@@ -1,26 +1,226 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
+/* ── DORIX Design Tokens ─────────────────────────────────────── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Brand colours */
+  --color-dorix-dark:        #2B3441;
+  --color-dorix-green:       #2D7A5F;
+  --color-dorix-green-light: #4CB87A;
+  --color-dorix-green-pale:  #D1F0E0;
+  --color-dorix-bg:          #F4FAF6;
+  --color-dorix-muted:       #6B7280;
+  --color-dorix-border:      #E5EDE9;
+
+  /* Semantic aliases */
+  --color-background:        var(--color-dorix-bg);
+  --color-foreground:        var(--color-dorix-dark);
+  --color-primary:           var(--color-dorix-green);
+  --color-primary-hover:     #235f49;
+  --color-primary-fg:        #ffffff;
+  --color-accent:            var(--color-dorix-green-light);
+  --color-muted:             var(--color-dorix-muted);
+  --color-border:            var(--color-dorix-border);
+  --color-card:              #ffffff;
+  --color-card-border:       #E8F0EC;
+
+  /* Status colours */
+  --color-success:     #16a34a;
+  --color-warning:     #d97706;
+  --color-danger:      #dc2626;
+  --color-info:        #2563eb;
+
+  /* Typography */
+  --font-serif:  "Playfair Display", Georgia, serif;
+  --font-sans:        var(--font-sans);
+
+  /* Border radius */
+  --radius-sm:   0.375rem;
+  --radius-md:   0.5rem;
+  --radius-lg:   0.75rem;
+  --radius-xl:   1rem;
+  --radius-2xl:  1.5rem;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+  --shadow-elevated: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
+  --font-heading:        var(--font-sans);
+  --color-sidebar-ring:        var(--sidebar-ring);
+  --color-sidebar-border:        var(--sidebar-border);
+  --color-sidebar-accent-foreground:        var(--sidebar-accent-foreground);
+  --color-sidebar-accent:        var(--sidebar-accent);
+  --color-sidebar-primary-foreground:        var(--sidebar-primary-foreground);
+  --color-sidebar-primary:        var(--sidebar-primary);
+  --color-sidebar-foreground:        var(--sidebar-foreground);
+  --color-sidebar:        var(--sidebar);
+  --color-chart-5:        var(--chart-5);
+  --color-chart-4:        var(--chart-4);
+  --color-chart-3:        var(--chart-3);
+  --color-chart-2:        var(--chart-2);
+  --color-chart-1:        var(--chart-1);
+  --color-ring:        var(--ring);
+  --color-input:        var(--input);
+  --color-destructive:        var(--destructive);
+  --color-accent-foreground:        var(--accent-foreground);
+  --color-muted-foreground:        var(--muted-foreground);
+  --color-secondary-foreground:        var(--secondary-foreground);
+  --color-secondary:        var(--secondary);
+  --color-primary-foreground:        var(--primary-foreground);
+  --color-popover-foreground:        var(--popover-foreground);
+  --color-popover:        var(--popover);
+  --color-card-foreground:        var(--card-foreground);
+  --radius-3xl:        calc(var(--radius) * 2.2);
+  --radius-4xl:        calc(var(--radius) * 2.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ── Base Styles ─────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-dorix-bg);
+  color: var(--color-dorix-dark);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-dorix-dark);
+}
+
+h4, h5, h6 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--color-dorix-dark);
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-dorix-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-dorix-muted); }
+
+/* ── Focus Ring ──────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-dorix-green);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Selection ───────────────────────────────────────────────── */
+::selection {
+  background-color: var(--color-dorix-green-pale);
+  color: var(--color-dorix-dark);
+}
+
+:root {
+  /* ── DORIX brand mapped to shadcn semantic tokens ── */
+  --background:        #F4FAF6;
+  --foreground:        #2B3441;
+  --card:              #ffffff;
+  --card-foreground:   #2B3441;
+  --popover:           #ffffff;
+  --popover-foreground: #2B3441;
+  --primary:           #2D7A5F;
+  --primary-foreground: #ffffff;
+  --secondary:         #D1F0E0;
+  --secondary-foreground: #2B3441;
+  --muted:             #EDF5F0;
+  --muted-foreground:  #6B7280;
+  --accent:            #4CB87A;
+  --accent-foreground: #ffffff;
+  --destructive:       #dc2626;
+  --border:            #E5EDE9;
+  --input:             #E5EDE9;
+  --ring:              #2D7A5F;
+  --radius:            0.75rem;
+  /* Chart — eco palette */
+  --chart-1: #2D7A5F;
+  --chart-2: #4CB87A;
+  --chart-3: #D1F0E0;
+  --chart-4: #d97706;
+  --chart-5: #dc2626;
+  /* Admin sidebar — charcoal dark */
+  --sidebar:                    #1e2b38;
+  --sidebar-foreground:         #e8f5ed;
+  --sidebar-primary:            #4CB87A;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent:             #253140;
+  --sidebar-accent-foreground:  #D1F0E0;
+  --sidebar-border:             rgba(255, 255, 255, 0.08);
+  --sidebar-ring:               #4CB87A;
+}
+
+.dark {
+  --background:        oklch(0.145 0 0);
+  --foreground:        oklch(0.985 0 0);
+  --card:        oklch(0.205 0 0);
+  --card-foreground:        oklch(0.985 0 0);
+  --popover:        oklch(0.205 0 0);
+  --popover-foreground:        oklch(0.985 0 0);
+  --primary:        oklch(0.922 0 0);
+  --primary-foreground:        oklch(0.205 0 0);
+  --secondary:        oklch(0.269 0 0);
+  --secondary-foreground:        oklch(0.985 0 0);
+  --muted:        oklch(0.269 0 0);
+  --muted-foreground:        oklch(0.708 0 0);
+  --accent:        oklch(0.269 0 0);
+  --accent-foreground:        oklch(0.985 0 0);
+  --destructive:        oklch(0.704 0.191 22.216);
+  --border:        oklch(1 0 0 / 10%);
+  --input:        oklch(1 0 0 / 15%);
+  --ring:        oklch(0.556 0 0);
+  --chart-1:        oklch(0.87 0 0);
+  --chart-2:        oklch(0.556 0 0);
+  --chart-3:        oklch(0.439 0 0);
+  --chart-4:        oklch(0.371 0 0);
+  --chart-5:        oklch(0.269 0 0);
+  --sidebar:        oklch(0.205 0 0);
+  --sidebar-foreground:        oklch(0.985 0 0);
+  --sidebar-primary:        oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground:        oklch(0.985 0 0);
+  --sidebar-accent:        oklch(0.269 0 0);
+  --sidebar-accent-foreground:        oklch(0.985 0 0);
+  --sidebar-border:        oklch(1 0 0 / 10%);
+  --sidebar-ring:        oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+/* ── Animations ──────────────────────────────────────────── */
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out both;
 }
