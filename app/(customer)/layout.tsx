@@ -1,5 +1,8 @@
 import { currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
+import Link from "next/link"
+import { UserButton } from "@clerk/nextjs"
+import { NotificationBell } from "@/components/notifications/NotificationBell"
 
 export default async function CustomerLayout({ children }: { children: React.ReactNode }) {
   const user = await currentUser()
@@ -9,7 +12,22 @@ export default async function CustomerLayout({ children }: { children: React.Rea
 
   return (
     <div className="min-h-screen bg-[#F4FAF6]">
-      {children}
+      <header className="sticky top-0 z-30 h-14 bg-white/90 backdrop-blur border-b border-gray-200">
+        <div className="max-w-7xl mx-auto h-full px-4 flex items-center justify-between gap-4">
+          <Link href="/" className="font-serif text-xl font-bold text-[#2B3441]">DORIX</Link>
+          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-[#6B7280]">
+            <Link href="/dashboard" className="hover:text-[#2D7A5F] transition-colors">Dashboard</Link>
+            <Link href="/book" className="hover:text-[#2D7A5F] transition-colors">Book</Link>
+            <Link href="/post-job" className="hover:text-[#2D7A5F] transition-colors">Post a job</Link>
+            <Link href="/jobs" className="hover:text-[#2D7A5F] transition-colors">My jobs</Link>
+          </nav>
+          <div className="flex items-center gap-2">
+            <NotificationBell />
+            <UserButton />
+          </div>
+        </div>
+      </header>
+      <main className="max-w-7xl mx-auto px-4 py-8">{children}</main>
     </div>
   )
 }
