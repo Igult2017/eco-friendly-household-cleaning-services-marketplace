@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { bookings, payments, providers } from "@/lib/db/schema"
 import { stripe } from "@/lib/stripe/client"
+import { calculateRefundAmount, calculateRefundPercent } from "@/lib/utils/refunds"
 import { eq, and } from "drizzle-orm"
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -43,21 +44,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     .from(payments)
     .where(eq(payments.bookingId, bookingId))
 
-  // Tiered refund logic
   const hoursUntilJob = (new Date(booking.scheduledAt).getTime() - Date.now()) / (1000 * 60 * 60)
-  let refundPercent = 0
-
-  if (callerRole === "provider") {
-    refundPercent = 100 // provider cancels → always full refund
-  } else if (hoursUntilJob > 48) {
-    refundPercent = 100
-  } else if (hoursUntilJob > 24) {
-    refundPercent = 50
-  } else {
-    refundPercent = 0
-  }
-
-  const refundAmount = Math.round(booking.totalAmount * (refundPercent / 100))
+  const refundPercent = calculateRefundPercent(hoursUntilJob, callerRole)
+  const refundAmount = calculateRefundAmount(booking.totalAmount, hoursUntilJob, callerRole)
 
   if (payment) {
     if (payment.status === "authorized") {
