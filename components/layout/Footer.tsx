@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Leaf } from "lucide-react"
+import Image from "next/image"
 
 const LINKS = {
   Product: [
@@ -28,11 +28,8 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
           <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 rounded-full bg-[#4CB87A] flex items-center justify-center">
-                <Leaf className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />
-              </div>
-              <span className="text-white font-bold text-lg tracking-tight">DORIX</span>
+            <div className="mb-4">
+              <Image src="/logo.png" alt="DORIX" width={100} height={36} className="brightness-0 invert" />
             </div>
             <p className="text-sm leading-relaxed text-white/50 max-w-[200px]">
               Clean home. Green future.<br />

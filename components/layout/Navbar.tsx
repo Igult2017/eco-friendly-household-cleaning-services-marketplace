@@ -1,11 +1,12 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { useState } from "react"
 import { SignInButton, UserButton } from "@clerk/nextjs"
 import { Show } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
-import { Leaf, Menu, X } from "lucide-react"
+import { Menu, X } from "lucide-react"
 
 const NAV_LINKS = [
   { href: "/browse", label: "Find cleaners" },
@@ -21,11 +22,8 @@ export function Navbar() {
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#E5EDE9]">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-          <div className="w-8 h-8 rounded-full bg-[#2D7A5F] flex items-center justify-center">
-            <Leaf className="w-4 h-4 text-white" strokeWidth={2.5} />
-          </div>
-          <span className="text-xl font-bold text-[#2B3441] tracking-tight">DORIX</span>
+        <Link href="/" className="flex-shrink-0">
+          <Image src="/logo.png" alt="DORIX" width={110} height={40} priority />
         </Link>
 
         {/* Desktop nav */}

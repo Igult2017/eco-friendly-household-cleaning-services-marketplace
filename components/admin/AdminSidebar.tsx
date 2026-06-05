@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import {
   LayoutDashboard,
@@ -31,7 +32,7 @@ export function AdminSidebar() {
   return (
     <aside className="fixed inset-y-0 left-0 w-60 bg-[#2B3441] flex flex-col z-40">
       <div className="h-16 flex items-center px-6 border-b border-white/10">
-        <span className="font-serif text-xl font-bold text-white tracking-wide">DORIX</span>
+        <Image src="/logo.png" alt="DORIX" width={90} height={32} className="brightness-0 invert" />
         <span className="ml-2 text-[10px] uppercase tracking-widest text-[#4CB87A] font-semibold">Admin</span>
       </div>
       <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
