@@ -1,0 +1,33 @@
+import { z } from "zod"
+
+export const addressSchema = z.object({
+  line1: z.string().min(2).max(200),
+  line2: z.string().max(100).optional(),
+  city: z.string().min(2).max(100),
+  state: z.string().max(100).optional(),
+  postalCode: z.string().min(3).max(10),
+  country: z.string().length(2).default("DE"),
+})
+
+export const createBookingSchema = z.object({
+  providerId: z.string().uuid(),
+  serviceId: z.string().uuid(),
+  paymentIntentId: z.string().min(1),
+  scheduledAt: z.string().datetime(),
+  durationMinutes: z.number().int().min(30).max(480),
+  serviceAddress: addressSchema,
+  serviceLatitude: z.number().optional(),
+  serviceLongitude: z.number().optional(),
+  specialInstructions: z.string().max(1000).optional(),
+  ecoOptions: z.array(z.string()).default([]),
+})
+
+export const paymentIntentSchema = z.object({
+  providerId: z.string().uuid(),
+  serviceId: z.string().uuid(),
+  scheduledAt: z.string().datetime(),
+  durationMinutes: z.number().int().min(30).max(480),
+})
+
+export type CreateBookingInput = z.infer<typeof createBookingSchema>
+export type PaymentIntentInput = z.infer<typeof paymentIntentSchema>

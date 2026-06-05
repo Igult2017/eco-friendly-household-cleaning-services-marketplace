@@ -1,0 +1,176 @@
+"use client"
+
+import { WizardProgress } from "@/components/booking/WizardProgress"
+import { useBookingStore } from "@/stores/bookingStore"
+import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
+import { Loader2, Clock } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+const DURATION_OPTIONS = [
+  { value: 60, label: "1 hour" },
+  { value: 120, label: "2 hours" },
+  { value: 180, label: "3 hours" },
+  { value: 240, label: "4 hours" },
+  { value: 360, label: "6 hours" },
+]
+
+const TIME_SLOTS = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"]
+
+function getNext14Days(): string[] {
+  const days: string[] = []
+  const today = new Date()
+  for (let i = 1; i <= 14; i++) {
+    const d = new Date(today)
+    d.setDate(today.getDate() + i)
+    days.push(d.toISOString().split("T")[0])
+  }
+  return days
+}
+
+export default function BookStep3Page() {
+  const router = useRouter()
+  const { selectedProviderId, setSchedule, scheduledAt, durationMinutes } = useBookingStore()
+
+  const [selectedDate, setSelectedDate] = useState<string | null>(scheduledAt ? scheduledAt.toISOString().split("T")[0] : null)
+  const [selectedTime, setSelectedTime] = useState<string | null>(scheduledAt ? scheduledAt.toTimeString().slice(0, 5) : null)
+  const [selectedDuration, setSelectedDuration] = useState(durationMinutes)
+  const [availability, setAvailability] = useState<{ available: boolean; workingHours?: { start: string; end: string } } | null>(null)
+  const [loadingAvail, setLoadingAvail] = useState(false)
+
+  useEffect(() => {
+    if (!selectedProviderId) { router.replace("/book"); return }
+  }, [selectedProviderId, router])
+
+  useEffect(() => {
+    if (!selectedDate || !selectedProviderId) return
+    setLoadingAvail(true)
+    fetch(`/api/providers/${selectedProviderId}/availability?date=${selectedDate}`)
+      .then((r) => r.json())
+      .then(setAvailability)
+      .finally(() => setLoadingAvail(false))
+  }, [selectedDate, selectedProviderId])
+
+  function filterSlots(slots: string[]) {
+    if (!availability?.workingHours) return slots
+    const { start, end } = availability.workingHours
+    return slots.filter((s) => s >= start.slice(0, 5) && s <= end.slice(0, 5))
+  }
+
+  function handleNext() {
+    if (!selectedDate || !selectedTime) return
+    const dt = new Date(`${selectedDate}T${selectedTime}:00`)
+    setSchedule(dt, selectedDuration)
+    router.push("/book/extras")
+  }
+
+  const days = getNext14Days()
+  const availableSlots = filterSlots(TIME_SLOTS)
+
+  return (
+    <div className="min-h-screen bg-[#F4FAF6] py-10 px-4">
+      <WizardProgress current={3} />
+
+      <div className="max-w-2xl mx-auto">
+        <h1 className="font-serif text-3xl font-bold text-[#2B3441] text-center mb-2">
+          When works for you?
+        </h1>
+        <p className="text-center text-[#6B7280] mb-8">Pick a date and time that suits your schedule</p>
+
+        <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-4">
+          <Label className="text-sm font-semibold text-[#2B3441] mb-3 block">Select a date</Label>
+          <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
+            {days.map((d) => {
+              const date = new Date(d)
+              const dayName = date.toLocaleDateString("en-GB", { weekday: "short" })
+              const dayNum = date.getDate()
+              const month = date.toLocaleDateString("en-GB", { month: "short" })
+              return (
+                <button
+                  key={d}
+                  onClick={() => setSelectedDate(d)}
+                  className={cn(
+                    "flex-shrink-0 flex flex-col items-center justify-center w-14 h-16 rounded-xl border-2 text-sm transition-all",
+                    selectedDate === d
+                      ? "border-[#2D7A5F] bg-[#2D7A5F] text-white"
+                      : "border-[#E5EBF0] hover:border-[#4CB87A] text-[#2B3441]"
+                  )}
+                >
+                  <span className="text-xs font-medium opacity-80">{dayName}</span>
+                  <span className="text-lg font-bold leading-none">{dayNum}</span>
+                  <span className="text-xs opacity-70">{month}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        {selectedDate && (
+          <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-4">
+            <Label className="text-sm font-semibold text-[#2B3441] mb-3 flex items-center gap-2">
+              <Clock size={15} /> Select a time
+              {loadingAvail && <Loader2 size={14} className="animate-spin text-[#2D7A5F]" />}
+            </Label>
+            {!availability?.available && !loadingAvail ? (
+              <p className="text-sm text-[#9CA3AF] py-2">This provider isn't available on this date. Please choose another.</p>
+            ) : (
+              <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+                {(loadingAvail ? TIME_SLOTS : availableSlots).map((t) => (
+                  <button
+                    key={t}
+                    disabled={loadingAvail}
+                    onClick={() => setSelectedTime(t)}
+                    className={cn(
+                      "py-2 rounded-lg text-sm font-medium border-2 transition-all",
+                      selectedTime === t
+                        ? "border-[#2D7A5F] bg-[#2D7A5F] text-white"
+                        : "border-[#E5EBF0] hover:border-[#4CB87A] text-[#2B3441]",
+                      loadingAvail && "opacity-40"
+                    )}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-6">
+          <Label className="text-sm font-semibold text-[#2B3441] mb-3 block">How long do you need?</Label>
+          <div className="flex flex-wrap gap-2">
+            {DURATION_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setSelectedDuration(opt.value)}
+                className={cn(
+                  "px-4 py-2 rounded-lg text-sm font-medium border-2 transition-all",
+                  selectedDuration === opt.value
+                    ? "border-[#2D7A5F] bg-[#2D7A5F] text-white"
+                    : "border-[#E5EBF0] hover:border-[#4CB87A] text-[#2B3441]"
+                )}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex gap-3">
+          <Button variant="outline" onClick={() => router.push("/book/providers")} className="flex-1 h-11 border-[#E5EBF0]">
+            ← Back
+          </Button>
+          <Button
+            onClick={handleNext}
+            disabled={!selectedDate || !selectedTime}
+            className="flex-1 h-11 bg-[#2D7A5F] hover:bg-[#235f49] text-white"
+          >
+            Continue — Add Details →
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}
