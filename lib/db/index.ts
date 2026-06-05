@@ -2,10 +2,12 @@ import { drizzle } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
 import * as schema from "./schema"
 
-// Use the POOLER URL at runtime (PgBouncer Transaction mode)
-// connection_limit=1 is set in the URL query param
-const client = postgres(process.env.DATABASE_POOLER_URL!, {
-  prepare: false, // Required for PgBouncer Transaction mode
+// Connects to your Hostinger VPS PostgreSQL instance.
+// For production, add ?ssl=true to the URL and set up PgBouncer on the VPS
+// to handle Vercel's serverless connection bursts.
+const client = postgres(process.env.DATABASE_URL!, {
+  max: 1,     // one connection per serverless function instance
+  prepare: false, // set to true if NOT using PgBouncer
 })
 
 export const db = drizzle(client, { schema })
