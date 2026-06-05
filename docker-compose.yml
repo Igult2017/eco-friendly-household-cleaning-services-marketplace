@@ -25,7 +25,6 @@ services:
         NEXT_PUBLIC_PUSHER_CLUSTER: ${NEXT_PUBLIC_PUSHER_CLUSTER:-eu}
         NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
     image: dorix-app:latest
-    container_name: dorix
     restart: unless-stopped
     expose:
       - "3000"                             # internal only — Nginx is the public entry point
@@ -35,6 +34,12 @@ services:
       - pgbouncer
     networks:
       - dorix-net
+    deploy:
+      replicas: 6                          # one per CPU core (leave 2 for Nginx + PgBouncer)
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
 
   pgbouncer:
     image: bitnami/pgbouncer:latest
