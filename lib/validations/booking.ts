@@ -20,6 +20,7 @@ export const createBookingSchema = z.object({
   serviceLongitude: z.number().optional(),
   specialInstructions: z.string().max(1000).optional(),
   ecoOptions: z.array(z.string()).default([]),
+  carbonOffsetCents: z.number().int().min(0).max(500).optional(),
 })
 
 export const paymentIntentSchema = z.object({
@@ -27,6 +28,7 @@ export const paymentIntentSchema = z.object({
   serviceId: z.string().uuid(),
   scheduledAt: z.string().datetime(),
   durationMinutes: z.number().int().min(30).max(480),
+  carbonOffsetCents: z.number().int().min(0).max(500).optional(),
 })
 
 export type CreateBookingInput = z.infer<typeof createBookingSchema>

@@ -18,6 +18,7 @@ interface Props {
     serviceLongitude?: number
     specialInstructions?: string
     ecoOptions: string[]
+    carbonOffsetCents?: number
   }
 }
 

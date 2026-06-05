@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
-  const { providerId, serviceId } = parsed.data
+  const { providerId, serviceId, carbonOffsetCents = 0 } = parsed.data
 
   // Load provider + service in parallel
   const [[provider], [service], [customer]] = await Promise.all([
@@ -49,6 +49,7 @@ export async function POST(req: Request) {
   }
 
   const amounts = calculateBookingAmounts(service.basePrice)
+  const totalWithOffset = amounts.totalCharged + carbonOffsetCents
 
   let stripeCustomerId: string | undefined
 
@@ -67,7 +68,7 @@ export async function POST(req: Request) {
   }
 
   const intent = await stripe.paymentIntents.create({
-    amount: amounts.totalCharged,
+    amount: totalWithOffset,
     currency: "eur",
     capture_method: "manual",
     customer: stripeCustomerId,
@@ -77,12 +78,13 @@ export async function POST(req: Request) {
       clerk_customer_id: userId,
       provider_id: providerId,
       service_id: serviceId,
+      carbon_offset_cents: String(carbonOffsetCents),
     },
   })
 
   return NextResponse.json({
     clientSecret: intent.client_secret,
     paymentIntentId: intent.id,
-    amounts,
+    amounts: { ...amounts, carbonOffsetCents, totalCharged: totalWithOffset },
   })
 }

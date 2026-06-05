@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { bookings, payments, providers, providerServices } from "@/lib/db/schema"
+import { bookings, payments, providers, providerServices, carbonOffsetContributions } from "@/lib/db/schema"
 import type { NewBooking } from "@/lib/db/schema/bookings"
 import { stripe, calculateBookingAmounts } from "@/lib/stripe/client"
 import { bookingRatelimit } from "@/lib/redis/client"
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
-  const { providerId, serviceId, paymentIntentId, scheduledAt, durationMinutes, serviceAddress, serviceLatitude, serviceLongitude, specialInstructions, ecoOptions } = parsed.data
+  const { providerId, serviceId, paymentIntentId, scheduledAt, durationMinutes, serviceAddress, serviceLatitude, serviceLongitude, specialInstructions, ecoOptions, carbonOffsetCents = 0 } = parsed.data
 
   // Verify PaymentIntent is in requires_capture state
   const intent = await stripe.paymentIntents.retrieve(paymentIntentId)
@@ -73,7 +73,7 @@ export async function POST(req: Request) {
     platformFeeAmount: amounts.platformFee,
     totalAmount: amounts.totalCharged,
     providerPayout: amounts.providerPayout,
-    carbonOffsetAmount: 0,
+    carbonOffsetAmount: carbonOffsetCents,
     completionPhotoUrls: [],
   }
 
@@ -92,6 +92,17 @@ export async function POST(req: Request) {
     currency: "eur",
     idempotencyKey: paymentIntentId,
   })
+
+  // Record carbon offset contribution if opted in
+  if (carbonOffsetCents > 0) {
+    await db.insert(carbonOffsetContributions).values({
+      bookingId: newBooking.id,
+      customerId: userId,
+      providerId,
+      amount: carbonOffsetCents,
+      offsetProvider: "DORIX Green Fund",
+    })
+  }
 
   // Fire Inngest event for notifications + emails
   await inngest.send({ name: "booking/created", data: { bookingId: newBooking.id, customerId: userId, providerId } })
