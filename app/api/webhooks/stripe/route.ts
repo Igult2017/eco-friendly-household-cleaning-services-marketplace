@@ -23,10 +23,11 @@ export async function POST(req: Request) {
     return new Response("Invalid webhook signature", { status: 400 })
   }
 
-  // Idempotency guard
+  // Idempotency guard — redis.set NX returns "OK" when the key is newly set (first delivery)
+  // and null when the key already existed (duplicate). Skip if already processed.
   const idempotencyKey = `stripe:processed:${event.id}`
-  const alreadyProcessed = await redis.set(idempotencyKey, "1", { nx: true, ex: 86400 })
-  if (!alreadyProcessed) return new Response("Already processed", { status: 200 })
+  const wasSet = await redis.set(idempotencyKey, "1", { nx: true, ex: 86400 })
+  if (wasSet === null) return new Response("Already processed", { status: 200 })
 
   try {
     switch (event.type) {
@@ -65,9 +66,9 @@ export async function POST(req: Request) {
       case "identity.verification_session.verified": {
         const session = event.data.object as Stripe.Identity.VerificationSession
         const meta = session.metadata as Record<string, string>
-        if (meta?.providerId) {
-          await db.update(providers).set({ verificationStatus: "verified" }).where(eq(providers.id, meta.providerId))
-          const [prov] = await db.select({ userId: providers.userId }).from(providers).where(eq(providers.id, meta.providerId))
+        if (meta?.provider_id) {
+          await db.update(providers).set({ verificationStatus: "verified" }).where(eq(providers.id, meta.provider_id))
+          const [prov] = await db.select({ userId: providers.userId }).from(providers).where(eq(providers.id, meta.provider_id))
           if (prov?.userId) {
             await db.insert(notifications).values({
               userId: prov.userId,
@@ -84,9 +85,9 @@ export async function POST(req: Request) {
       case "identity.verification_session.requires_input": {
         const session = event.data.object as Stripe.Identity.VerificationSession
         const meta = session.metadata as Record<string, string>
-        if (meta?.providerId) {
-          await db.update(providers).set({ verificationStatus: "requires_resubmission" }).where(eq(providers.id, meta.providerId))
-          const [prov] = await db.select({ userId: providers.userId }).from(providers).where(eq(providers.id, meta.providerId))
+        if (meta?.provider_id) {
+          await db.update(providers).set({ verificationStatus: "requires_resubmission" }).where(eq(providers.id, meta.provider_id))
+          const [prov] = await db.select({ userId: providers.userId }).from(providers).where(eq(providers.id, meta.provider_id))
           if (prov?.userId) {
             await db.insert(notifications).values({
               userId: prov.userId,
