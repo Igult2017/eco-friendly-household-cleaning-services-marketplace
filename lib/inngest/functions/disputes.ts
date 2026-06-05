@@ -51,13 +51,13 @@ export const onDisputeOpened = inngest.createFunction(
       await db.update(disputes).set({ status: "escalated" }).where(eq(disputes.id, disputeId))
 
       // Notify admin of escalation
-      const [opener] = await db.select({ email: users.email }).from(users).where(eq(users.id, openedBy))
-      if (opener?.email) {
+      const adminEmail = process.env.ADMIN_EMAIL
+      if (adminEmail) {
         await resend.emails.send({
           from: FROM,
-          to: process.env.RESEND_FROM_EMAIL!,
+          to: adminEmail,
           subject: `[ESCALATED] Dispute ${disputeId} needs admin review`,
-          html: `<p>Dispute ${disputeId} for booking ${bookingId} has been open for 72 hours and requires admin review.</p>`,
+          html: `<p>Dispute ${disputeId} for booking ${bookingId} has been open for 72 hours and requires admin review.</p><p><a href="${process.env.NEXT_PUBLIC_APP_URL}/admin/disputes">Open Admin Panel</a></p>`,
         })
       }
 

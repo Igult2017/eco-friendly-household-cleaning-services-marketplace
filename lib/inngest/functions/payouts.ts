@@ -6,7 +6,7 @@ import { resend, FROM } from "@/lib/resend/client"
 import { eq, and, gte, lte, inArray } from "drizzle-orm"
 
 export const weeklyPayoutRun = inngest.createFunction(
-  { id: "weekly-payout-run", triggers: [{ cron: "0 2 * * 1" }] },
+  { id: "weekly-payout-run", retries: 3, triggers: [{ cron: "0 2 * * 1" }] },
   async ({ step }: { step: any }) => {
     const now = new Date()
     const periodEnd = new Date(now)
@@ -77,25 +77,35 @@ export const processProviderPayout = inngest.createFunction(
 
     const providerBookingRows = await step.run("fetch-bookings", async () => {
       return db
-        .select({ id: bookings.id, providerPayout: bookings.providerPayout })
+        .select({ id: bookings.id, providerPayout: bookings.providerPayout, refundedAmount: payments.refundedAmount })
         .from(bookings)
         .innerJoin(payments, eq(bookings.id, payments.bookingId))
-        .where(and(eq(bookings.providerId, providerId), eq(payments.status, "captured"), gte(payments.capturedAt, periodStartDate), lte(payments.capturedAt, periodEndDate)))
+        .where(and(
+          eq(bookings.providerId, providerId),
+          eq(bookings.status, "completed"),       // exclude cancelled/disputed/refunded bookings
+          eq(payments.status, "captured"),
+          gte(payments.capturedAt, periodStartDate),
+          lte(payments.capturedAt, periodEndDate),
+        ))
     })
 
     if (providerBookingRows.length === 0) return { skipped: true, reason: "no_bookings" }
 
-    const rows = providerBookingRows as { id: string; providerPayout: number }[]
-    const totalPayout = rows.reduce((sum: number, b: { providerPayout: number }) => sum + b.providerPayout, 0)
+    const rows = providerBookingRows as { id: string; providerPayout: number; refundedAmount: number }[]
+    // Subtract any refunded amounts so providers aren't overpaid on disputed bookings
+    const totalPayout = rows.reduce((sum: number, b) => sum + Math.max(0, b.providerPayout - (b.refundedAmount ?? 0)), 0)
     const bookingIdList = rows.map((b: { id: string }) => b.id)
 
     const transfer = await step.run("stripe-transfer", async () => {
-      return stripe.transfers.create({
-        amount: totalPayout,
-        currency: "eur",
-        destination: provider.stripeAccountId!,
-        metadata: { provider_id: providerId, period_start: periodStart, period_end: periodEnd },
-      })
+      return stripe.transfers.create(
+        {
+          amount: totalPayout,
+          currency: "eur",
+          destination: provider.stripeAccountId!,
+          metadata: { provider_id: providerId, period_start: periodStart, period_end: periodEnd },
+        },
+        { idempotencyKey: `transfer-${providerId}-${periodStart}-${periodEnd}` },
+      )
     })
 
     const [payout] = await step.run("record-payout", async () => {
