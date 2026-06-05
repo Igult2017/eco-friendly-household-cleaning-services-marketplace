@@ -16,10 +16,10 @@ export default async function ProviderLayout({ children }: { children: React.Rea
         <div className="max-w-7xl mx-auto h-full px-4 flex items-center justify-between gap-4">
           <Link href="/" className="font-serif text-xl font-bold text-[#2B3441]">DORIX</Link>
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-[#6B7280]">
-            <Link href="/dashboard" className="hover:text-[#2D7A5F] transition-colors">Dashboard</Link>
-            <Link href="/jobs" className="hover:text-[#2D7A5F] transition-colors">Find jobs</Link>
+            <Link href="/provider/dashboard" className="hover:text-[#2D7A5F] transition-colors">Dashboard</Link>
+            <Link href="/provider/jobs" className="hover:text-[#2D7A5F] transition-colors">Find jobs</Link>
             <Link href="/bookings" className="hover:text-[#2D7A5F] transition-colors">Bookings</Link>
-            <Link href="/earnings" className="hover:text-[#2D7A5F] transition-colors">Earnings</Link>
+            <Link href="/provider/earnings" className="hover:text-[#2D7A5F] transition-colors">Earnings</Link>
           </nav>
           <div className="flex items-center gap-2">
             <NotificationBell />

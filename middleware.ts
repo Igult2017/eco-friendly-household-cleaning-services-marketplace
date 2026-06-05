@@ -3,8 +3,7 @@ import { NextResponse } from "next/server"
 
 const isPublicRoute = createRouteMatcher([
   "/",
-  "/browse(.*)",
-  "/provider/(.*)",
+  "/providers/(.*)",
   "/services(.*)",
   "/how-it-works(.*)",
   "/sustainability(.*)",
@@ -17,18 +16,29 @@ const isPublicRoute = createRouteMatcher([
   "/api/geo/(.*)",
 ])
 
-const isCustomerRoute = createRouteMatcher(["/customer(.*)"])
-const isProviderRoute = createRouteMatcher(["/provider/dashboard(.*)", "/provider/jobs(.*)", "/provider/bookings(.*)", "/provider/schedule(.*)", "/provider/earnings(.*)", "/provider/profile(.*)", "/provider/reviews(.*)", "/provider/settings(.*)"])
-const isAdminRoute = createRouteMatcher(["/admin(.*)"])
+// Customer-only routes (no URL prefix — customers are primary users)
+const isCustomerOnlyRoute = createRouteMatcher([
+  "/dashboard(.*)",
+  "/book(.*)",
+  "/post-job(.*)",
+  "/jobs(.*)",
+  "/bookings/(.*)",
+  "/payments(.*)",
+])
+
+// Provider routes use /provider/* URL prefix
+const isProviderRoute = createRouteMatcher(["/provider/(.*)"])
+
+// Admin routes use /admin/* URL prefix
+const isAdminRoute = createRouteMatcher(["/admin/(.*)"])
+
 const isOnboardingRoute = createRouteMatcher(["/onboarding(.*)"])
 
 export default clerkMiddleware(async (auth, req) => {
-  // Allow all public routes without auth
   if (isPublicRoute(req)) return NextResponse.next()
 
   const { userId, sessionClaims } = await auth()
 
-  // Redirect unauthenticated users to sign-in
   if (!userId) {
     const signInUrl = new URL("/sign-in", req.url)
     signInUrl.searchParams.set("redirect_url", req.url)
@@ -37,25 +47,26 @@ export default clerkMiddleware(async (auth, req) => {
 
   const role = (sessionClaims?.metadata as { role?: string } | undefined)?.role
 
-  // Allow onboarding for any authenticated user
   if (isOnboardingRoute(req)) return NextResponse.next()
-
-  // Role-based route guards
-  if (isAdminRoute(req) && role !== "admin") {
-    return NextResponse.redirect(new URL("/", req.url))
-  }
-
-  if (isProviderRoute(req) && role !== "provider") {
-    return NextResponse.redirect(new URL("/", req.url))
-  }
-
-  if (isCustomerRoute(req) && role !== "customer" && role !== "admin") {
-    return NextResponse.redirect(new URL("/", req.url))
-  }
 
   // Redirect users who haven't completed onboarding
   if (!role && !isOnboardingRoute(req)) {
     return NextResponse.redirect(new URL("/onboarding", req.url))
+  }
+
+  // Protect admin routes
+  if (isAdminRoute(req) && role !== "admin") {
+    return NextResponse.redirect(new URL("/", req.url))
+  }
+
+  // Protect provider routes
+  if (isProviderRoute(req) && role !== "provider") {
+    return NextResponse.redirect(new URL("/", req.url))
+  }
+
+  // Protect customer-only routes (admin can also view these for support)
+  if (isCustomerOnlyRoute(req) && role !== "customer" && role !== "admin") {
+    return NextResponse.redirect(new URL("/", req.url))
   }
 
   return NextResponse.next()
