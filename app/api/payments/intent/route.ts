@@ -53,17 +53,17 @@ export async function POST(req: Request) {
 
   let stripeCustomerId: string | undefined
 
-  // Create or reuse Stripe customer
+  // Create or reuse Stripe customer. Idempotency key on create prevents duplicate customers
+  // if two concurrent requests both find nothing in the search and proceed to create.
   const existing = await stripe.customers.search({ query: `metadata['clerk_id']:'${userId}'`, limit: 1 })
   if (existing.data[0]) {
     stripeCustomerId = existing.data[0].id
   } else {
     const fullName = [customer.firstName, customer.lastName].filter(Boolean).join(" ") || undefined
-    const created = await stripe.customers.create({
-      email: customer.email ?? undefined,
-      name: fullName,
-      metadata: { clerk_id: userId },
-    })
+    const created = await stripe.customers.create(
+      { email: customer.email ?? undefined, name: fullName, metadata: { clerk_id: userId } },
+      { idempotencyKey: `cus-create-${userId}` },
+    )
     stripeCustomerId = created.id
   }
 

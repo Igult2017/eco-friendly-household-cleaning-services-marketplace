@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { users, bookings, reviews, disputes, notifications } from "@/lib/db/schema"
+import { users, bookings, reviews, disputes, notifications, providers, providerServices, ecoCertifications } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 
 export async function GET() {
@@ -14,6 +14,7 @@ export async function GET() {
     userReviews,
     userDisputes,
     userNotifications,
+    [providerProfile],
   ] = await Promise.all([
     db.select().from(users).where(eq(users.id, userId)),
     db.select({ id: bookings.id, bookingNumber: bookings.bookingNumber, status: bookings.status, scheduledAt: bookings.scheduledAt, totalAmount: bookings.totalAmount, createdAt: bookings.createdAt })
@@ -24,7 +25,20 @@ export async function GET() {
       .from(disputes).where(eq(disputes.openedBy, userId)),
     db.select({ id: notifications.id, type: notifications.type, title: notifications.title, createdAt: notifications.createdAt })
       .from(notifications).where(eq(notifications.userId, userId)),
+    db.select({ id: providers.id, businessName: providers.businessName, bio: providers.bio, city: providers.city, ecoLevel: providers.ecoLevel, verificationStatus: providers.verificationStatus, stripeAccountStatus: providers.stripeAccountStatus, averageRating: providers.averageRating, totalReviews: providers.totalReviews, createdAt: providers.createdAt })
+      .from(providers).where(eq(providers.userId, userId)),
   ])
+
+  let providerData = null
+  if (providerProfile) {
+    const [provServices, certifications] = await Promise.all([
+      db.select({ id: providerServices.id, name: providerServices.name, basePrice: providerServices.basePrice, isActive: providerServices.isActive })
+        .from(providerServices).where(eq(providerServices.providerId, providerProfile.id)),
+      db.select({ id: ecoCertifications.id, name: ecoCertifications.name, issuingBody: ecoCertifications.issuingBody, verifiedAt: ecoCertifications.verifiedAt })
+        .from(ecoCertifications).where(eq(ecoCertifications.providerId, providerProfile.id)),
+    ])
+    providerData = { ...providerProfile, services: provServices, certifications }
+  }
 
   const exportData = {
     exportedAt: new Date().toISOString(),
@@ -32,6 +46,7 @@ export async function GET() {
     profile: user
       ? { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, phone: user.phone, role: user.role, gdprConsentAt: user.gdprConsentAt, marketingConsent: user.marketingConsent, createdAt: user.createdAt }
       : null,
+    providerProfile: providerData,
     bookings: userBookings,
     reviews: userReviews,
     disputes: userDisputes,

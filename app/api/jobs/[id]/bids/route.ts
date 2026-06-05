@@ -97,6 +97,15 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 
   const { id: jobPostId } = await params
 
+  // Verify the caller owns this job post
+  const [job] = await db
+    .select({ customerId: jobPosts.customerId })
+    .from(jobPosts)
+    .where(eq(jobPosts.id, jobPostId))
+
+  if (!job) return NextResponse.json({ error: "Job not found" }, { status: 404 })
+  if (job.customerId !== userId) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+
   const jobBids = await db.query.bids.findMany({
     where: (b: any, { eq: eqFn }: any) => eqFn(b.jobPostId, jobPostId),
     with: {

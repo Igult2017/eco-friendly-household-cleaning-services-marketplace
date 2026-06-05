@@ -6,7 +6,9 @@ import { headers } from "next/headers"
 export const runtime = "nodejs"
 
 export async function GET(req: Request) {
-  const ip = (await headers()).get("x-forwarded-for") ?? "anonymous"
+  const hdrs = await headers()
+  // CF-Connecting-IP is set by Cloudflare and cannot be spoofed (unlike x-forwarded-for)
+  const ip = hdrs.get("cf-connecting-ip") ?? hdrs.get("x-forwarded-for")?.split(",")[0].trim() ?? "anonymous"
   const { success } = await geoSearchRatelimit.limit(ip)
   if (!success) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 })

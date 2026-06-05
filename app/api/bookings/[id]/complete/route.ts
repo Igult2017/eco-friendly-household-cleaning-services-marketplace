@@ -30,7 +30,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   }
 
   const body = await req.json()
-  const photoUrls: string[] = body.photoUrls ?? []
+  const rawUrls: unknown[] = Array.isArray(body.photoUrls) ? body.photoUrls : []
+
+  // Only accept URLs from our own R2 bucket to prevent stored XSS via external URLs
+  const R2_BASE = process.env.R2_PUBLIC_URL ?? ""
+  const photoUrls = rawUrls.filter(
+    (u): u is string => typeof u === "string" && R2_BASE !== "" && u.startsWith(R2_BASE),
+  )
 
   // Update booking with photos + status
   await db

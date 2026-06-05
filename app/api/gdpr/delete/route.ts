@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server"
+import { auth, clerkClient } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { users } from "@/lib/db/schema"
@@ -16,6 +16,10 @@ export async function POST() {
     lastName: "User",
     phone: null,
   }).where(eq(users.id, userId))
+
+  // Ban the user in Clerk — revokes all active sessions immediately
+  const clerk = await clerkClient()
+  await clerk.users.banUser(userId)
 
   return NextResponse.json({ success: true, message: "Account scheduled for deletion. You will be signed out." })
 }

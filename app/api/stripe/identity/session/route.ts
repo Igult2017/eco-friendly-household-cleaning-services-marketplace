@@ -24,6 +24,7 @@ export async function POST(req: Request) {
     type: "document",
     options: { document: { require_matching_selfie: true } },
     return_url: `${origin}/onboarding/provider?step=2&identity=complete`,
+    metadata: { provider_id: provider.id },
   })
 
   const [existing] = await db

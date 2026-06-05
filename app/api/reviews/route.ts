@@ -3,7 +3,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { reviews, bookings, providers } from "@/lib/db/schema"
 import type { NewReview } from "@/lib/db/schema/reviews"
-import { eq, and } from "drizzle-orm"
+import { eq, and, avg, count } from "drizzle-orm"
 import { z } from "zod"
 
 const reviewSchema = z.object({
@@ -56,13 +56,15 @@ export async function POST(req: Request) {
 
   const [newReview] = await db.insert(reviews).values(insertData).returning({ id: reviews.id })
 
-  // Update provider average rating
-  const allRatings = await db.select({ rating: reviews.overallRating }).from(reviews).where(eq(reviews.providerId, booking.providerId))
-  const avg = allRatings.reduce((sum, r) => sum + r.rating, 0) / allRatings.length
+  // Update provider average rating using SQL aggregates (avoids full table scan in JS)
+  const [stats] = await db
+    .select({ avg: avg(reviews.overallRating), total: count() })
+    .from(reviews)
+    .where(eq(reviews.providerId, booking.providerId))
 
   await db
     .update(providers)
-    .set({ averageRating: Math.round(avg * 10) / 10, totalReviews: allRatings.length })
+    .set({ averageRating: Math.round(parseFloat(stats.avg ?? "0") * 10) / 10, totalReviews: stats.total })
     .where(eq(providers.id, booking.providerId))
 
   return NextResponse.json({ reviewId: newReview.id }, { status: 201 })

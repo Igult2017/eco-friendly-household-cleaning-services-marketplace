@@ -61,10 +61,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   if (payment) {
     if (payment.status === "authorized") {
-      // Not yet captured — cancel the intent
-      if (refundAmount > 0) {
-        await stripe.paymentIntents.cancel(payment.stripePaymentIntentId)
-      }
+      // Always cancel the intent to release the card hold, regardless of refund amount
+      await stripe.paymentIntents.cancel(payment.stripePaymentIntentId)
     } else if (payment.status === "captured" && refundAmount > 0) {
       await stripe.refunds.create({
         payment_intent: payment.stripePaymentIntentId,

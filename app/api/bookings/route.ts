@@ -6,13 +6,14 @@ import type { NewBooking } from "@/lib/db/schema/bookings"
 import { stripe, calculateBookingAmounts } from "@/lib/stripe/client"
 import { bookingRatelimit } from "@/lib/redis/client"
 import { createBookingSchema } from "@/lib/validations/booking"
-import { eq, and, count, desc } from "drizzle-orm"
+import { eq, and, desc } from "drizzle-orm"
 import { inngest } from "@/lib/inngest/client"
+import { redis } from "@/lib/redis/client"
 
 async function generateBookingNumber(): Promise<string> {
-  const [{ value }] = await db.select({ value: count() }).from(bookings)
-  const num = String(Number(value) + 1).padStart(6, "0")
-  return `BK-${new Date().getFullYear()}-${num}`
+  // Redis INCR is atomic — eliminates the COUNT(*)+1 race condition under concurrent load
+  const seq = await redis.incr("booking:seq")
+  return `BK-${new Date().getFullYear()}-${String(seq).padStart(6, "0")}`
 }
 
 export async function POST(req: Request) {

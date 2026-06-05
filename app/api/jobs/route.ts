@@ -81,12 +81,31 @@ export async function GET(req: Request) {
       return NextResponse.json({ jobs: [] })
     }
 
-    const jobs = await db.query.jobPosts.findMany({
-      where: (jp: any, { inArray: inArrayFn, eq: eqFn }: any) => inArrayFn(jp.status, ["open", "bidding"]),
+    const allJobs = await db.query.jobPosts.findMany({
+      where: (jp: any, { inArray: inArrayFn }: any) => inArrayFn(jp.status, ["open", "bidding"]),
       with: { category: { columns: { name: true, slug: true } }, bids: { columns: { id: true, status: true, providerId: true } } },
       orderBy: [desc(jobPosts.createdAt)],
-      limit: 30,
+      limit: 200,
     })
+
+    // Filter by overlap of provider radius and job's requested radius using Haversine distance
+    const providerLat = provider.latitude
+    const providerLng = provider.longitude
+    const providerRadius = provider.serviceRadiusKm ?? 25
+
+    function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
+      const R = 6371
+      const dLat = (lat2 - lat1) * Math.PI / 180
+      const dLon = (lon2 - lon1) * Math.PI / 180
+      const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+    }
+
+    const jobs = allJobs.filter((job: any) => {
+      if (!job.serviceLatitude || !job.serviceLongitude) return false
+      const dist = haversineKm(providerLat, providerLng, job.serviceLatitude, job.serviceLongitude)
+      return dist <= providerRadius || dist <= (job.radiusKm ?? 25)
+    }).slice(0, 30)
 
     return NextResponse.json({ jobs })
   }

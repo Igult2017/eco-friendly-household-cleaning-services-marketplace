@@ -58,9 +58,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   await db.update(bookings).set({ status: refundPercent === 100 ? "refunded" : "completed" }).where(eq(bookings.id, dispute.bookingId))
 
-  // Notify both parties
+  // Notify customer and provider
   await db.insert(notifications).values([
     { userId: booking.customerId, type: "dispute_resolved", title: "Your dispute has been resolved", body: resolution.slice(0, 120), link: `/bookings/${dispute.bookingId}` },
+    { userId: booking.providerId, type: "dispute_resolved", title: "A dispute on your booking has been resolved", body: resolution.slice(0, 120), link: `/provider/bookings` },
   ])
 
   return NextResponse.json({ success: true, refundAmount, outcome })
