@@ -20,7 +20,7 @@ export async function GET() {
       providerResponse: reviews.providerResponse,
       providerRespondedAt: reviews.providerRespondedAt,
       createdAt: reviews.createdAt,
-      customerEmail: users.email,
+      customerFirstName: users.firstName,
     })
     .from(reviews)
     .leftJoin(users, eq(reviews.customerId, users.id))

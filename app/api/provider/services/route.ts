@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { providers, providerServices, serviceCategories } from "@/lib/db/schema"
-import { eq } from "drizzle-orm"
+import { eq, and } from "drizzle-orm"
 import { z } from "zod"
 
 const serviceSchema = z.object({
@@ -71,6 +71,16 @@ export async function DELETE(req: Request) {
   if (!provider) return NextResponse.json({ error: "Provider not found" }, { status: 404 })
 
   const { serviceId } = await req.json()
+  if (!serviceId) return NextResponse.json({ error: "serviceId required" }, { status: 400 })
+
+  // Ownership check — prevents a provider from deactivating a competitor's service
+  const [service] = await db
+    .select({ id: providerServices.id })
+    .from(providerServices)
+    .where(and(eq(providerServices.id, serviceId), eq(providerServices.providerId, provider.id)))
+
+  if (!service) return NextResponse.json({ error: "Service not found" }, { status: 404 })
+
   await db.update(providerServices).set({ isActive: false }).where(eq(providerServices.id, serviceId))
 
   return NextResponse.json({ success: true })

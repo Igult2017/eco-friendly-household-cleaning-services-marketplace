@@ -20,9 +20,11 @@ export const onBookingCompleted = inngest.createFunction(
     })
 
     await step.run("update-booking", async () => {
+      // actualEndAt is already set by the /complete API route at the moment the provider
+      // tapped "complete" — we only update status here to avoid overwriting with Inngest's processing time
       await db
         .update(bookings)
-        .set({ status: "completed", actualEndAt: new Date() })
+        .set({ status: "completed" })
         .where(eq(bookings.id, bookingId))
     })
 
@@ -64,15 +66,22 @@ export const onBookingCompleted = inngest.createFunction(
         where: (r: any, { eq: eqFn }: any) => eqFn(r.bookingId, bookingId),
         limit: 1,
       })
-      if (existing.length > 0) return { skipped: true }
-      if (customer?.email) {
-        await resend.emails.send({
-          from: FROM,
-          to: customer.email,
-          subject: "Reminder: Share your DORIX experience",
-          html: `<p>Just a friendly reminder to leave a review for your recent cleaning. <a href="${process.env.NEXT_PUBLIC_APP_URL}/bookings/${bookingId}/review">Click here</a>.</p>`,
-        })
-      }
+      if (existing.length > 0) return { skipped: "already_reviewed" }
+
+      // Re-fetch user after 24h sleep — they may have deleted their account
+      const [freshUser] = await db
+        .select({ email: users.email, deletedAt: users.deletedAt })
+        .from(users)
+        .where(eq(users.id, customerId))
+
+      if (!freshUser || freshUser.deletedAt || !freshUser.email) return { skipped: "account_deleted" }
+
+      await resend.emails.send({
+        from: FROM,
+        to: freshUser.email,
+        subject: "Reminder: Share your DORIX experience",
+        html: `<p>Just a friendly reminder to leave a review for your recent cleaning. <a href="${process.env.NEXT_PUBLIC_APP_URL}/bookings/${bookingId}/review">Click here</a>.</p>`,
+      })
     })
 
     return { bookingId, captured }

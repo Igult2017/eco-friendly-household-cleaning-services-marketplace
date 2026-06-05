@@ -23,6 +23,10 @@ export async function GET(req: Request) {
     whereClause = eq(providers.isSuspended, true)
   }
 
+  const page = Math.max(1, parseInt(searchParams.get("page") ?? "1"))
+  const limit = 50
+  const offset = (page - 1) * limit
+
   const rows = await db
     .select({
       id: providers.id,
@@ -48,7 +52,8 @@ export async function GET(req: Request) {
     .leftJoin(users, eq(providers.userId, users.id))
     .where(whereClause)
     .orderBy(desc(providers.createdAt))
-    .limit(100)
+    .limit(limit)
+    .offset(offset)
 
-  return NextResponse.json({ providers: rows })
+  return NextResponse.json({ providers: rows, page, limit, hasMore: rows.length === limit })
 }
