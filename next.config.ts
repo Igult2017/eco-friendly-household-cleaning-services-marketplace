@@ -1,6 +1,7 @@
 import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
+  output: "standalone", // enables minimal self-contained build for Docker
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "*.r2.cloudflarestorage.com" },

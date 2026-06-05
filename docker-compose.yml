@@ -1,0 +1,39 @@
+services:
+  app:
+    build:
+      context: .
+      target: runner
+      args:
+        NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+        NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
+        NEXT_PUBLIC_PUSHER_KEY: ${NEXT_PUBLIC_PUSHER_KEY}
+        NEXT_PUBLIC_PUSHER_CLUSTER: ${NEXT_PUBLIC_PUSHER_CLUSTER:-eu}
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+    image: dorix-app:latest
+    container_name: dorix
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.local       # runtime secrets injected here (never baked into image)
+    depends_on:
+      - pgbouncer
+
+  pgbouncer:
+    image: bitnami/pgbouncer:latest
+    container_name: dorix-pgbouncer
+    restart: unless-stopped
+    environment:
+      POSTGRESQL_HOST: host.docker.internal   # connects to PostgreSQL on the VPS host
+      POSTGRESQL_PORT: 5432
+      POSTGRESQL_USERNAME: dorix
+      POSTGRESQL_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRESQL_DATABASE: dorix
+      PGBOUNCER_PORT: 6432
+      PGBOUNCER_POOL_MODE: transaction
+      PGBOUNCER_MAX_CLIENT_CONN: 1000
+      PGBOUNCER_DEFAULT_POOL_SIZE: 25
+    ports:
+      - "6432:6432"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
