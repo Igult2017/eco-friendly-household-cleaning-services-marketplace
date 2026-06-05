@@ -10,6 +10,7 @@ import { Menu, X } from "lucide-react"
 
 const NAV_LINKS = [
   { href: "/browse", label: "Find cleaners" },
+  { href: "/browse-jobs", label: "Browse jobs" },
   { href: "/#how-it-works", label: "How it works" },
   { href: "/sustainability", label: "Sustainability" },
   { href: "/become-a-cleaner", label: "Become a cleaner" },

@@ -12,8 +12,10 @@ const isPublicRoute = createRouteMatcher([
   "/legal(.*)",
   "/sign-in(.*)",
   "/sign-up(.*)",
+  "/browse-jobs(.*)",
   "/api/webhooks/(.*)",
   "/api/geo/(.*)",
+  "/api/jobs/public(.*)",
 ])
 
 // Customer-only routes (no URL prefix — customers are primary users)
