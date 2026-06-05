@@ -1,4 +1,20 @@
 services:
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: dorix-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/proxy_params:/etc/nginx/proxy_params:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro       # mount your origin cert here
+    depends_on:
+      - app
+    networks:
+      - dorix-net
+
   app:
     build:
       context: .
@@ -12,19 +28,21 @@ services:
     image: dorix-app:latest
     container_name: dorix
     restart: unless-stopped
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"                             # internal only — Nginx is the public entry point
     env_file:
-      - .env.local       # runtime secrets injected here (never baked into image)
+      - .env.local
     depends_on:
       - pgbouncer
+    networks:
+      - dorix-net
 
   pgbouncer:
     image: bitnami/pgbouncer:latest
     container_name: dorix-pgbouncer
     restart: unless-stopped
     environment:
-      POSTGRESQL_HOST: host.docker.internal   # connects to PostgreSQL on the VPS host
+      POSTGRESQL_HOST: host.docker.internal
       POSTGRESQL_PORT: 5432
       POSTGRESQL_USERNAME: dorix
       POSTGRESQL_PASSWORD: ${POSTGRES_PASSWORD}
@@ -33,7 +51,13 @@ services:
       PGBOUNCER_POOL_MODE: transaction
       PGBOUNCER_MAX_CLIENT_CONN: 1000
       PGBOUNCER_DEFAULT_POOL_SIZE: 25
-    ports:
-      - "6432:6432"
+    expose:
+      - "6432"                             # internal only — app connects via service name
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    networks:
+      - dorix-net
+
+networks:
+  dorix-net:
+    driver: bridge
