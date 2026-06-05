@@ -13,6 +13,7 @@ import {
   Star,
   Leaf,
   ChevronRight,
+  Bug,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -25,6 +26,7 @@ const nav = [
   { label: "Payments", href: "/admin/payments", icon: Wallet },
   { label: "Reviews", href: "/admin/reviews", icon: Star },
   { label: "Eco", href: "/admin/eco", icon: Leaf },
+  { label: "Errors", href: "/admin/errors", icon: Bug },
 ]
 
 export function AdminSidebar() {
