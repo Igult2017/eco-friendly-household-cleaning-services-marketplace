@@ -39,6 +39,24 @@ function expiresIn(dateStr: string) {
   return `${Math.floor(h / 24)}d left`
 }
 
+function StatusBadge({ status }: { status: string }) {
+  if (status === "assigned") {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold px-2.5 py-0.5">
+        Not Available
+      </span>
+    )
+  }
+  if (status === "expired") {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 text-gray-500 border border-gray-200 text-xs font-bold px-2.5 py-0.5">
+        Expired
+      </span>
+    )
+  }
+  return null
+}
+
 export default function BrowseJobsPage() {
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
@@ -78,7 +96,7 @@ export default function BrowseJobsPage() {
       <div className="max-w-4xl mx-auto px-4 py-10">
         {/* Stats bar */}
         <div className="flex items-center gap-2 mb-6">
-          <span className="text-sm font-semibold text-[#2B3441]">{jobs.length} open jobs</span>
+          <span className="text-sm font-semibold text-[#2B3441]">{jobs.filter(j => j.status === "open" || j.status === "bidding").length} open jobs</span>
           <span className="text-[#9CA3AF]">·</span>
           <span className="text-sm text-[#6B7280]">Updated every minute</span>
         </div>
@@ -95,8 +113,10 @@ export default function BrowseJobsPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {jobs.map((job) => (
-              <div key={job.id} className="rounded-2xl bg-white shadow-sm border border-[#E5EBF0] p-6 hover:border-[#2D7A5F]/40 transition-colors">
+            {jobs.map((job) => {
+              const isUnavailable = job.status === "assigned" || job.status === "expired"
+              return (
+              <div key={job.id} className={`rounded-2xl bg-white shadow-sm border p-6 transition-colors ${isUnavailable ? "border-[#E5EBF0] opacity-70" : "border-[#E5EBF0] hover:border-[#2D7A5F]/40"}`}>
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -110,6 +130,7 @@ export default function BrowseJobsPage() {
                           <Leaf size={10} /> Eco required
                         </span>
                       )}
+                      <StatusBadge status={job.status} />
                       <span className="text-xs text-[#9CA3AF] ml-auto">{timeAgo(job.createdAt)}</span>
                     </div>
                     <h2 className="font-semibold text-[#2B3441] text-lg leading-snug">{job.title}</h2>
@@ -156,16 +177,25 @@ export default function BrowseJobsPage() {
 
                 {/* CTA */}
                 <div className="mt-4 pt-4 border-t border-[#E5EBF0] flex items-center justify-between gap-3">
-                  <p className="text-xs text-[#9CA3AF]">Sign in as a provider to submit your bid</p>
-                  <Link
-                    href={`/sign-in?redirect_url=/provider/jobs`}
-                    className="inline-flex items-center gap-1.5 rounded-xl bg-[#2D7A5F] hover:bg-[#256349] text-white text-sm font-semibold px-4 py-2 transition-colors"
-                  >
-                    Bid on this job →
-                  </Link>
+                  {isUnavailable ? (
+                    <p className="text-xs text-[#9CA3AF]">
+                      {job.status === "assigned" ? "A provider has already been selected for this job." : "This job post has expired."}
+                    </p>
+                  ) : (
+                    <>
+                      <p className="text-xs text-[#9CA3AF]">Sign in as a provider to submit your bid</p>
+                      <Link
+                        href={`/sign-in?redirect_url=/provider/jobs`}
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-[#2D7A5F] hover:bg-[#256349] text-white text-sm font-semibold px-4 py-2 transition-colors"
+                      >
+                        Bid on this job →
+                      </Link>
+                    </>
+                  )}
                 </div>
               </div>
-            ))}
+              )
+            })}
           </div>
         )}
 

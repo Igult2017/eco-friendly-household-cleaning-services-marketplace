@@ -1,14 +1,21 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { jobPosts } from "@/lib/db/schema"
-import { inArray, desc, gt } from "drizzle-orm"
+import { inArray, desc, gte } from "drizzle-orm"
 
 export const revalidate = 60 // ISR: refresh every 60s
 
 export async function GET() {
+  // Include assigned + expired so UI can show "Not Available" / "Expired" badges
+  // Limit to jobs created in the last 7 days to avoid stale clutter
+  const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+
   const jobs = await db.query.jobPosts.findMany({
-    where: (jp, { inArray: inArr, and, gt: gtFn }) =>
-      inArr(jp.status, ["open", "bidding"]),
+    where: (jp, { inArray: inArr, and, gte: gteFn }) =>
+      and(
+        inArr(jp.status, ["open", "bidding", "assigned", "expired"]),
+        gteFn(jp.createdAt, cutoff),
+      ),
     with: {
       category: { columns: { name: true, slug: true } },
       bids: { columns: { id: true } },
