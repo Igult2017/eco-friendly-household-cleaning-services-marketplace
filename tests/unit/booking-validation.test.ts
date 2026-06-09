@@ -56,9 +56,9 @@ describe("paymentIntentSchema", () => {
     expect(paymentIntentSchema.safeParse(valid).success).toBe(true)
   })
 
-  it("carbonOffsetCents is undefined when omitted (field is optional)", () => {
+  it("carbonOffsetCents defaults to 0 when omitted", () => {
     const r = paymentIntentSchema.safeParse(valid)
     expect(r.success).toBe(true)
-    if (r.success) expect(r.data.carbonOffsetCents).toBeUndefined()
+    if (r.success) expect(r.data.carbonOffsetCents).toBe(0)
   })
 })
