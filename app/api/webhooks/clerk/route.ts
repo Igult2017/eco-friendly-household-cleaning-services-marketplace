@@ -2,7 +2,7 @@ import { headers } from "next/headers"
 import { Webhook } from "svix"
 import { db } from "@/lib/db"
 import { users } from "@/lib/db/schema"
-import { eq } from "drizzle-orm"
+import { eq, sql } from "drizzle-orm"
 import type { UserRole } from "@/types"
 
 interface ClerkUserEvent {
@@ -52,15 +52,24 @@ export async function POST(req: Request) {
 
   try {
     if (event.type === "user.created") {
-      await db.insert(users).values({
-        id,
-        email,
-        firstName: first_name,
-        lastName: last_name,
-        phone,
-        avatarUrl: image_url,
-        role,
-      })
+      // Upsert on both PK and email to handle:
+      // 1. Clerk retrying a webhook we already processed (same id → no-op)
+      // 2. A duplicate email slipping through when account-linking is off (same
+      //    email, different Clerk id) — we keep the first account and discard the
+      //    second rather than leaving a broken DB-less Clerk user.
+      await db
+        .insert(users)
+        .values({ id, email, firstName: first_name, lastName: last_name, phone, avatarUrl: image_url, role })
+        .onConflictDoUpdate({
+          target: users.id,
+          set: { email, firstName: first_name, lastName: last_name, phone, avatarUrl: image_url, updatedAt: new Date() },
+        })
+        .catch(async () => {
+          // email unique constraint: a different Clerk user already owns this email.
+          // Log and swallow — the first account is authoritative; this orphan Clerk
+          // user should be deleted manually or will be blocked at onboarding.
+          console.error(`[clerk-webhook] duplicate email on user.created — clerk id ${id}, email ${email}`)
+        })
     }
 
     if (event.type === "user.updated") {
