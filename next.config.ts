@@ -37,8 +37,7 @@ export default withSentryConfig(nextConfig, {
   silent: true,
   widenClientFileUpload: true,
   tunnelRoute: "/monitoring",
-  hideSourceMaps: true,
   disableLogger: true,
   reactComponentAnnotation: { enabled: true },
-  // Source-map uploads only happen when SENTRY_AUTH_TOKEN is set
+  sourcemaps: { disable: !process.env.SENTRY_AUTH_TOKEN },
 })

@@ -2,9 +2,11 @@ import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { errorLogs } from "@/lib/db/schema"
-import { desc, isNull, isNotNull, eq, and, count, gte, sql } from "drizzle-orm"
+import { desc, isNull, isNotNull, eq, and, count, gte } from "drizzle-orm"
 
 const PAGE_SIZE = 50
+const VALID_SEVERITIES = ["info", "warning", "error", "critical"] as const
+const VALID_FILTERS = ["unresolved", "resolved", "all"] as const
 
 export async function GET(req: Request) {
   const { sessionClaims } = await auth()
@@ -14,16 +16,24 @@ export async function GET(req: Request) {
 
   const { searchParams } = new URL(req.url)
   const filter = searchParams.get("filter") ?? "unresolved"
-  const severity = searchParams.get("severity")
+  const severityParam = searchParams.get("severity")
   const page = Math.max(1, parseInt(searchParams.get("page") ?? "1"))
   const offset = (page - 1) * PAGE_SIZE
+
+  if (!VALID_FILTERS.includes(filter as any)) {
+    return NextResponse.json({ error: "Invalid filter" }, { status: 400 })
+  }
+  if (severityParam && !VALID_SEVERITIES.includes(severityParam as any)) {
+    return NextResponse.json({ error: "Invalid severity" }, { status: 400 })
+  }
+  const severity = severityParam as typeof VALID_SEVERITIES[number] | null
 
   const since24h = new Date(Date.now() - 24 * 60 * 60 * 1000)
 
   const conditions = []
   if (filter === "unresolved") conditions.push(isNull(errorLogs.resolvedAt))
   if (filter === "resolved") conditions.push(isNotNull(errorLogs.resolvedAt))
-  if (severity) conditions.push(eq(errorLogs.severity, severity as any))
+  if (severity) conditions.push(eq(errorLogs.severity, severity))
 
   const where = conditions.length > 0 ? and(...conditions) : undefined
 
