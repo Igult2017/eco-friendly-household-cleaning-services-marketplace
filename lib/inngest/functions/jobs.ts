@@ -134,7 +134,7 @@ export const onJobExpired = inngest.createFunction(
     if (rejectedProviderUserIds.length > 0) {
       await step.run("notify-bidders", async () => {
         await db.insert(notifications).values(
-          rejectedProviderUserIds.map((userId) => ({
+          rejectedProviderUserIds.map((userId: string) => ({
             userId,
             type: "booking_cancelled" as const,
             title: "Job post expired",
