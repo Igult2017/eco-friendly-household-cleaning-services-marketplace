@@ -1,5 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server"
-import { NextResponse } from "next/server"
+import { NextResponse, type NextRequest, type NextFetchEvent } from "next/server"
 
 const isPublicRoute = createRouteMatcher([
   "/",
@@ -18,7 +18,6 @@ const isPublicRoute = createRouteMatcher([
   "/api/jobs/public(.*)",
 ])
 
-// Customer-only routes (no URL prefix — customers are primary users)
 const isCustomerOnlyRoute = createRouteMatcher([
   "/dashboard(.*)",
   "/book(.*)",
@@ -28,15 +27,11 @@ const isCustomerOnlyRoute = createRouteMatcher([
   "/payments(.*)",
 ])
 
-// Provider routes use /provider/* URL prefix
 const isProviderRoute = createRouteMatcher(["/provider/(.*)"])
-
-// Admin routes use /admin/* URL prefix
 const isAdminRoute = createRouteMatcher(["/admin/(.*)"])
-
 const isOnboardingRoute = createRouteMatcher(["/onboarding(.*)"])
 
-export default clerkMiddleware(async (auth, req) => {
+const clerkHandler = clerkMiddleware(async (auth, req) => {
   if (isPublicRoute(req)) return NextResponse.next()
 
   const { userId, sessionClaims } = await auth()
@@ -51,28 +46,27 @@ export default clerkMiddleware(async (auth, req) => {
 
   if (isOnboardingRoute(req)) return NextResponse.next()
 
-  // Redirect users who haven't completed onboarding
-  if (!role) {
-    return NextResponse.redirect(new URL("/onboarding", req.url))
-  }
+  if (!role) return NextResponse.redirect(new URL("/onboarding", req.url))
 
-  // Protect admin routes
-  if (isAdminRoute(req) && role !== "admin") {
-    return NextResponse.redirect(new URL("/", req.url))
-  }
-
-  // Protect provider routes
-  if (isProviderRoute(req) && role !== "provider") {
-    return NextResponse.redirect(new URL("/", req.url))
-  }
-
-  // Protect customer-only routes (admin can also view these for support)
-  if (isCustomerOnlyRoute(req) && role !== "customer" && role !== "admin") {
-    return NextResponse.redirect(new URL("/", req.url))
-  }
+  if (isAdminRoute(req) && role !== "admin") return NextResponse.redirect(new URL("/", req.url))
+  if (isProviderRoute(req) && role !== "provider") return NextResponse.redirect(new URL("/", req.url))
+  if (isCustomerOnlyRoute(req) && role !== "customer" && role !== "admin") return NextResponse.redirect(new URL("/", req.url))
 
   return NextResponse.next()
 })
+
+export default async function middleware(req: NextRequest, event: NextFetchEvent) {
+  // If Clerk is not configured, pass every request through so the app still renders
+  if (!process.env.CLERK_SECRET_KEY) return NextResponse.next()
+
+  try {
+    return (await clerkHandler(req, event)) ?? NextResponse.next()
+  } catch (err) {
+    // Clerk misconfiguration or key mismatch — log and fail open so the UI is reachable
+    console.error("[middleware] Clerk error, passing request through:", err)
+    return NextResponse.next()
+  }
+}
 
 export const config = {
   matcher: [

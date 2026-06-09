@@ -38,21 +38,25 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <ClerkProvider>
-      <html
-        lang="en"
-        className={cn("h-full", playfair.variable, inter.variable)}
-        suppressHydrationWarning
-      >
-        <body className="min-h-screen antialiased">
-          <QueryProvider>
-            {children}
-          </QueryProvider>
-          <Toaster richColors position="top-right" />
-          <CookieBanner />
-        </body>
-      </html>
-    </ClerkProvider>
+  const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+
+  const html = (
+    <html
+      lang="en"
+      className={cn("h-full", playfair.variable, inter.variable)}
+      suppressHydrationWarning
+    >
+      <body className="min-h-screen antialiased">
+        <QueryProvider>
+          {children}
+        </QueryProvider>
+        <Toaster richColors position="top-right" />
+        <CookieBanner />
+      </body>
+    </html>
   )
+
+  if (!publishableKey) return html
+
+  return <ClerkProvider publishableKey={publishableKey}>{html}</ClerkProvider>
 }
