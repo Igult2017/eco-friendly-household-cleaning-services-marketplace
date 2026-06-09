@@ -60,13 +60,9 @@ export function DashboardNotifications({ notifications }: { notifications: Notif
       ) : (
         <div className="divide-y divide-gray-50">
           {notifications.slice(0, 5).map(n => {
-            const Wrapper = n.link ? Link : "div" as React.ElementType
-            return (
-              <Wrapper
-                key={n.id}
-                {...(n.link ? { href: n.link } : {})}
-                className={`flex items-start gap-3 px-5 py-3 transition-colors hover:bg-[#F4FAF6] ${n.link ? "cursor-pointer" : ""} ${!n.isRead ? "bg-[#F4FAF6]/60" : ""}`}
-              >
+            const rowClass = `flex items-start gap-3 px-5 py-3 transition-colors hover:bg-[#F4FAF6] ${!n.isRead ? "bg-[#F4FAF6]/60" : ""}`
+            const inner = (
+              <>
                 <span className="mt-0.5 flex-shrink-0 text-base">{TYPE_ICON[n.type] ?? "🔔"}</span>
                 <div className="flex-1 min-w-0">
                   <p className={`truncate text-sm text-[#2B3441] ${!n.isRead ? "font-semibold" : "font-medium"}`}>
@@ -74,10 +70,13 @@ export function DashboardNotifications({ notifications }: { notifications: Notif
                   </p>
                   <p className="mt-0.5 truncate text-xs text-[#9CA3AF]">{n.body}</p>
                 </div>
-                {!n.isRead && (
-                  <span className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-[#2D7A5F]" />
-                )}
-              </Wrapper>
+                {!n.isRead && <span className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-[#2D7A5F]" />}
+              </>
+            )
+            return n.link ? (
+              <Link key={n.id} href={n.link} className={rowClass}>{inner}</Link>
+            ) : (
+              <div key={n.id} className={rowClass}>{inner}</div>
             )
           })}
         </div>

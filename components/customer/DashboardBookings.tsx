@@ -76,13 +76,19 @@ export function DashboardBookings({ upcoming, past }: { upcoming: Booking[]; pas
         </div>
       )}
 
-      {past.some(b => b.status === "completed") && (
-        <div className="border-t border-[#F4FAF6] px-5 py-3">
-          <Link href="/book" className="flex items-center gap-1 text-xs font-medium text-[#2D7A5F] hover:underline">
-            <Star size={11} /> Leave a review on a completed booking
-          </Link>
-        </div>
-      )}
+      {past.some(b => b.status === "completed") && (() => {
+        const done = past.find(b => b.status === "completed")
+        return done ? (
+          <div className="border-t border-[#F4FAF6] px-5 py-3">
+            <Link
+              href={`/bookings/${done.id}/review`}
+              className="flex items-center gap-1 text-xs font-medium text-[#2D7A5F] hover:underline"
+            >
+              <Star size={11} /> Leave a review for {done.provider?.businessName ?? "your cleaner"}
+            </Link>
+          </div>
+        ) : null
+      })()}
     </div>
   )
 }
