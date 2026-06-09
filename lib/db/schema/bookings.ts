@@ -72,6 +72,7 @@ export const bookings = pgTable(
   },
   (t) => [
     uniqueIndex("bookings_number_idx").on(t.bookingNumber),
+    uniqueIndex("bookings_provider_scheduled_idx").on(t.providerId, t.scheduledAt),
     index("bookings_customer_idx").on(t.customerId),
     index("bookings_provider_idx").on(t.providerId),
     index("bookings_status_idx").on(t.status),

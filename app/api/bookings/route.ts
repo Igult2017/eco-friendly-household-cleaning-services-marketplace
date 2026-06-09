@@ -1,20 +1,11 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { bookings, payments, providers, providerServices, carbonOffsetContributions } from "@/lib/db/schema"
-import type { NewBooking } from "@/lib/db/schema/bookings"
-import { stripe, calculateBookingAmounts } from "@/lib/stripe/client"
+import { bookings, users } from "@/lib/db/schema"
 import { bookingRatelimit } from "@/lib/redis/client"
 import { createBookingSchema } from "@/lib/validations/booking"
-import { eq, and, desc } from "drizzle-orm"
-import { inngest } from "@/lib/inngest/client"
-import { redis } from "@/lib/redis/client"
-
-async function generateBookingNumber(): Promise<string> {
-  // Redis INCR is atomic — eliminates the COUNT(*)+1 race condition under concurrent load
-  const seq = await redis.incr("booking:seq")
-  return `BK-${new Date().getFullYear()}-${String(seq).padStart(6, "0")}`
-}
+import { desc, eq } from "drizzle-orm"
+import { createBooking, BookingError } from "@/lib/bookings/create"
 
 export async function POST(req: Request) {
   const { userId } = await auth()
@@ -23,92 +14,23 @@ export async function POST(req: Request) {
   const { success } = await bookingRatelimit.limit(userId)
   if (!success) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 })
 
+  // Only customers may create bookings
+  const [user] = await db.select({ role: users.role }).from(users).where(eq(users.id, userId))
+  if (user?.role !== "customer") return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+
   const body = await req.json()
   const parsed = createBookingSchema.safeParse(body)
-  if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+  if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+
+  try {
+    const result = await createBooking(userId, parsed.data)
+    return NextResponse.json(result, { status: 201 })
+  } catch (err) {
+    if (err instanceof BookingError) {
+      return NextResponse.json({ error: err.message }, { status: err.status })
+    }
+    throw err
   }
-
-  const { providerId, serviceId, paymentIntentId, scheduledAt, durationMinutes, serviceAddress, serviceLatitude, serviceLongitude, specialInstructions, ecoOptions, carbonOffsetCents = 0 } = parsed.data
-
-  // Verify PaymentIntent is in requires_capture state
-  const intent = await stripe.paymentIntents.retrieve(paymentIntentId)
-  if (intent.status !== "requires_capture") {
-    return NextResponse.json({ error: "Payment not authorized" }, { status: 422 })
-  }
-
-  // Confirm the intent matches this user
-  if (intent.metadata.clerk_customer_id !== userId || intent.metadata.provider_id !== providerId) {
-    return NextResponse.json({ error: "Intent mismatch" }, { status: 403 })
-  }
-
-  const [service] = await db
-    .select({ basePrice: providerServices.basePrice })
-    .from(providerServices)
-    .where(and(eq(providerServices.id, serviceId), eq(providerServices.isActive, true)))
-
-  if (!service) return NextResponse.json({ error: "Service not found" }, { status: 404 })
-
-  const [provider] = await db.select({ id: providers.id }).from(providers).where(eq(providers.id, providerId))
-  if (!provider) return NextResponse.json({ error: "Provider not found" }, { status: 404 })
-
-  const amounts = calculateBookingAmounts(service.basePrice)
-  const bookingNumber = await generateBookingNumber()
-  const scheduledEnd = new Date(new Date(scheduledAt).getTime() + durationMinutes * 60_000)
-
-  const insertData: NewBooking = {
-    bookingNumber,
-    customerId: userId,
-    providerId,
-    serviceId,
-    status: "payment_authorized",
-    scheduledAt: new Date(scheduledAt),
-    scheduledEndAt: scheduledEnd,
-    serviceAddress,
-    serviceLatitude: serviceLatitude ?? null,
-    serviceLongitude: serviceLongitude ?? null,
-    specialInstructions: specialInstructions ?? null,
-    ecoOptionsSelected: ecoOptions,
-    platformFeePercent: 15,
-    subtotalAmount: amounts.subtotalCents,
-    platformFeeAmount: amounts.platformFee,
-    totalAmount: amounts.totalCharged,
-    providerPayout: amounts.providerPayout,
-    carbonOffsetAmount: carbonOffsetCents,
-    completionPhotoUrls: [],
-  }
-
-  const [newBooking] = await db.insert(bookings).values(insertData).returning({ id: bookings.id, bookingNumber: bookings.bookingNumber })
-
-  // Insert payment record
-  await db.insert(payments).values({
-    bookingId: newBooking.id,
-    customerId: userId,
-    stripePaymentIntentId: paymentIntentId,
-    stripeCustomerId: typeof intent.customer === "string" ? intent.customer : (intent.customer?.id ?? null),
-    status: "authorized",
-    amount: amounts.totalCharged,
-    capturedAmount: 0,
-    refundedAmount: 0,
-    currency: "eur",
-    idempotencyKey: paymentIntentId,
-  })
-
-  // Record carbon offset contribution if opted in
-  if (carbonOffsetCents > 0) {
-    await db.insert(carbonOffsetContributions).values({
-      bookingId: newBooking.id,
-      customerId: userId,
-      providerId,
-      amount: carbonOffsetCents,
-      offsetProvider: "DORIX Green Fund",
-    })
-  }
-
-  // Fire Inngest event for notifications + emails
-  await inngest.send({ name: "booking/created", data: { bookingId: newBooking.id, customerId: userId, providerId } })
-
-  return NextResponse.json({ bookingId: newBooking.id, bookingNumber: newBooking.bookingNumber }, { status: 201 })
 }
 
 export async function GET(_req: Request) {

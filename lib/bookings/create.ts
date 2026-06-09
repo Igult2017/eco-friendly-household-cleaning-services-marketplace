@@ -1,0 +1,120 @@
+import { db } from "@/lib/db"
+import { bookings, payments, providers, providerServices, carbonOffsetContributions } from "@/lib/db/schema"
+import type { NewBooking } from "@/lib/db/schema/bookings"
+import { stripe, PLATFORM_FEE_PERCENT, calculateBookingAmounts } from "@/lib/stripe/client"
+import { inngest } from "@/lib/inngest/client"
+import { redis } from "@/lib/redis/client"
+import { eq, and } from "drizzle-orm"
+import type { CreateBookingInput } from "@/lib/validations/booking"
+
+async function generateBookingNumber(): Promise<string> {
+  const seq = await redis.incr("booking:seq")
+  return `BK-${new Date().getFullYear()}-${String(seq).padStart(6, "0")}`
+}
+
+export class BookingError extends Error {
+  constructor(public readonly status: number, message: string) {
+    super(message)
+  }
+}
+
+export async function createBooking(userId: string, data: CreateBookingInput) {
+  const {
+    providerId, serviceId, paymentIntentId,
+    scheduledAt, durationMinutes, serviceAddress,
+    serviceLatitude, serviceLongitude, specialInstructions,
+    ecoOptions, carbonOffsetCents = 0,
+  } = data
+
+  const intent = await stripe.paymentIntents.retrieve(paymentIntentId)
+
+  if (intent.status !== "requires_capture") {
+    throw new BookingError(422, "Payment not authorized")
+  }
+
+  const cancel = async (status: number, msg: string): Promise<never> => {
+    try { await stripe.paymentIntents.cancel(paymentIntentId) } catch {}
+    throw new BookingError(status, msg)
+  }
+
+  if (intent.metadata.clerk_customer_id !== userId) await cancel(403, "Intent mismatch")
+  if (intent.metadata.provider_id !== providerId) await cancel(403, "Intent mismatch")
+  if (intent.metadata.service_id !== serviceId) await cancel(403, "Intent mismatch")
+  if (intent.metadata.carbon_offset_cents !== String(carbonOffsetCents)) await cancel(403, "Intent mismatch")
+
+  const [[service], [provider]] = await Promise.all([
+    db.select({ basePrice: providerServices.basePrice })
+      .from(providerServices)
+      .where(and(eq(providerServices.id, serviceId), eq(providerServices.isActive, true))),
+    db.select({ id: providers.id, isApproved: providers.isApproved, isSuspended: providers.isSuspended })
+      .from(providers)
+      .where(eq(providers.id, providerId)),
+  ])
+
+  if (!service) await cancel(404, "Service not found")
+  if (!provider?.isApproved || provider.isSuspended) await cancel(422, "Provider not available")
+
+  const amounts = calculateBookingAmounts(service!.basePrice)
+  const bookingNumber = await generateBookingNumber()
+  const scheduledEnd = new Date(new Date(scheduledAt).getTime() + durationMinutes * 60_000)
+
+  const insertData: NewBooking = {
+    bookingNumber,
+    customerId: userId,
+    providerId,
+    serviceId,
+    status: "payment_authorized",
+    scheduledAt: new Date(scheduledAt),
+    scheduledEndAt: scheduledEnd,
+    serviceAddress,
+    serviceLatitude: serviceLatitude ?? null,
+    serviceLongitude: serviceLongitude ?? null,
+    specialInstructions: specialInstructions ?? null,
+    ecoOptionsSelected: ecoOptions,
+    platformFeePercent: PLATFORM_FEE_PERCENT,
+    subtotalAmount: amounts.subtotalCents,
+    platformFeeAmount: amounts.platformFee,
+    totalAmount: amounts.totalCharged,
+    providerPayout: amounts.providerPayout,
+    carbonOffsetAmount: carbonOffsetCents,
+    completionPhotoUrls: [],
+  }
+
+  const result = await db.transaction(async (tx) => {
+    const [newBooking] = await tx
+      .insert(bookings)
+      .values(insertData)
+      .returning({ id: bookings.id, bookingNumber: bookings.bookingNumber })
+
+    await tx.insert(payments).values({
+      bookingId: newBooking.id,
+      customerId: userId,
+      stripePaymentIntentId: paymentIntentId,
+      stripeCustomerId: typeof intent.customer === "string" ? intent.customer : (intent.customer?.id ?? null),
+      status: "authorized",
+      amount: amounts.totalCharged,
+      capturedAmount: 0,
+      refundedAmount: 0,
+      currency: "eur",
+      idempotencyKey: paymentIntentId,
+    })
+
+    if (carbonOffsetCents > 0) {
+      await tx.insert(carbonOffsetContributions).values({
+        bookingId: newBooking.id,
+        customerId: userId,
+        providerId,
+        amount: carbonOffsetCents,
+        offsetProvider: "DORIX Green Fund",
+      })
+    }
+
+    return newBooking
+  })
+
+  try {
+    await inngest.send({ name: "booking/created", data: { bookingId: result.id, customerId: userId, providerId } })
+  } catch {}
+
+  return { bookingId: result.id, bookingNumber: result.bookingNumber }
+}

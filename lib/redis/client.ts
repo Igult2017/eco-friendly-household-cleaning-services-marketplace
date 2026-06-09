@@ -26,3 +26,17 @@ export const uploadRatelimit = new Ratelimit({
   limiter: Ratelimit.slidingWindow(20, "60 m"),
   prefix: "ratelimit:upload",
 })
+
+// Job post creation: 5 per 10 minutes per user
+export const jobRatelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, "10 m"),
+  prefix: "ratelimit:job",
+})
+
+// Bid submission: 10 per 5 minutes per user
+export const bidRatelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(10, "5 m"),
+  prefix: "ratelimit:bid",
+})

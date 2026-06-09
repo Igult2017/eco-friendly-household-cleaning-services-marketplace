@@ -85,6 +85,7 @@ export const payouts = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
+    uniqueIndex("payouts_transfer_idx").on(t.stripeTransferId),
     index("payouts_provider_idx").on(t.providerId),
     index("payouts_status_idx").on(t.status),
     index("payouts_period_idx").on(t.periodStart, t.periodEnd),

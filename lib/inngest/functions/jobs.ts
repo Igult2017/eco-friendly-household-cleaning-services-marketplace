@@ -4,7 +4,7 @@ import { jobPosts, bids, providers, users, notifications } from "@/lib/db/schema
 import { resend, FROM } from "@/lib/resend/client"
 import { pusherServer } from "@/lib/pusher/server"
 import { findProvidersNearLocation } from "@/lib/db/queries/geo"
-import { eq, and } from "drizzle-orm"
+import { eq, and, inArray } from "drizzle-orm"
 
 export const onJobPosted = inngest.createFunction(
   { id: "job-posted", retries: 2, triggers: [{ event: "job/posted" }] },
@@ -100,7 +100,7 @@ export const onJobExpired = inngest.createFunction(
       const providerRows = await db
         .select({ userId: providers.userId })
         .from(providers)
-        .where(eq(providers.id, pendingBids[0].providerId))
+        .where(inArray(providers.id, pendingBids.map((b) => b.providerId)))
 
       return providerRows.map((p) => p.userId)
     })

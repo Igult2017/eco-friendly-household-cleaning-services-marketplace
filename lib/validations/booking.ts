@@ -13,14 +13,17 @@ export const createBookingSchema = z.object({
   providerId: z.string().uuid(),
   serviceId: z.string().uuid(),
   paymentIntentId: z.string().min(1),
-  scheduledAt: z.string().datetime(),
+  scheduledAt: z
+    .string()
+    .datetime()
+    .refine((v) => new Date(v) > new Date(), { message: "scheduledAt must be in the future" }),
   durationMinutes: z.number().int().min(30).max(480),
   serviceAddress: addressSchema,
   serviceLatitude: z.number().optional(),
   serviceLongitude: z.number().optional(),
   specialInstructions: z.string().max(1000).optional(),
-  ecoOptions: z.array(z.string()).default([]),
-  carbonOffsetCents: z.number().int().min(0).max(500).optional(),
+  ecoOptions: z.array(z.string().max(100)).max(20).default([]),
+  carbonOffsetCents: z.union([z.literal(0), z.literal(200)]).optional().default(0),
 })
 
 export const paymentIntentSchema = z.object({
@@ -28,7 +31,7 @@ export const paymentIntentSchema = z.object({
   serviceId: z.string().uuid(),
   scheduledAt: z.string().datetime(),
   durationMinutes: z.number().int().min(30).max(480),
-  carbonOffsetCents: z.number().int().min(0).max(500).optional(),
+  carbonOffsetCents: z.union([z.literal(0), z.literal(200)]).optional().default(0),
 })
 
 export type CreateBookingInput = z.infer<typeof createBookingSchema>

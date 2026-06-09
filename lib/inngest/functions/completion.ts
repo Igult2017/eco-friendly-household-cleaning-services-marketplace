@@ -1,6 +1,6 @@
 import { inngest } from "../client"
 import { db } from "@/lib/db"
-import { bookings, payments, providers, users, notifications } from "@/lib/db/schema"
+import { bookings, payments, users, notifications } from "@/lib/db/schema"
 import { stripe } from "@/lib/stripe/client"
 import { resend, FROM } from "@/lib/resend/client"
 import { eq } from "drizzle-orm"
@@ -10,22 +10,25 @@ export const onBookingCompleted = inngest.createFunction(
   async ({ event, step }: { event: { data: { bookingId: string; paymentIntentId: string; providerId: string; customerId: string } }; step: any }) => {
     const { bookingId, paymentIntentId, customerId } = event.data
 
-    const captured = await step.run("capture-payment", async () => {
-      const intent = await stripe.paymentIntents.capture(paymentIntentId)
+    // Split capture and DB write into separate steps so a DB failure on retry
+    // doesn't re-hit Stripe — the idempotency key ensures Stripe deduplicates.
+    const captureResult = await step.run("stripe-capture", async () => {
+      return stripe.paymentIntents.capture(
+        paymentIntentId,
+        {},
+        { idempotencyKey: `capture-${paymentIntentId}` },
+      )
+    })
+
+    await step.run("record-capture", async () => {
       await db
         .update(payments)
-        .set({ status: "captured", capturedAmount: intent.amount_received, capturedAt: new Date() })
+        .set({ status: "captured", capturedAmount: captureResult.amount_received, capturedAt: new Date() })
         .where(eq(payments.stripePaymentIntentId, paymentIntentId))
-      return { amountCaptured: intent.amount_received }
     })
 
     await step.run("update-booking", async () => {
-      // actualEndAt is already set by the /complete API route at the moment the provider
-      // tapped "complete" — we only update status here to avoid overwriting with Inngest's processing time
-      await db
-        .update(bookings)
-        .set({ status: "completed" })
-        .where(eq(bookings.id, bookingId))
+      await db.update(bookings).set({ status: "completed" }).where(eq(bookings.id, bookingId))
     })
 
     await step.run("notify-customer", async () => {
@@ -68,7 +71,6 @@ export const onBookingCompleted = inngest.createFunction(
       })
       if (existing.length > 0) return { skipped: "already_reviewed" }
 
-      // Re-fetch user after 24h sleep — they may have deleted their account
       const [freshUser] = await db
         .select({ email: users.email, deletedAt: users.deletedAt })
         .from(users)
@@ -84,6 +86,6 @@ export const onBookingCompleted = inngest.createFunction(
       })
     })
 
-    return { bookingId, captured }
+    return { bookingId, amountCaptured: captureResult.amount_received }
   }
 )

@@ -4,8 +4,11 @@ import { db } from "@/lib/db"
 import { bids, jobPosts, providers, notifications } from "@/lib/db/schema"
 import type { NewBid } from "@/lib/db/schema/bids"
 import { pusherServer } from "@/lib/pusher/server"
+import { bidRatelimit } from "@/lib/redis/client"
 import { eq, and } from "drizzle-orm"
 import { z } from "zod"
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 const bidSchema = z.object({
   amount: z.number().int().min(100),
@@ -19,10 +22,21 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const { userId } = await auth()
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
+  const { success } = await bidRatelimit.limit(userId)
+  if (!success) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 })
+
   const { id: jobPostId } = await params
 
+  if (!UUID_RE.test(jobPostId)) return NextResponse.json({ error: "Invalid job ID" }, { status: 400 })
+
+  let body: unknown
+  try { body = await req.json() } catch { return NextResponse.json({ error: "Invalid JSON" }, { status: 400 }) }
+
+  const parsed = bidSchema.safeParse(body)
+  if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+
   const [provider] = await db
-    .select({ id: providers.id, businessName: providers.businessName, isApproved: providers.isApproved })
+    .select({ id: providers.id, businessName: providers.businessName, userId: providers.userId, isApproved: providers.isApproved })
     .from(providers)
     .where(and(eq(providers.userId, userId), eq(providers.isApproved, true), eq(providers.isSuspended, false)))
 
@@ -34,20 +48,16 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     .where(eq(jobPosts.id, jobPostId))
 
   if (!job) return NextResponse.json({ error: "Job not found" }, { status: 404 })
+  if (job.customerId === userId) return NextResponse.json({ error: "Cannot bid on your own job" }, { status: 403 })
   if (!["open", "bidding"].includes(job.status)) return NextResponse.json({ error: "Job is not accepting bids" }, { status: 422 })
   if (new Date(job.expiresAt) < new Date()) return NextResponse.json({ error: "Job has expired" }, { status: 422 })
 
-  // Check for existing bid
   const [existing] = await db
     .select({ id: bids.id })
     .from(bids)
     .where(and(eq(bids.providerId, provider.id), eq(bids.jobPostId, jobPostId)))
 
   if (existing) return NextResponse.json({ error: "You have already submitted a bid for this job" }, { status: 409 })
-
-  const body = await req.json()
-  const parsed = bidSchema.safeParse(body)
-  if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
   const data = parsed.data
   const insertData: NewBid = {
@@ -63,12 +73,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   const [newBid] = await db.insert(bids).values(insertData).returning({ id: bids.id })
 
-  // Update job to "bidding"
   if (job.status === "open") {
     await db.update(jobPosts).set({ status: "bidding" }).where(eq(jobPosts.id, jobPostId))
   }
 
-  // Notify customer
   await db.insert(notifications).values({
     userId: job.customerId,
     type: "bid_received",
@@ -84,9 +92,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       providerName: provider.businessName,
       amount: data.amount,
     })
-  } catch {
-    // non-critical
-  }
+  } catch {}
 
   return NextResponse.json({ bidId: newBid.id }, { status: 201 })
 }
@@ -97,7 +103,6 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 
   const { id: jobPostId } = await params
 
-  // Verify the caller owns this job post
   const [job] = await db
     .select({ customerId: jobPosts.customerId })
     .from(jobPosts)

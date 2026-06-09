@@ -6,6 +6,7 @@ import { eq, desc } from "drizzle-orm"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { AcceptBidButton } from "@/components/bidding/AcceptBidButton"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
 import { formatDate } from "@/lib/utils/formatDate"
 import { Plus, Star, Clock, CheckCircle2, Leaf } from "lucide-react"
@@ -110,9 +111,7 @@ export default async function CustomerJobsPage() {
                           <div className="text-right flex-shrink-0">
                             <p className="font-bold text-[#2D7A5F]">{formatCurrency(bid.amount)}</p>
                             {bid.status === "pending" && ["open", "bidding"].includes(job.status) && (
-                              <form action={`/api/jobs/${job.id}/bids/${bid.id}/accept`} method="POST">
-                                <Button size="sm" className="mt-1 h-7 text-xs bg-[#2D7A5F] hover:bg-[#235f49] text-white">Accept</Button>
-                              </form>
+                              <AcceptBidButton jobId={job.id} bidId={bid.id} />
                             )}
                             {bid.status === "accepted" && <p className="text-xs text-[#2D7A5F] font-semibold mt-1">✓ Accepted</p>}
                           </div>

@@ -1,9 +1,10 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { jobPosts, providers } from "@/lib/db/schema"
+import { jobPosts, providers, users } from "@/lib/db/schema"
 import type { NewJobPost } from "@/lib/db/schema/jobs"
 import { inngest } from "@/lib/inngest/client"
+import { jobRatelimit } from "@/lib/redis/client"
 import { eq, desc, and } from "drizzle-orm"
 import { z } from "zod"
 
@@ -16,27 +17,37 @@ const createJobSchema = z.object({
   desiredDate: z.string().optional(),
   desiredTimeRange: z.object({ start: z.string(), end: z.string() }).optional(),
   serviceAddress: z.object({
-    line1: z.string().min(2),
-    city: z.string().min(2),
-    postalCode: z.string().min(3),
+    line1: z.string().min(2).max(200),
+    city: z.string().min(2).max(100),
+    postalCode: z.string().min(3).max(10),
     country: z.string().length(2).default("DE"),
   }),
-  serviceLatitude: z.number(),
-  serviceLongitude: z.number(),
+  serviceLatitude: z.number().min(-90).max(90),
+  serviceLongitude: z.number().min(-180).max(180),
   radiusKm: z.number().int().min(1).max(100).default(25),
-  ecoRequirements: z.array(z.string()).default([]),
-})
+  ecoRequirements: z.array(z.string().max(100)).max(10).default([]),
+}).refine(
+  (d) => !d.budgetMin || !d.budgetMax || d.budgetMax >= d.budgetMin,
+  { message: "budgetMax must be >= budgetMin", path: ["budgetMax"] },
+)
 
 export async function POST(req: Request) {
   const { userId } = await auth()
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+  const { success } = await jobRatelimit.limit(userId)
+  if (!success) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 })
+
+  // Only customers may post jobs
+  const [user] = await db.select({ role: users.role }).from(users).where(eq(users.id, userId))
+  if (user?.role !== "customer") return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
   const body = await req.json()
   const parsed = createJobSchema.safeParse(body)
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
   const data = parsed.data
-  const expiresAt = new Date(Date.now() + 72 * 60 * 60 * 1000) // 72h from now
+  const expiresAt = new Date(Date.now() + 72 * 60 * 60 * 1000)
 
   const insertData: NewJobPost = {
     customerId: userId,
@@ -71,15 +82,12 @@ export async function GET(req: Request) {
   const forProvider = searchParams.get("forProvider") === "true"
 
   if (forProvider) {
-    // Provider sees open jobs near them
     const [provider] = await db
       .select({ id: providers.id, latitude: providers.latitude, longitude: providers.longitude, serviceRadiusKm: providers.serviceRadiusKm })
       .from(providers)
       .where(and(eq(providers.userId, userId), eq(providers.isApproved, true)))
 
-    if (!provider?.latitude || !provider?.longitude) {
-      return NextResponse.json({ jobs: [] })
-    }
+    if (!provider?.latitude || !provider?.longitude) return NextResponse.json({ jobs: [] })
 
     const allJobs = await db.query.jobPosts.findMany({
       where: (jp: any, { inArray: inArrayFn }: any) => inArrayFn(jp.status, ["open", "bidding"]),
@@ -88,7 +96,6 @@ export async function GET(req: Request) {
       limit: 200,
     })
 
-    // Filter by overlap of provider radius and job's requested radius using Haversine distance
     const providerLat = provider.latitude
     const providerLng = provider.longitude
     const providerRadius = provider.serviceRadiusKm ?? 25
@@ -110,7 +117,6 @@ export async function GET(req: Request) {
     return NextResponse.json({ jobs })
   }
 
-  // Customer sees their own jobs
   const jobs = await db.query.jobPosts.findMany({
     where: (jp: any, { eq: eqFn }: any) => eqFn(jp.customerId, userId),
     with: {

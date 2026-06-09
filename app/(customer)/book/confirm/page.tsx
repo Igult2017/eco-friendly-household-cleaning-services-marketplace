@@ -41,8 +41,53 @@ export default function BookStep5Page() {
   useEffect(() => {
     if (!store.selectedProviderId || !store.scheduledAt || !store.address || !store.categoryId) {
       router.replace("/book")
+      return
     }
-  }, [store, router])
+    // Detect 3DS/SCA redirect return — complete the booking using the persisted store state
+    const params = new URLSearchParams(window.location.search)
+    const piId = params.get("payment_intent")
+    const redirectStatus = params.get("redirect_status")
+    if (piId && redirectStatus === "succeeded") {
+      autoCompleteBooking(piId)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  async function autoCompleteBooking(piId: string) {
+    setLoading(true)
+    setError(null)
+    try {
+      const svcRes = await fetch(`/api/providers/${store.selectedProviderId}/services?categorySlug=${store.categoryId}`)
+      const svcData = await svcRes.json()
+      const service = svcData.services?.[0]
+      if (!service) { setError("Service not found. Please contact support."); return }
+
+      const res = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          providerId: store.selectedProviderId,
+          serviceId: service.id,
+          paymentIntentId: piId,
+          scheduledAt: store.scheduledAt,
+          durationMinutes: store.durationMinutes,
+          serviceAddress: store.address,
+          serviceLatitude: store.latitude ?? undefined,
+          serviceLongitude: store.longitude ?? undefined,
+          specialInstructions: store.specialInstructions || undefined,
+          ecoOptions: store.ecoOptions,
+          carbonOffsetCents: store.carbonOffsetCents || undefined,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setError(data.error ?? "Booking failed. Please contact support."); return }
+      setSuccess({ bookingId: data.bookingId, bookingNumber: data.bookingNumber })
+    } catch {
+      setError("Failed to complete booking. Please contact support.")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   async function fetchPricePreview() {
     if (amounts) return // already loaded
@@ -85,7 +130,7 @@ export default function BookStep5Page() {
         body: JSON.stringify({
           providerId: store.selectedProviderId,
           serviceId: service.id,
-          scheduledAt: store.scheduledAt!.toISOString(),
+          scheduledAt: store.scheduledAt!,
           durationMinutes: store.durationMinutes,
           carbonOffsetCents: addCarbonOffset ? CARBON_OFFSET_CENTS : 0,
         }),
@@ -95,6 +140,7 @@ export default function BookStep5Page() {
       setClientSecret(data.clientSecret)
       setIntentId(data.paymentIntentId)
       setAmounts(data.amounts)
+      store.setCarbonOffset(addCarbonOffset ? CARBON_OFFSET_CENTS : 0)
       setStep("payment")
     } catch {
       setError("Something went wrong. Please try again.")
@@ -116,7 +162,7 @@ export default function BookStep5Page() {
         <h1 className="font-serif text-3xl font-bold text-[#2B3441] text-center mb-2">Booking Confirmed!</h1>
         <p className="text-[#6B7280] text-center mb-2">Booking number: <strong className="text-[#2B3441]">{success.bookingNumber}</strong></p>
         <p className="text-sm text-[#6B7280] text-center mb-8 max-w-sm">
-          Your card has been pre-authorised. You will only be charged once the cleaning is marked complete.
+          A confirmation has been sent to your email. Your card has been pre-authorised — you will only be charged once the cleaning is marked complete.
         </p>
         <Button onClick={() => { store.reset(); router.push("/dashboard") }} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white px-8 h-11">
           Go to My Bookings
@@ -211,7 +257,7 @@ export default function BookStep5Page() {
                   providerId={store.selectedProviderId!}
                   serviceId={serviceId}
                   bookingPayload={{
-                    scheduledAt: store.scheduledAt!.toISOString(),
+                    scheduledAt: store.scheduledAt!,
                     durationMinutes: store.durationMinutes,
                     serviceAddress: store.address!,
                     serviceLatitude: store.latitude ?? undefined,

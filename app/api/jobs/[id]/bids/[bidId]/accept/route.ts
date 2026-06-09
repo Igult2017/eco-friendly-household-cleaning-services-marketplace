@@ -25,20 +25,28 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
 
   if (!bid) return NextResponse.json({ error: "Bid not found or not pending" }, { status: 404 })
 
-  // Accept this bid
-  await db.update(bids).set({ status: "accepted" }).where(eq(bids.id, bidId))
+  // Wrap the three state mutations in a transaction with a row lock on the job
+  // to prevent TOCTOU: two concurrent accept calls that both pass the status check above.
+  await db.transaction(async (tx) => {
+    const [locked] = await tx
+      .select({ status: jobPosts.status })
+      .from(jobPosts)
+      .where(eq(jobPosts.id, jobPostId))
+      .for("update")
 
-  // Reject all other pending bids
-  await db
-    .update(bids)
-    .set({ status: "rejected" })
-    .where(and(eq(bids.jobPostId, jobPostId), ne(bids.id, bidId), eq(bids.status, "pending")))
+    if (!locked || !["open", "bidding"].includes(locked.status)) {
+      tx.rollback()
+      return
+    }
 
-  // Mark job as assigned + link accepted bid
-  await db.update(jobPosts).set({ status: "assigned", acceptedBidId: bidId }).where(eq(jobPosts.id, jobPostId))
+    await tx.update(bids).set({ status: "accepted" }).where(eq(bids.id, bidId))
+    await tx.update(bids).set({ status: "rejected" })
+      .where(and(eq(bids.jobPostId, jobPostId), ne(bids.id, bidId), eq(bids.status, "pending")))
+    await tx.update(jobPosts).set({ status: "assigned", acceptedBidId: bidId }).where(eq(jobPosts.id, jobPostId))
+  })
 
-  // Notify winning provider
-  const [provider] = await db.select({ userId: providers.userId, businessName: providers.businessName }).from(providers).where(eq(providers.id, bid.providerId))
+  // Notify winning provider (outside transaction — non-critical)
+  const [provider] = await db.select({ userId: providers.userId }).from(providers).where(eq(providers.id, bid.providerId))
   if (provider) {
     await db.insert(notifications).values({
       userId: provider.userId,

@@ -34,8 +34,20 @@ export default function BookStep3Page() {
   const router = useRouter()
   const { selectedProviderId, setSchedule, scheduledAt, durationMinutes } = useBookingStore()
 
-  const [selectedDate, setSelectedDate] = useState<string | null>(scheduledAt ? scheduledAt.toISOString().split("T")[0] : null)
-  const [selectedTime, setSelectedTime] = useState<string | null>(scheduledAt ? scheduledAt.toTimeString().slice(0, 5) : null)
+  // scheduledAt is now an ISO string; convert back to local date/time parts for display
+  const restoreDate = (iso: string | null) => {
+    if (!iso) return null
+    const d = new Date(iso)
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
+  }
+  const restoreTime = (iso: string | null) => {
+    if (!iso) return null
+    const d = new Date(iso)
+    return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`
+  }
+
+  const [selectedDate, setSelectedDate] = useState<string | null>(restoreDate(scheduledAt))
+  const [selectedTime, setSelectedTime] = useState<string | null>(restoreTime(scheduledAt))
   const [selectedDuration, setSelectedDuration] = useState(durationMinutes)
   const [availability, setAvailability] = useState<{ available: boolean; workingHours?: { start: string; end: string } } | null>(null)
   const [loadingAvail, setLoadingAvail] = useState(false)
@@ -90,7 +102,7 @@ export default function BookStep3Page() {
               return (
                 <button
                   key={d}
-                  onClick={() => setSelectedDate(d)}
+                  onClick={() => { setSelectedDate(d); setSelectedTime(null) }}
                   className={cn(
                     "flex-shrink-0 flex flex-col items-center justify-center w-14 h-16 rounded-xl border-2 text-sm transition-all",
                     selectedDate === d
@@ -164,7 +176,7 @@ export default function BookStep3Page() {
           </Button>
           <Button
             onClick={handleNext}
-            disabled={!selectedDate || !selectedTime}
+            disabled={!selectedDate || !selectedTime || availability?.available === false}
             className="flex-1 h-11 bg-[#2D7A5F] hover:bg-[#235f49] text-white"
           >
             Continue — Add Details →
