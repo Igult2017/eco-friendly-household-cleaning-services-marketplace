@@ -7,4 +7,3 @@ node_modules
 .dockerignore
 Dockerfile
 docker-compose*.yml
-drizzle/migrations
