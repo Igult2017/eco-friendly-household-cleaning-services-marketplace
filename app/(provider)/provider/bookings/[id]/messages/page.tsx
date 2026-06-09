@@ -19,7 +19,6 @@ export default async function ProviderMessagesPage({
 
   const { id } = await params
 
-  // Fetch booking joined to provider (to verify ownership) and customer user row
   const [row] = await db
     .select({
       bookingId: bookings.id,
@@ -35,8 +34,6 @@ export default async function ProviderMessagesPage({
     .where(eq(bookings.id, id))
 
   if (!row) notFound()
-
-  // Only the provider who owns this booking may view it
   if (row.providerUserId !== userId) notFound()
 
   const customerName =
@@ -45,14 +42,13 @@ export default async function ProviderMessagesPage({
 
   return (
     <div className="max-w-2xl mx-auto py-6 px-4 space-y-4">
-      {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <Link
-          href={`/provider/bookings/${id}`}
+          href={`/provider/bookings`}
           className="inline-flex items-center gap-1.5 text-sm text-[#6B7280] hover:text-[#2D7A5F] transition-colors"
         >
           <ArrowLeft size={15} />
-          Back to booking
+          Back to bookings
         </Link>
       </div>
 

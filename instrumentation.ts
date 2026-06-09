@@ -27,7 +27,7 @@ export async function register() {
     console.error("[migrate] Migration failed:", err)
     // Crash hard in production so the container restarts rather than serving
     // against a schema that doesn't match the code.
-    if (process.env.NODE_ENV === "production") process.exit(1)
+    if (process.env.NODE_ENV === "production") throw err
   } finally {
     await client.end()
   }

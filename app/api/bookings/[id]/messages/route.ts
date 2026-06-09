@@ -86,16 +86,18 @@ export async function POST(req: Request, { params }: RouteContext) {
     .values({ bookingId, senderId: userId, body })
     .returning()
 
-  // Determine recipient
+  // Determine recipient — provider link uses the /provider/ prefix route
   const recipientId = isCustomer ? provider!.userId : booking.customerId
+  const notifLink = isCustomer
+    ? `/provider/bookings/${bookingId}/messages`
+    : `/bookings/${bookingId}/messages`
 
-  // Insert notification
   await db.insert(notifications).values({
     userId: recipientId,
     type: "new_message",
     title: "New message",
     body: body.slice(0, 100),
-    link: `/bookings/${bookingId}/messages`,
+    link: notifLink,
   })
 
   // Trigger Pusher event — non-fatal if it fails
