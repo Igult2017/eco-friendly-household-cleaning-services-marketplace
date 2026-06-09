@@ -19,6 +19,10 @@ export default async function CustomerDashboardPage() {
   if (!userId) redirect("/sign-in")
   const uid = userId as string
   const user = await currentUser()
+  const role = user?.publicMetadata?.role as string | undefined
+  if (role === "provider") redirect("/provider/dashboard")
+  if (role === "admin") redirect("/admin/dashboard")
+  if (!role) redirect("/onboarding")
 
   const [allBookings, recentJobs, recentPayments, recentNotifs, reviewedRows] = await Promise.all([
     db.query.bookings.findMany({

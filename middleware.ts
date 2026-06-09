@@ -1,4 +1,4 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server"
+import { clerkMiddleware, createRouteMatcher, clerkClient } from "@clerk/nextjs/server"
 import { NextResponse, type NextRequest, type NextFetchEvent } from "next/server"
 
 const isPublicRoute = createRouteMatcher([
@@ -35,6 +35,19 @@ const isProviderRoute = createRouteMatcher(["/provider/(.*)"])
 const isAdminRoute = createRouteMatcher(["/admin/(.*)"])
 const isOnboardingRoute = createRouteMatcher(["/onboarding(.*)"])
 
+const VALID_ROLES = ["customer", "provider", "admin"]
+
+function setCookieOnResponse(res: NextResponse, userId: string, role: string): NextResponse {
+  res.cookies.set("dorix_role", `${userId}:${role}`, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 60 * 60 * 24 * 7,
+    path: "/",
+  })
+  return res
+}
+
 const clerkHandler = clerkMiddleware(async (auth, req) => {
   if (isPublicRoute(req)) return NextResponse.next()
 
@@ -47,20 +60,39 @@ const clerkHandler = clerkMiddleware(async (auth, req) => {
   }
 
   let role = (sessionClaims?.metadata as { role?: string } | undefined)?.role
+  let shouldRefreshCookie = false
 
   // JWT hasn't refreshed yet (60s TTL) — read role from the cookie set during onboarding.
   if (!role) {
     const roleCookie = req.cookies.get("dorix_role")?.value
     if (roleCookie) {
       const [cookieUserId, cookieRole] = roleCookie.split(":")
-      const VALID_ROLES = ["customer", "provider", "admin"]
       if (cookieUserId === userId && VALID_ROLES.includes(cookieRole)) {
         role = cookieRole
       }
     }
   }
 
-  if (isOnboardingRoute(req)) return NextResponse.next()
+  // Cookie expired or missing — hit Clerk API as last resort.
+  if (!role) {
+    try {
+      const client = await clerkClient()
+      const clerkUser = await client.users.getUser(userId)
+      const clerkRole = (clerkUser.publicMetadata as { role?: string })?.role
+      if (clerkRole && VALID_ROLES.includes(clerkRole)) {
+        role = clerkRole
+        shouldRefreshCookie = true
+      }
+    } catch {
+      // Clerk API unreachable — fall through to onboarding redirect
+    }
+  }
+
+  if (isOnboardingRoute(req)) {
+    const res = NextResponse.next()
+    if (shouldRefreshCookie && role) setCookieOnResponse(res, userId, role)
+    return res
+  }
 
   if (!role) return NextResponse.redirect(new URL("/onboarding", req.url))
 
@@ -68,7 +100,9 @@ const clerkHandler = clerkMiddleware(async (auth, req) => {
   if (isProviderRoute(req) && role !== "provider") return NextResponse.redirect(new URL("/", req.url))
   if (isCustomerOnlyRoute(req) && role !== "customer" && role !== "admin") return NextResponse.redirect(new URL("/", req.url))
 
-  return NextResponse.next()
+  const res = NextResponse.next()
+  if (shouldRefreshCookie) setCookieOnResponse(res, userId, role)
+  return res
 })
 
 export default async function middleware(req: NextRequest, event: NextFetchEvent) {

@@ -28,8 +28,8 @@ function dashboardLabel(role: string | undefined) {
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
-  const { isSignedIn, user } = useUser()
-  const role = user?.publicMetadata?.role as string | undefined
+  const { isLoaded, isSignedIn, user } = useUser()
+  const role = (isLoaded ? user?.publicMetadata?.role : undefined) as string | undefined
   const href = dashboardHref(role)
   const label = dashboardLabel(role)
 
@@ -58,7 +58,8 @@ export function Navbar() {
           {isSignedIn ? (
             <>
               <Link
-                href={href}
+                href={isLoaded ? href : "#"}
+                onClick={!isLoaded ? (e) => e.preventDefault() : undefined}
                 className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg bg-[#EDF5F0] text-[#2D7A5F] hover:bg-[#D4EDE2] transition-colors"
               >
                 <LayoutDashboard size={15} />
@@ -106,8 +107,8 @@ export function Navbar() {
           <div className="pt-2 border-t border-[#E5EDE9] mt-1">
             {isSignedIn ? (
               <Link
-                href={href}
-                onClick={() => setMobileOpen(false)}
+                href={isLoaded ? href : "#"}
+                onClick={!isLoaded ? (e) => e.preventDefault() : () => setMobileOpen(false)}
                 className="flex items-center gap-2 text-sm font-medium px-3 py-2 rounded-lg bg-[#EDF5F0] text-[#2D7A5F]"
               >
                 <LayoutDashboard size={15} /> {label}
