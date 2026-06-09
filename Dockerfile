@@ -1,11 +1,17 @@
+# syntax=docker/dockerfile:1.4
 # ── Stage 1: deps ────────────────────────────────────────────────────────────
-# Install production + dev dependencies (cached as long as package.json unchanged)
+# Install production + dev dependencies.
+# --mount=type=cache keeps the npm download cache on the build host between runs,
+# so re-installs are fast even when package.json changes.
+# Layer cache: if package.json is unchanged, Docker skips this stage entirely.
 FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
-RUN npm install --no-audit --no-fund --prefer-offline || npm install --no-audit --no-fund
+RUN --mount=type=cache,id=npm,target=/root/.npm \
+    npm install --no-audit --no-fund --prefer-offline || \
+    npm install --no-audit --no-fund
 
 # ── Stage 2: builder ─────────────────────────────────────────────────────────
 # Compile the Next.js app. Result is a self-contained /app/.next/standalone dir.
@@ -32,7 +38,8 @@ ARG NEXT_PUBLIC_UMAMI_WEBSITE_ID
 ENV NEXT_TELEMETRY_DISABLED=1 \
     NODE_ENV=production
 
-RUN npm run build
+RUN --mount=type=cache,id=next-build,target=/app/.next/cache \
+    npm run build
 
 # ── Stage 3: migrator ────────────────────────────────────────────────────────
 # Tiny image that runs drizzle migrations once before the app containers start.
