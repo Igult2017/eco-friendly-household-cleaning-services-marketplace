@@ -19,6 +19,7 @@ export const users = pgTable(
     firstName: varchar("first_name", { length: 100 }),
     lastName: varchar("last_name", { length: 100 }),
     phone: varchar("phone", { length: 30 }),
+    stripeCustomerId: varchar("stripe_customer_id", { length: 100 }),
     role: userRoleEnum("role").notNull().default("customer"),
     avatarUrl: text("avatar_url"),
     isActive: boolean("is_active").notNull().default(true),

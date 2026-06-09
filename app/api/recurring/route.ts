@@ -5,6 +5,7 @@ import { db } from "@/lib/db"
 import { recurringSchedules, providers, providerServices, users } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
 import { inngest } from "@/lib/inngest/client"
+import { stripe } from "@/lib/stripe/client"
 
 const createSchema = z.object({
   providerId: z.string().uuid(),
@@ -15,20 +16,37 @@ const createSchema = z.object({
   serviceAddress: z.record(z.string(), z.string()),
   ecoOptions: z.array(z.string()).max(10).optional(),
   specialInstructions: z.string().max(1000).optional(),
+  paymentMethodId: z.string().startsWith("pm_"),
+  timezone: z.string().min(1).max(100).default("Europe/Amsterdam"),
 })
 
-function nextOccurrence(dayOfWeek: number, preferredTime: string): Date {
+function nextOccurrenceUTC(dayOfWeek: number, preferredTime: string, timezone: string): Date {
   const [hours, minutes] = preferredTime.split(":").map(Number)
   const now = new Date()
-  const candidate = new Date(now)
-  candidate.setDate(now.getDate() + 1)
-  candidate.setHours(hours, minutes, 0, 0)
+  const startUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1))
 
-  for (let i = 0; i < 7; i++) {
-    if (candidate.getDay() === dayOfWeek) break
-    candidate.setDate(candidate.getDate() + 1)
+  for (let i = 0; i < 8; i++) {
+    const probe = new Date(startUTC.getTime() + i * 86_400_000)
+
+    const localDOW = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+      .indexOf(new Intl.DateTimeFormat("en-US", { timeZone: timezone, weekday: "long" }).format(probe))
+
+    if (localDOW !== dayOfWeek) continue
+
+    const localDate = probe.toLocaleDateString("sv-SE", { timeZone: timezone })
+    const h = String(hours).padStart(2, "0")
+    const m = String(minutes).padStart(2, "0")
+    const testUTC = new Date(`${localDate}T${h}:${m}:00Z`)
+
+    // Measure the timezone offset at this moment and correct for it
+    const inTZ = testUTC.toLocaleString("sv-SE", { timeZone: timezone })
+    const [tzH, tzM] = inTZ.split(" ")[1].split(":").map(Number)
+    const driftMs = ((hours * 60 + minutes) - (tzH * 60 + tzM)) * 60_000
+
+    return new Date(testUTC.getTime() + driftMs)
   }
-  return candidate
+
+  throw new Error("Could not find next occurrence in 8 days")
 }
 
 export async function GET() {
@@ -56,6 +74,7 @@ export async function GET() {
       serviceAddress: recurringSchedules.serviceAddress,
       ecoOptions: recurringSchedules.ecoOptions,
       specialInstructions: recurringSchedules.specialInstructions,
+      timezone: recurringSchedules.timezone,
       status: recurringSchedules.status,
       nextBookingAt: recurringSchedules.nextBookingAt,
       createdAt: recurringSchedules.createdAt,
@@ -76,7 +95,12 @@ export async function POST(req: NextRequest) {
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const [user] = await db
-    .select({ role: users.role })
+    .select({
+      role: users.role,
+      email: users.email,
+      firstName: users.firstName,
+      stripeCustomerId: users.stripeCustomerId,
+    })
     .from(users)
     .where(eq(users.id, userId))
 
@@ -90,16 +114,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid input", details: parsed.error.flatten() }, { status: 422 })
   }
 
-  const { providerId, serviceId, frequency, dayOfWeek, preferredTime, serviceAddress, ecoOptions, specialInstructions } = parsed.data
+  const {
+    providerId, serviceId, frequency, dayOfWeek, preferredTime,
+    serviceAddress, ecoOptions, specialInstructions, paymentMethodId, timezone,
+  } = parsed.data
 
   const [provider] = await db
     .select({ id: providers.id, isApproved: providers.isApproved, isSuspended: providers.isSuspended })
     .from(providers)
     .where(eq(providers.id, providerId))
 
-  if (!provider) {
-    return NextResponse.json({ error: "Provider not found" }, { status: 404 })
-  }
+  if (!provider) return NextResponse.json({ error: "Provider not found" }, { status: 404 })
   if (!provider.isApproved || provider.isSuspended) {
     return NextResponse.json({ error: "Provider is not available" }, { status: 400 })
   }
@@ -109,11 +134,29 @@ export async function POST(req: NextRequest) {
     .from(providerServices)
     .where(and(eq(providerServices.id, serviceId), eq(providerServices.providerId, providerId)))
 
-  if (!service) {
-    return NextResponse.json({ error: "Service not found for this provider" }, { status: 404 })
+  if (!service) return NextResponse.json({ error: "Service not found for this provider" }, { status: 404 })
+
+  // Get or create Stripe Customer to attach the payment method
+  let stripeCustomerId = user.stripeCustomerId
+  if (!stripeCustomerId) {
+    const customer = await stripe.customers.create({
+      email: user.email,
+      name: user.firstName ?? undefined,
+      metadata: { userId },
+    })
+    stripeCustomerId = customer.id
+    await db.update(users).set({ stripeCustomerId }).where(eq(users.id, userId))
   }
 
-  const nextBookingAt = nextOccurrence(dayOfWeek, preferredTime)
+  // Attach the payment method to the customer (idempotent)
+  try {
+    await stripe.paymentMethods.attach(paymentMethodId, { customer: stripeCustomerId })
+  } catch (err: unknown) {
+    const stripeErr = err as { code?: string }
+    if (stripeErr?.code !== "resource_already_exists") throw err
+  }
+
+  const nextBookingAt = nextOccurrenceUTC(dayOfWeek, preferredTime, timezone)
 
   const [result] = await db
     .insert(recurringSchedules)
@@ -127,6 +170,8 @@ export async function POST(req: NextRequest) {
       serviceAddress,
       ecoOptions: ecoOptions ?? [],
       specialInstructions,
+      stripePaymentMethodId: paymentMethodId,
+      timezone,
       status: "active",
       nextBookingAt,
     })

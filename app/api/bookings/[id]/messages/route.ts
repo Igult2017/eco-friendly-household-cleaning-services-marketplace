@@ -3,7 +3,7 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { notifications, messages } from "@/lib/db/schema"
-import { eq, asc } from "drizzle-orm"
+import { eq, asc, and, ne } from "drizzle-orm"
 import { pusherServer } from "@/lib/pusher/server"
 
 type RouteContext = { params: Promise<{ id: string }> }
@@ -41,13 +41,19 @@ export async function GET(_req: Request, { params }: RouteContext) {
     .where(eq(messages.bookingId, bookingId))
     .orderBy(asc(messages.createdAt))
 
-  // Mark unread messages from the other party as read
-  const unreadFromOther = thread.filter((m) => !m.isRead && m.senderId !== userId)
-  for (const msg of unreadFromOther) {
+  // Mark all unread messages from the other party as read in a single query
+  const hasUnread = thread.some((m) => !m.isRead && m.senderId !== userId)
+  if (hasUnread) {
     await db
       .update(messages)
       .set({ isRead: true })
-      .where(eq(messages.id, msg.id))
+      .where(
+        and(
+          eq(messages.bookingId, bookingId),
+          ne(messages.senderId, userId),
+          eq(messages.isRead, false)
+        )
+      )
   }
 
   return NextResponse.json({ messages: thread })

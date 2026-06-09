@@ -26,9 +26,9 @@ export async function POST(req: Request, { params }: Params) {
 
   if (!booking) return NextResponse.json({ error: "Booking not found" }, { status: 404 })
 
-  if (booking.status !== "confirmed") {
+  if (!["confirmed", "in_progress"].includes(booking.status)) {
     return NextResponse.json(
-      { error: "Before photos can only be uploaded when booking status is 'confirmed'" },
+      { error: "Before photos can only be uploaded when booking is confirmed or in progress" },
       { status: 422 }
     )
   }
@@ -77,6 +77,7 @@ export async function GET(_req: Request, { params }: Params) {
       customerId: bookings.customerId,
       providerId: bookings.providerId,
       beforePhotoUrls: bookings.beforePhotoUrls,
+      providerUserId: providers.userId,
     })
     .from(bookings)
     .leftJoin(providers, eq(providers.id, bookings.providerId))
@@ -84,13 +85,8 @@ export async function GET(_req: Request, { params }: Params) {
 
   if (!booking) return NextResponse.json({ error: "Booking not found" }, { status: 404 })
 
-  const [providerRow] = await db
-    .select({ userId: providers.userId })
-    .from(providers)
-    .where(eq(providers.id, booking.providerId))
-
   const isCustomer = booking.customerId === userId
-  const isProvider = providerRow?.userId === userId
+  const isProvider = booking.providerUserId === userId
 
   if (!isCustomer && !isProvider) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })

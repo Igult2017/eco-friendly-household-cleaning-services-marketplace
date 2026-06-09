@@ -43,7 +43,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
 
   await db.insert(notifications).values({
     userId: booking.customerId,
-    type: "booking_confirmed",
+    type: "booking_started",
     title: "Your cleaner has arrived!",
     body: "Your cleaning session has begun.",
     link: `/bookings/${bookingId}`,

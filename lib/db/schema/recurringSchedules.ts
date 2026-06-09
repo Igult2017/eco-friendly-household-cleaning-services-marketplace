@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, smallint, pgEnum, timestamp, jsonb, check, index } from "drizzle-orm/pg-core"
+import { pgTable, uuid, text, varchar, smallint, pgEnum, timestamp, jsonb, check, index } from "drizzle-orm/pg-core"
 import { users } from "./users"
 import { providers } from "./providers"
 import { providerServices } from "./services"
@@ -18,6 +18,8 @@ export const recurringSchedules = pgTable("recurring_schedules", {
   serviceAddress: jsonb("service_address").notNull(),
   ecoOptions: jsonb("eco_options").default([]),
   specialInstructions: text("special_instructions"),
+  stripePaymentMethodId: varchar("stripe_payment_method_id", { length: 100 }),
+  timezone: text("timezone").notNull().default("Europe/Amsterdam"),
   status: recurringStatusEnum("status").notNull().default("active"),
   nextBookingAt: timestamp("next_booking_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

@@ -64,6 +64,17 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ error: "Provider is not available on that day" }, { status: 409 })
   }
 
+  // Verify the requested time falls within the provider's working hours
+  const reqH = newStart.getUTCHours()
+  const reqM = newStart.getUTCMinutes()
+  const reqTime = String(reqH).padStart(2, "0") + ":" + String(reqM).padStart(2, "0")
+  if (reqTime < availability.startTime || reqTime >= availability.endTime) {
+    return NextResponse.json(
+      { error: "Requested time is outside the provider's working hours" },
+      { status: 422 }
+    )
+  }
+
   // Check for conflicting bookings at the new time (exclude this booking)
   const activeStatuses = ["payment_authorized", "confirmed", "in_progress", "pending_capture"] as const
   const conflictingBookings = await db
@@ -83,15 +94,22 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ error: "Provider not available at requested time" }, { status: 409 })
   }
 
-  // Update the booking
-  await db
-    .update(bookings)
-    .set({
-      scheduledAt: newStart,
-      scheduledEndAt: newEnd,
-      updatedAt: new Date(),
-    })
-    .where(eq(bookings.id, bookingId))
+  // Update the booking — catch unique constraint violation (concurrent reschedule to same slot)
+  try {
+    await db
+      .update(bookings)
+      .set({ scheduledAt: newStart, scheduledEndAt: newEnd, updatedAt: new Date() })
+      .where(eq(bookings.id, bookingId))
+  } catch (err: unknown) {
+    const pgErr = err as { code?: string; message?: string }
+    if (pgErr?.code === "23505" || pgErr?.message?.includes("duplicate")) {
+      return NextResponse.json(
+        { error: "That time slot was just taken by another booking. Please choose a different time." },
+        { status: 409 }
+      )
+    }
+    throw err
+  }
 
   // Fetch provider's Clerk userId for notification
   const [provider] = await db
@@ -112,7 +130,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (provider) {
     await db.insert(notifications).values({
       userId: provider.userId,
-      type: "booking_confirmed",
+      type: "booking_rescheduled",
       title: "Booking rescheduled",
       body: `A booking has been rescheduled to ${formattedDate}.`,
       link: "/provider/bookings",
