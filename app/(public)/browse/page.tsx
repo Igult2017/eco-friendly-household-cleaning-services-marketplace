@@ -11,8 +11,6 @@ export const metadata: Metadata = {
   description: "Find trusted, eco-certified cleaning professionals near you.",
 }
 
-export const revalidate = 600
-
 const ecoLabels: Record<string, { label: string; color: string }> = {
   basic: { label: "Eco Basic", color: "bg-gray-100 text-gray-600" },
   certified: { label: "Eco Certified", color: "bg-green-100 text-green-700" },
@@ -30,27 +28,30 @@ async function getProviders(filters: { city?: string; ecoLevel?: string; minRati
     if (!isNaN(r)) conditions.push(gte(providers.averageRating, r))
   }
 
-  const rows = await db
-    .select({
-      id: providers.id,
-      slug: providers.slug,
-      businessName: providers.businessName,
-      bio: providers.bio,
-      city: providers.city,
-      country: providers.country,
-      ecoLevel: providers.ecoLevel,
-      averageRating: providers.averageRating,
-      totalReviews: providers.totalReviews,
-      totalJobsCompleted: providers.totalJobsCompleted,
-      profilePhotoUrl: providers.profilePhotoUrl,
-      verificationStatus: providers.verificationStatus,
-    })
-    .from(providers)
-    .where(and(...conditions))
-    .orderBy(desc(providers.averageRating))
-    .limit(48)
-
-  return rows
+  try {
+    const rows = await db
+      .select({
+        id: providers.id,
+        slug: providers.slug,
+        businessName: providers.businessName,
+        bio: providers.bio,
+        city: providers.city,
+        country: providers.country,
+        ecoLevel: providers.ecoLevel,
+        averageRating: providers.averageRating,
+        totalReviews: providers.totalReviews,
+        totalJobsCompleted: providers.totalJobsCompleted,
+        profilePhotoUrl: providers.profilePhotoUrl,
+        verificationStatus: providers.verificationStatus,
+      })
+      .from(providers)
+      .where(and(...conditions))
+      .orderBy(desc(providers.averageRating))
+      .limit(48)
+    return rows
+  } catch {
+    return []
+  }
 }
 
 export default async function BrowsePage({ searchParams }: { searchParams: Promise<{ city?: string; ecoLevel?: string; minRating?: string }> }) {

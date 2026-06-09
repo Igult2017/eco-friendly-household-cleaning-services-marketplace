@@ -7,54 +7,66 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import type { Metadata } from "next"
 
-export const revalidate = 3600
-
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params
-  const [p] = await db.select({ businessName: providers.businessName, bio: providers.bio }).from(providers).where(eq(providers.slug, slug))
-  if (!p) return {}
-  return { title: `${p.businessName} — DORIX`, description: p.bio ?? undefined }
+  try {
+    const { slug } = await params
+    const [p] = await db.select({ businessName: providers.businessName, bio: providers.bio }).from(providers).where(eq(providers.slug, slug))
+    if (!p) return {}
+    return { title: `${p.businessName} — DORIX`, description: p.bio ?? undefined }
+  } catch {
+    return {}
+  }
 }
 
 export default async function ProviderProfilePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
 
-  const [provider] = await db
-    .select({
-      id: providers.id,
-      businessName: providers.businessName,
-      bio: providers.bio,
-      city: providers.city,
-      country: providers.country,
-      ecoLevel: providers.ecoLevel,
-      ecoScore: providers.ecoScore,
-      averageRating: providers.averageRating,
-      totalReviews: providers.totalReviews,
-      totalJobsCompleted: providers.totalJobsCompleted,
-      profilePhotoUrl: providers.profilePhotoUrl,
-      galleryUrls: providers.galleryUrls,
-      isApproved: providers.isApproved,
-      userId: providers.userId,
-      verificationStatus: providers.verificationStatus,
-    })
-    .from(providers)
-    .where(eq(providers.slug, slug))
+  let provider, owner, services, recentReviews
+  try {
+    ;[provider] = await db
+      .select({
+        id: providers.id,
+        businessName: providers.businessName,
+        bio: providers.bio,
+        city: providers.city,
+        country: providers.country,
+        ecoLevel: providers.ecoLevel,
+        ecoScore: providers.ecoScore,
+        averageRating: providers.averageRating,
+        totalReviews: providers.totalReviews,
+        totalJobsCompleted: providers.totalJobsCompleted,
+        profilePhotoUrl: providers.profilePhotoUrl,
+        galleryUrls: providers.galleryUrls,
+        isApproved: providers.isApproved,
+        userId: providers.userId,
+        verificationStatus: providers.verificationStatus,
+      })
+      .from(providers)
+      .where(eq(providers.slug, slug))
 
-  if (!provider || !provider.isApproved) notFound()
+    if (!provider || !provider.isApproved) notFound()
 
-  const [owner] = await db.select({ firstName: users.firstName, lastName: users.lastName }).from(users).where(eq(users.id, provider.userId))
+    ;[owner] = await db.select({ firstName: users.firstName, lastName: users.lastName }).from(users).where(eq(users.id, provider.userId))
 
-  const services = await db
-    .select({ id: providerServices.id, name: providerServices.name, description: providerServices.description, basePrice: providerServices.basePrice, priceUnit: providerServices.priceUnit })
-    .from(providerServices)
-    .where(eq(providerServices.providerId, provider.id))
+    services = await db
+      .select({ id: providerServices.id, name: providerServices.name, description: providerServices.description, basePrice: providerServices.basePrice, priceUnit: providerServices.priceUnit })
+      .from(providerServices)
+      .where(eq(providerServices.providerId, provider.id))
 
-  const recentReviews = await db
-    .select({ id: reviews.id, overallRating: reviews.overallRating, title: reviews.title, body: reviews.body, createdAt: reviews.createdAt })
-    .from(reviews)
-    .where(eq(reviews.providerId, provider.id))
-    .orderBy(desc(reviews.createdAt))
-    .limit(5)
+    recentReviews = await db
+      .select({ id: reviews.id, overallRating: reviews.overallRating, title: reviews.title, body: reviews.body, createdAt: reviews.createdAt })
+      .from(reviews)
+      .where(eq(reviews.providerId, provider.id))
+      .orderBy(desc(reviews.createdAt))
+      .limit(5)
+  } catch {
+    notFound()
+  }
+
+  if (!provider) notFound()
+  owner = owner ?? null
+  services = services ?? []
+  recentReviews = recentReviews ?? []
 
   const ecoColors: Record<string, string> = {
     basic: "bg-gray-100 text-gray-600",

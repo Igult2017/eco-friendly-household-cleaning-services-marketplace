@@ -10,14 +10,18 @@ export const metadata: Metadata = {
 }
 
 async function getEcoStats() {
-  const [totalProviders] = await db.select({ count: count() }).from(providers).where(eq(providers.isApproved, true))
-  const [ecoProviders] = await db.select({ count: count() }).from(providers).where(sql`${providers.ecoLevel} IN ('certified','premium','zero_impact') AND ${providers.isApproved} = true`)
-  const [offsetTotal] = await db.select({ total: sum(carbonOffsetContributions.amount) }).from(carbonOffsetContributions)
+  try {
+    const [totalProviders] = await db.select({ count: count() }).from(providers).where(eq(providers.isApproved, true))
+    const [ecoProviders] = await db.select({ count: count() }).from(providers).where(sql`${providers.ecoLevel} IN ('certified','premium','zero_impact') AND ${providers.isApproved} = true`)
+    const [offsetTotal] = await db.select({ total: sum(carbonOffsetContributions.amount) }).from(carbonOffsetContributions)
 
-  return {
-    totalProviders: Number(totalProviders?.count ?? 0),
-    ecoProviders: Number(ecoProviders?.count ?? 0),
-    offsetEuros: Number(offsetTotal?.total ?? 0) / 100,
+    return {
+      totalProviders: Number(totalProviders?.count ?? 0),
+      ecoProviders: Number(ecoProviders?.count ?? 0),
+      offsetEuros: Number(offsetTotal?.total ?? 0) / 100,
+    }
+  } catch {
+    return { totalProviders: 0, ecoProviders: 0, offsetEuros: 0 }
   }
 }
 
