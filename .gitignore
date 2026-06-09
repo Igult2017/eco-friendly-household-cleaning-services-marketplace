@@ -52,3 +52,4 @@ uploads/
 # IDE
 .idea/
 .vscode/settings.json
+package-lock.json

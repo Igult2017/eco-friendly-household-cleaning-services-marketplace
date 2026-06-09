@@ -5,7 +5,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
-RUN npm install -g npm@11 && npm ci
+RUN npm install --no-audit --no-fund --prefer-offline || npm install --no-audit --no-fund
 
 # ── Stage 2: builder ─────────────────────────────────────────────────────────
 # Compile the Next.js app. Result is a self-contained /app/.next/standalone dir.
