@@ -53,7 +53,7 @@ export const providers = pgTable(
     city: varchar("city", { length: 100 }),
     state: varchar("state", { length: 100 }),
     postalCode: varchar("postal_code", { length: 20 }),
-    country: varchar("country", { length: 2 }).notNull().default("DE"),
+    country: varchar("country", { length: 2 }).notNull(),
     serviceRadiusKm: integer("service_radius_km").notNull().default(25),
     ecoLevel: ecoLevelEnum("eco_level").notNull().default("basic"),
     ecoScore: integer("eco_score").notNull().default(0),

@@ -20,7 +20,7 @@ const createJobSchema = z.object({
     line1: z.string().min(2).max(200),
     city: z.string().min(2).max(100),
     postalCode: z.string().min(3).max(10),
-    country: z.string().length(2).default("DE"),
+    country: z.string().length(2),  // required — caller must pass ISO country code
   }),
   serviceLatitude: z.number().min(-90).max(90),
   serviceLongitude: z.number().min(-180).max(180),

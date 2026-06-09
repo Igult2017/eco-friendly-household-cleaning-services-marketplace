@@ -1,9 +1,10 @@
 import { inngest } from "../client"
 import { db } from "@/lib/db"
-import { jobPosts, bids, providers, users, notifications } from "@/lib/db/schema"
-import { resend, FROM } from "@/lib/resend/client"
+import { jobPosts, bids, providers, notifications } from "@/lib/db/schema"
 import { pusherServer } from "@/lib/pusher/server"
-import { findProvidersNearLocation } from "@/lib/db/queries/geo"
+import { findProvidersNearLocation, type GeoProvider } from "@/lib/db/queries/geo"
+import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
+import { formatDistance } from "@/lib/utils/locale"
 import { eq, and, inArray } from "drizzle-orm"
 
 export const onJobPosted = inngest.createFunction(
@@ -35,26 +36,39 @@ export const onJobPosted = inngest.createFunction(
     if (nearbyProviders.length === 0) return { notified: 0 }
 
     // Notify each nearby provider via DB notification + Pusher
-    await step.run("notify-providers", async () => {
-      for (const provider of nearbyProviders as { id: string; userId: string }[]) {
-        await db.insert(notifications).values({
-          userId: provider.userId,
-          type: "new_job_request",
-          title: "New Job Near You!",
-          body: `A customer posted a ${job.category?.name ?? "cleaning"} job near you. Check it out!`,
-          link: `/provider/jobs`,
-        })
+    const city     = (job.serviceAddress as { city?: string }).city ?? "your area"
+    const category = job.category?.name ?? "cleaning"
+    const country  = (job.serviceAddress as { country?: string }).country ?? "DE"
 
-        try {
-          await pusherServer.trigger(`private-provider-${provider.id}`, "new-job", {
-            jobPostId,
-            title: job.title,
-            categoryName: job.category?.name,
-          })
-        } catch {
-          // Pusher failures are non-critical
-        }
+    await step.run("notify-providers", async () => {
+      const nearby = nearbyProviders as GeoProvider[]
+
+      let budgetText = ""
+      if (job.budgetMin && job.budgetMax) {
+        budgetText = ` · Budget: ${formatCurrencyForCountry(job.budgetMin, country)}–${formatCurrencyForCountry(job.budgetMax, country)}`
       }
+
+      // Batch-insert all notifications in one round-trip instead of N sequential inserts.
+      const notifValues = nearby.map((p) => ({
+        userId: p.userId,
+        type:   "new_job_request" as const,
+        title:  `New ${category} job in ${city}`,
+        body:   `A customer needs ${category} help in ${city}${budgetText}. They are ${formatDistance((p.distanceMeters ?? 0) / 1000, p.country || country)} from you — be one of the first to bid!`,
+        link:   "/provider/jobs",
+      }))
+
+      if (notifValues.length > 0) {
+        await db.insert(notifications).values(notifValues)
+      }
+
+      // Pusher is non-critical — fire all in parallel, ignore failures.
+      await Promise.all(nearby.map((p) =>
+        pusherServer
+          .trigger(`private-provider-${p.id}`, "new-job", {
+            jobPostId, title: job.title, city, categoryName: category,
+          })
+          .catch(() => undefined)
+      ))
     })
 
     // Schedule expiry in 72 hours
@@ -116,18 +130,18 @@ export const onJobExpired = inngest.createFunction(
       })
     })
 
-    // Notify each rejected bidder
+    // Notify each rejected bidder — single batch insert
     if (rejectedProviderUserIds.length > 0) {
       await step.run("notify-bidders", async () => {
-        for (const userId of rejectedProviderUserIds) {
-          await db.insert(notifications).values({
+        await db.insert(notifications).values(
+          rejectedProviderUserIds.map((userId) => ({
             userId,
-            type: "booking_cancelled",
+            type: "booking_cancelled" as const,
             title: "Job post expired",
             body: "A job you bid on has expired without a decision. Keep an eye out for new jobs!",
             link: "/provider/jobs",
-          })
-        }
+          }))
+        )
       })
     }
 
