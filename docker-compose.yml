@@ -10,9 +10,25 @@ services:
     volumes:
       - nginx-ssl:/etc/nginx/ssl  # cert is auto-generated on first run, persists across rebuilds
     depends_on:
-      - app
+      app:
+        condition: service_started
     networks:
       - dorix-net
+
+  migrator:
+    build:
+      context: .
+      target: migrator          # dedicated migration stage — runs once and exits
+    env_file:
+      - .env.local
+    depends_on:
+      pgbouncer:
+        condition: service_started
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - dorix-net
+    restart: "no"               # never restart — if migrations fail, fix and redeploy
 
   app:
     build:
@@ -31,7 +47,10 @@ services:
     env_file:
       - .env.local
     depends_on:
-      - pgbouncer
+      migrator:
+        condition: service_completed_successfully   # app only starts after migrations pass
+      pgbouncer:
+        condition: service_started
     networks:
       - dorix-net
     deploy:

@@ -32,7 +32,18 @@ ENV NEXT_TELEMETRY_DISABLED=1 \
 
 RUN npm run build
 
-# ── Stage 3: runner ──────────────────────────────────────────────────────────
+# ── Stage 3: migrator ────────────────────────────────────────────────────────
+# Tiny image that runs drizzle migrations once before the app containers start.
+FROM node:20-alpine AS migrator
+WORKDIR /app
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY drizzle/migrations ./drizzle/migrations
+COPY scripts/migrate.mjs ./scripts/migrate.mjs
+
+CMD ["node", "scripts/migrate.mjs"]
+
+# ── Stage 4: runner ──────────────────────────────────────────────────────────
 # Minimal runtime image — only the standalone output + static assets
 FROM node:20-alpine AS runner
 WORKDIR /app
@@ -51,6 +62,9 @@ COPY --from=builder /app/public ./public
 # Standalone server + prerendered pages
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Migration files — needed by instrumentation.ts on first boot
+COPY --from=builder --chown=nextjs:nodejs /app/drizzle/migrations ./drizzle/migrations
 
 USER nextjs
 
