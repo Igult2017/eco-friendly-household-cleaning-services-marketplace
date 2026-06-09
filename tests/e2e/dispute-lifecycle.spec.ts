@@ -1,10 +1,9 @@
 import { test, expect } from "@playwright/test"
-import { signIn, signOut, TEST_CUSTOMER, TEST_ADMIN } from "./helpers/auth"
+import { signIn, signOut, TEST_CUSTOMER, TEST_ADMIN, TEST_PROVIDER } from "./helpers/auth"
 
 test.describe("Dispute lifecycle", () => {
-  test("dispute creation endpoint requires authentication", async ({ page }) => {
-    const ctx = await page.request.newContext()
-    const res = await ctx.post("/api/bookings/fake-id/dispute", {
+  test("dispute creation endpoint requires authentication", async ({ request }) => {
+    const res = await request.post("/api/bookings/fake-id/dispute", {
       data: { reason: "Service not delivered", description: "Provider did not show up." },
     })
     expect(res.status()).toBe(401)
@@ -44,16 +43,14 @@ test.describe("Dispute lifecycle", () => {
     expect(res.status()).toBe(403)
   })
 
-  test("GDPR delete endpoint revokes access and returns success", async ({ page }) => {
+  test("GDPR delete endpoint revokes access and returns success", async ({ request }) => {
     // Only test that the endpoint is auth-protected — we don't want to delete test accounts
-    const ctx = await page.request.newContext()
-    const res = await ctx.post("/api/gdpr/delete")
+    const res = await request.post("/api/gdpr/delete")
     expect(res.status()).toBe(401)
   })
 
-  test("GDPR export requires authentication", async ({ page }) => {
-    const ctx = await page.request.newContext()
-    const res = await ctx.get("/api/gdpr/export")
+  test("GDPR export requires authentication", async ({ request }) => {
+    const res = await request.get("/api/gdpr/export")
     expect(res.status()).toBe(401)
   })
 

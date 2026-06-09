@@ -2,7 +2,8 @@ import { describe, it, expect } from "vitest"
 
 const ALLOWED_CONTENT_TYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf"]
 const ALLOWED_FOLDERS = ["completions", "certifications", "avatars", "disputes"]
-const R2_BASE = "https://pub.r2.dev"
+// Mirror actual production code — env var may be empty string, so TypeScript must see it as string not a literal
+const R2_BASE: string = process.env.R2_PUBLIC_URL ?? ""
 
 // Mirrors the validation logic in /api/upload/presigned/route.ts
 function validateUpload(contentType: string, folder: string, url: string) {

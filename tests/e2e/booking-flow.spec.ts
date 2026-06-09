@@ -50,10 +50,9 @@ test.describe("Booking flow", () => {
     expect(Array.isArray(body.providers)).toBe(true)
   })
 
-  test("payment intent API rejects unauthenticated requests", async ({ page }) => {
-    // Make request without auth session
-    const ctx = await page.request.newContext()
-    const res = await ctx.post("/api/payments/intent", {
+  test("payment intent API rejects unauthenticated requests", async ({ request }) => {
+    // request fixture is a fresh context with no browser cookies — always unauthenticated
+    const res = await request.post("/api/payments/intent", {
       data: { providerId: "fake", serviceId: "fake", scheduledAt: new Date().toISOString(), durationMinutes: 60, serviceAddress: { line1: "Test", city: "Berlin", postalCode: "10115", country: "DE" } },
     })
     expect(res.status()).toBe(401)
@@ -86,9 +85,8 @@ test.describe("Booking flow", () => {
 })
 
 test.describe("Booking cancellation policy", () => {
-  test("cancel API rejects unauthenticated requests", async ({ page }) => {
-    const ctx = await page.request.newContext()
-    const res = await ctx.post("/api/bookings/fake-id/cancel", { data: { reason: "test" } })
+  test("cancel API rejects unauthenticated requests", async ({ request }) => {
+    const res = await request.post("/api/bookings/fake-id/cancel", { data: { reason: "test" } })
     expect(res.status()).toBe(401)
   })
 
