@@ -3,7 +3,7 @@ import { db } from "@/lib/db"
 import { jobPosts } from "@/lib/db/schema"
 import { inArray, desc, gte } from "drizzle-orm"
 
-export const revalidate = 60 // ISR: refresh every 60s
+export const dynamic = "force-dynamic"
 
 export async function GET() {
   // Include assigned + expired so UI can show "Not Available" / "Expired" badges
