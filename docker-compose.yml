@@ -1,26 +1,10 @@
 services:
-  nginx:
-    build:
-      context: ./nginx          # uses nginx/Dockerfile
-    container_name: dorix-nginx
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - nginx-ssl:/etc/nginx/ssl  # cert is auto-generated on first run, persists across rebuilds
-    depends_on:
-      app:
-        condition: service_started
-    networks:
-      - dorix-net
-
   migrator:
     build:
       context: .
-      target: migrator          # dedicated migration stage — runs once and exits
+      target: migrator
     env_file:
-      - .env.local
+      - .env
     depends_on:
       pgbouncer:
         condition: service_started
@@ -28,7 +12,7 @@ services:
       - "host.docker.internal:host-gateway"
     networks:
       - dorix-net
-    restart: "no"               # never restart — if migrations fail, fix and redeploy
+    restart: "no"
 
   app:
     build:
@@ -45,29 +29,23 @@ services:
     image: dorix-app:latest
     restart: unless-stopped
     expose:
-      - "3000"                             # internal only — Nginx is the public entry point
+      - "3000"           # Coolify/Traefik routes to this port — no host binding needed
     env_file:
-      - .env.local
+      - .env
     depends_on:
       migrator:
-        condition: service_completed_successfully   # app only starts after migrations pass
+        condition: service_completed_successfully
       pgbouncer:
         condition: service_started
     networks:
       - dorix-net
-    deploy:
-      replicas: 6                          # one per CPU core (leave 2 for Nginx + PgBouncer)
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
 
   umami:
     image: ghcr.io/umami-software/umami:postgresql-latest
     container_name: dorix-umami
     restart: unless-stopped
-    ports:
-      - "3001:3000"                        # browser-accessible for tracking script + first-time admin login
+    expose:
+      - "3000"           # Coolify routes this to analytics.yourdomain.com
     environment:
       DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD}@umami-db:5432/umami
       APP_SECRET: ${UMAMI_APP_SECRET}
@@ -110,7 +88,7 @@ services:
       PGBOUNCER_MAX_CLIENT_CONN: 1000
       PGBOUNCER_DEFAULT_POOL_SIZE: 25
     expose:
-      - "6432"                             # internal only — app connects via service name
+      - "6432"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
@@ -121,5 +99,4 @@ networks:
     driver: bridge
 
 volumes:
-  nginx-ssl:      # persists the auto-generated origin cert across container rebuilds
-  umami-db-data:  # Umami analytics database — kept across container rebuilds
+  umami-db-data:
