@@ -25,7 +25,15 @@ type Booking = {
   service: { name: string } | null
 }
 
-export function DashboardBookings({ upcoming, past }: { upcoming: Booking[]; past: Booking[] }) {
+export function DashboardBookings({
+  upcoming,
+  past,
+  reviewedBookingIds = [],
+}: {
+  upcoming: Booking[]
+  past: Booking[]
+  reviewedBookingIds?: string[]
+}) {
   const rows = [...upcoming, ...past].slice(0, 6)
 
   return (
@@ -76,8 +84,8 @@ export function DashboardBookings({ upcoming, past }: { upcoming: Booking[]; pas
         </div>
       )}
 
-      {past.some(b => b.status === "completed") && (() => {
-        const done = past.find(b => b.status === "completed")
+      {(() => {
+        const done = past.find(b => b.status === "completed" && !reviewedBookingIds.includes(b.id))
         return done ? (
           <div className="border-t border-[#F4FAF6] px-5 py-3">
             <Link
@@ -89,6 +97,7 @@ export function DashboardBookings({ upcoming, past }: { upcoming: Booking[]; pas
           </div>
         ) : null
       })()}
+
     </div>
   )
 }

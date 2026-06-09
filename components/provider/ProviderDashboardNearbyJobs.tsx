@@ -38,7 +38,7 @@ export function ProviderDashboardNearbyJobs({
         <p className="text-sm text-[#6B7280] mb-4">
           Add your address to your profile so we can show you jobs near you.
         </p>
-        <Link href="/profile">
+        <Link href="/provider/profile">
           <Button size="sm" className="bg-[#2D7A5F] hover:bg-[#235f49] text-white">
             Update profile
           </Button>
@@ -93,7 +93,7 @@ export function ProviderDashboardNearbyJobs({
               </div>
               <div className="flex flex-col items-end gap-2 flex-shrink-0">
                 <BudgetLabel min={job.budgetMin} max={job.budgetMax} />
-                <Link href={`/provider/jobs`}>
+                <Link href={`/provider/jobs?job=${job.id}`}>
                   <Button size="sm" variant="outline" className="border-[#2D7A5F] text-[#2D7A5F] hover:bg-[#F4FAF6] text-xs h-7">
                     Bid now
                   </Button>

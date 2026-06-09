@@ -48,7 +48,7 @@ export function ProviderDashboardNotifications({ notifications }: { notification
             </span>
           )}
         </h2>
-        <Link href="/notifications" className="text-xs text-[#2D7A5F] hover:underline">View all →</Link>
+        <Link href="/provider/notifications" className="text-xs text-[#2D7A5F] hover:underline">View all →</Link>
       </div>
       <div className="divide-y divide-[#F0F4F8]">
         {notifications.map((n) => {

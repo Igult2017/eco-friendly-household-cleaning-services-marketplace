@@ -158,7 +158,7 @@ export default async function ProviderDashboardPage() {
   ).length
 
   return (
-    <div className="min-h-screen bg-[#F4FAF6] py-8 px-4">
+    <div className="min-h-screen bg-[#F4FAF6]">
       <div className="max-w-5xl mx-auto space-y-8">
 
         {/* Header */}

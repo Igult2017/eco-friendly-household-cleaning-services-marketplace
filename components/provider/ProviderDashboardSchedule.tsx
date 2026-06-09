@@ -63,7 +63,7 @@ export function ProviderDashboardSchedule({ bookings }: { bookings: Booking[] })
               <div className="flex flex-col items-end gap-2 flex-shrink-0">
                 <Badge className={cn("text-xs", cfg.cls)}>{cfg.label}</Badge>
                 <p className="text-sm font-bold text-[#2D7A5F]">{formatCurrency(b.providerPayout)}</p>
-                <Link href={`/bookings/${b.id}/complete`}>
+                <Link href={`/provider/bookings/${b.id}/complete`}>
                   <Button size="sm" className="bg-[#2D7A5F] hover:bg-[#235f49] text-white text-xs h-7">
                     Mark done
                   </Button>

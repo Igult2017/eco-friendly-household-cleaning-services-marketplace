@@ -9,7 +9,7 @@ export default async function CustomerLayout({ children }: { children: React.Rea
   const user = await currentUser()
   if (!user) redirect("/sign-in")
   const role = user.publicMetadata?.role as string | undefined
-  if (role && role !== "customer") redirect("/onboarding")
+  if (!role || role !== "customer") redirect("/")
 
   return (
     <div className="min-h-screen bg-[#F4FAF6]">

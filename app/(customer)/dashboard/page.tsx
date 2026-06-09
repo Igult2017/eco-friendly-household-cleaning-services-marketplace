@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic"
 import { auth, currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
-import { bookings, jobPosts, payments, notifications } from "@/lib/db/schema"
+import { bookings, jobPosts, payments, notifications, reviews } from "@/lib/db/schema"
 import { eq, desc } from "drizzle-orm"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -20,7 +20,7 @@ export default async function CustomerDashboardPage() {
   const uid = userId as string
   const user = await currentUser()
 
-  const [allBookings, recentJobs, recentPayments, recentNotifs] = await Promise.all([
+  const [allBookings, recentJobs, recentPayments, recentNotifs, reviewedRows] = await Promise.all([
     db.query.bookings.findMany({
       where: (b) => eq(b.customerId, uid),
       with: {
@@ -53,8 +53,14 @@ export default async function CustomerDashboardPage() {
       orderBy: [desc(notifications.createdAt)],
       limit: 6,
     }).catch(() => [] as never[]),
+
+    db.select({ bookingId: reviews.bookingId })
+      .from(reviews)
+      .where(eq(reviews.customerId, uid))
+      .catch(() => [] as never[]),
   ])
 
+  const reviewedBookingIds = reviewedRows.map(r => r.bookingId)
   const upcoming       = allBookings.filter(b => ["payment_authorized", "confirmed", "in_progress", "pending_capture"].includes(b.status))
   const past           = allBookings.filter(b => ["completed", "cancelled", "disputed", "refunded"].includes(b.status)).slice(0, 4)
   const pendingPayment = allBookings.filter(b => b.status === "pending_payment")
@@ -69,7 +75,7 @@ export default async function CustomerDashboardPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#F4FAF6] py-8 px-4">
+    <div className="min-h-screen bg-[#F4FAF6]">
       <div className="max-w-5xl mx-auto space-y-6">
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -101,7 +107,7 @@ export default async function CustomerDashboardPage() {
         <DashboardActions pendingBookings={pendingPayment} jobsWithBids={jobsWithBids} />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <DashboardBookings upcoming={upcoming} past={past} />
+          <DashboardBookings upcoming={upcoming} past={past} reviewedBookingIds={reviewedBookingIds} />
           <DashboardJobs jobs={recentJobs} />
         </div>
 
