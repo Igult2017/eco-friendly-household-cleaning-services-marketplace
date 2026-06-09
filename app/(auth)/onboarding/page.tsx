@@ -38,7 +38,9 @@ export default function OnboardingPage() {
         body: JSON.stringify({ role: selected }),
       })
       if (!res.ok) throw new Error("Failed to set role")
-      router.push(selected === "provider" ? "/onboarding/provider" : "/dashboard")
+      // Use full navigation so Clerk re-fetches a fresh JWT with the new role claim.
+      // router.push() reuses the cached token, causing a redirect loop in middleware.
+      window.location.href = selected === "provider" ? "/onboarding/provider" : "/onboarding/customer"
     } catch {
       setLoading(false)
     }

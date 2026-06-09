@@ -52,7 +52,7 @@ export default clerkMiddleware(async (auth, req) => {
   if (isOnboardingRoute(req)) return NextResponse.next()
 
   // Redirect users who haven't completed onboarding
-  if (!role && !isOnboardingRoute(req)) {
+  if (!role) {
     return NextResponse.redirect(new URL("/onboarding", req.url))
   }
 

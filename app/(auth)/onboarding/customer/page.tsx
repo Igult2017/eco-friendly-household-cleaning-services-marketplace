@@ -1,14 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { CheckCircle } from "lucide-react"
 
 export default function CustomerOnboardingPage() {
-  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [phone, setPhone] = useState("")
   const [gdprConsent, setGdprConsent] = useState(false)
@@ -23,7 +21,8 @@ export default function CustomerOnboardingPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone }),
       })
-      router.push("/dashboard")
+      // Full navigation forces Clerk to issue a fresh JWT — avoids middleware seeing stale role=undefined
+      window.location.href = "/dashboard"
     } finally {
       setLoading(false)
     }

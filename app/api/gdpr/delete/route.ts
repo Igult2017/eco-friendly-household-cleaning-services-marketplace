@@ -11,6 +11,7 @@ export async function POST() {
   // Soft delete — hard delete only after 30 days per data retention policy
   await db.update(users).set({
     deletedAt: new Date(),
+    isActive: false,
     email: `deleted_${userId}@dorix.invalid`,
     firstName: "Deleted",
     lastName: "User",

@@ -26,7 +26,9 @@ export const notificationTypeEnum = pgEnum("notification_type", [
   "dispute_resolved",
   "review_received",
   "provider_approved",
+  "provider_rejected",
   "provider_suspended",
+  "provider_unsuspended",
   "identity_verified",
 ])
 

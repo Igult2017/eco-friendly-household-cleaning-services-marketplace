@@ -52,9 +52,16 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   await db.update(providers).set(updates).where(eq(providers.id, providerId))
 
+  const notifType = {
+    approve: "provider_approved",
+    reject: "provider_rejected",
+    suspend: "provider_suspended",
+    unsuspend: "provider_unsuspended",
+  }[action] as "provider_approved" | "provider_rejected" | "provider_suspended" | "provider_unsuspended"
+
   await db.insert(notifications).values({
     userId: provider.userId,
-    type: action === "approve" ? "provider_approved" : "provider_suspended",
+    type: notifType,
     title: notifTitle,
     body: notifBody,
     link: "/dashboard",
