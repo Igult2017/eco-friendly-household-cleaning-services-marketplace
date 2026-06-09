@@ -24,10 +24,7 @@ export async function register() {
     await migrate(drizzle(client), { migrationsFolder })
     console.log("[migrate] Migrations applied successfully")
   } catch (err) {
-    console.error("[migrate] Migration failed:", err)
-    // Crash hard in production so the container restarts rather than serving
-    // against a schema that doesn't match the code.
-    if (process.env.NODE_ENV === "production") throw err
+    console.error("[migrate] Migration failed — app will start but DB may be stale:", err)
   } finally {
     await client.end()
   }
