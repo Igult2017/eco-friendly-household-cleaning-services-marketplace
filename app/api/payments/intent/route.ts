@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { providers, providerServices, users, bids, jobPosts } from "@/lib/db/schema"
+import { providers, providerServices, users, bids, jobPosts, promoCodes } from "@/lib/db/schema"
 import { stripe, calculateBookingAmounts } from "@/lib/stripe/client"
 import { bookingRatelimit } from "@/lib/redis/client"
 import { paymentIntentSchema } from "@/lib/validations/booking"
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
   const parsed = paymentIntentSchema.safeParse(body)
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
-  const { providerId, serviceId, scheduledAt, carbonOffsetCents = 0, bidAmountCents } = parsed.data
+  const { providerId, serviceId, scheduledAt, carbonOffsetCents = 0, bidAmountCents, promoCodeId, promoCodeDiscountCents } = parsed.data
 
   const [[provider], [service]] = await Promise.all([
     db
@@ -58,7 +58,33 @@ export async function POST(req: Request) {
   }
 
   const subtotal = bidAmountCents ?? service.basePrice
-  const amounts = calculateBookingAmounts(subtotal)
+
+  // Resolve promo discount: prefer the pre-computed promoCodeDiscountCents from the client,
+  // but verify the promo code exists and is active when promoCodeId is supplied.
+  let resolvedDiscountCents = 0
+  if (promoCodeId) {
+    const [promo] = await db
+      .select({ discountType: promoCodes.discountType, discountValue: promoCodes.discountValue, maxDiscountCents: promoCodes.maxDiscountCents, isActive: promoCodes.isActive, expiresAt: promoCodes.expiresAt, minOrderCents: promoCodes.minOrderCents, maxUses: promoCodes.maxUses, usedCount: promoCodes.usedCount })
+      .from(promoCodes)
+      .where(eq(promoCodes.id, promoCodeId))
+    if (!promo || !promo.isActive) return NextResponse.json({ error: "Promo code not valid" }, { status: 422 })
+    if (promo.expiresAt && promo.expiresAt < new Date()) return NextResponse.json({ error: "Promo code expired" }, { status: 422 })
+    if (promo.maxUses !== null && promo.usedCount >= promo.maxUses) return NextResponse.json({ error: "Promo code usage limit reached" }, { status: 422 })
+    if (subtotal < promo.minOrderCents) return NextResponse.json({ error: "Order total too low for this promo code" }, { status: 422 })
+
+    if (promoCodeDiscountCents !== undefined) {
+      resolvedDiscountCents = promoCodeDiscountCents
+    } else if (promo.discountType === "fixed") {
+      resolvedDiscountCents = promo.discountValue
+    } else {
+      // percentage
+      const raw = Math.round(subtotal * promo.discountValue / 100)
+      resolvedDiscountCents = promo.maxDiscountCents !== null ? Math.min(raw, promo.maxDiscountCents) : raw
+    }
+  }
+
+  const subtotalAfterDiscount = Math.max(0, subtotal - resolvedDiscountCents)
+  const amounts = calculateBookingAmounts(subtotalAfterDiscount)
   const totalWithOffset = amounts.totalCharged + carbonOffsetCents
 
   let stripeCustomerId: string | undefined
@@ -81,6 +107,8 @@ export async function POST(req: Request) {
     carbon_offset_cents: String(carbonOffsetCents),
   }
   if (bidAmountCents !== undefined) metadata.bid_amount_cents = String(bidAmountCents)
+  if (promoCodeId) metadata.promo_code_id = promoCodeId
+  if (resolvedDiscountCents > 0) metadata.promo_code_discount_cents = String(resolvedDiscountCents)
 
   const intent = await stripe.paymentIntents.create(
     {

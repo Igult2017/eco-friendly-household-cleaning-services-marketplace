@@ -15,6 +15,7 @@ import {
   ChevronRight,
   Bug,
   BarChart3,
+  Tag,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -29,6 +30,7 @@ const nav = [
   { label: "Eco", href: "/admin/eco", icon: Leaf },
   { label: "Errors", href: "/admin/errors", icon: Bug },
   { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
+  { label: "Promo Codes", href: "/admin/promo-codes", icon: Tag },
 ]
 
 export function AdminSidebar() {

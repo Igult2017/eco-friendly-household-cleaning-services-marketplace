@@ -1,10 +1,10 @@
 import { db } from "@/lib/db"
-import { bookings, payments, providers, providerServices, carbonOffsetContributions } from "@/lib/db/schema"
+import { bookings, payments, providers, providerServices, carbonOffsetContributions, promoCodes, promoCodeUsages } from "@/lib/db/schema"
 import type { NewBooking } from "@/lib/db/schema/bookings"
 import { stripe, PLATFORM_FEE_PERCENT, calculateBookingAmounts } from "@/lib/stripe/client"
 import { inngest } from "@/lib/inngest/client"
 import { redis } from "@/lib/redis/client"
-import { eq, and } from "drizzle-orm"
+import { eq, and, sql } from "drizzle-orm"
 import type { CreateBookingInput } from "@/lib/validations/booking"
 
 async function generateBookingNumber(): Promise<string> {
@@ -57,7 +57,12 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
   // Bug 5: use bid amount from PI metadata when present (bid-flow bookings)
   const bidAmountCents = intent.metadata.bid_amount_cents ? parseInt(intent.metadata.bid_amount_cents, 10) : null
   const subtotal = bidAmountCents ?? service!.basePrice
-  const amounts = calculateBookingAmounts(subtotal)
+
+  // Promo code from PI metadata
+  const promoCodeId = intent.metadata.promo_code_id ?? null
+  const discountCents = intent.metadata.promo_code_discount_cents ? parseInt(intent.metadata.promo_code_discount_cents, 10) : 0
+  const subtotalAfterDiscount = Math.max(0, subtotal - discountCents)
+  const amounts = calculateBookingAmounts(subtotalAfterDiscount)
   const bookingNumber = await generateBookingNumber()
   const scheduledEnd = new Date(new Date(scheduledAt).getTime() + durationMinutes * 60_000)
 
@@ -75,12 +80,14 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     specialInstructions: specialInstructions ?? null,
     ecoOptionsSelected: ecoOptions,
     platformFeePercent: PLATFORM_FEE_PERCENT,
-    subtotalAmount: subtotal,
+    subtotalAmount: subtotalAfterDiscount,
     platformFeeAmount: amounts.platformFee,
     totalAmount: amounts.totalCharged,
     providerPayout: amounts.providerPayout,
     carbonOffsetAmount: carbonOffsetCents,
     completionPhotoUrls: [],
+    promoCodeId: promoCodeId ?? undefined,
+    discountAmount: discountCents,
   }
 
   const result = await db.transaction(async (tx) => {
@@ -109,6 +116,33 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
         providerId,
         amount: carbonOffsetCents,
         offsetProvider: "DORIX Green Fund",
+      })
+    }
+
+    if (promoCodeId && discountCents > 0) {
+      // Atomic conditional increment: only succeeds when the code is still within maxUses.
+      // If two concurrent requests race past the earlier read-then-compare check, at most one
+      // will get a row back here; the other will find 0 rows and the transaction aborts.
+      const [updatedPromo] = await tx
+        .update(promoCodes)
+        .set({ usedCount: sql`used_count + 1` })
+        .where(
+          and(
+            eq(promoCodes.id, promoCodeId),
+            sql`(max_uses IS NULL OR used_count < max_uses)`,
+          )
+        )
+        .returning({ id: promoCodes.id })
+
+      if (!updatedPromo) {
+        throw new BookingError(422, "Promo code usage limit reached")
+      }
+
+      await tx.insert(promoCodeUsages).values({
+        promoCodeId,
+        userId,
+        bookingId: newBooking.id,
+        discountAmount: discountCents,
       })
     }
 

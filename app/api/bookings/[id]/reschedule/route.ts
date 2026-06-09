@@ -1,0 +1,132 @@
+import { auth } from "@clerk/nextjs/server"
+import { NextResponse } from "next/server"
+import { z } from "zod"
+import { db } from "@/lib/db"
+import { bookings, notifications, providerAvailability, providers } from "@/lib/db/schema"
+import { eq, and, inArray, gte, lte, ne } from "drizzle-orm"
+
+const rescheduleSchema = z.object({
+  newScheduledAt: z.string().datetime(),
+  newScheduledEndAt: z.string().datetime(),
+})
+
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { userId } = await auth()
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+  const { id: bookingId } = await params
+
+  const [booking] = await db
+    .select({
+      id: bookings.id,
+      customerId: bookings.customerId,
+      providerId: bookings.providerId,
+      status: bookings.status,
+      scheduledAt: bookings.scheduledAt,
+    })
+    .from(bookings)
+    .where(and(eq(bookings.id, bookingId), eq(bookings.customerId, userId)))
+
+  if (!booking) return NextResponse.json({ error: "Booking not found" }, { status: 404 })
+
+  if (!["payment_authorized", "confirmed"].includes(booking.status)) {
+    return NextResponse.json({ error: "Booking cannot be rescheduled in its current status" }, { status: 422 })
+  }
+
+  const body = await req.json()
+  const parsed = rescheduleSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid request body", details: parsed.error.flatten() }, { status: 422 })
+  }
+
+  const { newScheduledAt, newScheduledEndAt } = parsed.data
+  const newStart = new Date(newScheduledAt)
+  const newEnd = new Date(newScheduledEndAt)
+
+  if (newStart <= new Date()) {
+    return NextResponse.json({ error: "New scheduled time must be in the future" }, { status: 422 })
+  }
+
+  // Check provider availability for the day of week
+  const dayOfWeek = newStart.getDay()
+  const [availability] = await db
+    .select({ id: providerAvailability.id, startTime: providerAvailability.startTime, endTime: providerAvailability.endTime })
+    .from(providerAvailability)
+    .where(
+      and(
+        eq(providerAvailability.providerId, booking.providerId),
+        eq(providerAvailability.dayOfWeek, dayOfWeek),
+        eq(providerAvailability.isActive, true)
+      )
+    )
+
+  if (!availability) {
+    return NextResponse.json({ error: "Provider is not available on that day" }, { status: 409 })
+  }
+
+  // Check for conflicting bookings at the new time (exclude this booking)
+  const activeStatuses = ["payment_authorized", "confirmed", "in_progress", "pending_capture"] as const
+  const conflictingBookings = await db
+    .select({ id: bookings.id })
+    .from(bookings)
+    .where(
+      and(
+        eq(bookings.providerId, booking.providerId),
+        inArray(bookings.status, [...activeStatuses]),
+        ne(bookings.id, bookingId),
+        lte(bookings.scheduledAt, newEnd),
+        gte(bookings.scheduledEndAt, newStart)
+      )
+    )
+
+  if (conflictingBookings.length > 0) {
+    return NextResponse.json({ error: "Provider not available at requested time" }, { status: 409 })
+  }
+
+  // Update the booking
+  await db
+    .update(bookings)
+    .set({
+      scheduledAt: newStart,
+      scheduledEndAt: newEnd,
+      updatedAt: new Date(),
+    })
+    .where(eq(bookings.id, bookingId))
+
+  // Fetch provider's Clerk userId for notification
+  const [provider] = await db
+    .select({ userId: providers.userId })
+    .from(providers)
+    .where(eq(providers.id, booking.providerId))
+
+  const formattedDate = newStart.toLocaleDateString("en-GB", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  })
+
+  // Notify provider
+  if (provider) {
+    await db.insert(notifications).values({
+      userId: provider.userId,
+      type: "booking_confirmed",
+      title: "Booking rescheduled",
+      body: `A booking has been rescheduled to ${formattedDate}.`,
+      link: "/provider/bookings",
+    })
+  }
+
+  // Notify customer
+  await db.insert(notifications).values({
+    userId: booking.customerId,
+    type: "booking_confirmed",
+    title: "Booking rescheduled",
+    body: "Your booking has been rescheduled.",
+    link: `/bookings/${bookingId}`,
+  })
+
+  return NextResponse.json({ success: true, scheduledAt: newScheduledAt })
+}

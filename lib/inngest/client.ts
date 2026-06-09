@@ -38,4 +38,7 @@ export type DorixEvents = {
   "provider/identity-verified": {
     data: { providerId: string }
   }
+  "recurring/schedule.created": {
+    data: { scheduleId: string }
+  }
 }

@@ -6,7 +6,7 @@ import { eq, and } from "drizzle-orm"
 import Link from "next/link"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
 import { formatDate } from "@/lib/utils/formatDate"
-import { CalendarDays, MapPin, Leaf, Star, MessageSquareWarning, XCircle, CheckCircle2, Clock, AlertCircle } from "lucide-react"
+import { CalendarDays, MapPin, Leaf, Star, MessageSquareWarning, XCircle, CheckCircle2, Clock, AlertCircle, CalendarClock } from "lucide-react"
 
 export const dynamic = "force-dynamic"
 
@@ -67,6 +67,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
   const StatusIcon = cfg.icon
 
   const canCancel = ["payment_authorized", "confirmed"].includes(booking.status)
+  const canReschedule = ["payment_authorized", "confirmed"].includes(booking.status)
   const canDispute = booking.status === "completed"
   const canReview = booking.status === "completed"
 
@@ -168,7 +169,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
       </div>
 
       {/* Actions */}
-      {(canCancel || canDispute || canReview) && (
+      {(canCancel || canReschedule || canDispute || canReview) && (
         <div className="flex flex-col sm:flex-row gap-3">
           {canReview && (
             <Link
@@ -184,6 +185,14 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
               className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-orange-300 text-orange-600 hover:bg-orange-50 text-sm font-medium px-4 py-3 transition-colors"
             >
               <MessageSquareWarning size={15} /> Open Dispute
+            </Link>
+          )}
+          {canReschedule && (
+            <Link
+              href={`/bookings/${booking.id}/reschedule`}
+              className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-[#2D7A5F]/30 text-[#2D7A5F] hover:bg-[#F4FAF6] text-sm font-medium px-4 py-3 transition-colors"
+            >
+              <CalendarClock size={15} /> Reschedule
             </Link>
           )}
           {canCancel && (

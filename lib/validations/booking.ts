@@ -33,6 +33,8 @@ export const paymentIntentSchema = z.object({
   durationMinutes: z.number().int().min(30).max(480),
   carbonOffsetCents: z.union([z.literal(0), z.literal(200)]).optional().default(0),
   bidAmountCents: z.number().int().positive().optional(), // overrides service.basePrice for bid-flow bookings
+  promoCodeId: z.string().uuid().optional(),
+  promoCodeDiscountCents: z.number().int().min(0).optional(),
 })
 
 export type CreateBookingInput = z.infer<typeof createBookingSchema>

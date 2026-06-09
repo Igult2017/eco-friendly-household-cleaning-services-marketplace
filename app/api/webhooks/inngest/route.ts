@@ -6,6 +6,7 @@ import { bookingReminders } from "@/lib/inngest/functions/reminders"
 import { weeklyPayoutRun, processProviderPayout } from "@/lib/inngest/functions/payouts"
 import { onJobPosted, onJobExpired } from "@/lib/inngest/functions/jobs"
 import { onDisputeOpened } from "@/lib/inngest/functions/disputes"
+import { onRecurringScheduleCreated, recurringBookingCron } from "@/lib/inngest/functions/recurring"
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -18,5 +19,7 @@ export const { GET, POST, PUT } = serve({
     onJobPosted,
     onJobExpired,
     onDisputeOpened,
+    onRecurringScheduleCreated,
+    recurringBookingCron,
   ],
 })

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { CheckCircle2, Upload, Loader2, X, Camera } from "lucide-react"
+import { BeforePhotoUpload } from "@/components/booking/BeforePhotoUpload"
 
 export default function MarkCompletePage() {
   const router = useRouter()
@@ -98,6 +99,8 @@ export default function MarkCompletePage() {
       <div className="max-w-lg mx-auto">
         <h1 className="font-serif text-2xl font-bold text-[#2B3441] mb-2">Mark Job Complete</h1>
         <p className="text-[#6B7280] mb-8">Upload photos of the completed work to confirm the booking.</p>
+
+        <BeforePhotoUpload bookingId={bookingId} />
 
         <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-4">
           <Label className="text-sm font-semibold text-[#2B3441] mb-3 flex items-center gap-2">

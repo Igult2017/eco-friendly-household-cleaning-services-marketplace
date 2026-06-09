@@ -8,8 +8,9 @@ import { useEffect, useState } from "react"
 import { loadStripe } from "@stripe/stripe-js"
 import { Elements } from "@stripe/react-stripe-js"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
-import { Loader2, CheckCircle2, Leaf } from "lucide-react"
+import { Loader2, CheckCircle2, Leaf, Tag, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
@@ -37,6 +38,12 @@ export default function BookStep5Page() {
   const [serviceId, setServiceId] = useState<string | null>(null)
   const [success, setSuccess] = useState<{ bookingId: string; bookingNumber: string } | null>(null)
   const [addCarbonOffset, setAddCarbonOffset] = useState(false)
+  const [promoCode, setPromoCode] = useState("")
+  const [promoCodeId, setPromoCodeId] = useState<string | null>(null)
+  const [promoDiscountCents, setPromoDiscountCents] = useState(0)
+  const [promoLabel, setPromoLabel] = useState<string | null>(null)
+  const [promoLoading, setPromoLoading] = useState(false)
+  const [promoError, setPromoError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!store.selectedProviderId || !store.scheduledAt || !store.address || !store.categoryId) {
@@ -116,6 +123,36 @@ export default function BookStep5Page() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  async function applyPromoCode() {
+    if (!promoCode.trim()) return
+    setPromoLoading(true)
+    setPromoError(null)
+    try {
+      const res = await fetch("/api/promo-codes/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: promoCode.trim(), subtotalCents: amounts?.subtotalCents ?? 0 }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setPromoError(data.error ?? "Invalid promo code"); return }
+      setPromoCodeId(data.promoCodeId)
+      setPromoDiscountCents(data.discountCents)
+      setPromoLabel(data.label ?? promoCode.trim().toUpperCase())
+    } catch {
+      setPromoError("Failed to apply promo code. Please try again.")
+    } finally {
+      setPromoLoading(false)
+    }
+  }
+
+  function removePromoCode() {
+    setPromoCode("")
+    setPromoCodeId(null)
+    setPromoDiscountCents(0)
+    setPromoLabel(null)
+    setPromoError(null)
+  }
+
   async function proceedToPayment() {
     setLoading(true)
     setError(null)
@@ -136,6 +173,7 @@ export default function BookStep5Page() {
           carbonOffsetCents: addCarbonOffset ? CARBON_OFFSET_CENTS : 0,
           // Bug 5: pass bid amount so PI uses the accepted price, not the list price
           ...(store.bidAmountCents !== null ? { bidAmountCents: store.bidAmountCents } : {}),
+          ...(promoCodeId ? { promoCodeId, promoCodeDiscountCents: promoDiscountCents } : {}),
         }),
       })
       const data = await res.json()
@@ -152,9 +190,16 @@ export default function BookStep5Page() {
     }
   }
 
-  const totalWithOffset = amounts
-    ? amounts.totalCharged + (addCarbonOffset ? CARBON_OFFSET_CENTS : 0)
-    : null
+  // When amounts come from the PI response they already incorporate the promo discount.
+  // In preview mode (before PI is created) we subtract the discount ourselves.
+  const previewSubtotal = amounts ? Math.max(0, amounts.subtotalCents - (promoCodeId ? promoDiscountCents : 0)) : null
+  const previewPlatformFee = previewSubtotal !== null ? Math.round(previewSubtotal * 0.15) : null
+  const previewTotal = previewSubtotal !== null && previewPlatformFee !== null ? previewSubtotal + previewPlatformFee : null
+  const totalWithOffset = previewTotal !== null
+    ? previewTotal + (addCarbonOffset ? CARBON_OFFSET_CENTS : 0)
+    : amounts
+      ? amounts.totalCharged + (addCarbonOffset ? CARBON_OFFSET_CENTS : 0)
+      : null
 
   if (success) {
     return (
@@ -200,6 +245,48 @@ export default function BookStep5Page() {
                 <span>Service fee (15%)</span>
                 <span>{formatCurrency(amounts.platformFee)}</span>
               </div>
+
+              {/* Promo code input */}
+              {step === "summary" && (
+                <>
+                  <div className="border-t border-[#E5EBF0] my-2" />
+                  {promoCodeId ? (
+                    <div className="flex items-center justify-between rounded-xl bg-[#F4FAF6] border border-[#2D7A5F]/30 px-3 py-2.5">
+                      <div className="flex items-center gap-2">
+                        <Tag size={13} className="text-[#2D7A5F]" />
+                        <span className="text-[#2B3441] font-medium">{promoLabel}</span>
+                        <span className="text-xs text-[#2D7A5F]">applied</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#2D7A5F] font-semibold">-{formatCurrency(promoDiscountCents)}</span>
+                        <button onClick={removePromoCode} className="text-[#9CA3AF] hover:text-[#6B7280]" aria-label="Remove promo code">
+                          <X size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Promo code"
+                        value={promoCode}
+                        onChange={(e) => { setPromoCode(e.target.value); setPromoError(null) }}
+                        onKeyDown={(e) => e.key === "Enter" && applyPromoCode()}
+                        className="h-9 text-sm border-[#E5EBF0] focus-visible:ring-[#2D7A5F]"
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={applyPromoCode}
+                        disabled={promoLoading || !promoCode.trim()}
+                        className="h-9 px-4 border-[#2D7A5F] text-[#2D7A5F] hover:bg-[#F4FAF6] shrink-0"
+                      >
+                        {promoLoading ? <Loader2 size={14} className="animate-spin" /> : "Apply"}
+                      </Button>
+                    </div>
+                  )}
+                  {promoError && <p className="text-red-500 text-xs">{promoError}</p>}
+                </>
+              )}
 
               {/* Carbon offset toggle */}
               <div className="border-t border-[#E5EBF0] my-2" />

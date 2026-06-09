@@ -65,6 +65,9 @@ export const bookings = pgTable(
     providerPayout: integer("provider_payout").notNull(),   // provider receives this
     carbonOffsetAmount: integer("carbon_offset_amount").notNull().default(0),
     completionPhotoUrls: jsonb("completion_photos").$type<string[]>().default([]),
+    beforePhotoUrls: jsonb("before_photo_urls").$type<string[]>().default([]),
+    promoCodeId: uuid("promo_code_id"),  // no FK here to avoid circular dep — enforced in API
+    discountAmount: integer("discount_amount").notNull().default(0),
     cancellationReason: text("cancellation_reason"),
     cancelledAt: timestamp("cancelled_at", { withTimezone: true }),
     cancelledBy: text("cancelled_by"),
