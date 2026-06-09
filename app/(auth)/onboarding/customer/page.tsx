@@ -62,9 +62,9 @@ export default function CustomerOnboardingPage() {
           />
           <span className="text-xs text-[#6B7280] leading-relaxed">
             I agree to DORIX&apos;s{" "}
-            <a href="/terms" target="_blank" className="text-[#2D7A5F] underline">Terms of Service</a>{" "}
+            <a href="/legal/terms" target="_blank" className="text-[#2D7A5F] underline">Terms of Service</a>{" "}
             and{" "}
-            <a href="/privacy" target="_blank" className="text-[#2D7A5F] underline">Privacy Policy</a>.
+            <a href="/legal/privacy" target="_blank" className="text-[#2D7A5F] underline">Privacy Policy</a>.
             I consent to the processing of my personal data in accordance with GDPR.
           </span>
         </label>

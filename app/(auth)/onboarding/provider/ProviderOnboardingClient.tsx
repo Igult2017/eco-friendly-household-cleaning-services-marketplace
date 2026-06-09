@@ -47,7 +47,8 @@ export function ProviderOnboardingClient() {
   }
 
   function handleFinish() {
-    router.push("/provider/dashboard")
+    // Full navigation so Clerk issues a fresh JWT with the updated role claim.
+    window.location.href = "/provider/dashboard"
   }
 
   return (

@@ -46,7 +46,19 @@ const clerkHandler = clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(signInUrl)
   }
 
-  const role = (sessionClaims?.metadata as { role?: string } | undefined)?.role
+  let role = (sessionClaims?.metadata as { role?: string } | undefined)?.role
+
+  // JWT hasn't refreshed yet (60s TTL) — read role from the cookie set during onboarding.
+  if (!role) {
+    const roleCookie = req.cookies.get("dorix_role")?.value
+    if (roleCookie) {
+      const [cookieUserId, cookieRole] = roleCookie.split(":")
+      const VALID_ROLES = ["customer", "provider", "admin"]
+      if (cookieUserId === userId && VALID_ROLES.includes(cookieRole)) {
+        role = cookieRole
+      }
+    }
+  }
 
   if (isOnboardingRoute(req)) return NextResponse.next()
 

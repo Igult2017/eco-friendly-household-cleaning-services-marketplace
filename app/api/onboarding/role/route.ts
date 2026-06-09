@@ -1,5 +1,8 @@
 import { auth, clerkClient } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
+
+const ROLE_COOKIE = "dorix_role"
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 7 // 7 days
 import { db } from "@/lib/db"
 import { users } from "@/lib/db/schema"
 import { roleSelectionSchema } from "@/lib/validations/provider"
@@ -41,5 +44,15 @@ export async function POST(req: Request) {
       set: { role, updatedAt: new Date() },
     })
 
-  return NextResponse.json({ success: true, role })
+  // Set an HttpOnly cookie so the middleware can read the role immediately,
+  // before Clerk refreshes the JWT (which has a ~60s TTL).
+  const res = NextResponse.json({ success: true, role })
+  res.cookies.set(ROLE_COOKIE, `${userId}:${role}`, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: COOKIE_MAX_AGE,
+    path: "/",
+  })
+  return res
 }
