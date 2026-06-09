@@ -99,7 +99,8 @@ export default function BookStep5Page() {
       const service = svcData.services?.[0]
       if (!service) { setError("This provider doesn't offer that service."); return }
       setServiceId(service.id)
-      const subtotalCents: number = service.basePrice
+      // Bug 5: bid-flow bookings use the accepted bid amount, not the service list price
+      const subtotalCents: number = store.bidAmountCents ?? service.basePrice
       const platformFee = Math.round(subtotalCents * 0.15)
       const totalCharged = subtotalCents + platformFee
       setAmounts({ subtotalCents, platformFee, totalCharged })
@@ -133,6 +134,8 @@ export default function BookStep5Page() {
           scheduledAt: store.scheduledAt!,
           durationMinutes: store.durationMinutes,
           carbonOffsetCents: addCarbonOffset ? CARBON_OFFSET_CENTS : 0,
+          // Bug 5: pass bid amount so PI uses the accepted price, not the list price
+          ...(store.bidAmountCents !== null ? { bidAmountCents: store.bidAmountCents } : {}),
         }),
       })
       const data = await res.json()

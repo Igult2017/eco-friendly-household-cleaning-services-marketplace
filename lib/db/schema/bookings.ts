@@ -20,6 +20,7 @@ export const bookingStatusEnum = pgEnum("booking_status", [
   "payment_authorized",
   "confirmed",
   "in_progress",
+  "pending_capture",  // work done by provider, awaiting Inngest capture
   "completed",
   "cancelled",
   "disputed",

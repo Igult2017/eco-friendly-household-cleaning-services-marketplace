@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { bids, jobPosts, providers, notifications } from "@/lib/db/schema"
+import { bids, jobPosts, providers, notifications, serviceCategories } from "@/lib/db/schema"
 import { eq, and, ne } from "drizzle-orm"
 
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string; bidId: string }> }) {
@@ -11,7 +11,16 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
   const { id: jobPostId, bidId } = await params
 
   const [job] = await db
-    .select({ id: jobPosts.id, customerId: jobPosts.customerId, status: jobPosts.status })
+    .select({
+      id: jobPosts.id,
+      customerId: jobPosts.customerId,
+      status: jobPosts.status,
+      categoryId: jobPosts.categoryId,
+      serviceAddress: jobPosts.serviceAddress,
+      serviceLatitude: jobPosts.serviceLatitude,
+      serviceLongitude: jobPosts.serviceLongitude,
+      desiredDate: jobPosts.desiredDate,
+    })
     .from(jobPosts)
     .where(and(eq(jobPosts.id, jobPostId), eq(jobPosts.customerId, userId)))
 
@@ -19,14 +28,21 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
   if (!["open", "bidding"].includes(job.status)) return NextResponse.json({ error: "Job is not accepting bid acceptance" }, { status: 422 })
 
   const [bid] = await db
-    .select({ id: bids.id, providerId: bids.providerId, amount: bids.amount, status: bids.status })
+    .select({
+      id: bids.id,
+      providerId: bids.providerId,
+      amount: bids.amount,
+      status: bids.status,
+      proposedDate: bids.proposedDate,
+      proposedTimeStart: bids.proposedTimeStart,
+      estimatedDurationMinutes: bids.estimatedDurationMinutes,
+    })
     .from(bids)
     .where(and(eq(bids.id, bidId), eq(bids.jobPostId, jobPostId), eq(bids.status, "pending")))
 
   if (!bid) return NextResponse.json({ error: "Bid not found or not pending" }, { status: 404 })
 
-  // Wrap the three state mutations in a transaction with a row lock on the job
-  // to prevent TOCTOU: two concurrent accept calls that both pass the status check above.
+  // TOCTOU: row-lock the job row inside a transaction before mutating state
   await db.transaction(async (tx) => {
     const [locked] = await tx
       .select({ status: jobPosts.status })
@@ -40,27 +56,59 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
     }
 
     await tx.update(bids).set({ status: "accepted" }).where(eq(bids.id, bidId))
-    await tx.update(bids).set({ status: "rejected" })
+    await tx
+      .update(bids)
+      .set({ status: "rejected" })
       .where(and(eq(bids.jobPostId, jobPostId), ne(bids.id, bidId), eq(bids.status, "pending")))
     await tx.update(jobPosts).set({ status: "assigned", acceptedBidId: bidId }).where(eq(jobPosts.id, jobPostId))
   })
 
-  // Notify winning provider (outside transaction — non-critical)
-  const [provider] = await db.select({ userId: providers.userId }).from(providers).where(eq(providers.id, bid.providerId))
+  // Look up category slug for bid-flow store hydration
+  let categorySlug: string | null = null
+  let categoryName: string | null = null
+  if (job.categoryId) {
+    const [cat] = await db
+      .select({ slug: serviceCategories.slug, name: serviceCategories.name })
+      .from(serviceCategories)
+      .where(eq(serviceCategories.id, job.categoryId))
+    categorySlug = cat?.slug ?? null
+    categoryName = cat?.name ?? null
+  }
+
+  // Bug 10: link to provider bookings list, not the customer job post
+  const [provider] = await db
+    .select({ userId: providers.userId })
+    .from(providers)
+    .where(eq(providers.id, bid.providerId))
   if (provider) {
     await db.insert(notifications).values({
       userId: provider.userId,
       type: "bid_accepted",
       title: "Your bid was accepted!",
-      body: `A customer accepted your bid of €${(bid.amount / 100).toFixed(2)}. Proceed to book.`,
-      link: `/jobs/${jobPostId}`,
+      body: `A customer accepted your bid of €${(bid.amount / 100).toFixed(2)}. A booking is being prepared.`,
+      link: "/provider/bookings",
     })
   }
 
+  // Build ISO scheduledAt from bid's proposed date/time for the bid-flow booking wizard
+  const dateStr = bid.proposedDate ?? job.desiredDate
+  const timeStr = bid.proposedTimeStart ? bid.proposedTimeStart.substring(0, 5) : "10:00"
+  const scheduledAt = dateStr ? `${dateStr}T${timeStr}:00Z` : null
+
   return NextResponse.json({
     success: true,
-    providerId: bid.providerId,
-    amount: bid.amount,
-    redirectTo: `/book?from=bid&jobId=${jobPostId}&providerId=${bid.providerId}&amount=${bid.amount}`,
+    redirectTo: "/book/confirm",
+    // bidFlow: all data needed to pre-populate the booking store without going through the wizard
+    bidFlow: {
+      providerId: bid.providerId,
+      categorySlug,
+      categoryName,
+      serviceAddress: job.serviceAddress,
+      serviceLatitude: job.serviceLatitude,
+      serviceLongitude: job.serviceLongitude,
+      scheduledAt,
+      durationMinutes: bid.estimatedDurationMinutes ?? 120,
+      bidAmountCents: bid.amount,
+    },
   })
 }

@@ -3,7 +3,7 @@ import { db } from "@/lib/db"
 import { payments, payouts, bookings, providers, users } from "@/lib/db/schema"
 import { stripe } from "@/lib/stripe/client"
 import { resend, FROM } from "@/lib/resend/client"
-import { eq, and, gte, lte, inArray } from "drizzle-orm"
+import { eq, and, gte, lte, inArray, isNull } from "drizzle-orm"
 
 export const weeklyPayoutRun = inngest.createFunction(
   { id: "weekly-payout-run", retries: 3, triggers: [{ cron: "0 2 * * 1" }] },
@@ -18,11 +18,17 @@ export const weeklyPayoutRun = inngest.createFunction(
     const periodEndStr = periodEnd.toISOString().split("T")[0]
 
     const capturedPayments = await step.run("find-captured-payments", async () => {
+      // Bug 3: filter payoutId IS NULL — prevents re-processing payments already settled
       return db
         .select({ id: payments.id, bookingId: payments.bookingId, capturedAmount: payments.capturedAmount })
         .from(payments)
         .innerJoin(bookings, eq(payments.bookingId, bookings.id))
-        .where(and(eq(payments.status, "captured"), gte(payments.capturedAt, periodStart), lte(payments.capturedAt, periodEnd)))
+        .where(and(
+          eq(payments.status, "captured"),
+          gte(payments.capturedAt, periodStart),
+          lte(payments.capturedAt, periodEnd),
+          isNull(payments.payoutId),
+        ))
     })
 
     if (capturedPayments.length === 0) return { processed: 0 }
@@ -76,25 +82,27 @@ export const processProviderPayout = inngest.createFunction(
     const periodEndDate = new Date(periodEnd)
 
     const providerBookingRows = await step.run("fetch-bookings", async () => {
+      // Bug 3: also filter payoutId IS NULL here in case new payments were added since weeklyPayoutRun
       return db
-        .select({ id: bookings.id, providerPayout: bookings.providerPayout, refundedAmount: payments.refundedAmount })
+        .select({ id: bookings.id, providerPayout: bookings.providerPayout, refundedAmount: payments.refundedAmount, paymentId: payments.id })
         .from(bookings)
         .innerJoin(payments, eq(bookings.id, payments.bookingId))
         .where(and(
           eq(bookings.providerId, providerId),
-          eq(bookings.status, "completed"),       // exclude cancelled/disputed/refunded bookings
+          eq(bookings.status, "completed"),
           eq(payments.status, "captured"),
           gte(payments.capturedAt, periodStartDate),
           lte(payments.capturedAt, periodEndDate),
+          isNull(payments.payoutId),
         ))
     })
 
     if (providerBookingRows.length === 0) return { skipped: true, reason: "no_bookings" }
 
-    const rows = providerBookingRows as { id: string; providerPayout: number; refundedAmount: number }[]
-    // Subtract any refunded amounts so providers aren't overpaid on disputed bookings
+    const rows = providerBookingRows as { id: string; providerPayout: number; refundedAmount: number; paymentId: string }[]
     const totalPayout = rows.reduce((sum: number, b) => sum + Math.max(0, b.providerPayout - (b.refundedAmount ?? 0)), 0)
     const bookingIdList = rows.map((b: { id: string }) => b.id)
+    const paymentIdList = rows.map((b: { paymentId: string }) => b.paymentId)
 
     const transfer = await step.run("stripe-transfer", async () => {
       return stripe.transfers.create(
@@ -111,12 +119,33 @@ export const processProviderPayout = inngest.createFunction(
     const [payout] = await step.run("record-payout", async () => {
       return db
         .insert(payouts)
-        .values({ providerId, stripeTransferId: transfer.id, status: "paid", amount: totalPayout, currency: "eur", periodStart, periodEnd, bookingIds: bookingIdList, processedAt: new Date() })
+        .values({
+          providerId,
+          stripeTransferId: transfer.id,
+          status: "paid",
+          amount: totalPayout,
+          currency: "eur",
+          periodStart,
+          periodEnd,
+          bookingIds: bookingIdList,
+          processedAt: new Date(),
+        })
         .returning({ id: payouts.id })
     })
 
+    // Bug 3: mark these payments as settled — prevents double-payout on Inngest retry
+    await step.run("mark-payments-settled", async () => {
+      await db
+        .update(payments)
+        .set({ payoutId: payout.id })
+        .where(inArray(payments.id, paymentIdList))
+    })
+
     await step.run("email-provider", async () => {
-      const [user] = await db.select({ email: users.email, firstName: users.firstName }).from(users).where(eq(users.id, provider.userId))
+      const [user] = await db
+        .select({ email: users.email, firstName: users.firstName })
+        .from(users)
+        .where(eq(users.id, provider.userId))
       if (!user?.email) return
       await resend.emails.send({
         from: FROM,

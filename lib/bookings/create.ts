@@ -54,7 +54,10 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
   if (!service) await cancel(404, "Service not found")
   if (!provider?.isApproved || provider.isSuspended) await cancel(422, "Provider not available")
 
-  const amounts = calculateBookingAmounts(service!.basePrice)
+  // Bug 5: use bid amount from PI metadata when present (bid-flow bookings)
+  const bidAmountCents = intent.metadata.bid_amount_cents ? parseInt(intent.metadata.bid_amount_cents, 10) : null
+  const subtotal = bidAmountCents ?? service!.basePrice
+  const amounts = calculateBookingAmounts(subtotal)
   const bookingNumber = await generateBookingNumber()
   const scheduledEnd = new Date(new Date(scheduledAt).getTime() + durationMinutes * 60_000)
 
@@ -72,7 +75,7 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     specialInstructions: specialInstructions ?? null,
     ecoOptionsSelected: ecoOptions,
     platformFeePercent: PLATFORM_FEE_PERCENT,
-    subtotalAmount: amounts.subtotalCents,
+    subtotalAmount: subtotal,
     platformFeeAmount: amounts.platformFee,
     totalAmount: amounts.totalCharged,
     providerPayout: amounts.providerPayout,

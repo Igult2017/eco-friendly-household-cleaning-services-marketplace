@@ -24,6 +24,14 @@ export async function POST(req: Request) {
 
   const { bookingId, reason, description, evidenceUrls } = parsed.data
 
+  // Bug 6: only allow evidence files from our own R2 bucket — any external URL is an XSS vector
+  const r2Base = process.env.R2_PUBLIC_URL
+  if (evidenceUrls.length > 0) {
+    if (!r2Base) return NextResponse.json({ error: "File storage not configured" }, { status: 500 })
+    const invalid = evidenceUrls.filter((u) => !u.startsWith(r2Base))
+    if (invalid.length > 0) return NextResponse.json({ error: "Invalid evidence file URLs" }, { status: 400 })
+  }
+
   // Find booking — caller must be customer or the provider
   const [booking] = await db
     .select({ id: bookings.id, status: bookings.status, customerId: bookings.customerId, providerId: bookings.providerId })
@@ -39,7 +47,7 @@ export async function POST(req: Request) {
   }
   if (!isParty) return NextResponse.json({ error: "Not authorized" }, { status: 403 })
 
-  if (!["payment_authorized", "confirmed", "in_progress", "completed"].includes(booking.status)) {
+  if (!["payment_authorized", "confirmed", "in_progress", "pending_capture", "completed"].includes(booking.status)) {
     return NextResponse.json({ error: "Cannot open dispute for this booking" }, { status: 422 })
   }
 

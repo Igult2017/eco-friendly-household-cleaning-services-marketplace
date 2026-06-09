@@ -23,6 +23,7 @@ export const paymentStatusEnum = pgEnum("payment_status", [
   "partially_refunded",
   "failed",
   "disputed",
+  "cancelled",  // authorized intent cancelled before capture (card hold released)
 ])
 
 export const payoutStatusEnum = pgEnum("payout_status", [
@@ -54,6 +55,7 @@ export const payments = pgTable(
     failureMessage: text("failure_message"),
     metadata: jsonb("metadata").$type<Record<string, string>>(),
     idempotencyKey: varchar("idempotency_key", { length: 128 }),
+    payoutId: uuid("payout_id").references(() => payouts.id),  // set after payout to prevent double-payout
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
@@ -62,6 +64,7 @@ export const payments = pgTable(
     index("payments_booking_idx").on(t.bookingId),
     index("payments_customer_idx").on(t.customerId),
     index("payments_status_idx").on(t.status),
+    index("payments_payout_idx").on(t.payoutId),
   ]
 )
 

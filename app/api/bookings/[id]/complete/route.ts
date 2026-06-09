@@ -11,13 +11,17 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   const { id: bookingId } = await params
 
-  // Verify caller is the provider for this booking
+  // Bug 7: fail loudly if R2 is not configured — silent filtering would drop all photos
+  const R2_BASE = process.env.R2_PUBLIC_URL
+  if (!R2_BASE) return NextResponse.json({ error: "File storage not configured" }, { status: 500 })
+
+  // Bug 4: reject suspended providers — they must not be able to trigger payment capture
   const [provider] = await db
     .select({ id: providers.id })
     .from(providers)
-    .where(eq(providers.userId, userId))
+    .where(and(eq(providers.userId, userId), eq(providers.isSuspended, false)))
 
-  if (!provider) return NextResponse.json({ error: "Not a provider" }, { status: 403 })
+  if (!provider) return NextResponse.json({ error: "Not a provider or account suspended" }, { status: 403 })
 
   const [booking] = await db
     .select({ id: bookings.id, status: bookings.status, customerId: bookings.customerId, providerId: bookings.providerId })
@@ -33,18 +37,16 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const rawUrls: unknown[] = Array.isArray(body.photoUrls) ? body.photoUrls : []
 
   // Only accept URLs from our own R2 bucket to prevent stored XSS via external URLs
-  const R2_BASE = process.env.R2_PUBLIC_URL ?? ""
   const photoUrls = rawUrls.filter(
-    (u): u is string => typeof u === "string" && R2_BASE !== "" && u.startsWith(R2_BASE),
+    (u): u is string => typeof u === "string" && u.startsWith(R2_BASE),
   )
 
-  // Update booking with photos + status
+  // Bug 2: set to pending_capture, not completed — Inngest sets completed after capture succeeds
   await db
     .update(bookings)
-    .set({ status: "completed", completionPhotoUrls: photoUrls, actualEndAt: new Date() })
+    .set({ status: "pending_capture", completionPhotoUrls: photoUrls, actualEndAt: new Date() })
     .where(eq(bookings.id, bookingId))
 
-  // Fetch payment intent ID
   const [payment] = await db
     .select({ stripePaymentIntentId: payments.stripePaymentIntentId })
     .from(payments)
@@ -52,7 +54,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   if (!payment) return NextResponse.json({ error: "Payment record not found" }, { status: 500 })
 
-  // Fire Inngest to capture payment async
   await inngest.send({
     name: "booking/completed",
     data: {

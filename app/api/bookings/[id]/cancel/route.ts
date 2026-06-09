@@ -59,7 +59,14 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       })
     }
 
-    await db.update(payments).set({ status: refundAmount > 0 ? "refunded" : "captured" }).where(eq(payments.bookingId, bookingId))
+    // Bug 9: authorized payments that are cancelled never reach "captured" — use the correct status
+    let newPaymentStatus: "cancelled" | "refunded" | "captured" = "captured"
+    if (payment.status === "authorized") {
+      newPaymentStatus = "cancelled"  // card hold released, no charge
+    } else if (refundAmount > 0) {
+      newPaymentStatus = "refunded"
+    }
+    await db.update(payments).set({ status: newPaymentStatus }).where(eq(payments.bookingId, bookingId))
   }
 
   await db

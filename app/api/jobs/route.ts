@@ -5,7 +5,7 @@ import { jobPosts, providers, users } from "@/lib/db/schema"
 import type { NewJobPost } from "@/lib/db/schema/jobs"
 import { inngest } from "@/lib/inngest/client"
 import { jobRatelimit } from "@/lib/redis/client"
-import { eq, desc, and } from "drizzle-orm"
+import { eq, desc, and, inArray, sql } from "drizzle-orm"
 import { z } from "zod"
 
 const createJobSchema = z.object({
@@ -89,30 +89,31 @@ export async function GET(req: Request) {
 
     if (!provider?.latitude || !provider?.longitude) return NextResponse.json({ jobs: [] })
 
-    const allJobs = await db.query.jobPosts.findMany({
-      where: (jp: any, { inArray: inArrayFn }: any) => inArrayFn(jp.status, ["open", "bidding"]),
-      with: { category: { columns: { name: true, slug: true } }, bids: { columns: { id: true, status: true, providerId: true } } },
-      orderBy: [desc(jobPosts.createdAt)],
-      limit: 200,
-    })
-
+    // Bug 8: use PostGIS ST_DWithin to push the geo filter into SQL — eliminates the 200-row in-memory cap
     const providerLat = provider.latitude
     const providerLng = provider.longitude
-    const providerRadius = provider.serviceRadiusKm ?? 25
+    const radiusMeters = (provider.serviceRadiusKm ?? 25) * 1000
 
-    function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
-      const R = 6371
-      const dLat = (lat2 - lat1) * Math.PI / 180
-      const dLon = (lon2 - lon1) * Math.PI / 180
-      const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2
-      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-    }
+    // Step 1: get nearby job IDs ordered by distance via PostGIS (service_location added in migration 0001)
+    const nearbyRows = await db
+      .select({ id: jobPosts.id })
+      .from(jobPosts)
+      .where(and(
+        inArray(jobPosts.status, ["open", "bidding"]),
+        sql`service_location IS NOT NULL AND ST_DWithin(service_location::geography, ST_MakePoint(${providerLng}, ${providerLat})::geography, ${radiusMeters})`,
+      ))
+      .orderBy(sql`ST_Distance(service_location::geography, ST_MakePoint(${providerLng}, ${providerLat})::geography)`)
+      .limit(30)
 
-    const jobs = allJobs.filter((job: any) => {
-      if (!job.serviceLatitude || !job.serviceLongitude) return false
-      const dist = haversineKm(providerLat, providerLng, job.serviceLatitude, job.serviceLongitude)
-      return dist <= providerRadius || dist <= (job.radiusKm ?? 25)
-    }).slice(0, 30)
+    if (nearbyRows.length === 0) return NextResponse.json({ jobs: [] })
+
+    const nearbyIds = nearbyRows.map((r: { id: string }) => r.id)
+
+    // Step 2: fetch full job data with relations for the nearby IDs
+    const jobs = await db.query.jobPosts.findMany({
+      where: (jp: any, { inArray: inArrayFn }: any) => inArrayFn(jp.id, nearbyIds),
+      with: { category: { columns: { name: true, slug: true } }, bids: { columns: { id: true, status: true, providerId: true } } },
+    })
 
     return NextResponse.json({ jobs })
   }

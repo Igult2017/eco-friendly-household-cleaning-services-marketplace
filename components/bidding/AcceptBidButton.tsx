@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
+import { useBookingStore } from "@/stores/bookingStore"
 
 interface Props {
   jobId: string
@@ -12,6 +13,8 @@ interface Props {
 
 export function AcceptBidButton({ jobId, bidId }: Props) {
   const router = useRouter()
+  const setBidFlow = useBookingStore((s) => s.setBidFlow)
+  const reset = useBookingStore((s) => s.reset)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -22,7 +25,15 @@ export function AcceptBidButton({ jobId, bidId }: Props) {
       const res = await fetch(`/api/jobs/${jobId}/bids/${bidId}/accept`, { method: "POST" })
       const data = await res.json()
       if (!res.ok) { setError(data.error ?? "Failed to accept bid"); return }
-      if (data.redirectTo) router.push(data.redirectTo)
+
+      // Bug 5: pre-populate the booking store with bid data so the confirm page
+      // bypasses the wizard steps (category → location → provider → schedule)
+      if (data.bidFlow) {
+        reset()  // clear any previous wizard state
+        setBidFlow(data.bidFlow)
+      }
+
+      router.push(data.redirectTo ?? "/dashboard")
     } catch {
       setError("Something went wrong. Please try again.")
     } finally {

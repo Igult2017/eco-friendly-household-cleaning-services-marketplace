@@ -16,7 +16,20 @@ interface BookingDraft {
   specialInstructions: string
   ecoOptions: string[]
   carbonOffsetCents: number    // 0 | 200 — persisted so 3DS redirect restores it
+  bidAmountCents: number | null // non-null when booking originates from an accepted bid
   step: 1 | 2 | 3 | 4 | 5
+}
+
+interface BidFlowData {
+  providerId: string
+  categorySlug: string | null
+  categoryName: string | null
+  serviceAddress: Address
+  serviceLatitude: number
+  serviceLongitude: number
+  scheduledAt: string | null
+  durationMinutes: number
+  bidAmountCents: number
 }
 
 interface BookingStore extends BookingDraft {
@@ -27,6 +40,7 @@ interface BookingStore extends BookingDraft {
   setExtras: (instructions: string, ecoOptions: string[]) => void
   setCarbonOffset: (cents: number) => void
   setStep: (step: BookingDraft["step"]) => void
+  setBidFlow: (data: BidFlowData) => void  // pre-populate all wizard fields from accepted bid
   reset: () => void
 }
 
@@ -42,6 +56,7 @@ const initialState: BookingDraft = {
   specialInstructions: "",
   ecoOptions: [],
   carbonOffsetCents: 0,
+  bidAmountCents: null,
   step: 1,
 }
 
@@ -58,6 +73,19 @@ export const useBookingStore = create<BookingStore>()(
         set({ specialInstructions, ecoOptions, step: 5 }),
       setCarbonOffset: (carbonOffsetCents) => set({ carbonOffsetCents }),
       setStep: (step) => set({ step }),
+      setBidFlow: (data) =>
+        set({
+          selectedProviderId: data.providerId,
+          categoryId: data.categorySlug,
+          categoryName: data.categoryName,
+          address: data.serviceAddress,
+          latitude: data.serviceLatitude,
+          longitude: data.serviceLongitude,
+          scheduledAt: data.scheduledAt,
+          durationMinutes: data.durationMinutes,
+          bidAmountCents: data.bidAmountCents,
+          step: 5,
+        }),
       reset: () => set(initialState),
     }),
     {
