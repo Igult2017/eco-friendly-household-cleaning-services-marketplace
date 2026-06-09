@@ -24,10 +24,11 @@ export async function PATCH(req: Request) {
 
   const { id } = await req.json()
 
-  await db
-    .update(notifications)
-    .set({ isRead: true })
-    .where(and(eq(notifications.id, id), eq(notifications.userId, userId)))
+  if (id === "all") {
+    await db.update(notifications).set({ isRead: true }).where(eq(notifications.userId, userId))
+  } else {
+    await db.update(notifications).set({ isRead: true }).where(and(eq(notifications.id, id), eq(notifications.userId, userId)))
+  }
 
   return NextResponse.json({ success: true })
 }

@@ -25,6 +25,9 @@ const isCustomerOnlyRoute = createRouteMatcher([
   "/jobs(.*)",
   "/bookings/(.*)",
   "/payments(.*)",
+  "/notifications(.*)",
+  "/profile(.*)",
+  "/recurring(.*)",
 ])
 
 const isProviderRoute = createRouteMatcher(["/provider/(.*)"])
