@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { db } from "@/lib/db"
 import { errorLogs } from "@/lib/db/schema"
 import { desc, isNull, isNotNull, eq, and, count, gte } from "drizzle-orm"

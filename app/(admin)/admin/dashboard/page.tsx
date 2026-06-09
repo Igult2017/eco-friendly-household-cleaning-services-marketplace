@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { KpiCard } from "@/components/admin/KpiCard"
 import { StatusBadge } from "@/components/admin/StatusBadge"
 import { db } from "@/lib/db"

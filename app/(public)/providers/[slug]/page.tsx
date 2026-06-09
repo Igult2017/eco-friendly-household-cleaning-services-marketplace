@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { db } from "@/lib/db"
 import { providers, users, providerServices, reviews } from "@/lib/db/schema"
 import { eq, avg, count, desc } from "drizzle-orm"
