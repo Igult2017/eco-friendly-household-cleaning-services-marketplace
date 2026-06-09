@@ -57,10 +57,11 @@ export async function POST(req: Request) {
   const [newReview] = await db.insert(reviews).values(insertData).returning({ id: reviews.id })
 
   // Update provider average rating using SQL aggregates (avoids full table scan in JS)
+  // Bug 9: exclude flagged reviews — they're hidden from public view and must not skew the rating
   const [stats] = await db
     .select({ avg: avg(reviews.overallRating), total: count() })
     .from(reviews)
-    .where(eq(reviews.providerId, booking.providerId))
+    .where(and(eq(reviews.providerId, booking.providerId), eq(reviews.isFlagged, false)))
 
   await db
     .update(providers)

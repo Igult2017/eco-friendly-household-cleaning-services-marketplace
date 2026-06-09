@@ -18,7 +18,8 @@ export function useNotifications() {
     queryFn: async () => {
       const res = await fetch("/api/notifications")
       if (!res.ok) throw new Error("Failed to fetch notifications")
-      return res.json()
+      // Bug 1A: API returns { notifications: [...] }, not a bare array
+      return (await res.json()).notifications
     },
     refetchInterval: 30_000, // poll every 30s as fallback to Pusher
   })
@@ -34,7 +35,12 @@ export function useMarkAsRead() {
 
   return useMutation({
     mutationFn: async (notificationId: string) => {
-      await fetch(`/api/notifications/${notificationId}/read`, { method: "POST" })
+      // Bug 1B: route is PATCH /api/notifications with { id } — not POST /api/notifications/:id/read
+      await fetch("/api/notifications", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: notificationId }),
+      })
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] })

@@ -90,7 +90,8 @@ export const useBookingStore = create<BookingStore>()(
     }),
     {
       name: "booking-draft",
-      storage: createJSONStorage(() => sessionStorage),
+      // Bug 2: sessionStorage is cleared on cross-origin 3DS redirects; localStorage survives them
+      storage: createJSONStorage(() => localStorage),
     }
   )
 )

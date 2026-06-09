@@ -16,7 +16,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const { userId } = await auth()
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  // Verify admin role
   const [admin] = await db.select({ role: users.role }).from(users).where(eq(users.id, userId))
   if (!admin || admin.role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
@@ -27,7 +26,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   const { outcome, resolution, refundPercent } = parsed.data
 
-  const [dispute] = await db.select({ id: disputes.id, bookingId: disputes.bookingId, status: disputes.status }).from(disputes).where(eq(disputes.id, disputeId))
+  const [dispute] = await db
+    .select({ id: disputes.id, bookingId: disputes.bookingId, status: disputes.status })
+    .from(disputes)
+    .where(eq(disputes.id, disputeId))
   if (!dispute) return NextResponse.json({ error: "Dispute not found" }, { status: 404 })
   if (["resolved_customer", "resolved_provider", "closed"].includes(dispute.status)) {
     return NextResponse.json({ error: "Dispute already resolved" }, { status: 422 })
@@ -40,11 +42,17 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   const refundAmount = Math.round(booking.totalAmount * (refundPercent / 100))
 
-  // Issue Stripe refund if applicable
   if (refundPercent > 0) {
-    const [payment] = await db.select({ stripePaymentIntentId: payments.stripePaymentIntentId, status: payments.status }).from(payments).where(eq(payments.bookingId, dispute.bookingId))
+    const [payment] = await db
+      .select({ stripePaymentIntentId: payments.stripePaymentIntentId, status: payments.status })
+      .from(payments)
+      .where(eq(payments.bookingId, dispute.bookingId))
     if (payment?.status === "captured") {
-      await stripe.refunds.create({ payment_intent: payment.stripePaymentIntentId, amount: refundAmount })
+      // Bug 7: idempotency key prevents double-refund if server crashes after Stripe responds but before DB update
+      await stripe.refunds.create(
+        { payment_intent: payment.stripePaymentIntentId, amount: refundAmount },
+        { idempotencyKey: `refund-dispute-${disputeId}` },
+      )
     }
   }
 
@@ -56,9 +64,14 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     resolvedAt: new Date(),
   }).where(eq(disputes.id, disputeId))
 
-  await db.update(bookings).set({ status: refundPercent === 100 ? "refunded" : "completed" }).where(eq(bookings.id, dispute.bookingId))
+  // Bug 6: a partial refund means the service was disputed — "completed" is misleading for unserviced bookings.
+  // Use "cancelled" for any refund outcome (customer wins); only "completed" when provider wins outright (no refund).
+  const newBookingStatus =
+    refundPercent === 100 ? "refunded" :
+    refundPercent > 0    ? "cancelled" :
+                           "completed"
+  await db.update(bookings).set({ status: newBookingStatus }).where(eq(bookings.id, dispute.bookingId))
 
-  // Notify customer and provider
   await db.insert(notifications).values([
     { userId: booking.customerId, type: "dispute_resolved", title: "Your dispute has been resolved", body: resolution.slice(0, 120), link: `/bookings/${dispute.bookingId}` },
     { userId: booking.providerId, type: "dispute_resolved", title: "A dispute on your booking has been resolved", body: resolution.slice(0, 120), link: `/provider/bookings` },

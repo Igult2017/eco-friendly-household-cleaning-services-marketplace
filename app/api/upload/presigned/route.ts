@@ -22,6 +22,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "contentType and contentLength required" }, { status: 400 })
   }
 
+  // Bug 8: client-supplied contentLength has no cap — reject oversized uploads before issuing a presigned URL
+  const MAX_BYTES = 10 * 1024 * 1024 // 10 MB
+  if (typeof contentLength !== "number" || contentLength <= 0 || contentLength > MAX_BYTES) {
+    return NextResponse.json({ error: `contentLength must be between 1 and ${MAX_BYTES} bytes` }, { status: 400 })
+  }
+
   if (!ALLOWED_CONTENT_TYPES.includes(contentType)) {
     return NextResponse.json({ error: "Content type not allowed" }, { status: 400 })
   }
