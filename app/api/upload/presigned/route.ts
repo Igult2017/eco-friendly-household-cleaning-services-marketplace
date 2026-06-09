@@ -4,7 +4,7 @@ import { generatePresignedUploadUrl } from "@/lib/r2/client"
 import { uploadRatelimit } from "@/lib/redis/client"
 import { nanoid } from "nanoid"
 
-const ALLOWED_FOLDERS = ["completions", "certifications", "avatars", "disputes"] as const
+const ALLOWED_FOLDERS = ["completions", "certifications", "avatars", "disputes", "blog-images"] as const
 type AllowedFolder = typeof ALLOWED_FOLDERS[number]
 
 const ALLOWED_CONTENT_TYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf"]

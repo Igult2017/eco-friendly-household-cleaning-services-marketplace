@@ -10,6 +10,7 @@ import { reviews } from "./reviews"
 import { disputes, disputeMessages } from "./disputes"
 import { notifications } from "./notifications"
 import { ecoCertifications, providerIdentityVerifications } from "./eco"
+import { blogPosts, blogComments } from "./blog"
 
 export const usersRelations = relations(users, ({ many }) => ({
   bookings: many(bookings, { relationName: "customerBookings" }),
@@ -93,4 +94,14 @@ export const ecoCertificationsRelations = relations(ecoCertifications, ({ one })
 
 export const providerIdentityVerificationsRelations = relations(providerIdentityVerifications, ({ one }) => ({
   provider: one(providers, { fields: [providerIdentityVerifications.providerId], references: [providers.id] }),
+}))
+
+export const blogPostsRelations = relations(blogPosts, ({ one, many }) => ({
+  author: one(users, { fields: [blogPosts.authorId], references: [users.id] }),
+  comments: many(blogComments),
+}))
+
+export const blogCommentsRelations = relations(blogComments, ({ one }) => ({
+  post: one(blogPosts, { fields: [blogComments.postId], references: [blogPosts.id] }),
+  user: one(users, { fields: [blogComments.userId], references: [users.id] }),
 }))

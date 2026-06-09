@@ -16,6 +16,7 @@ const isPublicRoute = createRouteMatcher([
   "/api/webhooks/(.*)",
   "/api/geo/(.*)",
   "/api/jobs/public(.*)",
+  "/api/blog/(.*)",
 ])
 
 const isCustomerOnlyRoute = createRouteMatcher([
