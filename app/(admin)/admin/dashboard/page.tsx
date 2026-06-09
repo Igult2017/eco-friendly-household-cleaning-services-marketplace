@@ -26,6 +26,9 @@ async function getStats() {
     recentBookings,
     recentDisputes,
     bookingsByDay,
+    [cancellationRow],
+    topProviders,
+    allCustomerBookings,
   ] = await Promise.all([
     db.select({ total: sum(payments.capturedAmount) }).from(payments).where(eq(payments.status, "captured")),
     db.select({ count: count() }).from(bookings).where(sql`${bookings.status} IN ('confirmed','in_progress','payment_authorized')`),
@@ -40,7 +43,30 @@ async function getStats() {
     db.select({ day: sql<string>`DATE(${bookings.createdAt})`, cnt: count(), gmv: sum(bookings.totalAmount) })
       .from(bookings).where(gte(bookings.createdAt, thirtyDaysAgo))
       .groupBy(sql`DATE(${bookings.createdAt})`).orderBy(sql`DATE(${bookings.createdAt})`),
+    db.select({
+      total: count(),
+      cancelled: sql<number>`COUNT(*) FILTER (WHERE ${bookings.status} = 'cancelled')`,
+    }).from(bookings),
+    db.select({
+      businessName: providers.businessName,
+      totalEarnings: sum(bookings.providerPayout),
+    })
+      .from(bookings)
+      .innerJoin(providers, eq(bookings.providerId, providers.id))
+      .where(and(eq(bookings.status, "completed"), gte(bookings.createdAt, thirtyDaysAgo)))
+      .groupBy(providers.id, providers.businessName)
+      .orderBy(desc(sum(bookings.providerPayout)))
+      .limit(3),
+    db.select({ customerId: bookings.customerId, bookingCount: count() })
+      .from(bookings)
+      .groupBy(bookings.customerId),
   ])
+
+  const totalBookings = Number(cancellationRow?.total ?? 0)
+  const cancelledCount = Number(cancellationRow?.cancelled ?? 0)
+  const cancellationRate = totalBookings > 0 ? (cancelledCount / totalBookings) * 100 : 0
+  const repeats = allCustomerBookings.filter(c => Number(c.bookingCount) >= 2).length
+  const repeatCustomerRate = allCustomerBookings.length > 0 ? (repeats / allCustomerBookings.length) * 100 : 0
 
   return {
     gmv: Number(gmvRow?.total ?? 0),
@@ -52,6 +78,9 @@ async function getStats() {
     recentBookings,
     recentDisputes,
     bookingsByDay,
+    cancellationRate,
+    repeatCustomerRate,
+    topProviders: topProviders.map(p => ({ businessName: p.businessName ?? "—", totalEarnings: Number(p.totalEarnings ?? 0) })),
   }
 }
 
@@ -130,6 +159,28 @@ export default async function AdminDashboardPage() {
             {stats.recentDisputes.length === 0 && (
               <p className="px-6 py-8 text-sm text-center text-[#6B7280]">No open disputes</p>
             )}
+          </div>
+        </div>
+      </div>
+
+      {/* Business Health */}
+      <div>
+        <h2 className="font-serif text-xl font-bold text-[#2B3441] mb-4">Business Health</h2>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="rounded-xl border border-[#E5EBF0] bg-white p-5 shadow-sm">
+            <p className="text-xs uppercase tracking-wide text-[#6B7280]">Cancellation Rate</p>
+            <p className="mt-1 text-3xl font-bold text-[#2B3441]">{stats.cancellationRate.toFixed(1)}%</p>
+            <p className="mt-1 text-xs text-[#9CA3AF]">of all bookings</p>
+          </div>
+          <div className="rounded-xl border border-[#E5EBF0] bg-white p-5 shadow-sm">
+            <p className="text-xs uppercase tracking-wide text-[#6B7280]">Repeat Customers</p>
+            <p className="mt-1 text-3xl font-bold text-[#2B3441]">{stats.repeatCustomerRate.toFixed(0)}%</p>
+            <p className="mt-1 text-xs text-[#9CA3AF]">have booked 2+ times</p>
+          </div>
+          <div className="rounded-xl border border-[#E5EBF0] bg-white p-5 shadow-sm">
+            <p className="text-xs uppercase tracking-wide text-[#6B7280]">Top Provider (30d)</p>
+            <p className="mt-1 truncate text-xl font-bold text-[#2B3441]">{stats.topProviders[0]?.businessName ?? "—"}</p>
+            <p className="mt-1 text-xs text-[#9CA3AF]">€{((stats.topProviders[0]?.totalEarnings ?? 0) / 100).toFixed(0)} earned</p>
           </div>
         </div>
       </div>

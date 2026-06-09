@@ -1,6 +1,6 @@
 import { db } from "@/lib/db"
 import { providers, users } from "@/lib/db/schema"
-import { eq, desc } from "drizzle-orm"
+import { eq, desc, and, ilike, gte } from "drizzle-orm"
 import Link from "next/link"
 import type { Metadata } from "next"
 
@@ -18,7 +18,16 @@ const ecoLabels: Record<string, { label: string; color: string }> = {
   zero_impact: { label: "Zero Impact", color: "bg-[#2D7A5F]/10 text-[#2D7A5F]" },
 }
 
-async function getProviders(city?: string) {
+async function getProviders(filters: { city?: string; ecoLevel?: string; minRating?: string }) {
+  const conditions: Parameters<typeof and>[0][] = [eq(providers.isApproved, true)]
+
+  if (filters.city) conditions.push(ilike(providers.city, "%" + filters.city + "%"))
+  if (filters.ecoLevel) conditions.push(eq(providers.ecoLevel, filters.ecoLevel as "basic" | "certified" | "premium" | "zero_impact"))
+  if (filters.minRating) {
+    const r = parseFloat(filters.minRating)
+    if (!isNaN(r)) conditions.push(gte(providers.averageRating, r))
+  }
+
   const rows = await db
     .select({
       id: providers.id,
@@ -32,24 +41,54 @@ async function getProviders(city?: string) {
       totalReviews: providers.totalReviews,
       totalJobsCompleted: providers.totalJobsCompleted,
       profilePhotoUrl: providers.profilePhotoUrl,
+      verificationStatus: providers.verificationStatus,
     })
     .from(providers)
-    .where(eq(providers.isApproved, true))
+    .where(and(...conditions))
     .orderBy(desc(providers.averageRating))
     .limit(48)
 
   return rows
 }
 
-export default async function BrowsePage({ searchParams }: { searchParams: Promise<{ city?: string }> }) {
-  const { city } = await searchParams
-  const providerList = await getProviders(city)
+export default async function BrowsePage({ searchParams }: { searchParams: Promise<{ city?: string; ecoLevel?: string; minRating?: string }> }) {
+  const { city, ecoLevel, minRating } = await searchParams
+  const providerList = await getProviders({ city, ecoLevel, minRating })
 
   return (
     <div className="max-w-7xl mx-auto py-10 px-4">
+      <form method="GET" action="/browse" className="mb-6 flex flex-wrap items-end gap-3">
+        <div>
+          <label className="mb-1 block text-xs text-[#6B7280]">City</label>
+          <input name="city" defaultValue={city ?? ""} placeholder="Amsterdam" className="rounded-lg border border-[#E5EBF0] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs text-[#6B7280]">Eco Level</label>
+          <select name="ecoLevel" defaultValue={ecoLevel ?? ""} className="rounded-lg border border-[#E5EBF0] px-3 py-2 text-sm">
+            <option value="">Any</option>
+            <option value="basic">Eco Basic</option>
+            <option value="certified">Eco Certified</option>
+            <option value="premium">Eco Premium</option>
+            <option value="zero_impact">Zero Impact</option>
+          </select>
+        </div>
+        <div>
+          <label className="mb-1 block text-xs text-[#6B7280]">Min Rating</label>
+          <select name="minRating" defaultValue={minRating ?? ""} className="rounded-lg border border-[#E5EBF0] px-3 py-2 text-sm">
+            <option value="">Any</option>
+            <option value="3">3★ +</option>
+            <option value="4">4★ +</option>
+            <option value="4.5">4.5★ +</option>
+          </select>
+        </div>
+        <button type="submit" className="rounded-lg bg-[#2D7A5F] px-4 py-2 text-sm font-semibold text-white">Filter</button>
+        {(city || ecoLevel || minRating) && (
+          <a href="/browse" className="rounded-lg border border-[#E5EBF0] px-4 py-2 text-sm text-[#6B7280]">Clear</a>
+        )}
+      </form>
       <div className="mb-8">
         <h1 className="font-serif text-4xl font-bold text-[#2B3441]">Find Eco Cleaners</h1>
-        <p className="text-[#6B7280] mt-2">{providerList.length} vetted providers available</p>
+        <p className="text-[#6B7280] mt-2">{providerList.length} {(city || ecoLevel || minRating) ? "providers match your filters" : "vetted providers available"}</p>
       </div>
 
       {providerList.length === 0 ? (
@@ -80,6 +119,9 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
                   <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold mb-3 ${eco.color}`}>
                     🌿 {eco.label}
                   </span>
+                  {p.verificationStatus === "verified" && (
+                    <span className="ml-1 inline-flex rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">✓ Verified</span>
+                  )}
 
                   {p.bio && (
                     <p className="text-sm text-[#6B7280] line-clamp-2 leading-relaxed mb-3">{p.bio}</p>

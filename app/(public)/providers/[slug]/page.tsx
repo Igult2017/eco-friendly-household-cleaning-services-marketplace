@@ -33,6 +33,7 @@ export default async function ProviderProfilePage({ params }: { params: Promise<
       galleryUrls: providers.galleryUrls,
       isApproved: providers.isApproved,
       userId: providers.userId,
+      verificationStatus: providers.verificationStatus,
     })
     .from(providers)
     .where(eq(providers.slug, slug))
@@ -77,6 +78,11 @@ export default async function ProviderProfilePage({ params }: { params: Promise<
             <span className={`rounded-full px-3 py-1 text-xs font-bold capitalize ${ecoColors[provider.ecoLevel] ?? ecoColors.basic}`}>
               🌿 {provider.ecoLevel.replace("_", " ")}
             </span>
+            {provider.verificationStatus === "verified" && (
+              <span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
+                ✓ ID Verified
+              </span>
+            )}
           </div>
           <p className="text-sm text-[#6B7280] mt-1">{provider.city}, {provider.country}</p>
           <div className="flex items-center gap-4 mt-2">
