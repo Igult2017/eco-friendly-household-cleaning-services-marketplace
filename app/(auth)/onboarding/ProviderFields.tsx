@@ -74,7 +74,7 @@ export function ProviderFields({ values, onChange }: Props) {
       <div className="grid grid-cols-2 gap-3">
         <div>
           <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">Country *</Label>
-          <Select value={values.country} onValueChange={v => onChange("country", v)}>
+          <Select value={values.country} onValueChange={v => { if (v) onChange("country", v) }}>
             <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
             <SelectContent>
               {EU_COUNTRIES.map(([code, name]) => (
@@ -98,7 +98,7 @@ export function ProviderFields({ values, onChange }: Props) {
 
       <div>
         <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">Eco level *</Label>
-        <Select value={values.ecoLevel} onValueChange={v => onChange("ecoLevel", v)}>
+        <Select value={values.ecoLevel} onValueChange={v => { if (v) onChange("ecoLevel", v) }}>
           <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
           <SelectContent>
             {ECO_LEVELS.map(([value, label]) => (
