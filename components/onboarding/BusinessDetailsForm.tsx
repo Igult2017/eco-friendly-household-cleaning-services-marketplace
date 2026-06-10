@@ -95,7 +95,10 @@ export function BusinessDetailsForm({ onSubmit }: Props) {
           <Input
             type="number"
             value={form.serviceRadiusKm}
-            onChange={(e) => set("serviceRadiusKm", parseInt(e.target.value))}
+            onChange={(e) => {
+              const v = parseInt(e.target.value)
+              if (!isNaN(v)) set("serviceRadiusKm", v)
+            }}
             min={1}
             max={100}
           />
