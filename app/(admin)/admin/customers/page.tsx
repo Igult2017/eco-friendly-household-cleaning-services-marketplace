@@ -3,16 +3,8 @@ export const dynamic = "force-dynamic"
 import { db } from "@/lib/db"
 import { users } from "@/lib/db/schema"
 import { eq, desc } from "drizzle-orm"
-import { auth } from "@clerk/nextjs/server"
-import { redirect } from "next/navigation"
 
 export default async function AdminCustomersPage() {
-  const { userId } = await auth()
-  if (!userId) redirect("/sign-in")
-
-  const [me] = await db.select({ role: users.role }).from(users).where(eq(users.id, userId))
-  if (!me || me.role !== "admin") redirect("/")
-
   const customers = await db
     .select({ id: users.id, email: users.email, firstName: users.firstName, lastName: users.lastName, createdAt: users.createdAt, isActive: users.isActive, gdprConsentAt: users.gdprConsentAt })
     .from(users)

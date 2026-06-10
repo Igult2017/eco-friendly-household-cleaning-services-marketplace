@@ -4,15 +4,12 @@ import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { users } from "@/lib/db/schema"
-import { eq, desc } from "drizzle-orm"
+import { desc } from "drizzle-orm"
 import { UserRoleManager } from "@/components/admin/UserRoleManager"
 
 export default async function AdminUsersPage() {
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
-
-  const [me] = await db.select({ role: users.role }).from(users).where(eq(users.id, userId))
-  if (!me || me.role !== "admin") redirect("/")
 
   const allUsers = await db
     .select({
