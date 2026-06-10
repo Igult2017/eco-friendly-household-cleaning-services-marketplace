@@ -38,7 +38,7 @@ export default async function ProviderDashboardPage() {
     .from(providers)
     .where(eq(providers.userId, userId))
 
-  if (!provider) redirect("/onboarding/provider")
+  if (!provider) redirect("/provider/profile")
 
   const uid = userId as string
   const pid = provider.id

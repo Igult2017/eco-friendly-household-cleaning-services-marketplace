@@ -94,7 +94,7 @@ export async function POST(req: Request) {
               type: "provider_suspended",
               title: "Additional documents needed",
               body: "We need more information to verify your identity. Please resubmit your documents.",
-              link: "/onboarding/provider",
+              link: "/provider/profile",
             })
           }
         }

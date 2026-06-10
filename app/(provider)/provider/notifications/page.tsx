@@ -35,7 +35,7 @@ export default async function ProviderNotificationsPage() {
   if (!userId) redirect("/sign-in")
 
   const [provider] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, userId))
-  if (!provider) redirect("/onboarding/provider")
+  if (!provider) redirect("/provider/profile")
 
   const notifs = await db
     .select()

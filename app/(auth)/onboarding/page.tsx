@@ -1,6 +1,6 @@
 import { currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
-import { OnboardingRoleClient } from "./OnboardingRoleClient"
+import { OnboardingForm } from "./OnboardingForm"
 
 export default async function OnboardingPage() {
   const user = await currentUser()
@@ -10,5 +10,10 @@ export default async function OnboardingPage() {
   if (role === "customer") redirect("/dashboard")
   if (role === "admin") redirect("/admin/dashboard")
 
-  return <OnboardingRoleClient />
+  return (
+    <OnboardingForm
+      defaultFirstName={user?.firstName ?? ""}
+      defaultLastName={user?.lastName ?? ""}
+    />
+  )
 }

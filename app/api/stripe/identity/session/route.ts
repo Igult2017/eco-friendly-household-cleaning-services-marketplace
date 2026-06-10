@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     const session = await stripe.identity.verificationSessions.create({
       type: "document",
       options: { document: { require_matching_selfie: true } },
-      return_url: `${origin}/onboarding/provider?step=2&identity=complete`,
+      return_url: `${origin}/provider/profile?identity=complete`,
       metadata: { provider_id: provider.id },
     })
 

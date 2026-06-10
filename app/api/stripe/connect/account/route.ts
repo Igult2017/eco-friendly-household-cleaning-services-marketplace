@@ -39,9 +39,8 @@ export async function POST(req: Request) {
     const origin = req.headers.get("origin") ?? process.env.NEXT_PUBLIC_APP_URL!
     const link = await createAccountLink({
       accountId: stripeAccountId,
-      // Bug 3: step=4 doesn't exist in the onboarding page — use step=3 so provider lands on valid UI
-      refreshUrl: `${origin}/onboarding/provider?step=3&refresh=1`,
-      returnUrl: `${origin}/onboarding/provider?step=3&success=1`,
+      refreshUrl: `${origin}/provider/earnings?connect=refresh`,
+      returnUrl: `${origin}/provider/earnings?connect=success`,
     })
 
     return NextResponse.json({ url: link.url })
