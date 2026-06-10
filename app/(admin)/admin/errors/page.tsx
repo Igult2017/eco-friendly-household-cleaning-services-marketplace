@@ -3,8 +3,7 @@ export const dynamic = "force-dynamic"
 import { db } from "@/lib/db"
 import { errorLogs } from "@/lib/db/schema"
 import { desc, isNull, isNotNull, eq, and, count, gte } from "drizzle-orm"
-import { AlertTriangle, Bug, Clock, ShieldAlert, ChevronLeft, ChevronRight } from "lucide-react"
-import { KpiCard } from "@/components/admin/KpiCard"
+import { AlertTriangle, Bug, Clock, ShieldAlert, ChevronLeft, ChevronRight, Activity } from "lucide-react"
 import { ErrorResolveButton } from "@/components/admin/ErrorResolveButton"
 import Link from "next/link"
 
@@ -70,11 +69,62 @@ export default async function AdminErrorsPage({ searchParams }: { searchParams: 
         <p className="mt-1 text-sm text-[#6B7280]">Application errors captured in production</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <KpiCard label="Unresolved"   value={total}    sub="Needs attention"  icon={Bug}          accent="red"   />
-        <KpiCard label="Last 24 h"    value={last24h}  sub="New errors"       icon={Clock}        accent="amber" />
-        <KpiCard label="Critical"     value={critical} sub="Highest severity" icon={ShieldAlert}  accent="red"   />
-        <KpiCard label="Sentry"       value="Linked"   sub="View full traces" icon={AlertTriangle} accent="blue" />
+      <div className="grid grid-cols-2 gap-5 lg:grid-cols-4">
+        {/* Unresolved */}
+        <div className="rounded-2xl bg-white border border-gray-100 shadow-sm px-6 py-5 flex flex-col gap-4 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200">
+          <div className="flex items-center justify-between">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50"><Bug className="h-4 w-4 text-red-500" /></span>
+            <span className={`text-[10px] font-semibold uppercase tracking-widest px-2 py-0.5 rounded-full ${total > 0 ? "bg-red-50 text-red-500" : "bg-green-50 text-green-600"}`}>
+              {total > 0 ? "Action needed" : "All clear"}
+            </span>
+          </div>
+          <div>
+            <p className="text-[2rem] font-bold leading-none tracking-tight text-[#2B3441]">{total}</p>
+            <p className="mt-2 text-sm font-medium text-[#4B5563]">Unresolved</p>
+            <p className="mt-0.5 text-xs text-[#9CA3AF]">Open error logs</p>
+          </div>
+        </div>
+
+        {/* Last 24h */}
+        <div className="rounded-2xl bg-white border border-gray-100 shadow-sm px-6 py-5 flex flex-col gap-4 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200">
+          <div className="flex items-center justify-between">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50"><Clock className="h-4 w-4 text-amber-500" /></span>
+            <span className="flex items-center gap-1"><Activity className="h-3 w-3 text-amber-400" /><span className="text-xs text-[#9CA3AF]">24h</span></span>
+          </div>
+          <div>
+            <p className="text-[2rem] font-bold leading-none tracking-tight text-[#2B3441]">{last24h}</p>
+            <p className="mt-2 text-sm font-medium text-[#4B5563]">Last 24 hours</p>
+            <p className="mt-0.5 text-xs text-[#9CA3AF]">New errors</p>
+          </div>
+        </div>
+
+        {/* Critical */}
+        <div className={`rounded-2xl border shadow-sm px-6 py-5 flex flex-col gap-4 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200 ${critical > 0 ? "bg-red-50 border-red-200" : "bg-white border-gray-100"}`}>
+          <div className="flex items-center justify-between">
+            <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${critical > 0 ? "bg-red-100" : "bg-gray-50"}`}>
+              <ShieldAlert className={`h-4 w-4 ${critical > 0 ? "text-red-600" : "text-gray-400"}`} />
+            </span>
+            {critical > 0 && <span className="animate-pulse h-2 w-2 rounded-full bg-red-500" />}
+          </div>
+          <div>
+            <p className={`text-[2rem] font-bold leading-none tracking-tight ${critical > 0 ? "text-red-600" : "text-[#2B3441]"}`}>{critical}</p>
+            <p className="mt-2 text-sm font-medium text-[#4B5563]">Critical</p>
+            <p className="mt-0.5 text-xs text-[#9CA3AF]">Highest severity</p>
+          </div>
+        </div>
+
+        {/* Sentry */}
+        <div className="rounded-2xl bg-white border border-gray-100 shadow-sm px-6 py-5 flex flex-col gap-4 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200">
+          <div className="flex items-center justify-between">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50"><AlertTriangle className="h-4 w-4 text-indigo-500" /></span>
+            <span className="h-2 w-2 rounded-full bg-green-400" />
+          </div>
+          <div>
+            <p className="text-[2rem] font-bold leading-none tracking-tight text-[#2B3441]">Linked</p>
+            <p className="mt-2 text-sm font-medium text-[#4B5563]">Sentry</p>
+            <p className="mt-0.5 text-xs text-[#9CA3AF]">View full traces</p>
+          </div>
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">

@@ -97,20 +97,18 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* KPI Row */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-6">
-        <div className="xl:col-span-2">
-          <KpiCard
-            label="Total GMV"
-            value={`€${(stats.gmv / 100).toLocaleString("de-DE", { minimumFractionDigits: 2 })}`}
-            sub="All captured payments"
-            icon={TrendingUp}
-            accent="green"
-          />
-        </div>
-        <KpiCard label="Active Bookings" value={stats.activeBookings} icon={CalendarCheck} accent="blue" />
-        <KpiCard label="Open Disputes" value={stats.openDisputes} sub="Needs attention" icon={MessageSquareWarning} accent="red" />
-        <KpiCard label="Pending Providers" value={stats.pendingProviders} sub="Awaiting approval" icon={UserCheck} accent="amber" />
-        <KpiCard label="Total Customers" value={stats.totalCustomers} icon={Users} accent="blue" />
+      <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 xl:grid-cols-5">
+        <KpiCard
+          label="Total GMV"
+          value={`€${(stats.gmv / 100).toLocaleString("de-DE", { minimumFractionDigits: 2 })}`}
+          sub="All captured payments"
+          icon={TrendingUp}
+          accent="green"
+        />
+        <KpiCard label="Active Bookings"   value={stats.activeBookings}   icon={CalendarCheck}        accent="blue"  />
+        <KpiCard label="Open Disputes"     value={stats.openDisputes}     sub="Needs attention"       icon={MessageSquareWarning} accent="red"   />
+        <KpiCard label="Pending Providers" value={stats.pendingProviders} sub="Awaiting approval"     icon={UserCheck}            accent="amber" />
+        <KpiCard label="Total Customers"   value={stats.totalCustomers}   icon={Users}                accent="blue"  />
       </div>
 
       {/* Two-column tables */}
