@@ -1,5 +1,7 @@
 import { SignIn } from "@clerk/nextjs"
 import Image from "next/image"
+import Link from "next/link"
+import { ArrowLeft } from "lucide-react"
 
 export default function SignInPage() {
   return (
@@ -8,6 +10,12 @@ export default function SignInPage() {
         <Image src="/logo.png" alt="DORIX" width={140} height={50} className="mx-auto" priority />
       </div>
       <SignIn />
+      <Link
+        href="/"
+        className="mt-6 flex items-center gap-1.5 text-sm text-[#6B7280] hover:text-[#2D7A5F] transition-colors"
+      >
+        <ArrowLeft size={14} /> Back to homepage
+      </Link>
     </div>
   )
 }
