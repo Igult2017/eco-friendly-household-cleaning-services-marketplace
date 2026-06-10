@@ -56,9 +56,23 @@ export default function PostJobPage() {
     }))
   }
 
+  function extractError(payload: unknown): string {
+    if (typeof payload === "string") return payload
+    if (payload && typeof payload === "object") {
+      const p = payload as Record<string, unknown>
+      const formErrs = Array.isArray(p.formErrors) ? p.formErrors : []
+      const fieldErrs = p.fieldErrors && typeof p.fieldErrors === "object"
+        ? Object.values(p.fieldErrors as Record<string, string[]>).flat()
+        : []
+      const all = [...formErrs, ...fieldErrs].filter(Boolean)
+      if (all.length) return all.join(" · ")
+    }
+    return "Something went wrong. Please try again."
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!form.serviceLatitude) { setError("Please geocode your address first by filling in city and postal code."); return }
+    if (!form.serviceLatitude) { setError("Please fill in city and postal code so we can locate your address."); return }
     setLoading(true); setError(null)
     try {
       const res = await fetch("/api/jobs", {
@@ -70,8 +84,14 @@ export default function PostJobPage() {
           budgetMax: form.budgetMax ? parseInt(form.budgetMax) * 100 : undefined,
         }),
       })
-      if (!res.ok) { const d = await res.json(); setError(d.error ?? "Failed"); return }
+      if (!res.ok) {
+        const d = await res.json()
+        setError(extractError(d.error))
+        return
+      }
       setSuccess(true)
+    } catch {
+      setError("Network error. Please check your connection and try again.")
     } finally { setLoading(false) }
   }
 

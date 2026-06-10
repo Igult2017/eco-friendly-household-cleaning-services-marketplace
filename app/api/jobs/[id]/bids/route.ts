@@ -23,8 +23,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-    const { success } = await bidRatelimit.limit(userId)
-    if (!success) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 })
+    try {
+      const { success } = await bidRatelimit.limit(userId)
+      if (!success) return NextResponse.json({ error: "Rate limit exceeded. You can submit up to 10 bids per 5 minutes." }, { status: 429 })
+    } catch (redisErr) {
+      console.warn("[bids POST] Redis rate limit unavailable, allowing through:", redisErr)
+    }
 
     const { id: jobPostId } = await params
 

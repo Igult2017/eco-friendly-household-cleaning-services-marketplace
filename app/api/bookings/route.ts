@@ -12,8 +12,12 @@ export async function POST(req: Request) {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-    const { success } = await bookingRatelimit.limit(userId)
-    if (!success) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 })
+    try {
+      const { success } = await bookingRatelimit.limit(userId)
+      if (!success) return NextResponse.json({ error: "Rate limit exceeded. You can create up to 10 bookings per minute." }, { status: 429 })
+    } catch (redisErr) {
+      console.warn("[bookings POST] Redis rate limit unavailable, allowing through:", redisErr)
+    }
 
     // Only customers may create bookings
     const [user] = await db.select({ role: users.role }).from(users).where(eq(users.id, userId))

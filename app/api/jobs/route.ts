@@ -17,10 +17,10 @@ const createJobSchema = z.object({
   desiredDate: z.string().optional(),
   desiredTimeRange: z.object({ start: z.string(), end: z.string() }).optional(),
   serviceAddress: z.object({
-    line1: z.string().min(2).max(200),
+    line1: z.string().max(200).optional(),
     city: z.string().min(2).max(100),
     postalCode: z.string().min(3).max(10),
-    country: z.string().length(2),  // required — caller must pass ISO country code
+    country: z.string().length(2),
   }),
   serviceLatitude: z.number().min(-90).max(90),
   serviceLongitude: z.number().min(-180).max(180),
@@ -36,8 +36,12 @@ export async function POST(req: Request) {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-    const { success } = await jobRatelimit.limit(userId)
-    if (!success) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 })
+    try {
+      const { success } = await jobRatelimit.limit(userId)
+      if (!success) return NextResponse.json({ error: "Rate limit exceeded. You can post up to 5 jobs per 10 minutes." }, { status: 429 })
+    } catch (redisErr) {
+      console.warn("[jobs POST] Redis rate limit unavailable, allowing through:", redisErr)
+    }
 
     // Only customers may post jobs
     const [user] = await db.select({ role: users.role }).from(users).where(eq(users.id, userId))
@@ -74,7 +78,10 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ jobPostId: newJob.id }, { status: 201 })
   } catch (err) {
-    console.error("[jobs POST]", err)
+    console.error("[jobs POST] Unhandled error:", {
+      message: err instanceof Error ? err.message : String(err),
+      stack: err instanceof Error ? err.stack : undefined,
+    })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

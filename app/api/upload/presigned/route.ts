@@ -14,8 +14,12 @@ export async function POST(req: Request) {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-    const { success } = await uploadRatelimit.limit(userId)
-    if (!success) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 })
+    try {
+      const { success } = await uploadRatelimit.limit(userId)
+      if (!success) return NextResponse.json({ error: "Rate limit exceeded. You can upload up to 20 files per hour." }, { status: 429 })
+    } catch (redisErr) {
+      console.warn("[upload/presigned POST] Redis rate limit unavailable, allowing through:", redisErr)
+    }
 
     const { contentType, contentLength, folder } = await req.json()
 
