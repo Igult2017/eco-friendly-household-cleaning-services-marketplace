@@ -109,10 +109,7 @@ export default function ProviderServicesPage() {
             <div>
               <label className="block text-xs font-semibold text-[#2B3441] mb-1.5">Price (€) *</label>
               <input
-                type="number"
-                min="1"
-                step="0.5"
-                value={form.basePrice}
+                type="number" min="1" step="0.5" value={form.basePrice}
                 onChange={(e) => setForm((f) => ({ ...f, basePrice: e.target.value }))}
                 placeholder="0.00"
                 className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none"
@@ -131,10 +128,7 @@ export default function ProviderServicesPage() {
             <div>
               <label className="block text-xs font-semibold text-[#2B3441] mb-1.5">Min duration (min)</label>
               <input
-                type="number"
-                min="30"
-                step="30"
-                value={form.minDurationMinutes}
+                type="number" min="30" step="30" value={form.minDurationMinutes}
                 onChange={(e) => setForm((f) => ({ ...f, minDurationMinutes: e.target.value }))}
                 className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none"
               />
@@ -142,8 +136,7 @@ export default function ProviderServicesPage() {
             <div>
               <label className="block text-xs font-semibold text-[#2B3441] mb-1.5">Description</label>
               <input
-                type="text"
-                value={form.description}
+                type="text" value={form.description}
                 onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
                 placeholder="Optional short description"
                 className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none"
