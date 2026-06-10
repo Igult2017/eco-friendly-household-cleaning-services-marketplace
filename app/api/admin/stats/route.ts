@@ -1,16 +1,13 @@
-import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { bookings, disputes, payments, providers, users } from "@/lib/db/schema"
 import { eq, and, count, sum, gte, sql } from "drizzle-orm"
+import { requireAdmin } from "@/lib/auth/requireAdmin"
 
 export async function GET() {
   try {
-    const { userId } = await auth()
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-
-    const [admin] = await db.select({ role: users.role }).from(users).where(eq(users.id, userId))
-    if (!admin || admin.role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    const guard = await requireAdmin()
+    if (guard instanceof NextResponse) return guard
 
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
 

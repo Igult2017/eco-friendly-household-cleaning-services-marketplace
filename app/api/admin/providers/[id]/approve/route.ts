@@ -1,9 +1,9 @@
-import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { providers, users, notifications } from "@/lib/db/schema"
+import { providers, notifications } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { z } from "zod"
+import { requireAdmin } from "@/lib/auth/requireAdmin"
 
 const approveSchema = z.object({
   action: z.enum(["approve", "reject", "suspend", "unsuspend"]),
@@ -12,11 +12,8 @@ const approveSchema = z.object({
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { userId } = await auth()
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-
-    const [admin] = await db.select({ role: users.role }).from(users).where(eq(users.id, userId))
-    if (!admin || admin.role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    const guard = await requireAdmin()
+    if (guard instanceof NextResponse) return guard
 
     const { id: providerId } = await params
     const body = await req.json()
@@ -65,7 +62,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       type: notifType,
       title: notifTitle,
       body: notifBody,
-      link: "/dashboard",
+      link: action === "approve" ? "/provider/dashboard" : "/provider/profile",
     })
 
     return NextResponse.json({ success: true, action })

@@ -1,10 +1,10 @@
-import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { disputes, bookings, payments, users, notifications } from "@/lib/db/schema"
+import { disputes, bookings, payments, notifications } from "@/lib/db/schema"
 import { stripe } from "@/lib/stripe/client"
 import { eq } from "drizzle-orm"
 import { z } from "zod"
+import { requireAdmin } from "@/lib/auth/requireAdmin"
 
 const resolveSchema = z.object({
   outcome: z.enum(["resolved_customer", "resolved_provider"]),
@@ -14,11 +14,9 @@ const resolveSchema = z.object({
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { userId } = await auth()
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-
-    const [admin] = await db.select({ role: users.role }).from(users).where(eq(users.id, userId))
-    if (!admin || admin.role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    const guard = await requireAdmin()
+    if (guard instanceof NextResponse) return guard
+    const { adminId: userId } = guard
 
     const { id: disputeId } = await params
     const body = await req.json()
