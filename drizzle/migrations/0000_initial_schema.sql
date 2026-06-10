@@ -8,43 +8,51 @@
 -- ============================================================
 
 -- ── Enums ────────────────────────────────────────────────────
+-- Use DO blocks for conditional type creation: CREATE TYPE IF NOT EXISTS
+-- requires PostgreSQL 16+. DO blocks work on PostgreSQL 12+.
 
-CREATE TYPE IF NOT EXISTS user_role           AS ENUM ('customer','provider','admin');
-CREATE TYPE IF NOT EXISTS eco_level           AS ENUM ('basic','certified','premium','zero_impact');
-CREATE TYPE IF NOT EXISTS verification_status AS ENUM ('not_started','pending','verified','rejected','requires_resubmission');
-CREATE TYPE IF NOT EXISTS payout_schedule     AS ENUM ('weekly','biweekly','monthly');
+DO $$ BEGIN CREATE TYPE user_role AS ENUM ('customer','provider','admin'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN CREATE TYPE eco_level AS ENUM ('basic','certified','premium','zero_impact'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN CREATE TYPE verification_status AS ENUM ('not_started','pending','verified','rejected','requires_resubmission'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN CREATE TYPE payout_schedule AS ENUM ('weekly','biweekly','monthly'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- booking_status includes 'pending_capture' (added in 0005) from the start
-CREATE TYPE IF NOT EXISTS booking_status AS ENUM (
-  'pending_payment','payment_authorized','confirmed','in_progress',
-  'pending_capture','completed','cancelled','disputed','refunded'
-);
+DO $$ BEGIN
+  CREATE TYPE booking_status AS ENUM (
+    'pending_payment','payment_authorized','confirmed','in_progress',
+    'pending_capture','completed','cancelled','disputed','refunded'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-CREATE TYPE IF NOT EXISTS job_status AS ENUM ('open','bidding','assigned','completed','cancelled','expired');
-CREATE TYPE IF NOT EXISTS bid_status AS ENUM ('pending','accepted','rejected','withdrawn');
+DO $$ BEGIN CREATE TYPE job_status AS ENUM ('open','bidding','assigned','completed','cancelled','expired'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN CREATE TYPE bid_status AS ENUM ('pending','accepted','rejected','withdrawn'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- payment_status includes 'cancelled' (added in 0005) from the start
-CREATE TYPE IF NOT EXISTS payment_status AS ENUM (
-  'pending','authorized','captured','refunded','partially_refunded','failed','disputed','cancelled'
-);
+DO $$ BEGIN
+  CREATE TYPE payment_status AS ENUM (
+    'pending','authorized','captured','refunded','partially_refunded','failed','disputed','cancelled'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-CREATE TYPE IF NOT EXISTS payout_status  AS ENUM ('pending','processing','paid','failed');
-CREATE TYPE IF NOT EXISTS dispute_status AS ENUM ('open','under_review','resolved_customer','resolved_provider','escalated','closed');
+DO $$ BEGIN CREATE TYPE payout_status AS ENUM ('pending','processing','paid','failed'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN CREATE TYPE dispute_status AS ENUM ('open','under_review','resolved_customer','resolved_provider','escalated','closed'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- notification_type includes all values added through 0004, 0006, 0007
-CREATE TYPE IF NOT EXISTS notification_type AS ENUM (
-  'new_job_request','bid_received','bid_accepted','bid_rejected',
-  'booking_confirmed','booking_reminder','booking_completed','booking_cancelled',
-  'payment_received','payout_processed','dispute_opened','dispute_resolved',
-  'review_received','provider_approved','provider_rejected','provider_suspended',
-  'provider_unsuspended','identity_verified','new_message',
-  'booking_rescheduled','booking_started','recurring_booking_created'
-);
+DO $$ BEGIN
+  CREATE TYPE notification_type AS ENUM (
+    'new_job_request','bid_received','bid_accepted','bid_rejected',
+    'booking_confirmed','booking_reminder','booking_completed','booking_cancelled',
+    'payment_received','payout_processed','dispute_opened','dispute_resolved',
+    'review_received','provider_approved','provider_rejected','provider_suspended',
+    'provider_unsuspended','identity_verified','new_message',
+    'booking_rescheduled','booking_started','recurring_booking_created'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- added in 0006
-CREATE TYPE IF NOT EXISTS discount_type        AS ENUM ('percentage','fixed');
-CREATE TYPE IF NOT EXISTS recurring_frequency  AS ENUM ('weekly','biweekly','monthly');
-CREATE TYPE IF NOT EXISTS recurring_status     AS ENUM ('active','paused','cancelled');
+DO $$ BEGIN CREATE TYPE discount_type AS ENUM ('percentage','fixed'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN CREATE TYPE recurring_frequency AS ENUM ('weekly','biweekly','monthly'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN CREATE TYPE recurring_status AS ENUM ('active','paused','cancelled'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- ── Tables ───────────────────────────────────────────────────
 

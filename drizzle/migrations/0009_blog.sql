@@ -1,5 +1,5 @@
 -- Blog system: posts and comments
-CREATE TYPE IF NOT EXISTS blog_post_status AS ENUM ('draft', 'published');
+DO $$ BEGIN CREATE TYPE blog_post_status AS ENUM ('draft', 'published'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 CREATE TABLE IF NOT EXISTS blog_posts (
   id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),

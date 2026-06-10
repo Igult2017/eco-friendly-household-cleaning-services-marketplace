@@ -12,8 +12,8 @@ CREATE INDEX IF NOT EXISTS messages_booking_idx ON messages(booking_id);
 CREATE INDEX IF NOT EXISTS messages_created_at_idx ON messages(created_at);
 
 -- Recurring schedules
-CREATE TYPE IF NOT EXISTS recurring_frequency AS ENUM ('weekly','biweekly','monthly');
-CREATE TYPE IF NOT EXISTS recurring_status AS ENUM ('active','paused','cancelled');
+DO $$ BEGIN CREATE TYPE recurring_frequency AS ENUM ('weekly','biweekly','monthly'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN CREATE TYPE recurring_status AS ENUM ('active','paused','cancelled'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 CREATE TABLE IF NOT EXISTS recurring_schedules (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   customer_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -34,7 +34,7 @@ CREATE INDEX IF NOT EXISTS recurring_customer_idx ON recurring_schedules(custome
 CREATE INDEX IF NOT EXISTS recurring_provider_idx ON recurring_schedules(provider_id);
 
 -- Promo codes
-CREATE TYPE IF NOT EXISTS discount_type AS ENUM ('percentage','fixed');
+DO $$ BEGIN CREATE TYPE discount_type AS ENUM ('percentage','fixed'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 CREATE TABLE IF NOT EXISTS promo_codes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   code VARCHAR(50) UNIQUE NOT NULL,
