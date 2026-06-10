@@ -10,33 +10,38 @@ type AllowedFolder = typeof ALLOWED_FOLDERS[number]
 const ALLOWED_CONTENT_TYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf"]
 
 export async function POST(req: Request) {
-  const { userId } = await auth()
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  try {
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  const { success } = await uploadRatelimit.limit(userId)
-  if (!success) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 })
+    const { success } = await uploadRatelimit.limit(userId)
+    if (!success) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 })
 
-  const { contentType, contentLength, folder } = await req.json()
+    const { contentType, contentLength, folder } = await req.json()
 
-  if (!contentType || !contentLength) {
-    return NextResponse.json({ error: "contentType and contentLength required" }, { status: 400 })
+    if (!contentType || !contentLength) {
+      return NextResponse.json({ error: "contentType and contentLength required" }, { status: 400 })
+    }
+
+    // Bug 8: client-supplied contentLength has no cap — reject oversized uploads before issuing a presigned URL
+    const MAX_BYTES = 10 * 1024 * 1024 // 10 MB
+    if (typeof contentLength !== "number" || contentLength <= 0 || contentLength > MAX_BYTES) {
+      return NextResponse.json({ error: `contentLength must be between 1 and ${MAX_BYTES} bytes` }, { status: 400 })
+    }
+
+    if (!ALLOWED_CONTENT_TYPES.includes(contentType)) {
+      return NextResponse.json({ error: "Content type not allowed" }, { status: 400 })
+    }
+
+    const safeFolder: AllowedFolder = ALLOWED_FOLDERS.includes(folder) ? folder : "completions"
+    const ext = contentType.split("/")[1] ?? "bin"
+    const key = `${safeFolder}/${userId}/${nanoid(12)}.${ext}`
+
+    const { uploadUrl, publicUrl } = await generatePresignedUploadUrl({ key, contentType, contentLength })
+
+    return NextResponse.json({ uploadUrl, publicUrl, key })
+  } catch (err) {
+    console.error("[upload/presigned POST]", err)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
-
-  // Bug 8: client-supplied contentLength has no cap — reject oversized uploads before issuing a presigned URL
-  const MAX_BYTES = 10 * 1024 * 1024 // 10 MB
-  if (typeof contentLength !== "number" || contentLength <= 0 || contentLength > MAX_BYTES) {
-    return NextResponse.json({ error: `contentLength must be between 1 and ${MAX_BYTES} bytes` }, { status: 400 })
-  }
-
-  if (!ALLOWED_CONTENT_TYPES.includes(contentType)) {
-    return NextResponse.json({ error: "Content type not allowed" }, { status: 400 })
-  }
-
-  const safeFolder: AllowedFolder = ALLOWED_FOLDERS.includes(folder) ? folder : "completions"
-  const ext = contentType.split("/")[1] ?? "bin"
-  const key = `${safeFolder}/${userId}/${nanoid(12)}.${ext}`
-
-  const { uploadUrl, publicUrl } = await generatePresignedUploadUrl({ key, contentType, contentLength })
-
-  return NextResponse.json({ uploadUrl, publicUrl, key })
 }

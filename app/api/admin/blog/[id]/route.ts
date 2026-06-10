@@ -26,29 +26,39 @@ async function requireAdmin() {
 }
 
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const adminId = await requireAdmin()
-  if (!adminId) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  try {
+    const adminId = await requireAdmin()
+    if (!adminId) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
-  const { id } = await params
-  const body = await req.json()
-  const parsed = updateSchema.safeParse(body)
-  if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+    const { id } = await params
+    const body = await req.json()
+    const parsed = updateSchema.safeParse(body)
+    if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
-  const data = parsed.data
-  if (data.content) {
-    const wordCount = data.content.replace(/<[^>]+>/g, "").split(/\s+/).filter(Boolean).length
-    if (!data.readTimeMinutes) data.readTimeMinutes = Math.max(1, Math.ceil(wordCount / 200))
+    const data = parsed.data
+    if (data.content) {
+      const wordCount = data.content.replace(/<[^>]+>/g, "").split(/\s+/).filter(Boolean).length
+      if (!data.readTimeMinutes) data.readTimeMinutes = Math.max(1, Math.ceil(wordCount / 200))
+    }
+
+    await db.update(blogPosts).set({ ...data, coverImageUrl: data.coverImageUrl || null, updatedAt: new Date() }).where(eq(blogPosts.id, id))
+    return NextResponse.json({ success: true })
+  } catch (err) {
+    console.error("[admin/blog/[id] PUT]", err)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
-
-  await db.update(blogPosts).set({ ...data, coverImageUrl: data.coverImageUrl || null, updatedAt: new Date() }).where(eq(blogPosts.id, id))
-  return NextResponse.json({ success: true })
 }
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const adminId = await requireAdmin()
-  if (!adminId) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  try {
+    const adminId = await requireAdmin()
+    if (!adminId) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
-  const { id } = await params
-  await db.delete(blogPosts).where(eq(blogPosts.id, id))
-  return NextResponse.json({ success: true })
+    const { id } = await params
+    await db.delete(blogPosts).where(eq(blogPosts.id, id))
+    return NextResponse.json({ success: true })
+  } catch (err) {
+    console.error("[admin/blog/[id] DELETE]", err)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
 }

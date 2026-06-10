@@ -18,55 +18,60 @@ const reviewSchema = z.object({
 })
 
 export async function POST(req: Request) {
-  const { userId } = await auth()
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  try {
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  const body = await req.json()
-  const parsed = reviewSchema.safeParse(body)
-  if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+    const body = await req.json()
+    const parsed = reviewSchema.safeParse(body)
+    if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
-  const data = parsed.data
+    const data = parsed.data
 
-  const [booking] = await db
-    .select({ id: bookings.id, status: bookings.status, customerId: bookings.customerId, providerId: bookings.providerId })
-    .from(bookings)
-    .where(and(eq(bookings.id, data.bookingId), eq(bookings.customerId, userId)))
+    const [booking] = await db
+      .select({ id: bookings.id, status: bookings.status, customerId: bookings.customerId, providerId: bookings.providerId })
+      .from(bookings)
+      .where(and(eq(bookings.id, data.bookingId), eq(bookings.customerId, userId)))
 
-  if (!booking) return NextResponse.json({ error: "Booking not found" }, { status: 404 })
-  if (booking.status !== "completed") return NextResponse.json({ error: "Can only review completed bookings" }, { status: 422 })
+    if (!booking) return NextResponse.json({ error: "Booking not found" }, { status: 404 })
+    if (booking.status !== "completed") return NextResponse.json({ error: "Can only review completed bookings" }, { status: 422 })
 
-  // Check no existing review
-  const [existing] = await db.select({ id: reviews.id }).from(reviews).where(eq(reviews.bookingId, data.bookingId))
-  if (existing) return NextResponse.json({ error: "Review already submitted" }, { status: 409 })
+    // Check no existing review
+    const [existing] = await db.select({ id: reviews.id }).from(reviews).where(eq(reviews.bookingId, data.bookingId))
+    if (existing) return NextResponse.json({ error: "Review already submitted" }, { status: 409 })
 
-  const insertData: NewReview = {
-    bookingId: data.bookingId,
-    customerId: userId,
-    providerId: booking.providerId,
-    overallRating: data.overallRating,
-    cleanlinessRating: data.cleanlinessRating ?? null,
-    punctualityRating: data.punctualityRating ?? null,
-    ecoComplianceRating: data.ecoComplianceRating ?? null,
-    communicationRating: data.communicationRating ?? null,
-    title: data.title ?? null,
-    body: data.body ?? null,
-    isPublic: true,
-    isFlagged: false,
+    const insertData: NewReview = {
+      bookingId: data.bookingId,
+      customerId: userId,
+      providerId: booking.providerId,
+      overallRating: data.overallRating,
+      cleanlinessRating: data.cleanlinessRating ?? null,
+      punctualityRating: data.punctualityRating ?? null,
+      ecoComplianceRating: data.ecoComplianceRating ?? null,
+      communicationRating: data.communicationRating ?? null,
+      title: data.title ?? null,
+      body: data.body ?? null,
+      isPublic: true,
+      isFlagged: false,
+    }
+
+    const [newReview] = await db.insert(reviews).values(insertData).returning({ id: reviews.id })
+
+    // Update provider average rating using SQL aggregates (avoids full table scan in JS)
+    // Bug 9: exclude flagged reviews — they're hidden from public view and must not skew the rating
+    const [stats] = await db
+      .select({ avg: avg(reviews.overallRating), total: count() })
+      .from(reviews)
+      .where(and(eq(reviews.providerId, booking.providerId), eq(reviews.isFlagged, false)))
+
+    await db
+      .update(providers)
+      .set({ averageRating: Math.round(parseFloat(stats.avg ?? "0") * 10) / 10, totalReviews: stats.total })
+      .where(eq(providers.id, booking.providerId))
+
+    return NextResponse.json({ reviewId: newReview.id }, { status: 201 })
+  } catch (err) {
+    console.error("[reviews POST]", err)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
-
-  const [newReview] = await db.insert(reviews).values(insertData).returning({ id: reviews.id })
-
-  // Update provider average rating using SQL aggregates (avoids full table scan in JS)
-  // Bug 9: exclude flagged reviews — they're hidden from public view and must not skew the rating
-  const [stats] = await db
-    .select({ avg: avg(reviews.overallRating), total: count() })
-    .from(reviews)
-    .where(and(eq(reviews.providerId, booking.providerId), eq(reviews.isFlagged, false)))
-
-  await db
-    .update(providers)
-    .set({ averageRating: Math.round(parseFloat(stats.avg ?? "0") * 10) / 10, totalReviews: stats.total })
-    .where(eq(providers.id, booking.providerId))
-
-  return NextResponse.json({ reviewId: newReview.id }, { status: 201 })
 }

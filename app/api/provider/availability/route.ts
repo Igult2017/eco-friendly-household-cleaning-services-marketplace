@@ -18,56 +18,66 @@ const blackoutSchema = z.object({
 })
 
 export async function GET() {
-  const { userId } = await auth()
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  try {
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  const [provider] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, userId))
-  if (!provider) return NextResponse.json({ error: "Provider not found" }, { status: 404 })
+    const [provider] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, userId))
+    if (!provider) return NextResponse.json({ error: "Provider not found" }, { status: 404 })
 
-  const [availability, blackouts] = await Promise.all([
-    db.select().from(providerAvailability).where(eq(providerAvailability.providerId, provider.id)),
-    db.select().from(providerBlackoutDates).where(eq(providerBlackoutDates.providerId, provider.id)),
-  ])
+    const [availability, blackouts] = await Promise.all([
+      db.select().from(providerAvailability).where(eq(providerAvailability.providerId, provider.id)),
+      db.select().from(providerBlackoutDates).where(eq(providerBlackoutDates.providerId, provider.id)),
+    ])
 
-  return NextResponse.json({ availability, blackouts })
+    return NextResponse.json({ availability, blackouts })
+  } catch (err) {
+    console.error("[provider/availability GET]", err)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
 }
 
 export async function POST(req: Request) {
-  const { userId } = await auth()
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  try {
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  const [provider] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, userId))
-  if (!provider) return NextResponse.json({ error: "Provider not found" }, { status: 404 })
+    const [provider] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, userId))
+    if (!provider) return NextResponse.json({ error: "Provider not found" }, { status: 404 })
 
-  const body = await req.json()
+    const body = await req.json()
 
-  if (body.type === "availability") {
-    const parsed = availabilitySchema.safeParse(body.data)
-    if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+    if (body.type === "availability") {
+      const parsed = availabilitySchema.safeParse(body.data)
+      if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
-    const { dayOfWeek, startTime, endTime, isActive } = parsed.data
+      const { dayOfWeek, startTime, endTime, isActive } = parsed.data
 
-    // Upsert by day
-    const existing = await db.select({ id: providerAvailability.id }).from(providerAvailability)
-      .where(and(eq(providerAvailability.providerId, provider.id), eq(providerAvailability.dayOfWeek, dayOfWeek)))
+      // Upsert by day
+      const existing = await db.select({ id: providerAvailability.id }).from(providerAvailability)
+        .where(and(eq(providerAvailability.providerId, provider.id), eq(providerAvailability.dayOfWeek, dayOfWeek)))
 
-    if (existing.length > 0) {
-      await db.update(providerAvailability).set({ startTime, endTime, isActive })
-        .where(eq(providerAvailability.id, existing[0].id))
-    } else {
-      await db.insert(providerAvailability).values({ providerId: provider.id, dayOfWeek, startTime, endTime, isActive })
+      if (existing.length > 0) {
+        await db.update(providerAvailability).set({ startTime, endTime, isActive })
+          .where(eq(providerAvailability.id, existing[0].id))
+      } else {
+        await db.insert(providerAvailability).values({ providerId: provider.id, dayOfWeek, startTime, endTime, isActive })
+      }
+
+      return NextResponse.json({ success: true })
     }
 
-    return NextResponse.json({ success: true })
+    if (body.type === "blackout") {
+      const parsed = blackoutSchema.safeParse(body.data)
+      if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+
+      await db.insert(providerBlackoutDates).values({ providerId: provider.id, date: parsed.data.date, reason: parsed.data.reason })
+      return NextResponse.json({ success: true })
+    }
+
+    return NextResponse.json({ error: "Unknown type" }, { status: 400 })
+  } catch (err) {
+    console.error("[provider/availability POST]", err)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
-
-  if (body.type === "blackout") {
-    const parsed = blackoutSchema.safeParse(body.data)
-    if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
-
-    await db.insert(providerBlackoutDates).values({ providerId: provider.id, date: parsed.data.date, reason: parsed.data.reason })
-    return NextResponse.json({ success: true })
-  }
-
-  return NextResponse.json({ error: "Unknown type" }, { status: 400 })
 }

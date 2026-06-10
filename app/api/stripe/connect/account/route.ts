@@ -6,42 +6,47 @@ import { eq } from "drizzle-orm"
 import { createConnectAccount, createAccountLink } from "@/lib/stripe/connect"
 
 export async function POST(req: Request) {
-  const { userId } = await auth()
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  try {
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  const [[provider], [user]] = await Promise.all([
-    db.select({ id: providers.id, stripeAccountId: providers.stripeAccountId })
-      .from(providers).where(eq(providers.userId, userId)),
-    db.select({ email: users.email }).from(users).where(eq(users.id, userId)),
-  ])
+    const [[provider], [user]] = await Promise.all([
+      db.select({ id: providers.id, stripeAccountId: providers.stripeAccountId })
+        .from(providers).where(eq(providers.userId, userId)),
+      db.select({ email: users.email }).from(users).where(eq(users.id, userId)),
+    ])
 
-  if (!provider) {
-    return NextResponse.json({ error: "Provider profile not found" }, { status: 404 })
-  }
+    if (!provider) {
+      return NextResponse.json({ error: "Provider profile not found" }, { status: 404 })
+    }
 
-  let stripeAccountId = provider.stripeAccountId
+    let stripeAccountId = provider.stripeAccountId
 
-  if (!stripeAccountId) {
-    const body = await req.json().catch(() => ({}))
-    const account = await createConnectAccount({
-      email: user?.email ?? undefined,
-      country: body.country ?? "DE",
+    if (!stripeAccountId) {
+      const body = await req.json().catch(() => ({}))
+      const account = await createConnectAccount({
+        email: user?.email ?? undefined,
+        country: body.country ?? "DE",
+      })
+      stripeAccountId = account.id
+
+      await db
+        .update(providers)
+        .set({ stripeAccountId, stripeAccountStatus: "pending" })
+        .where(eq(providers.id, provider.id))
+    }
+
+    const origin = req.headers.get("origin") ?? process.env.NEXT_PUBLIC_APP_URL!
+    const link = await createAccountLink({
+      accountId: stripeAccountId,
+      // Bug 3: step=4 doesn't exist in the onboarding page — use step=3 so provider lands on valid UI
+      refreshUrl: `${origin}/onboarding/provider?step=3&refresh=1`,
+      returnUrl: `${origin}/onboarding/provider?step=3&success=1`,
     })
-    stripeAccountId = account.id
 
-    await db
-      .update(providers)
-      .set({ stripeAccountId, stripeAccountStatus: "pending" })
-      .where(eq(providers.id, provider.id))
+    return NextResponse.json({ url: link.url })
+  } catch (err) {
+    console.error("[stripe/connect/account POST]", err)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
-
-  const origin = req.headers.get("origin") ?? process.env.NEXT_PUBLIC_APP_URL!
-  const link = await createAccountLink({
-    accountId: stripeAccountId,
-    // Bug 3: step=4 doesn't exist in the onboarding page — use step=3 so provider lands on valid UI
-    refreshUrl: `${origin}/onboarding/provider?step=3&refresh=1`,
-    returnUrl: `${origin}/onboarding/provider?step=3&success=1`,
-  })
-
-  return NextResponse.json({ url: link.url })
 }

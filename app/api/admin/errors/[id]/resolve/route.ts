@@ -5,19 +5,24 @@ import { errorLogs } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { userId, sessionClaims } = await auth()
-  if ((sessionClaims?.metadata as any)?.role !== "admin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  try {
+    const { userId, sessionClaims } = await auth()
+    if ((sessionClaims?.metadata as any)?.role !== "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
+
+    const { id } = await params
+
+    const [updated] = await db
+      .update(errorLogs)
+      .set({ resolvedAt: new Date(), resolvedBy: userId ?? "admin" })
+      .where(eq(errorLogs.id, id))
+      .returning({ id: errorLogs.id })
+
+    if (!updated) return NextResponse.json({ error: "Not found" }, { status: 404 })
+    return NextResponse.json({ ok: true })
+  } catch (err) {
+    console.error("[admin/errors/[id]/resolve POST]", err)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
-
-  const { id } = await params
-
-  const [updated] = await db
-    .update(errorLogs)
-    .set({ resolvedAt: new Date(), resolvedBy: userId ?? "admin" })
-    .where(eq(errorLogs.id, id))
-    .returning({ id: errorLogs.id })
-
-  if (!updated) return NextResponse.json({ error: "Not found" }, { status: 404 })
-  return NextResponse.json({ ok: true })
 }

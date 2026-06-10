@@ -10,25 +10,30 @@ const respondSchema = z.object({
 })
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { userId } = await auth()
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  try {
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  const { id: reviewId } = await params
+    const { id: reviewId } = await params
 
-  const [provider] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, userId))
-  if (!provider) return NextResponse.json({ error: "Not a provider" }, { status: 403 })
+    const [provider] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, userId))
+    if (!provider) return NextResponse.json({ error: "Not a provider" }, { status: 403 })
 
-  const [review] = await db.select({ id: reviews.id, providerId: reviews.providerId }).from(reviews).where(eq(reviews.id, reviewId))
-  if (!review || review.providerId !== provider.id) return NextResponse.json({ error: "Not authorized" }, { status: 403 })
+    const [review] = await db.select({ id: reviews.id, providerId: reviews.providerId }).from(reviews).where(eq(reviews.id, reviewId))
+    if (!review || review.providerId !== provider.id) return NextResponse.json({ error: "Not authorized" }, { status: 403 })
 
-  const body = await req.json()
-  const parsed = respondSchema.safeParse(body)
-  if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+    const body = await req.json()
+    const parsed = respondSchema.safeParse(body)
+    if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
-  await db.update(reviews).set({
-    providerResponse: parsed.data.response,
-    providerRespondedAt: new Date(),
-  }).where(eq(reviews.id, reviewId))
+    await db.update(reviews).set({
+      providerResponse: parsed.data.response,
+      providerRespondedAt: new Date(),
+    }).where(eq(reviews.id, reviewId))
 
-  return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true })
+  } catch (err) {
+    console.error("[reviews/[id]/respond POST]", err)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
 }

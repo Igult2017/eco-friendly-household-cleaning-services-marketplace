@@ -27,34 +27,44 @@ async function requireAdmin() {
 }
 
 export async function GET() {
-  const adminId = await requireAdmin()
-  if (!adminId) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  try {
+    const adminId = await requireAdmin()
+    if (!adminId) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
-  const posts = await db.query.blogPosts.findMany({
-    with: { author: { columns: { firstName: true, lastName: true } } },
-    orderBy: [desc(blogPosts.createdAt)],
-  })
-  return NextResponse.json({ posts })
+    const posts = await db.query.blogPosts.findMany({
+      with: { author: { columns: { firstName: true, lastName: true } } },
+      orderBy: [desc(blogPosts.createdAt)],
+    })
+    return NextResponse.json({ posts })
+  } catch (err) {
+    console.error("[admin/blog GET]", err)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
 }
 
 export async function POST(req: Request) {
-  const adminId = await requireAdmin()
-  if (!adminId) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  try {
+    const adminId = await requireAdmin()
+    if (!adminId) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
-  const body = await req.json()
-  const parsed = blogSchema.safeParse(body)
-  if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+    const body = await req.json()
+    const parsed = blogSchema.safeParse(body)
+    if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
-  const data = parsed.data
-  const wordCount = data.content.replace(/<[^>]+>/g, "").split(/\s+/).filter(Boolean).length
-  const readTime = data.readTimeMinutes ?? Math.max(1, Math.ceil(wordCount / 200))
+    const data = parsed.data
+    const wordCount = data.content.replace(/<[^>]+>/g, "").split(/\s+/).filter(Boolean).length
+    const readTime = data.readTimeMinutes ?? Math.max(1, Math.ceil(wordCount / 200))
 
-  const [post] = await db.insert(blogPosts).values({
-    ...data,
-    coverImageUrl: data.coverImageUrl || null,
-    authorId: adminId,
-    readTimeMinutes: readTime,
-  }).returning({ id: blogPosts.id, slug: blogPosts.slug })
+    const [post] = await db.insert(blogPosts).values({
+      ...data,
+      coverImageUrl: data.coverImageUrl || null,
+      authorId: adminId,
+      readTimeMinutes: readTime,
+    }).returning({ id: blogPosts.id, slug: blogPosts.slug })
 
-  return NextResponse.json({ post }, { status: 201 })
+    return NextResponse.json({ post }, { status: 201 })
+  } catch (err) {
+    console.error("[admin/blog POST]", err)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
 }

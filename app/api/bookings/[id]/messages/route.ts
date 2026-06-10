@@ -27,36 +27,41 @@ async function getBookingAndVerifyAccess(bookingId: string, userId: string) {
 }
 
 export async function GET(_req: Request, { params }: RouteContext) {
-  const { userId } = await auth()
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  try {
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  const { id: bookingId } = await params
+    const { id: bookingId } = await params
 
-  const access = await getBookingAndVerifyAccess(bookingId, userId)
-  if (!access) return NextResponse.json({ error: "Not found" }, { status: 404 })
+    const access = await getBookingAndVerifyAccess(bookingId, userId)
+    if (!access) return NextResponse.json({ error: "Not found" }, { status: 404 })
 
-  const thread = await db
-    .select()
-    .from(messages)
-    .where(eq(messages.bookingId, bookingId))
-    .orderBy(asc(messages.createdAt))
+    const thread = await db
+      .select()
+      .from(messages)
+      .where(eq(messages.bookingId, bookingId))
+      .orderBy(asc(messages.createdAt))
 
-  // Mark all unread messages from the other party as read in a single query
-  const hasUnread = thread.some((m) => !m.isRead && m.senderId !== userId)
-  if (hasUnread) {
-    await db
-      .update(messages)
-      .set({ isRead: true })
-      .where(
-        and(
-          eq(messages.bookingId, bookingId),
-          ne(messages.senderId, userId),
-          eq(messages.isRead, false)
+    // Mark all unread messages from the other party as read in a single query
+    const hasUnread = thread.some((m) => !m.isRead && m.senderId !== userId)
+    if (hasUnread) {
+      await db
+        .update(messages)
+        .set({ isRead: true })
+        .where(
+          and(
+            eq(messages.bookingId, bookingId),
+            ne(messages.senderId, userId),
+            eq(messages.isRead, false)
+          )
         )
-      )
-  }
+    }
 
-  return NextResponse.json({ messages: thread })
+    return NextResponse.json({ messages: thread })
+  } catch (err) {
+    console.error("[bookings/[id]/messages GET]", err)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
 }
 
 const sendMessageSchema = z.object({
@@ -64,53 +69,58 @@ const sendMessageSchema = z.object({
 })
 
 export async function POST(req: Request, { params }: RouteContext) {
-  const { userId } = await auth()
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-
-  const { id: bookingId } = await params
-
-  const access = await getBookingAndVerifyAccess(bookingId, userId)
-  if (!access) return NextResponse.json({ error: "Not found" }, { status: 404 })
-
-  const { booking, provider, isCustomer } = access
-
-  const parsed = sendMessageSchema.safeParse(await req.json())
-  if (!parsed.success) {
-    return NextResponse.json({ error: "Invalid body", details: parsed.error.flatten() }, { status: 400 })
-  }
-
-  const { body } = parsed.data
-
-  const [newMessage] = await db
-    .insert(messages)
-    .values({ bookingId, senderId: userId, body })
-    .returning()
-
-  // Determine recipient — provider link uses the /provider/ prefix route
-  const recipientId = isCustomer ? provider!.userId : booking.customerId
-  const notifLink = isCustomer
-    ? `/provider/bookings/${bookingId}/messages`
-    : `/bookings/${bookingId}/messages`
-
-  await db.insert(notifications).values({
-    userId: recipientId,
-    type: "new_message",
-    title: "New message",
-    body: body.slice(0, 100),
-    link: notifLink,
-  })
-
-  // Trigger Pusher event — non-fatal if it fails
   try {
-    await pusherServer.trigger(`private-booking-${bookingId}`, "new-message", {
-      messageId: newMessage.id,
-      senderId: userId,
-      body,
-      createdAt: newMessage.createdAt,
-    })
-  } catch (err) {
-    console.error("[pusher] Failed to trigger new-message event:", err)
-  }
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  return NextResponse.json({ message: newMessage }, { status: 201 })
+    const { id: bookingId } = await params
+
+    const access = await getBookingAndVerifyAccess(bookingId, userId)
+    if (!access) return NextResponse.json({ error: "Not found" }, { status: 404 })
+
+    const { booking, provider, isCustomer } = access
+
+    const parsed = sendMessageSchema.safeParse(await req.json())
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid body", details: parsed.error.flatten() }, { status: 400 })
+    }
+
+    const { body } = parsed.data
+
+    const [newMessage] = await db
+      .insert(messages)
+      .values({ bookingId, senderId: userId, body })
+      .returning()
+
+    // Determine recipient — provider link uses the /provider/ prefix route
+    const recipientId = isCustomer ? provider!.userId : booking.customerId
+    const notifLink = isCustomer
+      ? `/provider/bookings/${bookingId}/messages`
+      : `/bookings/${bookingId}/messages`
+
+    await db.insert(notifications).values({
+      userId: recipientId,
+      type: "new_message",
+      title: "New message",
+      body: body.slice(0, 100),
+      link: notifLink,
+    })
+
+    // Trigger Pusher event — non-fatal if it fails
+    try {
+      await pusherServer.trigger(`private-booking-${bookingId}`, "new-message", {
+        messageId: newMessage.id,
+        senderId: userId,
+        body,
+        createdAt: newMessage.createdAt,
+      })
+    } catch (err) {
+      console.error("[pusher] Failed to trigger new-message event:", err)
+    }
+
+    return NextResponse.json({ message: newMessage }, { status: 201 })
+  } catch (err) {
+    console.error("[bookings/[id]/messages POST]", err)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
 }
