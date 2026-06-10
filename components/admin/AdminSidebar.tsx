@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation"
 import {
   LayoutDashboard,
   Users,
+  ShieldCheck,
   Briefcase,
   CalendarCheck,
   MessageSquareWarning,
@@ -21,8 +22,9 @@ import {
 import { cn } from "@/lib/utils"
 
 const nav = [
-  { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-  { label: "Providers", href: "/admin/providers", icon: Briefcase },
+  { label: "Dashboard",   href: "/admin/dashboard", icon: LayoutDashboard },
+  { label: "Users",       href: "/admin/users",      icon: ShieldCheck },
+  { label: "Providers",   href: "/admin/providers",  icon: Briefcase },
   { label: "Bookings", href: "/admin/bookings", icon: CalendarCheck },
   { label: "Disputes", href: "/admin/disputes", icon: MessageSquareWarning },
   { label: "Customers", href: "/admin/customers", icon: Users },
