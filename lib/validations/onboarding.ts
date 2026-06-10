@@ -4,9 +4,7 @@ const base = z.object({
   firstName: z.string().min(1, "Required").max(50),
   lastName: z.string().min(1, "Required").max(50),
   phone: z.string().optional(),
-  gdprConsent: z.literal(true, {
-    errorMap: () => ({ message: "You must accept the terms to continue" }),
-  }),
+  gdprConsent: z.literal(true, "You must accept the terms to continue"),
 })
 
 const customerSchema = base.extend({ role: z.literal("customer") })
