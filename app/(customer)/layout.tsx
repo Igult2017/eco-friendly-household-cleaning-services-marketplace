@@ -23,6 +23,7 @@ export default async function CustomerLayout({ children }: { children: React.Rea
             <Link href="/jobs" className="hover:text-[#2D7A5F] transition-colors">My jobs</Link>
             <Link href="/payments" className="hover:text-[#2D7A5F] transition-colors">Payments</Link>
             <Link href="/notifications" className="hover:text-[#2D7A5F] transition-colors">Notifications</Link>
+            <Link href="/profile" className="hover:text-[#2D7A5F] transition-colors">Profile</Link>
           </nav>
           <div className="flex items-center gap-2">
             <NotificationBell />
