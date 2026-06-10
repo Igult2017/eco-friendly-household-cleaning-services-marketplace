@@ -63,7 +63,12 @@ export async function POST(req: Request) {
       budgetMax: data.budgetMax ?? null,
       desiredDate: data.desiredDate ?? null,
       desiredTimeRange: data.desiredTimeRange ?? null,
-      serviceAddress: data.serviceAddress,
+      serviceAddress: {
+        line1: data.serviceAddress.line1 ?? "",
+        city: data.serviceAddress.city,
+        postalCode: data.serviceAddress.postalCode,
+        country: data.serviceAddress.country,
+      },
       serviceLatitude: data.serviceLatitude,
       serviceLongitude: data.serviceLongitude,
       radiusKm: data.radiusKm,
@@ -73,8 +78,15 @@ export async function POST(req: Request) {
     }
 
     const [newJob] = await db.insert(jobPosts).values(insertData).returning({ id: jobPosts.id })
+    if (!newJob?.id) throw new Error("DB insert returned no ID")
 
-    await inngest.send({ name: "job/posted", data: { jobPostId: newJob.id, customerId: userId } })
+    // Inngest is non-critical — job is already created; don't let a missing/invalid
+    // INNGEST_EVENT_KEY kill the response.
+    try {
+      await inngest.send({ name: "job/posted", data: { jobPostId: newJob.id, customerId: userId } })
+    } catch (inngestErr) {
+      console.warn("[jobs POST] Inngest send failed (job still created):", inngestErr instanceof Error ? inngestErr.message : inngestErr)
+    }
 
     return NextResponse.json({ jobPostId: newJob.id }, { status: 201 })
   } catch (err) {

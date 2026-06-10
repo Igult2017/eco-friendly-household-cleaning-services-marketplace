@@ -70,7 +70,11 @@ export async function POST(req: Request) {
     // Update booking status
     await db.update(bookings).set({ status: "disputed" }).where(eq(bookings.id, bookingId))
 
-    await inngest.send({ name: "dispute/opened", data: { disputeId: newDispute.id, bookingId, openedBy: userId } })
+    try {
+      await inngest.send({ name: "dispute/opened", data: { disputeId: newDispute.id, bookingId, openedBy: userId } })
+    } catch (inngestErr) {
+      console.warn("[disputes POST] Inngest send failed:", inngestErr instanceof Error ? inngestErr.message : inngestErr)
+    }
 
     return NextResponse.json({ disputeId: newDispute.id }, { status: 201 })
   } catch (err) {

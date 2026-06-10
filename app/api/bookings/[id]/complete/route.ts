@@ -55,15 +55,19 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     if (!payment) return NextResponse.json({ error: "Payment record not found" }, { status: 500 })
 
-    await inngest.send({
-      name: "booking/completed",
-      data: {
-        bookingId,
-        paymentIntentId: payment.stripePaymentIntentId,
-        providerId: provider.id,
-        customerId: booking.customerId,
-      },
-    })
+    try {
+      await inngest.send({
+        name: "booking/completed",
+        data: {
+          bookingId,
+          paymentIntentId: payment.stripePaymentIntentId,
+          providerId: provider.id,
+          customerId: booking.customerId,
+        },
+      })
+    } catch (inngestErr) {
+      console.warn("[bookings/complete POST] Inngest send failed:", inngestErr instanceof Error ? inngestErr.message : inngestErr)
+    }
 
     return NextResponse.json({ success: true })
   } catch (err) {

@@ -183,10 +183,14 @@ export async function POST(req: NextRequest) {
       })
       .returning({ id: recurringSchedules.id })
 
-    await inngest.send({
-      name: "recurring/schedule.created",
-      data: { scheduleId: result.id },
-    })
+    try {
+      await inngest.send({
+        name: "recurring/schedule.created",
+        data: { scheduleId: result.id },
+      })
+    } catch (inngestErr) {
+      console.warn("[recurring POST] Inngest send failed:", inngestErr instanceof Error ? inngestErr.message : inngestErr)
+    }
 
     return NextResponse.json({ scheduleId: result.id }, { status: 201 })
   } catch (err) {
