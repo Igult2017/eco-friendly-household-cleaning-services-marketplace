@@ -43,24 +43,48 @@ export default function ProviderJobsPage() {
       .finally(() => setLoading(false))
   }, [])
 
+  function extractError(payload: unknown): string {
+    if (typeof payload === "string") return payload
+    if (payload && typeof payload === "object") {
+      const p = payload as Record<string, unknown>
+      const form = Array.isArray(p.formErrors) ? p.formErrors as string[] : []
+      const fields = p.fieldErrors && typeof p.fieldErrors === "object"
+        ? Object.values(p.fieldErrors as Record<string, string[]>).flat()
+        : []
+      const all = [...form, ...fields].filter(Boolean)
+      if (all.length) return all.join(" · ")
+    }
+    return "Something went wrong. Please try again."
+  }
+
   async function submitBid(jobId: string) {
-    if (!bidForm.amount) { setError("Please enter a bid amount"); return }
+    const amountEuros = parseFloat(bidForm.amount)
+    if (!bidForm.amount || isNaN(amountEuros) || amountEuros < 1) {
+      setError("Please enter a valid bid amount (minimum €1)")
+      return
+    }
     setSubmitting(true); setError(null)
     try {
       const res = await fetch(`/api/jobs/${jobId}/bids`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: Math.round(parseFloat(bidForm.amount) * 100),
+          amount: Math.round(amountEuros * 100),
           message: bidForm.message || undefined,
           estimatedDurationMinutes: parseInt(bidForm.estimatedDurationMinutes),
           proposedDate: bidForm.proposedDate || undefined,
         }),
       })
-      if (!res.ok) { const d = await res.json(); setError(d.error ?? "Failed"); return }
+      if (!res.ok) {
+        const d = await res.json()
+        setError(extractError(d.error))
+        return
+      }
       setSubmitted((prev) => new Set([...prev, jobId]))
       setBidding(null)
       setBidForm({ amount: "", message: "", estimatedDurationMinutes: "120", proposedDate: "" })
+    } catch {
+      setError("Network error. Please check your connection.")
     } finally { setSubmitting(false) }
   }
 

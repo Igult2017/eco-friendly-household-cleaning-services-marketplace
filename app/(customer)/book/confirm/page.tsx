@@ -45,8 +45,14 @@ export default function BookStep5Page() {
   const [promoLoading, setPromoLoading] = useState(false)
   const [promoError, setPromoError] = useState<string | null>(null)
 
+  // Bid-flow bookings (accepted bid) may have null categoryId or a slug instead of UUID.
+  // They always have bidAmountCents set. Loosen the guard accordingly.
+  const isBidFlow = store.bidAmountCents !== null
+
   useEffect(() => {
-    if (!store.selectedProviderId || !store.scheduledAt || !store.address || !store.categoryId) {
+    const missingBase = !store.selectedProviderId || !store.address
+    const missingWizard = !isBidFlow && (!store.scheduledAt || !store.categoryId)
+    if (missingBase || missingWizard) {
       router.replace("/book")
       return
     }
@@ -64,7 +70,7 @@ export default function BookStep5Page() {
     setLoading(true)
     setError(null)
     try {
-      const svcRes = await fetch(`/api/providers/${store.selectedProviderId}/services?categorySlug=${store.categoryId}`)
+      const svcRes = await fetch(`/api/providers/${store.selectedProviderId}/services${store.categoryId ? `?categorySlug=${store.categoryId}` : ""}`)
       const svcData = await svcRes.json()
       const service = svcData.services?.[0]
       if (!service) { setError("Service not found. Please contact support."); return }
@@ -101,7 +107,7 @@ export default function BookStep5Page() {
     setLoading(true)
     setError(null)
     try {
-      const svcRes = await fetch(`/api/providers/${store.selectedProviderId}/services?categorySlug=${store.categoryId}`)
+      const svcRes = await fetch(`/api/providers/${store.selectedProviderId}/services${store.categoryId ? `?categorySlug=${store.categoryId}` : ""}`)
       const svcData = await svcRes.json()
       const service = svcData.services?.[0]
       if (!service) { setError("This provider doesn't offer that service."); return }
@@ -157,7 +163,7 @@ export default function BookStep5Page() {
     setLoading(true)
     setError(null)
     try {
-      const svcRes = await fetch(`/api/providers/${store.selectedProviderId}/services?categorySlug=${store.categoryId}`)
+      const svcRes = await fetch(`/api/providers/${store.selectedProviderId}/services${store.categoryId ? `?categorySlug=${store.categoryId}` : ""}`)
       const svcData = await svcRes.json()
       const service = svcData.services?.[0]
       if (!service) { setError("Service not found."); return }

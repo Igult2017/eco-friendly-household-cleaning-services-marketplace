@@ -91,10 +91,20 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       })
     }
 
-    // Build ISO scheduledAt from bid's proposed date/time for the bid-flow booking wizard
+    // Build ISO scheduledAt — always non-null so confirm page guard doesn't redirect to /book.
+    // Falls back to 7 days from now at 10:00 UTC when neither bid nor job has a date.
     const dateStr = bid.proposedDate ?? job.desiredDate
     const timeStr = bid.proposedTimeStart ? bid.proposedTimeStart.substring(0, 5) : "10:00"
-    const scheduledAt = dateStr ? `${dateStr}T${timeStr}:00Z` : null
+    let scheduledAt: string
+    if (dateStr) {
+      scheduledAt = `${dateStr}T${timeStr}:00Z`
+    } else {
+      const fd = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+      const yy = fd.getUTCFullYear()
+      const mm = String(fd.getUTCMonth() + 1).padStart(2, "0")
+      const dd = String(fd.getUTCDate()).padStart(2, "0")
+      scheduledAt = `${yy}-${mm}-${dd}T10:00:00Z`
+    }
 
     return NextResponse.json({
       success: true,
