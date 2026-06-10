@@ -33,7 +33,7 @@ const isCustomerOnlyRoute = createRouteMatcher([
 
 const isProviderRoute = createRouteMatcher(["/provider/(.*)"])
 const isAdminRoute = createRouteMatcher(["/admin/(.*)"])
-const isOnboardingRoute = createRouteMatcher(["/onboarding(.*)"])
+const isOnboardingRoute = createRouteMatcher(["/onboarding(.*)", "/api/onboarding/(.*)"])
 
 const VALID_ROLES = ["customer", "provider", "admin"]
 

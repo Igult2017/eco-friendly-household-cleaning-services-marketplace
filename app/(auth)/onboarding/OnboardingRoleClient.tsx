@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Home, Briefcase, ArrowRight } from "lucide-react"
+import { Home, Briefcase, ArrowRight, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
@@ -25,19 +25,27 @@ const ROLES = [
 export function OnboardingRoleClient() {
   const [selected, setSelected] = useState<"customer" | "provider" | null>(null)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   async function handleContinue() {
     if (!selected) return
     setLoading(true)
+    setError(null)
     try {
       const res = await fetch("/api/onboarding/role", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role: selected }),
       })
-      if (!res.ok) throw new Error("Failed to set role")
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setError((data as { error?: string }).error ?? "Something went wrong. Please try again.")
+        setLoading(false)
+        return
+      }
       window.location.href = selected === "provider" ? "/onboarding/provider" : "/onboarding/customer"
     } catch {
+      setError("Network error. Please check your connection and try again.")
       setLoading(false)
     }
   }
@@ -82,6 +90,13 @@ export function OnboardingRoleClient() {
           </button>
         ))}
       </div>
+
+      {error && (
+        <div className="flex items-start gap-2 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700 mb-4">
+          <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+          {error}
+        </div>
+      )}
 
       <Button
         onClick={handleContinue}
