@@ -124,7 +124,21 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     const jobBids = await db.query.bids.findMany({
       where: (b: any, { eq: eqFn }: any) => eqFn(b.jobPostId, jobPostId),
       with: {
-        provider: { columns: { businessName: true, averageRating: true, totalReviews: true, profilePhotoUrl: true, ecoLevel: true, city: true } },
+        provider: {
+          columns: {
+            businessName: true,
+            bio: true,
+            averageRating: true,
+            totalReviews: true,
+            totalJobsCompleted: true,
+            profilePhotoUrl: true,
+            ecoLevel: true,
+            ecoScore: true,
+            city: true,
+            postalCode: true,
+            country: true,
+          },
+        },
       },
       orderBy: (b: any, { asc }: any) => [asc(b.createdAt)],
     })

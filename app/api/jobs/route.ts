@@ -140,6 +140,15 @@ export async function GET(req: Request) {
         with: { category: { columns: { name: true, slug: true } }, bids: { columns: { id: true, status: true, providerId: true } } },
       })
 
+      // Increment view count — each provider load counts as an impression
+      try {
+        await db.update(jobPosts)
+          .set({ viewCount: sql`view_count + 1` })
+          .where(inArray(jobPosts.id, nearbyIds))
+      } catch (viewErr) {
+        console.warn("[jobs GET provider] viewCount increment failed:", viewErr)
+      }
+
       return NextResponse.json({ jobs })
     }
 
@@ -147,7 +156,26 @@ export async function GET(req: Request) {
       where: (jp: any, { eq: eqFn }: any) => eqFn(jp.customerId, userId),
       with: {
         category: { columns: { name: true } },
-        bids: { with: { provider: { columns: { businessName: true, averageRating: true, profilePhotoUrl: true, ecoLevel: true } } } },
+        bids: {
+          with: {
+            provider: {
+              columns: {
+                businessName: true,
+                bio: true,
+                averageRating: true,
+                totalReviews: true,
+                totalJobsCompleted: true,
+                profilePhotoUrl: true,
+                ecoLevel: true,
+                ecoScore: true,
+                city: true,
+                postalCode: true,
+                country: true,
+              },
+            },
+          },
+          orderBy: (b: any, { desc: d }: any) => [d(b.amount)],
+        },
       },
       orderBy: [desc(jobPosts.createdAt)],
       limit: 20,

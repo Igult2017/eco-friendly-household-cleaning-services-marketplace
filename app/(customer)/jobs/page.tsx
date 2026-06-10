@@ -1,18 +1,60 @@
-export const dynamic = "force-dynamic"
+"use client"
 
-import { auth } from "@clerk/nextjs/server"
-import { redirect } from "next/navigation"
-import { db } from "@/lib/db"
-import { jobPosts, bids } from "@/lib/db/schema"
-import { eq, desc } from "drizzle-orm"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { AcceptBidButton } from "@/components/bidding/AcceptBidButton"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
 import { formatDate } from "@/lib/utils/formatDate"
-import { Plus, Star, Clock, CheckCircle2, Leaf } from "lucide-react"
 import { cn } from "@/lib/utils"
+import {
+  Plus, Star, Clock, Leaf, Eye, ChevronDown, ChevronUp,
+  MapPin, Timer, CalendarDays, MessageSquare, Briefcase, Loader2,
+} from "lucide-react"
+
+interface BidProvider {
+  businessName: string
+  bio: string | null
+  averageRating: number | null
+  totalReviews: number
+  totalJobsCompleted: number
+  profilePhotoUrl: string | null
+  ecoLevel: string
+  ecoScore: number
+  city: string | null
+  postalCode: string | null
+  country: string
+}
+
+interface Bid {
+  id: string
+  status: string
+  amount: number
+  message: string | null
+  estimatedDurationMinutes: number | null
+  proposedDate: string | null
+  proposedTimeStart: string | null
+  createdAt: string
+  provider: BidProvider | null
+}
+
+interface Job {
+  id: string
+  title: string
+  description: string
+  status: string
+  budgetMin: number | null
+  budgetMax: number | null
+  desiredDate: string | null
+  serviceAddress: { line1: string; city: string; postalCode: string; country: string }
+  ecoRequirements: string[]
+  viewCount: number
+  expiresAt: string
+  createdAt: string
+  category: { name: string } | null
+  bids: Bid[]
+}
 
 const STATUS_COLOR: Record<string, string> = {
   open: "bg-blue-100 text-blue-700",
@@ -23,28 +65,174 @@ const STATUS_COLOR: Record<string, string> = {
   expired: "bg-gray-100 text-gray-500",
 }
 
-const ECO_BADGE: Record<string, string> = {
+const ECO_LABEL: Record<string, string> = {
+  basic: "Basic",
+  certified: "Certified",
+  premium: "Premium",
+  zero_impact: "Zero Impact",
+}
+
+const ECO_COLOR: Record<string, string> = {
   basic: "bg-[#D1F0E0] text-[#2D7A5F]",
   certified: "bg-[#4CB87A]/20 text-[#2D7A5F]",
   premium: "bg-[#2D7A5F]/20 text-[#235f49]",
   zero_impact: "bg-[#2B3441]/10 text-[#2B3441]",
 }
 
-export default async function CustomerJobsPage() {
-  const { userId } = await auth()
-  if (!userId) redirect("/sign-in")
+function BidCard({ bid, jobId, jobStatus }: { bid: Bid; jobId: string; jobStatus: string }) {
+  const p = bid.provider
+  const initials = p?.businessName?.slice(0, 2).toUpperCase() ?? "??"
+  const location = [p?.city, p?.postalCode, p?.country].filter(Boolean).join(", ")
+  const canAccept = bid.status === "pending" && ["open", "bidding"].includes(jobStatus)
 
-  const jobs = await db.query.jobPosts.findMany({
-    where: (jp) => eq(jp.customerId, userId),
-    with: {
-      category: { columns: { name: true } },
-      bids: {
-        with: { provider: { columns: { businessName: true, averageRating: true, totalReviews: true, profilePhotoUrl: true, ecoLevel: true, city: true } } },
-        orderBy: [desc(bids.amount)],
-      },
-    },
-    orderBy: [desc(jobPosts.createdAt)],
-  })
+  return (
+    <div className={cn(
+      "rounded-xl border-2 overflow-hidden transition-all",
+      bid.status === "accepted" ? "border-[#2D7A5F] bg-[#F4FAF6]" :
+      bid.status === "rejected" ? "border-[#E5EBF0] opacity-50" :
+      "border-[#E5EBF0] bg-white hover:border-[#4CB87A]/40"
+    )}>
+      {/* Provider header */}
+      <div className="p-4 flex items-start gap-4">
+        {p?.profilePhotoUrl ? (
+          <img
+            src={p.profilePhotoUrl}
+            alt={p.businessName}
+            className="w-14 h-14 rounded-full object-cover flex-shrink-0 border-2 border-[#E5EBF0]"
+          />
+        ) : (
+          <div className="w-14 h-14 rounded-full bg-[#D1F0E0] flex items-center justify-center text-[#2D7A5F] font-bold text-base flex-shrink-0">
+            {initials}
+          </div>
+        )}
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-2 flex-wrap">
+            <div>
+              <h3 className="font-semibold text-[#2B3441] text-sm">{p?.businessName ?? "Unknown Provider"}</h3>
+              {location && (
+                <p className="flex items-center gap-1 text-xs text-[#6B7280] mt-0.5">
+                  <MapPin size={11} className="flex-shrink-0" />
+                  {location}
+                </p>
+              )}
+            </div>
+            <div className="text-right flex-shrink-0">
+              <p className="font-bold text-[#2D7A5F] text-lg leading-tight">{formatCurrency(bid.amount)}</p>
+              <p className="text-xs text-[#9CA3AF]">bid amount</p>
+            </div>
+          </div>
+
+          {/* Stats row */}
+          <div className="flex flex-wrap items-center gap-2 mt-2">
+            {p?.averageRating != null && p.averageRating > 0 && (
+              <span className="flex items-center gap-1 text-xs text-[#6B7280]">
+                <Star size={11} className="fill-amber-400 text-amber-400" />
+                {Number(p.averageRating).toFixed(1)}
+                {p.totalReviews > 0 && <span className="text-[#9CA3AF]">({p.totalReviews})</span>}
+              </span>
+            )}
+            {(p?.totalJobsCompleted ?? 0) > 0 && (
+              <span className="flex items-center gap-1 text-xs text-[#6B7280]">
+                <Briefcase size={11} />
+                {p!.totalJobsCompleted} jobs done
+              </span>
+            )}
+            {p?.ecoLevel && (
+              <Badge className={cn("text-xs px-1.5 py-0 h-5", ECO_COLOR[p.ecoLevel])}>
+                <Leaf size={10} className="mr-0.5" />
+                {ECO_LABEL[p.ecoLevel] ?? p.ecoLevel}
+              </Badge>
+            )}
+            {(p?.ecoScore ?? 0) > 0 && (
+              <span className="text-xs text-[#2D7A5F] font-medium">Eco {p!.ecoScore}/100</span>
+            )}
+          </div>
+
+          {/* Bio */}
+          {p?.bio && (
+            <p className="text-xs text-[#6B7280] mt-2 line-clamp-2">{p.bio}</p>
+          )}
+        </div>
+      </div>
+
+      {/* Bid details */}
+      <div className="px-4 pb-4 border-t border-[#F4FAF6] pt-3 space-y-2">
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#6B7280]">
+          {bid.estimatedDurationMinutes && (
+            <span className="flex items-center gap-1">
+              <Timer size={11} />
+              {bid.estimatedDurationMinutes >= 60
+                ? `${Math.floor(bid.estimatedDurationMinutes / 60)}h${bid.estimatedDurationMinutes % 60 > 0 ? ` ${bid.estimatedDurationMinutes % 60}m` : ""}`
+                : `${bid.estimatedDurationMinutes}m`} estimated
+            </span>
+          )}
+          {bid.proposedDate && (
+            <span className="flex items-center gap-1">
+              <CalendarDays size={11} />
+              {formatDate(bid.proposedDate)}
+              {bid.proposedTimeStart && ` at ${bid.proposedTimeStart.slice(0, 5)}`}
+            </span>
+          )}
+          <span className="flex items-center gap-1 text-[#9CA3AF]">
+            <Clock size={11} /> Submitted {formatDate(bid.createdAt)}
+          </span>
+        </div>
+
+        {bid.message && (
+          <div className="bg-[#F4FAF6] rounded-lg p-3">
+            <p className="flex items-start gap-1.5 text-xs text-[#2B3441]">
+              <MessageSquare size={12} className="flex-shrink-0 mt-0.5 text-[#6B7280]" />
+              <span className="italic">&ldquo;{bid.message}&rdquo;</span>
+            </p>
+          </div>
+        )}
+
+        <div className="flex items-center justify-between pt-1">
+          {bid.status === "accepted" && (
+            <span className="text-xs font-semibold text-[#2D7A5F]">✓ Accepted — booking in progress</span>
+          )}
+          {bid.status === "rejected" && (
+            <span className="text-xs text-[#9CA3AF]">Declined</span>
+          )}
+          {canAccept && (
+            <div className="ml-auto">
+              <AcceptBidButton jobId={jobId} bidId={bid.id} />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function CustomerJobsPage() {
+  const [jobs, setJobs] = useState<Job[]>([])
+  const [loading, setLoading] = useState(true)
+  const [expanded, setExpanded] = useState<Set<string>>(new Set())
+
+  useEffect(() => {
+    fetch("/api/jobs")
+      .then((r) => r.json())
+      .then((d) => setJobs(d.jobs ?? []))
+      .finally(() => setLoading(false))
+  }, [])
+
+  function toggleBids(jobId: string) {
+    setExpanded((prev) => {
+      const next = new Set(prev)
+      next.has(jobId) ? next.delete(jobId) : next.add(jobId)
+      return next
+    })
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#F4FAF6] flex items-center justify-center">
+        <Loader2 size={32} className="animate-spin text-[#2D7A5F]" />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-[#F4FAF6] py-8 px-4">
@@ -55,7 +243,9 @@ export default async function CustomerJobsPage() {
             <p className="text-[#6B7280] text-sm mt-1">Track bids from eco-cleaners</p>
           </div>
           <Link href="/post-job">
-            <Button className="bg-[#2D7A5F] hover:bg-[#235f49] text-white gap-2"><Plus size={16} /> Post a Job</Button>
+            <Button className="bg-[#2D7A5F] hover:bg-[#235f49] text-white gap-2">
+              <Plus size={16} /> Post a Job
+            </Button>
           </Link>
         </div>
 
@@ -64,70 +254,101 @@ export default async function CustomerJobsPage() {
             <Clock size={48} className="mx-auto text-[#9CA3AF] mb-4" />
             <h2 className="font-serif text-xl font-bold text-[#2B3441] mb-2">No jobs posted yet</h2>
             <p className="text-[#6B7280] mb-6">Post a job and let cleaners compete for your business</p>
-            <Link href="/post-job"><Button className="bg-[#2D7A5F] hover:bg-[#235f49] text-white">Post a Job</Button></Link>
+            <Link href="/post-job">
+              <Button className="bg-[#2D7A5F] hover:bg-[#235f49] text-white">Post a Job</Button>
+            </Link>
           </div>
         ) : (
-          <div className="space-y-6">
-            {jobs.map((job) => (
-              <div key={job.id} className="bg-white rounded-2xl border border-[#E5EBF0] shadow-sm overflow-hidden">
-                <div className="p-5 border-b border-[#F4FAF6]">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h2 className="font-semibold text-[#2B3441]">{job.title}</h2>
-                      <p className="text-xs text-[#9CA3AF] mt-1">{formatDate(job.createdAt)} · {job.serviceAddress.city}</p>
+          <div className="space-y-4">
+            {jobs.map((job) => {
+              const bidCount = job.bids.length
+              const isOpen = expanded.has(job.id)
+              const hasBids = bidCount > 0
+
+              return (
+                <div key={job.id} className="bg-white rounded-2xl border border-[#E5EBF0] shadow-sm overflow-hidden">
+                  {/* Job summary card */}
+                  <div className="p-5">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h2 className="font-semibold text-[#2B3441]">{job.title}</h2>
+                          <Badge className={cn("text-xs", STATUS_COLOR[job.status] ?? "bg-gray-100 text-gray-600")}>
+                            {job.status.charAt(0).toUpperCase() + job.status.slice(1)}
+                          </Badge>
+                        </div>
+                        {job.category && (
+                          <p className="text-xs text-[#6B7280] mt-0.5">{job.category.name}</p>
+                        )}
+                        <p className="text-xs text-[#9CA3AF] mt-1">
+                          <MapPin size={11} className="inline mr-0.5" />
+                          {job.serviceAddress.city}, {job.serviceAddress.postalCode}
+                          {" · "}Posted {formatDate(job.createdAt)}
+                        </p>
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        {job.budgetMin && job.budgetMax && (
+                          <p className="text-sm font-bold text-[#2D7A5F]">
+                            {formatCurrency(job.budgetMin)} – {formatCurrency(job.budgetMax)}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                      <Badge className={cn("text-xs", STATUS_COLOR[job.status] ?? "bg-gray-100 text-gray-600")}>{job.status.charAt(0).toUpperCase() + job.status.slice(1)}</Badge>
-                      {job.budgetMin && job.budgetMax && (
-                        <p className="text-xs font-medium text-[#2D7A5F]">{formatCurrency(job.budgetMin)} – {formatCurrency(job.budgetMax)}</p>
+
+                    {/* Stats + expand toggle */}
+                    <div className="flex items-center justify-between mt-4">
+                      <div className="flex items-center gap-4 text-sm text-[#6B7280]">
+                        <span className="flex items-center gap-1.5">
+                          <Eye size={14} />
+                          <span><strong className="text-[#2B3441]">{job.viewCount}</strong> views</span>
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <MessageSquare size={14} />
+                          <span><strong className="text-[#2B3441]">{bidCount}</strong> {bidCount === 1 ? "bid" : "bids"}</span>
+                        </span>
+                        {job.desiredDate && (
+                          <span className="flex items-center gap-1 text-xs">
+                            <CalendarDays size={13} />
+                            Wanted {formatDate(job.desiredDate)}
+                          </span>
+                        )}
+                      </div>
+
+                      {hasBids && (
+                        <button
+                          onClick={() => toggleBids(job.id)}
+                          className="flex items-center gap-1.5 text-sm font-medium text-[#2D7A5F] hover:text-[#235f49] transition-colors"
+                        >
+                          {isOpen ? (
+                            <><ChevronUp size={16} /> Hide bids</>
+                          ) : (
+                            <><ChevronDown size={16} /> View {bidCount} {bidCount === 1 ? "bid" : "bids"}</>
+                          )}
+                        </button>
                       )}
                     </div>
-                  </div>
-                </div>
 
-                {job.bids.length > 0 && (
-                  <div className="p-5">
-                    <p className="text-xs font-semibold text-[#6B7280] mb-3">{job.bids.length} bid{job.bids.length !== 1 ? "s" : ""} received</p>
-                    <div className="space-y-3">
+                    {!hasBids && (
+                      <p className="text-xs text-[#9CA3AF] mt-3">
+                        Waiting for bids — expires {formatDate(job.expiresAt)}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Expandable bids panel */}
+                  {isOpen && hasBids && (
+                    <div className="border-t border-[#F4FAF6] bg-[#F4FAF6] p-4 space-y-3">
+                      <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wide mb-2">
+                        {bidCount} {bidCount === 1 ? "Bid" : "Bids"} Received
+                      </p>
                       {job.bids.map((bid) => (
-                        <div key={bid.id} className={cn("flex items-center justify-between gap-3 p-3 rounded-xl border-2", bid.status === "accepted" ? "border-[#2D7A5F] bg-[#F4FAF6]" : bid.status === "rejected" ? "border-[#E5EBF0] opacity-50" : "border-[#E5EBF0]")}>
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-[#D1F0E0] flex items-center justify-center text-[#2D7A5F] font-bold text-sm flex-shrink-0">
-                              {bid.provider?.businessName?.[0] ?? "?"}
-                            </div>
-                            <div>
-                              <p className="font-medium text-sm text-[#2B3441]">{bid.provider?.businessName}</p>
-                              <div className="flex items-center gap-2 mt-0.5">
-                                {bid.provider?.averageRating && (
-                                  <span className="flex items-center gap-1 text-xs text-[#6B7280]">
-                                    <Star size={11} className="fill-amber-400 text-amber-400" />
-                                    {Number(bid.provider.averageRating).toFixed(1)}
-                                  </span>
-                                )}
-                                <Badge className={cn("text-xs px-1.5 py-0", ECO_BADGE[bid.provider?.ecoLevel ?? "basic"])}>
-                                  <Leaf size={10} className="mr-0.5" />{bid.provider?.ecoLevel?.replace("_", " ")}
-                                </Badge>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="text-right flex-shrink-0">
-                            <p className="font-bold text-[#2D7A5F]">{formatCurrency(bid.amount)}</p>
-                            {bid.status === "pending" && ["open", "bidding"].includes(job.status) && (
-                              <AcceptBidButton jobId={job.id} bidId={bid.id} />
-                            )}
-                            {bid.status === "accepted" && <p className="text-xs text-[#2D7A5F] font-semibold mt-1">✓ Accepted</p>}
-                          </div>
-                        </div>
+                        <BidCard key={bid.id} bid={bid} jobId={job.id} jobStatus={job.status} />
                       ))}
                     </div>
-                  </div>
-                )}
-
-                {job.bids.length === 0 && (
-                  <div className="px-5 py-4 text-sm text-[#9CA3AF]">Waiting for bids — expires {formatDate(job.expiresAt)}</div>
-                )}
-              </div>
-            ))}
+                  )}
+                </div>
+              )
+            })}
           </div>
         )}
       </div>

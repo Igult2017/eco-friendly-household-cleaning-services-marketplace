@@ -54,6 +54,7 @@ export const jobPosts = pgTable(
     radiusKm: integer("radius_km").notNull().default(25),
     ecoRequirements: jsonb("eco_requirements").$type<string[]>().default([]),
     acceptedBidId: uuid("accepted_bid_id"),
+    viewCount: integer("view_count").notNull().default(0),
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
