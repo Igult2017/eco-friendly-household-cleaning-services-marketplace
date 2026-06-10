@@ -1,5 +1,5 @@
 -- Migration: add error_severity enum and error_logs table
-CREATE TYPE "error_severity" AS ENUM('info', 'warning', 'error', 'critical');
+DO $$ BEGIN CREATE TYPE error_severity AS ENUM('info', 'warning', 'error', 'critical'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 CREATE TABLE IF NOT EXISTS "error_logs" (
   "id"              uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
