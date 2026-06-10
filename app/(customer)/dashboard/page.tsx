@@ -15,14 +15,15 @@ import { DashboardPayments } from "@/components/customer/DashboardPayments"
 import { DashboardNotifications } from "@/components/customer/DashboardNotifications"
 
 export default async function CustomerDashboardPage() {
-  const { userId } = await auth()
+  const { userId, sessionClaims } = await auth()
   if (!userId) redirect("/sign-in")
   const uid = userId as string
   const user = await currentUser()
-  const role = user?.publicMetadata?.role as string | undefined
+  const jwtRole = (sessionClaims?.metadata as { role?: string } | undefined)?.role
+  const role = jwtRole ?? (user?.publicMetadata?.role as string | undefined)
   if (role === "provider") redirect("/provider/dashboard")
   if (role === "admin") redirect("/admin/dashboard")
-  if (!role) redirect("/onboarding")
+  // No redirect for missing role — middleware already verified access
 
   const [allBookings, recentJobs, recentPayments, recentNotifs, reviewedRows] = await Promise.all([
     db.query.bookings.findMany({

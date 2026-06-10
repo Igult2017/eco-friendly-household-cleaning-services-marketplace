@@ -4,25 +4,34 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { CheckCircle } from "lucide-react"
+import { CheckCircle, AlertCircle } from "lucide-react"
 
 export default function CustomerOnboardingPage() {
   const [loading, setLoading] = useState(false)
   const [phone, setPhone] = useState("")
   const [gdprConsent, setGdprConsent] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!gdprConsent) return
     setLoading(true)
+    setError(null)
     try {
-      await fetch("/api/onboarding/customer", {
+      const res = await fetch("/api/onboarding/customer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone }),
       })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setError((data as { error?: string }).error ?? "Something went wrong. Please try again.")
+        return
+      }
       // Full navigation forces Clerk to issue a fresh JWT — avoids middleware seeing stale role=undefined
       window.location.href = "/dashboard"
+    } catch {
+      setError("Network error. Please check your connection and try again.")
     } finally {
       setLoading(false)
     }
@@ -68,6 +77,13 @@ export default function CustomerOnboardingPage() {
             I consent to the processing of my personal data in accordance with GDPR.
           </span>
         </label>
+
+        {error && (
+          <div className="flex items-start gap-2 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
+            <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+            {error}
+          </div>
+        )}
 
         <Button
           type="submit"
