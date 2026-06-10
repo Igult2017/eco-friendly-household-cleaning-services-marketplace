@@ -1,16 +1,10 @@
 export const dynamic = "force-dynamic"
 
-import { auth } from "@clerk/nextjs/server"
-import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
-import { ecoCertifications, providers, users, carbonOffsetContributions } from "@/lib/db/schema"
+import { ecoCertifications, providers, carbonOffsetContributions } from "@/lib/db/schema"
 import { eq, desc, sum, count } from "drizzle-orm"
 
 export default async function AdminEcoPage() {
-  const { userId } = await auth()
-  if (!userId) redirect("/sign-in")
-  const [me] = await db.select({ role: users.role }).from(users).where(eq(users.id, userId))
-  if (!me || me.role !== "admin") redirect("/")
 
   const [certs, offsets, [ecoStats]] = await Promise.all([
     db.select({

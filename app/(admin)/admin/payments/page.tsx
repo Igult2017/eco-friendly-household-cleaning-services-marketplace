@@ -1,17 +1,11 @@
 export const dynamic = "force-dynamic"
 
-import { auth } from "@clerk/nextjs/server"
-import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { payments, payouts, users, providers } from "@/lib/db/schema"
 import { eq, desc, sum, count } from "drizzle-orm"
 import { StatusBadge } from "@/components/admin/StatusBadge"
 
 export default async function AdminPaymentsPage() {
-  const { userId } = await auth()
-  if (!userId) redirect("/sign-in")
-  const [me] = await db.select({ role: users.role }).from(users).where(eq(users.id, userId))
-  if (!me || me.role !== "admin") redirect("/")
 
   const recentPayments = await db
     .select({
