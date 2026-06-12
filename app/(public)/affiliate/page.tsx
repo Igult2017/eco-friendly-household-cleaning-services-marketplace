@@ -96,7 +96,35 @@ const IDEAL_FOR = [
   "Anyone with an engaged, home-focused audience",
 ]
 
-export default function AffiliatePage() {
+export default async function AffiliatePage() {
+  // Check auth server-side so we never redirect a signed-in user to /sign-up
+  const { auth } = await import("@clerk/nextjs/server")
+  const { userId } = await auth()
+
+  // Auto-fetch (and auto-create) the referral link for signed-in users
+  let referralUrl: string | null = null
+  if (userId) {
+    try {
+      const { db } = await import("@/lib/db")
+      const { referralCodes } = await import("@/lib/db/schema")
+      const { eq } = await import("drizzle-orm")
+      const { customAlphabet } = await import("nanoid")
+
+      const genCode = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8)
+      let [row] = await db.select().from(referralCodes).where(eq(referralCodes.userId, userId)).limit(1)
+      if (!row) {
+        const code = genCode()
+        const inserted = await db.insert(referralCodes).values({ userId, code }).onConflictDoNothing().returning()
+        row = inserted[0] ?? (await db.select().from(referralCodes).where(eq(referralCodes.userId, userId)).limit(1))[0]
+      }
+      if (row) referralUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/?ref=${row.code}`
+    } catch {}
+  }
+
+  const heroPrimary   = userId ? { href: "/dashboard", label: "Go to my affiliate dashboard" } : { href: "/sign-up", label: "Get your link free" }
+  const heroSecondary = userId ? null : { href: "/sign-in", label: "Already a member? Sign in" }
+  const ctaPrimary    = userId ? { href: "/dashboard", label: "View my affiliate link" }        : { href: "/sign-up", label: "Get your affiliate link" }
+
   return (
     <div className="bg-[#F4FAF6] min-h-screen">
       {/* Hero */}
@@ -124,20 +152,31 @@ export default function AffiliatePage() {
               Partner with DORIXÉ and earn <strong className="text-white">5% lifetime commission</strong> on every
               booking made by customers you refer. No cap. No expiry. Just recurring credit for work you did once.
             </p>
+
+            {/* Signed-in: show their link inline */}
+            {userId && referralUrl && (
+              <div className="mb-8 flex items-center gap-2 bg-white/10 border border-white/20 rounded-xl px-4 py-3 max-w-lg">
+                <span className="flex-1 font-mono text-sm text-white/80 truncate">{referralUrl}</span>
+                <span className="text-xs font-semibold text-[#4CB87A] bg-[#2D7A5F]/30 rounded-lg px-3 py-1.5 shrink-0">Your link</span>
+              </div>
+            )}
+
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
-                href="/sign-up"
+                href={heroPrimary.href}
                 className="inline-flex items-center justify-center gap-2 bg-[#2D7A5F] hover:bg-[#245f4a] text-white rounded-xl px-8 py-3 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 shadow-lg"
               >
-                Get your link free
+                {heroPrimary.label}
                 <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link
-                href="/dashboard"
-                className="inline-flex items-center justify-center border border-white/20 text-white hover:bg-white/10 rounded-xl px-8 py-3 text-sm font-semibold transition-all duration-200"
-              >
-                Already a member? View dashboard
-              </Link>
+              {heroSecondary && (
+                <Link
+                  href={heroSecondary.href}
+                  className="inline-flex items-center justify-center border border-white/20 text-white hover:bg-white/10 rounded-xl px-8 py-3 text-sm font-semibold transition-all duration-200"
+                >
+                  {heroSecondary.label}
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -325,33 +364,39 @@ export default function AffiliatePage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
           <Leaf className="w-10 h-10 text-white/40 mx-auto mb-6" />
           <h2 className="text-3xl sm:text-4xl font-serif font-bold mb-4">
-            Start earning today. No approval needed.
+            {userId ? "Your affiliate link is ready." : "Start earning today. No approval needed."}
           </h2>
           <p className="text-white/70 text-lg mb-10 max-w-xl mx-auto">
-            Sign up, grab your link, and share. Your first commission could arrive before the week is out.
+            {userId
+              ? "Share your unique link and earn 5% on every booking your referrals make — forever."
+              : "Sign up, grab your link, and share. Your first commission could arrive before the week is out."}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/sign-up"
+              href={ctaPrimary.href}
               className="inline-flex items-center justify-center gap-2 bg-white text-[#2D7A5F] hover:bg-white/90 rounded-xl px-10 py-3 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 shadow-lg"
             >
-              Get your affiliate link
+              {ctaPrimary.label}
               <ArrowRight className="w-4 h-4" />
             </Link>
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center justify-center border border-white/30 text-white hover:bg-white/10 rounded-xl px-10 py-3 text-sm font-semibold transition-all duration-200"
-            >
-              Go to my dashboard
-            </Link>
+            {!userId && (
+              <Link
+                href="/sign-in"
+                className="inline-flex items-center justify-center border border-white/30 text-white hover:bg-white/10 rounded-xl px-10 py-3 text-sm font-semibold transition-all duration-200"
+              >
+                Sign in to existing account
+              </Link>
+            )}
           </div>
-          <p className="mt-8 text-white/40 text-xs">
-            By joining, you agree to our{" "}
-            <Link href="/legal/terms" className="underline hover:text-white/70 transition-colors">
-              Terms of Service
-            </Link>
-            . Commission paid as platform credit.
-          </p>
+          {!userId && (
+            <p className="mt-8 text-white/40 text-xs">
+              By joining, you agree to our{" "}
+              <Link href="/legal/terms" className="underline hover:text-white/70 transition-colors">
+                Terms of Service
+              </Link>
+              . Commission paid as platform credit.
+            </p>
+          )}
         </div>
       </section>
     </div>
