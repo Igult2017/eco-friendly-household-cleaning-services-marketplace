@@ -25,6 +25,7 @@ export const users = pgTable(
     isActive: boolean("is_active").notNull().default(true),
     gdprConsentAt: timestamp("gdpr_consent_at", { withTimezone: true }),
     marketingConsent: boolean("marketing_consent").notNull().default(false),
+    dualRoleEnabled: boolean("dual_role_enabled").notNull().default(false),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

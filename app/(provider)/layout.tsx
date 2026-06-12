@@ -1,22 +1,32 @@
 import { auth, currentUser } from "@clerk/nextjs/server"
+import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { UserButton } from "@clerk/nextjs"
 import { NotificationBell } from "@/components/notifications/NotificationBell"
+import { RoleSwitcher } from "@/components/layout/RoleSwitcher"
 
 export default async function ProviderLayout({ children }: { children: React.ReactNode }) {
   const user = await currentUser()
   if (!user) redirect("/sign-in")
 
-  // JWT claims are fresher than publicMetadata on the first render after onboarding.
   const { sessionClaims } = await auth()
-  const jwtRole = (sessionClaims?.metadata as { role?: string } | undefined)?.role
-  const role = jwtRole ?? (user.publicMetadata?.role as string | undefined)
+  const meta = sessionClaims?.metadata as { role?: string; dualRole?: boolean } | undefined
+  const jwtRole = meta?.role
+  const isDual  = meta?.dualRole === true
+  const primaryRole = jwtRole ?? (user.publicMetadata?.role as string | undefined)
 
-  if (role === "customer") redirect("/dashboard")
-  if (role === "admin") redirect("/admin/dashboard")
-  if (role && role !== "provider") redirect("/")
+  // Admin: allowed through (can view provider views, e.g. My Cleaner Account)
+  if (primaryRole !== "admin") {
+    const cookieStore = await cookies()
+    const activeRole = isDual ? cookieStore.get("dorix_active_role")?.value : undefined
+    const effectiveRole = activeRole ?? primaryRole
+    if (effectiveRole === "customer") redirect("/dashboard")
+    if (effectiveRole && effectiveRole !== "provider") redirect("/")
+  }
+
+  const showSwitcher = isDual || primaryRole === "admin"
 
   return (
     <div className="min-h-screen bg-[#F4FAF6]">
@@ -31,6 +41,7 @@ export default async function ProviderLayout({ children }: { children: React.Rea
             <Link href="/provider/profile" className="hover:text-[#2D7A5F] transition-colors">Profile</Link>
           </nav>
           <div className="flex items-center gap-2">
+            {showSwitcher && <RoleSwitcher currentRole="provider" targetRole="customer" />}
             <NotificationBell />
             <UserButton />
           </div>

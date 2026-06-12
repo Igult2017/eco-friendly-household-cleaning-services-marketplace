@@ -23,8 +23,7 @@ export default async function CustomerDashboardPage() {
   const jwtRole = (sessionClaims?.metadata as { role?: string } | undefined)?.role
   const role = jwtRole ?? (user?.publicMetadata?.role as string | undefined)
   if (role === "provider") redirect("/provider/dashboard")
-  if (role === "admin") redirect("/admin/dashboard")
-  // No redirect for missing role — middleware already verified access
+  // Admin is allowed through to view customer-side data (My Provider Account)
 
   const [allBookings, recentJobs, recentPayments, recentNotifs, reviewedRows] = await Promise.all([
     db.query.bookings.findMany({

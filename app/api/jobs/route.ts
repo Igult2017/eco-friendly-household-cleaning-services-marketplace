@@ -126,11 +126,13 @@ export async function GET(req: Request) {
       const radiusMeters = (provider.serviceRadiusKm ?? 25) * 1000
 
       // Step 1: get nearby job IDs ordered by distance via PostGIS (service_location added in migration 0001)
+      // Fraud prevention: dual-role users cannot bid on jobs they posted as customers.
       const nearbyRows = await db
         .select({ id: jobPosts.id })
         .from(jobPosts)
         .where(and(
           inArray(jobPosts.status, ["open", "bidding"]),
+          sql`customer_id != ${userId}`,
           sql`service_location IS NOT NULL AND ST_DWithin(service_location::geography, ST_MakePoint(${providerLng}, ${providerLat})::geography, ${radiusMeters})`,
         ))
         .orderBy(sql`ST_Distance(service_location::geography, ST_MakePoint(${providerLng}, ${providerLat})::geography)`)

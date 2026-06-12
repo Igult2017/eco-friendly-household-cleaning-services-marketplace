@@ -15,6 +15,7 @@ const isPublicRoute = createRouteMatcher([
   "/browse-jobs(.*)",
   "/affiliate(.*)",
   "/about(.*)",
+  "/become-a-cleaner(.*)",
   "/api/webhooks/(.*)",
   "/api/geo/(.*)",
   "/api/jobs/public(.*)",
@@ -98,9 +99,28 @@ const clerkHandler = clerkMiddleware(async (auth, req) => {
 
   if (!role) return NextResponse.redirect(new URL("/onboarding", req.url))
 
+  // Admin-only gate: non-admins cannot access /admin/* routes
   if (isAdminRoute(req) && role !== "admin") return NextResponse.redirect(new URL("/", req.url))
-  if (isProviderRoute(req) && role !== "provider") return NextResponse.redirect(new URL("/", req.url))
-  if (isCustomerOnlyRoute(req) && role !== "customer" && role !== "admin") return NextResponse.redirect(new URL("/", req.url))
+
+  // Admin bypasses all further role-based route restrictions (can view provider/customer UIs)
+  if (role === "admin") {
+    const res = NextResponse.next()
+    if (shouldRefreshCookie) setCookieOnResponse(res, userId, role)
+    return res
+  }
+
+  // Dual-role: use the active-role cookie to determine which section this user is browsing
+  const isDual = (sessionClaims?.metadata as { dualRole?: boolean } | undefined)?.dualRole === true
+  let effectiveRole = role
+  if (isDual) {
+    const activeRoleCookie = req.cookies.get("dorix_active_role")?.value
+    if (activeRoleCookie === "customer" || activeRoleCookie === "provider") {
+      effectiveRole = activeRoleCookie
+    }
+  }
+
+  if (isProviderRoute(req) && effectiveRole !== "provider") return NextResponse.redirect(new URL("/", req.url))
+  if (isCustomerOnlyRoute(req) && effectiveRole !== "customer") return NextResponse.redirect(new URL("/", req.url))
 
   const res = NextResponse.next()
   if (shouldRefreshCookie) setCookieOnResponse(res, userId, role)
