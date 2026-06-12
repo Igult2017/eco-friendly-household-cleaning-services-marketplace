@@ -35,7 +35,7 @@ export const referrals = pgTable("referrals", {
 export const referralCommissions = pgTable("referral_commissions", {
   id: uuid("id").primaryKey().defaultRandom(),
   referralId: uuid("referral_id").notNull().references(() => referrals.id),
-  bookingId: uuid("booking_id").notNull().references(() => bookings.id),
+  bookingId: uuid("booking_id").notNull().unique().references(() => bookings.id),
   referrerId: text("referrer_id").notNull().references(() => users.id),
   bookingAmountCents: integer("booking_amount_cents").notNull(),
   commissionCents: integer("commission_cents").notNull(),
@@ -43,6 +43,7 @@ export const referralCommissions = pgTable("referral_commissions", {
   creditedAt: timestamp("credited_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
+  uniqueIndex("ref_commissions_booking_idx").on(t.bookingId),
   index("ref_commissions_referral_idx").on(t.referralId),
   index("ref_commissions_referrer_idx").on(t.referrerId),
 ])

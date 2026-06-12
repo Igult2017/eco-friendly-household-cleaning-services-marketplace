@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS referral_commissions (
   credited_at           TIMESTAMPTZ,
   created_at            TIMESTAMPTZ       NOT NULL DEFAULT NOW()
 );
+CREATE UNIQUE INDEX IF NOT EXISTS ref_commissions_booking_idx ON referral_commissions(booking_id);
 CREATE INDEX IF NOT EXISTS ref_commissions_referral_idx ON referral_commissions(referral_id);
 CREATE INDEX IF NOT EXISTS ref_commissions_referrer_idx ON referral_commissions(referrer_id);
 

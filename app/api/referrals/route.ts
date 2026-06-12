@@ -3,11 +3,14 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { referralCodes, referrals, referralCredits } from "@/lib/db/schema"
 import { eq, count, sql } from "drizzle-orm"
-import { nanoid } from "nanoid"
+import { customAlphabet } from "nanoid"
 
-function generateCode(userId: string): string {
-  // 8-char alphanumeric, uppercased — readable and unique enough
-  return nanoid(8).toUpperCase()
+// Strict alphanumeric — no `-` or `_` from nanoid's default alphabet.
+// The middleware regex [A-Z0-9]{6,20} must match every generated code.
+const genCode = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8)
+
+function generateCode(): string {
+  return genCode()
 }
 
 export async function GET() {
@@ -23,7 +26,7 @@ export async function GET() {
       .limit(1)
 
     if (!codeRow) {
-      const code = generateCode(userId)
+      const code = generateCode()
       ;[codeRow] = await db
         .insert(referralCodes)
         .values({ userId, code })

@@ -105,17 +105,25 @@ export const onBookingCompleted = inngest.createFunction(
           .where(eq(referrals.id, ref.id))
       }
 
-      await db.insert(referralCommissions).values({
-        referralId: ref.id,
-        bookingId,
-        referrerId: ref.referrerId,
-        bookingAmountCents: booking.subtotalAmount,
-        commissionCents,
-        status: "credited",
-        creditedAt: new Date(),
-      })
+      // Unique constraint on booking_id makes this INSERT idempotent across retries.
+      // If it returns empty (conflict), a prior attempt already credited — skip wallet update.
+      const inserted = await db
+        .insert(referralCommissions)
+        .values({
+          referralId: ref.id,
+          bookingId,
+          referrerId: ref.referrerId,
+          bookingAmountCents: booking.subtotalAmount,
+          commissionCents,
+          status: "credited",
+          creditedAt: new Date(),
+        })
+        .onConflictDoNothing()
+        .returning({ id: referralCommissions.id })
 
-      // Upsert credit wallet
+      if (!inserted.length) return { skipped: "already_credited" }
+
+      // Only reaches here once per booking — safe to increment balance
       await db
         .insert(referralCredits)
         .values({ userId: ref.referrerId, balanceCents: commissionCents, lifetimeEarnedCents: commissionCents })

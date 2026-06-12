@@ -1,0 +1,23 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - img "DORIX" [ref=e4]
+    - link "Back to homepage" [ref=e5] [cursor=pointer]:
+      - /url: /
+      - img [ref=e6]
+      - text: Back to homepage
+  - region "Notifications alt+T"
+  - alert [ref=e8]
+  - generic [ref=e10]:
+    - generic [ref=e11]:
+      - paragraph [ref=e12]: We use cookies 🍪
+      - paragraph [ref=e13]:
+        - text: We use essential cookies to run the platform and analytics cookies to improve your experience. Read our
+        - link "Cookie Policy" [ref=e14] [cursor=pointer]:
+          - /url: /legal/cookie-policy
+        - text: and
+        - link "Privacy Policy" [ref=e15] [cursor=pointer]:
+          - /url: /legal/privacy
+        - text: .
+    - generic [ref=e16]:
+      - button "Decline" [ref=e17]
+      - button "Accept" [ref=e18]
