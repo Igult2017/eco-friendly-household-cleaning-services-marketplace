@@ -32,6 +32,7 @@ export function OnboardingForm({ defaultFirstName = "", defaultLastName = "" }: 
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [locationValid, setLocationValid] = useState(true)
 
   function updateProvider(key: keyof typeof providerData, value: string) {
     setProviderData(prev => ({ ...prev, [key]: value }))
@@ -41,6 +42,7 @@ export function OnboardingForm({ defaultFirstName = "", defaultLastName = "" }: 
     && providerData.bio.trim().length >= 20
     && providerData.city.trim().length >= 2
     && providerData.postalCode.trim().length >= 3
+    && locationValid
 
   const isValid = !!role && firstName.trim().length > 0 && lastName.trim().length > 0 && gdpr
     && (role === "customer" || providerValid)
@@ -123,7 +125,7 @@ export function OnboardingForm({ defaultFirstName = "", defaultLastName = "" }: 
           <Input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+31 6 12345678" />
         </div>
 
-        {role === "provider" && <ProviderFields values={providerData} onChange={updateProvider} />}
+        {role === "provider" && <ProviderFields values={providerData} onChange={updateProvider} onValidChange={setLocationValid} />}
 
         <label className="flex items-start gap-3 cursor-pointer">
           <input type="checkbox" checked={gdpr} onChange={e => setGdpr(e.target.checked)}

@@ -16,6 +16,7 @@ export function AddCleanerRoleForm() {
   })
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState<string | null>(null)
+  const [locationValid, setLocationValid] = useState(true)
 
   function update(key: FieldKey, value: string) {
     setFields(prev => ({ ...prev, [key]: value }))
@@ -25,6 +26,7 @@ export function AddCleanerRoleForm() {
     && fields.bio.trim().length >= 20
     && fields.city.trim().length >= 2
     && fields.postalCode.trim().length >= 3
+    && locationValid
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -56,7 +58,7 @@ export function AddCleanerRoleForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      <ProviderFields values={fields} onChange={update} />
+      <ProviderFields values={fields} onChange={update} onValidChange={setLocationValid} />
 
       {error && (
         <div className="flex items-start gap-2 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">

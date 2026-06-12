@@ -1,7 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Loader2, Save } from "lucide-react"
+import { Loader2, Save, AlertTriangle } from "lucide-react"
+import { LocationDetectButton } from "@/components/location/LocationDetectButton"
+import { usePostalValidation } from "@/hooks/usePostalValidation"
+import type { GeoResult } from "@/lib/nominatim"
 
 type Profile = {
   businessName: string
@@ -21,6 +24,19 @@ export default function ProviderProfilePage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [locationValid, setLocationValid] = useState(true)
+  const postal = usePostalValidation()
+
+  function handleDetect(result: GeoResult) {
+    setProfile((p) => ({ ...p, city: result.city, postalCode: result.postalCode }))
+    postal.clear()
+    setLocationValid(true)
+  }
+
+  async function validatePostal() {
+    const ok = await postal.validate(profile.postalCode, profile.country, profile.city)
+    setLocationValid(ok)
+  }
 
   useEffect(() => {
     fetch("/api/providers/profile")
@@ -84,21 +100,41 @@ export default function ProviderProfilePage() {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">City</label>
-            <input type="text" value={profile.city}
-              onChange={(e) => setProfile((p) => ({ ...p, city: e.target.value }))}
-              className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]"
-            />
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-semibold text-[#2B3441] uppercase tracking-wide">Location</span>
+            <LocationDetectButton onDetect={handleDetect} />
           </div>
-          <div>
-            <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">Postal code</label>
-            <input type="text" value={profile.postalCode}
-              onChange={(e) => setProfile((p) => ({ ...p, postalCode: e.target.value }))}
-              className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">City</label>
+              <input type="text" value={profile.city}
+                onChange={(e) => setProfile((p) => ({ ...p, city: e.target.value }))}
+                onBlur={validatePostal}
+                className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">Postal code</label>
+              <input type="text" value={profile.postalCode}
+                onChange={(e) => setProfile((p) => ({ ...p, postalCode: e.target.value }))}
+                onBlur={validatePostal}
+                className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]"
+              />
+            </div>
           </div>
+          {postal.postalError && (
+            <div className="mt-2 flex items-start gap-2 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-800">
+              <AlertTriangle size={13} className="mt-0.5 shrink-0" />
+              <span className="flex-1">{postal.postalError}</span>
+              {postal.canonicalCity && (
+                <button type="button" onClick={() => { setProfile((p) => ({ ...p, city: postal.canonicalCity! })); postal.clear(); setLocationValid(true) }}
+                  className="shrink-0 font-semibold underline hover:text-amber-900 transition-colors">
+                  Use {postal.canonicalCity}
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         <div>
@@ -123,7 +159,7 @@ export default function ProviderProfilePage() {
           </div>
         </label>
 
-        <button onClick={save} disabled={saving}
+        <button onClick={save} disabled={saving || !locationValid}
           className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#2D7A5F] py-3 text-sm font-semibold text-white disabled:opacity-50 hover:bg-[#256349] transition-colors"
         >
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}

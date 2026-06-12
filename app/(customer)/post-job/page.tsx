@@ -6,8 +6,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Loader2, CheckCircle2, MapPin } from "lucide-react"
+import { Loader2, CheckCircle2, MapPin, AlertTriangle } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { LocationDetectButton } from "@/components/location/LocationDetectButton"
+import { usePostalValidation } from "@/hooks/usePostalValidation"
+import type { GeoResult } from "@/lib/nominatim"
 
 const ECO_OPTIONS = ["Eco-certified products only", "No single-use plastics", "Fragrance-free", "Energy-saving methods"]
 
@@ -17,6 +20,8 @@ export default function PostJobPage() {
   const [success, setSuccess] = useState(false)
   const [geocoding, setGeocoding] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [locationValid, setLocationValid] = useState(true)
+  const postal = usePostalValidation()
 
   const [form, setForm] = useState({
     title: "",
@@ -39,7 +44,10 @@ export default function PostJobPage() {
     if (!form.serviceAddress.city || !form.serviceAddress.postalCode) return
     setGeocoding(true)
     try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&postalcode=${encodeURIComponent(form.serviceAddress.postalCode)}&city=${encodeURIComponent(form.serviceAddress.city)}&country=${form.serviceAddress.country}&limit=1`, { headers: { "Accept-Language": "en" } })
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&postalcode=${encodeURIComponent(form.serviceAddress.postalCode)}&city=${encodeURIComponent(form.serviceAddress.city)}&country=${form.serviceAddress.country}&limit=1`,
+        { headers: { "Accept-Language": "en", "User-Agent": "DORIXE-marketplace/1.0 (contact: antiperhenryotieno@gmail.com)" } }
+      )
       const data = await res.json()
       if (data[0]) {
         setForm((prev) => ({ ...prev, serviceLatitude: parseFloat(data[0].lat), serviceLongitude: parseFloat(data[0].lon) }))
@@ -47,6 +55,22 @@ export default function PostJobPage() {
     } finally {
       setGeocoding(false)
     }
+  }
+
+  function handleDetect(result: GeoResult) {
+    setForm((prev) => ({
+      ...prev,
+      serviceAddress: { ...prev.serviceAddress, line1: result.line1, city: result.city, postalCode: result.postalCode },
+      serviceLatitude: result.lat,
+      serviceLongitude: result.lng,
+    }))
+    postal.clear()
+    setLocationValid(true)
+  }
+
+  async function validatePostal() {
+    const ok = await postal.validate(form.serviceAddress.postalCode, form.serviceAddress.country, form.serviceAddress.city)
+    setLocationValid(ok)
   }
 
   function toggleEco(opt: string) {
@@ -144,7 +168,10 @@ export default function PostJobPage() {
           </div>
 
           <div className="bg-white rounded-2xl border border-[#E5EBF0] p-5 space-y-4">
-            <h2 className="font-semibold text-[#2B3441]">Service location</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-[#2B3441]">Service location</h2>
+              <LocationDetectButton onDetect={handleDetect} />
+            </div>
             <div>
               <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">Street address</Label>
               <Input value={form.serviceAddress.line1} onChange={(e) => setForm((p) => ({ ...p, serviceAddress: { ...p.serviceAddress, line1: e.target.value } }))} placeholder="Hauptstraße 42" />
@@ -152,13 +179,31 @@ export default function PostJobPage() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">City *</Label>
-                <Input value={form.serviceAddress.city} onChange={(e) => setForm((p) => ({ ...p, serviceAddress: { ...p.serviceAddress, city: e.target.value } }))} placeholder="Berlin" required onBlur={geocodeAddress} />
+                <Input value={form.serviceAddress.city}
+                  onChange={(e) => setForm((p) => ({ ...p, serviceAddress: { ...p.serviceAddress, city: e.target.value } }))}
+                  placeholder="Berlin" required
+                  onBlur={() => { geocodeAddress(); validatePostal() }} />
               </div>
               <div>
                 <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">Postal code *</Label>
-                <Input value={form.serviceAddress.postalCode} onChange={(e) => setForm((p) => ({ ...p, serviceAddress: { ...p.serviceAddress, postalCode: e.target.value } }))} placeholder="10115" required onBlur={geocodeAddress} />
+                <Input value={form.serviceAddress.postalCode}
+                  onChange={(e) => setForm((p) => ({ ...p, serviceAddress: { ...p.serviceAddress, postalCode: e.target.value } }))}
+                  placeholder="10115" required
+                  onBlur={() => { geocodeAddress(); validatePostal() }} />
               </div>
             </div>
+            {postal.postalError && (
+              <div className="flex items-start gap-2 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-800">
+                <AlertTriangle size={13} className="mt-0.5 shrink-0" />
+                <span className="flex-1">{postal.postalError}</span>
+                {postal.canonicalCity && (
+                  <button type="button" onClick={() => { setForm((p) => ({ ...p, serviceAddress: { ...p.serviceAddress, city: postal.canonicalCity! } })); postal.clear(); setLocationValid(true) }}
+                    className="shrink-0 font-semibold underline hover:text-amber-900 transition-colors">
+                    Use {postal.canonicalCity}
+                  </button>
+                )}
+              </div>
+            )}
             <div className="flex items-center gap-2 text-xs text-[#6B7280]">
               <MapPin size={13} className={form.serviceLatitude ? "text-[#2D7A5F]" : "text-[#9CA3AF]"} />
               {geocoding ? "Locating..." : form.serviceLatitude ? `Located: ${form.serviceLatitude.toFixed(4)}, ${form.serviceLongitude.toFixed(4)}` : "Fill in city and postal code to auto-locate"}
@@ -186,7 +231,7 @@ export default function PostJobPage() {
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
-          <Button type="submit" disabled={loading} className="w-full h-12 bg-[#2D7A5F] hover:bg-[#235f49] text-white font-semibold">
+          <Button type="submit" disabled={loading || !locationValid} className="w-full h-12 bg-[#2D7A5F] hover:bg-[#235f49] text-white font-semibold">
             {loading ? <><Loader2 size={16} className="animate-spin mr-2" /> Posting...</> : "Post Job & Get Bids"}
           </Button>
         </form>

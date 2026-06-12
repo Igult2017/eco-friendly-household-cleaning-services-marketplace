@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label"
 import { Loader2, MapPin, Search } from "lucide-react"
 import type { GeoProvider } from "@/lib/db/queries/geo"
 import type { Address } from "@/types"
+import { LocationDetectButton } from "@/components/location/LocationDetectButton"
+import type { GeoResult } from "@/lib/nominatim"
 
 export default function BookStep2Page() {
   const router = useRouter()
@@ -25,6 +27,30 @@ export default function BookStep2Page() {
   const latRef = useRef<number | null>(null)
   const lngRef = useRef<number | null>(null)
 
+  async function searchProviders(lat: number, lng: number) {
+    setSearching(true)
+    setError(null)
+    try {
+      const params = new URLSearchParams({ lat: String(lat), lng: String(lng), radius: "25" })
+      if (categoryId) params.set("categoryId", categoryId)
+      const res = await fetch(`/api/geo/providers?${params}`)
+      const data = await res.json()
+      setProviders(data.providers ?? [])
+      setSearched(true)
+    } catch {
+      setError("Search failed. Please try again.")
+    } finally {
+      setSearching(false)
+    }
+  }
+
+  function handleDetect(result: GeoResult) {
+    setAddressForm({ line1: result.line1, city: result.city, postalCode: result.postalCode, country: result.country || "DE" })
+    latRef.current = result.lat
+    lngRef.current = result.lng
+    searchProviders(result.lat, result.lng)
+  }
+
   const geocodeAndSearch = useCallback(async () => {
     if (!address.postalCode || !address.city) {
       setError("Please enter your city and postal code")
@@ -35,7 +61,7 @@ export default function BookStep2Page() {
 
     try {
       const geocodeUrl = `https://nominatim.openstreetmap.org/search?format=json&postalcode=${encodeURIComponent(address.postalCode)}&city=${encodeURIComponent(address.city)}&country=${address.country}&limit=1`
-      const geoRes = await fetch(geocodeUrl, { headers: { "Accept-Language": "en" } })
+      const geoRes = await fetch(geocodeUrl, { headers: { "Accept-Language": "en", "User-Agent": "DORIXE-marketplace/1.0 (contact: antiperhenryotieno@gmail.com)" } })
       const geoData = await geoRes.json()
 
       if (!geoData[0]) {
@@ -86,6 +112,9 @@ export default function BookStep2Page() {
         <p className="text-center text-[#6B7280] mb-8">We'll find eco-verified cleaners near you</p>
 
         <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-6">
+          <div className="flex justify-end mb-3">
+            <LocationDetectButton onDetect={handleDetect} />
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <div>
               <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">Street address</Label>
