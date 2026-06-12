@@ -244,10 +244,10 @@ export default async function AffiliatePage() {
                 crediting, and a dashboard that actually shows you what's happening. No black boxes.
               </p>
               <Link
-                href="/sign-up"
+                href={userId ? "/dashboard" : "/sign-up"}
                 className="inline-flex items-center gap-2 bg-[#2D7A5F] hover:bg-[#245f4a] text-white rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5"
               >
-                Join now — it's free
+                {userId ? "Go to my dashboard" : "Join now — it's free"}
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
