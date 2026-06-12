@@ -17,6 +17,7 @@ import {
   BarChart3,
   Tag,
   Newspaper,
+  ExternalLink,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -68,8 +69,17 @@ export function AdminSidebar() {
           )
         })}
       </nav>
-      <div className="p-4 border-t border-white/10">
-        <p className="text-white/30 text-xs">DORIX Platform v1.0</p>
+      <div className="p-3 border-t border-white/10 space-y-2">
+        <Link
+          href="/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-white/60 hover:text-white hover:bg-white/10 transition-all"
+        >
+          <ExternalLink className="h-4 w-4 shrink-0" />
+          <span className="flex-1">View Marketplace</span>
+        </Link>
+        <p className="text-white/25 text-xs px-3">DORIX Platform v1.0</p>
       </div>
     </aside>
   )
