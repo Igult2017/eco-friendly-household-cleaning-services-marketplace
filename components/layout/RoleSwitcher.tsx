@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowLeftRight, Leaf, Home, AlertTriangle, Loader2 } from "lucide-react"
+import { toast } from "sonner"
 
 interface Props {
   currentRole: "customer" | "provider"
@@ -18,6 +19,8 @@ const ROLE_META = {
     accentBg: "bg-[#EDF5F0]",
     accentBorder: "border-[#2D7A5F]/20",
     accentIcon: "text-[#2D7A5F]",
+    toastTitle: "Switched to Cleaner Account",
+    toastDesc: "You are now browsing as a cleaner. Find and bid on nearby jobs.",
   },
   customer: {
     label: "Provider Account",
@@ -27,6 +30,8 @@ const ROLE_META = {
     accentBg: "bg-[#FFF9F0]",
     accentBorder: "border-amber-200",
     accentIcon: "text-amber-500",
+    toastTitle: "Switched to Provider Account",
+    toastDesc: "You are now browsing as a provider. Post jobs and manage bookings.",
   },
 }
 
@@ -56,8 +61,18 @@ export function RoleSwitcher({ currentRole, targetRole }: Props) {
         setSwitching(false)
         return
       }
-      // Signal the destination page to show a toast on arrival
-      try { sessionStorage.setItem("dorix_switched_to", targetRole) } catch {}
+
+      // Show the toast NOW — while still on this page — so the Toaster
+      // is guaranteed to be in the DOM and the notification is visible.
+      // After a short pause we navigate, giving the toast time to render.
+      toast.success(target.toastTitle, {
+        description: target.toastDesc,
+        icon: <TargetIcon size={16} className={target.color} />,
+        duration: 5000,
+      })
+
+      // Brief delay so the toast appears before the page transitions
+      await new Promise(r => setTimeout(r, 400))
       router.push((data as { redirectTo?: string }).redirectTo ?? "/")
     } catch {
       setError("Network error. Try again.")
