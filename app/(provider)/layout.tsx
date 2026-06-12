@@ -6,6 +6,7 @@ import Image from "next/image"
 import { UserButton } from "@clerk/nextjs"
 import { NotificationBell } from "@/components/notifications/NotificationBell"
 import { RoleSwitcher } from "@/components/layout/RoleSwitcher"
+import { SwitchNotifier } from "@/components/layout/SwitchNotifier"
 
 export default async function ProviderLayout({ children }: { children: React.ReactNode }) {
   const user = await currentUser()
@@ -47,6 +48,7 @@ export default async function ProviderLayout({ children }: { children: React.Rea
           </div>
         </div>
       </header>
+      <SwitchNotifier />
       <main className="max-w-7xl mx-auto px-4 py-8">{children}</main>
     </div>
   )
