@@ -55,7 +55,7 @@ export const bookingReminders = inngest.createFunction(
             <p>Hi ${esc(customer.firstName ?? "there")},</p>
             <p>Just a reminder that your cleaning session is scheduled for <strong>${scheduledTime.toLocaleString("en-GB")}</strong>.</p>
             ${addr ? `<p>Address: ${esc(addr)}</p>` : ""}
-            <p>Thank you for choosing DORIX 🌿</p>
+            <p>Thank you for choosing DORIXÉ 🌿</p>
           `,
         })
       })

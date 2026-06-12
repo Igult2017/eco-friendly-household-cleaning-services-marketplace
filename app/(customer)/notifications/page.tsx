@@ -9,7 +9,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { MarkAllReadButton } from "@/components/notifications/MarkAllReadButton"
 
-export const metadata: Metadata = { title: "Notifications — DORIX" }
+export const metadata: Metadata = { title: "Notifications — DORIXÉ" }
 
 const TYPE_ICON: Record<string, string> = {
   booking_confirmed: "📅", booking_completed: "✅", booking_cancelled: "❌",

@@ -115,7 +115,7 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
         customerId: userId,
         providerId,
         amount: carbonOffsetCents,
-        offsetProvider: "DORIX Green Fund",
+        offsetProvider: "DORIXÉ Green Fund",
       })
     }
 

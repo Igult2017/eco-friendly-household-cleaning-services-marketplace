@@ -49,7 +49,7 @@ export const onBookingCreated = inngest.createFunction(
           <p>Service: ${booking.service?.name}</p>
           <p>Scheduled: ${new Date(booking.scheduledAt).toLocaleString("en-GB")}</p>
           <p>Your card has been pre-authorised. You will only be charged once the cleaning is completed.</p>
-          <p>Thank you for choosing DORIX 🌿</p>
+          <p>Thank you for choosing DORIXÉ 🌿</p>
         `,
       })
     })

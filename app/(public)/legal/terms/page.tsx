@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Terms of Service — DORIX",
+  title: "Terms of Service — DORIXÉ",
 }
 
 export default function TermsPage() {
@@ -13,17 +13,17 @@ export default function TermsPage() {
       <div className="space-y-8 text-sm text-[#2B3441]/80 leading-relaxed">
         <section>
           <h2 className="text-xl font-semibold text-[#2B3441] mb-3">1. Acceptance</h2>
-          <p>By accessing or using DORIX, you agree to these Terms. If you do not agree, do not use the platform.</p>
+          <p>By accessing or using DORIXÉ, you agree to these Terms. If you do not agree, do not use the platform.</p>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold text-[#2B3441] mb-3">2. Services</h2>
-          <p>DORIX is a marketplace connecting customers with independent eco-friendly cleaning service providers. We are not the employer of any service provider. DORIX is not responsible for the quality of services delivered by providers but mediates disputes in good faith.</p>
+          <p>DORIXÉ is a marketplace connecting customers with independent eco-friendly cleaning service providers. We are not the employer of any service provider. DORIXÉ is not responsible for the quality of services delivered by providers but mediates disputes in good faith.</p>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold text-[#2B3441] mb-3">3. Platform fee</h2>
-          <p>DORIX charges a <strong>15% service fee</strong> on top of the provider's quoted price. This fee is paid by the customer at the time of booking and covers platform costs, payment processing, and customer support.</p>
+          <p>DORIXÉ charges a <strong>15% service fee</strong> on top of the provider's quoted price. This fee is paid by the customer at the time of booking and covers platform costs, payment processing, and customer support.</p>
         </section>
 
         <section>
@@ -43,12 +43,12 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-[#2B3441] mb-3">6. Prohibited uses</h2>
-          <p>You may not use DORIX to: circumvent platform payments, solicit providers off-platform, post false reviews, discriminate unlawfully, or violate applicable EU laws.</p>
+          <p>You may not use DORIXÉ to: circumvent platform payments, solicit providers off-platform, post false reviews, discriminate unlawfully, or violate applicable EU laws.</p>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold text-[#2B3441] mb-3">7. Limitation of liability</h2>
-          <p>To the maximum extent permitted by EU law, DORIX shall not be liable for indirect, incidental, or consequential damages. Our total liability shall not exceed the amount paid to DORIX in the 12 months preceding the claim.</p>
+          <p>To the maximum extent permitted by EU law, DORIXÉ shall not be liable for indirect, incidental, or consequential damages. Our total liability shall not exceed the amount paid to DORIXÉ in the 12 months preceding the claim.</p>
         </section>
 
         <section>

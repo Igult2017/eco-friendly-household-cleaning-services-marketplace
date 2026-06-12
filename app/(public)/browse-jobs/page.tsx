@@ -203,7 +203,7 @@ export default function BrowseJobsPage() {
         <div className="mt-12 rounded-2xl bg-[#2B3441] p-8 text-center">
           <h2 className="font-serif text-2xl font-bold text-white mb-2">Ready to start earning?</h2>
           <p className="text-white/60 text-sm mb-6 max-w-md mx-auto">
-            Join DORIX as a provider. Set your own prices, work your own hours, and get paid weekly.
+            Join DORIXÉ as a provider. Set your own prices, work your own hours, and get paid weekly.
           </p>
           <Link
             href="/sign-up"

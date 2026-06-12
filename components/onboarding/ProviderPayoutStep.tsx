@@ -54,7 +54,7 @@ export function ProviderPayoutStep({ onComplete, onSkip }: Props) {
       </div>
       <h2 className="text-lg font-semibold text-[#2B3441] mb-2">Set up payouts</h2>
       <p className="text-sm text-[#6B7280] mb-6 max-w-sm mx-auto leading-relaxed">
-        Connect your bank account via Stripe to receive weekly payouts. DORIX charges
+        Connect your bank account via Stripe to receive weekly payouts. DORIXÉ charges
         a 15% platform fee — you keep 100% of your quoted price.
       </p>
 

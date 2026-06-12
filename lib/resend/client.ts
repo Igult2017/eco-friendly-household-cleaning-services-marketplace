@@ -2,7 +2,7 @@ import { Resend } from "resend"
 
 export const resend = new Resend(process.env.RESEND_API_KEY ?? "re_placeholder_build_only")
 
-export const FROM = `${process.env.RESEND_FROM_NAME ?? "DORIX"} <${process.env.RESEND_FROM_EMAIL ?? "noreply@dorix.eu"}>`
+export const FROM = `${process.env.RESEND_FROM_NAME ?? "DORIXÉ"} <${process.env.RESEND_FROM_EMAIL ?? "noreply@dorix.eu"}>`
 
 /** Send a transactional email. Returns the message ID. */
 export async function sendEmail(params: {

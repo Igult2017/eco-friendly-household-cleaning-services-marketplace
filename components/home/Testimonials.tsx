@@ -12,7 +12,7 @@ const REVIEWS = [
     name: "Marco B.",
     city: "Berlin",
     rating: 5,
-    text: "Used DORIX for our office monthly clean. The eco-certified team is professional, punctual, and the booking dashboard is a dream. Our whole company switched.",
+    text: "Used DORIXÉ for our office monthly clean. The eco-certified team is professional, punctual, and the booking dashboard is a dream. Our whole company switched.",
     service: "Office Cleaning",
   },
   {
@@ -32,7 +32,7 @@ export function Testimonials() {
           <h2 className="text-3xl md:text-4xl font-serif font-bold text-[#2B3441] mb-3">
             Loved by thousands across Europe
           </h2>
-          <p className="text-[#6B7280] text-sm">Real reviews from verified DORIX customers</p>
+          <p className="text-[#6B7280] text-sm">Real reviews from verified DORIXÉ customers</p>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
           {REVIEWS.map((review) => (

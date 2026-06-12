@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const { slug } = await params
     const [p] = await db.select({ businessName: providers.businessName, bio: providers.bio }).from(providers).where(eq(providers.slug, slug))
     if (!p) return {}
-    return { title: `${p.businessName} — DORIX`, description: p.bio ?? undefined }
+    return { title: `${p.businessName} — DORIXÉ`, description: p.bio ?? undefined }
   } catch {
     return {}
   }

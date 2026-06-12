@@ -56,7 +56,7 @@ export function Footer() {
           ))}
         </div>
         <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-white/40">
-          <p>© 2026 DORIX. All rights reserved.</p>
+          <p>© 2026 DORIXÉ. All rights reserved.</p>
           <p>Registered in the EU · GDPR Compliant · Powered by Stripe</p>
         </div>
       </div>

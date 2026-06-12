@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 
 export const metadata: Metadata = {
-  title: "How It Works — DORIX",
+  title: "How It Works — DORIXÉ",
   description: "Book trusted eco-friendly cleaners in 3 simple steps.",
 }
 
@@ -38,7 +38,7 @@ const STEPS_PROVIDER = [
   {
     num: "03",
     title: "Start earning",
-    desc: "Browse job posts, submit bids, or receive direct bookings. Get paid weekly via bank transfer. DORIX charges customers a 15% platform fee — you keep 100% of your quoted price.",
+    desc: "Browse job posts, submit bids, or receive direct bookings. Get paid weekly via bank transfer. DORIXÉ charges customers a 15% platform fee — you keep 100% of your quoted price.",
   },
 ]
 
@@ -47,7 +47,7 @@ export default function HowItWorksPage() {
     <div>
       {/* Hero */}
       <section className="bg-[#F4FAF6] py-16 px-4 text-center border-b border-gray-200">
-        <h1 className="font-serif text-5xl font-bold text-[#2B3441] mb-4">How DORIX works</h1>
+        <h1 className="font-serif text-5xl font-bold text-[#2B3441] mb-4">How DORIXÉ works</h1>
         <p className="text-[#6B7280] max-w-xl mx-auto text-lg">
           Book trusted, eco-certified cleaners in minutes. Or join as a provider and grow your eco-cleaning business.
         </p>

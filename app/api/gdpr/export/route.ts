@@ -43,7 +43,7 @@ export async function GET() {
 
     const exportData = {
       exportedAt: new Date().toISOString(),
-      subject: "GDPR Data Export — DORIX (Art. 20)",
+      subject: "GDPR Data Export — DORIXÉ (Art. 20)",
       profile: user
         ? { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, phone: user.phone, role: user.role, gdprConsentAt: user.gdprConsentAt, marketingConsent: user.marketingConsent, createdAt: user.createdAt }
         : null,

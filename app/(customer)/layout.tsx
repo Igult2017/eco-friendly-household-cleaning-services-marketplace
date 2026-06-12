@@ -24,7 +24,7 @@ export default async function CustomerLayout({ children }: { children: React.Rea
     <div className="min-h-screen bg-[#F4FAF6]">
       <header className="sticky top-0 z-30 h-14 bg-white/90 backdrop-blur border-b border-gray-200">
         <div className="max-w-7xl mx-auto h-full px-4 flex items-center justify-between gap-4">
-          <Link href="/"><Image src="/logo.png" alt="DORIX" width={100} height={36} priority /></Link>
+          <Link href="/"><Image src="/logo.png" alt="DORIXÉ" width={100} height={36} priority /></Link>
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-[#6B7280]">
             <Link href="/dashboard" className="hover:text-[#2D7A5F] transition-colors">Dashboard</Link>
             <Link href="/book" className="hover:text-[#2D7A5F] transition-colors">Book</Link>

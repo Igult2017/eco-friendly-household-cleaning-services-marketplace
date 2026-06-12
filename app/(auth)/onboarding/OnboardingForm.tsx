@@ -12,7 +12,7 @@ type Role = "customer" | "provider"
 
 const ROLE_CARDS = [
   { value: "customer" as Role, icon: Home, title: "I need cleaning", desc: "Book eco-friendly professionals for your home or office." },
-  { value: "provider" as Role, icon: Briefcase, title: "I am a cleaner", desc: "List your eco-certified services and earn on DORIX." },
+  { value: "provider" as Role, icon: Briefcase, title: "I am a cleaner", desc: "List your eco-certified services and earn on DORIXÉ." },
 ]
 
 interface Props {
@@ -77,7 +77,7 @@ export function OnboardingForm({ defaultFirstName = "", defaultLastName = "" }: 
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="text-center mb-2">
         <h1 className="text-2xl font-serif font-bold text-[#2B3441] mb-1">Complete your profile</h1>
-        <p className="text-[#6B7280] text-sm">Tell us who you are to get started on DORIX.</p>
+        <p className="text-[#6B7280] text-sm">Tell us who you are to get started on DORIXÉ.</p>
       </div>
 
       <div className="space-y-3">
@@ -129,7 +129,7 @@ export function OnboardingForm({ defaultFirstName = "", defaultLastName = "" }: 
           <input type="checkbox" checked={gdpr} onChange={e => setGdpr(e.target.checked)}
             className="mt-0.5 rounded accent-[#2D7A5F]" />
           <span className="text-xs text-[#6B7280] leading-relaxed">
-            I agree to DORIX&apos;s{" "}
+            I agree to DORIXÉ&apos;s{" "}
             <a href="/legal/terms" target="_blank" className="text-[#2D7A5F] underline">Terms of Service</a>
             {" "}and{" "}
             <a href="/legal/privacy" target="_blank" className="text-[#2D7A5F] underline">Privacy Policy</a>.

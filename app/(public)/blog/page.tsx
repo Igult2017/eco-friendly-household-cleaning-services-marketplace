@@ -8,8 +8,8 @@ import { BlogPostCard } from "@/components/blog/BlogPostCard"
 import { Rss } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Blog — DORIX",
-  description: "Tips, news and eco-friendly insights from the DORIX team.",
+  title: "Blog — DORIXÉ",
+  description: "Tips, news and eco-friendly insights from the DORIXÉ team.",
 }
 
 async function getPosts(category?: string) {
@@ -47,7 +47,7 @@ export default async function BlogPage({
             <span className="text-xs font-semibold text-[#2D7A5F] uppercase tracking-widest">Blog</span>
           </div>
           <h1 className="font-serif text-4xl font-bold text-[#2B3441]">Clean home. Green future.</h1>
-          <p className="text-[#6B7280] mt-2 text-lg">Tips, guides and eco insights from the DORIX team.</p>
+          <p className="text-[#6B7280] mt-2 text-lg">Tips, guides and eco insights from the DORIXÉ team.</p>
         </div>
 
         {categories.length > 0 && (

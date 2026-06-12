@@ -27,7 +27,7 @@ export function HowItWorks() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
           <h2 className="text-3xl md:text-4xl font-serif font-bold text-[#2B3441] mb-3">
-            How DORIX works
+            How DORIXÉ works
           </h2>
           <p className="text-[#6B7280] max-w-xl mx-auto text-sm">
             From search to spotless in three simple steps — no hidden fees, no hassle.

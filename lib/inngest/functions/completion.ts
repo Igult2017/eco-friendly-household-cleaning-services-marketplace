@@ -59,7 +59,7 @@ export const onBookingCompleted = inngest.createFunction(
           <p>Hi ${customer.firstName ?? "there"},</p>
           <p>Your cleaning session has been completed and payment captured.</p>
           <a href="${process.env.NEXT_PUBLIC_APP_URL}/bookings/${bookingId}/review" style="background:#2D7A5F;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;display:inline-block;margin-top:16px;">Leave a Review</a>
-          <p style="margin-top:24px;color:#6B7280;">Thank you for choosing DORIX 🌿</p>
+          <p style="margin-top:24px;color:#6B7280;">Thank you for choosing DORIXÉ 🌿</p>
         `,
       })
     })
@@ -158,7 +158,7 @@ export const onBookingCompleted = inngest.createFunction(
       await resend.emails.send({
         from: FROM,
         to: freshUser.email,
-        subject: "Reminder: Share your DORIX experience",
+        subject: "Reminder: Share your DORIXÉ experience",
         html: `<p>Just a friendly reminder to leave a review for your recent cleaning. <a href="${process.env.NEXT_PUBLIC_APP_URL}/bookings/${bookingId}/review">Click here</a>.</p>`,
       })
     })

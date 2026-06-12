@@ -21,8 +21,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "DORIX — Clean Home. Green Future.",
-    template: "%s | DORIX",
+    default: "DORIXÉ — Clean Home. Green Future.",
+    template: "%s | DORIXÉ",
   },
   description:
     "Book trusted, eco-friendly cleaning professionals near you. Vetted providers, transparent pricing, and a green future for every home.",
@@ -30,8 +30,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_EU",
-    siteName: "DORIX",
-    title: "DORIX — Clean Home. Green Future.",
+    siteName: "DORIXÉ",
+    title: "DORIXÉ — Clean Home. Green Future.",
     description: "Book trusted, eco-friendly cleaning professionals near you.",
   },
   robots: { index: true, follow: true },

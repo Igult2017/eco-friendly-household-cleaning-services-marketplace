@@ -121,7 +121,7 @@ export async function POST(req: Request) {
         currency: "eur",
         capture_method: "manual",
         customer: stripeCustomerId,
-        // Carbon offset stays with DORIX (added to platform fee), not paid to provider
+        // Carbon offset stays with DORIXÉ (added to platform fee), not paid to provider
         application_fee_amount: amounts.platformFee + carbonOffsetCents,
         transfer_data: { destination: provider.stripeAccountId },
         metadata,

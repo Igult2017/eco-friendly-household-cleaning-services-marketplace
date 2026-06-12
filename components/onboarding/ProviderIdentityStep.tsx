@@ -35,7 +35,7 @@ export function ProviderIdentityStep({ onComplete, onSkip }: Props) {
       </div>
       <h2 className="text-lg font-semibold text-[#2B3441] mb-2">Identity verification</h2>
       <p className="text-sm text-[#6B7280] mb-6 max-w-sm mx-auto leading-relaxed">
-        DORIX requires all providers to verify their identity via Stripe. This ensures
+        DORIXÉ requires all providers to verify their identity via Stripe. This ensures
         customer safety and enables payouts to your bank account.
       </p>
 

@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     // Document must be hosted in our R2 bucket — reject external URLs
     const R2_BASE = process.env.R2_PUBLIC_URL ?? ""
     if (R2_BASE && !parsed.data.documentUrl.startsWith(R2_BASE)) {
-      return NextResponse.json({ error: "Document must be uploaded via DORIX storage" }, { status: 400 })
+      return NextResponse.json({ error: "Document must be uploaded via DORIXÉ storage" }, { status: 400 })
     }
 
     const [cert] = await db.insert(ecoCertifications).values({

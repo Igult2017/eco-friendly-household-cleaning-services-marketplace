@@ -33,7 +33,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       updates.isApproved = true
       updates.isSuspended = false
       notifTitle = "Your application was approved!"
-      notifBody = "You can now receive bookings on DORIX. Complete your profile to get started."
+      notifBody = "You can now receive bookings on DORIXÉ. Complete your profile to get started."
     } else if (action === "reject") {
       updates.isApproved = false
       notifTitle = "Application update"
@@ -41,11 +41,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     } else if (action === "suspend") {
       updates.isSuspended = true
       notifTitle = "Account suspended"
-      notifBody = "Your DORIX provider account has been temporarily suspended."
+      notifBody = "Your DORIXÉ provider account has been temporarily suspended."
     } else if (action === "unsuspend") {
       updates.isSuspended = false
       notifTitle = "Account reinstated"
-      notifBody = "Your DORIX provider account has been reinstated."
+      notifBody = "Your DORIXÉ provider account has been reinstated."
     }
 
     await db.update(providers).set(updates).where(eq(providers.id, providerId))

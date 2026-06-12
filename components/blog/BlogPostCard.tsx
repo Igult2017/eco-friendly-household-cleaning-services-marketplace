@@ -19,7 +19,7 @@ function formatDate(d: Date | string | null) {
 }
 
 export function BlogPostCard({ post }: { post: Post }) {
-  const authorName = [post.author?.firstName, post.author?.lastName].filter(Boolean).join(" ") || "DORIX Team"
+  const authorName = [post.author?.firstName, post.author?.lastName].filter(Boolean).join(" ") || "DORIXÉ Team"
   return (
     <Link href={`/blog/${post.slug}`} className="group block bg-white rounded-2xl border border-[#E5EBF0] overflow-hidden hover:shadow-md transition-shadow">
       {post.coverImageUrl ? (

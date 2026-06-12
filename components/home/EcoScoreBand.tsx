@@ -13,7 +13,7 @@ export function EcoScoreBand() {
           <h2 className="text-2xl md:text-3xl font-serif font-bold text-white mb-2">
             Our environmental impact
           </h2>
-          <p className="text-white/60 text-sm">Every DORIX booking makes the planet a little greener</p>
+          <p className="text-white/60 text-sm">Every DORIXÉ booking makes the planet a little greener</p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {STATS.map(({ value, label }) => (
@@ -27,7 +27,7 @@ export function EcoScoreBand() {
         </div>
         <div className="mt-10 pt-8 border-t border-white/10 text-center">
           <p className="text-white/50 text-xs">
-            DORIX offsets 100% of service-related transport emissions · Verified by EcoAudit EU
+            DORIXÉ offsets 100% of service-related transport emissions · Verified by EcoAudit EU
           </p>
         </div>
       </div>

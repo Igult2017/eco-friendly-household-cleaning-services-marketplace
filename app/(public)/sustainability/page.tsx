@@ -6,7 +6,7 @@ import { providers, carbonOffsetContributions } from "@/lib/db/schema"
 import { eq, count, sum, sql } from "drizzle-orm"
 
 export const metadata: Metadata = {
-  title: "Sustainability Impact — DORIX",
+  title: "Sustainability Impact — DORIXÉ",
 }
 
 async function getEcoStats() {
@@ -36,7 +36,7 @@ export default async function SustainabilityPage() {
         <p className="text-[#4CB87A] uppercase tracking-widest text-xs font-semibold mb-3">Our commitment</p>
         <h1 className="font-serif text-5xl font-bold mb-4">Clean Home. Green Future.</h1>
         <p className="text-white/80 max-w-xl mx-auto text-lg leading-relaxed">
-          Every booking on DORIX connects you with vetted eco-conscious cleaners who use sustainable, non-toxic products that protect your family and the planet.
+          Every booking on DORIXÉ connects you with vetted eco-conscious cleaners who use sustainable, non-toxic products that protect your family and the planet.
         </p>
       </section>
 
@@ -62,7 +62,7 @@ export default async function SustainabilityPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
             { level: "Basic", color: "bg-gray-100 text-gray-600", desc: "Uses some eco-friendly products. Getting started on their green journey." },
-            { level: "Certified", color: "bg-green-100 text-green-700", desc: "Certified eco products. No harsh chemicals. Verified by DORIX." },
+            { level: "Certified", color: "bg-green-100 text-green-700", desc: "Certified eco products. No harsh chemicals. Verified by DORIXÉ." },
             { level: "Premium", color: "bg-emerald-100 text-emerald-700", desc: "100% eco product commitment. Full carbon footprint reporting." },
             { level: "Zero Impact", color: "bg-[#2D7A5F]/10 text-[#2D7A5F]", desc: "Carbon-neutral operations. Offsets every job. Top 5% of providers." },
           ].map((l) => (

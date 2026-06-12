@@ -11,7 +11,7 @@ export default function OnboardingLayout({ children }: { children: React.ReactNo
           Back
         </Link>
         <Link href="/">
-          <Image src="/logo.png" alt="DORIX" width={110} height={40} priority />
+          <Image src="/logo.png" alt="DORIXÉ" width={110} height={40} priority />
         </Link>
       </header>
       <main className="flex-1 flex items-start justify-center py-12 px-4">

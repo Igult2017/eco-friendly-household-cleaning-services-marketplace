@@ -6,7 +6,7 @@ export function UmamiSetup() {
       <BarChart3 className="h-12 w-12 mx-auto text-[#4CB87A] mb-4" />
       <h2 className="text-lg font-semibold text-[#2B3441] mb-2">Analytics not configured</h2>
       <p className="text-sm text-[#6B7280] max-w-md mx-auto mb-6">
-        DORIX uses <strong>Umami</strong> — a self-hosted, GDPR-safe analytics engine. It captures page views,
+        DORIXÉ uses <strong>Umami</strong> — a self-hosted, GDPR-safe analytics engine. It captures page views,
         countries, social referrers, and day-of-week patterns without cookies or consent banners.
       </p>
       <ol className="text-left text-sm text-[#6B7280] space-y-2 max-w-sm mx-auto mb-6">

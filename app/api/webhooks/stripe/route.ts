@@ -74,7 +74,7 @@ export async function POST(req: Request) {
               userId: prov.userId,
               type: "provider_approved",
               title: "Identity verified!",
-              body: "Your identity has been verified. You can now accept bookings on DORIX.",
+              body: "Your identity has been verified. You can now accept bookings on DORIXÉ.",
               link: "/dashboard",
             })
           }

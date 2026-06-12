@@ -157,7 +157,7 @@ export const processProviderPayout = inngest.createFunction(
           <p>We've sent <strong>€${(totalPayout / 100).toFixed(2)}</strong> to your connected bank account.</p>
           <p>Period: ${periodStart} to ${periodEnd} | Bookings: ${bookingIdList.length}</p>
           <p>Transfers typically arrive within 1–2 business days.</p>
-          <p>Thank you for being part of DORIX 🌿</p>
+          <p>Thank you for being part of DORIXÉ 🌿</p>
         `,
       })
     })

@@ -3,16 +3,16 @@ import Link from "next/link"
 import { Leaf, ShieldCheck, Star, Euro, Heart, Globe2, Users, Zap } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "About Us — DORIX",
+  title: "About Us — DORIXÉ",
   description:
-    "DORIX connects eco-conscious households with vetted, eco-certified cleaners across Europe. Clean home. Green future.",
+    "DORIXÉ connects eco-conscious households with vetted, eco-certified cleaners across Europe. Clean home. Green future.",
 }
 
 const VALUES = [
   {
     icon: Leaf,
     title: "Eco-first, always",
-    body: "Every provider on DORIX is vetted for their use of non-toxic, biodegradable, and certified eco-friendly products. No greenwashing — we verify the certifications.",
+    body: "Every provider on DORIXÉ is vetted for their use of non-toxic, biodegradable, and certified eco-friendly products. No greenwashing — we verify the certifications.",
   },
   {
     icon: ShieldCheck,
@@ -37,7 +37,7 @@ const VALUES = [
   {
     icon: Globe2,
     title: "Built for Europe",
-    body: "DORIX is designed for the EU market — GDPR-compliant from day one, payments in EUR, European address formats, and provider onboarding that meets local regulations.",
+    body: "DORIXÉ is designed for the EU market — GDPR-compliant from day one, payments in EUR, European address formats, and provider onboarding that meets local regulations.",
   },
 ]
 
@@ -61,7 +61,7 @@ const TIMELINE = [
   },
   {
     year: "The solution",
-    title: "DORIX — Clean home. Green future.",
+    title: "DORIXÉ — Clean home. Green future.",
     body: "A full marketplace with identity-verified providers, escrow payments, a transparent bidding system, and automated weekly payouts. Built for households who want both quality and sustainability.",
   },
 ]
@@ -81,7 +81,7 @@ export default function AboutPage() {
             We&apos;re building the greenest<br className="hidden md:block" /> cleaning marketplace in Europe
           </h1>
           <p className="text-white/60 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-            DORIX connects eco-conscious households with vetted, certified cleaners who care as much about the planet
+            DORIXÉ connects eco-conscious households with vetted, certified cleaners who care as much about the planet
             as they do about a spotless home.
           </p>
         </div>
@@ -103,7 +103,7 @@ export default function AboutPage() {
       <section className="max-w-3xl mx-auto px-4 py-20">
         <div className="text-center mb-14">
           <span className="inline-flex rounded-full bg-[#2D7A5F]/10 px-4 py-1.5 text-xs font-semibold text-[#2D7A5F] uppercase tracking-widest mb-3">Our story</span>
-          <h2 className="font-serif text-4xl font-bold text-[#2B3441]">Why we built DORIX</h2>
+          <h2 className="font-serif text-4xl font-bold text-[#2B3441]">Why we built DORIXÉ</h2>
         </div>
 
         <div className="relative">
@@ -136,7 +136,7 @@ export default function AboutPage() {
           </h2>
           <p className="text-[#6B7280] text-lg leading-relaxed">
             Millions of homes are cleaned every week using products that are harsh on surfaces, harmful to health, and
-            damaging to waterways. We&apos;re changing that — one verified booking at a time. DORIX makes it as easy to
+            damaging to waterways. We&apos;re changing that — one verified booking at a time. DORIXÉ makes it as easy to
             book a certified eco-cleaner as it is to order a taxi.
           </p>
         </div>
@@ -165,7 +165,7 @@ export default function AboutPage() {
       <section className="bg-[#2B3441] text-white py-20 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="font-serif text-4xl font-bold mb-3">How DORIX works</h2>
+            <h2 className="font-serif text-4xl font-bold mb-3">How DORIXÉ works</h2>
             <p className="text-white/60 text-lg">Two ways to use the platform — for households and for cleaners.</p>
           </div>
 

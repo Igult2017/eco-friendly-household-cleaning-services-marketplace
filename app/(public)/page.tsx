@@ -8,7 +8,7 @@ import { Testimonials } from "@/components/home/Testimonials"
 import { CtaBand } from "@/components/home/CtaBand"
 
 export const metadata = {
-  title: "DORIX — Clean Home. Green Future.",
+  title: "DORIXÉ — Clean Home. Green Future.",
   description:
     "Book trusted, eco-friendly cleaning professionals near you. Vetted providers, transparent pricing, and a green future for every home.",
 }

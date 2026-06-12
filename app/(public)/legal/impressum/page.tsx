@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Impressum — DORIX",
+  title: "Impressum — DORIXÉ",
 }
 
 export default function ImpressumPage() {
@@ -14,7 +14,7 @@ export default function ImpressumPage() {
         <section>
           <h2 className="text-base font-semibold text-[#2B3441] mb-2">Angaben gemäß § 5 TMG</h2>
           <p>
-            DORIX Marketplace UG (haftungsbeschränkt)<br />
+            DORIXÉ Marketplace UG (haftungsbeschränkt)<br />
             Musterstraße 1<br />
             10115 Berlin<br />
             Deutschland
@@ -47,7 +47,7 @@ export default function ImpressumPage() {
         <section>
           <h2 className="text-base font-semibold text-[#2B3441] mb-2">Verantwortlich für den Inhalt (§ 55 Abs. 2 RStV)</h2>
           <p>
-            DORIX Marketplace UG<br />
+            DORIXÉ Marketplace UG<br />
             Musterstraße 1<br />
             10115 Berlin
           </p>

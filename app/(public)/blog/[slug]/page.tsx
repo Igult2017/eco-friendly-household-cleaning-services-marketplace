@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const post = await getPost(slug)
   if (!post) return { title: "Not found" }
   return {
-    title: `${post.title} — DORIX Blog`,
+    title: `${post.title} — DORIXÉ Blog`,
     description: post.excerpt ?? undefined,
     openGraph: post.coverImageUrl ? { images: [post.coverImageUrl] } : undefined,
   }
@@ -43,7 +43,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   if (!post) notFound()
 
   const authorName =
-    [post.author?.firstName, post.author?.lastName].filter(Boolean).join(" ") || "DORIX Team"
+    [post.author?.firstName, post.author?.lastName].filter(Boolean).join(" ") || "DORIXÉ Team"
   const postUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/blog/${post.slug}`
 
   return (

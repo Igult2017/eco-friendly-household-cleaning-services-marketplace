@@ -81,7 +81,7 @@ export function AdminSidebar() {
           <ExternalLink className="h-4 w-4 shrink-0" />
           <span className="flex-1">View Marketplace</span>
         </Link>
-        <p className="text-white/25 text-xs px-3">DORIX Platform v1.0</p>
+        <p className="text-white/25 text-xs px-3">DORIXÉ Platform v1.0</p>
       </div>
     </aside>
   )

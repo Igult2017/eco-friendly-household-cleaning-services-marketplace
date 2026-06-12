@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Cookie Policy — DORIX",
+  title: "Cookie Policy — DORIXÉ",
 }
 
 export default function CookiePolicyPage() {

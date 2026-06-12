@@ -16,9 +16,9 @@ import {
 } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Affiliate Programme — DORIX",
+  title: "Affiliate Programme — DORIXÉ",
   description:
-    "Partner with DORIX and earn 5% lifetime commission on every booking made by customers you refer. The eco-friendly way to grow your income.",
+    "Partner with DORIXÉ and earn 5% lifetime commission on every booking made by customers you refer. The eco-friendly way to grow your income.",
 }
 
 const STATS = [
@@ -32,7 +32,7 @@ const HOW_IT_WORKS = [
   {
     step: "01",
     title: "Sign up for free",
-    body: "Create a DORIX account (or log in to your existing one). Your unique affiliate link is generated instantly — no approval, no waiting.",
+    body: "Create a DORIXÉ account (or log in to your existing one). Your unique affiliate link is generated instantly — no approval, no waiting.",
     icon: Users,
   },
   {
@@ -44,7 +44,7 @@ const HOW_IT_WORKS = [
   {
     step: "03",
     title: "Earn on every booking",
-    body: "When someone clicks your link and books a cleaning, you earn 5% of the booking value — credited to your DORIX account automatically.",
+    body: "When someone clicks your link and books a cleaning, you earn 5% of the booking value — credited to your DORIXÉ account automatically.",
     icon: BarChart3,
   },
   {
@@ -66,13 +66,13 @@ const BENEFITS = [
 
 const TESTIMONIALS = [
   {
-    quote: "I mentioned DORIX once in my home-organisation video and earned €140 in the first week. The dashboard is so clean to track.",
+    quote: "I mentioned DORIXÉ once in my home-organisation video and earned €140 in the first week. The dashboard is so clean to track.",
     name: "Anika V.",
     handle: "@anika.organises",
     followers: "82k YouTube",
   },
   {
-    quote: "My eco-lifestyle newsletter recommended DORIX last month. My readers loved it and I've already covered two months of my own cleanings.",
+    quote: "My eco-lifestyle newsletter recommended DORIXÉ last month. My readers loved it and I've already covered two months of my own cleanings.",
     name: "Leila M.",
     handle: "@thegreenleila",
     followers: "41k Substack",
@@ -121,7 +121,7 @@ export default function AffiliatePage() {
               </span>
             </h1>
             <p className="text-lg sm:text-xl text-white/70 leading-relaxed mb-10 max-w-2xl">
-              Partner with DORIX and earn <strong className="text-white">5% lifetime commission</strong> on every
+              Partner with DORIXÉ and earn <strong className="text-white">5% lifetime commission</strong> on every
               booking made by customers you refer. No cap. No expiry. Just recurring credit for work you did once.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -194,7 +194,7 @@ export default function AffiliatePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="grid lg:grid-cols-2 gap-16 items-start">
             <div>
-              <span className="mb-4 inline-flex items-center rounded-full border border-[#2D7A5F]/20 bg-[#F4FAF6] px-3 py-1 text-xs font-semibold text-[#2D7A5F]">Why DORIX?</span>
+              <span className="mb-4 inline-flex items-center rounded-full border border-[#2D7A5F]/20 bg-[#F4FAF6] px-3 py-1 text-xs font-semibold text-[#2D7A5F]">Why DORIXÉ?</span>
               <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#2B3441] mb-6">
                 A programme built to reward loyal partners
               </h2>
@@ -230,7 +230,7 @@ export default function AffiliatePage() {
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#2B3441] mb-4">Perfect for creators like you</h2>
           <p className="text-gray-500 max-w-lg mx-auto">
-            If your audience cares about their home, sustainability, or quality of life — DORIX is the ideal fit.
+            If your audience cares about their home, sustainability, or quality of life — DORIXÉ is the ideal fit.
           </p>
         </div>
         <div className="flex flex-wrap justify-center gap-3">

@@ -10,7 +10,7 @@ import { RefreshCw, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { RecurringScheduleCard } from "@/components/booking/RecurringScheduleCard"
 
-export const metadata = { title: "Recurring Bookings | DORIX" }
+export const metadata = { title: "Recurring Bookings | DORIXÉ" }
 
 export default async function RecurringPage() {
   const { userId } = await auth()

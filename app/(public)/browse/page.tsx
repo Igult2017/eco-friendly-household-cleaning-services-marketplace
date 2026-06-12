@@ -7,7 +7,7 @@ import Link from "next/link"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Browse Eco Cleaners — DORIX",
+  title: "Browse Eco Cleaners — DORIXÉ",
   description: "Find trusted, eco-certified cleaning professionals near you.",
 }
 

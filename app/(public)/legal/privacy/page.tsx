@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — DORIX",
+  title: "Privacy Policy — DORIXÉ",
 }
 
 export default function PrivacyPolicyPage() {
@@ -13,7 +13,7 @@ export default function PrivacyPolicyPage() {
       <section className="space-y-6 text-[#2B3441]/80 text-sm leading-relaxed">
         <div>
           <h2 className="text-xl font-semibold text-[#2B3441]">1. Who we are</h2>
-          <p>DORIX operates an eco-friendly household cleaning services marketplace. Our registered address and data controller details are available upon request at <a href="mailto:privacy@dorix.eu" className="text-[#2D7A5F] underline">privacy@dorix.eu</a>.</p>
+          <p>DORIXÉ operates an eco-friendly household cleaning services marketplace. Our registered address and data controller details are available upon request at <a href="mailto:privacy@dorix.eu" className="text-[#2D7A5F] underline">privacy@dorix.eu</a>.</p>
         </div>
 
         <div>
@@ -73,7 +73,7 @@ export default function PrivacyPolicyPage() {
 
         <div>
           <h2 className="text-xl font-semibold text-[#2B3441]">8. Contact</h2>
-          <p>Data controller: DORIX<br />Email: <a href="mailto:privacy@dorix.eu" className="text-[#2D7A5F] underline">privacy@dorix.eu</a><br />You may also lodge a complaint with your national supervisory authority.</p>
+          <p>Data controller: DORIXÉ<br />Email: <a href="mailto:privacy@dorix.eu" className="text-[#2D7A5F] underline">privacy@dorix.eu</a><br />You may also lodge a complaint with your national supervisory authority.</p>
         </div>
       </section>
     </div>
