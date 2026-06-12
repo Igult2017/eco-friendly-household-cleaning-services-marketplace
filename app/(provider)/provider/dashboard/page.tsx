@@ -14,6 +14,7 @@ import { ProviderDashboardEarnings }     from "@/components/provider/ProviderDas
 import { ProviderDashboardNearbyJobs }   from "@/components/provider/ProviderDashboardNearbyJobs"
 import { ProviderDashboardRating }       from "@/components/provider/ProviderDashboardRating"
 import { ProviderDashboardDisputes }     from "@/components/provider/ProviderDashboardDisputes"
+import { ReferralCard }                  from "@/components/referral/ReferralCard"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
@@ -226,6 +227,9 @@ export default async function ProviderDashboardPage() {
           <ProviderDashboardNotifications notifications={recentNotifs as any} />
           <div className="lg:col-span-2">
             <ProviderDashboardDisputes disputes={providerDisputes as any} />
+          </div>
+          <div className="lg:col-span-2">
+            <ReferralCard />
           </div>
         </div>
 

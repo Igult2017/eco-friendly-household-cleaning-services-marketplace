@@ -106,6 +106,30 @@ const clerkHandler = clerkMiddleware(async (auth, req) => {
 })
 
 export default async function middleware(req: NextRequest, event: NextFetchEvent) {
+  // Capture ?ref=CODE and store in a 30-day cookie so the referral survives sign-up
+  const refCode = req.nextUrl.searchParams.get("ref")
+  if (refCode && /^[A-Z0-9]{6,20}$/i.test(refCode) && !req.cookies.get("dorix_ref")) {
+    let base: NextResponse
+    if (!process.env.CLERK_SECRET_KEY) {
+      base = NextResponse.next()
+    } else {
+      try {
+        const handled = await clerkHandler(req, event)
+        base = (handled instanceof NextResponse ? handled : null) ?? NextResponse.next()
+      } catch {
+        base = NextResponse.next()
+      }
+    }
+    base.cookies.set("dorix_ref", refCode.toUpperCase(), {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 60 * 24 * 30,
+      path: "/",
+    })
+    return base
+  }
+
   // If Clerk is not configured, pass every request through so the app still renders
   if (!process.env.CLERK_SECRET_KEY) return NextResponse.next()
 

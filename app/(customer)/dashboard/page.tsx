@@ -13,6 +13,7 @@ import { DashboardBookings } from "@/components/customer/DashboardBookings"
 import { DashboardJobs } from "@/components/customer/DashboardJobs"
 import { DashboardPayments } from "@/components/customer/DashboardPayments"
 import { DashboardNotifications } from "@/components/customer/DashboardNotifications"
+import { ReferralCard } from "@/components/referral/ReferralCard"
 
 export default async function CustomerDashboardPage() {
   const { userId, sessionClaims } = await auth()
@@ -120,6 +121,8 @@ export default async function CustomerDashboardPage() {
           <DashboardPayments payments={recentPayments} />
           <DashboardNotifications notifications={recentNotifs} />
         </div>
+
+        <ReferralCard />
 
       </div>
     </div>

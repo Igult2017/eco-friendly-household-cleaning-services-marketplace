@@ -1,9 +1,11 @@
 import { inngest } from "../client"
 import { db } from "@/lib/db"
-import { bookings, payments, users, notifications } from "@/lib/db/schema"
+import { bookings, payments, users, notifications, referrals, referralCommissions, referralCredits } from "@/lib/db/schema"
 import { stripe } from "@/lib/stripe/client"
 import { resend, FROM } from "@/lib/resend/client"
-import { eq } from "drizzle-orm"
+import { eq, and, sql } from "drizzle-orm"
+
+const REFERRAL_COMMISSION_PCT = 0.05 // 5%
 
 export const onBookingCompleted = inngest.createFunction(
   { id: "booking-completed", retries: 3, triggers: [{ event: "booking/completed" }] },
@@ -60,6 +62,73 @@ export const onBookingCompleted = inngest.createFunction(
           <p style="margin-top:24px;color:#6B7280;">Thank you for choosing DORIX 🌿</p>
         `,
       })
+    })
+
+    // Process referral commission — 5% of booking subtotal credited to referrer
+    await step.run("referral-commission", async () => {
+      const [booking] = await db
+        .select({ subtotalAmount: bookings.subtotalAmount })
+        .from(bookings)
+        .where(eq(bookings.id, bookingId))
+      if (!booking?.subtotalAmount) return { skipped: "no_subtotal" }
+
+      const [referral] = await db
+        .select()
+        .from(referrals)
+        .where(and(eq(referrals.referredId, customerId), eq(referrals.status, "pending")))
+        .limit(1)
+
+      // Also check already-active referrals for lifetime commissions
+      const [activeReferral] = !referral
+        ? await db
+            .select()
+            .from(referrals)
+            .where(and(eq(referrals.referredId, customerId), eq(referrals.status, "active")))
+            .limit(1)
+        : [undefined]
+
+      const ref = referral ?? activeReferral
+      if (!ref) return { skipped: "no_referral" }
+
+      const commissionCents = Math.round(booking.subtotalAmount * REFERRAL_COMMISSION_PCT)
+
+      // Activate on first booking if still pending
+      if (referral) {
+        await db
+          .update(referrals)
+          .set({ status: "active", activatedAt: new Date(), totalCommissionEarnedCents: sql`total_commission_earned_cents + ${commissionCents}` })
+          .where(eq(referrals.id, ref.id))
+      } else {
+        await db
+          .update(referrals)
+          .set({ totalCommissionEarnedCents: sql`total_commission_earned_cents + ${commissionCents}` })
+          .where(eq(referrals.id, ref.id))
+      }
+
+      await db.insert(referralCommissions).values({
+        referralId: ref.id,
+        bookingId,
+        referrerId: ref.referrerId,
+        bookingAmountCents: booking.subtotalAmount,
+        commissionCents,
+        status: "credited",
+        creditedAt: new Date(),
+      })
+
+      // Upsert credit wallet
+      await db
+        .insert(referralCredits)
+        .values({ userId: ref.referrerId, balanceCents: commissionCents, lifetimeEarnedCents: commissionCents })
+        .onConflictDoUpdate({
+          target: referralCredits.userId,
+          set: {
+            balanceCents: sql`referral_credits.balance_cents + ${commissionCents}`,
+            lifetimeEarnedCents: sql`referral_credits.lifetime_earned_cents + ${commissionCents}`,
+            updatedAt: new Date(),
+          },
+        })
+
+      return { commissionCents, referrerId: ref.referrerId }
     })
 
     await step.sleep("wait-24h", "24 hours")

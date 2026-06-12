@@ -1,7 +1,7 @@
 import { auth, clerkClient } from "@clerk/nextjs/server"
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { users, providers } from "@/lib/db/schema"
+import { users, providers, referralCodes, referrals } from "@/lib/db/schema"
 import type { NewProvider } from "@/lib/db/schema/providers"
 import { eq } from "drizzle-orm"
 import { onboardingSchema } from "@/lib/validations/onboarding"
@@ -17,7 +17,7 @@ function toSlug(name: string, suffix: string): string {
   )
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -94,6 +94,29 @@ export async function POST(req: Request) {
       }
     }
 
+    // Record referral if a valid ref cookie was set before sign-up
+    const refCode = req.cookies.get("dorix_ref")?.value
+    if (refCode) {
+      try {
+        const [refCodeRow] = await db
+          .select({ userId: referralCodes.userId })
+          .from(referralCodes)
+          .where(eq(referralCodes.code, refCode))
+          .limit(1)
+
+        if (refCodeRow && refCodeRow.userId !== userId) {
+          await db.insert(referrals).values({
+            referrerId: refCodeRow.userId,
+            referredId: userId,
+            code: refCode,
+            status: "pending",
+          }).onConflictDoNothing()
+        }
+      } catch (refErr) {
+        console.warn("[onboarding/complete] referral recording failed:", refErr)
+      }
+    }
+
     const redirect = data.role === "provider" ? "/provider/dashboard" : "/dashboard"
     const res = NextResponse.json({ success: true, redirect })
     res.cookies.set(ROLE_COOKIE, `${userId}:${data.role}`, {
@@ -103,6 +126,7 @@ export async function POST(req: Request) {
       maxAge: COOKIE_MAX_AGE,
       path: "/",
     })
+    res.cookies.delete("dorix_ref")
     return res
   } catch (err) {
     console.error("[onboarding/complete POST]", err)
