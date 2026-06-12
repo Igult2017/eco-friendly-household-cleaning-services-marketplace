@@ -6,17 +6,17 @@ import Image from "next/image"
 import { UserButton } from "@clerk/nextjs"
 import { NotificationBell } from "@/components/notifications/NotificationBell"
 import { RoleSwitcher } from "@/components/layout/RoleSwitcher"
-import { SwitchNotifier } from "@/components/layout/SwitchNotifier"
 
 export default async function CustomerLayout({ children }: { children: React.ReactNode }) {
   const user = await currentUser()
   if (!user) redirect("/sign-in")
 
   const { sessionClaims } = await auth()
-  const meta = sessionClaims?.metadata as { role?: string; dualRole?: boolean } | undefined
-  const jwtRole = meta?.role
-  const isDual  = meta?.dualRole === true
-  const primaryRole = jwtRole ?? (user.publicMetadata?.role as string | undefined)
+  const jwtMeta  = sessionClaims?.metadata as { role?: string } | undefined
+  const liveMeta = user.publicMetadata as { role?: string; dualRole?: boolean } | undefined
+  // Use live publicMetadata for dualRole — JWT is stale for up to 60s after enablement
+  const isDual      = liveMeta?.dualRole === true
+  const primaryRole = jwtMeta?.role ?? liveMeta?.role ?? "customer"
 
   // Admin: allowed through without redirect (they can browse customer views)
   if (primaryRole !== "admin") {
@@ -50,7 +50,6 @@ export default async function CustomerLayout({ children }: { children: React.Rea
           </div>
         </div>
       </header>
-      <SwitchNotifier />
       <main className="max-w-7xl mx-auto px-4 py-8">{children}</main>
     </div>
   )
