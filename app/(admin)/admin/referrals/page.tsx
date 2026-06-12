@@ -10,41 +10,66 @@ function fmt(cents: number) {
 }
 
 export default async function AdminReferralsPage() {
-  const [allReferrals, [totals]] = await Promise.all([
-    db
-      .select({
-        id: referrals.id,
-        referrerId: referrals.referrerId,
-        referredId: referrals.referredId,
-        code: referrals.code,
-        status: referrals.status,
-        activatedAt: referrals.activatedAt,
-        totalEarned: referrals.totalCommissionEarnedCents,
-        createdAt: referrals.createdAt,
-        referrerEmail: users.email,
-        referrerFirst: users.firstName,
-      })
-      .from(referrals)
-      .leftJoin(users, eq(referrals.referrerId, users.id))
-      .orderBy(desc(referrals.createdAt))
-      .limit(100),
+  let allReferrals: {
+    id: string
+    referrerId: string
+    referredId: string
+    code: string
+    status: "pending" | "active" | "invalid"
+    activatedAt: Date | null
+    totalEarned: number
+    createdAt: Date
+    referrerEmail: string | null
+    referrerFirst: string | null
+  }[] = []
+  let totals: { total: number; active: number; pending: number; totalCommission: string | null } | null = null
+  let totalCreditCents = 0
+  let totalCommissionCents = 0
+  let errorMsg: string | null = null
 
-    db
-      .select({
-        total: count(),
-        active: sql<number>`SUM(CASE WHEN status='active' THEN 1 ELSE 0 END)`.mapWith(Number),
-        pending: sql<number>`SUM(CASE WHEN status='pending' THEN 1 ELSE 0 END)`.mapWith(Number),
-        totalCommission: sum(referrals.totalCommissionEarnedCents),
-      })
-      .from(referrals),
-  ])
+  try {
+    const [rows, [totalsRow]] = await Promise.all([
+      db
+        .select({
+          id: referrals.id,
+          referrerId: referrals.referrerId,
+          referredId: referrals.referredId,
+          code: referrals.code,
+          status: referrals.status,
+          activatedAt: referrals.activatedAt,
+          totalEarned: referrals.totalCommissionEarnedCents,
+          createdAt: referrals.createdAt,
+          referrerEmail: users.email,
+          referrerFirst: users.firstName,
+        })
+        .from(referrals)
+        .leftJoin(users, eq(referrals.referrerId, users.id))
+        .orderBy(desc(referrals.createdAt))
+        .limit(100),
 
-  const totalCredit = await db
-    .select({ total: sum(referralCredits.balanceCents) })
-    .from(referralCredits)
+      db
+        .select({
+          total: count(),
+          active: sql<number>`SUM(CASE WHEN ${referrals.status} = 'active' THEN 1 ELSE 0 END)`.mapWith(Number),
+          pending: sql<number>`SUM(CASE WHEN ${referrals.status} = 'pending' THEN 1 ELSE 0 END)`.mapWith(Number),
+          totalCommission: sum(referrals.totalCommissionEarnedCents),
+        })
+        .from(referrals),
+    ])
 
-  const totalCreditCents = Number(totalCredit[0]?.total ?? 0)
-  const totalCommissionCents = Number(totals?.totalCommission ?? 0)
+    allReferrals = rows
+    totals = totalsRow ?? null
+
+    const creditRows = await db
+      .select({ total: sum(referralCredits.balanceCents) })
+      .from(referralCredits)
+
+    totalCreditCents = Number(creditRows[0]?.total ?? 0)
+    totalCommissionCents = Number(totals?.totalCommission ?? 0)
+  } catch (err) {
+    console.error("[AdminReferralsPage]", err)
+    errorMsg = "Failed to load referral data. The referral tables may still be migrating — try refreshing in a moment."
+  }
 
   const STATUS_CFG: Record<string, { pill: string; icon: React.ReactNode }> = {
     active:  { pill: "bg-green-50 text-green-700",  icon: <CheckCircle2 size={11} /> },
@@ -65,6 +90,12 @@ export default async function AdminReferralsPage() {
           <p className="text-sm text-[#6B7280]">Track referrals, commissions, and credit balances</p>
         </div>
       </div>
+
+      {errorMsg && (
+        <div className="rounded-xl bg-red-50 border border-red-200 px-5 py-4 text-sm text-red-700">
+          {errorMsg}
+        </div>
+      )}
 
       {/* KPI cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
