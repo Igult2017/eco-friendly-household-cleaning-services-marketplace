@@ -21,8 +21,8 @@ export function ReferralCard() {
 
   useEffect(() => {
     fetch("/api/referrals")
-      .then((r) => r.json())
-      .then(setData)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (d && d.stats && d.credit) setData(d) })
       .catch(console.error)
       .finally(() => setLoading(false))
   }, [])
@@ -70,10 +70,10 @@ export function ReferralCard() {
       {/* Stats row */}
       <div className="grid grid-cols-4 divide-x divide-gray-100">
         {[
-          { icon: Users, label: "Referred", value: loading ? "—" : String(data?.stats.total ?? 0) },
-          { icon: TrendingUp, label: "Active", value: loading ? "—" : String(data?.stats.active ?? 0) },
-          { icon: Gift, label: "Total Earned", value: loading ? "—" : fmt(data?.stats.totalEarnedCents ?? 0) },
-          { icon: Wallet, label: "Credit Balance", value: loading ? "—" : fmt(data?.credit.balanceCents ?? 0) },
+          { icon: Users, label: "Referred", value: loading ? "—" : String(data?.stats?.total ?? 0) },
+          { icon: TrendingUp, label: "Active", value: loading ? "—" : String(data?.stats?.active ?? 0) },
+          { icon: Gift, label: "Total Earned", value: loading ? "—" : fmt(data?.stats?.totalEarnedCents ?? 0) },
+          { icon: Wallet, label: "Credit Balance", value: loading ? "—" : fmt(data?.credit?.balanceCents ?? 0) },
         ].map(({ icon: Icon, label, value }) => (
           <div key={label} className="flex flex-col items-center py-4 px-2 gap-1">
             <Icon size={14} className="text-[#2D7A5F]" />
