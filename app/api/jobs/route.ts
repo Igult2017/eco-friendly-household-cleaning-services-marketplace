@@ -33,7 +33,7 @@ const createJobSchema = z.object({
 
 export async function POST(req: Request) {
   try {
-    const { userId } = await auth()
+    const { userId, sessionClaims } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
     try {
@@ -43,9 +43,15 @@ export async function POST(req: Request) {
       console.warn("[jobs POST] Redis rate limit unavailable, allowing through:", redisErr)
     }
 
-    // Only customers may post jobs
-    const [user] = await db.select({ role: users.role }).from(users).where(eq(users.id, userId))
-    if (user?.role !== "customer") return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    // Role check: JWT claims are authoritative (set by Clerk during onboarding).
+    // Fall back to DB only when JWT has not refreshed yet (60 s TTL).
+    const jwtRole = (sessionClaims?.metadata as { role?: string } | undefined)?.role
+    let role = jwtRole
+    if (!role) {
+      const [dbUser] = await db.select({ role: users.role }).from(users).where(eq(users.id, userId))
+      role = dbUser?.role ?? "customer"
+    }
+    if (role !== "customer") return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
     const body = await req.json()
     const parsed = createJobSchema.safeParse(body)

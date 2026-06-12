@@ -1,4 +1,4 @@
-import { currentUser } from "@clerk/nextjs/server"
+import { auth, currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
@@ -8,8 +8,17 @@ import { NotificationBell } from "@/components/notifications/NotificationBell"
 export default async function CustomerLayout({ children }: { children: React.ReactNode }) {
   const user = await currentUser()
   if (!user) redirect("/sign-in")
-  const role = user.publicMetadata?.role as string | undefined
-  if (!role || role !== "customer") redirect("/")
+
+  // JWT claims are fresher than publicMetadata on the first render after onboarding.
+  const { sessionClaims } = await auth()
+  const jwtRole = (sessionClaims?.metadata as { role?: string } | undefined)?.role
+  const role = jwtRole ?? (user.publicMetadata?.role as string | undefined)
+
+  // Non-customers: providers go to /provider/dashboard, admins to /admin/dashboard
+  if (role === "provider") redirect("/provider/dashboard")
+  if (role === "admin") redirect("/admin/dashboard")
+  // No role yet → onboarding incomplete; middleware handles this, but be safe
+  if (role && role !== "customer") redirect("/")
 
   return (
     <div className="min-h-screen bg-[#F4FAF6]">

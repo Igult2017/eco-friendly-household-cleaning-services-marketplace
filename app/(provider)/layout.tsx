@@ -1,4 +1,4 @@
-import { currentUser } from "@clerk/nextjs/server"
+import { auth, currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
@@ -8,8 +8,15 @@ import { NotificationBell } from "@/components/notifications/NotificationBell"
 export default async function ProviderLayout({ children }: { children: React.ReactNode }) {
   const user = await currentUser()
   if (!user) redirect("/sign-in")
-  const role = user.publicMetadata?.role as string | undefined
-  if (!role || role !== "provider") redirect("/")
+
+  // JWT claims are fresher than publicMetadata on the first render after onboarding.
+  const { sessionClaims } = await auth()
+  const jwtRole = (sessionClaims?.metadata as { role?: string } | undefined)?.role
+  const role = jwtRole ?? (user.publicMetadata?.role as string | undefined)
+
+  if (role === "customer") redirect("/dashboard")
+  if (role === "admin") redirect("/admin/dashboard")
+  if (role && role !== "provider") redirect("/")
 
   return (
     <div className="min-h-screen bg-[#F4FAF6]">

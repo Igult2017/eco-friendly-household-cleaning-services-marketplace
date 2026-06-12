@@ -36,6 +36,7 @@ export async function GET(req: Request) {
         completionPhotoUrls: bookings.completionPhotoUrls,
         createdAt: bookings.createdAt,
         customerName: users.firstName,
+        customerEmail: users.email,
         serviceName: providerServices.name,
       })
       .from(bookings)

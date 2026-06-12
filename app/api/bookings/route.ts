@@ -9,7 +9,7 @@ import { createBooking, BookingError } from "@/lib/bookings/create"
 
 export async function POST(req: Request) {
   try {
-    const { userId } = await auth()
+    const { userId, sessionClaims } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
     try {
@@ -19,9 +19,14 @@ export async function POST(req: Request) {
       console.warn("[bookings POST] Redis rate limit unavailable, allowing through:", redisErr)
     }
 
-    // Only customers may create bookings
-    const [user] = await db.select({ role: users.role }).from(users).where(eq(users.id, userId))
-    if (user?.role !== "customer") return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    // JWT claims are authoritative; fall back to DB when JWT hasn't refreshed yet.
+    const jwtRole = (sessionClaims?.metadata as { role?: string } | undefined)?.role
+    let role = jwtRole
+    if (!role) {
+      const [dbUser] = await db.select({ role: users.role }).from(users).where(eq(users.id, userId))
+      role = dbUser?.role ?? "customer"
+    }
+    if (role !== "customer") return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
     const body = await req.json()
     const parsed = createBookingSchema.safeParse(body)
