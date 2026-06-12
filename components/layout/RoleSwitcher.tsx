@@ -69,9 +69,10 @@ export function RoleSwitcher({ currentRole, targetRole }: Props) {
     <>
       {/* Compact pill in navbar */}
       <button
-        onClick={() => setShowModal(true)}
+        onClick={() => { if (!switching) setShowModal(true) }}
+        disabled={switching}
         className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border transition-all
-          ${current.bg} ${current.color} border-current/20 hover:opacity-80`}
+          ${current.bg} ${current.color} border-current/20 hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed`}
       >
         <CurrentIcon size={12} />
         {current.label}

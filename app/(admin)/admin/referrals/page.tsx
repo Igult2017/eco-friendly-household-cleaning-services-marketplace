@@ -180,7 +180,7 @@ export default async function AdminReferralsPage() {
                   </tr>
                 )
               })}
-              {allReferrals.length === 0 && (
+              {allReferrals.length === 0 && !errorMsg && (
                 <tr>
                   <td colSpan={6} className="px-5 py-16 text-center">
                     <div className="flex flex-col items-center gap-2">

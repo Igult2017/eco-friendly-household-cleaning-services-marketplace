@@ -118,7 +118,9 @@ export default async function AffiliatePage() {
         row = inserted[0] ?? (await db.select().from(referralCodes).where(eq(referralCodes.userId, userId)).limit(1))[0]
       }
       if (row) referralUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/?ref=${row.code}`
-    } catch {}
+    } catch (err) {
+      console.error("[affiliate] referral code error", err)
+    }
   }
 
   const heroPrimary   = userId ? { href: "/dashboard", label: "Go to my affiliate dashboard" } : { href: "/sign-up", label: "Get your link free" }

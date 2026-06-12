@@ -35,11 +35,12 @@ export default function AdminSettingsPage() {
     setSaving(true)
     try {
       const payload: Record<string, number | string> = {}
-      if (cfg.commission_pct)        payload.commission_pct        = parseInt(cfg.commission_pct)
-      if (cfg.referral_pct)          payload.referral_pct          = parseInt(cfg.referral_pct)
-      if (cfg.payout_schedule)       payload.payout_schedule        = cfg.payout_schedule
-      if (cfg.max_service_radius_km) payload.max_service_radius_km = parseInt(cfg.max_service_radius_km)
-      if (cfg.platform_name)         payload.platform_name          = cfg.platform_name
+      // Use !== "" guards instead of truthiness so numeric value 0 is not silently dropped
+      if (cfg.commission_pct        !== undefined && cfg.commission_pct        !== "") payload.commission_pct        = parseInt(cfg.commission_pct, 10)
+      if (cfg.referral_pct          !== undefined && cfg.referral_pct          !== "") payload.referral_pct          = parseInt(cfg.referral_pct, 10)
+      if (cfg.payout_schedule       !== undefined && cfg.payout_schedule       !== "") payload.payout_schedule        = cfg.payout_schedule
+      if (cfg.max_service_radius_km !== undefined && cfg.max_service_radius_km !== "") payload.max_service_radius_km = parseInt(cfg.max_service_radius_km, 10)
+      if (cfg.platform_name         !== undefined && cfg.platform_name         !== "") payload.platform_name          = cfg.platform_name
 
       const res = await fetch("/api/admin/settings", {
         method: "PATCH",

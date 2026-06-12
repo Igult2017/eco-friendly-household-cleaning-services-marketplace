@@ -2,7 +2,6 @@ import { auth, currentUser } from "@clerk/nextjs/server"
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { platformSettings } from "@/lib/db/schema"
-import { eq } from "drizzle-orm"
 import { z } from "zod"
 
 const updateSchema = z.object({
@@ -13,19 +12,28 @@ const updateSchema = z.object({
   platform_name:         z.string().min(1).max(50).optional(),
 })
 
-async function assertAdmin() {
-  const { sessionClaims } = await auth()
+type AdminCheckResult = "ok" | "unauthorized" | "forbidden"
+
+async function assertAdmin(): Promise<AdminCheckResult> {
+  const { userId, sessionClaims } = await auth()
+  if (!userId) return "unauthorized"
   const meta = sessionClaims?.metadata as { role?: string } | undefined
   let role = meta?.role
   if (!role) {
     const user = await currentUser()
     role = user?.publicMetadata?.role as string | undefined
   }
-  return role === "admin"
+  return role === "admin" ? "ok" : "forbidden"
+}
+
+function authError(result: AdminCheckResult) {
+  if (result === "unauthorized") return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 }
 
 export async function GET() {
-  if (!(await assertAdmin())) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  const check = await assertAdmin()
+  if (check !== "ok") return authError(check)
   try {
     const rows = await db.select().from(platformSettings)
     const config = Object.fromEntries(rows.map(r => [r.key, r.value]))
@@ -37,7 +45,8 @@ export async function GET() {
 }
 
 export async function PATCH(req: NextRequest) {
-  if (!(await assertAdmin())) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  const check = await assertAdmin()
+  if (check !== "ok") return authError(check)
   try {
     const body = await req.json().catch(() => ({}))
     const parsed = updateSchema.safeParse(body)

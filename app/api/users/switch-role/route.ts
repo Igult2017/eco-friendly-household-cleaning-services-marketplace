@@ -10,23 +10,18 @@ type SwitchableRole = typeof VALID_ROLES[number]
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId, sessionClaims } = await auth()
+    const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-
-    const meta = sessionClaims?.metadata as { role?: string; dualRole?: boolean } | undefined
 
     const { success: rlOk } = await switchRatelimit.limit(userId)
     if (!rlOk) return NextResponse.json({ error: "Too many requests" }, { status: 429 })
 
-    // JWT can be stale (60s TTL) — fall back to live Clerk data for role check
-    let primaryRole = meta?.role as string | undefined
-    let isDual = meta?.dualRole === true
-    if (!primaryRole || primaryRole === "customer") {
-      const user = await currentUser()
-      const liveMeta = user?.publicMetadata as { role?: string; dualRole?: boolean } | undefined
-      primaryRole = liveMeta?.role ?? primaryRole ?? "customer"
-      isDual = isDual || liveMeta?.dualRole === true
-    }
+    // Always fetch live Clerk data — JWT dualRole may be stale if an admin revoked it
+    // within the 60s JWT TTL window, which would create a false-positive bypass.
+    const liveUser = await currentUser()
+    const liveMeta = liveUser?.publicMetadata as { role?: string; dualRole?: boolean } | undefined
+    const primaryRole = liveMeta?.role ?? "customer"
+    const isDual      = liveMeta?.dualRole === true
 
     // Admin can always switch; others need dual role enabled
     if (primaryRole !== "admin" && !isDual) {

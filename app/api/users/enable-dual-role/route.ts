@@ -27,23 +27,22 @@ function toSlug(name: string, suffix: string): string {
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId, sessionClaims } = await auth()
+    const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
     const { success: rlOk } = await enableDualRoleRatelimit.limit(userId)
     if (!rlOk) return NextResponse.json({ error: "Too many requests" }, { status: 429 })
 
-    const meta = sessionClaims?.metadata as { role?: string; dualRole?: boolean } | undefined
+    // Always fetch live Clerk data — JWT (60s TTL) may have stale role/dualRole,
+    // and we need the live publicMetadata as the base when writing back to avoid
+    // clobbering fields set by admin (e.g. suspended, stripeCustomerId) since those
+    // may have been added after the JWT was issued.
+    const liveUser = await currentUser()
+    const liveMeta = liveUser?.publicMetadata as { role?: string; dualRole?: boolean } | undefined
+    const livePublicMeta = (liveUser?.publicMetadata as object) ?? {}
 
-    // JWT can be stale (60s TTL) — fall back to live Clerk data for role + dualRole
-    let primaryRole = meta?.role as string | undefined
-    let alreadyDual = meta?.dualRole === true
-    if (!primaryRole || primaryRole === "customer") {
-      const user = await currentUser()
-      const liveMeta = user?.publicMetadata as { role?: string; dualRole?: boolean } | undefined
-      primaryRole = liveMeta?.role ?? primaryRole ?? "customer"
-      alreadyDual = alreadyDual || liveMeta?.dualRole === true
-    }
+    const primaryRole = liveMeta?.role ?? "customer"
+    const alreadyDual = liveMeta?.dualRole === true
 
     if (alreadyDual) {
       return NextResponse.json({ error: "Dual role already enabled" }, { status: 409 })
@@ -52,10 +51,10 @@ export async function POST(req: NextRequest) {
     const body = await req.json().catch(() => ({}))
 
     // Providers enabling dual role (adding customer/posting side) — no new profile needed
-    if (primaryRole === "provider" && primaryRole !== "admin") {
+    if (primaryRole === "provider") {
       const clerk = await clerkClient()
       await clerk.users.updateUser(userId, {
-        publicMetadata: { ...(sessionClaims?.metadata as object ?? {}), dualRole: true },
+        publicMetadata: { ...livePublicMeta, dualRole: true },
       })
       await db.update(users).set({ dualRoleEnabled: true, updatedAt: new Date() }).where(eq(users.id, userId))
 
@@ -97,7 +96,7 @@ export async function POST(req: NextRequest) {
 
     const clerk = await clerkClient()
     await clerk.users.updateUser(userId, {
-      publicMetadata: { ...(sessionClaims?.metadata as object ?? {}), dualRole: true },
+      publicMetadata: { ...livePublicMeta, dualRole: true },
     })
     await db.update(users).set({ dualRoleEnabled: true, updatedAt: new Date() }).where(eq(users.id, userId))
 
