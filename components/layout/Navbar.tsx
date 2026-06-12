@@ -37,7 +37,7 @@ export function Navbar() {
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#E5EDE9]">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         <Link href="/" className="flex-shrink-0">
-          <Image src="/logo.png" alt="DORIX" width={110} height={40} priority />
+          <Image src="/logo.png" alt="DORIXÉ" width={140} height={44} priority />
         </Link>
 
         {/* Desktop nav */}
