@@ -12,6 +12,7 @@ const LINKS = {
     { label: "About us", href: "/about" },
     { label: "Sustainability", href: "/sustainability" },
     { label: "Become a cleaner", href: "/become-a-cleaner" },
+    { label: "Affiliate Programme", href: "/affiliate" },
     { label: "Blog", href: "/blog" },
   ],
   Legal: [

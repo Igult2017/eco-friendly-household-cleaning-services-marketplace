@@ -1,0 +1,307 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - navigation [ref=e4]:
+        - link "DORIXÉ" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - img "DORIXÉ" [ref=e6]
+        - generic [ref=e7]:
+          - link "Find cleaners" [ref=e8] [cursor=pointer]:
+            - /url: /browse
+          - link "Browse jobs" [ref=e9] [cursor=pointer]:
+            - /url: /browse-jobs
+          - link "How it works" [ref=e10] [cursor=pointer]:
+            - /url: /#how-it-works
+          - link "Sustainability" [ref=e11] [cursor=pointer]:
+            - /url: /sustainability
+          - link "Become a cleaner" [ref=e12] [cursor=pointer]:
+            - /url: /become-a-cleaner
+        - generic [ref=e13]:
+          - button "Sign in" [ref=e14]
+          - button "Start booking" [ref=e15]
+    - main [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e21]:
+          - generic [ref=e22]:
+            - img
+            - text: Affiliate Programme
+          - heading "Earn while you promote the green way" [level=1] [ref=e23]
+          - paragraph [ref=e24]:
+            - text: Partner with DORIX and earn
+            - strong [ref=e25]: 5% lifetime commission
+            - text: on every booking made by customers you refer. No cap. No expiry. Just recurring credit for work you did once.
+          - generic [ref=e26]:
+            - button "Get your link free" [ref=e27]:
+              - link "Get your link free" [ref=e28] [cursor=pointer]:
+                - /url: /sign-up
+                - text: Get your link free
+                - img
+            - button "Already a member? View dashboard" [ref=e29]:
+              - link "Already a member? View dashboard" [ref=e30] [cursor=pointer]:
+                - /url: /dashboard
+        - generic [ref=e33]:
+          - generic [ref=e34]:
+            - img [ref=e36]
+            - generic [ref=e38]:
+              - paragraph [ref=e39]: 5%
+              - paragraph [ref=e40]: Lifetime commission
+          - generic [ref=e41]:
+            - img [ref=e43]
+            - generic [ref=e47]:
+              - paragraph [ref=e48]: €0
+              - paragraph [ref=e49]: Cost to join
+          - generic [ref=e50]:
+            - img [ref=e52]
+            - generic [ref=e54]:
+              - paragraph [ref=e55]: ∞
+              - paragraph [ref=e56]: Earning potential
+          - generic [ref=e57]:
+            - img [ref=e59]
+            - generic [ref=e62]:
+              - paragraph [ref=e63]: 30d
+              - paragraph [ref=e64]: Cookie window
+        - generic [ref=e65]:
+          - generic [ref=e66]:
+            - heading "How it works" [level=2] [ref=e67]
+            - paragraph [ref=e68]: From sign-up to first commission in under 5 minutes.
+          - generic [ref=e69]:
+            - generic [ref=e70]:
+              - generic [ref=e71]:
+                - generic [ref=e72]: "01"
+                - img [ref=e74]
+              - heading "Sign up for free" [level=3] [ref=e79]
+              - paragraph [ref=e80]: Create a DORIX account (or log in to your existing one). Your unique affiliate link is generated instantly — no approval, no waiting.
+            - generic [ref=e81]:
+              - generic [ref=e82]:
+                - generic [ref=e83]: "02"
+                - img [ref=e85]
+              - heading "Share your link" [level=3] [ref=e88]
+              - paragraph [ref=e89]: Post it on Instagram, YouTube, TikTok, your blog, or newsletter. Wherever your audience hangs out, your link works.
+            - generic [ref=e90]:
+              - generic [ref=e91]:
+                - generic [ref=e92]: "03"
+                - img [ref=e94]
+              - heading "Earn on every booking" [level=3] [ref=e96]
+              - paragraph [ref=e97]: When someone clicks your link and books a cleaning, you earn 5% of the booking value — credited to your DORIX account automatically.
+            - generic [ref=e98]:
+              - generic [ref=e99]:
+                - generic [ref=e100]: "04"
+                - img [ref=e102]
+              - heading "Cash out or book with it" [level=3] [ref=e104]
+              - paragraph [ref=e105]: Use your credit balance to pay for your own cleanings or withdraw it. Your credit, your choice.
+        - generic [ref=e108]:
+          - generic [ref=e109]:
+            - generic [ref=e110]: Why DORIX?
+            - heading "A programme built to reward loyal partners" [level=2] [ref=e111]
+            - paragraph [ref=e112]: We designed our affiliate programme the way we'd want one ourselves — lifetime commissions, instant crediting, and a dashboard that actually shows you what's happening. No black boxes.
+            - button "Join now — it's free" [ref=e113]:
+              - link "Join now — it's free" [ref=e114] [cursor=pointer]:
+                - /url: /sign-up
+                - text: Join now — it's free
+                - img
+          - generic [ref=e115]:
+            - generic [ref=e116]:
+              - img [ref=e117]
+              - generic [ref=e120]:
+                - paragraph [ref=e121]: Lifetime commission
+                - paragraph [ref=e122]: Every booking your referral makes — not just the first one — earns you 5%.
+            - generic [ref=e123]:
+              - img [ref=e124]
+              - generic [ref=e127]:
+                - paragraph [ref=e128]: Real-time dashboard
+                - paragraph [ref=e129]: Track clicks, referrals, and earnings in your personal dashboard, updated live.
+            - generic [ref=e130]:
+              - img [ref=e131]
+              - generic [ref=e134]:
+                - paragraph [ref=e135]: 30-day cookie
+                - paragraph [ref=e136]: If someone clicks your link and books within 30 days, you get the credit.
+            - generic [ref=e137]:
+              - img [ref=e138]
+              - generic [ref=e141]:
+                - paragraph [ref=e142]: No cap on earnings
+                - paragraph [ref=e143]: Refer 5 people or 5,000. There's no monthly ceiling on what you can earn.
+            - generic [ref=e144]:
+              - img [ref=e145]
+              - generic [ref=e148]:
+                - paragraph [ref=e149]: Instant credit
+                - paragraph [ref=e150]: Commission lands in your credit wallet the moment a booking completes. No monthly payout delays.
+            - generic [ref=e151]:
+              - img [ref=e152]
+              - generic [ref=e155]:
+                - paragraph [ref=e156]: Eco-aligned brand
+                - paragraph [ref=e157]: Promote something you're proud of — a platform that's genuinely good for the planet.
+        - generic [ref=e158]:
+          - generic [ref=e159]:
+            - heading "Perfect for creators like you" [level=2] [ref=e160]
+            - paragraph [ref=e161]: If your audience cares about their home, sustainability, or quality of life — DORIX is the ideal fit.
+          - generic [ref=e162]:
+            - generic [ref=e163]:
+              - img [ref=e164]
+              - text: Eco-lifestyle bloggers & vloggers
+            - generic [ref=e167]:
+              - img [ref=e168]
+              - text: Interior design & home organisation creators
+            - generic [ref=e171]:
+              - img [ref=e172]
+              - text: Sustainability influencers
+            - generic [ref=e175]:
+              - img [ref=e176]
+              - text: Parenting & family content creators
+            - generic [ref=e179]:
+              - img [ref=e180]
+              - text: Newsletter writers & podcasters
+            - generic [ref=e183]:
+              - img [ref=e184]
+              - text: Property managers & real-estate agents
+            - generic [ref=e187]:
+              - img [ref=e188]
+              - text: Mummy bloggers & family YouTubers
+            - generic [ref=e191]:
+              - img [ref=e192]
+              - text: Anyone with an engaged, home-focused audience
+        - generic [ref=e196]:
+          - generic [ref=e197]:
+            - heading "Creators already earning" [level=2] [ref=e198]
+            - paragraph [ref=e199]: Real partners. Real commissions.
+          - generic [ref=e200]:
+            - generic [ref=e201]:
+              - generic [ref=e202]:
+                - img [ref=e203]
+                - img [ref=e205]
+                - img [ref=e207]
+                - img [ref=e209]
+                - img [ref=e211]
+              - paragraph [ref=e213]: "\"I mentioned DORIX once in my home-organisation video and earned €140 in the first week. The dashboard is so clean to track.\""
+              - generic [ref=e214]:
+                - generic [ref=e215]: A
+                - generic [ref=e216]:
+                  - paragraph [ref=e217]: Anika V.
+                  - paragraph [ref=e218]: "@anika.organises · 82k YouTube"
+            - generic [ref=e219]:
+              - generic [ref=e220]:
+                - img [ref=e221]
+                - img [ref=e223]
+                - img [ref=e225]
+                - img [ref=e227]
+                - img [ref=e229]
+              - paragraph [ref=e231]: "\"My eco-lifestyle newsletter recommended DORIX last month. My readers loved it and I've already covered two months of my own cleanings.\""
+              - generic [ref=e232]:
+                - generic [ref=e233]: L
+                - generic [ref=e234]:
+                  - paragraph [ref=e235]: Leila M.
+                  - paragraph [ref=e236]: "@thegreenleila · 41k Substack"
+            - generic [ref=e237]:
+              - generic [ref=e238]:
+                - img [ref=e239]
+                - img [ref=e241]
+                - img [ref=e243]
+                - img [ref=e245]
+                - img [ref=e247]
+              - paragraph [ref=e249]: "\"Perfect for sustainability creators. The 5% lifetime model is genuinely rare — most programmes pay only on the first order.\""
+              - generic [ref=e250]:
+                - generic [ref=e251]: J
+                - generic [ref=e252]:
+                  - paragraph [ref=e253]: Jonas B.
+                  - paragraph [ref=e254]: "@sustainjon · 210k TikTok"
+        - generic [ref=e256]:
+          - img [ref=e258]
+          - heading "How commissions are calculated" [level=2] [ref=e260]
+          - paragraph [ref=e261]:
+            - text: You earn
+            - strong [ref=e262]: 5% of each booking's subtotal
+            - text: (the provider's price, before the platform fee). There's no cap per booking, no cap per month, and no expiry. If someone you referred books twice a week for years, you earn on every single one of those bookings.
+          - generic [ref=e263]:
+            - paragraph [ref=e264]: Example calculation
+            - generic [ref=e265]:
+              - generic [ref=e266]:
+                - generic [ref=e267]: Booking subtotal
+                - generic [ref=e268]: €120
+              - generic [ref=e269]:
+                - generic [ref=e270]: Your commission (5%)
+                - generic [ref=e271]: €6.00
+              - generic [ref=e272]:
+                - generic [ref=e273]: Bookings / month (estimate)
+                - generic [ref=e274]: × 4
+              - generic [ref=e275]:
+                - generic [ref=e276]: Monthly earnings per referral
+                - generic [ref=e277]: €24 / mo
+        - generic [ref=e279]:
+          - img [ref=e280]
+          - heading "Start earning today. No approval needed." [level=2] [ref=e283]
+          - paragraph [ref=e284]: Sign up, grab your link, and share. Your first commission could arrive before the week is out.
+          - generic [ref=e285]:
+            - button "Get your affiliate link" [ref=e286]:
+              - link "Get your affiliate link" [ref=e287] [cursor=pointer]:
+                - /url: /sign-up
+                - text: Get your affiliate link
+                - img
+            - button "Go to my dashboard" [ref=e288]:
+              - link "Go to my dashboard" [ref=e289] [cursor=pointer]:
+                - /url: /dashboard
+          - paragraph [ref=e290]:
+            - text: By joining, you agree to our
+            - link "Terms of Service" [ref=e291] [cursor=pointer]:
+              - /url: /legal/terms
+            - text: . Commission paid as platform credit.
+    - contentinfo [ref=e292]:
+      - generic [ref=e293]:
+        - generic [ref=e294]:
+          - generic [ref=e295]:
+            - generic [ref=e296]:
+              - img [ref=e298]
+              - generic [ref=e301]: DORIXÉ
+            - paragraph [ref=e302]:
+              - text: Clean home. Green future.
+              - text: Trusted eco-friendly cleaners across Europe.
+          - generic [ref=e303]:
+            - heading "Product" [level=4] [ref=e304]
+            - list [ref=e305]:
+              - listitem [ref=e306]:
+                - link "Browse cleaners" [ref=e307] [cursor=pointer]:
+                  - /url: /browse
+              - listitem [ref=e308]:
+                - link "Post a job" [ref=e309] [cursor=pointer]:
+                  - /url: /post-job
+              - listitem [ref=e310]:
+                - link "How it works" [ref=e311] [cursor=pointer]:
+                  - /url: /#how-it-works
+              - listitem [ref=e312]:
+                - link "Pricing" [ref=e313] [cursor=pointer]:
+                  - /url: /pricing
+          - generic [ref=e314]:
+            - heading "Company" [level=4] [ref=e315]
+            - list [ref=e316]:
+              - listitem [ref=e317]:
+                - link "About us" [ref=e318] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e319]:
+                - link "Sustainability" [ref=e320] [cursor=pointer]:
+                  - /url: /sustainability
+              - listitem [ref=e321]:
+                - link "Become a cleaner" [ref=e322] [cursor=pointer]:
+                  - /url: /become-a-cleaner
+              - listitem [ref=e323]:
+                - link "Affiliate Programme" [ref=e324] [cursor=pointer]:
+                  - /url: /affiliate
+              - listitem [ref=e325]:
+                - link "Blog" [ref=e326] [cursor=pointer]:
+                  - /url: /blog
+          - generic [ref=e327]:
+            - heading "Legal" [level=4] [ref=e328]
+            - list [ref=e329]:
+              - listitem [ref=e330]:
+                - link "Privacy Policy" [ref=e331] [cursor=pointer]:
+                  - /url: /legal/privacy
+              - listitem [ref=e332]:
+                - link "Terms of Service" [ref=e333] [cursor=pointer]:
+                  - /url: /legal/terms
+              - listitem [ref=e334]:
+                - link "Cookie Policy" [ref=e335] [cursor=pointer]:
+                  - /url: /legal/cookie-policy
+              - listitem [ref=e336]:
+                - link "Legal Notice" [ref=e337] [cursor=pointer]:
+                  - /url: /legal/impressum
+        - generic [ref=e338]:
+          - paragraph [ref=e339]: © 2026 DORIX. All rights reserved.
+          - paragraph [ref=e340]: Registered in the EU · GDPR Compliant · Powered by Stripe
+  - region "Notifications alt+T"
