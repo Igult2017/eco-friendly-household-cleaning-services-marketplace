@@ -19,8 +19,6 @@ import {
   Newspaper,
   Gift,
   ExternalLink,
-  Home,
-  Scissors,
   Banknote,
   Settings,
 } from "lucide-react"
@@ -77,33 +75,6 @@ export function AdminSidebar() {
           )
         })}
       </nav>
-      {/* My Accounts — admin's own cleaner and provider activities */}
-      <div className="border-t border-white/10 pt-3 mx-3 mb-1">
-        <p className="text-[9px] uppercase tracking-[0.15em] text-white/30 font-bold px-1 mb-2">My Accounts</p>
-        {[
-          { label: "My Cleaner Account", href: "/provider/dashboard", icon: Scissors },
-          { label: "My Provider Account", href: "/dashboard",          icon: Home      },
-        ].map(({ label, href, icon: Icon }) => {
-          const active = pathname === href
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={cn(
-                "group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all mb-1",
-                active
-                  ? "bg-[#2D7A5F] text-white"
-                  : "text-[#4CB87A] hover:text-white hover:bg-white/10"
-              )}
-            >
-              <Icon className="h-4 w-4 shrink-0" />
-              <span className="flex-1">{label}</span>
-              {active && <ChevronRight className="h-3 w-3 opacity-60" />}
-            </Link>
-          )
-        })}
-      </div>
-
       <div className="p-3 border-t border-white/10 space-y-2">
         <Link
           href="/"

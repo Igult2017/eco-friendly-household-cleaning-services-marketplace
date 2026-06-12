@@ -5,6 +5,7 @@ import Image from "next/image"
 import { useState } from "react"
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs"
 import { Menu, X, LayoutDashboard } from "lucide-react"
+import { AdminCleanerSwitch } from "@/components/layout/AdminCleanerSwitch"
 
 const NAV_LINKS = [
   { href: "/browse", label: "Find cleaners" },
@@ -57,6 +58,7 @@ export function Navbar() {
         <div className="flex items-center gap-2">
           {isSignedIn ? (
             <>
+              {role === "admin" && <AdminCleanerSwitch />}
               <Link
                 href={isLoaded ? href : "#"}
                 onClick={!isLoaded ? (e) => e.preventDefault() : undefined}

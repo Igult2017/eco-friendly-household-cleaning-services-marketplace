@@ -6,6 +6,7 @@ import Image from "next/image"
 import { UserButton } from "@clerk/nextjs"
 import { NotificationBell } from "@/components/notifications/NotificationBell"
 import { RoleSwitcher } from "@/components/layout/RoleSwitcher"
+import { LayoutDashboard } from "lucide-react"
 
 export default async function ProviderLayout({ children }: { children: React.ReactNode }) {
   const user = await currentUser()
@@ -27,7 +28,7 @@ export default async function ProviderLayout({ children }: { children: React.Rea
     if (effectiveRole && effectiveRole !== "provider") redirect("/")
   }
 
-  const showSwitcher = isDual || primaryRole === "admin"
+  const showSwitcher = isDual && primaryRole !== "admin"
 
   return (
     <div className="min-h-screen bg-[#F4FAF6]">
@@ -42,6 +43,15 @@ export default async function ProviderLayout({ children }: { children: React.Rea
             <Link href="/provider/profile" className="hover:text-[#2D7A5F] transition-colors">Profile</Link>
           </nav>
           <div className="flex items-center gap-2">
+            {primaryRole === "admin" && (
+              <Link
+                href="/admin/dashboard"
+                className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border border-[#E5EDE9] bg-white text-[#2B3441] hover:bg-[#F4FAF6] transition-colors"
+              >
+                <LayoutDashboard size={13} />
+                Admin Panel
+              </Link>
+            )}
             {showSwitcher && <RoleSwitcher currentRole="provider" targetRole="customer" />}
             <NotificationBell />
             <UserButton />
