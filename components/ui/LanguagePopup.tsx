@@ -11,31 +11,40 @@ interface LangEntry {
 }
 
 const COUNTRY_LANG: Record<string, LangEntry> = {
-  DE: { name: "German", nativeName: "Deutsch", flag: "🇩🇪" },
-  AT: { name: "German", nativeName: "Deutsch", flag: "🇦🇹" },
-  CH: { name: "German", nativeName: "Deutsch", flag: "🇨🇭" },
-  NL: { name: "Dutch", nativeName: "Nederlands", flag: "🇳🇱" },
-  BE: { name: "Dutch", nativeName: "Nederlands", flag: "🇧🇪" },
-  FR: { name: "French", nativeName: "Français", flag: "🇫🇷" },
-  ES: { name: "Spanish", nativeName: "Español", flag: "🇪🇸" },
-  IT: { name: "Italian", nativeName: "Italiano", flag: "🇮🇹" },
-  PL: { name: "Polish", nativeName: "Polski", flag: "🇵🇱" },
-  PT: { name: "Portuguese", nativeName: "Português", flag: "🇵🇹" },
-  SE: { name: "Swedish", nativeName: "Svenska", flag: "🇸🇪" },
-  DK: { name: "Danish", nativeName: "Dansk", flag: "🇩🇰" },
-  FI: { name: "Finnish", nativeName: "Suomi", flag: "🇫🇮" },
-  NO: { name: "Norwegian", nativeName: "Norsk", flag: "🇳🇴" },
-  RO: { name: "Romanian", nativeName: "Română", flag: "🇷🇴" },
-  HU: { name: "Hungarian", nativeName: "Magyar", flag: "🇭🇺" },
-  CZ: { name: "Czech", nativeName: "Čeština", flag: "🇨🇿" },
-  SK: { name: "Slovak", nativeName: "Slovenčina", flag: "🇸🇰" },
-  HR: { name: "Croatian", nativeName: "Hrvatski", flag: "🇭🇷" },
-  GR: { name: "Greek", nativeName: "Ελληνικά", flag: "🇬🇷" },
-  BG: { name: "Bulgarian", nativeName: "Български", flag: "🇧🇬" },
-  LT: { name: "Lithuanian", nativeName: "Lietuvių", flag: "🇱🇹" },
-  LV: { name: "Latvian", nativeName: "Latviešu", flag: "🇱🇻" },
-  EE: { name: "Estonian", nativeName: "Eesti", flag: "🇪🇪" },
-  SI: { name: "Slovenian", nativeName: "Slovenščina", flag: "🇸🇮" },
+  // Germanic
+  DE: { name: "German",       nativeName: "Deutsch",         flag: "🇩🇪" },
+  AT: { name: "German",       nativeName: "Deutsch",         flag: "🇦🇹" },
+  CH: { name: "German",       nativeName: "Deutsch",         flag: "🇨🇭" },
+  LU: { name: "Luxembourgish", nativeName: "Lëtzebuergesch", flag: "🇱🇺" },
+  // Romance
+  FR: { name: "French",       nativeName: "Français",        flag: "🇫🇷" },
+  BE: { name: "French",       nativeName: "Français",        flag: "🇧🇪" },
+  ES: { name: "Spanish",      nativeName: "Español",         flag: "🇪🇸" },
+  IT: { name: "Italian",      nativeName: "Italiano",        flag: "🇮🇹" },
+  PT: { name: "Portuguese",   nativeName: "Português",       flag: "🇵🇹" },
+  RO: { name: "Romanian",     nativeName: "Română",          flag: "🇷🇴" },
+  // Dutch
+  NL: { name: "Dutch",        nativeName: "Nederlands",      flag: "🇳🇱" },
+  // Nordic
+  SE: { name: "Swedish",      nativeName: "Svenska",         flag: "🇸🇪" },
+  DK: { name: "Danish",       nativeName: "Dansk",           flag: "🇩🇰" },
+  FI: { name: "Finnish",      nativeName: "Suomi",           flag: "🇫🇮" },
+  NO: { name: "Norwegian",    nativeName: "Norsk",           flag: "🇳🇴" },
+  // Central & Eastern European
+  PL: { name: "Polish",       nativeName: "Polski",          flag: "🇵🇱" },
+  CZ: { name: "Czech",        nativeName: "Čeština",         flag: "🇨🇿" },
+  SK: { name: "Slovak",       nativeName: "Slovenčina",      flag: "🇸🇰" },
+  HU: { name: "Hungarian",    nativeName: "Magyar",          flag: "🇭🇺" },
+  SI: { name: "Slovenian",    nativeName: "Slovenščina",     flag: "🇸🇮" },
+  HR: { name: "Croatian",     nativeName: "Hrvatski",        flag: "🇭🇷" },
+  BG: { name: "Bulgarian",    nativeName: "Български",       flag: "🇧🇬" },
+  // Baltic
+  LT: { name: "Lithuanian",   nativeName: "Lietuvių",        flag: "🇱🇹" },
+  LV: { name: "Latvian",      nativeName: "Latviešu",        flag: "🇱🇻" },
+  EE: { name: "Estonian",     nativeName: "Eesti",           flag: "🇪🇪" },
+  // Greek
+  GR: { name: "Greek",        nativeName: "Ελληνικά",        flag: "🇬🇷" },
+  CY: { name: "Greek",        nativeName: "Ελληνικά",        flag: "🇨🇾" },
 }
 
 const DISMISS_KEY = "dorix_lang_popup_dismissed"
