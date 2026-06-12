@@ -1,4 +1,4 @@
-import { auth, clerkClient } from "@clerk/nextjs/server"
+import { auth, clerkClient, currentUser } from "@clerk/nextjs/server"
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { users, providers } from "@/lib/db/schema"
@@ -27,16 +27,25 @@ export async function POST(req: NextRequest) {
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
     const meta = sessionClaims?.metadata as { role?: string; dualRole?: boolean } | undefined
-    const primaryRole = meta?.role ?? "customer"
 
-    if (meta?.dualRole === true) {
+    // JWT can be stale (60s TTL) — fall back to live Clerk data for role + dualRole
+    let primaryRole = meta?.role as string | undefined
+    let alreadyDual = meta?.dualRole === true
+    if (!primaryRole || primaryRole === "customer") {
+      const user = await currentUser()
+      const liveMeta = user?.publicMetadata as { role?: string; dualRole?: boolean } | undefined
+      primaryRole = liveMeta?.role ?? primaryRole ?? "customer"
+      alreadyDual = alreadyDual || liveMeta?.dualRole === true
+    }
+
+    if (alreadyDual) {
       return NextResponse.json({ error: "Dual role already enabled" }, { status: 409 })
     }
 
     const body = await req.json().catch(() => ({}))
 
     // Providers enabling dual role (adding customer/posting side) — no new profile needed
-    if (primaryRole === "provider") {
+    if (primaryRole === "provider" && primaryRole !== "admin") {
       const clerk = await clerkClient()
       await clerk.users.updateUser(userId, {
         publicMetadata: { ...(sessionClaims?.metadata as object ?? {}), dualRole: true },

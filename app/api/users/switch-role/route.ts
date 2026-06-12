@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server"
+import { auth, currentUser } from "@clerk/nextjs/server"
 import { NextRequest, NextResponse } from "next/server"
 
 const VALID_ROLES = ["customer", "provider"] as const
@@ -10,10 +10,19 @@ export async function POST(req: NextRequest) {
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
     const meta = sessionClaims?.metadata as { role?: string; dualRole?: boolean } | undefined
-    const primaryRole = meta?.role ?? "customer"
 
-    // Admin can always switch; others need dual role enabled in JWT
-    if (primaryRole !== "admin" && meta?.dualRole !== true) {
+    // JWT can be stale (60s TTL) — fall back to live Clerk data for role check
+    let primaryRole = meta?.role as string | undefined
+    let isDual = meta?.dualRole === true
+    if (!primaryRole || primaryRole === "customer") {
+      const user = await currentUser()
+      const liveMeta = user?.publicMetadata as { role?: string; dualRole?: boolean } | undefined
+      primaryRole = liveMeta?.role ?? primaryRole ?? "customer"
+      isDual = isDual || liveMeta?.dualRole === true
+    }
+
+    // Admin can always switch; others need dual role enabled
+    if (primaryRole !== "admin" && !isDual) {
       return NextResponse.json({ error: "Dual role not enabled" }, { status: 403 })
     }
 
