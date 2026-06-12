@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs"
 import { QueryProvider } from "@/components/providers/QueryProvider"
 import { Toaster } from "@/components/ui/sonner"
 import { CookieBanner } from "@/components/gdpr/CookieBanner"
+import { LanguagePopup } from "@/components/ui/LanguagePopup"
 import { cn } from "@/lib/utils"
 import "./globals.css"
 
@@ -52,6 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </QueryProvider>
         <Toaster richColors position="top-right" />
         <CookieBanner />
+        <LanguagePopup />
       </body>
     </html>
   )
