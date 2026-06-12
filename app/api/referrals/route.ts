@@ -1,6 +1,10 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
+import { redis } from "@/lib/redis/client"
+import { Ratelimit } from "@upstash/ratelimit"
 import { db } from "@/lib/db"
+
+const referralRatelimit = new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(10, "60 s"), prefix: "ratelimit:referral" })
 import { referralCodes, referrals, referralCredits } from "@/lib/db/schema"
 import { eq, count, sql } from "drizzle-orm"
 import { customAlphabet } from "nanoid"
@@ -17,6 +21,8 @@ export async function GET() {
   try {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    const { success } = await referralRatelimit.limit(userId)
+    if (!success) return NextResponse.json({ error: "Too many requests" }, { status: 429 })
 
     // Fetch or auto-create the user's referral code
     let [codeRow] = await db

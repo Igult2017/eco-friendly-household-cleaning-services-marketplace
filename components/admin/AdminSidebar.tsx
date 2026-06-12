@@ -21,6 +21,8 @@ import {
   ExternalLink,
   Home,
   Scissors,
+  Banknote,
+  Settings,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -32,13 +34,15 @@ const nav = [
   { label: "Disputes", href: "/admin/disputes", icon: MessageSquareWarning },
   { label: "Customers", href: "/admin/customers", icon: Users },
   { label: "Payments", href: "/admin/payments", icon: Wallet },
+  { label: "Payouts",  href: "/admin/payouts",  icon: Banknote },
   { label: "Reviews", href: "/admin/reviews", icon: Star },
   { label: "Eco", href: "/admin/eco", icon: Leaf },
   { label: "Errors", href: "/admin/errors", icon: Bug },
   { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
   { label: "Promo Codes", href: "/admin/promo-codes", icon: Tag },
   { label: "Referrals",   href: "/admin/referrals",   icon: Gift },
-  { label: "Blog", href: "/admin/content/blog", icon: Newspaper },
+  { label: "Blog",     href: "/admin/content/blog", icon: Newspaper },
+  { label: "Settings", href: "/admin/settings",    icon: Settings },
 ]
 
 export function AdminSidebar() {

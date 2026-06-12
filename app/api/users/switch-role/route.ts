@@ -1,5 +1,9 @@
 import { auth, currentUser } from "@clerk/nextjs/server"
 import { NextRequest, NextResponse } from "next/server"
+import { redis } from "@/lib/redis/client"
+import { Ratelimit } from "@upstash/ratelimit"
+
+const switchRatelimit = new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(10, "60 s"), prefix: "ratelimit:switch-role" })
 
 const VALID_ROLES = ["customer", "provider"] as const
 type SwitchableRole = typeof VALID_ROLES[number]
@@ -10,6 +14,9 @@ export async function POST(req: NextRequest) {
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
     const meta = sessionClaims?.metadata as { role?: string; dualRole?: boolean } | undefined
+
+    const { success: rlOk } = await switchRatelimit.limit(userId)
+    if (!rlOk) return NextResponse.json({ error: "Too many requests" }, { status: 429 })
 
     // JWT can be stale (60s TTL) — fall back to live Clerk data for role check
     let primaryRole = meta?.role as string | undefined

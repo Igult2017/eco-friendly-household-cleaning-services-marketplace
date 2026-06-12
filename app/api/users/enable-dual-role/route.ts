@@ -1,5 +1,9 @@
 import { auth, clerkClient, currentUser } from "@clerk/nextjs/server"
 import { NextRequest, NextResponse } from "next/server"
+import { redis } from "@/lib/redis/client"
+import { Ratelimit } from "@upstash/ratelimit"
+
+const enableDualRoleRatelimit = new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(5, "10 m"), prefix: "ratelimit:enable-dual-role" })
 import { db } from "@/lib/db"
 import { users, providers } from "@/lib/db/schema"
 import type { NewProvider } from "@/lib/db/schema/providers"
@@ -25,6 +29,9 @@ export async function POST(req: NextRequest) {
   try {
     const { userId, sessionClaims } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+    const { success: rlOk } = await enableDualRoleRatelimit.limit(userId)
+    if (!rlOk) return NextResponse.json({ error: "Too many requests" }, { status: 429 })
 
     const meta = sessionClaims?.metadata as { role?: string; dualRole?: boolean } | undefined
 
