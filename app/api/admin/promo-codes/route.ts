@@ -2,38 +2,27 @@ import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
-import { users, promoCodes } from "@/lib/db/schema"
-import { eq, desc } from "drizzle-orm"
+import { promoCodes } from "@/lib/db/schema"
+import { desc } from "drizzle-orm"
 
 const createSchema = z.object({
   code: z.string().min(3).max(50).toUpperCase(),
   discountType: z.enum(["percentage", "fixed"]),
-  discountValue: z.number().int().positive(),
+  discountValue: z.number().positive(),
   minOrderCents: z.number().int().min(0).default(0),
   maxDiscountCents: z.number().int().positive().optional(),
   maxUses: z.number().int().positive().optional(),
   expiresAt: z.string().datetime().optional(),
 })
 
-async function requireAdmin(userId: string) {
-  const [user] = await db
-    .select({ role: users.role })
-    .from(users)
-    .where(eq(users.id, userId))
-    .limit(1)
-  return user?.role === "admin"
-}
-
 export async function GET() {
   try {
-    const { userId } = await auth()
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-
-    const isAdmin = await requireAdmin(userId)
-    if (!isAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    const { sessionClaims } = await auth()
+    if ((sessionClaims?.metadata as { role?: string } | undefined)?.role !== "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
 
     const rows = await db.select().from(promoCodes).orderBy(desc(promoCodes.createdAt))
-
     return NextResponse.json({ promoCodes: rows })
   } catch (err) {
     console.error("[admin/promo-codes GET]", err)
@@ -43,11 +32,11 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const { userId } = await auth()
+    const { userId, sessionClaims } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-
-    const isAdmin = await requireAdmin(userId)
-    if (!isAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    if ((sessionClaims?.metadata as { role?: string } | undefined)?.role !== "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
 
     const parsed = createSchema.safeParse(await req.json())
     if (!parsed.success) {
@@ -57,21 +46,32 @@ export async function POST(req: Request) {
     const { code, discountType, discountValue, minOrderCents, maxDiscountCents, maxUses, expiresAt } =
       parsed.data
 
-    const [result] = await db
-      .insert(promoCodes)
-      .values({
-        code,
-        discountType,
-        discountValue,
-        minOrderCents,
-        maxDiscountCents: maxDiscountCents ?? null,
-        maxUses: maxUses ?? null,
-        expiresAt: expiresAt ? new Date(expiresAt) : null,
-        createdBy: userId,
-      })
-      .returning({ id: promoCodes.id })
+    try {
+      const [result] = await db
+        .insert(promoCodes)
+        .values({
+          code,
+          discountType,
+          discountValue: Math.round(discountValue),
+          minOrderCents,
+          maxDiscountCents: maxDiscountCents ?? null,
+          maxUses: maxUses ?? null,
+          expiresAt: expiresAt ? new Date(expiresAt) : null,
+          createdBy: userId,
+        })
+        .returning({ id: promoCodes.id })
 
-    return NextResponse.json({ promoCodeId: result.id }, { status: 201 })
+      return NextResponse.json({ promoCodeId: result.id }, { status: 201 })
+    } catch (dbErr: unknown) {
+      const pg = dbErr as { code?: string }
+      if (pg?.code === "23505") {
+        return NextResponse.json(
+          { error: { fieldErrors: { code: [`Code "${code}" already exists`] } } },
+          { status: 409 },
+        )
+      }
+      throw dbErr
+    }
   } catch (err) {
     console.error("[admin/promo-codes POST]", err)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

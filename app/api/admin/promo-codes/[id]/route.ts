@@ -2,32 +2,22 @@ import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
-import { users, promoCodes } from "@/lib/db/schema"
+import { promoCodes } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 
 const patchSchema = z.object({
   isActive: z.boolean(),
 })
 
-async function requireAdmin(userId: string): Promise<boolean> {
-  const [user] = await db
-    .select({ role: users.role })
-    .from(users)
-    .where(eq(users.id, userId))
-    .limit(1)
-  return user?.role === "admin"
-}
-
 export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId } = await auth()
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-
-    const isAdmin = await requireAdmin(userId)
-    if (!isAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    const { sessionClaims } = await auth()
+    if ((sessionClaims?.metadata as { role?: string } | undefined)?.role !== "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
 
     const { id } = await params
 
