@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { StatusBadge } from "@/components/admin/StatusBadge"
 import { Loader2, Scale } from "lucide-react"
 
@@ -30,26 +30,29 @@ export default function AdminDisputesPage() {
   const [resolving, setResolving] = useState(false)
   const [form, setForm] = useState({ outcome: "resolved_customer", resolution: "", refundPercent: 0 })
 
-  const reload = () => {
+  const reload = useCallback(() => {
     setLoading(true)
     fetch(`/api/admin/disputes?status=${filter}`)
       .then((r) => r.json())
       .then((d) => { setDisputes(d.disputes ?? []); setLoading(false) })
-  }
+  }, [filter])
 
-  useEffect(() => { reload() }, [filter])
+  useEffect(() => { reload() }, [reload])
 
   const resolve = async () => {
     if (!selected) return
     setResolving(true)
-    await fetch(`/api/admin/disputes/${selected.id}/resolve`, {
+    const res = await fetch(`/api/admin/disputes/${selected.id}/resolve`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
     })
     setResolving(false)
-    setSelected(null)
-    reload()
+    if (res.ok) {
+      setSelected(null)
+      setForm({ outcome: "resolved_customer", resolution: "", refundPercent: 0 })
+      reload()
+    }
   }
 
   const filters: FilterType[] = ["open", "escalated", "all"]

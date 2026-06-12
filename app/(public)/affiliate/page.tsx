@@ -14,8 +14,6 @@ import {
   Star,
   Zap,
 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 
 export const metadata: Metadata = {
   title: "Affiliate Programme — DORIX",
@@ -112,10 +110,10 @@ export default function AffiliatePage() {
         />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
           <div className="max-w-3xl">
-            <Badge className="mb-6 bg-[#2D7A5F]/20 text-[#4CB87A] border-[#2D7A5F]/30 hover:bg-[#2D7A5F]/20">
+            <span className="mb-6 inline-flex items-center rounded-full border border-[#2D7A5F]/30 bg-[#2D7A5F]/20 px-3 py-1 text-xs font-semibold text-[#4CB87A]">
               <Leaf className="w-3 h-3 mr-1" />
               Affiliate Programme
-            </Badge>
+            </span>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold leading-tight mb-6">
               Earn while you{" "}
               <span className="bg-linear-to-r from-[#4CB87A] to-[#2D7A5F] bg-clip-text text-transparent">
@@ -127,24 +125,19 @@ export default function AffiliatePage() {
               booking made by customers you refer. No cap. No expiry. Just recurring credit for work you did once.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button
-                asChild
-                size="lg"
-                className="bg-[#2D7A5F] hover:bg-[#245f4a] text-white rounded-xl px-8 transition-all duration-200 hover:-translate-y-0.5 shadow-lg"
+              <Link
+                href="/sign-up"
+                className="inline-flex items-center justify-center gap-2 bg-[#2D7A5F] hover:bg-[#245f4a] text-white rounded-xl px-8 py-3 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 shadow-lg"
               >
-                <Link href="/sign-up">
-                  Get your link free
-                  <ArrowRight className="ml-2 w-4 h-4" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                size="lg"
-                className="border-white/20 text-white hover:bg-white/10 rounded-xl px-8 transition-all duration-200"
+                Get your link free
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center justify-center border border-white/20 text-white hover:bg-white/10 rounded-xl px-8 py-3 text-sm font-semibold transition-all duration-200"
               >
-                <Link href="/dashboard">Already a member? View dashboard</Link>
-              </Button>
+                Already a member? View dashboard
+              </Link>
             </div>
           </div>
         </div>
@@ -201,7 +194,7 @@ export default function AffiliatePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="grid lg:grid-cols-2 gap-16 items-start">
             <div>
-              <Badge className="mb-4 bg-[#F4FAF6] text-[#2D7A5F] border-[#2D7A5F]/20">Why DORIX?</Badge>
+              <span className="mb-4 inline-flex items-center rounded-full border border-[#2D7A5F]/20 bg-[#F4FAF6] px-3 py-1 text-xs font-semibold text-[#2D7A5F]">Why DORIX?</span>
               <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#2B3441] mb-6">
                 A programme built to reward loyal partners
               </h2>
@@ -209,15 +202,13 @@ export default function AffiliatePage() {
                 We designed our affiliate programme the way we'd want one ourselves — lifetime commissions, instant
                 crediting, and a dashboard that actually shows you what's happening. No black boxes.
               </p>
-              <Button
-                asChild
-                className="bg-[#2D7A5F] hover:bg-[#245f4a] text-white rounded-xl transition-all duration-200 hover:-translate-y-0.5"
+              <Link
+                href="/sign-up"
+                className="inline-flex items-center gap-2 bg-[#2D7A5F] hover:bg-[#245f4a] text-white rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5"
               >
-                <Link href="/sign-up">
-                  Join now — it's free
-                  <ArrowRight className="ml-2 w-4 h-4" />
-                </Link>
-              </Button>
+                Join now — it's free
+                <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {BENEFITS.map(({ title, body }) => (
@@ -340,24 +331,19 @@ export default function AffiliatePage() {
             Sign up, grab your link, and share. Your first commission could arrive before the week is out.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              asChild
-              size="lg"
-              className="bg-white text-[#2D7A5F] hover:bg-white/90 rounded-xl px-10 font-semibold transition-all duration-200 hover:-translate-y-0.5 shadow-lg"
+            <Link
+              href="/sign-up"
+              className="inline-flex items-center justify-center gap-2 bg-white text-[#2D7A5F] hover:bg-white/90 rounded-xl px-10 py-3 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 shadow-lg"
             >
-              <Link href="/sign-up">
-                Get your affiliate link
-                <ArrowRight className="ml-2 w-4 h-4" />
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="border-white/30 text-white hover:bg-white/10 rounded-xl px-10 transition-all duration-200"
+              Get your affiliate link
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center justify-center border border-white/30 text-white hover:bg-white/10 rounded-xl px-10 py-3 text-sm font-semibold transition-all duration-200"
             >
-              <Link href="/dashboard">Go to my dashboard</Link>
-            </Button>
+              Go to my dashboard
+            </Link>
           </div>
           <p className="mt-8 text-white/40 text-xs">
             By joining, you agree to our{" "}

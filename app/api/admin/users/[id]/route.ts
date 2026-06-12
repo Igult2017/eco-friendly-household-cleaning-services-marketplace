@@ -7,12 +7,18 @@ import { eq, and, ne } from "drizzle-orm"
 const VALID_ROLES = ["admin", "customer", "provider"] as const
 type Role = (typeof VALID_ROLES)[number]
 
-async function requireAdmin() {
-  const { userId } = await auth()
+async function requireAdmin(): Promise<string | null> {
+  const { userId, sessionClaims } = await auth()
   if (!userId) return null
-  const [me] = await db.select({ role: users.role }).from(users).where(eq(users.id, userId))
-  if (!me || me.role !== "admin") return null
-  return userId
+  const role = (sessionClaims?.metadata as { role?: string } | undefined)?.role
+  if (role === "admin") return userId
+  // Fallback: Clerk API (handles fresh sessions where JWT hasn't refreshed yet)
+  try {
+    const clerk = await clerkClient()
+    const user = await clerk.users.getUser(userId)
+    if ((user.publicMetadata as { role?: string })?.role === "admin") return userId
+  } catch { /* Clerk unreachable — deny */ }
+  return null
 }
 
 // PATCH /api/admin/users/[id] — change a user's role

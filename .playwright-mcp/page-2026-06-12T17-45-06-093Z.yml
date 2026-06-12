@@ -1,0 +1,62 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - img "DORIX" [ref=e4]
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e9]:
+          - heading "Sign in to My Application" [level=1] [ref=e10]
+          - paragraph [ref=e11]: Welcome back! Please sign in to continue
+        - generic [ref=e12]:
+          - button "Sign in with Google Continue with Google" [ref=e15] [cursor=pointer]:
+            - generic [ref=e16]:
+              - generic "Sign in with Google" [ref=e18]
+              - generic [ref=e19]: Continue with Google
+          - paragraph [ref=e22]: or
+          - generic [ref=e24]:
+            - generic [ref=e25]:
+              - generic [ref=e28]:
+                - generic [ref=e29]:
+                  - generic [ref=e30]: Email address or username
+                  - link "Use phone" [ref=e31] [cursor=pointer]:
+                    - /url: ""
+                - textbox "Email address or username" [ref=e32]:
+                  - /placeholder: Enter email or username
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic: Password
+                    - generic:
+                      - textbox "Password":
+                        - /placeholder: Enter your password
+                      - button "Show password":
+                        - img
+            - button "Continue" [ref=e35] [cursor=pointer]:
+              - generic [ref=e36]:
+                - text: Continue
+                - img [ref=e37]
+      - generic [ref=e39]:
+        - generic [ref=e40]:
+          - generic [ref=e41]: Don’t have an account?
+          - link "Sign up" [ref=e42] [cursor=pointer]:
+            - /url: http://localhost:3000/sign-up#/?redirect_url=http%3A%2F%2Flocalhost%3A3000%2Fadmin%2Fdashboard
+        - generic [ref=e44]:
+          - generic [ref=e46]:
+            - paragraph [ref=e47]: Secured by
+            - link "Clerk logo" [ref=e48] [cursor=pointer]:
+              - /url: https://go.clerk.com/components
+              - img [ref=e49]
+          - paragraph [ref=e54]: Development mode
+    - link "Back to homepage" [ref=e55] [cursor=pointer]:
+      - /url: /
+      - img [ref=e56]
+      - text: Back to homepage
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e63] [cursor=pointer]:
+    - generic [ref=e66]:
+      - text: Compiling
+      - generic [ref=e67]:
+        - generic [ref=e68]: .
+        - generic [ref=e69]: .
+        - generic [ref=e70]: .
+  - alert [ref=e71]

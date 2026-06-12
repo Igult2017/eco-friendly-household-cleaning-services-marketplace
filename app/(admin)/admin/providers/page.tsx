@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { StatusBadge } from "@/components/admin/StatusBadge"
 import { CheckCircle, XCircle, PauseCircle, PlayCircle, Loader2, Check, X } from "lucide-react"
 
@@ -74,12 +74,12 @@ export default function AdminProvidersPage() {
   const [loading, setLoading] = useState(true)
   const [actioning, setActioning] = useState<string | null>(null)
 
-  const reload = () => {
+  const reload = useCallback(() => {
     setLoading(true)
     fetchProviders(tab).then((rows) => { setProviders(rows); setLoading(false) })
-  }
+  }, [tab])
 
-  useEffect(() => { reload() }, [tab])
+  useEffect(() => { reload() }, [reload])
 
   const handle = async (id: string, action: string) => {
     setActioning(id)

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Loader2, ToggleLeft, ToggleRight } from "lucide-react"
+import { Loader2, ToggleLeft, ToggleRight, Trash2 } from "lucide-react"
 import type { PromoCode } from "@/lib/db/schema"
 
 interface Props {
@@ -20,6 +20,7 @@ function StatusPill({ isActive }: { isActive: boolean }) {
 export function PromoCodeTable({ codes }: Props) {
   const router = useRouter()
   const [toggling, setToggling] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState<string | null>(null)
 
   async function toggleActive(id: string, current: boolean) {
     setToggling(id)
@@ -35,6 +36,17 @@ export function PromoCodeTable({ codes }: Props) {
     }
   }
 
+  async function deleteCode(id: string, code: string) {
+    if (!confirm(`Delete promo code "${code}"? This cannot be undone.`)) return
+    setDeleting(id)
+    try {
+      await fetch(`/api/admin/promo-codes/${id}`, { method: "DELETE" })
+      router.refresh()
+    } finally {
+      setDeleting(null)
+    }
+  }
+
   if (codes.length === 0) {
     return (
       <div className="rounded-xl bg-white shadow-sm">
@@ -43,7 +55,7 @@ export function PromoCodeTable({ codes }: Props) {
     )
   }
 
-  const headers = ["Code", "Type", "Value", "Uses", "Min Order", "Expires", "Status", "Actions"]
+  const headers = ["Code", "Type", "Value", "Uses", "Min Order", "Expires", "Status", "Actions", ""]
 
   return (
     <div className="rounded-xl bg-white shadow-sm overflow-hidden">
@@ -111,6 +123,19 @@ export function PromoCodeTable({ codes }: Props) {
                         ) : (
                           <><ToggleRight className="h-3.5 w-3.5" /> Activate</>
                         )}
+                      </button>
+                    )}
+                  </td>
+                  <td className="px-4 py-3">
+                    {deleting === c.id ? (
+                      <Loader2 className="h-4 w-4 animate-spin text-[#6B7280]" />
+                    ) : (
+                      <button
+                        onClick={() => deleteCode(c.id, c.code)}
+                        title="Delete code"
+                        className="p-1.5 rounded-lg text-red-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+                      >
+                        <Trash2 className="h-4 w-4" />
                       </button>
                     )}
                   </td>

@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { StatusBadge } from "@/components/admin/StatusBadge"
-import { Loader2 } from "lucide-react"
+import { Loader2, ChevronLeft, ChevronRight } from "lucide-react"
 
 type BookingRow = {
   id: string
@@ -20,21 +20,25 @@ type BookingRow = {
 }
 
 const STATUS_FILTERS = ["all", "confirmed", "in_progress", "completed", "cancelled", "disputed", "refunded"]
+const PAGE_LIMIT = 20
 
 export default function AdminBookingsPage() {
   const [status, setStatus] = useState("all")
+  const [page, setPage] = useState(1)
   const [bookings, setBookings] = useState<BookingRow[]>([])
   const [loading, setLoading] = useState(true)
 
-  const reload = () => {
+  const reload = useCallback(() => {
     setLoading(true)
-    const q = status === "all" ? "" : `?status=${status}`
-    fetch(`/api/admin/bookings${q}`)
+    const params = new URLSearchParams()
+    if (status !== "all") params.set("status", status)
+    params.set("page", String(page))
+    fetch(`/api/admin/bookings?${params}`)
       .then((r) => r.json())
       .then((d) => { setBookings(d.bookings ?? []); setLoading(false) })
-  }
+  }, [status, page])
 
-  useEffect(() => { reload() }, [status])
+  useEffect(() => { reload() }, [reload])
 
   return (
     <div className="space-y-6">
@@ -48,14 +52,14 @@ export default function AdminBookingsPage() {
         {STATUS_FILTERS.map((s) => (
           <button
             key={s}
-            onClick={() => setStatus(s)}
+            onClick={() => { setStatus(s); setPage(1) }}
             className={`px-4 py-1.5 rounded-full text-sm font-medium capitalize transition-all border ${
               status === s
                 ? "border-[#2D7A5F] bg-[#2D7A5F] text-white"
                 : "border-gray-200 text-[#6B7280] hover:border-[#2D7A5F] hover:text-[#2D7A5F] bg-white"
             }`}
           >
-            {s}
+            {s.replace(/_/g, " ")}
           </button>
         ))}
       </div>
@@ -100,6 +104,33 @@ export default function AdminBookingsPage() {
           </table>
         )}
       </div>
+
+      {/* Pagination */}
+      {!loading && (
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-[#6B7280]">
+            Page {page} · {bookings.length} rows shown
+          </p>
+          <div className="flex gap-2">
+            {page > 1 && (
+              <button
+                onClick={() => setPage((p) => p - 1)}
+                className="inline-flex items-center gap-1 text-xs font-medium text-[#6B7280] hover:text-[#2B3441] transition-colors"
+              >
+                <ChevronLeft className="h-3 w-3" /> Prev
+              </button>
+            )}
+            {bookings.length === PAGE_LIMIT && (
+              <button
+                onClick={() => setPage((p) => p + 1)}
+                className="inline-flex items-center gap-1 text-xs font-medium text-[#2D7A5F] hover:text-[#245f4a] transition-colors"
+              >
+                Next <ChevronRight className="h-3 w-3" />
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

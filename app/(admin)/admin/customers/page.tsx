@@ -1,12 +1,23 @@
 export const dynamic = "force-dynamic"
 
 import { db } from "@/lib/db"
-import { users } from "@/lib/db/schema"
-import { eq, desc } from "drizzle-orm"
+import { users, bookings } from "@/lib/db/schema"
+import { eq, desc, count, sql } from "drizzle-orm"
 
 export default async function AdminCustomersPage() {
   const customers = await db
-    .select({ id: users.id, email: users.email, firstName: users.firstName, lastName: users.lastName, createdAt: users.createdAt, isActive: users.isActive, gdprConsentAt: users.gdprConsentAt })
+    .select({
+      id: users.id,
+      email: users.email,
+      firstName: users.firstName,
+      lastName: users.lastName,
+      createdAt: users.createdAt,
+      isActive: users.isActive,
+      gdprConsentAt: users.gdprConsentAt,
+      bookingCount: sql<number>`(
+        SELECT COUNT(*) FROM bookings WHERE bookings.customer_id = ${users.id}
+      )`.mapWith(Number),
+    })
     .from(users)
     .where(eq(users.role, "customer"))
     .orderBy(desc(users.createdAt))
@@ -22,7 +33,7 @@ export default async function AdminCustomersPage() {
         <table className="min-w-full divide-y divide-gray-100">
           <thead className="bg-gray-50">
             <tr>
-              {["Name", "Email", "GDPR consent", "Status", "Joined"].map((h) => (
+              {["Name", "Email", "Bookings", "GDPR consent", "Status", "Joined"].map((h) => (
                 <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-[#6B7280]">{h}</th>
               ))}
             </tr>
@@ -32,6 +43,13 @@ export default async function AdminCustomersPage() {
               <tr key={c.id} className="hover:bg-gray-50/50">
                 <td className="px-4 py-3 text-sm font-medium text-[#2B3441]">{c.firstName} {c.lastName}</td>
                 <td className="px-4 py-3 text-sm text-[#6B7280]">{c.email}</td>
+                <td className="px-4 py-3 text-sm font-semibold text-[#2B3441]">
+                  {c.bookingCount > 0 ? (
+                    <span className={c.bookingCount >= 2 ? "text-[#2D7A5F]" : ""}>{c.bookingCount}</span>
+                  ) : (
+                    <span className="text-[#9CA3AF]">0</span>
+                  )}
+                </td>
                 <td className="px-4 py-3 text-xs text-[#6B7280]">{c.gdprConsentAt ? new Date(c.gdprConsentAt).toLocaleDateString("de-DE") : "—"}</td>
                 <td className="px-4 py-3">
                   <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${c.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
@@ -41,6 +59,11 @@ export default async function AdminCustomersPage() {
                 <td className="px-4 py-3 text-xs text-[#6B7280]">{new Date(c.createdAt).toLocaleDateString("de-DE")}</td>
               </tr>
             ))}
+            {customers.length === 0 && (
+              <tr>
+                <td colSpan={6} className="px-4 py-16 text-center text-sm text-[#6B7280]">No customers yet</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

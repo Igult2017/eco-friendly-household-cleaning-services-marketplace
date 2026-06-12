@@ -39,7 +39,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       .from(bookings)
       .where(eq(bookings.id, dispute.bookingId))
 
-    const refundAmount = Math.round(booking.totalAmount * (refundPercent / 100))
+    if (!booking) return NextResponse.json({ error: "Booking not found" }, { status: 404 })
+
+    const refundAmount = Math.round((booking.totalAmount ?? 0) * (refundPercent / 100))
 
     if (refundPercent > 0) {
       const [payment] = await db
