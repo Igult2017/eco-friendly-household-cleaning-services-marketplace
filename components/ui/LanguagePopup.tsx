@@ -45,6 +45,11 @@ const COUNTRY_LANG: Record<string, LangEntry> = {
   // Greek
   GR: { name: "Greek",        nativeName: "Ελληνικά",        flag: "🇬🇷" },
   CY: { name: "Greek",        nativeName: "Ελληνικά",        flag: "🇨🇾" },
+  // Asia & Middle East / candidate countries
+  TR: { name: "Turkish",      nativeName: "Türkçe",          flag: "🇹🇷" },
+  CN: { name: "Chinese",      nativeName: "中文",             flag: "🇨🇳" },
+  TW: { name: "Chinese",      nativeName: "中文",             flag: "🇹🇼" },
+  HK: { name: "Chinese",      nativeName: "中文",             flag: "🇭🇰" },
 }
 
 const DISMISS_KEY = "dorix_lang_popup_dismissed"
