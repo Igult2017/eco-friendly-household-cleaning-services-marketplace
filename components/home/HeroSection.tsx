@@ -21,8 +21,8 @@ export function HeroSection() {
               🌿 Europe&apos;s #1 eco-friendly cleaning marketplace
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-[#2B3441] leading-[1.1] mb-5">
-              Your home,<br />
-              <span className="text-[#2D7A5F]">cleaned green.</span>
+              Clean Home,<br />
+              <span className="text-[#2D7A5F]">Green Future.</span>
             </h1>
             <p className="text-lg text-[#6B7280] mb-8 max-w-md leading-relaxed">
               Book trusted cleaning professionals who use eco-friendly products.
