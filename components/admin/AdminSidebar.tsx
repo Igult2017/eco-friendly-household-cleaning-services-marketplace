@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import Image from "next/image"
 import { usePathname } from "next/navigation"
 import {
   LayoutDashboard,
@@ -41,9 +40,12 @@ export function AdminSidebar() {
   const pathname = usePathname()
   return (
     <aside className="fixed inset-y-0 left-0 w-60 bg-[#2B3441] flex flex-col z-40">
-      <div className="h-16 flex items-center px-6 border-b border-white/10">
-        <Image src="/logo.png" alt="DORIX" width={90} height={32} className="brightness-0 invert" />
-        <span className="ml-2 text-[10px] uppercase tracking-widest text-[#4CB87A] font-semibold">Admin</span>
+      <div className="h-16 flex items-center px-5 border-b border-white/10 gap-2.5">
+        <div className="w-7 h-7 rounded-lg bg-[#2D7A5F] flex items-center justify-center flex-shrink-0">
+          <Leaf className="w-3.5 h-3.5 text-white" />
+        </div>
+        <span className="font-serif font-bold text-white text-[17px] tracking-tight leading-none">DORIXÉ</span>
+        <span className="text-[9px] uppercase tracking-[0.15em] text-[#4CB87A] font-bold mt-0.5">Admin</span>
       </div>
       <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
         {nav.map(({ label, href, icon: Icon }) => {
