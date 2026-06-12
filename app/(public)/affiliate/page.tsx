@@ -114,9 +114,9 @@ export default function AffiliatePage() {
               <Leaf className="w-3 h-3 mr-1" />
               Affiliate Programme
             </span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold leading-tight mb-6">
-              Earn while you{" "}
-              <span className="bg-linear-to-r from-[#4CB87A] to-[#2D7A5F] bg-clip-text text-transparent">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold leading-tight mb-6 text-white">
+              <span className="block">Earn while you</span>
+              <span className="block bg-gradient-to-r from-[#4CB87A] to-[#2D7A5F] bg-clip-text text-transparent">
                 promote the green way
               </span>
             </h1>
@@ -321,7 +321,7 @@ export default function AffiliatePage() {
       </section>
 
       {/* CTA */}
-      <section className="bg-linear-to-br from-[#2D7A5F] to-[#1a5a43] text-white">
+      <section className="bg-gradient-to-br from-[#2D7A5F] to-[#1a5a43] text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
           <Leaf className="w-10 h-10 text-white/40 mx-auto mb-6" />
           <h2 className="text-3xl sm:text-4xl font-serif font-bold mb-4">
