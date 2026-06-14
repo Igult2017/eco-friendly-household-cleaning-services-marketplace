@@ -7,10 +7,20 @@ import { users } from "@/lib/db/schema"
 import { desc } from "drizzle-orm"
 import { UserRoleManager } from "@/components/admin/UserRoleManager"
 import { SyncUsersButton } from "@/components/admin/SyncUsersButton"
+import { syncClerkUsers } from "@/lib/clerk/sync"
 
 export default async function AdminUsersPage() {
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
+
+  // Self-healing: reconcile against Clerk on every load so a missed webhook
+  // delivery can never leave a signed-up user invisible. Fails open — a Clerk
+  // outage must never break the admin page.
+  try {
+    await syncClerkUsers()
+  } catch (err) {
+    console.error("[admin/users] auto-sync failed:", err)
+  }
 
   const allUsers = await db
     .select({
