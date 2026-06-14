@@ -1,10 +1,18 @@
 export const dynamic = "force-dynamic"
 
 import { db } from "@/lib/db"
-import { providers, users } from "@/lib/db/schema"
-import { eq, desc, and, ilike, gte } from "drizzle-orm"
+import { providers, users, providerServices } from "@/lib/db/schema"
+import { eq, desc, and, ilike, gte, inArray } from "drizzle-orm"
 import Link from "next/link"
 import type { Metadata } from "next"
+import { formatCurrencyShort } from "@/lib/utils/formatCurrency"
+
+// Suffix shown after a provider's "from" price, based on their service's price unit.
+const priceUnitSuffix: Record<string, string> = {
+  per_hour: "/hr",
+  per_job: "/job",
+  per_sqft: "/m²",
+}
 
 export const metadata: Metadata = {
   title: "Browse Eco Cleaners — DORIXÉ",
@@ -48,7 +56,31 @@ async function getProviders(filters: { city?: string; ecoLevel?: string; minRati
       .where(and(...conditions))
       .orderBy(desc(providers.averageRating))
       .limit(48)
-    return rows
+
+    if (rows.length === 0) return []
+
+    // Each provider's "from" price = the cheapest of their active services.
+    const ids = rows.map((r) => r.id)
+    const svc = await db
+      .select({
+        providerId: providerServices.providerId,
+        basePrice: providerServices.basePrice,
+        priceUnit: providerServices.priceUnit,
+      })
+      .from(providerServices)
+      .where(and(eq(providerServices.isActive, true), inArray(providerServices.providerId, ids)))
+
+    const cheapest = new Map<string, { price: number; unit: string }>()
+    for (const s of svc) {
+      const cur = cheapest.get(s.providerId)
+      if (!cur || s.basePrice < cur.price) cheapest.set(s.providerId, { price: s.basePrice, unit: s.priceUnit })
+    }
+
+    return rows.map((r) => ({
+      ...r,
+      priceFrom: cheapest.get(r.id)?.price ?? null,
+      priceUnit: cheapest.get(r.id)?.unit ?? null,
+    }))
   } catch {
     return []
   }
@@ -130,11 +162,21 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
                     <p className="text-sm text-[#6B7280] line-clamp-2 leading-relaxed mb-3">{p.bio}</p>
                   )}
 
-                  <div className="flex items-center gap-2 text-xs text-[#6B7280] mb-4">
-                    <span className="font-medium text-[#2B3441]">★ {(p.averageRating ?? 0).toFixed(1)}</span>
-                    <span>({p.totalReviews})</span>
-                    <span>·</span>
-                    <span>{p.totalJobsCompleted} jobs</span>
+                  <div className="flex items-center justify-between gap-2 text-xs text-[#6B7280] mb-4">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-[#2B3441]">★ {(p.averageRating ?? 0).toFixed(1)}</span>
+                      <span>({p.totalReviews})</span>
+                      <span>·</span>
+                      <span>{p.totalJobsCompleted} jobs</span>
+                    </div>
+                    {p.priceFrom != null && (
+                      <span className="whitespace-nowrap text-sm font-bold text-[#2D7A5F]">
+                        From {formatCurrencyShort(p.priceFrom)}
+                        <span className="text-[11px] font-medium text-[#6B7280]">
+                          {priceUnitSuffix[p.priceUnit ?? "per_job"] ?? ""}
+                        </span>
+                      </span>
+                    )}
                   </div>
 
                   <div className="flex gap-2">
