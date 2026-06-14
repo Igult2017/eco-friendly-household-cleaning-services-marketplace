@@ -1,10 +1,12 @@
 import type { Metadata } from "next"
 import { Playfair_Display, Inter } from "next/font/google"
 import { ClerkProvider } from "@clerk/nextjs"
+import { NextIntlClientProvider } from "next-intl"
+import { getLocale } from "next-intl/server"
 import { QueryProvider } from "@/components/providers/QueryProvider"
 import { Toaster } from "@/components/ui/sonner"
 import { CookieBanner } from "@/components/gdpr/CookieBanner"
-import { LanguagePopup } from "@/components/ui/LanguagePopup"
+import { LocaleDetector } from "@/components/i18n/LocaleDetector"
 import { cn } from "@/lib/utils"
 import "./globals.css"
 
@@ -38,22 +40,25 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+  const locale = await getLocale()
 
   const html = (
     <html
-      lang="en"
+      lang={locale}
       className={cn("h-full", playfair.variable, inter.variable)}
       suppressHydrationWarning
     >
       <body className="min-h-screen antialiased">
-        <QueryProvider>
-          {children}
-        </QueryProvider>
-        <Toaster richColors position="top-right" />
-        <CookieBanner />
-        <LanguagePopup />
+        <NextIntlClientProvider>
+          <QueryProvider>
+            {children}
+          </QueryProvider>
+          <Toaster richColors position="top-right" />
+          <CookieBanner />
+          <LocaleDetector />
+        </NextIntlClientProvider>
       </body>
     </html>
   )

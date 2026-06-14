@@ -1,0 +1,14 @@
+{
+  "nav": {
+    "findCleaners": "Trova addetti alle pulizie",
+    "browseJobs": "Sfoglia i lavori",
+    "howItWorks": "Come funziona",
+    "sustainability": "Sostenibilità",
+    "becomeACleaner": "Diventa addetto alle pulizie",
+    "signIn": "Accedi",
+    "startBooking": "Prenota ora",
+    "cleanerDashboard": "Dashboard addetto",
+    "adminPanel": "Pannello di amministrazione",
+    "myDashboard": "La mia dashboard"
+  }
+}

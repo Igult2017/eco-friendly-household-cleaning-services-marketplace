@@ -1,0 +1,14 @@
+{
+  "nav": {
+    "findCleaners": "Encontrar profissionais de limpeza",
+    "browseJobs": "Ver trabalhos",
+    "howItWorks": "Como funciona",
+    "sustainability": "Sustentabilidade",
+    "becomeACleaner": "Torne-se profissional de limpeza",
+    "signIn": "Iniciar sessão",
+    "startBooking": "Reservar agora",
+    "cleanerDashboard": "Painel do profissional",
+    "adminPanel": "Painel de administração",
+    "myDashboard": "O meu painel"
+  }
+}

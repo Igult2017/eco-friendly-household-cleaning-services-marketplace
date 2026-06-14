@@ -1,5 +1,8 @@
 import { withSentryConfig } from "@sentry/nextjs"
+import createNextIntlPlugin from "next-intl/plugin"
 import type { NextConfig } from "next"
+
+const withNextIntl = createNextIntlPlugin()
 
 const nextConfig: NextConfig = {
   output: "standalone", // enables minimal self-contained build for Docker
@@ -33,7 +36,7 @@ const nextConfig: NextConfig = {
   },
 }
 
-export default withSentryConfig(nextConfig, {
+export default withSentryConfig(withNextIntl(nextConfig), {
   silent: true,
   widenClientFileUpload: true,
   tunnelRoute: "/monitoring",

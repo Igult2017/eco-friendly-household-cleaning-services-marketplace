@@ -1,0 +1,14 @@
+{
+  "nav": {
+    "findCleaners": "Reinigungskräfte finden",
+    "browseJobs": "Jobs durchsuchen",
+    "howItWorks": "So funktioniert's",
+    "sustainability": "Nachhaltigkeit",
+    "becomeACleaner": "Reinigungskraft werden",
+    "signIn": "Anmelden",
+    "startBooking": "Jetzt buchen",
+    "cleanerDashboard": "Reinigungs-Dashboard",
+    "adminPanel": "Admin-Bereich",
+    "myDashboard": "Mein Dashboard"
+  }
+}

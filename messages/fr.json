@@ -1,0 +1,14 @@
+{
+  "nav": {
+    "findCleaners": "Trouver des agents d'entretien",
+    "browseJobs": "Parcourir les offres",
+    "howItWorks": "Comment ça marche",
+    "sustainability": "Durabilité",
+    "becomeACleaner": "Devenir agent d'entretien",
+    "signIn": "Se connecter",
+    "startBooking": "Réserver",
+    "cleanerDashboard": "Tableau de bord agent",
+    "adminPanel": "Panneau d'administration",
+    "myDashboard": "Mon tableau de bord"
+  }
+}

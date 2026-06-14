@@ -1,0 +1,14 @@
+{
+  "nav": {
+    "findCleaners": "Find cleaners",
+    "browseJobs": "Browse jobs",
+    "howItWorks": "How it works",
+    "sustainability": "Sustainability",
+    "becomeACleaner": "Become a cleaner",
+    "signIn": "Sign in",
+    "startBooking": "Start booking",
+    "cleanerDashboard": "Cleaner dashboard",
+    "adminPanel": "Admin panel",
+    "myDashboard": "My dashboard"
+  }
+}

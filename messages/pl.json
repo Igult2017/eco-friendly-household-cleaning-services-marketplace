@@ -1,0 +1,14 @@
+{
+  "nav": {
+    "findCleaners": "Znajdź sprzątaczy",
+    "browseJobs": "Przeglądaj zlecenia",
+    "howItWorks": "Jak to działa",
+    "sustainability": "Zrównoważony rozwój",
+    "becomeACleaner": "Zostań sprzątaczem",
+    "signIn": "Zaloguj się",
+    "startBooking": "Zarezerwuj teraz",
+    "cleanerDashboard": "Panel sprzątacza",
+    "adminPanel": "Panel administratora",
+    "myDashboard": "Mój panel"
+  }
+}
