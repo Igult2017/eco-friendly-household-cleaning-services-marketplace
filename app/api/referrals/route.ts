@@ -1,10 +1,9 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
-import { redis, safeLimit } from "@/lib/redis/client"
-import { Ratelimit } from "@upstash/ratelimit"
+import { safeLimit, createRateLimiter } from "@/lib/redis/client"
 import { db } from "@/lib/db"
 
-const referralRatelimit = new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(10, "60 s"), prefix: "ratelimit:referral" })
+const referralRatelimit = createRateLimiter({ tokens: 10, windowSeconds: 60, prefix: "ratelimit:referral" })
 import { referralCodes, referrals, referralCredits } from "@/lib/db/schema"
 import { eq, count, sql } from "drizzle-orm"
 import { customAlphabet } from "nanoid"

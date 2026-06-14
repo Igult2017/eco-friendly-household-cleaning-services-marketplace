@@ -1,9 +1,8 @@
 import { auth, currentUser } from "@clerk/nextjs/server"
 import { NextRequest, NextResponse } from "next/server"
-import { redis, safeLimit } from "@/lib/redis/client"
-import { Ratelimit } from "@upstash/ratelimit"
+import { safeLimit, createRateLimiter } from "@/lib/redis/client"
 
-const switchRatelimit = new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(10, "60 s"), prefix: "ratelimit:switch-role" })
+const switchRatelimit = createRateLimiter({ tokens: 10, windowSeconds: 60, prefix: "ratelimit:switch-role" })
 
 const VALID_ROLES = ["customer", "provider"] as const
 type SwitchableRole = typeof VALID_ROLES[number]

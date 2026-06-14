@@ -1,9 +1,8 @@
 import { auth, clerkClient, currentUser } from "@clerk/nextjs/server"
 import { NextRequest, NextResponse } from "next/server"
-import { redis, safeLimit } from "@/lib/redis/client"
-import { Ratelimit } from "@upstash/ratelimit"
+import { safeLimit, createRateLimiter } from "@/lib/redis/client"
 
-const enableDualRoleRatelimit = new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(5, "10 m"), prefix: "ratelimit:enable-dual-role" })
+const enableDualRoleRatelimit = createRateLimiter({ tokens: 5, windowSeconds: 600, prefix: "ratelimit:enable-dual-role" })
 import { db } from "@/lib/db"
 import { users, providers } from "@/lib/db/schema"
 import type { NewProvider } from "@/lib/db/schema/providers"
