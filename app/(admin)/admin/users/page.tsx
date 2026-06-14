@@ -6,6 +6,7 @@ import { db } from "@/lib/db"
 import { users } from "@/lib/db/schema"
 import { desc } from "drizzle-orm"
 import { UserRoleManager } from "@/components/admin/UserRoleManager"
+import { SyncUsersButton } from "@/components/admin/SyncUsersButton"
 
 export default async function AdminUsersPage() {
   const { userId } = await auth()
@@ -27,11 +28,14 @@ export default async function AdminUsersPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-serif text-3xl font-bold text-[#2B3441]">Users</h1>
-        <p className="mt-1 text-sm text-[#6B7280]">
-          {allUsers.length} total · manage roles and accounts
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="font-serif text-3xl font-bold text-[#2B3441]">Users</h1>
+          <p className="mt-1 text-sm text-[#6B7280]">
+            {allUsers.length} total · manage roles and accounts
+          </p>
+        </div>
+        <SyncUsersButton />
       </div>
 
       <div className="rounded-xl bg-white shadow-sm overflow-hidden">
