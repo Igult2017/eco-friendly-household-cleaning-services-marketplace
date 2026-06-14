@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
-import { redis } from "@/lib/redis/client"
+import { redis, safeLimit } from "@/lib/redis/client"
 import { Ratelimit } from "@upstash/ratelimit"
 import { db } from "@/lib/db"
 
@@ -21,7 +21,7 @@ export async function GET() {
   try {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    const { success } = await referralRatelimit.limit(userId)
+    const { success } = await safeLimit(referralRatelimit, userId)
     if (!success) return NextResponse.json({ error: "Too many requests" }, { status: 429 })
 
     // Fetch or auto-create the user's referral code

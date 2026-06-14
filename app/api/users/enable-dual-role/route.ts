@@ -1,6 +1,6 @@
 import { auth, clerkClient, currentUser } from "@clerk/nextjs/server"
 import { NextRequest, NextResponse } from "next/server"
-import { redis } from "@/lib/redis/client"
+import { redis, safeLimit } from "@/lib/redis/client"
 import { Ratelimit } from "@upstash/ratelimit"
 
 const enableDualRoleRatelimit = new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(5, "10 m"), prefix: "ratelimit:enable-dual-role" })
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-    const { success: rlOk } = await enableDualRoleRatelimit.limit(userId)
+    const { success: rlOk } = await safeLimit(enableDualRoleRatelimit, userId)
     if (!rlOk) return NextResponse.json({ error: "Too many requests" }, { status: 429 })
 
     // Always fetch live Clerk data — JWT (60s TTL) may have stale role/dualRole,
