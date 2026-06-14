@@ -3,7 +3,7 @@
 import { Star, MapPin, Leaf } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { formatCurrencyShort } from "@/lib/utils/formatCurrency"
+import { formatCurrencyShort, priceUnitSuffix } from "@/lib/utils/formatCurrency"
 import type { GeoProvider } from "@/lib/db/queries/geo"
 import Image from "next/image"
 
@@ -15,7 +15,7 @@ const ECO_COLORS: Record<string, string> = {
 }
 
 interface Props {
-  provider: GeoProvider & { serviceBasePrice?: number }
+  provider: GeoProvider
   onSelect: (id: string) => void
   selected?: boolean
 }
@@ -67,9 +67,11 @@ export function ProviderCard({ provider, onSelect, selected }: Props) {
                 </span>
               </div>
             </div>
-            {provider.serviceBasePrice && (
-              <p className="text-lg font-bold text-[#2D7A5F] flex-shrink-0">
-                {formatCurrencyShort(provider.serviceBasePrice)}
+            {provider.serviceBasePrice != null && (
+              <p className="flex-shrink-0 text-right leading-none">
+                <span className="block text-[10px] font-medium text-[#9CA3AF]">From</span>
+                <span className="text-lg font-bold text-[#2D7A5F]">{formatCurrencyShort(provider.serviceBasePrice)}</span>
+                <span className="text-[11px] font-medium text-[#6B7280]">{priceUnitSuffix[provider.priceUnit ?? "per_job"] ?? ""}</span>
               </p>
             )}
           </div>

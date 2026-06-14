@@ -15,6 +15,13 @@ export function formatCurrency(
   }).format(cents / 100)
 }
 
+// Suffix shown after a "from" price, based on a provider service's price unit.
+export const priceUnitSuffix: Record<string, string> = {
+  per_hour: "/hr",
+  per_job: "/job",
+  per_sqft: "/m²",
+}
+
 // Short form: no decimal cents (€22 not €22.00).
 export function formatCurrencyShort(
   cents: number,

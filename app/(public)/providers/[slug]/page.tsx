@@ -6,6 +6,7 @@ import { eq, avg, count, desc } from "drizzle-orm"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import type { Metadata } from "next"
+import { formatCurrencyShort, priceUnitSuffix } from "@/lib/utils/formatCurrency"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   try {
@@ -49,7 +50,7 @@ export default async function ProviderProfilePage({ params }: { params: Promise<
     ;[owner] = await db.select({ firstName: users.firstName, lastName: users.lastName }).from(users).where(eq(users.id, provider.userId))
 
     services = await db
-      .select({ id: providerServices.id, name: providerServices.name, description: providerServices.description, basePrice: providerServices.basePrice, priceUnit: providerServices.priceUnit })
+      .select({ id: providerServices.id, name: providerServices.name, description: providerServices.description, basePrice: providerServices.basePrice, priceUnit: providerServices.priceUnit, isActive: providerServices.isActive })
       .from(providerServices)
       .where(eq(providerServices.providerId, provider.id))
 
@@ -67,6 +68,11 @@ export default async function ProviderProfilePage({ params }: { params: Promise<
   owner = owner ?? null
   services = services ?? []
   recentReviews = recentReviews ?? []
+
+  // "From" price = cheapest active service (matches browse + book cards).
+  const activeServices = services.filter((s) => s.isActive)
+  const fromPrice = activeServices.length ? Math.min(...activeServices.map((s) => s.basePrice)) : null
+  const fromUnit = fromPrice != null ? activeServices.find((s) => s.basePrice === fromPrice)?.priceUnit ?? null : null
 
   const ecoColors: Record<string, string> = {
     basic: "bg-gray-100 text-gray-600",
@@ -104,6 +110,12 @@ export default async function ProviderProfilePage({ params }: { params: Promise<
             <span className="text-sm text-[#6B7280]">({provider.totalReviews} reviews)</span>
             <span className="text-sm text-[#6B7280]">{provider.totalJobsCompleted} jobs done</span>
           </div>
+          {fromPrice != null && (
+            <p className="mt-2 text-base font-bold text-[#2D7A5F]">
+              From {formatCurrencyShort(fromPrice)}
+              <span className="text-xs font-medium text-[#6B7280]">{priceUnitSuffix[fromUnit ?? "per_job"] ?? ""}</span>
+            </p>
+          )}
           {provider.bio && <p className="text-sm text-[#6B7280] mt-3 max-w-xl leading-relaxed">{provider.bio}</p>}
         </div>
         <Link

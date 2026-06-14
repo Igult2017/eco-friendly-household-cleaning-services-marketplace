@@ -5,14 +5,7 @@ import { providers, users, providerServices } from "@/lib/db/schema"
 import { eq, desc, and, ilike, gte, inArray } from "drizzle-orm"
 import Link from "next/link"
 import type { Metadata } from "next"
-import { formatCurrencyShort } from "@/lib/utils/formatCurrency"
-
-// Suffix shown after a provider's "from" price, based on their service's price unit.
-const priceUnitSuffix: Record<string, string> = {
-  per_hour: "/hr",
-  per_job: "/job",
-  per_sqft: "/m²",
-}
+import { formatCurrencyShort, priceUnitSuffix } from "@/lib/utils/formatCurrency"
 
 export const metadata: Metadata = {
   title: "Browse Eco Cleaners — DORIXÉ",

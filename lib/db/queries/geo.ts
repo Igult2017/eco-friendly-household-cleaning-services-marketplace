@@ -1,5 +1,6 @@
 import { db } from "../index"
-import { sql } from "drizzle-orm"
+import { providerServices } from "../schema"
+import { sql, and, eq, inArray } from "drizzle-orm"
 
 export interface GeoProvider {
   id: string; userId: string; slug: string; businessName: string; bio: string | null
@@ -7,6 +8,34 @@ export interface GeoProvider {
   ecoLevel: string; ecoScore: number; averageRating: number | null
   totalReviews: number; totalJobsCompleted: number; profilePhotoUrl: string | null
   isApproved: boolean; distanceMeters: number
+  // Cheapest active service — surfaced on result cards as a "from" price.
+  serviceBasePrice?: number | null; priceUnit?: string | null
+}
+
+// Attach each provider's cheapest active service price (one extra query, no
+// changes to the PostGIS/Haversine SQL). Mirrors the browse page approach.
+async function attachCheapestPrice(list: GeoProvider[]): Promise<GeoProvider[]> {
+  if (list.length === 0) return list
+  const ids = list.map((p) => p.id)
+  const svc = await db
+    .select({
+      providerId: providerServices.providerId,
+      basePrice: providerServices.basePrice,
+      priceUnit: providerServices.priceUnit,
+    })
+    .from(providerServices)
+    .where(and(eq(providerServices.isActive, true), inArray(providerServices.providerId, ids)))
+
+  const cheapest = new Map<string, { price: number; unit: string }>()
+  for (const s of svc) {
+    const cur = cheapest.get(s.providerId)
+    if (!cur || s.basePrice < cur.price) cheapest.set(s.providerId, { price: s.basePrice, unit: s.priceUnit })
+  }
+  return list.map((p) => ({
+    ...p,
+    serviceBasePrice: cheapest.get(p.id)?.price ?? null,
+    priceUnit: cheapest.get(p.id)?.unit ?? null,
+  }))
 }
 
 // Haversine bounding-box + exact distance — pure PostgreSQL, no PostGIS needed.
@@ -61,6 +90,7 @@ export async function findProvidersNearLocation(params: {
   categoryId?: string; limit?: number
 }): Promise<GeoProvider[]> {
   const { latitude, longitude, radiusKm, categoryId, limit = 20 } = params
+  let providersList: GeoProvider[]
   try {
     const result = await db.execute(sql`
       SELECT
@@ -81,11 +111,12 @@ export async function findProvidersNearLocation(params: {
       ORDER BY "distanceMeters" ASC, p.average_rating DESC NULLS LAST
       LIMIT ${limit}
     `)
-    return Array.from(result) as unknown as GeoProvider[]
+    providersList = Array.from(result) as unknown as GeoProvider[]
   } catch {
     // PostGIS not installed — fall back to pure-SQL Haversine
-    return findProvidersHaversine({ latitude, longitude, radiusKm, categoryId, limit })
+    providersList = await findProvidersHaversine({ latitude, longitude, radiusKm, categoryId, limit })
   }
+  return attachCheapestPrice(providersList)
 }
 
 /**
