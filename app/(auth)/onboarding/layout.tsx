@@ -1,8 +1,10 @@
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft } from "lucide-react"
+import { getTranslations } from "next-intl/server"
 
-export default function OnboardingLayout({ children }: { children: React.ReactNode }) {
+export default async function OnboardingLayout({ children }: { children: React.ReactNode }) {
+  const t = await getTranslations("authOnboardingLayout")
   return (
     <div className="min-h-screen bg-[#F4FAF6] flex flex-col">
       <header className="relative flex items-center justify-center py-6 border-b border-[#E5EDE9] bg-white px-4">
