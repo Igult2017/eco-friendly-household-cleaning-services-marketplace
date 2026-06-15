@@ -6,6 +6,11 @@ const withNextIntl = createNextIntlPlugin()
 
 const nextConfig: NextConfig = {
   output: "standalone", // enables minimal self-contained build for Docker
+  // Type-checking + linting run as a separate `tsc --noEmit` gate before every
+  // deploy. Skipping them inside `next build` avoids the memory-heavy in-build
+  // TypeScript pass OOM-killing the resource-limited VPS build container.
+  typescript: { ignoreBuildErrors: true },
+  eslint: { ignoreDuringBuilds: true },
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "*.r2.cloudflarestorage.com" },
