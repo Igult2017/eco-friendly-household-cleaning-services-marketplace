@@ -1,29 +1,40 @@
 import Link from "next/link"
 import { Leaf } from "lucide-react"
+import { getTranslations } from "next-intl/server"
 
-const LINKS = {
-  Product: [
-    { label: "Browse cleaners", href: "/browse" },
-    { label: "Post a job", href: "/post-job" },
-    { label: "How it works", href: "/#how-it-works" },
-    { label: "Pricing", href: "/pricing" },
-  ],
-  Company: [
-    { label: "About us", href: "/about" },
-    { label: "Sustainability", href: "/sustainability" },
-    { label: "Become a cleaner", href: "/become-a-cleaner" },
-    { label: "Affiliate Programme", href: "/affiliate" },
-    { label: "Blog", href: "/blog" },
-  ],
-  Legal: [
-    { label: "Privacy Policy", href: "/legal/privacy" },
-    { label: "Terms of Service", href: "/legal/terms" },
-    { label: "Cookie Policy", href: "/legal/cookie-policy" },
-    { label: "Legal Notice", href: "/legal/impressum" },
-  ],
-}
+const SECTIONS = [
+  {
+    key: "product",
+    links: [
+      { key: "browseCleaners", href: "/browse" },
+      { key: "postAJob", href: "/post-job" },
+      { key: "howItWorks", href: "/#how-it-works" },
+      { key: "pricing", href: "/pricing" },
+    ],
+  },
+  {
+    key: "company",
+    links: [
+      { key: "aboutUs", href: "/about" },
+      { key: "sustainability", href: "/sustainability" },
+      { key: "becomeACleaner", href: "/become-a-cleaner" },
+      { key: "affiliateProgramme", href: "/affiliate" },
+      { key: "blog", href: "/blog" },
+    ],
+  },
+  {
+    key: "legal",
+    links: [
+      { key: "privacyPolicy", href: "/legal/privacy" },
+      { key: "termsOfService", href: "/legal/terms" },
+      { key: "cookiePolicy", href: "/legal/cookie-policy" },
+      { key: "legalNotice", href: "/legal/impressum" },
+    ],
+  },
+]
 
-export function Footer() {
+export async function Footer() {
+  const t = await getTranslations("footer")
   return (
     <footer className="bg-[#2B3441] text-white/70">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
@@ -36,18 +47,18 @@ export function Footer() {
               <span className="font-serif font-bold text-white text-lg tracking-tight leading-none">DORIXÉ</span>
             </div>
             <p className="text-sm leading-relaxed text-white/50 max-w-[200px]">
-              Clean home. Green future.<br />
-              Trusted eco-friendly cleaners across Europe.
+              {t("taglineLine1")}<br />
+              {t("taglineLine2")}
             </p>
           </div>
-          {Object.entries(LINKS).map(([section, links]) => (
-            <div key={section}>
-              <h4 className="text-white text-sm font-semibold mb-4">{section}</h4>
+          {SECTIONS.map(({ key, links }) => (
+            <div key={key}>
+              <h4 className="text-white text-sm font-semibold mb-4">{t(`section_${key}`)}</h4>
               <ul className="space-y-2.5">
-                {links.map(({ label, href }) => (
+                {links.map(({ key: linkKey, href }) => (
                   <li key={href}>
                     <Link href={href} className="text-sm hover:text-white transition-colors">
-                      {label}
+                      {t(`link_${linkKey}`)}
                     </Link>
                   </li>
                 ))}
@@ -56,8 +67,8 @@ export function Footer() {
           ))}
         </div>
         <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-white/40">
-          <p>© 2026 DORIXÉ. All rights reserved.</p>
-          <p>Registered in the EU · GDPR Compliant · Powered by Stripe</p>
+          <p>{t("copyright")}</p>
+          <p>{t("compliance")}</p>
         </div>
       </div>
     </footer>

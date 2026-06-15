@@ -1,15 +1,19 @@
-const TICKERS = [
-  "BACKGROUND-CHECKED PROVIDERS",
-  "ECO-VERIFIED PRODUCTS",
-  "CASHLESS STRIPE PAYMENTS",
-  "5-STAR CUSTOMER SUPPORT",
-  "GDPR COMPLIANT",
-  "EU INSURED PROVIDERS",
-  "48H REFUND POLICY",
-  "REAL-TIME NOTIFICATIONS",
-]
+import { getTranslations } from "next-intl/server"
 
-export function TrustTicker() {
+export async function TrustTicker() {
+  const t = await getTranslations("homeTrustTicker")
+
+  const TICKERS = [
+    t("backgroundCheckedProviders"),
+    t("ecoVerifiedProducts"),
+    t("cashlessStripePayments"),
+    t("fiveStarCustomerSupport"),
+    t("gdprCompliant"),
+    t("euInsuredProviders"),
+    t("refundPolicy48h"),
+    t("realTimeNotifications"),
+  ]
+
   const items = [...TICKERS, ...TICKERS]
 
   return (

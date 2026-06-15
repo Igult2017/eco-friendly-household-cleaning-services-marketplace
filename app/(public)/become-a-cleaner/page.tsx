@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server"
+import { getTranslations } from "next-intl/server"
 import { Leaf, Euro, Clock, ShieldCheck, Star, Users } from "lucide-react"
 import { AddCleanerRoleForm } from "@/components/layout/AddCleanerRoleForm"
 import { EnableCustomerRoleButton } from "@/components/layout/EnableCustomerRoleButton"
@@ -9,16 +10,16 @@ export const metadata = {
   description: "Join DORIXÉ as an eco-certified cleaner. Set your own rates, work your own schedule, get paid weekly.",
 }
 
-const PERKS = [
-  { icon: Euro,        title: "Keep 100% of your rate",  body: "DORIXÉ charges customers a 15% platform fee on top — your quoted price is yours, always." },
-  { icon: Clock,       title: "Work when you want",       body: "Set your own availability, service area, and take only the bookings you want." },
-  { icon: ShieldCheck, title: "Weekly payouts",           body: "Earnings are transferred to your bank every Monday via Stripe." },
-  { icon: Star,        title: "Build your reputation",    body: "Every completed booking adds a verified review to your public profile." },
-  { icon: Leaf,        title: "Join an eco community",    body: "All DORIXÉ cleaners use certified non-toxic products. We verify it." },
-  { icon: Users,       title: "Dual-account support",     body: "Already a customer? Switch roles in one click — your Provider Account stays separate." },
-]
-
 export default async function BecomeACleanerPage() {
+  const t = await getTranslations("becomeCleaner")
+  const PERKS = [
+    { icon: Euro,        title: t("perkRateTitle"),       body: t("perkRateBody") },
+    { icon: Clock,       title: t("perkScheduleTitle"),   body: t("perkScheduleBody") },
+    { icon: ShieldCheck, title: t("perkPayoutTitle"),     body: t("perkPayoutBody") },
+    { icon: Star,        title: t("perkReputationTitle"), body: t("perkReputationBody") },
+    { icon: Leaf,        title: t("perkEcoTitle"),        body: t("perkEcoBody") },
+    { icon: Users,       title: t("perkDualTitle"),       body: t("perkDualBody") },
+  ]
   const { sessionClaims } = await auth()
   const meta     = sessionClaims?.metadata as { role?: string; dualRole?: boolean } | undefined
   const role     = meta?.role
@@ -30,13 +31,13 @@ export default async function BecomeACleanerPage() {
       <section className="bg-[#2B3441] text-white py-20 px-4">
         <div className="max-w-4xl mx-auto text-center space-y-4">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-[#2D7A5F]/30 border border-[#2D7A5F]/40 px-4 py-1 text-xs font-semibold text-[#4CB87A] uppercase tracking-wide">
-            <Leaf size={11} /> Eco-Certified Cleaners
+            <Leaf size={11} /> {t("heroBadge")}
           </span>
           <h1 className="font-serif text-5xl font-bold leading-tight">
-            Turn your skills into<br />a green income
+            {t("heroTitleLine1")}<br />{t("heroTitleLine2")}
           </h1>
           <p className="text-white/70 text-lg max-w-xl mx-auto">
-            Join DORIXÉ&apos;s network of vetted eco-friendly cleaners. Set your own rates, choose your jobs, and get paid weekly.
+            {t("heroSubtitle")}
           </p>
         </div>
       </section>
@@ -56,17 +57,17 @@ export default async function BecomeACleanerPage() {
       <section className="max-w-lg mx-auto px-4 pb-24">
         {!role && (
           <div className="bg-white rounded-2xl border border-[#E5EBF0] shadow-sm p-8 text-center space-y-4">
-            <h2 className="font-serif text-2xl font-bold text-[#2B3441]">Ready to get started?</h2>
-            <p className="text-[#6B7280] text-sm">Create your DORIXÉ account to join as a cleaner.</p>
+            <h2 className="font-serif text-2xl font-bold text-[#2B3441]">{t("noRoleTitle")}</h2>
+            <p className="text-[#6B7280] text-sm">{t("noRoleBody")}</p>
             <Link
               href="/sign-up"
               className="inline-flex items-center justify-center h-12 px-8 rounded-xl bg-[#2D7A5F] hover:bg-[#235f49] text-white font-semibold text-sm transition-colors"
             >
-              Create Cleaner Account
+              {t("noRoleCta")}
             </Link>
             <p className="text-xs text-[#6B7280]">
-              Already have an account?{" "}
-              <Link href="/sign-in" className="text-[#2D7A5F] underline">Sign in</Link>
+              {t("noRoleHaveAccount")}{" "}
+              <Link href="/sign-in" className="text-[#2D7A5F] underline">{t("noRoleSignIn")}</Link>
             </p>
           </div>
         )}
@@ -76,30 +77,30 @@ export default async function BecomeACleanerPage() {
             <div className="w-14 h-14 rounded-full bg-[#EDF5F0] flex items-center justify-center mx-auto">
               <Leaf size={24} className="text-[#2D7A5F]" />
             </div>
-            <h2 className="font-serif text-2xl font-bold text-[#2B3441]">You already have both accounts</h2>
-            <p className="text-[#6B7280] text-sm">Switch between Cleaner and Provider Account from the top navigation.</p>
+            <h2 className="font-serif text-2xl font-bold text-[#2B3441]">{t("dualTitle")}</h2>
+            <p className="text-[#6B7280] text-sm">{t("dualBody")}</p>
             <Link
               href="/provider/dashboard"
               className="inline-flex items-center justify-center h-12 px-8 rounded-xl bg-[#2D7A5F] hover:bg-[#235f49] text-white font-semibold text-sm transition-colors"
             >
-              Go to Cleaner Dashboard
+              {t("dualCta")}
             </Link>
           </div>
         )}
 
         {role && !isDual && isProvider && (
           <div className="bg-white rounded-2xl border border-[#E5EBF0] shadow-sm p-8 text-center space-y-4">
-            <h2 className="font-serif text-2xl font-bold text-[#2B3441]">You&apos;re already a cleaner</h2>
-            <p className="text-[#6B7280] text-sm">Want to also post jobs and hire other cleaners? Enable your Provider Account with one click.</p>
+            <h2 className="font-serif text-2xl font-bold text-[#2B3441]">{t("providerTitle")}</h2>
+            <p className="text-[#6B7280] text-sm">{t("providerBody")}</p>
             <EnableCustomerRoleButton />
           </div>
         )}
 
         {role && !isDual && !isProvider && (
           <div className="bg-white rounded-2xl border border-[#E5EBF0] shadow-sm p-6">
-            <h2 className="font-serif text-2xl font-bold text-[#2B3441] mb-1">Add your Cleaner Account</h2>
+            <h2 className="font-serif text-2xl font-bold text-[#2B3441] mb-1">{t("addAccountTitle")}</h2>
             <p className="text-[#6B7280] text-sm mb-6">
-              Your existing account stays intact. Switch roles any time from the navbar.
+              {t("addAccountBody")}
             </p>
             <AddCleanerRoleForm />
           </div>

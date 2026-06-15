@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Star, MapPin } from "lucide-react"
+import { getTranslations } from "next-intl/server"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
@@ -45,20 +46,21 @@ const PROVIDERS = [
   },
 ]
 
-export function FeaturedProviders() {
+export async function FeaturedProviders() {
+  const t = await getTranslations("homeFeaturedProviders")
   return (
     <section className="py-20 bg-[#F4FAF6]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-end justify-between mb-10">
           <div>
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-[#2B3441] mb-2">
-              Top-rated professionals
+              {t("heading")}
             </h2>
-            <p className="text-[#6B7280] text-sm">Verified, eco-certified cleaners near you</p>
+            <p className="text-[#6B7280] text-sm">{t("subtitle")}</p>
           </div>
           <Link href="/browse" className="hidden md:block">
             <Button variant="outline" className="border-[#2D7A5F] text-[#2D7A5F] hover:bg-[#2D7A5F] hover:text-white">
-              View all →
+              {t("viewAll")}
             </Button>
           </Link>
         </div>
@@ -89,7 +91,7 @@ export function FeaturedProviders() {
               <div className="flex items-center gap-1.5 mb-2">
                 <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                 <span className="text-sm font-semibold text-[#2B3441]">{p.rating}</span>
-                <span className="text-xs text-[#6B7280]">({p.reviews} reviews)</span>
+                <span className="text-xs text-[#6B7280]">{t("reviewsCount", { count: p.reviews })}</span>
               </div>
               <p className="text-xs text-[#6B7280] leading-relaxed mb-3 line-clamp-2">{p.bio}</p>
               <div className="flex flex-wrap gap-1.5 mb-4">
@@ -101,15 +103,15 @@ export function FeaturedProviders() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="font-bold text-[#2B3441]">
-                  €{p.price}<span className="text-xs font-normal text-[#6B7280]">/hr</span>
+                  €{p.price}<span className="text-xs font-normal text-[#6B7280]">{t("perHour")}</span>
                 </span>
                 <div className="flex gap-2">
                   <Link href={`/providers/${p.id}`}>
-                    <Button variant="outline" size="sm" className="text-xs h-8 px-3">View</Button>
+                    <Button variant="outline" size="sm" className="text-xs h-8 px-3">{t("view")}</Button>
                   </Link>
                   <Link href={`/book?provider=${p.id}`}>
                     <Button size="sm" className="text-xs h-8 px-3 bg-[#2D7A5F] hover:bg-[#235f49] text-white">
-                      Book
+                      {t("book")}
                     </Button>
                   </Link>
                 </div>

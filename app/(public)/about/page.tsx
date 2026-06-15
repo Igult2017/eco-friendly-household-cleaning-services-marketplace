@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { getTranslations } from "next-intl/server"
 import { Leaf, ShieldCheck, Star, Euro, Heart, Globe2, Users, Zap } from "lucide-react"
 
 export const metadata: Metadata = {
@@ -8,65 +9,81 @@ export const metadata: Metadata = {
     "DORIXÉ connects eco-conscious households with vetted, eco-certified cleaners across Europe. Clean home. Green future.",
 }
 
-const VALUES = [
-  {
-    icon: Leaf,
-    title: "Eco-first, always",
-    body: "Every provider on DORIXÉ is vetted for their use of non-toxic, biodegradable, and certified eco-friendly products. No greenwashing — we verify the certifications.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Trusted & verified",
-    body: "All cleaners pass identity verification (Stripe Identity), background checks, and a manual approval review before their first booking. Your home, protected.",
-  },
-  {
-    icon: Euro,
-    title: "Transparent pricing",
-    body: "Providers set their own prices. You pay their quoted price plus a 15% platform fee — visible before you confirm. No hidden charges, no surprises at checkout.",
-  },
-  {
-    icon: Star,
-    title: "Community-driven quality",
-    body: "Every completed booking unlocks a verified review. Ratings are real — only customers who booked and paid can leave feedback. Consistent quality or providers are removed.",
-  },
-  {
-    icon: Heart,
-    title: "Fair for providers",
-    body: "Cleaners keep 100% of their quoted price. The platform fee is charged to the customer, not deducted from the provider. We believe the people doing the work deserve to be paid fairly.",
-  },
-  {
-    icon: Globe2,
-    title: "Built for Europe",
-    body: "DORIXÉ is designed for the EU market — GDPR-compliant from day one, payments in EUR, European address formats, and provider onboarding that meets local regulations.",
-  },
-]
+export default async function AboutPage() {
+  const t = await getTranslations("about")
 
-const STATS = [
-  { value: "100%", label: "Eco-certified providers" },
-  { value: "15%", label: "Platform fee (paid by customer)" },
-  { value: "72h", label: "Dispute resolution target" },
-  { value: "€0", label: "Deducted from provider earnings" },
-]
+  const VALUES = [
+    {
+      icon: Leaf,
+      title: t("valueEcoFirstTitle"),
+      body: t("valueEcoFirstBody"),
+    },
+    {
+      icon: ShieldCheck,
+      title: t("valueTrustedTitle"),
+      body: t("valueTrustedBody"),
+    },
+    {
+      icon: Euro,
+      title: t("valuePricingTitle"),
+      body: t("valuePricingBody"),
+    },
+    {
+      icon: Star,
+      title: t("valueQualityTitle"),
+      body: t("valueQualityBody"),
+    },
+    {
+      icon: Heart,
+      title: t("valueFairTitle"),
+      body: t("valueFairBody"),
+    },
+    {
+      icon: Globe2,
+      title: t("valueEuropeTitle"),
+      body: t("valueEuropeBody"),
+    },
+  ]
 
-const TIMELINE = [
-  {
-    year: "The problem",
-    title: "Finding a trustworthy eco-cleaner was nearly impossible",
-    body: "Most cleaning platforms are packed with unlisted providers using chemical-heavy products. Customers who care about sustainability had no way to verify who was actually eco-friendly and who was just claiming to be.",
-  },
-  {
-    year: "The idea",
-    title: "A marketplace that starts from eco, not retrofits it",
-    body: "We decided to build a platform where eco certification is the entry requirement, not an optional badge. Every provider must prove their credentials before they can take a single booking.",
-  },
-  {
-    year: "The solution",
-    title: "DORIXÉ — Clean home. Green future.",
-    body: "A full marketplace with identity-verified providers, escrow payments, a transparent bidding system, and automated weekly payouts. Built for households who want both quality and sustainability.",
-  },
-]
+  const STATS = [
+    { value: "100%", label: t("statEcoCertified") },
+    { value: "15%", label: t("statPlatformFee") },
+    { value: "72h", label: t("statDisputeTarget") },
+    { value: "€0", label: t("statDeducted") },
+  ]
 
-export default function AboutPage() {
+  const TIMELINE = [
+    {
+      year: t("timelineProblemYear"),
+      title: t("timelineProblemTitle"),
+      body: t("timelineProblemBody"),
+    },
+    {
+      year: t("timelineIdeaYear"),
+      title: t("timelineIdeaTitle"),
+      body: t("timelineIdeaBody"),
+    },
+    {
+      year: t("timelineSolutionYear"),
+      title: t("timelineSolutionTitle"),
+      body: t("timelineSolutionBody"),
+    },
+  ]
+
+  const CUSTOMER_POINTS = [
+    t("customerPoint1"),
+    t("customerPoint2"),
+    t("customerPoint3"),
+    t("customerPoint4"),
+  ]
+
+  const PROVIDER_POINTS = [
+    t("providerPoint1"),
+    t("providerPoint2"),
+    t("providerPoint3"),
+    t("providerPoint4"),
+  ]
+
   return (
     <div>
       {/* Hero */}
@@ -75,14 +92,13 @@ export default function AboutPage() {
         <div className="relative max-w-4xl mx-auto px-4 py-24 text-center">
           <div className="inline-flex items-center gap-2 rounded-full bg-[#2D7A5F]/20 border border-[#2D7A5F]/30 px-4 py-1.5 text-sm text-[#4CB87A] font-medium mb-6">
             <Leaf size={14} />
-            Clean home. Green future.
+            {t("tagline")}
           </div>
           <h1 className="font-serif text-5xl md:text-6xl font-bold mb-6 leading-tight">
-            We&apos;re building the greenest<br className="hidden md:block" /> cleaning marketplace in Europe
+            {t("heroTitleLine1")}<br className="hidden md:block" /> {t("heroTitleLine2")}
           </h1>
           <p className="text-white/60 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-            DORIXÉ connects eco-conscious households with vetted, certified cleaners who care as much about the planet
-            as they do about a spotless home.
+            {t("heroSubtitle")}
           </p>
         </div>
       </section>
@@ -102,8 +118,8 @@ export default function AboutPage() {
       {/* Our story — timeline */}
       <section className="max-w-3xl mx-auto px-4 py-20">
         <div className="text-center mb-14">
-          <span className="inline-flex rounded-full bg-[#2D7A5F]/10 px-4 py-1.5 text-xs font-semibold text-[#2D7A5F] uppercase tracking-widest mb-3">Our story</span>
-          <h2 className="font-serif text-4xl font-bold text-[#2B3441]">Why we built DORIXÉ</h2>
+          <span className="inline-flex rounded-full bg-[#2D7A5F]/10 px-4 py-1.5 text-xs font-semibold text-[#2D7A5F] uppercase tracking-widest mb-3">{t("storyEyebrow")}</span>
+          <h2 className="font-serif text-4xl font-bold text-[#2B3441]">{t("storyHeading")}</h2>
         </div>
 
         <div className="relative">
@@ -130,14 +146,12 @@ export default function AboutPage() {
       {/* Mission */}
       <section className="bg-[#F4FAF6] border-y border-[#E5EBF0] py-20 px-4">
         <div className="max-w-3xl mx-auto text-center">
-          <span className="inline-flex rounded-full bg-[#2D7A5F]/10 px-4 py-1.5 text-xs font-semibold text-[#2D7A5F] uppercase tracking-widest mb-4">Our mission</span>
+          <span className="inline-flex rounded-full bg-[#2D7A5F]/10 px-4 py-1.5 text-xs font-semibold text-[#2D7A5F] uppercase tracking-widest mb-4">{t("missionEyebrow")}</span>
           <h2 className="font-serif text-4xl font-bold text-[#2B3441] mb-6">
-            Make eco-friendly cleaning the default, not the exception
+            {t("missionHeading")}
           </h2>
           <p className="text-[#6B7280] text-lg leading-relaxed">
-            Millions of homes are cleaned every week using products that are harsh on surfaces, harmful to health, and
-            damaging to waterways. We&apos;re changing that — one verified booking at a time. DORIXÉ makes it as easy to
-            book a certified eco-cleaner as it is to order a taxi.
+            {t("missionBody")}
           </p>
         </div>
       </section>
@@ -145,8 +159,8 @@ export default function AboutPage() {
       {/* Values grid */}
       <section className="max-w-5xl mx-auto px-4 py-20">
         <div className="text-center mb-14">
-          <span className="inline-flex rounded-full bg-[#2D7A5F]/10 px-4 py-1.5 text-xs font-semibold text-[#2D7A5F] uppercase tracking-widest mb-3">What we stand for</span>
-          <h2 className="font-serif text-4xl font-bold text-[#2B3441]">Our values</h2>
+          <span className="inline-flex rounded-full bg-[#2D7A5F]/10 px-4 py-1.5 text-xs font-semibold text-[#2D7A5F] uppercase tracking-widest mb-3">{t("valuesEyebrow")}</span>
+          <h2 className="font-serif text-4xl font-bold text-[#2B3441]">{t("valuesHeading")}</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {VALUES.map((v) => (
@@ -165,8 +179,8 @@ export default function AboutPage() {
       <section className="bg-[#2B3441] text-white py-20 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="font-serif text-4xl font-bold mb-3">How DORIXÉ works</h2>
-            <p className="text-white/60 text-lg">Two ways to use the platform — for households and for cleaners.</p>
+            <h2 className="font-serif text-4xl font-bold mb-3">{t("howHeading")}</h2>
+            <p className="text-white/60 text-lg">{t("howSubtitle")}</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -175,14 +189,9 @@ export default function AboutPage() {
               <div className="w-10 h-10 rounded-xl bg-[#2D7A5F] flex items-center justify-center mb-4">
                 <Users size={20} className="text-white" />
               </div>
-              <h3 className="font-serif text-xl font-bold mb-4">For households</h3>
+              <h3 className="font-serif text-xl font-bold mb-4">{t("forHouseholdsTitle")}</h3>
               <ul className="space-y-3 text-sm text-white/70">
-                {[
-                  "Search vetted eco-certified cleaners near you",
-                  "Book directly or post a job and receive competitive bids",
-                  "Pay securely — funds held in escrow until the job is done",
-                  "Leave a verified review after every booking",
-                ].map((item) => (
+                {CUSTOMER_POINTS.map((item) => (
                   <li key={item} className="flex items-start gap-2">
                     <span className="text-[#4CB87A] mt-0.5 flex-shrink-0">✓</span>
                     {item}
@@ -193,7 +202,7 @@ export default function AboutPage() {
                 href="/browse"
                 className="inline-flex mt-6 rounded-xl bg-[#2D7A5F] px-6 py-3 text-sm font-semibold text-white hover:bg-[#256349] transition-colors"
               >
-                Find a cleaner →
+                {t("findCleanerArrow")}
               </Link>
             </div>
 
@@ -202,14 +211,9 @@ export default function AboutPage() {
               <div className="w-10 h-10 rounded-xl bg-[#4CB87A]/30 flex items-center justify-center mb-4">
                 <Zap size={20} className="text-[#4CB87A]" />
               </div>
-              <h3 className="font-serif text-xl font-bold mb-4">For cleaners</h3>
+              <h3 className="font-serif text-xl font-bold mb-4">{t("forCleanersTitle")}</h3>
               <ul className="space-y-3 text-sm text-white/70">
-                {[
-                  "Apply once — approval takes 1–2 business days",
-                  "Set your own prices and working hours",
-                  "Browse job posts and submit bids to grow your client base",
-                  "Keep 100% of your quoted price — weekly bank payouts",
-                ].map((item) => (
+                {PROVIDER_POINTS.map((item) => (
                   <li key={item} className="flex items-start gap-2">
                     <span className="text-[#4CB87A] mt-0.5 flex-shrink-0">✓</span>
                     {item}
@@ -220,7 +224,7 @@ export default function AboutPage() {
                 href="/onboarding"
                 className="inline-flex mt-6 rounded-xl border border-white/20 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
               >
-                Become a provider →
+                {t("becomeProviderArrow")}
               </Link>
             </div>
           </div>
@@ -234,23 +238,23 @@ export default function AboutPage() {
             <Leaf size={32} className="text-[#2D7A5F]" />
           </div>
           <h2 className="font-serif text-4xl font-bold text-[#2B3441] mb-4">
-            Ready for a cleaner, greener home?
+            {t("ctaHeading")}
           </h2>
           <p className="text-[#6B7280] text-lg mb-8">
-            Join thousands of households across Europe who&apos;ve switched to eco-certified cleaning.
+            {t("ctaBody")}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               href="/browse"
               className="inline-flex justify-center rounded-xl bg-[#2D7A5F] px-8 py-4 text-white font-semibold hover:bg-[#256349] transition-colors"
             >
-              Find a cleaner
+              {t("findCleaner")}
             </Link>
             <Link
               href="/how-it-works"
               className="inline-flex justify-center rounded-xl border-2 border-[#2B3441] px-8 py-4 text-[#2B3441] font-semibold hover:bg-[#2B3441] hover:text-white transition-colors"
             >
-              How it works
+              {t("howItWorks")}
             </Link>
           </div>
         </div>

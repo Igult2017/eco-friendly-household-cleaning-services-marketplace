@@ -1,44 +1,57 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { getTranslations } from "next-intl/server"
 import { CheckCircle2, XCircle, ArrowRight, Euro, ShieldCheck, Leaf, Zap } from "lucide-react"
 
-export const metadata: Metadata = {
-  title: "Pricing — DORIXÉ",
-  description: "Transparent pricing for customers and cleaners. Customers pay a 15% platform fee on top. Cleaners keep 100% of their rate.",
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("pricing")
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  }
 }
 
-const CUSTOMER_FEATURES = [
-  "Browse and book eco-certified cleaners",
-  "Pre-authorised payment — only captured on completion",
-  "Built-in dispute resolution",
-  "5-star review system",
-  "Job posting + bidding marketplace",
-  "Referral credit programme",
-  "Cancellation protection (tiered refund)",
-  "Real-time notifications",
-]
+export default async function PricingPage() {
+  const t = await getTranslations("pricing")
 
-const PROVIDER_FEATURES = [
-  "Free profile and listing",
-  "Weekly automatic payouts via Stripe",
-  "Job alerts in your service area",
-  "Bid on posted jobs",
-  "Earnings dashboard",
-  "Eco certification badge",
-  "Zero subscription or monthly fee",
-]
+  const CUSTOMER_FEATURES = [
+    t("customerFeature1"),
+    t("customerFeature2"),
+    t("customerFeature3"),
+    t("customerFeature4"),
+    t("customerFeature5"),
+    t("customerFeature6"),
+    t("customerFeature7"),
+    t("customerFeature8"),
+  ]
 
-const COMPARISON = [
-  { feature: "Provider keeps 100% of their rate",  dorixe: true,  competitor: false },
-  { feature: "No monthly subscription for cleaners", dorixe: true,  competitor: false },
-  { feature: "Eco-certified provider network",       dorixe: true,  competitor: false },
-  { feature: "Job marketplace + bidding",            dorixe: true,  competitor: false },
-  { feature: "Pre-auth payment (captured on done)",  dorixe: true,  competitor: false },
-  { feature: "Built-in dispute resolution",          dorixe: true,  competitor: true  },
-  { feature: "Instant payout option",               dorixe: false, competitor: true  },
-]
+  const PROVIDER_FEATURES = [
+    t("providerFeature1"),
+    t("providerFeature2"),
+    t("providerFeature3"),
+    t("providerFeature4"),
+    t("providerFeature5"),
+    t("providerFeature6"),
+    t("providerFeature7"),
+  ]
 
-export default function PricingPage() {
+  const COMPARISON = [
+    { feature: t("compareKeepRate"),        dorixe: true,  competitor: false },
+    { feature: t("compareNoSubscription"),  dorixe: true,  competitor: false },
+    { feature: t("compareEcoNetwork"),      dorixe: true,  competitor: false },
+    { feature: t("compareMarketplace"),     dorixe: true,  competitor: false },
+    { feature: t("comparePreAuth"),         dorixe: true,  competitor: false },
+    { feature: t("compareDispute"),         dorixe: true,  competitor: true  },
+    { feature: t("compareInstantPayout"),   dorixe: false, competitor: true  },
+  ]
+
+  const FAQS = [
+    { q: t("faqChargedQ"), a: t("faqChargedA") },
+    { q: t("faqCancelQ"), a: t("faqCancelA") },
+    { q: t("faqPayoutQ"), a: t("faqPayoutA") },
+    { q: t("faqMinimumQ"), a: t("faqMinimumA") },
+  ]
+
   return (
     <div className="bg-[#F4FAF6] min-h-screen">
 
@@ -46,13 +59,13 @@ export default function PricingPage() {
       <section className="bg-[#2B3441] text-white py-20 px-4">
         <div className="max-w-3xl mx-auto text-center space-y-4">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-[#2D7A5F]/30 border border-[#2D7A5F]/40 px-4 py-1 text-xs font-semibold text-[#4CB87A] uppercase tracking-wide">
-            <Euro size={11} /> Transparent Pricing
+            <Euro size={11} /> {t("heroBadge")}
           </span>
           <h1 className="font-serif text-4xl sm:text-5xl font-bold text-white leading-tight">
-            Simple, honest fees.<br />No surprises.
+            {t("heroTitleLine1")}<br />{t("heroTitleLine2")}
           </h1>
           <p className="text-white/70 text-lg max-w-xl mx-auto">
-            Customers pay a small platform fee. Cleaners keep every cent of their quoted rate. That&apos;s it.
+            {t("heroSubtitle")}
           </p>
         </div>
       </section>
@@ -67,13 +80,13 @@ export default function PricingPage() {
               <div className="w-10 h-10 rounded-xl bg-[#2D7A5F] flex items-center justify-center mb-4">
                 <ShieldCheck size={18} className="text-white" />
               </div>
-              <h2 className="font-serif text-2xl font-bold mb-1">For Customers</h2>
-              <p className="text-white/60 text-sm">Book trusted, eco-certified cleaners</p>
+              <h2 className="font-serif text-2xl font-bold mb-1">{t("customerCardTitle")}</h2>
+              <p className="text-white/60 text-sm">{t("customerCardSubtitle")}</p>
               <div className="mt-6 flex items-end gap-1">
                 <span className="text-5xl font-bold">15%</span>
-                <span className="text-white/60 mb-1.5 text-sm">platform fee</span>
+                <span className="text-white/60 mb-1.5 text-sm">{t("customerPriceLabel")}</span>
               </div>
-              <p className="text-white/50 text-xs mt-1">Added on top of the provider&apos;s price at checkout</p>
+              <p className="text-white/50 text-xs mt-1">{t("customerPriceNote")}</p>
             </div>
             <div className="px-6 py-6 space-y-3">
               {CUSTOMER_FEATURES.map(f => (
@@ -84,17 +97,17 @@ export default function PricingPage() {
               ))}
               <div className="pt-4">
                 <div className="bg-[#F4FAF6] rounded-xl px-4 py-4 text-sm space-y-2">
-                  <p className="font-semibold text-[#2B3441] text-xs uppercase tracking-wide">Example booking</p>
+                  <p className="font-semibold text-[#2B3441] text-xs uppercase tracking-wide">{t("exampleBooking")}</p>
                   <div className="flex justify-between text-sm">
-                    <span className="text-[#6B7280]">Cleaner&apos;s rate</span>
+                    <span className="text-[#6B7280]">{t("customerExampleRate")}</span>
                     <span className="font-medium text-[#2B3441]">€80</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-[#6B7280]">Platform fee (15%)</span>
+                    <span className="text-[#6B7280]">{t("customerExampleFee")}</span>
                     <span className="font-medium text-[#2B3441]">€12</span>
                   </div>
                   <div className="flex justify-between text-sm font-bold border-t border-gray-200 pt-2">
-                    <span className="text-[#2B3441]">You pay total</span>
+                    <span className="text-[#2B3441]">{t("customerExampleTotal")}</span>
                     <span className="text-[#2D7A5F]">€92</span>
                   </div>
                 </div>
@@ -103,7 +116,7 @@ export default function PricingPage() {
                 href="/book"
                 className="block w-full text-center mt-4 bg-[#2D7A5F] hover:bg-[#235f49] text-white rounded-xl px-6 py-3 text-sm font-semibold transition-colors"
               >
-                Book a cleaner →
+                {t("bookCleanerCta")}
               </Link>
             </div>
           </div>
@@ -115,15 +128,15 @@ export default function PricingPage() {
                 <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
                   <Leaf size={18} className="text-white" />
                 </div>
-                <span className="text-xs font-bold bg-white/20 rounded-full px-3 py-1">Most popular</span>
+                <span className="text-xs font-bold bg-white/20 rounded-full px-3 py-1">{t("mostPopular")}</span>
               </div>
-              <h2 className="font-serif text-2xl font-bold mb-1">For Cleaners</h2>
-              <p className="text-white/60 text-sm">List your services and get booked</p>
+              <h2 className="font-serif text-2xl font-bold mb-1">{t("providerCardTitle")}</h2>
+              <p className="text-white/60 text-sm">{t("providerCardSubtitle")}</p>
               <div className="mt-6 flex items-end gap-1">
                 <span className="text-5xl font-bold">€0</span>
-                <span className="text-white/60 mb-1.5 text-sm">to join</span>
+                <span className="text-white/60 mb-1.5 text-sm">{t("providerPriceLabel")}</span>
               </div>
-              <p className="text-white/50 text-xs mt-1">You keep 100% of your quoted rate, always</p>
+              <p className="text-white/50 text-xs mt-1">{t("providerPriceNote")}</p>
             </div>
             <div className="px-6 py-6 space-y-3">
               {PROVIDER_FEATURES.map(f => (
@@ -134,17 +147,17 @@ export default function PricingPage() {
               ))}
               <div className="pt-4">
                 <div className="bg-[#EDF5F0] rounded-xl px-4 py-4 text-sm space-y-2">
-                  <p className="font-semibold text-[#2B3441] text-xs uppercase tracking-wide">Example booking</p>
+                  <p className="font-semibold text-[#2B3441] text-xs uppercase tracking-wide">{t("exampleBooking")}</p>
                   <div className="flex justify-between text-sm">
-                    <span className="text-[#6B7280]">Your quoted rate</span>
+                    <span className="text-[#6B7280]">{t("providerExampleRate")}</span>
                     <span className="font-medium text-[#2B3441]">€80</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-[#6B7280]">DORIXÉ fee on you</span>
+                    <span className="text-[#6B7280]">{t("providerExampleFee")}</span>
                     <span className="font-medium text-[#2D7A5F] font-bold">€0</span>
                   </div>
                   <div className="flex justify-between text-sm font-bold border-t border-[#2D7A5F]/20 pt-2">
-                    <span className="text-[#2B3441]">You receive</span>
+                    <span className="text-[#2B3441]">{t("providerExampleReceive")}</span>
                     <span className="text-[#2D7A5F]">€80</span>
                   </div>
                 </div>
@@ -153,7 +166,7 @@ export default function PricingPage() {
                 href="/become-a-cleaner"
                 className="block w-full text-center mt-4 bg-[#2D7A5F] hover:bg-[#235f49] text-white rounded-xl px-6 py-3 text-sm font-semibold transition-colors"
               >
-                Become a cleaner →
+                {t("becomeCleanerCta")}
               </Link>
             </div>
           </div>
@@ -163,14 +176,14 @@ export default function PricingPage() {
 
       {/* Comparison table */}
       <section className="max-w-3xl mx-auto px-4 pb-16">
-        <h2 className="font-serif text-2xl font-bold text-[#2B3441] mb-6 text-center">How we compare</h2>
+        <h2 className="font-serif text-2xl font-bold text-[#2B3441] mb-6 text-center">{t("comparisonHeading")}</h2>
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
           <table className="w-full">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
-                <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wider text-[#6B7280]">Feature</th>
+                <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wider text-[#6B7280]">{t("comparisonColFeature")}</th>
                 <th className="px-5 py-3 text-center text-xs font-bold uppercase tracking-wider text-[#2D7A5F]">DORIXÉ</th>
-                <th className="px-5 py-3 text-center text-xs font-bold uppercase tracking-wider text-[#6B7280]">Typical competitor</th>
+                <th className="px-5 py-3 text-center text-xs font-bold uppercase tracking-wider text-[#6B7280]">{t("comparisonColCompetitor")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -197,13 +210,8 @@ export default function PricingPage() {
       {/* FAQ strip */}
       <section className="bg-white border-y border-gray-100">
         <div className="max-w-3xl mx-auto px-4 py-16 space-y-6">
-          <h2 className="font-serif text-2xl font-bold text-[#2B3441]">Common questions</h2>
-          {[
-            { q: "When am I charged?", a: "Your card is pre-authorised at booking. The charge is only captured when the cleaner marks the job complete — you never pay for a booking that didn't happen." },
-            { q: "What if I cancel?", a: "Cancel more than 48 hours before → full refund. 24–48 hours → 50% refund. Under 24 hours → no refund. If the cleaner cancels, you always get a full refund." },
-            { q: "How do cleaners get paid?", a: "Every Monday, Stripe automatically transfers the week's completed booking earnings to each cleaner's connected bank account." },
-            { q: "Is there a minimum booking value?", a: "No. Cleaners set their own prices and the platform fee scales with the booking — there is no floor." },
-          ].map(({ q, a }) => (
+          <h2 className="font-serif text-2xl font-bold text-[#2B3441]">{t("faqHeading")}</h2>
+          {FAQS.map(({ q, a }) => (
             <div key={q} className="border-b border-gray-100 pb-6 last:border-0 last:pb-0">
               <p className="font-semibold text-[#2B3441] mb-1.5">{q}</p>
               <p className="text-sm text-[#6B7280] leading-relaxed">{a}</p>
@@ -215,14 +223,14 @@ export default function PricingPage() {
       {/* CTA */}
       <section className="max-w-2xl mx-auto px-4 py-20 text-center">
         <Zap size={32} className="text-[#2D7A5F] mx-auto mb-4" />
-        <h2 className="font-serif text-2xl font-bold text-[#2B3441] mb-3">Ready to get started?</h2>
-        <p className="text-[#6B7280] mb-8">Book your first eco-friendly cleaning or join as a cleaner — no commitment required.</p>
+        <h2 className="font-serif text-2xl font-bold text-[#2B3441] mb-3">{t("ctaHeading")}</h2>
+        <p className="text-[#6B7280] mb-8">{t("ctaSubtitle")}</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link href="/book" className="inline-flex items-center justify-center gap-2 bg-[#2D7A5F] hover:bg-[#235f49] text-white rounded-xl px-8 py-3 text-sm font-semibold transition-colors">
-            Book a cleaning <ArrowRight size={15} />
+            {t("ctaBookButton")} <ArrowRight size={15} />
           </Link>
           <Link href="/become-a-cleaner" className="inline-flex items-center justify-center gap-2 border border-[#2D7A5F] text-[#2D7A5F] hover:bg-[#EDF5F0] rounded-xl px-8 py-3 text-sm font-semibold transition-colors">
-            Become a cleaner <ArrowRight size={15} />
+            {t("ctaCleanerButton")} <ArrowRight size={15} />
           </Link>
         </div>
       </section>

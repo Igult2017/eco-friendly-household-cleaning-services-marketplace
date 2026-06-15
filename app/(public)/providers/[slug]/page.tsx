@@ -7,6 +7,7 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import type { Metadata } from "next"
 import { formatCurrencyShort, priceUnitSuffix } from "@/lib/utils/formatCurrency"
+import { getTranslations } from "next-intl/server"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   try {
@@ -21,6 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ProviderProfilePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
+  const t = await getTranslations("providerProfile")
 
   let provider, owner, services, recentReviews
   try {
@@ -100,19 +102,19 @@ export default async function ProviderProfilePage({ params }: { params: Promise<
             </span>
             {provider.verificationStatus === "verified" && (
               <span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
-                ✓ ID Verified
+                ✓ {t("idVerified")}
               </span>
             )}
           </div>
           <p className="text-sm text-[#6B7280] mt-1">{provider.city}, {provider.country}</p>
           <div className="flex items-center gap-4 mt-2">
             <span className="text-sm font-semibold text-[#2B3441]">★ {(provider.averageRating ?? 0).toFixed(1)}</span>
-            <span className="text-sm text-[#6B7280]">({provider.totalReviews} reviews)</span>
-            <span className="text-sm text-[#6B7280]">{provider.totalJobsCompleted} jobs done</span>
+            <span className="text-sm text-[#6B7280]">({t("reviewsCount", { count: provider.totalReviews })})</span>
+            <span className="text-sm text-[#6B7280]">{t("jobsDone", { count: provider.totalJobsCompleted })}</span>
           </div>
           {fromPrice != null && (
             <p className="mt-2 text-base font-bold text-[#2D7A5F]">
-              From {formatCurrencyShort(fromPrice)}
+              {t("fromPrice", { price: formatCurrencyShort(fromPrice) })}
               <span className="text-xs font-medium text-[#6B7280]">{priceUnitSuffix[fromUnit ?? "per_job"] ?? ""}</span>
             </p>
           )}
@@ -122,14 +124,14 @@ export default async function ProviderProfilePage({ params }: { params: Promise<
           href={`/book?providerId=${provider.id}`}
           className="shrink-0 rounded-xl bg-[#2D7A5F] px-6 py-3 text-sm font-semibold text-white hover:bg-[#256349] transition-colors"
         >
-          Book now
+          {t("bookNow")}
         </Link>
       </div>
 
       {/* Services */}
       {services.length > 0 && (
         <section>
-          <h2 className="font-serif text-2xl font-bold text-[#2B3441] mb-4">Services</h2>
+          <h2 className="font-serif text-2xl font-bold text-[#2B3441] mb-4">{t("servicesHeading")}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {services.map((s) => (
               <div key={s.id} className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
@@ -152,7 +154,7 @@ export default async function ProviderProfilePage({ params }: { params: Promise<
       {/* Reviews */}
       {recentReviews.length > 0 && (
         <section>
-          <h2 className="font-serif text-2xl font-bold text-[#2B3441] mb-4">Reviews</h2>
+          <h2 className="font-serif text-2xl font-bold text-[#2B3441] mb-4">{t("reviewsHeading")}</h2>
           <div className="space-y-4">
             {recentReviews.map((r) => (
               <div key={r.id} className="rounded-xl bg-white border border-gray-100 p-5 shadow-sm">

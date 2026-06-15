@@ -5,18 +5,22 @@ import { providers, users, providerServices } from "@/lib/db/schema"
 import { eq, desc, and, ilike, gte, inArray } from "drizzle-orm"
 import Link from "next/link"
 import type { Metadata } from "next"
+import { getTranslations } from "next-intl/server"
 import { formatCurrencyShort, priceUnitSuffix } from "@/lib/utils/formatCurrency"
 
-export const metadata: Metadata = {
-  title: "Browse Eco Cleaners — DORIXÉ",
-  description: "Find trusted, eco-certified cleaning professionals near you.",
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("browse")
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  }
 }
 
-const ecoLabels: Record<string, { label: string; color: string }> = {
-  basic: { label: "Eco Basic", color: "bg-gray-100 text-gray-600" },
-  certified: { label: "Eco Certified", color: "bg-green-100 text-green-700" },
-  premium: { label: "Eco Premium", color: "bg-emerald-100 text-emerald-700" },
-  zero_impact: { label: "Zero Impact", color: "bg-[#2D7A5F]/10 text-[#2D7A5F]" },
+const ecoLabelColors: Record<string, string> = {
+  basic: "bg-gray-100 text-gray-600",
+  certified: "bg-green-100 text-green-700",
+  premium: "bg-emerald-100 text-emerald-700",
+  zero_impact: "bg-[#2D7A5F]/10 text-[#2D7A5F]",
 }
 
 async function getProviders(filters: { city?: string; ecoLevel?: string; minRating?: string }) {
@@ -82,51 +86,60 @@ async function getProviders(filters: { city?: string; ecoLevel?: string; minRati
 export default async function BrowsePage({ searchParams }: { searchParams: Promise<{ city?: string; ecoLevel?: string; minRating?: string }> }) {
   const { city, ecoLevel, minRating } = await searchParams
   const providerList = await getProviders({ city, ecoLevel, minRating })
+  const t = await getTranslations("browse")
+
+  const ecoLabelText: Record<string, string> = {
+    basic: t("ecoBasic"),
+    certified: t("ecoCertified"),
+    premium: t("ecoPremium"),
+    zero_impact: t("ecoZeroImpact"),
+  }
 
   return (
     <div className="max-w-7xl mx-auto py-10 px-4">
       <form method="GET" action="/browse" className="mb-6 flex flex-wrap items-end gap-3">
         <div>
-          <label className="mb-1 block text-xs text-[#6B7280]">City</label>
-          <input name="city" defaultValue={city ?? ""} placeholder="Amsterdam" className="rounded-lg border border-[#E5EBF0] px-3 py-2 text-sm" />
+          <label className="mb-1 block text-xs text-[#6B7280]">{t("cityLabel")}</label>
+          <input name="city" defaultValue={city ?? ""} placeholder={t("cityPlaceholder")} className="rounded-lg border border-[#E5EBF0] px-3 py-2 text-sm" />
         </div>
         <div>
-          <label className="mb-1 block text-xs text-[#6B7280]">Eco Level</label>
+          <label className="mb-1 block text-xs text-[#6B7280]">{t("ecoLevelLabel")}</label>
           <select name="ecoLevel" defaultValue={ecoLevel ?? ""} className="rounded-lg border border-[#E5EBF0] px-3 py-2 text-sm">
-            <option value="">Any</option>
-            <option value="basic">Eco Basic</option>
-            <option value="certified">Eco Certified</option>
-            <option value="premium">Eco Premium</option>
-            <option value="zero_impact">Zero Impact</option>
+            <option value="">{t("anyOption")}</option>
+            <option value="basic">{t("ecoBasic")}</option>
+            <option value="certified">{t("ecoCertified")}</option>
+            <option value="premium">{t("ecoPremium")}</option>
+            <option value="zero_impact">{t("ecoZeroImpact")}</option>
           </select>
         </div>
         <div>
-          <label className="mb-1 block text-xs text-[#6B7280]">Min Rating</label>
+          <label className="mb-1 block text-xs text-[#6B7280]">{t("minRatingLabel")}</label>
           <select name="minRating" defaultValue={minRating ?? ""} className="rounded-lg border border-[#E5EBF0] px-3 py-2 text-sm">
-            <option value="">Any</option>
-            <option value="3">3★ +</option>
-            <option value="4">4★ +</option>
-            <option value="4.5">4.5★ +</option>
+            <option value="">{t("anyOption")}</option>
+            <option value="3">{t("rating3")}</option>
+            <option value="4">{t("rating4")}</option>
+            <option value="4.5">{t("rating45")}</option>
           </select>
         </div>
-        <button type="submit" className="rounded-lg bg-[#2D7A5F] px-4 py-2 text-sm font-semibold text-white">Filter</button>
+        <button type="submit" className="rounded-lg bg-[#2D7A5F] px-4 py-2 text-sm font-semibold text-white">{t("filterButton")}</button>
         {(city || ecoLevel || minRating) && (
-          <a href="/browse" className="rounded-lg border border-[#E5EBF0] px-4 py-2 text-sm text-[#6B7280]">Clear</a>
+          <a href="/browse" className="rounded-lg border border-[#E5EBF0] px-4 py-2 text-sm text-[#6B7280]">{t("clearButton")}</a>
         )}
       </form>
       <div className="mb-8">
-        <h1 className="font-serif text-4xl font-bold text-[#2B3441]">Find Eco Cleaners</h1>
-        <p className="text-[#6B7280] mt-2">{providerList.length} {(city || ecoLevel || minRating) ? "providers match your filters" : "vetted providers available"}</p>
+        <h1 className="font-serif text-4xl font-bold text-[#2B3441]">{t("heading")}</h1>
+        <p className="text-[#6B7280] mt-2">{(city || ecoLevel || minRating) ? t("resultsFiltered", { count: providerList.length }) : t("resultsAvailable", { count: providerList.length })}</p>
       </div>
 
       {providerList.length === 0 ? (
         <div className="text-center py-20">
-          <p className="text-[#6B7280]">No providers found. Check back soon!</p>
+          <p className="text-[#6B7280]">{t("emptyState")}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {providerList.map((p) => {
-            const eco = ecoLabels[p.ecoLevel] ?? ecoLabels.basic
+            const ecoColor = ecoLabelColors[p.ecoLevel] ?? ecoLabelColors.basic
+            const ecoLabel = ecoLabelText[p.ecoLevel] ?? ecoLabelText.basic
             return (
               <div key={p.id} className="rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
                 <div className="p-5">
@@ -144,11 +157,11 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
                     </div>
                   </div>
 
-                  <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold mb-3 ${eco.color}`}>
-                    🌿 {eco.label}
+                  <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold mb-3 ${ecoColor}`}>
+                    🌿 {ecoLabel}
                   </span>
                   {p.verificationStatus === "verified" && (
-                    <span className="ml-1 inline-flex rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">✓ Verified</span>
+                    <span className="ml-1 inline-flex rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">{t("verifiedBadge")}</span>
                   )}
 
                   {p.bio && (
@@ -160,11 +173,11 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
                       <span className="font-medium text-[#2B3441]">★ {(p.averageRating ?? 0).toFixed(1)}</span>
                       <span>({p.totalReviews})</span>
                       <span>·</span>
-                      <span>{p.totalJobsCompleted} jobs</span>
+                      <span>{t("jobsCount", { count: p.totalJobsCompleted })}</span>
                     </div>
                     {p.priceFrom != null && (
                       <span className="whitespace-nowrap text-sm font-bold text-[#2D7A5F]">
-                        From {formatCurrencyShort(p.priceFrom)}
+                        {t("priceFrom")} {formatCurrencyShort(p.priceFrom)}
                         <span className="text-[11px] font-medium text-[#6B7280]">
                           {priceUnitSuffix[p.priceUnit ?? "per_job"] ?? ""}
                         </span>
@@ -177,13 +190,13 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
                       href={`/providers/${p.slug}`}
                       className="flex-1 rounded-lg border border-gray-200 py-2 text-center text-sm font-medium text-[#6B7280] hover:border-[#2D7A5F] hover:text-[#2D7A5F] transition-colors"
                     >
-                      View
+                      {t("viewButton")}
                     </Link>
                     <Link
                       href={`/book?providerId=${p.id}`}
                       className="flex-1 rounded-lg bg-[#2D7A5F] py-2 text-center text-sm font-semibold text-white hover:bg-[#256349] transition-colors"
                     >
-                      Book
+                      {t("bookButton")}
                     </Link>
                   </div>
                 </div>

@@ -1,12 +1,16 @@
 export const dynamic = "force-dynamic"
 
 import type { Metadata } from "next"
+import { getTranslations } from "next-intl/server"
 import { db } from "@/lib/db"
 import { providers, carbonOffsetContributions } from "@/lib/db/schema"
 import { eq, count, sum, sql } from "drizzle-orm"
 
-export const metadata: Metadata = {
-  title: "Sustainability Impact — DORIXÉ",
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("sustainability")
+  return {
+    title: t("metaTitle"),
+  }
 }
 
 async function getEcoStats() {
@@ -26,6 +30,7 @@ async function getEcoStats() {
 }
 
 export default async function SustainabilityPage() {
+  const t = await getTranslations("sustainability")
   const stats = await getEcoStats()
   const ecoPercent = stats.totalProviders > 0 ? Math.round((stats.ecoProviders / stats.totalProviders) * 100) : 0
 
@@ -33,10 +38,10 @@ export default async function SustainabilityPage() {
     <div>
       {/* Hero */}
       <section className="bg-[#2D7A5F] text-white py-20 px-4 text-center">
-        <p className="text-[#4CB87A] uppercase tracking-widest text-xs font-semibold mb-3">Our commitment</p>
-        <h1 className="font-serif text-5xl font-bold mb-4">Clean Home. Green Future.</h1>
+        <p className="text-[#4CB87A] uppercase tracking-widest text-xs font-semibold mb-3">{t("heroEyebrow")}</p>
+        <h1 className="font-serif text-5xl font-bold mb-4">{t("heroTitle")}</h1>
         <p className="text-white/80 max-w-xl mx-auto text-lg leading-relaxed">
-          Every booking on DORIXÉ connects you with vetted eco-conscious cleaners who use sustainable, non-toxic products that protect your family and the planet.
+          {t("heroSubtitle")}
         </p>
       </section>
 
@@ -44,9 +49,9 @@ export default async function SustainabilityPage() {
       <section className="bg-[#2B3441] text-white py-12 px-4">
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
           {[
-            { value: `${ecoPercent}%`, label: "of providers eco-certified" },
-            { value: `€${stats.offsetEuros.toFixed(0)}`, label: "in carbon offsets contributed" },
-            { value: `${stats.ecoProviders}`, label: "eco-verified cleaners" },
+            { value: `${ecoPercent}%`, label: t("statEcoCertified") },
+            { value: `€${stats.offsetEuros.toFixed(0)}`, label: t("statCarbonOffsets") },
+            { value: `${stats.ecoProviders}`, label: t("statEcoVerified") },
           ].map((s, i) => (
             <div key={i}>
               <p className="font-serif text-5xl font-bold text-[#4CB87A]">{s.value}</p>
@@ -58,13 +63,13 @@ export default async function SustainabilityPage() {
 
       {/* Eco levels */}
       <section className="max-w-4xl mx-auto py-20 px-4">
-        <h2 className="font-serif text-3xl font-bold text-[#2B3441] text-center mb-10">Our Eco Badge System</h2>
+        <h2 className="font-serif text-3xl font-bold text-[#2B3441] text-center mb-10">{t("badgeSystemTitle")}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { level: "Basic", color: "bg-gray-100 text-gray-600", desc: "Uses some eco-friendly products. Getting started on their green journey." },
-            { level: "Certified", color: "bg-green-100 text-green-700", desc: "Certified eco products. No harsh chemicals. Verified by DORIXÉ." },
-            { level: "Premium", color: "bg-emerald-100 text-emerald-700", desc: "100% eco product commitment. Full carbon footprint reporting." },
-            { level: "Zero Impact", color: "bg-[#2D7A5F]/10 text-[#2D7A5F]", desc: "Carbon-neutral operations. Offsets every job. Top 5% of providers." },
+            { level: t("levelBasic"), color: "bg-gray-100 text-gray-600", desc: t("levelBasicDesc") },
+            { level: t("levelCertified"), color: "bg-green-100 text-green-700", desc: t("levelCertifiedDesc") },
+            { level: t("levelPremium"), color: "bg-emerald-100 text-emerald-700", desc: t("levelPremiumDesc") },
+            { level: t("levelZeroImpact"), color: "bg-[#2D7A5F]/10 text-[#2D7A5F]", desc: t("levelZeroImpactDesc") },
           ].map((l) => (
             <div key={l.level} className="rounded-xl border border-gray-200 bg-white p-6 text-center shadow-sm">
               <span className={`inline-flex rounded-full px-3 py-1 text-xs font-bold mb-4 ${l.color}`}>{l.level}</span>
@@ -76,10 +81,10 @@ export default async function SustainabilityPage() {
 
       {/* CTA */}
       <section className="bg-[#F4FAF6] border-t border-gray-200 py-16 px-4 text-center">
-        <h2 className="font-serif text-3xl font-bold text-[#2B3441] mb-4">Book an eco-certified cleaner today</h2>
-        <p className="text-[#6B7280] mb-8">Join thousands of households making the sustainable choice.</p>
+        <h2 className="font-serif text-3xl font-bold text-[#2B3441] mb-4">{t("ctaTitle")}</h2>
+        <p className="text-[#6B7280] mb-8">{t("ctaSubtitle")}</p>
         <a href="/book" className="inline-flex items-center gap-2 rounded-xl bg-[#2D7A5F] px-8 py-4 text-white font-semibold hover:bg-[#256349] transition-colors">
-          Find eco cleaners →
+          {t("ctaButton")}
         </a>
       </section>
     </div>

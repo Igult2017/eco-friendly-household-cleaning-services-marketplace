@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Star } from "lucide-react"
+import { getTranslations } from "next-intl/server"
 import { Button } from "@/components/ui/button"
 
 const SAMPLE_BIDS = [
@@ -8,7 +9,7 @@ const SAMPLE_BIDS = [
     provider: "Amara G.",
     rating: 4.9,
     amount: 65,
-    message: "Available this Saturday with certified organic products. I bring all supplies!",
+    messageKey: "bid1Message",
     eco: true,
   },
   {
@@ -16,7 +17,7 @@ const SAMPLE_BIDS = [
     provider: "Lucas M.",
     rating: 4.8,
     amount: 58,
-    message: "Friday morning available. 3 years deep-clean experience, zero-waste approach.",
+    messageKey: "bid2Message",
     eco: true,
   },
   {
@@ -24,12 +25,13 @@ const SAMPLE_BIDS = [
     provider: "Sofia P.",
     rating: 5.0,
     amount: 72,
-    message: "Specialised in end-of-tenancy. Bringing all eco supplies, GDPR-compliant photos.",
+    messageKey: "bid3Message",
     eco: true,
   },
-]
+] as const
 
-export function JobPostSection() {
+export async function JobPostSection() {
+  const t = await getTranslations("homeJobPost")
   return (
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -37,22 +39,21 @@ export function JobPostSection() {
           {/* Left */}
           <div>
             <div className="inline-flex items-center gap-2 bg-[#D1F0E0] text-[#2D7A5F] text-xs font-semibold px-3 py-1.5 rounded-full mb-5">
-              NEW · Bidding marketplace
+              {t("badge")}
             </div>
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-[#2B3441] mb-4">
-              Need something specific?<br />
-              <span className="text-[#2D7A5F]">Post a job, get bids.</span>
+              {t("headingLine1")}<br />
+              <span className="text-[#2D7A5F]">{t("headingLine2")}</span>
             </h2>
             <p className="text-[#6B7280] mb-6 leading-relaxed text-sm">
-              Describe your cleaning task, set your budget, and let verified eco-cleaners
-              compete to win your booking — like Upwork, but for spotless homes.
+              {t("description")}
             </p>
             <ul className="space-y-2.5 mb-8">
               {[
-                "Post your job for free",
-                "Receive bids within hours",
-                "Compare by eco-score, rating & price",
-                "Pay securely only when happy",
+                t("feature1"),
+                t("feature2"),
+                t("feature3"),
+                t("feature4"),
               ].map((item) => (
                 <li key={item} className="flex items-center gap-2.5 text-sm text-[#2B3441]">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#2D7A5F] flex-shrink-0" />
@@ -62,7 +63,7 @@ export function JobPostSection() {
             </ul>
             <Link href="/post-job">
               <Button className="bg-[#2D7A5F] hover:bg-[#235f49] text-white">
-                Post a job →
+                {t("postJobCta")}
               </Button>
             </Link>
           </div>
@@ -70,7 +71,7 @@ export function JobPostSection() {
           {/* Right — sample bids */}
           <div>
             <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-widest mb-4">
-              Live bids on a deep-clean job · Amsterdam
+              {t("liveBidsLabel")}
             </p>
             <div className="space-y-3">
               {SAMPLE_BIDS.map((bid, i) => (
@@ -87,7 +88,7 @@ export function JobPostSection() {
                         <span className="text-sm font-semibold text-[#2B3441] truncate">{bid.provider}</span>
                         {bid.eco && (
                           <span className="text-[10px] bg-[#D1F0E0] text-[#2D7A5F] px-2 py-0.5 rounded-full flex-shrink-0">
-                            🌿 Eco
+                            🌿 {t("ecoBadge")}
                           </span>
                         )}
                       </div>
@@ -97,7 +98,7 @@ export function JobPostSection() {
                       <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
                       <span className="text-xs text-[#6B7280]">{bid.rating}</span>
                     </div>
-                    <p className="text-xs text-[#6B7280] leading-relaxed line-clamp-1">{bid.message}</p>
+                    <p className="text-xs text-[#6B7280] leading-relaxed line-clamp-1">{t(bid.messageKey)}</p>
                   </div>
                 </div>
               ))}

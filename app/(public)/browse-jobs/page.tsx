@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import { MapPin, Calendar, Leaf, Users, Clock } from "lucide-react"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
 
@@ -23,34 +24,36 @@ type Job = {
   createdAt: string
 }
 
-function timeAgo(dateStr: string) {
+type TFn = (key: string, values?: Record<string, string | number>) => string
+
+function timeAgo(dateStr: string, t: TFn) {
   const diff = Date.now() - new Date(dateStr).getTime()
   const h = Math.floor(diff / 3_600_000)
-  if (h < 1) return "just now"
-  if (h < 24) return `${h}h ago`
-  return `${Math.floor(h / 24)}d ago`
+  if (h < 1) return t("justNow")
+  if (h < 24) return t("hoursAgo", { count: h })
+  return t("daysAgo", { count: Math.floor(h / 24) })
 }
 
-function expiresIn(dateStr: string) {
+function expiresIn(dateStr: string, t: TFn) {
   const diff = new Date(dateStr).getTime() - Date.now()
-  if (diff <= 0) return "Expired"
+  if (diff <= 0) return t("expired")
   const h = Math.floor(diff / 3_600_000)
-  if (h < 24) return `${h}h left`
-  return `${Math.floor(h / 24)}d left`
+  if (h < 24) return t("hoursLeft", { count: h })
+  return t("daysLeft", { count: Math.floor(h / 24) })
 }
 
-function StatusBadge({ status }: { status: string }) {
+function StatusBadge({ status, t }: { status: string; t: TFn }) {
   if (status === "assigned") {
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold px-2.5 py-0.5">
-        Not Available
+        {t("notAvailable")}
       </span>
     )
   }
   if (status === "expired") {
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 text-gray-500 border border-gray-200 text-xs font-bold px-2.5 py-0.5">
-        Expired
+        {t("expired")}
       </span>
     )
   }
@@ -58,6 +61,7 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export default function BrowseJobsPage() {
+  const t = useTranslations("browseJobs")
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -72,23 +76,23 @@ export default function BrowseJobsPage() {
       {/* Hero */}
       <div className="bg-gradient-to-br from-[#2B3441] to-[#1e2730] py-14 px-4 text-center">
         <h1 className="font-serif text-4xl md:text-5xl font-bold text-white mb-3">
-          Open Cleaning Jobs
+          {t("heroTitle")}
         </h1>
         <p className="text-white/60 text-lg max-w-xl mx-auto mb-8">
-          Browse jobs posted by customers across Europe. Create a provider account to submit your bid.
+          {t("heroSubtitle")}
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
             href="/sign-up"
             className="inline-flex items-center justify-center rounded-xl bg-[#2D7A5F] hover:bg-[#256349] text-white font-semibold px-6 py-3 transition-colors"
           >
-            Become a provider — bid on jobs
+            {t("becomeProvider")}
           </Link>
           <Link
             href="/sign-in"
             className="inline-flex items-center justify-center rounded-xl border border-white/20 text-white hover:bg-white/10 font-medium px-6 py-3 transition-colors"
           >
-            Sign in to bid
+            {t("signInToBid")}
           </Link>
         </div>
       </div>
@@ -96,9 +100,9 @@ export default function BrowseJobsPage() {
       <div className="max-w-4xl mx-auto px-4 py-10">
         {/* Stats bar */}
         <div className="flex items-center gap-2 mb-6">
-          <span className="text-sm font-semibold text-[#2B3441]">{jobs.filter(j => j.status === "open" || j.status === "bidding").length} open jobs</span>
+          <span className="text-sm font-semibold text-[#2B3441]">{t("openJobsCount", { count: jobs.filter(j => j.status === "open" || j.status === "bidding").length })}</span>
           <span className="text-[#9CA3AF]">·</span>
-          <span className="text-sm text-[#6B7280]">Updated every minute</span>
+          <span className="text-sm text-[#6B7280]">{t("updatedEveryMinute")}</span>
         </div>
 
         {loading ? (
@@ -109,7 +113,7 @@ export default function BrowseJobsPage() {
           </div>
         ) : jobs.length === 0 ? (
           <div className="rounded-2xl bg-white shadow-sm py-20 text-center">
-            <p className="text-[#6B7280]">No open jobs right now. Check back soon.</p>
+            <p className="text-[#6B7280]">{t("emptyState")}</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -127,11 +131,11 @@ export default function BrowseJobsPage() {
                       )}
                       {job.ecoRequirements && job.ecoRequirements.length > 0 && (
                         <span className="inline-flex items-center gap-1 rounded-full bg-green-50 text-green-700 text-xs font-semibold px-2 py-0.5">
-                          <Leaf size={10} /> Eco required
+                          <Leaf size={10} /> {t("ecoRequired")}
                         </span>
                       )}
-                      <StatusBadge status={job.status} />
-                      <span className="text-xs text-[#9CA3AF] ml-auto">{timeAgo(job.createdAt)}</span>
+                      <StatusBadge status={job.status} t={t} />
+                      <span className="text-xs text-[#9CA3AF] ml-auto">{timeAgo(job.createdAt, t)}</span>
                     </div>
                     <h2 className="font-semibold text-[#2B3441] text-lg leading-snug">{job.title}</h2>
                     <p className="text-sm text-[#6B7280] mt-1 line-clamp-2 leading-relaxed">{job.description}</p>
@@ -140,12 +144,12 @@ export default function BrowseJobsPage() {
                   {/* Budget */}
                   {(job.budgetMin || job.budgetMax) && (
                     <div className="text-right shrink-0">
-                      <p className="text-xs text-[#9CA3AF] mb-0.5">Budget</p>
+                      <p className="text-xs text-[#9CA3AF] mb-0.5">{t("budget")}</p>
                       <p className="font-bold text-[#2D7A5F] text-lg">
                         {job.budgetMin && job.budgetMax
                           ? `${formatCurrency(job.budgetMin)} – ${formatCurrency(job.budgetMax)}`
                           : job.budgetMax
-                          ? `Up to ${formatCurrency(job.budgetMax)}`
+                          ? t("budgetUpTo", { amount: formatCurrency(job.budgetMax) })
                           : formatCurrency(job.budgetMin!)}
                       </p>
                     </div>
@@ -167,11 +171,11 @@ export default function BrowseJobsPage() {
                   )}
                   <span className="flex items-center gap-1.5">
                     <Users size={12} className="text-[#2D7A5F]" />
-                    {job.bidCount} {job.bidCount === 1 ? "bid" : "bids"}
+                    {t("bidCount", { count: job.bidCount })}
                   </span>
                   <span className="flex items-center gap-1.5">
                     <Clock size={12} className={job.expiresAt && new Date(job.expiresAt).getTime() - Date.now() < 3_600_000 * 6 ? "text-red-500" : "text-[#2D7A5F]"} />
-                    {expiresIn(job.expiresAt)}
+                    {expiresIn(job.expiresAt, t)}
                   </span>
                 </div>
 
@@ -179,16 +183,16 @@ export default function BrowseJobsPage() {
                 <div className="mt-4 pt-4 border-t border-[#E5EBF0] flex items-center justify-between gap-3">
                   {isUnavailable ? (
                     <p className="text-xs text-[#9CA3AF]">
-                      {job.status === "assigned" ? "A provider has already been selected for this job." : "This job post has expired."}
+                      {job.status === "assigned" ? t("providerSelected") : t("jobExpired")}
                     </p>
                   ) : (
                     <>
-                      <p className="text-xs text-[#9CA3AF]">Sign in as a provider to submit your bid</p>
+                      <p className="text-xs text-[#9CA3AF]">{t("signInAsProvider")}</p>
                       <Link
                         href={`/sign-in?redirect_url=/provider/jobs`}
                         className="inline-flex items-center gap-1.5 rounded-xl bg-[#2D7A5F] hover:bg-[#256349] text-white text-sm font-semibold px-4 py-2 transition-colors"
                       >
-                        Bid on this job →
+                        {t("bidOnThisJob")}
                       </Link>
                     </>
                   )}
@@ -201,15 +205,15 @@ export default function BrowseJobsPage() {
 
         {/* Bottom CTA */}
         <div className="mt-12 rounded-2xl bg-[#2B3441] p-8 text-center">
-          <h2 className="font-serif text-2xl font-bold text-white mb-2">Ready to start earning?</h2>
+          <h2 className="font-serif text-2xl font-bold text-white mb-2">{t("bottomCtaTitle")}</h2>
           <p className="text-white/60 text-sm mb-6 max-w-md mx-auto">
-            Join DORIXÉ as a provider. Set your own prices, work your own hours, and get paid weekly.
+            {t("bottomCtaSubtitle")}
           </p>
           <Link
             href="/sign-up"
             className="inline-flex items-center justify-center rounded-xl bg-[#2D7A5F] hover:bg-[#256349] text-white font-semibold px-8 py-3 transition-colors"
           >
-            Create a provider account
+            {t("createProviderAccount")}
           </Link>
         </div>
       </div>

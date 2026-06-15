@@ -1,63 +1,76 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { getTranslations } from "next-intl/server"
 
-export const metadata: Metadata = {
-  title: "How It Works — DORIXÉ",
-  description: "Book trusted eco-friendly cleaners in 3 simple steps.",
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("howItWorksPage")
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  }
 }
 
-const STEPS_CUSTOMER = [
-  {
-    num: "01",
-    title: "Search & choose",
-    desc: "Enter your postcode or city. Browse vetted eco-certified cleaners sorted by rating and distance. Filter by service type, eco level, and availability.",
-  },
-  {
-    num: "02",
-    title: "Book & pay",
-    desc: "Select a time slot, add special instructions, and pay securely via card. Your payment is held in escrow — only released after the job is done.",
-  },
-  {
-    num: "03",
-    title: "Relax",
-    desc: "Your cleaner arrives at the scheduled time using non-toxic, eco-certified products. After completion, leave a review and help grow the green cleaning community.",
-  },
-]
+export default async function HowItWorksPage() {
+  const t = await getTranslations("howItWorksPage")
 
-const STEPS_PROVIDER = [
-  {
-    num: "01",
-    title: "Apply & verify",
-    desc: "Create a provider account, submit your eco certifications, and complete identity verification. Approval takes 1–2 business days.",
-  },
-  {
-    num: "02",
-    title: "Set up your profile",
-    desc: "Add your services, pricing, working hours, and service radius. Connect your Stripe account for weekly payouts.",
-  },
-  {
-    num: "03",
-    title: "Start earning",
-    desc: "Browse job posts, submit bids, or receive direct bookings. Get paid weekly via bank transfer. DORIXÉ charges customers a 15% platform fee — you keep 100% of your quoted price.",
-  },
-]
+  const STEPS_CUSTOMER = [
+    {
+      num: "01",
+      title: t("customerStep1Title"),
+      desc: t("customerStep1Desc"),
+    },
+    {
+      num: "02",
+      title: t("customerStep2Title"),
+      desc: t("customerStep2Desc"),
+    },
+    {
+      num: "03",
+      title: t("customerStep3Title"),
+      desc: t("customerStep3Desc"),
+    },
+  ]
 
-export default function HowItWorksPage() {
+  const STEPS_PROVIDER = [
+    {
+      num: "01",
+      title: t("providerStep1Title"),
+      desc: t("providerStep1Desc"),
+    },
+    {
+      num: "02",
+      title: t("providerStep2Title"),
+      desc: t("providerStep2Desc"),
+    },
+    {
+      num: "03",
+      title: t("providerStep3Title"),
+      desc: t("providerStep3Desc"),
+    },
+  ]
+
+  const TRUST_BADGES = [
+    { icon: "🔒", label: t("badgeSecureLabel"), sub: t("badgeSecureSub") },
+    { icon: "🌿", label: t("badgeEcoLabel"), sub: t("badgeEcoSub") },
+    { icon: "⭐", label: t("badgeVettedLabel"), sub: t("badgeVettedSub") },
+    { icon: "💬", label: t("badgeDisputeLabel"), sub: t("badgeDisputeSub") },
+  ]
+
   return (
     <div>
       {/* Hero */}
       <section className="bg-[#F4FAF6] py-16 px-4 text-center border-b border-gray-200">
-        <h1 className="font-serif text-5xl font-bold text-[#2B3441] mb-4">How DORIXÉ works</h1>
+        <h1 className="font-serif text-5xl font-bold text-[#2B3441] mb-4">{t("heroTitle")}</h1>
         <p className="text-[#6B7280] max-w-xl mx-auto text-lg">
-          Book trusted, eco-certified cleaners in minutes. Or join as a provider and grow your eco-cleaning business.
+          {t("heroSubtitle")}
         </p>
       </section>
 
       {/* Customer steps */}
       <section className="max-w-4xl mx-auto py-20 px-4">
         <div className="text-center mb-12">
-          <span className="inline-flex rounded-full bg-[#2D7A5F]/10 px-4 py-1.5 text-xs font-semibold text-[#2D7A5F] uppercase tracking-widest mb-3">For customers</span>
-          <h2 className="font-serif text-3xl font-bold text-[#2B3441]">Book in 3 steps</h2>
+          <span className="inline-flex rounded-full bg-[#2D7A5F]/10 px-4 py-1.5 text-xs font-semibold text-[#2D7A5F] uppercase tracking-widest mb-3">{t("customerBadge")}</span>
+          <h2 className="font-serif text-3xl font-bold text-[#2B3441]">{t("customerHeading")}</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {STEPS_CUSTOMER.map((s) => (
@@ -72,7 +85,7 @@ export default function HowItWorksPage() {
         </div>
         <div className="text-center mt-10">
           <Link href="/book" className="inline-flex rounded-xl bg-[#2D7A5F] px-8 py-4 text-white font-semibold hover:bg-[#256349] transition-colors">
-            Book a cleaner →
+            {t("customerCta")}
           </Link>
         </div>
       </section>
@@ -83,8 +96,8 @@ export default function HowItWorksPage() {
       {/* Provider steps */}
       <section className="max-w-4xl mx-auto py-20 px-4">
         <div className="text-center mb-12">
-          <span className="inline-flex rounded-full bg-[#2B3441]/10 px-4 py-1.5 text-xs font-semibold text-[#2B3441] uppercase tracking-widest mb-3">For providers</span>
-          <h2 className="font-serif text-3xl font-bold text-[#2B3441]">Start earning in 3 steps</h2>
+          <span className="inline-flex rounded-full bg-[#2B3441]/10 px-4 py-1.5 text-xs font-semibold text-[#2B3441] uppercase tracking-widest mb-3">{t("providerBadge")}</span>
+          <h2 className="font-serif text-3xl font-bold text-[#2B3441]">{t("providerHeading")}</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {STEPS_PROVIDER.map((s) => (
@@ -99,7 +112,7 @@ export default function HowItWorksPage() {
         </div>
         <div className="text-center mt-10">
           <Link href="/onboarding" className="inline-flex rounded-xl border-2 border-[#2B3441] px-8 py-4 text-[#2B3441] font-semibold hover:bg-[#2B3441] hover:text-white transition-colors">
-            Become a provider →
+            {t("providerCta")}
           </Link>
         </div>
       </section>
@@ -107,12 +120,7 @@ export default function HowItWorksPage() {
       {/* Trust badges */}
       <section className="bg-[#F4FAF6] border-t border-gray-200 py-12 px-4">
         <div className="max-w-3xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          {[
-            { icon: "🔒", label: "Secure payments", sub: "Stripe escrow" },
-            { icon: "🌿", label: "Eco-certified", sub: "Verified products" },
-            { icon: "⭐", label: "Vetted providers", sub: "ID-verified" },
-            { icon: "💬", label: "Dispute support", sub: "72h resolution" },
-          ].map((b) => (
+          {TRUST_BADGES.map((b) => (
             <div key={b.label}>
               <div className="text-3xl mb-2">{b.icon}</div>
               <p className="font-semibold text-sm text-[#2B3441]">{b.label}</p>

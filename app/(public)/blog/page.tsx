@@ -6,10 +6,14 @@ import { blogPosts } from "@/lib/db/schema"
 import { eq, desc } from "drizzle-orm"
 import { BlogPostCard } from "@/components/blog/BlogPostCard"
 import { Rss } from "lucide-react"
+import { getTranslations } from "next-intl/server"
 
-export const metadata: Metadata = {
-  title: "Blog — DORIXÉ",
-  description: "Tips, news and eco-friendly insights from the DORIXÉ team.",
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("blog")
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  }
 }
 
 async function getPosts(category?: string) {
@@ -37,6 +41,7 @@ export default async function BlogPage({
 }) {
   const { category } = await searchParams
   const [posts, categories] = await Promise.all([getPosts(category), getCategories()])
+  const t = await getTranslations("blog")
 
   return (
     <div className="min-h-screen bg-[#F4FAF6]">
@@ -44,10 +49,10 @@ export default async function BlogPage({
         <div className="mb-10">
           <div className="flex items-center gap-2 mb-2">
             <Rss size={18} className="text-[#2D7A5F]" />
-            <span className="text-xs font-semibold text-[#2D7A5F] uppercase tracking-widest">Blog</span>
+            <span className="text-xs font-semibold text-[#2D7A5F] uppercase tracking-widest">{t("eyebrow")}</span>
           </div>
-          <h1 className="font-serif text-4xl font-bold text-[#2B3441]">Clean home. Green future.</h1>
-          <p className="text-[#6B7280] mt-2 text-lg">Tips, guides and eco insights from the DORIXÉ team.</p>
+          <h1 className="font-serif text-4xl font-bold text-[#2B3441]">{t("title")}</h1>
+          <p className="text-[#6B7280] mt-2 text-lg">{t("subtitle")}</p>
         </div>
 
         {categories.length > 0 && (
@@ -58,7 +63,7 @@ export default async function BlogPage({
                 !category ? "bg-[#2D7A5F] text-white" : "bg-white text-[#6B7280] border border-[#E5EBF0] hover:border-[#2D7A5F] hover:text-[#2D7A5F]"
               }`}
             >
-              All
+              {t("allCategories")}
             </a>
             {categories.map((cat) => (
               <a
@@ -76,8 +81,8 @@ export default async function BlogPage({
 
         {posts.length === 0 ? (
           <div className="text-center py-20 text-[#9CA3AF]">
-            <p className="text-lg font-medium mb-1">No articles yet</p>
-            <p className="text-sm">Check back soon!</p>
+            <p className="text-lg font-medium mb-1">{t("emptyTitle")}</p>
+            <p className="text-sm">{t("emptyMessage")}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

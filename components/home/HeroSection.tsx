@@ -1,16 +1,17 @@
 import Link from "next/link"
 import { MapPin, CheckCircle } from "lucide-react"
+import { getTranslations } from "next-intl/server"
 import { Button } from "@/components/ui/button"
 import { ServiceGrid } from "./ServiceGrid"
 
-const TRUST = [
-  "Vetted & Background-checked",
-  "Eco-certified products",
-  "Fully Insured",
-  "Instant Confirmation",
-]
-
-export function HeroSection() {
+export async function HeroSection() {
+  const t = await getTranslations("homeHero")
+  const TRUST = [
+    t("trustVetted"),
+    t("trustEcoCertified"),
+    t("trustInsured"),
+    t("trustInstantConfirmation"),
+  ]
   return (
     <section className="bg-gradient-to-br from-[#F4FAF6] to-[#e8f5ed] py-16 md:py-24 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -18,15 +19,14 @@ export function HeroSection() {
           {/* Left */}
           <div>
             <div className="inline-flex items-center gap-2 bg-[#D1F0E0] text-[#2D7A5F] text-xs font-semibold px-3 py-1.5 rounded-full mb-6">
-              🌿 Europe&apos;s #1 eco-friendly cleaning marketplace
+              🌿 {t("badge")}
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-[#2B3441] leading-[1.1] mb-5">
-              Clean Home,<br />
-              <span className="text-[#2D7A5F]">Green Future.</span>
+              {t("headlineLine1")}<br />
+              <span className="text-[#2D7A5F]">{t("headlineLine2")}</span>
             </h1>
             <p className="text-lg text-[#6B7280] mb-8 max-w-md leading-relaxed">
-              Book trusted cleaning professionals who use eco-friendly products.
-              Better for your family, better for the planet.
+              {t("subheadline")}
             </p>
 
             {/* Postcode search */}
@@ -35,13 +35,13 @@ export function HeroSection() {
                 <MapPin className="w-4 h-4 text-[#6B7280] flex-shrink-0" />
                 <input
                   type="text"
-                  placeholder="Enter your postcode"
+                  placeholder={t("postcodePlaceholder")}
                   className="flex-1 text-sm outline-none text-[#2B3441] placeholder:text-[#9ca3af] bg-transparent"
                 />
               </label>
               <Link href="/browse">
                 <Button className="bg-[#2D7A5F] hover:bg-[#235f49] text-white rounded-xl px-5 h-full whitespace-nowrap">
-                  Find cleaners
+                  {t("findCleaners")}
                 </Button>
               </Link>
             </div>
@@ -60,13 +60,13 @@ export function HeroSection() {
           {/* Right — service grid */}
           <div>
             <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-widest mb-4">
-              Our services
+              {t("ourServices")}
             </p>
             <ServiceGrid />
             <p className="text-xs text-[#6B7280] mt-4 text-center">
-              Or{" "}
+              {t("orPrefix")}{" "}
               <Link href="/post-job" className="text-[#2D7A5F] font-semibold hover:underline">
-                post a job and receive bids →
+                {t("postJobLink")}
               </Link>
             </p>
           </div>
