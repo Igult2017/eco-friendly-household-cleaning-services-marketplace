@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter, useParams } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
@@ -38,6 +39,7 @@ function StarRating({ value, onChange, label }: { value: number; onChange: (v: n
 }
 
 export default function ReviewPage() {
+  const t = useTranslations("customerBookingsIdReviewPage")
   const router = useRouter()
   const params = useParams<{ id: string }>()
   const bookingId = params.id
@@ -55,7 +57,7 @@ export default function ReviewPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (overall === 0) { setError("Please select an overall rating"); return }
+    if (overall === 0) { setError(t("errorSelectOverallRating")); return }
     setSubmitting(true)
     setError(null)
 
@@ -75,7 +77,7 @@ export default function ReviewPage() {
     })
 
     const data = await res.json()
-    if (!res.ok) { setError(data.error ?? "Failed to submit review"); setSubmitting(false); return }
+    if (!res.ok) { setError(data.error ?? t("errorSubmitFailed")); setSubmitting(false); return }
     setDone(true)
   }
 
@@ -85,10 +87,10 @@ export default function ReviewPage() {
         <div className="w-16 h-16 bg-[#D1F0E0] rounded-full flex items-center justify-center mb-6">
           <CheckCircle2 size={40} className="text-[#2D7A5F]" />
         </div>
-        <h1 className="font-serif text-2xl font-bold text-[#2B3441] text-center mb-2">Thank you!</h1>
-        <p className="text-[#6B7280] text-center mb-8">Your review helps others find great eco-cleaners.</p>
+        <h1 className="font-serif text-2xl font-bold text-[#2B3441] text-center mb-2">{t("thankYouTitle")}</h1>
+        <p className="text-[#6B7280] text-center mb-8">{t("thankYouSubtitle")}</p>
         <Button onClick={() => router.push("/dashboard")} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white px-8 h-11">
-          Back to Dashboard
+          {t("backToDashboard")}
         </Button>
       </div>
     )
@@ -97,43 +99,43 @@ export default function ReviewPage() {
   return (
     <div className="min-h-screen bg-[#F4FAF6] py-10 px-4">
       <div className="max-w-lg mx-auto">
-        <h1 className="font-serif text-2xl font-bold text-[#2B3441] mb-2">Leave a Review</h1>
-        <p className="text-[#6B7280] mb-8">How was your cleaning experience?</p>
+        <h1 className="font-serif text-2xl font-bold text-[#2B3441] mb-2">{t("pageTitle")}</h1>
+        <p className="text-[#6B7280] mb-8">{t("pageSubtitle")}</p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 space-y-5">
-            <StarRating value={overall} onChange={setOverall} label="Overall Rating *" />
+            <StarRating value={overall} onChange={setOverall} label={t("overallRatingLabel")} />
             <div className="grid grid-cols-2 gap-4 pt-2 border-t border-[#F4FAF6]">
-              <StarRating value={cleanliness} onChange={setCleanliness} label="Cleanliness" />
-              <StarRating value={punctuality} onChange={setPunctuality} label="Punctuality" />
-              <StarRating value={eco} onChange={setEco} label="Eco Compliance" />
-              <StarRating value={communication} onChange={setCommunication} label="Communication" />
+              <StarRating value={cleanliness} onChange={setCleanliness} label={t("cleanlinessLabel")} />
+              <StarRating value={punctuality} onChange={setPunctuality} label={t("punctualityLabel")} />
+              <StarRating value={eco} onChange={setEco} label={t("ecoComplianceLabel")} />
+              <StarRating value={communication} onChange={setCommunication} label={t("communicationLabel")} />
             </div>
           </div>
 
           <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 space-y-4">
             <div>
-              <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">Review title</Label>
-              <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Sum it up in a few words" maxLength={200} />
+              <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">{t("reviewTitleLabel")}</Label>
+              <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("reviewTitlePlaceholder")} maxLength={200} />
             </div>
             <div>
-              <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">Your experience</Label>
+              <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">{t("experienceLabel")}</Label>
               <Textarea
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
-                placeholder="Tell others what made this service great (or what could be improved)..."
+                placeholder={t("experiencePlaceholder")}
                 rows={5}
                 maxLength={2000}
                 className="resize-none"
               />
-              <p className="text-xs text-[#9CA3AF] mt-1">{body.length} / 2000</p>
+              <p className="text-xs text-[#9CA3AF] mt-1">{t("characterCount", { count: body.length })}</p>
             </div>
           </div>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
           <Button type="submit" disabled={submitting} className="w-full h-12 bg-[#2D7A5F] hover:bg-[#235f49] text-white font-semibold">
-            {submitting ? <><Loader2 size={16} className="animate-spin mr-2" /> Submitting...</> : "Submit Review"}
+            {submitting ? <><Loader2 size={16} className="animate-spin mr-2" /> {t("submitting")}</> : t("submitReview")}
           </Button>
         </form>
       </div>

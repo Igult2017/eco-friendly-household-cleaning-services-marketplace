@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic"
 
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
+import { getTranslations } from "next-intl/server"
 import { db } from "@/lib/db"
 import { bookings, providers, bids, notifications, payouts, reviews, disputes, jobPosts } from "@/lib/db/schema"
 import { eq, desc, asc, and, sql, inArray } from "drizzle-orm"
@@ -19,6 +20,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
 export default async function ProviderDashboardPage() {
+  const t = await getTranslations("providerProviderDashboardPage")
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
 
@@ -166,22 +168,22 @@ export default async function ProviderDashboardPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="font-serif text-2xl font-bold text-[#2B3441]">{provider.businessName}</h1>
-            <p className="text-[#6B7280] text-sm mt-1">Cleaner Dashboard</p>
+            <p className="text-[#6B7280] text-sm mt-1">{t("cleanerDashboard")}</p>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
             {!provider.isApproved && (
               <div className="flex items-center gap-2 bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-2 text-sm text-yellow-700">
-                <AlertCircle size={15} /> Pending admin approval
+                <AlertCircle size={15} /> {t("pendingAdminApproval")}
               </div>
             )}
             {activeDisputes > 0 && (
               <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-2 text-sm text-red-700">
-                <AlertCircle size={15} /> {activeDisputes} active dispute{activeDisputes > 1 ? "s" : ""}
+                <AlertCircle size={15} /> {t("activeDisputes", { count: activeDisputes })}
               </div>
             )}
             <Link href="/provider/jobs">
               <Button className="bg-[#2D7A5F] hover:bg-[#235f49] text-white h-9 text-sm">
-                Find jobs
+                {t("findJobs")}
               </Button>
             </Link>
           </div>
@@ -190,10 +192,10 @@ export default async function ProviderDashboardPage() {
         {/* KPI row */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: "Total Earned",   value: totalEarnings > 0 ? `€${(totalEarnings / 100).toFixed(0)}` : "€0", icon: TrendingUp },
-            { label: "Jobs Completed", value: provider.totalJobsCompleted, icon: CheckCircle2 },
-            { label: "Avg Rating",     value: provider.averageRating ? `${Number(provider.averageRating).toFixed(1)} ⭐` : "—", icon: Star },
-            { label: "Upcoming",       value: upcomingBookings.length, icon: CalendarDays },
+            { label: t("totalEarned"),    value: totalEarnings > 0 ? `€${(totalEarnings / 100).toFixed(0)}` : "€0", icon: TrendingUp },
+            { label: t("jobsCompleted"),  value: provider.totalJobsCompleted, icon: CheckCircle2 },
+            { label: t("avgRating"),      value: provider.averageRating ? `${Number(provider.averageRating).toFixed(1)} ⭐` : "—", icon: Star },
+            { label: t("upcoming"),       value: upcomingBookings.length, icon: CalendarDays },
           ].map((stat) => (
             <div key={stat.label} className="bg-white rounded-2xl p-4 shadow-sm border border-[#E5EBF0]">
               <div className="flex items-center gap-2 mb-1">

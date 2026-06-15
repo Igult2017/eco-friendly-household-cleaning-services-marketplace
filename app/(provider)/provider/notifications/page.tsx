@@ -8,6 +8,7 @@ import { eq, desc } from "drizzle-orm"
 import Link from "next/link"
 import { Bell, Briefcase, CheckCircle2, DollarSign, AlertTriangle, Info } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { getTranslations } from "next-intl/server"
 
 const TYPE_ICON: Record<string, React.ElementType> = {
   new_job_request:   Briefcase,
@@ -21,16 +22,17 @@ const TYPE_ICON: Record<string, React.ElementType> = {
   provider_approved: CheckCircle2,
 }
 
-function timeAgo(d: Date | string) {
+function timeAgo(d: Date | string, t: (key: string, values?: Record<string, string | number | Date>) => string) {
   const diff = Date.now() - new Date(d).getTime()
   const mins = Math.floor(diff / 60000)
-  if (mins < 60) return `${mins}m ago`
+  if (mins < 60) return t("timeAgoMinutes", { count: mins })
   const hrs = Math.floor(mins / 60)
-  if (hrs < 24) return `${hrs}h ago`
-  return `${Math.floor(hrs / 24)}d ago`
+  if (hrs < 24) return t("timeAgoHours", { count: hrs })
+  return t("timeAgoDays", { count: Math.floor(hrs / 24) })
 }
 
 export default async function ProviderNotificationsPage() {
+  const t = await getTranslations("providerProviderNotificationsPage")
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
 
@@ -51,10 +53,10 @@ export default async function ProviderNotificationsPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="font-serif text-2xl font-bold text-[#2B3441] flex items-center gap-2">
-            <Bell size={22} className="text-[#2D7A5F]" /> Notifications
+            <Bell size={22} className="text-[#2D7A5F]" /> {t("heading")}
           </h1>
           {unread > 0 && (
-            <p className="text-sm text-[#6B7280] mt-0.5">{unread} unread</p>
+            <p className="text-sm text-[#6B7280] mt-0.5">{t("unreadCount", { count: unread })}</p>
           )}
         </div>
       </div>
@@ -62,8 +64,8 @@ export default async function ProviderNotificationsPage() {
       {notifs.length === 0 ? (
         <div className="bg-white rounded-2xl border border-[#E5EBF0] p-12 text-center">
           <Bell size={40} className="mx-auto text-[#9CA3AF] mb-3" />
-          <p className="font-semibold text-[#2B3441] mb-1">No notifications yet</p>
-          <p className="text-sm text-[#6B7280]">Job alerts, booking updates and payment confirmations will appear here.</p>
+          <p className="font-semibold text-[#2B3441] mb-1">{t("emptyTitle")}</p>
+          <p className="text-sm text-[#6B7280]">{t("emptyBody")}</p>
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-[#E5EBF0] overflow-hidden divide-y divide-[#F0F4F8]">
@@ -83,7 +85,7 @@ export default async function ProviderNotificationsPage() {
                   <p className="text-sm font-medium text-[#2B3441]">{n.title}</p>
                   <p className="text-xs text-[#6B7280] leading-snug mt-0.5">{n.body}</p>
                 </div>
-                <span className="text-xs text-[#9CA3AF] flex-shrink-0">{timeAgo(n.createdAt)}</span>
+                <span className="text-xs text-[#9CA3AF] flex-shrink-0">{timeAgo(n.createdAt, t)}</span>
               </div>
             )
             return n.link ? (

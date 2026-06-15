@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic"
 
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
+import { getTranslations } from "next-intl/server"
 import { db } from "@/lib/db"
 import { providers, payouts, bookings, payments } from "@/lib/db/schema"
 import { eq, and, sum, count, desc } from "drizzle-orm"
@@ -31,17 +32,19 @@ export default async function EarningsPage() {
 
   const data = await getEarningsData(provider.id)
 
+  const t = await getTranslations("providerProviderEarningsPage")
+
   const kpis = [
-    { label: "Total earned", value: `€${(data.totalEarned / 100).toFixed(2)}`, sub: "All time" },
-    { label: "Pending payout", value: `€${(data.pendingPayout / 100).toFixed(2)}`, sub: "Next Monday" },
-    { label: "Jobs completed", value: data.completedJobs, sub: "All time" },
+    { label: t("kpiTotalEarned"), value: `€${(data.totalEarned / 100).toFixed(2)}`, sub: t("kpiAllTime") },
+    { label: t("kpiPendingPayout"), value: `€${(data.pendingPayout / 100).toFixed(2)}`, sub: t("kpiNextMonday") },
+    { label: t("kpiJobsCompleted"), value: data.completedJobs, sub: t("kpiAllTime") },
   ]
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-serif text-3xl font-bold text-[#2B3441]">Earnings</h1>
-        <p className="text-sm text-[#6B7280] mt-1">Your payout history and upcoming earnings</p>
+        <h1 className="font-serif text-3xl font-bold text-[#2B3441]">{t("heading")}</h1>
+        <p className="text-sm text-[#6B7280] mt-1">{t("subheading")}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -56,15 +59,15 @@ export default async function EarningsPage() {
 
       <div className="rounded-xl bg-white shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100">
-          <h2 className="font-semibold text-[#2B3441]">Payout History</h2>
+          <h2 className="font-semibold text-[#2B3441]">{t("payoutHistoryTitle")}</h2>
         </div>
         {data.recentPayouts.length === 0 ? (
-          <p className="py-12 text-center text-sm text-[#6B7280]">No payouts yet. Complete jobs to start earning.</p>
+          <p className="py-12 text-center text-sm text-[#6B7280]">{t("emptyState")}</p>
         ) : (
           <table className="min-w-full divide-y divide-gray-100">
             <thead className="bg-gray-50">
               <tr>
-                {["Period", "Amount", "Status", "Processed"].map((h) => (
+                {[t("colPeriod"), t("colAmount"), t("colStatus"), t("colProcessed")].map((h) => (
                   <th key={h} className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-[#6B7280]">{h}</th>
                 ))}
               </tr>
@@ -78,11 +81,11 @@ export default async function EarningsPage() {
                   <td className="px-6 py-4 text-sm font-bold text-[#2B3441]">€{((p.amount ?? 0) / 100).toFixed(2)}</td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${p.status === "paid" ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"}`}>
-                      {p.status}
+                      {p.status === "paid" ? t("statusPaid") : t("statusPending")}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-[#6B7280]">
-                    {p.processedAt ? new Date(p.processedAt).toLocaleDateString("de-DE") : "Pending"}
+                    {p.processedAt ? new Date(p.processedAt).toLocaleDateString("de-DE") : t("processedPending")}
                   </td>
                 </tr>
               ))}

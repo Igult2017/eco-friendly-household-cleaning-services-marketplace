@@ -6,6 +6,7 @@ import { bookings, providers } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
 import { MessageThread } from "@/components/messaging/MessageThread"
 import { ArrowLeft, MessageSquare } from "lucide-react"
+import { getTranslations } from "next-intl/server"
 
 export const dynamic = "force-dynamic"
 
@@ -16,6 +17,8 @@ export default async function CustomerMessagesPage({
 }) {
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
+
+  const t = await getTranslations("customerBookingsIdMessagesPage")
 
   const { id } = await params
 
@@ -41,7 +44,7 @@ export default async function CustomerMessagesPage({
           className="inline-flex items-center gap-1.5 text-sm text-[#6B7280] hover:text-[#2D7A5F] transition-colors"
         >
           <ArrowLeft size={15} />
-          Back to booking
+          {t("backToBooking")}
         </Link>
       </div>
 
@@ -51,9 +54,9 @@ export default async function CustomerMessagesPage({
         </div>
         <div>
           <h1 className="font-serif text-lg font-bold text-[#2B3441] leading-tight">
-            {booking.providerBusinessName ?? "Provider"}
+            {booking.providerBusinessName ?? t("providerFallback")}
           </h1>
-          <p className="text-xs text-[#9CA3AF]">Booking conversation</p>
+          <p className="text-xs text-[#9CA3AF]">{t("bookingConversation")}</p>
         </div>
       </div>
 

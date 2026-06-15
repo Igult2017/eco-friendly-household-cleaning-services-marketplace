@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Loader2, CalendarDays, RefreshCw } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
@@ -20,10 +21,16 @@ const STATUS_BADGE: Record<string, string> = {
   cancelled: "bg-red-100 text-red-700",
 }
 
-const FREQUENCY_LABEL: Record<string, string> = {
-  weekly: "Weekly",
-  biweekly: "Every 2 weeks",
-  monthly: "Monthly",
+const FREQUENCY_KEY: Record<string, string> = {
+  weekly: "frequencyWeekly",
+  biweekly: "frequencyBiweekly",
+  monthly: "frequencyMonthly",
+}
+
+const STATUS_KEY: Record<string, string> = {
+  active: "statusActive",
+  paused: "statusPaused",
+  cancelled: "statusCancelled",
 }
 
 export function RecurringScheduleCard({
@@ -35,6 +42,7 @@ export function RecurringScheduleCard({
   status,
 }: Props) {
   const router = useRouter()
+  const t = useTranslations("compBookingRecurringScheduleCard")
   const [loading, setLoading] = useState<"pause" | "cancel" | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -49,19 +57,22 @@ export function RecurringScheduleCard({
       })
       const data = await res.json()
       if (!res.ok) {
-        setError(data.error ?? "Action failed. Please try again.")
+        setError(data.error ?? t("errorActionFailed"))
         return
       }
       router.refresh()
     } catch {
-      setError("Something went wrong. Please try again.")
+      setError(t("errorGeneric"))
     } finally {
       setLoading(null)
     }
   }
 
   const badgeClass = STATUS_BADGE[status] ?? STATUS_BADGE.active
-  const frequencyLabel = FREQUENCY_LABEL[frequency] ?? frequency
+  const frequencyLabel = FREQUENCY_KEY[frequency]
+    ? t(FREQUENCY_KEY[frequency])
+    : frequency
+  const statusLabel = STATUS_KEY[status] ? t(STATUS_KEY[status]) : status
 
   return (
     <div className="bg-white rounded-2xl border border-[#E5EBF0] shadow-sm p-5 flex flex-col gap-4">
@@ -69,10 +80,10 @@ export function RecurringScheduleCard({
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="font-semibold text-[#2B3441] text-base">{serviceName}</p>
-          <p className="text-sm text-[#6B7280] mt-0.5">with {businessName}</p>
+          <p className="text-sm text-[#6B7280] mt-0.5">{t("withBusiness", { businessName })}</p>
         </div>
         <Badge className={`text-xs px-2.5 py-1 capitalize ${badgeClass}`}>
-          {status}
+          {statusLabel}
         </Badge>
       </div>
 
@@ -85,7 +96,7 @@ export function RecurringScheduleCard({
         {nextBookingAt && (
           <span className="flex items-center gap-1.5">
             <CalendarDays size={13} className="text-[#2D7A5F]" />
-            Next:{" "}
+            {t("nextLabel")}{" "}
             {new Date(nextBookingAt).toLocaleDateString("en-GB", {
               weekday: "short",
               day: "numeric",
@@ -112,7 +123,7 @@ export function RecurringScheduleCard({
               {loading === "pause" ? (
                 <Loader2 size={14} className="animate-spin" />
               ) : null}
-              Pause
+              {t("pauseButton")}
             </button>
           )}
           <button
@@ -124,7 +135,7 @@ export function RecurringScheduleCard({
             {loading === "cancel" ? (
               <Loader2 size={14} className="animate-spin" />
             ) : null}
-            Cancel
+            {t("cancelButton")}
           </button>
         </div>
       )}

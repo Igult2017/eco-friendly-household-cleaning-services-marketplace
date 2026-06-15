@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from "react"
 import { Loader2, Check, Plus } from "lucide-react"
+import { useTranslations } from "next-intl"
 
-const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+const DAY_KEYS = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
 
 type Slot = { dayOfWeek: number; startTime: string; endTime: string; isActive: boolean }
 
 export default function ProviderSchedulePage() {
+  const t = useTranslations("providerSchedulePage")
   const [slots, setSlots] = useState<Slot[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState<number | null>(null)
@@ -58,14 +60,14 @@ export default function ProviderSchedulePage() {
   return (
     <div className="space-y-8 max-w-2xl">
       <div>
-        <h1 className="font-serif text-3xl font-bold text-[#2B3441]">Schedule</h1>
-        <p className="text-sm text-[#6B7280] mt-1">Set your weekly availability and block off holidays</p>
+        <h1 className="font-serif text-3xl font-bold text-[#2B3441]">{t("title")}</h1>
+        <p className="text-sm text-[#6B7280] mt-1">{t("subtitle")}</p>
       </div>
 
       {/* Weekly Availability */}
       <div className="rounded-xl bg-white shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100">
-          <h2 className="font-semibold text-[#2B3441]">Weekly Availability</h2>
+          <h2 className="font-semibold text-[#2B3441]">{t("weeklyAvailabilityHeading")}</h2>
         </div>
         {loading ? (
           <div className="flex items-center justify-center py-12">
@@ -73,7 +75,7 @@ export default function ProviderSchedulePage() {
           </div>
         ) : (
           <div className="divide-y divide-gray-50">
-            {DAYS.map((dayName, dayIdx) => {
+            {DAY_KEYS.map((dayKey, dayIdx) => {
               const slot = getSlot(dayIdx)
               return (
                 <div key={dayIdx} className="flex items-center gap-4 px-6 py-3">
@@ -87,7 +89,7 @@ export default function ProviderSchedulePage() {
                       }}
                       className="h-4 w-4 accent-[#2D7A5F] cursor-pointer"
                     />
-                    <span className={`text-sm font-medium ${slot.isActive ? "text-[#2B3441]" : "text-[#6B7280]"}`}>{dayName}</span>
+                    <span className={`text-sm font-medium ${slot.isActive ? "text-[#2B3441]" : "text-[#6B7280]"}`}>{t(dayKey)}</span>
                   </label>
 
                   {slot.isActive && (
@@ -105,7 +107,7 @@ export default function ProviderSchedulePage() {
                         onBlur={(e) => save({ ...slot, startTime: e.target.value })}
                         className="rounded-lg border border-gray-200 px-2 py-1.5 text-sm focus:border-[#2D7A5F] focus:outline-none"
                       />
-                      <span className="text-[#6B7280] text-sm">to</span>
+                      <span className="text-[#6B7280] text-sm">{t("timeRangeSeparator")}</span>
                       <input
                         type="time"
                         value={slot.endTime}
@@ -124,7 +126,7 @@ export default function ProviderSchedulePage() {
                   )}
 
                   {!slot.isActive && (
-                    <span className="text-sm text-[#6B7280]">Not available</span>
+                    <span className="text-sm text-[#6B7280]">{t("notAvailable")}</span>
                   )}
                 </div>
               )
@@ -136,8 +138,8 @@ export default function ProviderSchedulePage() {
       {/* Blackout Dates */}
       <div className="rounded-xl bg-white shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100">
-          <h2 className="font-semibold text-[#2B3441]">Blocked Dates</h2>
-          <p className="text-xs text-[#6B7280] mt-0.5">Block specific dates for holidays, vacations, etc.</p>
+          <h2 className="font-semibold text-[#2B3441]">{t("blockedDatesHeading")}</h2>
+          <p className="text-xs text-[#6B7280] mt-0.5">{t("blockedDatesDescription")}</p>
         </div>
         <div className="p-6 space-y-4">
           <div className="flex gap-2">
@@ -154,7 +156,7 @@ export default function ProviderSchedulePage() {
               className="flex items-center gap-1.5 rounded-xl bg-[#2D7A5F] px-4 py-2 text-sm font-medium text-white disabled:opacity-50 hover:bg-[#256349] transition-colors"
             >
               {addingBlackout ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-              Block date
+              {t("blockDateButton")}
             </button>
           </div>
 
@@ -168,7 +170,7 @@ export default function ProviderSchedulePage() {
               ))}
             </div>
           ) : (
-            <p className="text-sm text-center text-[#6B7280] py-4">No blocked dates</p>
+            <p className="text-sm text-center text-[#6B7280] py-4">{t("noBlockedDates")}</p>
           )}
         </div>
       </div>

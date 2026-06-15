@@ -2,16 +2,18 @@
 
 import { cn } from "@/lib/utils"
 import { Check } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 const STEPS = [
-  { n: 1, label: "Service" },
-  { n: 2, label: "Location" },
-  { n: 3, label: "Schedule" },
-  { n: 4, label: "Details" },
-  { n: 5, label: "Payment" },
-]
+  { n: 1, labelKey: "stepService" },
+  { n: 2, labelKey: "stepLocation" },
+  { n: 3, labelKey: "stepSchedule" },
+  { n: 4, labelKey: "stepDetails" },
+  { n: 5, labelKey: "stepPayment" },
+] as const
 
 export function WizardProgress({ current }: { current: 1 | 2 | 3 | 4 | 5 }) {
+  const t = useTranslations("compBookingWizardProgress")
   return (
     <div className="flex items-center justify-center gap-0 w-full max-w-lg mx-auto mb-8">
       {STEPS.map((step, i) => {
@@ -38,7 +40,7 @@ export function WizardProgress({ current }: { current: 1 | 2 | 3 | 4 | 5 }) {
                   !done && !active && "text-[#9CA3AF]"
                 )}
               >
-                {step.label}
+                {t(step.labelKey)}
               </span>
             </div>
             {i < STEPS.length - 1 && (

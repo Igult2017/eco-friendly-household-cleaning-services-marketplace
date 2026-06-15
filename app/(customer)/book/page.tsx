@@ -6,17 +6,19 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { useTranslations } from "next-intl"
 
 const SERVICE_CATEGORIES = [
-  { id: "regular", slug: "regular-cleaning", icon: "🌿", name: "Regular Cleaning", from: "€29", desc: "Weekly or bi-weekly home maintenance" },
-  { id: "deep", slug: "deep-cleaning", icon: "🏠", name: "Deep Cleaning", from: "€79", desc: "Thorough top-to-bottom clean" },
-  { id: "move", slug: "move-in-out", icon: "📦", name: "Move-in / Move-out", from: "€99", desc: "Leave or enter spotless" },
-  { id: "office", slug: "office-cleaning", icon: "🏢", name: "Office Cleaning", from: "€49", desc: "Commercial & workspace cleaning" },
-  { id: "laundry", slug: "laundry", icon: "👕", name: "Laundry Service", from: "€19", desc: "Wash, dry & fold with care" },
-  { id: "windows", slug: "window-cleaning", icon: "🪟", name: "Window Cleaning", from: "€39", desc: "Streak-free interior & exterior" },
+  { id: "regular", slug: "regular-cleaning", icon: "🌿", name: "Regular Cleaning", from: "€29" },
+  { id: "deep", slug: "deep-cleaning", icon: "🏠", name: "Deep Cleaning", from: "€79" },
+  { id: "move", slug: "move-in-out", icon: "📦", name: "Move-in / Move-out", from: "€99" },
+  { id: "office", slug: "office-cleaning", icon: "🏢", name: "Office Cleaning", from: "€49" },
+  { id: "laundry", slug: "laundry", icon: "👕", name: "Laundry Service", from: "€19" },
+  { id: "windows", slug: "window-cleaning", icon: "🪟", name: "Window Cleaning", from: "€39" },
 ]
 
 export default function BookStep1Page() {
+  const t = useTranslations("customerBookPage")
   const router = useRouter()
   const { setCategory, categoryId } = useBookingStore()
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null)
@@ -41,9 +43,9 @@ export default function BookStep1Page() {
 
       <div className="max-w-2xl mx-auto">
         <h1 className="font-serif text-3xl font-bold text-[#2B3441] text-center mb-2">
-          What do you need cleaned?
+          {t("heading")}
         </h1>
-        <p className="text-center text-[#6B7280] mb-8">Select a service to get started</p>
+        <p className="text-center text-[#6B7280] mb-8">{t("subheading")}</p>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
           {SERVICE_CATEGORIES.map((cat) => (
@@ -58,9 +60,9 @@ export default function BookStep1Page() {
               )}
             >
               <div className="text-3xl mb-2">{cat.icon}</div>
-              <p className="font-semibold text-[#2B3441] text-sm leading-tight">{cat.name}</p>
-              <p className="text-xs text-[#6B7280] mt-1 leading-tight">{cat.desc}</p>
-              <p className="text-xs font-bold text-[#2D7A5F] mt-2">From {cat.from}</p>
+              <p className="font-semibold text-[#2B3441] text-sm leading-tight">{t(`category_${cat.id}_name`)}</p>
+              <p className="text-xs text-[#6B7280] mt-1 leading-tight">{t(`category_${cat.id}_desc`)}</p>
+              <p className="text-xs font-bold text-[#2D7A5F] mt-2">{t("fromPrice", { price: cat.from })}</p>
             </button>
           ))}
         </div>
@@ -70,7 +72,7 @@ export default function BookStep1Page() {
           disabled={!selectedSlug}
           className="w-full h-12 bg-[#2D7A5F] hover:bg-[#235f49] text-white font-semibold text-base"
         >
-          Continue — Choose Location →
+          {t("continueButton")}
         </Button>
       </div>
     </div>

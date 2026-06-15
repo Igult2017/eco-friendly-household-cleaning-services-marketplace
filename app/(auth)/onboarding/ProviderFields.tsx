@@ -109,7 +109,7 @@ export function ProviderFields({ values, onChange, onValidChange }: Props) {
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">Country *</Label>
+          <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">{t("countryLabel")}</Label>
           <Select value={values.country} onValueChange={v => { if (v) onChange("country", v) }}>
             <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
             <SelectContent>
@@ -118,18 +118,18 @@ export function ProviderFields({ values, onChange, onValidChange }: Props) {
           </Select>
         </div>
         <div>
-          <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">Service radius (km) *</Label>
+          <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">{t("serviceRadiusLabel")}</Label>
           <Input type="number" min={1} max={100} value={values.serviceRadiusKm}
-            onChange={e => onChange("serviceRadiusKm", e.target.value)} placeholder="25" />
+            onChange={e => onChange("serviceRadiusKm", e.target.value)} placeholder={t("serviceRadiusPlaceholder")} />
         </div>
       </div>
 
       <div>
-        <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">Eco level *</Label>
+        <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">{t("ecoLevelLabel")}</Label>
         <Select value={values.ecoLevel} onValueChange={v => { if (v) onChange("ecoLevel", v) }}>
           <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
           <SelectContent>
-            {ECO_LEVELS.map(([value, label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}
+            {ECO_LEVEL_KEYS.map(value => <SelectItem key={value} value={value}>{t(ECO_LEVEL_LABEL_KEYS[value])}</SelectItem>)}
           </SelectContent>
         </Select>
       </div>

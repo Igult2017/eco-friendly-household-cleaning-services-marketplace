@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { Bell } from "lucide-react"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 
 type Notification = {
   id: string
@@ -15,6 +16,7 @@ type Notification = {
 }
 
 export function NotificationBell() {
+  const t = useTranslations("compNotificationsNotificationBell")
   const [open, setOpen] = useState(false)
   const [notifs, setNotifs] = useState<Notification[]>([])
   const ref = useRef<HTMLDivElement>(null)
@@ -49,7 +51,7 @@ export function NotificationBell() {
       <button
         onClick={() => setOpen((o) => !o)}
         className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors"
-        aria-label="Notifications"
+        aria-label={t("ariaNotifications")}
       >
         <Bell className="h-5 w-5 text-[#2B3441]" />
         {unread > 0 && (
@@ -62,12 +64,12 @@ export function NotificationBell() {
       {open && (
         <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden">
           <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-            <p className="text-sm font-semibold text-[#2B3441]">Notifications</p>
-            {unread > 0 && <span className="text-xs text-[#6B7280]">{unread} unread</span>}
+            <p className="text-sm font-semibold text-[#2B3441]">{t("title")}</p>
+            {unread > 0 && <span className="text-xs text-[#6B7280]">{t("unreadCount", { count: unread })}</span>}
           </div>
           <div className="max-h-80 overflow-y-auto divide-y divide-gray-50">
             {notifs.length === 0 ? (
-              <p className="text-center py-8 text-sm text-[#6B7280]">No notifications yet</p>
+              <p className="text-center py-8 text-sm text-[#6B7280]">{t("empty")}</p>
             ) : (
               notifs.map((n) => {
                 const Wrapper = n.link ? Link : "div" as any

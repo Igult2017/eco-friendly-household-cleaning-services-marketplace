@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Loader2, CheckCircle2 } from "lucide-react"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 
 interface RescheduleFormProps {
   bookingId: string
@@ -11,6 +12,7 @@ interface RescheduleFormProps {
 }
 
 export function RescheduleForm({ bookingId, currentScheduledAt }: RescheduleFormProps) {
+  const t = useTranslations("compBookingRescheduleForm")
   const router = useRouter()
   const [newDate, setNewDate] = useState("")
   const [newTime, setNewTime] = useState("")
@@ -25,7 +27,7 @@ export function RescheduleForm({ bookingId, currentScheduledAt }: RescheduleForm
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!newDate || !newTime) { setError("Please select a date and time."); return }
+    if (!newDate || !newTime) { setError(t("errorSelectDateTime")); return }
     setError(null)
     setSubmitting(true)
 
@@ -41,11 +43,11 @@ export function RescheduleForm({ bookingId, currentScheduledAt }: RescheduleForm
         body: JSON.stringify({ newScheduledAt, newScheduledEndAt }),
       })
       const data = await res.json()
-      if (!res.ok) { setError(data.error ?? "Reschedule failed"); return }
+      if (!res.ok) { setError(data.error ?? t("errorRescheduleFailed")); return }
       setSuccess(true)
       router.refresh()
     } catch {
-      setError("Something went wrong. Please try again.")
+      setError(t("errorGeneric"))
     } finally {
       setSubmitting(false)
     }
@@ -55,13 +57,13 @@ export function RescheduleForm({ bookingId, currentScheduledAt }: RescheduleForm
     return (
       <div className="flex flex-col items-center text-center py-8 gap-4">
         <CheckCircle2 size={48} className="text-[#2D7A5F]" />
-        <h2 className="font-serif text-2xl font-bold text-[#2B3441]">Booking Rescheduled</h2>
-        <p className="text-[#6B7280]">Your booking has been successfully rescheduled.</p>
+        <h2 className="font-serif text-2xl font-bold text-[#2B3441]">{t("successTitle")}</h2>
+        <p className="text-[#6B7280]">{t("successMessage")}</p>
         <Link
           href={`/bookings/${bookingId}`}
           className="mt-2 inline-flex items-center justify-center rounded-xl bg-[#2D7A5F] hover:bg-[#256349] text-white text-sm font-semibold px-6 py-3 transition-colors"
         >
-          View Booking
+          {t("viewBooking")}
         </Link>
       </div>
     )
@@ -70,7 +72,7 @@ export function RescheduleForm({ bookingId, currentScheduledAt }: RescheduleForm
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="bg-[#F4FAF6] rounded-xl px-4 py-3 text-sm text-[#6B7280]">
-        Current schedule:{" "}
+        {t("currentSchedule")}{" "}
         <span className="font-medium text-[#2B3441]">
           {new Date(currentScheduledAt).toLocaleDateString("en-GB", {
             weekday: "long",
@@ -84,7 +86,7 @@ export function RescheduleForm({ bookingId, currentScheduledAt }: RescheduleForm
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-[#2B3441] mb-1.5">New Date</label>
+        <label className="block text-sm font-medium text-[#2B3441] mb-1.5">{t("newDate")}</label>
         <input
           type="date"
           value={newDate}
@@ -96,7 +98,7 @@ export function RescheduleForm({ bookingId, currentScheduledAt }: RescheduleForm
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-[#2B3441] mb-1.5">New Time</label>
+        <label className="block text-sm font-medium text-[#2B3441] mb-1.5">{t("newTime")}</label>
         <input
           type="time"
           value={newTime}
@@ -107,18 +109,18 @@ export function RescheduleForm({ bookingId, currentScheduledAt }: RescheduleForm
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-[#2B3441] mb-1.5">Duration</label>
+        <label className="block text-sm font-medium text-[#2B3441] mb-1.5">{t("duration")}</label>
         <select
           value={durationHours}
           onChange={(e) => setDurationHours(Number(e.target.value))}
           className="w-full rounded-xl border border-[#E5EBF0] px-3 py-2.5 text-sm text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]/30 bg-white"
         >
-          <option value={1}>1 hour</option>
-          <option value={2}>2 hours</option>
-          <option value={3}>3 hours</option>
-          <option value={4}>4 hours</option>
-          <option value={5}>5 hours</option>
-          <option value={6}>6 hours</option>
+          <option value={1}>{t("durationHours", { count: 1 })}</option>
+          <option value={2}>{t("durationHours", { count: 2 })}</option>
+          <option value={3}>{t("durationHours", { count: 3 })}</option>
+          <option value={4}>{t("durationHours", { count: 4 })}</option>
+          <option value={5}>{t("durationHours", { count: 5 })}</option>
+          <option value={6}>{t("durationHours", { count: 6 })}</option>
         </select>
       </div>
 
@@ -129,14 +131,14 @@ export function RescheduleForm({ bookingId, currentScheduledAt }: RescheduleForm
           href={`/bookings/${bookingId}`}
           className="flex-1 inline-flex items-center justify-center rounded-xl border border-[#E5EBF0] text-sm font-medium text-[#6B7280] hover:bg-[#F9FAFB] py-3 transition-colors"
         >
-          Go Back
+          {t("goBack")}
         </Link>
         <button
           type="submit"
           disabled={submitting}
           className="flex-1 rounded-xl bg-[#2D7A5F] hover:bg-[#256349] text-white text-sm font-semibold py-3 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
         >
-          {submitting ? <><Loader2 size={15} className="animate-spin" />Rescheduling…</> : "Confirm Reschedule"}
+          {submitting ? <><Loader2 size={15} className="animate-spin" />{t("rescheduling")}</> : t("confirmReschedule")}
         </button>
       </div>
     </form>

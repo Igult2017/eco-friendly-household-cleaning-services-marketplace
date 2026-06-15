@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { usePusherChannel } from "@/hooks/usePusherChannel"
+import { useTranslations } from "next-intl"
 import { Send, Loader2 } from "lucide-react"
 
 interface Message {
@@ -34,6 +35,7 @@ function formatDate(iso: string) {
 }
 
 export function MessageThread({ bookingId, currentUserId }: Props) {
+  const t = useTranslations("compMessagingMessageThread")
   const queryClient = useQueryClient()
   const scrollRef = useRef<HTMLDivElement>(null)
   const [body, setBody] = useState("")
@@ -80,13 +82,13 @@ export function MessageThread({ bookingId, currentUserId }: Props) {
       })
       if (!res.ok) {
         const json = (await res.json()) as { error?: string }
-        setSendError(json.error ?? "Failed to send message")
+        setSendError(json.error ?? t("sendFailed"))
         return
       }
       setBody("")
       queryClient.invalidateQueries({ queryKey: ["messages", bookingId] })
     } catch {
-      setSendError("Something went wrong. Please try again.")
+      setSendError(t("genericError"))
     } finally {
       setSending(false)
     }
@@ -118,7 +120,7 @@ export function MessageThread({ bookingId, currentUserId }: Props) {
         {!isLoading && messages.length === 0 && (
           <div className="flex items-center justify-center h-full">
             <p className="text-[#9CA3AF] text-sm text-center">
-              No messages yet. Start the conversation!
+              {t("emptyState")}
             </p>
           </div>
         )}
@@ -175,7 +177,7 @@ export function MessageThread({ bookingId, currentUserId }: Props) {
             value={body}
             onChange={(e) => setBody(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Type a message… (Enter to send)"
+            placeholder={t("inputPlaceholder")}
             rows={1}
             className="flex-1 resize-none rounded-xl border border-[#E5EBF0] bg-[#F4FAF6] px-4 py-2.5 text-sm text-[#2B3441] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#2D7A5F] focus:ring-1 focus:ring-[#2D7A5F] transition-colors max-h-32 overflow-y-auto"
             style={{ fieldSizing: "content" } as React.CSSProperties}
@@ -184,7 +186,7 @@ export function MessageThread({ bookingId, currentUserId }: Props) {
             onClick={handleSend}
             disabled={!body.trim() || sending}
             className="shrink-0 w-10 h-10 rounded-xl bg-[#2D7A5F] hover:bg-[#256349] disabled:opacity-50 disabled:cursor-not-allowed text-white flex items-center justify-center transition-colors"
-            aria-label="Send message"
+            aria-label={t("sendButtonLabel")}
           >
             {sending ? (
               <Loader2 size={16} className="animate-spin" />

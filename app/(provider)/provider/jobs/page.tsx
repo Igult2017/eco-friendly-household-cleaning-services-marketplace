@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -28,6 +29,7 @@ interface JobPost {
 }
 
 export default function ProviderJobsPage() {
+  const t = useTranslations("providerProviderJobsPage")
   const [jobs, setJobs] = useState<JobPost[]>([])
   const [loading, setLoading] = useState(true)
   const [bidding, setBidding] = useState<string | null>(null)
@@ -54,13 +56,13 @@ export default function ProviderJobsPage() {
       const all = [...form, ...fields].filter(Boolean)
       if (all.length) return all.join(" · ")
     }
-    return "Something went wrong. Please try again."
+    return t("genericError")
   }
 
   async function submitBid(jobId: string) {
     const amountEuros = parseFloat(bidForm.amount)
     if (!bidForm.amount || isNaN(amountEuros) || amountEuros < 1) {
-      setError("Please enter a valid bid amount (minimum €1)")
+      setError(t("invalidBidAmount"))
       return
     }
     setSubmitting(true); setError(null)
@@ -84,7 +86,7 @@ export default function ProviderJobsPage() {
       setBidding(null)
       setBidForm({ amount: "", message: "", estimatedDurationMinutes: "120", proposedDate: "" })
     } catch {
-      setError("Network error. Please check your connection.")
+      setError(t("networkError"))
     } finally { setSubmitting(false) }
   }
 
@@ -100,15 +102,15 @@ export default function ProviderJobsPage() {
     <div className="min-h-screen bg-[#F4FAF6] py-8 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="mb-8">
-          <h1 className="font-serif text-2xl font-bold text-[#2B3441]">Available Jobs</h1>
-          <p className="text-[#6B7280] text-sm mt-1">Jobs posted by customers near you</p>
+          <h1 className="font-serif text-2xl font-bold text-[#2B3441]">{t("pageTitle")}</h1>
+          <p className="text-[#6B7280] text-sm mt-1">{t("pageSubtitle")}</p>
         </div>
 
         {jobs.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-2xl border border-[#E5EBF0]">
             <Clock size={48} className="mx-auto text-[#9CA3AF] mb-4" />
-            <h2 className="font-serif text-xl font-bold text-[#2B3441] mb-2">No jobs available right now</h2>
-            <p className="text-[#6B7280]">New jobs from customers near you will appear here</p>
+            <h2 className="font-serif text-xl font-bold text-[#2B3441] mb-2">{t("emptyTitle")}</h2>
+            <p className="text-[#6B7280]">{t("emptyDescription")}</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -128,7 +130,7 @@ export default function ProviderJobsPage() {
                         {job.budgetMin && job.budgetMax && (
                           <p className="font-bold text-[#2D7A5F] text-sm">{formatCurrency(job.budgetMin)} – {formatCurrency(job.budgetMax)}</p>
                         )}
-                        <p className="text-xs text-[#9CA3AF] mt-1">{job.bids.length} bid{job.bids.length !== 1 ? "s" : ""}</p>
+                        <p className="text-xs text-[#9CA3AF] mt-1">{t("bidCount", { count: job.bids.length })}</p>
                       </div>
                     </div>
 
@@ -149,42 +151,42 @@ export default function ProviderJobsPage() {
 
                     {alreadyBid ? (
                       <div className="flex items-center gap-2 text-sm text-[#2D7A5F] font-medium">
-                        <CheckCircle2 size={16} /> Bid submitted successfully
+                        <CheckCircle2 size={16} /> {t("bidSubmittedSuccess")}
                       </div>
                     ) : (
                       <Button
                         onClick={() => setBidding(isOpen ? null : job.id)}
                         className={cn("h-9 text-sm transition-all", isOpen ? "bg-[#E5EBF0] text-[#2B3441] hover:bg-[#E5EBF0]" : "bg-[#2D7A5F] hover:bg-[#235f49] text-white")}
                       >
-                        {isOpen ? "Cancel" : "Submit a Bid"}
+                        {isOpen ? t("cancel") : t("submitABid")}
                       </Button>
                     )}
                   </div>
 
                   {isOpen && !alreadyBid && (
                     <div className="border-t border-[#F4FAF6] bg-[#F4FAF6] p-5 space-y-3">
-                      <h3 className="font-semibold text-sm text-[#2B3441]">Your Bid</h3>
+                      <h3 className="font-semibold text-sm text-[#2B3441]">{t("yourBid")}</h3>
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <Label className="text-xs font-medium text-[#2B3441] mb-1 block">Your price (€) *</Label>
+                          <Label className="text-xs font-medium text-[#2B3441] mb-1 block">{t("yourPriceLabel")}</Label>
                           <Input type="number" value={bidForm.amount} onChange={(e) => setBidForm((p) => ({ ...p, amount: e.target.value }))} placeholder="75" min={1} className="bg-white" />
                         </div>
                         <div>
-                          <Label className="text-xs font-medium text-[#2B3441] mb-1 block">Duration (mins)</Label>
+                          <Label className="text-xs font-medium text-[#2B3441] mb-1 block">{t("durationLabel")}</Label>
                           <Input type="number" value={bidForm.estimatedDurationMinutes} onChange={(e) => setBidForm((p) => ({ ...p, estimatedDurationMinutes: e.target.value }))} className="bg-white" />
                         </div>
                       </div>
                       <div>
-                        <Label className="text-xs font-medium text-[#2B3441] mb-1 block">Proposed date</Label>
+                        <Label className="text-xs font-medium text-[#2B3441] mb-1 block">{t("proposedDateLabel")}</Label>
                         <Input type="date" value={bidForm.proposedDate} onChange={(e) => setBidForm((p) => ({ ...p, proposedDate: e.target.value }))} className="bg-white" min={new Date().toISOString().split("T")[0]} />
                       </div>
                       <div>
-                        <Label className="text-xs font-medium text-[#2B3441] mb-1 block">Message to customer</Label>
-                        <Textarea value={bidForm.message} onChange={(e) => setBidForm((p) => ({ ...p, message: e.target.value }))} placeholder="Why should they choose you? Your approach, eco credentials..." rows={3} className="resize-none bg-white text-sm" />
+                        <Label className="text-xs font-medium text-[#2B3441] mb-1 block">{t("messageLabel")}</Label>
+                        <Textarea value={bidForm.message} onChange={(e) => setBidForm((p) => ({ ...p, message: e.target.value }))} placeholder={t("messagePlaceholder")} rows={3} className="resize-none bg-white text-sm" />
                       </div>
                       {error && <p className="text-red-500 text-xs">{error}</p>}
                       <Button onClick={() => submitBid(job.id)} disabled={submitting} className="w-full h-9 bg-[#2D7A5F] hover:bg-[#235f49] text-white text-sm">
-                        {submitting ? <><Loader2 size={14} className="animate-spin mr-2" /> Submitting...</> : "Submit Bid"}
+                        {submitting ? <><Loader2 size={14} className="animate-spin mr-2" /> {t("submitting")}</> : t("submitBid")}
                       </Button>
                     </div>
                   )}

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef } from "react"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Loader2, Upload, X, ImagePlus, CheckCircle2 } from "lucide-react"
 
@@ -15,6 +16,7 @@ interface PhotoEntry {
 }
 
 export function BeforePhotoUpload({ bookingId, onComplete }: BeforePhotoUploadProps) {
+  const t = useTranslations("compBookingBeforePhotoUpload")
   const [photos, setPhotos] = useState<PhotoEntry[]>([])
   const [uploading, setUploading] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -59,7 +61,7 @@ export function BeforePhotoUpload({ bookingId, onComplete }: BeforePhotoUploadPr
 
         if (!presignedRes.ok) {
           const data = await presignedRes.json().catch(() => ({}))
-          throw new Error(data.error ?? "Failed to get upload URL")
+          throw new Error(data.error ?? t("errorGetUploadUrl"))
         }
 
         const { uploadUrl, publicUrl } = await presignedRes.json()
@@ -70,7 +72,7 @@ export function BeforePhotoUpload({ bookingId, onComplete }: BeforePhotoUploadPr
           headers: { "Content-Type": entry.file.type },
         })
 
-        if (!putRes.ok) throw new Error("Failed to upload file to storage")
+        if (!putRes.ok) throw new Error(t("errorUploadToStorage"))
 
         publicUrls.push(publicUrl)
       }
@@ -83,13 +85,13 @@ export function BeforePhotoUpload({ bookingId, onComplete }: BeforePhotoUploadPr
 
       if (!saveRes.ok) {
         const data = await saveRes.json().catch(() => ({}))
-        throw new Error(data.error ?? "Failed to save photos")
+        throw new Error(data.error ?? t("errorSavePhotos"))
       }
 
       setSaved(true)
       onComplete?.()
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed. Please try again.")
+      setError(err instanceof Error ? err.message : t("errorUploadFailed"))
     } finally {
       setUploading(false)
     }
@@ -97,9 +99,9 @@ export function BeforePhotoUpload({ bookingId, onComplete }: BeforePhotoUploadPr
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-6">
-      <h2 className="font-serif text-lg font-bold text-[#2B3441] mb-1">Before-Service Photos</h2>
+      <h2 className="font-serif text-lg font-bold text-[#2B3441] mb-1">{t("title")}</h2>
       <p className="text-sm text-[#6B7280] mb-4">
-        Document the space before you begin. These photos protect you in case of disputes.
+        {t("description")}
       </p>
 
       {/* Thumbnail grid */}
@@ -107,13 +109,13 @@ export function BeforePhotoUpload({ bookingId, onComplete }: BeforePhotoUploadPr
         <div className="grid grid-cols-3 gap-2 mb-4">
           {photos.map((p, i) => (
             <div key={i} className="relative aspect-square rounded-xl overflow-hidden bg-[#F4FAF6]">
-              <img src={p.preview} alt={`Before photo ${i + 1}`} className="w-full h-full object-cover" />
+              <img src={p.preview} alt={t("photoAlt", { number: i + 1 })} className="w-full h-full object-cover" />
               <button
                 type="button"
                 onClick={() => removePhoto(i)}
                 disabled={uploading}
                 className="absolute top-1 right-1 w-5 h-5 bg-black/50 text-white rounded-full flex items-center justify-center hover:bg-black/70 transition-colors disabled:opacity-50"
-                aria-label="Remove photo"
+                aria-label={t("removePhoto")}
               >
                 <X size={11} />
               </button>
@@ -127,7 +129,7 @@ export function BeforePhotoUpload({ bookingId, onComplete }: BeforePhotoUploadPr
         <label className="flex items-center gap-2 cursor-pointer w-fit">
           <div className="flex items-center gap-2 text-sm text-[#2D7A5F] font-medium hover:text-[#235f49] transition-colors">
             <ImagePlus size={16} />
-            <span>Select photos</span>
+            <span>{t("selectPhotos")}</span>
           </div>
           <input
             ref={inputRef}
@@ -150,7 +152,7 @@ export function BeforePhotoUpload({ bookingId, onComplete }: BeforePhotoUploadPr
       {saved && (
         <div className="flex items-center gap-2 mt-3 text-sm font-medium text-[#2D7A5F]">
           <CheckCircle2 size={16} />
-          <span>Photos saved</span>
+          <span>{t("photosSaved")}</span>
         </div>
       )}
 
@@ -165,12 +167,12 @@ export function BeforePhotoUpload({ bookingId, onComplete }: BeforePhotoUploadPr
           {uploading ? (
             <>
               <Loader2 size={15} className="animate-spin mr-2" />
-              Uploading…
+              {t("uploading")}
             </>
           ) : (
             <>
               <Upload size={15} className="mr-2" />
-              Upload {photos.length} photo{photos.length !== 1 ? "s" : ""}
+              {t("uploadButton", { count: photos.length })}
             </>
           )}
         </Button>

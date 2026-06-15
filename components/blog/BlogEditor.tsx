@@ -7,6 +7,7 @@ import Youtube from "@tiptap/extension-youtube"
 import Link from "@tiptap/extension-link"
 import Placeholder from "@tiptap/extension-placeholder"
 import { useRef, useEffect } from "react"
+import { useTranslations } from "next-intl"
 import { BlogEditorToolbar } from "./BlogEditorToolbar"
 
 interface BlogEditorProps {
@@ -15,8 +16,10 @@ interface BlogEditorProps {
   placeholder?: string
 }
 
-export function BlogEditor({ value, onChange, placeholder = "Write your article here…" }: BlogEditorProps) {
+export function BlogEditor({ value, onChange, placeholder }: BlogEditorProps) {
+  const t = useTranslations("compBlogBlogEditor")
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const editorPlaceholder = placeholder ?? t("placeholderWriteArticle")
 
   const editor = useEditor({
     extensions: [
@@ -24,7 +27,7 @@ export function BlogEditor({ value, onChange, placeholder = "Write your article 
       ImageExt.configure({ allowBase64: false, HTMLAttributes: { class: "rounded-lg max-w-full my-4" } }),
       Youtube.configure({ controls: true, nocookie: true, HTMLAttributes: { class: "w-full aspect-video rounded-lg my-4" } }),
       Link.configure({ openOnClick: false, HTMLAttributes: { class: "text-[#2D7A5F] underline" } }),
-      Placeholder.configure({ placeholder }),
+      Placeholder.configure({ placeholder: editorPlaceholder }),
     ],
     content: value,
     editorProps: {
@@ -54,7 +57,7 @@ export function BlogEditor({ value, onChange, placeholder = "Write your article 
       await fetch(uploadUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } })
       editor.chain().focus().setImage({ src: publicUrl, alt: file.name }).run()
     } catch {
-      alert("Image upload failed — check your R2 configuration.")
+      alert(t("errorImageUploadFailed"))
     }
   }
 

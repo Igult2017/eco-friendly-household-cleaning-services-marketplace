@@ -2,8 +2,10 @@
 
 import { Link2, Check } from "lucide-react"
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 
 export function ShareButtons({ url, title }: { url: string; title: string }) {
+  const t = useTranslations("compBlogShareButtons")
   const [copied, setCopied] = useState(false)
   const encoded = encodeURIComponent(url)
   const encodedTitle = encodeURIComponent(title)
@@ -17,7 +19,7 @@ export function ShareButtons({ url, title }: { url: string; title: string }) {
 
   return (
     <div className="flex items-center gap-2 flex-wrap">
-      <span className="text-sm font-medium text-[#6B7280]">Share:</span>
+      <span className="text-sm font-medium text-[#6B7280]">{t("share")}</span>
       <a
         href={`https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encoded}`}
         target="_blank" rel="noopener noreferrer"
@@ -44,7 +46,7 @@ export function ShareButtons({ url, title }: { url: string; title: string }) {
         className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-gray-100 text-[#2B3441] hover:bg-gray-200 transition-colors"
       >
         {copied ? <Check size={12} className="text-green-600" /> : <Link2 size={12} />}
-        {copied ? "Copied!" : "Copy link"}
+        {copied ? t("copied") : t("copyLink")}
       </button>
     </div>
   )

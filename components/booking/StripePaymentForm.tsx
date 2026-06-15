@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js"
 import { Button } from "@/components/ui/button"
 import { Loader2, Lock } from "lucide-react"
@@ -23,6 +24,7 @@ interface Props {
 }
 
 export function StripePaymentForm({ paymentIntentId, providerId, serviceId, onSuccess, bookingPayload }: Props) {
+  const t = useTranslations("compBookingStripePaymentForm")
   const stripe = useStripe()
   const elements = useElements()
   const [loading, setLoading] = useState(false)
@@ -42,7 +44,7 @@ export function StripePaymentForm({ paymentIntentId, providerId, serviceId, onSu
     })
 
     if (stripeError) {
-      setError(stripeError.message ?? "Payment failed")
+      setError(stripeError.message ?? t("paymentFailed"))
       setLoading(false)
       return
     }
@@ -62,13 +64,13 @@ export function StripePaymentForm({ paymentIntentId, providerId, serviceId, onSu
 
       const data = await res.json()
       if (!res.ok) {
-        setError(data.error ?? "Booking creation failed")
+        setError(data.error ?? t("bookingCreationFailed"))
         return
       }
 
       onSuccess(data.bookingId, data.bookingNumber)
     } catch {
-      setError("Something went wrong. Please contact support.")
+      setError(t("genericError"))
     } finally {
       setLoading(false)
     }
@@ -89,13 +91,13 @@ export function StripePaymentForm({ paymentIntentId, providerId, serviceId, onSu
         className="w-full h-12 bg-[#2D7A5F] hover:bg-[#235f49] text-white font-semibold text-base"
       >
         {loading ? (
-          <><Loader2 size={16} className="animate-spin mr-2" /> Processing…</>
+          <><Loader2 size={16} className="animate-spin mr-2" /> {t("processing")}</>
         ) : (
-          <><Lock size={15} className="mr-2" /> Confirm & Reserve</>
+          <><Lock size={15} className="mr-2" /> {t("confirmAndReserve")}</>
         )}
       </Button>
       <p className="text-xs text-center text-[#6B7280]">
-        Your card will be pre-authorised now. You are only charged after the cleaning is completed.
+        {t("preAuthNotice")}
       </p>
     </form>
   )

@@ -7,6 +7,7 @@ import { notifications } from "@/lib/db/schema"
 import { eq, desc } from "drizzle-orm"
 import type { Metadata } from "next"
 import Link from "next/link"
+import { getTranslations } from "next-intl/server"
 import { MarkAllReadButton } from "@/components/notifications/MarkAllReadButton"
 
 export const metadata: Metadata = { title: "Notifications — DORIXÉ" }
@@ -27,6 +28,8 @@ export default async function NotificationsPage() {
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
 
+  const t = await getTranslations("customerNotificationsPage")
+
   let rows: Row[] = []
   try {
     rows = await db
@@ -43,9 +46,9 @@ export default async function NotificationsPage() {
     <div className="max-w-2xl mx-auto py-8 px-4">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="font-serif text-2xl font-bold text-[#2B3441]">Notifications</h1>
+          <h1 className="font-serif text-2xl font-bold text-[#2B3441]">{t("heading")}</h1>
           {unreadCount > 0 && (
-            <p className="text-sm text-[#6B7280] mt-1">{unreadCount} unread</p>
+            <p className="text-sm text-[#6B7280] mt-1">{t("unreadCount", { count: unreadCount })}</p>
           )}
         </div>
         {unreadCount > 0 && <MarkAllReadButton />}
@@ -53,7 +56,7 @@ export default async function NotificationsPage() {
 
       {rows.length === 0 ? (
         <div className="rounded-2xl border border-[#E5EBF0] bg-white py-20 text-center shadow-sm">
-          <p className="text-[#9CA3AF] text-sm">You have no notifications yet.</p>
+          <p className="text-[#9CA3AF] text-sm">{t("emptyState")}</p>
         </div>
       ) : (
         <div className="overflow-hidden rounded-2xl border border-[#E5EBF0] bg-white shadow-sm divide-y divide-gray-50">

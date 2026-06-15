@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { getTranslations } from "next-intl/server"
 import { Button } from "@/components/ui/button"
 import { MapPin, Briefcase, Clock } from "lucide-react"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
@@ -15,13 +16,23 @@ type NearbyJob = {
   category: { name: string } | null
 }
 
-function BudgetLabel({ min, max }: { min: number | null; max: number | null }) {
-  if (!min && !max) return <span className="text-xs text-[#9CA3AF]">Budget flexible</span>
+function BudgetLabel({
+  min,
+  max,
+  budgetFlexibleLabel,
+  fromLabel,
+}: {
+  min: number | null
+  max: number | null
+  budgetFlexibleLabel: string
+  fromLabel: string
+}) {
+  if (!min && !max) return <span className="text-xs text-[#9CA3AF]">{budgetFlexibleLabel}</span>
   if (min && max) return <span className="text-xs font-medium text-[#2D7A5F]">{formatCurrency(min)} – {formatCurrency(max)}</span>
-  return <span className="text-xs font-medium text-[#2D7A5F]">From {formatCurrency(min ?? max ?? 0)}</span>
+  return <span className="text-xs font-medium text-[#2D7A5F]">{fromLabel} {formatCurrency(min ?? max ?? 0)}</span>
 }
 
-export function ProviderDashboardNearbyJobs({
+export async function ProviderDashboardNearbyJobs({
   jobs,
   hasLocation,
   providerCountry,
@@ -30,17 +41,18 @@ export function ProviderDashboardNearbyJobs({
   hasLocation: boolean
   providerCountry: string
 }) {
+  const t = await getTranslations("compProviderProviderDashboardNearbyJobs")
   if (!hasLocation) {
     return (
       <div className="bg-white rounded-2xl border border-[#E5EBF0] p-6 text-center">
         <MapPin size={36} className="mx-auto text-[#9CA3AF] mb-3" />
-        <p className="font-semibold text-[#2B3441] mb-1">Set your location</p>
+        <p className="font-semibold text-[#2B3441] mb-1">{t("setLocationTitle")}</p>
         <p className="text-sm text-[#6B7280] mb-4">
-          Add your address to your profile so we can show you jobs near you.
+          {t("setLocationDescription")}
         </p>
         <Link href="/provider/profile">
           <Button size="sm" className="bg-[#2D7A5F] hover:bg-[#235f49] text-white">
-            Update profile
+            {t("updateProfile")}
           </Button>
         </Link>
       </div>
@@ -51,8 +63,8 @@ export function ProviderDashboardNearbyJobs({
     return (
       <div className="bg-white rounded-2xl border border-[#E5EBF0] p-6 text-center">
         <Briefcase size={36} className="mx-auto text-[#9CA3AF] mb-3" />
-        <p className="font-semibold text-[#2B3441] mb-1">No open jobs near you right now</p>
-        <p className="text-sm text-[#6B7280]">New jobs are posted daily — check back soon.</p>
+        <p className="font-semibold text-[#2B3441] mb-1">{t("noJobsTitle")}</p>
+        <p className="text-sm text-[#6B7280]">{t("noJobsDescription")}</p>
       </div>
     )
   }
@@ -61,12 +73,12 @@ export function ProviderDashboardNearbyJobs({
     <div className="bg-white rounded-2xl border border-[#E5EBF0] overflow-hidden">
       <div className="px-5 py-4 border-b border-[#F0F4F8] flex items-center justify-between">
         <h2 className="font-semibold text-[#2B3441] flex items-center gap-2">
-          <MapPin size={16} className="text-[#2D7A5F]" /> Jobs Near You
+          <MapPin size={16} className="text-[#2D7A5F]" /> {t("jobsNearYou")}
           <span className="bg-[#D1F0E0] text-[#2D7A5F] text-xs font-semibold px-2 py-0.5 rounded-full">
-            {jobs.length} open
+            {t("openCount", { count: jobs.length })}
           </span>
         </h2>
-        <Link href="/provider/jobs" className="text-xs text-[#2D7A5F] hover:underline">See all →</Link>
+        <Link href="/provider/jobs" className="text-xs text-[#2D7A5F] hover:underline">{t("seeAll")}</Link>
       </div>
       <div className="divide-y divide-[#F0F4F8]">
         {jobs.map((job) => {
@@ -87,15 +99,20 @@ export function ProviderDashboardNearbyJobs({
                 )}
                 {job.desiredDate && (
                   <p className="text-xs text-[#9CA3AF] mt-1 flex items-center gap-1">
-                    <Clock size={10} /> Desired: {job.desiredDate}
+                    <Clock size={10} /> {t("desired", { date: job.desiredDate })}
                   </p>
                 )}
               </div>
               <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                <BudgetLabel min={job.budgetMin} max={job.budgetMax} />
+                <BudgetLabel
+                  min={job.budgetMin}
+                  max={job.budgetMax}
+                  budgetFlexibleLabel={t("budgetFlexible")}
+                  fromLabel={t("from")}
+                />
                 <Link href={`/provider/jobs?job=${job.id}`}>
                   <Button size="sm" variant="outline" className="border-[#2D7A5F] text-[#2D7A5F] hover:bg-[#F4FAF6] text-xs h-7">
-                    Bid now
+                    {t("bidNow")}
                   </Button>
                 </Link>
               </div>

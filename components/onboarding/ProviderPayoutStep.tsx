@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useSearchParams } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { CreditCard, CheckCircle, ExternalLink, AlertCircle } from "lucide-react"
 
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export function ProviderPayoutStep({ onComplete, onSkip }: Props) {
+  const t = useTranslations("compOnboardingProviderPayoutStep")
   const searchParams = useSearchParams()
   const isSuccess = searchParams.get("success") === "1"
   const [loading, setLoading] = useState(false)
@@ -25,7 +27,7 @@ export function ProviderPayoutStep({ onComplete, onSkip }: Props) {
       const { url } = await res.json()
       window.location.href = url
     } catch {
-      setError("Could not start Stripe Connect. Please try again.")
+      setError(t("connectError"))
       setLoading(false)
     }
   }
@@ -36,12 +38,12 @@ export function ProviderPayoutStep({ onComplete, onSkip }: Props) {
         <div className="w-16 h-16 rounded-full bg-[#D1F0E0] flex items-center justify-center mx-auto mb-5">
           <CheckCircle className="w-8 h-8 text-[#2D7A5F]" />
         </div>
-        <h2 className="text-lg font-semibold text-[#2B3441] mb-2">Stripe account connected!</h2>
+        <h2 className="text-lg font-semibold text-[#2B3441] mb-2">{t("successTitle")}</h2>
         <p className="text-sm text-[#6B7280] mb-6">
-          Your payout account is set up. You'll receive your earnings weekly every Monday.
+          {t("successDescription")}
         </p>
         <Button onClick={onComplete} className="w-full bg-[#2D7A5F] hover:bg-[#235f49] text-white h-11">
-          Go to my dashboard →
+          {t("goToDashboard")}
         </Button>
       </div>
     )
@@ -52,18 +54,17 @@ export function ProviderPayoutStep({ onComplete, onSkip }: Props) {
       <div className="w-16 h-16 rounded-full bg-[#D1F0E0] flex items-center justify-center mx-auto mb-5">
         <CreditCard className="w-8 h-8 text-[#2D7A5F]" />
       </div>
-      <h2 className="text-lg font-semibold text-[#2B3441] mb-2">Set up payouts</h2>
+      <h2 className="text-lg font-semibold text-[#2B3441] mb-2">{t("title")}</h2>
       <p className="text-sm text-[#6B7280] mb-6 max-w-sm mx-auto leading-relaxed">
-        Connect your bank account via Stripe to receive weekly payouts. DORIXÉ charges
-        a 15% platform fee — you keep 100% of your quoted price.
+        {t("description")}
       </p>
 
       <div className="bg-[#F4FAF6] rounded-xl p-4 border border-[#E5EDE9] text-left mb-6 space-y-2">
         {[
-          "Weekly payouts every Monday",
-          "Direct bank transfer via Stripe",
-          "Full earnings transparency in your dashboard",
-          "€0 payout fees for standard transfers",
+          t("benefitWeeklyPayouts"),
+          t("benefitDirectTransfer"),
+          t("benefitTransparency"),
+          t("benefitNoFees"),
         ].map((item) => (
           <div key={item} className="flex items-center gap-2 text-xs text-[#2B3441]">
             <CheckCircle className="w-3.5 h-3.5 text-[#2D7A5F] flex-shrink-0" />
@@ -86,14 +87,14 @@ export function ProviderPayoutStep({ onComplete, onSkip }: Props) {
           className="w-full bg-[#2D7A5F] hover:bg-[#235f49] text-white h-11"
         >
           <ExternalLink className="w-4 h-4 mr-2" />
-          {loading ? "Redirecting to Stripe..." : "Connect Stripe account"}
+          {loading ? t("connecting") : t("connectButton")}
         </Button>
         <Button variant="ghost" onClick={onSkip} className="w-full text-[#6B7280] hover:text-[#2B3441] text-sm">
-          Skip for now
+          {t("skip")}
         </Button>
       </div>
       <p className="text-xs text-[#6B7280] mt-4">
-        You can connect Stripe later from your dashboard. Payouts require a connected account.
+        {t("footnote")}
       </p>
     </div>
   )

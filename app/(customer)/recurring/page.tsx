@@ -9,10 +9,12 @@ import Link from "next/link"
 import { RefreshCw, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { RecurringScheduleCard } from "@/components/booking/RecurringScheduleCard"
+import { getTranslations } from "next-intl/server"
 
 export const metadata = { title: "Recurring Bookings | DORIXÉ" }
 
 export default async function RecurringPage() {
+  const t = await getTranslations("customerRecurringPage")
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
 
@@ -42,13 +44,13 @@ export default async function RecurringPage() {
           <div>
             <h1 className="font-serif text-2xl font-bold text-[#2B3441] flex items-center gap-2">
               <RefreshCw size={22} className="text-[#2D7A5F]" />
-              Recurring Bookings
+              {t("title")}
             </h1>
-            <p className="text-[#6B7280] text-sm mt-1">Your automated cleaning schedules</p>
+            <p className="text-[#6B7280] text-sm mt-1">{t("subtitle")}</p>
           </div>
           <Link href="/book">
             <Button className="bg-[#2D7A5F] hover:bg-[#235f49] text-white gap-2">
-              <Plus size={16} /> New Booking
+              <Plus size={16} /> {t("newBooking")}
             </Button>
           </Link>
         </div>
@@ -56,17 +58,17 @@ export default async function RecurringPage() {
         {schedules.length === 0 && (
           <div className="text-center py-16 bg-white rounded-2xl border border-[#E5EBF0]">
             <RefreshCw size={48} className="mx-auto text-[#9CA3AF] mb-4" />
-            <h2 className="font-serif text-xl font-bold text-[#2B3441] mb-2">No recurring schedules</h2>
-            <p className="text-[#6B7280] mb-6">Set up a recurring cleaning when booking a service</p>
+            <h2 className="font-serif text-xl font-bold text-[#2B3441] mb-2">{t("emptyTitle")}</h2>
+            <p className="text-[#6B7280] mb-6">{t("emptyDescription")}</p>
             <Link href="/book">
-              <Button className="bg-[#2D7A5F] hover:bg-[#235f49] text-white">Book a Cleaning</Button>
+              <Button className="bg-[#2D7A5F] hover:bg-[#235f49] text-white">{t("bookACleaning")}</Button>
             </Link>
           </div>
         )}
 
         {active.length > 0 && (
           <section className="mb-8">
-            <h2 className="text-sm font-semibold text-[#2B3441] uppercase tracking-wide mb-3">Active</h2>
+            <h2 className="text-sm font-semibold text-[#2B3441] uppercase tracking-wide mb-3">{t("active")}</h2>
             <div className="space-y-4">
               {active.map((s) => (
                 <RecurringScheduleCard
@@ -85,7 +87,7 @@ export default async function RecurringPage() {
 
         {paused.length > 0 && (
           <section className="mb-8">
-            <h2 className="text-sm font-semibold text-[#6B7280] uppercase tracking-wide mb-3">Paused</h2>
+            <h2 className="text-sm font-semibold text-[#6B7280] uppercase tracking-wide mb-3">{t("paused")}</h2>
             <div className="space-y-4">
               {paused.map((s) => (
                 <RecurringScheduleCard
@@ -104,7 +106,7 @@ export default async function RecurringPage() {
 
         {cancelled.length > 0 && (
           <section>
-            <h2 className="text-sm font-semibold text-[#9CA3AF] uppercase tracking-wide mb-3">Cancelled</h2>
+            <h2 className="text-sm font-semibold text-[#9CA3AF] uppercase tracking-wide mb-3">{t("cancelled")}</h2>
             <div className="space-y-4">
               {cancelled.map((s) => (
                 <RecurringScheduleCard

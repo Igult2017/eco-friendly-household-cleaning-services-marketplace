@@ -2,9 +2,11 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 
 export function EnableCustomerRoleButton() {
   const router  = useRouter()
+  const t = useTranslations("compLayoutEnableCustomerRoleButton")
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState<string | null>(null)
 
@@ -19,13 +21,13 @@ export function EnableCustomerRoleButton() {
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
-        setError((data as { error?: string }).error ?? "Something went wrong.")
+        setError((data as { error?: string }).error ?? t("genericError"))
         setLoading(false)
         return
       }
       router.push((data as { redirectTo?: string }).redirectTo ?? "/dashboard")
     } catch {
-      setError("Network error. Please try again.")
+      setError(t("networkError"))
       setLoading(false)
     }
   }
@@ -37,7 +39,7 @@ export function EnableCustomerRoleButton() {
         disabled={loading}
         className="inline-flex items-center justify-center h-12 px-8 rounded-xl bg-[#2D7A5F] hover:bg-[#235f49] text-white font-semibold text-sm transition-colors disabled:opacity-60"
       >
-        {loading ? "Activating…" : "Enable Provider Account"}
+        {loading ? t("activating") : t("enableProviderAccount")}
       </button>
       {error && <p className="text-xs text-red-600 text-center">{error}</p>}
     </div>

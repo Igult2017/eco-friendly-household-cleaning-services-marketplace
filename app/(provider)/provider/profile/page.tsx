@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useTranslations } from "next-intl"
 import { Loader2, Save, AlertTriangle } from "lucide-react"
 import { LocationDetectButton } from "@/components/location/LocationDetectButton"
 import { usePostalValidation } from "@/hooks/usePostalValidation"
@@ -17,6 +18,7 @@ type Profile = {
 }
 
 export default function ProviderProfilePage() {
+  const t = useTranslations("providerProviderProfilePage")
   const [profile, setProfile] = useState<Profile>({
     businessName: "", bio: "", city: "", postalCode: "",
     country: "DE", serviceRadiusKm: 25, carbonOffsetEnabled: false,
@@ -76,13 +78,13 @@ export default function ProviderProfilePage() {
   return (
     <div className="max-w-xl space-y-8">
       <div>
-        <h1 className="font-serif text-3xl font-bold text-[#2B3441]">Profile</h1>
-        <p className="text-sm text-[#6B7280] mt-1">Your public business profile visible to customers</p>
+        <h1 className="font-serif text-3xl font-bold text-[#2B3441]">{t("heading")}</h1>
+        <p className="text-sm text-[#6B7280] mt-1">{t("subheading")}</p>
       </div>
 
       <div className="rounded-xl bg-white shadow-sm p-6 space-y-5">
         <div>
-          <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">Business name</label>
+          <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">{t("businessNameLabel")}</label>
           <input
             type="text" value={profile.businessName}
             onChange={(e) => setProfile((p) => ({ ...p, businessName: e.target.value }))}
@@ -91,23 +93,23 @@ export default function ProviderProfilePage() {
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">Bio</label>
+          <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">{t("bioLabel")}</label>
           <textarea
             value={profile.bio}
             onChange={(e) => setProfile((p) => ({ ...p, bio: e.target.value }))}
-            rows={4} placeholder="Describe your services and eco commitment..."
+            rows={4} placeholder={t("bioPlaceholder")}
             className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F] resize-none"
           />
         </div>
 
         <div>
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-[#2B3441] uppercase tracking-wide">Location</span>
+            <span className="text-xs font-semibold text-[#2B3441] uppercase tracking-wide">{t("locationLabel")}</span>
             <LocationDetectButton onDetect={handleDetect} />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">City</label>
+              <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">{t("cityLabel")}</label>
               <input type="text" value={profile.city}
                 onChange={(e) => setProfile((p) => ({ ...p, city: e.target.value }))}
                 onBlur={validatePostal}
@@ -115,7 +117,7 @@ export default function ProviderProfilePage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">Postal code</label>
+              <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">{t("postalCodeLabel")}</label>
               <input type="text" value={profile.postalCode}
                 onChange={(e) => setProfile((p) => ({ ...p, postalCode: e.target.value }))}
                 onBlur={validatePostal}
@@ -130,7 +132,7 @@ export default function ProviderProfilePage() {
               {postal.canonicalCity && (
                 <button type="button" onClick={() => { setProfile((p) => ({ ...p, city: postal.canonicalCity! })); postal.clear(); setLocationValid(true) }}
                   className="shrink-0 font-semibold underline hover:text-amber-900 transition-colors">
-                  Use {postal.canonicalCity}
+                  {t("useSuggestedCity", { city: postal.canonicalCity })}
                 </button>
               )}
             </div>
@@ -139,13 +141,13 @@ export default function ProviderProfilePage() {
 
         <div>
           <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">
-            Service radius: {profile.serviceRadiusKm} km
+            {t("serviceRadiusLabel", { km: profile.serviceRadiusKm })}
           </label>
           <input type="range" min={5} max={100} step={5} value={profile.serviceRadiusKm}
             onChange={(e) => setProfile((p) => ({ ...p, serviceRadiusKm: Number(e.target.value) }))}
             className="w-full accent-[#2D7A5F]"
           />
-          <div className="flex justify-between text-xs text-[#6B7280] mt-1"><span>5 km</span><span>100 km</span></div>
+          <div className="flex justify-between text-xs text-[#6B7280] mt-1"><span>{t("radiusMin")}</span><span>{t("radiusMax")}</span></div>
         </div>
 
         <label className="flex items-center gap-3 cursor-pointer">
@@ -154,8 +156,8 @@ export default function ProviderProfilePage() {
             className="h-4 w-4 accent-[#2D7A5F]"
           />
           <div>
-            <p className="text-sm font-medium text-[#2B3441]">Enable carbon offset option</p>
-            <p className="text-xs text-[#6B7280]">Allow customers to add a carbon offset contribution at checkout</p>
+            <p className="text-sm font-medium text-[#2B3441]">{t("carbonOffsetTitle")}</p>
+            <p className="text-xs text-[#6B7280]">{t("carbonOffsetDescription")}</p>
           </div>
         </label>
 
@@ -163,7 +165,7 @@ export default function ProviderProfilePage() {
           className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#2D7A5F] py-3 text-sm font-semibold text-white disabled:opacity-50 hover:bg-[#256349] transition-colors"
         >
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-          {saved ? "Saved!" : saving ? "Saving..." : "Save changes"}
+          {saved ? t("saveButtonSaved") : saving ? t("saveButtonSaving") : t("saveButton")}
         </button>
       </div>
     </div>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Loader2, CalendarClock, MapPin } from "lucide-react"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
 
 type Booking = {
@@ -22,19 +23,20 @@ type Booking = {
   createdAt: string
 }
 
-const STATUS_LABEL: Record<string, { label: string; color: string }> = {
-  payment_authorized: { label: "Confirmed", color: "bg-blue-100 text-blue-700" },
-  confirmed:          { label: "Confirmed", color: "bg-blue-100 text-blue-700" },
-  in_progress:        { label: "In Progress", color: "bg-amber-100 text-amber-700" },
-  completed:          { label: "Completed", color: "bg-green-100 text-green-700" },
-  cancelled:          { label: "Cancelled", color: "bg-gray-100 text-gray-500" },
-  disputed:           { label: "Disputed", color: "bg-red-100 text-red-700" },
-  refunded:           { label: "Refunded", color: "bg-purple-100 text-purple-700" },
+const STATUS_LABEL: Record<string, { labelKey: string; color: string }> = {
+  payment_authorized: { labelKey: "statusConfirmed", color: "bg-blue-100 text-blue-700" },
+  confirmed:          { labelKey: "statusConfirmed", color: "bg-blue-100 text-blue-700" },
+  in_progress:        { labelKey: "statusInProgress", color: "bg-amber-100 text-amber-700" },
+  completed:          { labelKey: "statusCompleted", color: "bg-green-100 text-green-700" },
+  cancelled:          { labelKey: "statusCancelled", color: "bg-gray-100 text-gray-500" },
+  disputed:           { labelKey: "statusDisputed", color: "bg-red-100 text-red-700" },
+  refunded:           { labelKey: "statusRefunded", color: "bg-purple-100 text-purple-700" },
 }
 
 const TABS = ["all", "payment_authorized", "in_progress", "completed", "cancelled"]
 
 export default function ProviderBookingsPage() {
+  const t = useTranslations("providerProviderBookingsPage")
   const [bookings, setBookings] = useState<Booking[]>([])
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState("all")
@@ -50,21 +52,21 @@ export default function ProviderBookingsPage() {
   return (
     <div className="max-w-4xl space-y-6">
       <div>
-        <h1 className="font-serif text-3xl font-bold text-[#2B3441]">My Bookings</h1>
-        <p className="text-sm text-[#6B7280] mt-1">All jobs assigned to you</p>
+        <h1 className="font-serif text-3xl font-bold text-[#2B3441]">{t("title")}</h1>
+        <p className="text-sm text-[#6B7280] mt-1">{t("subtitle")}</p>
       </div>
 
       {/* Status tabs */}
       <div className="flex gap-2 flex-wrap">
-        {TABS.map((t) => (
+        {TABS.map((tabKey) => (
           <button
-            key={t}
-            onClick={() => setTab(t)}
+            key={tabKey}
+            onClick={() => setTab(tabKey)}
             className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-              tab === t ? "bg-[#2D7A5F] text-white" : "bg-white text-[#6B7280] border border-gray-200 hover:border-[#2D7A5F] hover:text-[#2D7A5F]"
+              tab === tabKey ? "bg-[#2D7A5F] text-white" : "bg-white text-[#6B7280] border border-gray-200 hover:border-[#2D7A5F] hover:text-[#2D7A5F]"
             }`}
           >
-            {t === "all" ? "All" : STATUS_LABEL[t]?.label ?? t}
+            {tabKey === "all" ? t("tabAll") : STATUS_LABEL[tabKey]?.labelKey ? t(STATUS_LABEL[tabKey].labelKey) : tabKey}
           </button>
         ))}
       </div>
@@ -75,12 +77,13 @@ export default function ProviderBookingsPage() {
         </div>
       ) : visible.length === 0 ? (
         <div className="rounded-2xl bg-white shadow-sm py-20 text-center">
-          <p className="text-[#6B7280] text-sm">No bookings found.</p>
+          <p className="text-[#6B7280] text-sm">{t("emptyState")}</p>
         </div>
       ) : (
         <div className="space-y-4">
           {visible.map((b) => {
-            const badge = STATUS_LABEL[b.status] ?? { label: b.status, color: "bg-gray-100 text-gray-600" }
+            const statusMeta = STATUS_LABEL[b.status]
+            const badge = { label: statusMeta ? t(statusMeta.labelKey) : b.status, color: statusMeta?.color ?? "bg-gray-100 text-gray-600" }
             const scheduledDate = new Date(b.scheduledAt).toLocaleDateString("de-DE", { day: "2-digit", month: "short", year: "numeric" })
             const scheduledTime = new Date(b.scheduledAt).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })
 
@@ -92,19 +95,19 @@ export default function ProviderBookingsPage() {
                       <span className="font-semibold text-[#2B3441]">{b.bookingNumber}</span>
                       <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${badge.color}`}>{badge.label}</span>
                     </div>
-                    <p className="text-sm font-medium text-[#2B3441]">{b.serviceName ?? "Cleaning Service"}</p>
-                    <p className="text-xs text-[#6B7280]">Customer: {b.customerName ?? b.customerEmail ?? "—"}</p>
+                    <p className="text-sm font-medium text-[#2B3441]">{b.serviceName ?? t("defaultServiceName")}</p>
+                    <p className="text-xs text-[#6B7280]">{t("customerLabel", { name: b.customerName ?? b.customerEmail ?? "—" })}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-bold text-[#2D7A5F]">{formatCurrency(b.providerPayout)}</p>
-                    <p className="text-xs text-[#9CA3AF]">your payout</p>
+                    <p className="text-xs text-[#9CA3AF]">{t("yourPayout")}</p>
                   </div>
                 </div>
 
                 <div className="mt-3 flex flex-wrap gap-4 text-sm text-[#6B7280]">
                   <div className="flex items-center gap-1.5">
                     <CalendarClock className="h-4 w-4 text-[#2D7A5F]" />
-                    <span>{scheduledDate} at {scheduledTime}</span>
+                    <span>{t("scheduledAt", { date: scheduledDate, time: scheduledTime })}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <MapPin className="h-4 w-4 text-[#2D7A5F]" />
@@ -124,7 +127,7 @@ export default function ProviderBookingsPage() {
                       href={`/bookings/${b.id}/complete`}
                       className="inline-flex items-center gap-1.5 rounded-xl bg-[#2D7A5F] px-4 py-2 text-sm font-semibold text-white hover:bg-[#256349] transition-colors"
                     >
-                      Mark as Complete
+                      {t("markAsComplete")}
                     </Link>
                   </div>
                 )}

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ProviderFields } from "@/app/(auth)/onboarding/ProviderFields"
@@ -9,6 +10,7 @@ import { ProviderFields } from "@/app/(auth)/onboarding/ProviderFields"
 type FieldKey = "businessName" | "bio" | "city" | "postalCode" | "country" | "serviceRadiusKm" | "ecoLevel"
 
 export function AddCleanerRoleForm() {
+  const t = useTranslations("compLayoutAddCleanerRoleForm")
   const router = useRouter()
   const [fields, setFields] = useState({
     businessName: "", bio: "", city: "", postalCode: "",
@@ -45,12 +47,12 @@ export function AddCleanerRoleForm() {
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
-        setError((data as { error?: string }).error ?? "Something went wrong.")
+        setError((data as { error?: string }).error ?? t("errorGeneric"))
         return
       }
       router.push((data as { redirectTo?: string }).redirectTo ?? "/provider/dashboard")
     } catch {
-      setError("Network error. Please try again.")
+      setError(t("errorNetwork"))
     } finally {
       setLoading(false)
     }
@@ -72,11 +74,11 @@ export function AddCleanerRoleForm() {
         disabled={!isValid || loading}
         className="w-full bg-[#2D7A5F] hover:bg-[#235f49] text-white h-12 text-base"
       >
-        {loading ? "Setting up your Cleaner Account…" : "Activate Cleaner Account →"}
+        {loading ? t("submitLoading") : t("submitLabel")}
       </Button>
 
       <p className="text-xs text-[#6B7280] text-center">
-        Your account is subject to admin approval before you can accept bookings.
+        {t("approvalNotice")}
       </p>
     </form>
   )

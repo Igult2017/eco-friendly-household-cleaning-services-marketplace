@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { getTranslations } from "next-intl/server"
 import { Bell, Briefcase, CheckCircle2, DollarSign, AlertTriangle, Info } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -24,15 +25,16 @@ type Notif = {
   createdAt: Date | string
 }
 
-export function ProviderDashboardNotifications({ notifications }: { notifications: Notif[] }) {
+export async function ProviderDashboardNotifications({ notifications }: { notifications: Notif[] }) {
+  const t = await getTranslations("compProviderProviderDashboardNotifications")
   const unread = notifications.filter((n) => !n.isRead).length
 
   if (notifications.length === 0) {
     return (
       <div className="bg-white rounded-2xl border border-[#E5EBF0] p-6 text-center">
         <Bell size={36} className="mx-auto text-[#9CA3AF] mb-3" />
-        <p className="font-semibold text-[#2B3441] mb-1">No notifications</p>
-        <p className="text-sm text-[#6B7280]">New job alerts and updates will appear here.</p>
+        <p className="font-semibold text-[#2B3441] mb-1">{t("emptyTitle")}</p>
+        <p className="text-sm text-[#6B7280]">{t("emptyDescription")}</p>
       </div>
     )
   }
@@ -41,14 +43,14 @@ export function ProviderDashboardNotifications({ notifications }: { notification
     <div className="bg-white rounded-2xl border border-[#E5EBF0] overflow-hidden">
       <div className="px-5 py-4 border-b border-[#F0F4F8] flex items-center justify-between">
         <h2 className="font-semibold text-[#2B3441] flex items-center gap-2">
-          <Bell size={16} className="text-[#2D7A5F]" /> Notifications
+          <Bell size={16} className="text-[#2D7A5F]" /> {t("heading")}
           {unread > 0 && (
             <span className="bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full leading-none">
               {unread}
             </span>
           )}
         </h2>
-        <Link href="/provider/notifications" className="text-xs text-[#2D7A5F] hover:underline">View all →</Link>
+        <Link href="/provider/notifications" className="text-xs text-[#2D7A5F] hover:underline">{t("viewAll")}</Link>
       </div>
       <div className="divide-y divide-[#F0F4F8]">
         {notifications.map((n) => {

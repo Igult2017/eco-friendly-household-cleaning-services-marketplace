@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useTranslations } from "next-intl"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -80,6 +81,7 @@ const ECO_COLOR: Record<string, string> = {
 }
 
 function BidCard({ bid, jobId, jobStatus }: { bid: Bid; jobId: string; jobStatus: string }) {
+  const t = useTranslations("customerJobsPage")
   const p = bid.provider
   const initials = p?.businessName?.slice(0, 2).toUpperCase() ?? "??"
   const location = [p?.city, p?.postalCode, p?.country].filter(Boolean).join(", ")
@@ -109,7 +111,7 @@ function BidCard({ bid, jobId, jobStatus }: { bid: Bid; jobId: string; jobStatus
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2 flex-wrap">
             <div>
-              <h3 className="font-semibold text-[#2B3441] text-sm">{p?.businessName ?? "Unknown Provider"}</h3>
+              <h3 className="font-semibold text-[#2B3441] text-sm">{p?.businessName ?? t("unknownProvider")}</h3>
               {location && (
                 <p className="flex items-center gap-1 text-xs text-[#6B7280] mt-0.5">
                   <MapPin size={11} className="flex-shrink-0" />
@@ -119,7 +121,7 @@ function BidCard({ bid, jobId, jobStatus }: { bid: Bid; jobId: string; jobStatus
             </div>
             <div className="text-right flex-shrink-0">
               <p className="font-bold text-[#2D7A5F] text-lg leading-tight">{formatCurrency(bid.amount)}</p>
-              <p className="text-xs text-[#9CA3AF]">bid amount</p>
+              <p className="text-xs text-[#9CA3AF]">{t("bidAmount")}</p>
             </div>
           </div>
 
@@ -135,17 +137,17 @@ function BidCard({ bid, jobId, jobStatus }: { bid: Bid; jobId: string; jobStatus
             {(p?.totalJobsCompleted ?? 0) > 0 && (
               <span className="flex items-center gap-1 text-xs text-[#6B7280]">
                 <Briefcase size={11} />
-                {p!.totalJobsCompleted} jobs done
+                {t("jobsDone", { count: p!.totalJobsCompleted })}
               </span>
             )}
             {p?.ecoLevel && (
               <Badge className={cn("text-xs px-1.5 py-0 h-5", ECO_COLOR[p.ecoLevel])}>
                 <Leaf size={10} className="mr-0.5" />
-                {ECO_LABEL[p.ecoLevel] ?? p.ecoLevel}
+                {ECO_LABEL[p.ecoLevel] ? t(`ecoLevel_${p.ecoLevel}` as Parameters<typeof t>[0]) : p.ecoLevel}
               </Badge>
             )}
             {(p?.ecoScore ?? 0) > 0 && (
-              <span className="text-xs text-[#2D7A5F] font-medium">Eco {p!.ecoScore}/100</span>
+              <span className="text-xs text-[#2D7A5F] font-medium">{t("ecoScore", { score: p!.ecoScore })}</span>
             )}
           </div>
 
@@ -162,20 +164,23 @@ function BidCard({ bid, jobId, jobStatus }: { bid: Bid; jobId: string; jobStatus
           {bid.estimatedDurationMinutes && (
             <span className="flex items-center gap-1">
               <Timer size={11} />
-              {bid.estimatedDurationMinutes >= 60
-                ? `${Math.floor(bid.estimatedDurationMinutes / 60)}h${bid.estimatedDurationMinutes % 60 > 0 ? ` ${bid.estimatedDurationMinutes % 60}m` : ""}`
-                : `${bid.estimatedDurationMinutes}m`} estimated
+              {t("estimatedDuration", {
+                duration: bid.estimatedDurationMinutes >= 60
+                  ? `${Math.floor(bid.estimatedDurationMinutes / 60)}h${bid.estimatedDurationMinutes % 60 > 0 ? ` ${bid.estimatedDurationMinutes % 60}m` : ""}`
+                  : `${bid.estimatedDurationMinutes}m`,
+              })}
             </span>
           )}
           {bid.proposedDate && (
             <span className="flex items-center gap-1">
               <CalendarDays size={11} />
-              {formatDate(bid.proposedDate)}
-              {bid.proposedTimeStart && ` at ${bid.proposedTimeStart.slice(0, 5)}`}
+              {bid.proposedTimeStart
+                ? t("proposedDateTime", { date: formatDate(bid.proposedDate), time: bid.proposedTimeStart.slice(0, 5) })
+                : formatDate(bid.proposedDate)}
             </span>
           )}
           <span className="flex items-center gap-1 text-[#9CA3AF]">
-            <Clock size={11} /> Submitted {formatDate(bid.createdAt)}
+            <Clock size={11} /> {t("submitted", { date: formatDate(bid.createdAt) })}
           </span>
         </div>
 
@@ -190,10 +195,10 @@ function BidCard({ bid, jobId, jobStatus }: { bid: Bid; jobId: string; jobStatus
 
         <div className="flex items-center justify-between pt-1">
           {bid.status === "accepted" && (
-            <span className="text-xs font-semibold text-[#2D7A5F]">✓ Accepted — booking in progress</span>
+            <span className="text-xs font-semibold text-[#2D7A5F]">{t("bidAccepted")}</span>
           )}
           {bid.status === "rejected" && (
-            <span className="text-xs text-[#9CA3AF]">Declined</span>
+            <span className="text-xs text-[#9CA3AF]">{t("bidDeclined")}</span>
           )}
           {canAccept && (
             <div className="ml-auto">
@@ -207,6 +212,7 @@ function BidCard({ bid, jobId, jobStatus }: { bid: Bid; jobId: string; jobStatus
 }
 
 export default function CustomerJobsPage() {
+  const t = useTranslations("customerJobsPage")
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
@@ -239,12 +245,12 @@ export default function CustomerJobsPage() {
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="font-serif text-2xl font-bold text-[#2B3441]">My Job Posts</h1>
-            <p className="text-[#6B7280] text-sm mt-1">Track bids from eco-cleaners</p>
+            <h1 className="font-serif text-2xl font-bold text-[#2B3441]">{t("pageTitle")}</h1>
+            <p className="text-[#6B7280] text-sm mt-1">{t("pageSubtitle")}</p>
           </div>
           <Link href="/post-job">
             <Button className="bg-[#2D7A5F] hover:bg-[#235f49] text-white gap-2">
-              <Plus size={16} /> Post a Job
+              <Plus size={16} /> {t("postJob")}
             </Button>
           </Link>
         </div>
@@ -252,10 +258,10 @@ export default function CustomerJobsPage() {
         {jobs.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-2xl border border-[#E5EBF0]">
             <Clock size={48} className="mx-auto text-[#9CA3AF] mb-4" />
-            <h2 className="font-serif text-xl font-bold text-[#2B3441] mb-2">No jobs posted yet</h2>
-            <p className="text-[#6B7280] mb-6">Post a job and let cleaners compete for your business</p>
+            <h2 className="font-serif text-xl font-bold text-[#2B3441] mb-2">{t("emptyTitle")}</h2>
+            <p className="text-[#6B7280] mb-6">{t("emptyDescription")}</p>
             <Link href="/post-job">
-              <Button className="bg-[#2D7A5F] hover:bg-[#235f49] text-white">Post a Job</Button>
+              <Button className="bg-[#2D7A5F] hover:bg-[#235f49] text-white">{t("postJob")}</Button>
             </Link>
           </div>
         ) : (
@@ -274,7 +280,9 @@ export default function CustomerJobsPage() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <h2 className="font-semibold text-[#2B3441]">{job.title}</h2>
                           <Badge className={cn("text-xs", STATUS_COLOR[job.status] ?? "bg-gray-100 text-gray-600")}>
-                            {job.status.charAt(0).toUpperCase() + job.status.slice(1)}
+                            {STATUS_COLOR[job.status]
+                              ? t(`status_${job.status}` as Parameters<typeof t>[0])
+                              : job.status.charAt(0).toUpperCase() + job.status.slice(1)}
                           </Badge>
                         </div>
                         {job.category && (
@@ -283,7 +291,7 @@ export default function CustomerJobsPage() {
                         <p className="text-xs text-[#9CA3AF] mt-1">
                           <MapPin size={11} className="inline mr-0.5" />
                           {job.serviceAddress.city}, {job.serviceAddress.postalCode}
-                          {" · "}Posted {formatDate(job.createdAt)}
+                          {" · "}{t("posted", { date: formatDate(job.createdAt) })}
                         </p>
                       </div>
                       <div className="text-right flex-shrink-0">
@@ -300,16 +308,16 @@ export default function CustomerJobsPage() {
                       <div className="flex items-center gap-4 text-sm text-[#6B7280]">
                         <span className="flex items-center gap-1.5">
                           <Eye size={14} />
-                          <span><strong className="text-[#2B3441]">{job.viewCount}</strong> views</span>
+                          <span><strong className="text-[#2B3441]">{job.viewCount}</strong> {t("views", { count: job.viewCount })}</span>
                         </span>
                         <span className="flex items-center gap-1.5">
                           <MessageSquare size={14} />
-                          <span><strong className="text-[#2B3441]">{bidCount}</strong> {bidCount === 1 ? "bid" : "bids"}</span>
+                          <span><strong className="text-[#2B3441]">{bidCount}</strong> {t("bids", { count: bidCount })}</span>
                         </span>
                         {job.desiredDate && (
                           <span className="flex items-center gap-1 text-xs">
                             <CalendarDays size={13} />
-                            Wanted {formatDate(job.desiredDate)}
+                            {t("wanted", { date: formatDate(job.desiredDate) })}
                           </span>
                         )}
                       </div>
@@ -320,9 +328,9 @@ export default function CustomerJobsPage() {
                           className="flex items-center gap-1.5 text-sm font-medium text-[#2D7A5F] hover:text-[#235f49] transition-colors"
                         >
                           {isOpen ? (
-                            <><ChevronUp size={16} /> Hide bids</>
+                            <><ChevronUp size={16} /> {t("hideBids")}</>
                           ) : (
-                            <><ChevronDown size={16} /> View {bidCount} {bidCount === 1 ? "bid" : "bids"}</>
+                            <><ChevronDown size={16} /> {t("viewBids", { count: bidCount })}</>
                           )}
                         </button>
                       )}
@@ -330,7 +338,7 @@ export default function CustomerJobsPage() {
 
                     {!hasBids && (
                       <p className="text-xs text-[#9CA3AF] mt-3">
-                        Waiting for bids — expires {formatDate(job.expiresAt)}
+                        {t("waitingForBids", { date: formatDate(job.expiresAt) })}
                       </p>
                     )}
                   </div>
@@ -339,7 +347,7 @@ export default function CustomerJobsPage() {
                   {isOpen && hasBids && (
                     <div className="border-t border-[#F4FAF6] bg-[#F4FAF6] p-4 space-y-3">
                       <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wide mb-2">
-                        {bidCount} {bidCount === 1 ? "Bid" : "Bids"} Received
+                        {t("bidsReceived", { count: bidCount })}
                       </p>
                       {job.bids.map((bid) => (
                         <BidCard key={bid.id} bid={bid} jobId={job.id} jobStatus={job.status} />

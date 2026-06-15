@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -12,18 +13,14 @@ import { usePostalValidation } from "@/hooks/usePostalValidation"
 import type { GeoResult } from "@/lib/nominatim"
 import type { ProviderProfileInput } from "@/lib/validations/provider"
 
-const ECO_LEVELS = [
-  { value: "basic", label: "Basic — standard eco practices" },
-  { value: "certified", label: "Certified — eco certification obtained" },
-  { value: "premium", label: "Premium — all plant-based products" },
-  { value: "zero_impact", label: "Zero Impact — carbon neutral operations" },
-]
+const ECO_LEVELS = ["basic", "certified", "premium", "zero_impact"] as const
 
 interface Props {
   onSubmit: (data: ProviderProfileInput) => Promise<void>
 }
 
 export function BusinessDetailsForm({ onSubmit }: Props) {
+  const t = useTranslations("compOnboardingBusinessDetailsForm")
   const [loading, setLoading] = useState(false)
   const [locationValid, setLocationValid] = useState(true)
   const postal = usePostalValidation()
@@ -66,13 +63,13 @@ export function BusinessDetailsForm({ onSubmit }: Props) {
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
         <Label htmlFor="businessName" className="text-[#2B3441] text-sm font-medium mb-1.5 block">
-          Business / Trading name
+          {t("businessNameLabel")}
         </Label>
         <Input
           id="businessName"
           value={form.businessName}
           onChange={(e) => set("businessName", e.target.value)}
-          placeholder="e.g. Amara Green Cleaning"
+          placeholder={t("businessNamePlaceholder")}
           required
           minLength={2}
         />
@@ -80,34 +77,34 @@ export function BusinessDetailsForm({ onSubmit }: Props) {
 
       <div>
         <Label htmlFor="bio" className="text-[#2B3441] text-sm font-medium mb-1.5 block">
-          About you / your service
+          {t("bioLabel")}
         </Label>
         <Textarea
           id="bio"
           value={form.bio}
           onChange={(e) => set("bio", e.target.value)}
-          placeholder="Describe your experience, eco approach, and what makes you stand out..."
+          placeholder={t("bioPlaceholder")}
           required
           minLength={20}
           rows={4}
           className="resize-none"
         />
-        <p className="text-xs text-[#6B7280] mt-1">{form.bio.length} / 800 characters</p>
+        <p className="text-xs text-[#6B7280] mt-1">{t("bioCharCount", { count: form.bio.length })}</p>
       </div>
 
       <div>
         <div className="flex items-center justify-between mb-2">
-          <p className="text-xs font-semibold text-[#2B3441] uppercase tracking-wide">Location</p>
+          <p className="text-xs font-semibold text-[#2B3441] uppercase tracking-wide">{t("locationHeading")}</p>
           <LocationDetectButton onDetect={handleDetect} />
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <Label htmlFor="city" className="text-[#2B3441] text-sm font-medium mb-1.5 block">City</Label>
-            <Input id="city" value={form.city} onChange={(e) => set("city", e.target.value)} onBlur={validatePostal} placeholder="Amsterdam" required />
+            <Label htmlFor="city" className="text-[#2B3441] text-sm font-medium mb-1.5 block">{t("cityLabel")}</Label>
+            <Input id="city" value={form.city} onChange={(e) => set("city", e.target.value)} onBlur={validatePostal} placeholder={t("cityPlaceholder")} required />
           </div>
           <div>
-            <Label htmlFor="postalCode" className="text-[#2B3441] text-sm font-medium mb-1.5 block">Postal code</Label>
-            <Input id="postalCode" value={form.postalCode} onChange={(e) => set("postalCode", e.target.value)} onBlur={validatePostal} placeholder="1011 AB" required />
+            <Label htmlFor="postalCode" className="text-[#2B3441] text-sm font-medium mb-1.5 block">{t("postalCodeLabel")}</Label>
+            <Input id="postalCode" value={form.postalCode} onChange={(e) => set("postalCode", e.target.value)} onBlur={validatePostal} placeholder={t("postalCodePlaceholder")} required />
           </div>
         </div>
         {postal.postalError && (
@@ -117,7 +114,7 @@ export function BusinessDetailsForm({ onSubmit }: Props) {
             {postal.canonicalCity && (
               <button type="button" onClick={() => { set("city", postal.canonicalCity!); postal.clear(); setLocationValid(true) }}
                 className="shrink-0 font-semibold underline hover:text-amber-900 transition-colors">
-                Use {postal.canonicalCity}
+                {t("useCanonicalCity", { city: postal.canonicalCity })}
               </button>
             )}
           </div>
@@ -126,7 +123,7 @@ export function BusinessDetailsForm({ onSubmit }: Props) {
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">Service radius (km)</Label>
+          <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">{t("serviceRadiusLabel")}</Label>
           <Input
             type="number"
             value={form.serviceRadiusKm}
@@ -139,14 +136,14 @@ export function BusinessDetailsForm({ onSubmit }: Props) {
           />
         </div>
         <div>
-          <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">Eco level</Label>
+          <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">{t("ecoLevelLabel")}</Label>
           <Select value={form.ecoLevel} onValueChange={(v) => set("ecoLevel", v)}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {ECO_LEVELS.map((l) => (
-                <SelectItem key={l.value} value={l.value}>{l.label}</SelectItem>
+                <SelectItem key={l} value={l}>{t(`ecoLevel_${l}`)}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -154,7 +151,7 @@ export function BusinessDetailsForm({ onSubmit }: Props) {
       </div>
 
       <Button type="submit" disabled={loading || !locationValid} className="w-full bg-[#2D7A5F] hover:bg-[#235f49] text-white h-11">
-        {loading ? "Saving..." : "Save & continue →"}
+        {loading ? t("savingButton") : t("saveContinueButton")}
       </Button>
     </form>
   )

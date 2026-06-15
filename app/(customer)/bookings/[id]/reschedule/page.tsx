@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server"
+import { getTranslations } from "next-intl/server"
 import { redirect, notFound } from "next/navigation"
 import { db } from "@/lib/db"
 import { bookings, providers, providerServices } from "@/lib/db/schema"
@@ -12,6 +13,8 @@ export const dynamic = "force-dynamic"
 export default async function ReschedulePage({ params }: { params: Promise<{ id: string }> }) {
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
+
+  const t = await getTranslations("customerBookingsIdReschedulePage")
 
   const { id } = await params
 
@@ -41,17 +44,17 @@ export default async function ReschedulePage({ params }: { params: Promise<{ id:
           href={`/bookings/${id}`}
           className="inline-flex items-center text-sm text-[#6B7280] hover:text-[#2D7A5F] transition-colors mb-6"
         >
-          ← Back to booking
+          ← {t("backToBooking")}
         </Link>
 
         <div className="bg-white rounded-2xl shadow-xl border border-[#E5EBF0] p-6">
           <div className="flex items-center gap-3 mb-2">
             <CalendarClock size={22} className="text-[#2D7A5F]" />
-            <h1 className="font-serif text-2xl font-bold text-[#2B3441]">Reschedule Booking</h1>
+            <h1 className="font-serif text-2xl font-bold text-[#2B3441]">{t("title")}</h1>
           </div>
 
           <p className="text-sm text-[#6B7280] mb-6">
-            <span className="font-medium text-[#2B3441]">{booking.serviceName ?? "Cleaning Service"}</span>
+            <span className="font-medium text-[#2B3441]">{booking.serviceName ?? t("defaultServiceName")}</span>
             {booking.providerBusinessName ? ` · ${booking.providerBusinessName}` : ""}
             <span className="ml-2 text-xs text-[#9CA3AF]">{booking.bookingNumber}</span>
           </p>

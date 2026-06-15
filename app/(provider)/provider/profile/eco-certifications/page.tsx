@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import { useTranslations } from "next-intl"
 import { Upload, Loader2, Plus, CheckCircle } from "lucide-react"
 
 type Cert = {
@@ -17,6 +18,7 @@ type Cert = {
 const EMPTY = { name: "", issuingBody: "", certificationNumber: "", documentUrl: "", expiresAt: "" }
 
 export default function EcoCertificationsPage() {
+  const t = useTranslations("providerProviderProfileEcocertificationsPage")
   const [certs, setCerts] = useState<Cert[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
@@ -43,7 +45,7 @@ export default function EcoCertificationsPage() {
   }
 
   const save = async () => {
-    if (!form.name || !form.documentUrl) { setError("Certificate name and document are required."); return }
+    if (!form.name || !form.documentUrl) { setError(t("errorNameAndDocumentRequired")); return }
     setSaving(true)
     setError(null)
     const res = await fetch("/api/provider/certifications", {
@@ -51,7 +53,7 @@ export default function EcoCertificationsPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...form, expiresAt: form.expiresAt || undefined }),
     })
-    if (!res.ok) { const d = await res.json(); setError(d.error?.formErrors?.[0] ?? "Failed to save.") }
+    if (!res.ok) { const d = await res.json(); setError(d.error?.formErrors?.[0] ?? t("errorFailedToSave")) }
     else { setForm(EMPTY); setShowForm(false); reload() }
     setSaving(false)
   }
@@ -60,42 +62,42 @@ export default function EcoCertificationsPage() {
     <div className="max-w-2xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-serif text-3xl font-bold text-[#2B3441]">Eco Certifications</h1>
-          <p className="text-sm text-[#6B7280] mt-1">Upload certificates to boost your eco badge level</p>
+          <h1 className="font-serif text-3xl font-bold text-[#2B3441]">{t("title")}</h1>
+          <p className="text-sm text-[#6B7280] mt-1">{t("subtitle")}</p>
         </div>
         <button
           onClick={() => setShowForm((v) => !v)}
           className="flex items-center gap-1.5 rounded-xl bg-[#2D7A5F] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#256349] transition-colors"
         >
           <Plus className="h-4 w-4" />
-          Add certificate
+          {t("addCertificate")}
         </button>
       </div>
 
       {showForm && (
         <div className="rounded-xl bg-white shadow-sm p-6 space-y-4 border border-[#2D7A5F]/20">
-          <h2 className="font-semibold text-[#2B3441]">New certification</h2>
+          <h2 className="font-semibold text-[#2B3441]">{t("newCertification")}</h2>
           <div className="space-y-3">
             <div>
-              <label className="block text-xs font-semibold text-[#2B3441] mb-1.5">Certificate name *</label>
-              <input type="text" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="e.g. EU Ecolabel, Green Seal" className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none" />
+              <label className="block text-xs font-semibold text-[#2B3441] mb-1.5">{t("labelCertificateName")}</label>
+              <input type="text" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder={t("placeholderCertificateName")} className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-[#2B3441] mb-1.5">Issuing body</label>
-                <input type="text" value={form.issuingBody} onChange={(e) => setForm((f) => ({ ...f, issuingBody: e.target.value }))} placeholder="Organisation name" className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none" />
+                <label className="block text-xs font-semibold text-[#2B3441] mb-1.5">{t("labelIssuingBody")}</label>
+                <input type="text" value={form.issuingBody} onChange={(e) => setForm((f) => ({ ...f, issuingBody: e.target.value }))} placeholder={t("placeholderIssuingBody")} className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none" />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[#2B3441] mb-1.5">Certificate number</label>
-                <input type="text" value={form.certificationNumber} onChange={(e) => setForm((f) => ({ ...f, certificationNumber: e.target.value }))} placeholder="Optional" className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none" />
+                <label className="block text-xs font-semibold text-[#2B3441] mb-1.5">{t("labelCertificateNumber")}</label>
+                <input type="text" value={form.certificationNumber} onChange={(e) => setForm((f) => ({ ...f, certificationNumber: e.target.value }))} placeholder={t("placeholderCertificateNumber")} className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none" />
               </div>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-[#2B3441] mb-1.5">Expiry date</label>
+              <label className="block text-xs font-semibold text-[#2B3441] mb-1.5">{t("labelExpiryDate")}</label>
               <input type="date" value={form.expiresAt} onChange={(e) => setForm((f) => ({ ...f, expiresAt: e.target.value }))} className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-[#2B3441] mb-1.5">Document (PDF or image) *</label>
+              <label className="block text-xs font-semibold text-[#2B3441] mb-1.5">{t("labelDocument")}</label>
               <input ref={fileRef} type="file" accept=".pdf,image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadFile(f) }} />
               <button
                 type="button"
@@ -103,16 +105,16 @@ export default function EcoCertificationsPage() {
                 className="flex items-center gap-2 rounded-xl border-2 border-dashed border-gray-200 px-4 py-3 text-sm text-[#6B7280] hover:border-[#2D7A5F] hover:text-[#2D7A5F] transition-colors w-full"
               >
                 {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-                {uploading ? "Uploading…" : form.documentUrl ? "Document uploaded ✓" : "Upload certificate"}
+                {uploading ? t("uploading") : form.documentUrl ? t("documentUploaded") : t("uploadCertificate")}
               </button>
             </div>
           </div>
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3">
-            <button onClick={() => { setShowForm(false); setError(null) }} className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-[#6B7280] hover:bg-gray-50">Cancel</button>
+            <button onClick={() => { setShowForm(false); setError(null) }} className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-[#6B7280] hover:bg-gray-50">{t("cancel")}</button>
             <button onClick={save} disabled={saving || uploading} className="flex-1 rounded-xl bg-[#2D7A5F] py-2.5 text-sm font-semibold text-white disabled:opacity-50 hover:bg-[#256349] transition-colors flex items-center justify-center gap-2">
               {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-              {saving ? "Saving…" : "Save"}
+              {saving ? t("saving") : t("save")}
             </button>
           </div>
         </div>
@@ -123,7 +125,7 @@ export default function EcoCertificationsPage() {
           <div className="flex items-center justify-center py-12"><Loader2 className="h-5 w-5 animate-spin text-[#2D7A5F]" /></div>
         ) : certs.length === 0 ? (
           <div className="py-16 text-center">
-            <p className="text-[#6B7280] text-sm">No certifications yet. Add your eco credentials to unlock higher badge levels.</p>
+            <p className="text-[#6B7280] text-sm">{t("emptyState")}</p>
           </div>
         ) : (
           <div className="divide-y divide-gray-100">
@@ -133,14 +135,14 @@ export default function EcoCertificationsPage() {
                   <div className="flex items-center gap-2">
                     <p className="font-semibold text-sm text-[#2B3441]">{c.name}</p>
                     {c.verifiedAt
-                      ? <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700"><CheckCircle className="h-3 w-3" />Verified</span>
-                      : <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">Pending</span>
+                      ? <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700"><CheckCircle className="h-3 w-3" />{t("statusVerified")}</span>
+                      : <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">{t("statusPending")}</span>
                     }
                   </div>
                   {c.issuingBody && <p className="text-xs text-[#6B7280] mt-0.5">{c.issuingBody}</p>}
-                  {c.expiresAt && <p className="text-xs text-[#6B7280]">Expires: {c.expiresAt}</p>}
+                  {c.expiresAt && <p className="text-xs text-[#6B7280]">{t("expires", { date: c.expiresAt })}</p>}
                 </div>
-                <a href={c.documentUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-[#2D7A5F] hover:underline font-medium">View doc</a>
+                <a href={c.documentUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-[#2D7A5F] hover:underline font-medium">{t("viewDoc")}</a>
               </div>
             ))}
           </div>

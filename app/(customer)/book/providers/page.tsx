@@ -4,6 +4,7 @@ import { WizardProgress } from "@/components/booking/WizardProgress"
 import { ProviderCard } from "@/components/booking/ProviderCard"
 import { useBookingStore } from "@/stores/bookingStore"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { useState, useCallback, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -15,6 +16,7 @@ import { LocationDetectButton } from "@/components/location/LocationDetectButton
 import type { GeoResult } from "@/lib/nominatim"
 
 export default function BookStep2Page() {
+  const t = useTranslations("customerBookProvidersPage")
   const router = useRouter()
   const { setAddress, setProvider, selectedProviderId, categoryId } = useBookingStore()
 
@@ -38,7 +40,7 @@ export default function BookStep2Page() {
       setProviders(data.providers ?? [])
       setSearched(true)
     } catch {
-      setError("Search failed. Please try again.")
+      setError(t("errorSearchFailed"))
     } finally {
       setSearching(false)
     }
@@ -53,7 +55,7 @@ export default function BookStep2Page() {
 
   const geocodeAndSearch = useCallback(async () => {
     if (!address.postalCode || !address.city) {
-      setError("Please enter your city and postal code")
+      setError(t("errorMissingCityPostal"))
       return
     }
     setSearching(true)
@@ -65,7 +67,7 @@ export default function BookStep2Page() {
       const geoData = await geoRes.json()
 
       if (!geoData[0]) {
-        setError("Could not locate your address. Please check your postal code.")
+        setError(t("errorAddressNotFound"))
         return
       }
 
@@ -82,11 +84,11 @@ export default function BookStep2Page() {
       setProviders(data.providers ?? [])
       setSearched(true)
     } catch {
-      setError("Search failed. Please try again.")
+      setError(t("errorSearchFailed"))
     } finally {
       setSearching(false)
     }
-  }, [address, categoryId])
+  }, [address, categoryId, t])
 
   function handleSelectProvider(id: string) {
     setSelectedId(id)
@@ -107,9 +109,9 @@ export default function BookStep2Page() {
 
       <div className="max-w-2xl mx-auto">
         <h1 className="font-serif text-3xl font-bold text-[#2B3441] text-center mb-2">
-          Where do you need cleaning?
+          {t("heading")}
         </h1>
-        <p className="text-center text-[#6B7280] mb-8">We'll find eco-verified cleaners near you</p>
+        <p className="text-center text-[#6B7280] mb-8">{t("subheading")}</p>
 
         <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-6">
           <div className="flex justify-end mb-3">
@@ -117,32 +119,32 @@ export default function BookStep2Page() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <div>
-              <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">Street address</Label>
+              <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">{t("labelStreetAddress")}</Label>
               <Input
                 value={address.line1}
                 onChange={(e) => setAddressForm((prev) => ({ ...prev, line1: e.target.value }))}
-                placeholder="e.g. Hauptstraße 42"
+                placeholder={t("placeholderStreetAddress")}
               />
             </div>
             <div>
-              <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">City</Label>
+              <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">{t("labelCity")}</Label>
               <Input
                 value={address.city}
                 onChange={(e) => setAddressForm((prev) => ({ ...prev, city: e.target.value }))}
-                placeholder="e.g. Berlin"
+                placeholder={t("placeholderCity")}
               />
             </div>
             <div>
-              <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">Postal code</Label>
+              <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">{t("labelPostalCode")}</Label>
               <Input
                 value={address.postalCode}
                 onChange={(e) => setAddressForm((prev) => ({ ...prev, postalCode: e.target.value }))}
-                placeholder="e.g. 10115"
+                placeholder={t("placeholderPostalCode")}
               />
             </div>
             <div>
-              <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">Country</Label>
-              <Input value="Germany" disabled className="text-[#6B7280]" />
+              <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">{t("labelCountry")}</Label>
+              <Input value={t("countryGermany")} disabled className="text-[#6B7280]" />
             </div>
           </div>
 
@@ -153,7 +155,7 @@ export default function BookStep2Page() {
             disabled={searching}
             className="w-full bg-[#2D7A5F] hover:bg-[#235f49] text-white h-10"
           >
-            {searching ? <><Loader2 size={16} className="animate-spin mr-2" /> Searching...</> : <><Search size={16} className="mr-2" /> Find Cleaners Near Me</>}
+            {searching ? <><Loader2 size={16} className="animate-spin mr-2" /> {t("searching")}</> : <><Search size={16} className="mr-2" /> {t("findCleanersButton")}</>}
           </Button>
         </div>
 
@@ -162,12 +164,12 @@ export default function BookStep2Page() {
             {providers.length === 0 ? (
               <div className="text-center py-12 bg-white rounded-2xl border border-[#E5EBF0]">
                 <MapPin size={40} className="mx-auto text-[#9CA3AF] mb-3" />
-                <p className="text-[#6B7280] font-medium">No providers found in your area yet</p>
-                <p className="text-sm text-[#9CA3AF] mt-1">Try expanding your search radius or check back soon</p>
+                <p className="text-[#6B7280] font-medium">{t("emptyTitle")}</p>
+                <p className="text-sm text-[#9CA3AF] mt-1">{t("emptySubtitle")}</p>
               </div>
             ) : (
               <>
-                <p className="text-sm font-medium text-[#6B7280]">{providers.length} provider{providers.length !== 1 ? "s" : ""} found nearby</p>
+                <p className="text-sm font-medium text-[#6B7280]">{t("providersFound", { count: providers.length })}</p>
                 {providers.map((p) => (
                   <ProviderCard key={p.id} provider={p} onSelect={handleSelectProvider} selected={selectedId === p.id} />
                 ))}
@@ -178,14 +180,14 @@ export default function BookStep2Page() {
 
         <div className="flex gap-3">
           <Button variant="outline" onClick={() => router.push("/book")} className="flex-1 h-11 border-[#E5EBF0]">
-            ← Back
+            {t("backButton")}
           </Button>
           <Button
             onClick={handleNext}
             disabled={!selectedId}
             className="flex-1 h-11 bg-[#2D7A5F] hover:bg-[#235f49] text-white"
           >
-            Continue — Pick a Time →
+            {t("continueButton")}
           </Button>
         </div>
       </div>

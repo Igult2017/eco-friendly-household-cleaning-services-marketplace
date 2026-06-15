@@ -1,6 +1,7 @@
 "use client"
 
 import { MapPin, Loader2, CheckCircle2 } from "lucide-react"
+import { useTranslations } from "next-intl"
 import { useGeolocation } from "@/hooks/useGeolocation"
 import type { GeoResult } from "@/lib/nominatim"
 
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export function LocationDetectButton({ onDetect, className }: Props) {
+  const t = useTranslations("compLocationLocationDetectButton")
   const { detect, loading, error, result } = useGeolocation()
 
   return (
@@ -27,7 +29,7 @@ export function LocationDetectButton({ onDetect, className }: Props) {
         ) : (
           <MapPin size={13} className="shrink-0" />
         )}
-        {loading ? "Detecting location…" : result ? "Location detected ✓" : "Use my location"}
+        {loading ? t("detecting") : result ? t("detected") : t("useMyLocation")}
       </button>
 
       {error && (

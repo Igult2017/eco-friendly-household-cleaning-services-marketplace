@@ -3,21 +3,23 @@
 import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { use } from "react"
+import { useTranslations } from "next-intl"
 import { AlertTriangle, Loader2 } from "lucide-react"
 
 const REASONS = [
-  { value: "service_not_performed", label: "Service was not performed" },
-  { value: "poor_quality", label: "Quality was unacceptable" },
-  { value: "no_show", label: "Provider did not show up" },
-  { value: "property_damage", label: "Property was damaged" },
-  { value: "wrong_price", label: "Wrong price charged" },
-  { value: "eco_non_compliance", label: "Eco requirements not followed" },
-  { value: "other", label: "Other" },
+  { value: "service_not_performed", labelKey: "reasonServiceNotPerformed" },
+  { value: "poor_quality", labelKey: "reasonPoorQuality" },
+  { value: "no_show", labelKey: "reasonNoShow" },
+  { value: "property_damage", labelKey: "reasonPropertyDamage" },
+  { value: "wrong_price", labelKey: "reasonWrongPrice" },
+  { value: "eco_non_compliance", labelKey: "reasonEcoNonCompliance" },
+  { value: "other", labelKey: "reasonOther" },
 ]
 
 export default function OpenDisputePage({ params }: { params: Promise<{ id: string }> }) {
   const { id: bookingId } = use(params)
   const router = useRouter()
+  const t = useTranslations("customerBookingsIdDisputePage")
   const [isPending, startTransition] = useTransition()
 
   const [reason, setReason] = useState("")
@@ -26,7 +28,7 @@ export default function OpenDisputePage({ params }: { params: Promise<{ id: stri
 
   const submit = () => {
     if (!reason || description.length < 20) {
-      setError("Please select a reason and describe the issue in at least 20 characters.")
+      setError(t("validationSelectReasonAndDescribe"))
       return
     }
     setError(null)
@@ -40,7 +42,7 @@ export default function OpenDisputePage({ params }: { params: Promise<{ id: stri
         router.push("/dashboard")
       } else {
         const d = await res.json()
-        setError(d.error ?? "Failed to open dispute.")
+        setError(d.error ?? t("errorFailedToOpenDispute"))
       }
     })
   }
@@ -52,18 +54,18 @@ export default function OpenDisputePage({ params }: { params: Promise<{ id: stri
           <AlertTriangle className="h-5 w-5 text-red-500" />
         </div>
         <div>
-          <h1 className="font-serif text-2xl font-bold text-[#2B3441]">Open a Dispute</h1>
-          <p className="text-sm text-[#6B7280]">We will review and resolve within 72 hours</p>
+          <h1 className="font-serif text-2xl font-bold text-[#2B3441]">{t("title")}</h1>
+          <p className="text-sm text-[#6B7280]">{t("subtitle")}</p>
         </div>
       </div>
 
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-8 text-sm text-amber-800">
-        <strong>Before you continue:</strong> disputes are a last resort. If possible, please message your provider first to resolve the issue directly.
+        <strong>{t("beforeYouContinueLabel")}</strong> {t("beforeYouContinueText")}
       </div>
 
       <div className="space-y-6">
         <div>
-          <label className="block text-sm font-semibold text-[#2B3441] mb-2">Reason for dispute</label>
+          <label className="block text-sm font-semibold text-[#2B3441] mb-2">{t("reasonLabel")}</label>
           <div className="space-y-2">
             {REASONS.map((r) => (
               <button
@@ -75,7 +77,7 @@ export default function OpenDisputePage({ params }: { params: Promise<{ id: stri
                     : "border-gray-200 text-[#6B7280] hover:border-gray-300 hover:text-[#2B3441]"
                 }`}
               >
-                {r.label}
+                {t(r.labelKey)}
               </button>
             ))}
           </div>
@@ -83,13 +85,13 @@ export default function OpenDisputePage({ params }: { params: Promise<{ id: stri
 
         <div>
           <label className="block text-sm font-semibold text-[#2B3441] mb-2">
-            Describe the issue <span className="text-[#6B7280] font-normal">(min. 20 characters)</span>
+            {t("describeIssueLabel")} <span className="text-[#6B7280] font-normal">{t("describeIssueHint")}</span>
           </label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={5}
-            placeholder="Please describe what happened in detail..."
+            placeholder={t("describeIssuePlaceholder")}
             className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F] resize-none"
           />
           <p className="text-xs text-[#6B7280] mt-1">{description.length} / 2000</p>
@@ -106,7 +108,7 @@ export default function OpenDisputePage({ params }: { params: Promise<{ id: stri
             onClick={() => router.back()}
             className="flex-1 rounded-xl border border-gray-200 py-3 text-sm font-medium text-[#6B7280] hover:bg-gray-50"
           >
-            Cancel
+            {t("cancel")}
           </button>
           <button
             onClick={submit}
@@ -114,7 +116,7 @@ export default function OpenDisputePage({ params }: { params: Promise<{ id: stri
             className="flex-1 rounded-xl bg-red-500 py-3 text-sm font-semibold text-white hover:bg-red-600 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
           >
             {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-            {isPending ? "Submitting…" : "Open Dispute"}
+            {isPending ? t("submitting") : t("openDispute")}
           </button>
         </div>
       </div>

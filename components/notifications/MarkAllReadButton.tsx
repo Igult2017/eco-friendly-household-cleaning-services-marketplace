@@ -2,9 +2,11 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 
 export function MarkAllReadButton() {
+  const t = useTranslations("compNotificationsMarkAllReadButton")
   const router = useRouter()
   const [loading, setLoading] = useState(false)
 
@@ -27,7 +29,7 @@ export function MarkAllReadButton() {
       disabled={loading}
       className="text-xs border-[#2D7A5F] text-[#2D7A5F] hover:bg-[#F4FAF6]"
     >
-      {loading ? "Marking…" : "Mark all as read"}
+      {loading ? t("marking") : t("markAllAsRead")}
     </Button>
   )
 }

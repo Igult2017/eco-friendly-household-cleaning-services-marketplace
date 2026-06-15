@@ -1,6 +1,7 @@
 "use client"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 
 interface Props {
   bookingId: string
@@ -9,6 +10,7 @@ interface Props {
 
 export function ProviderBookingActions({ bookingId, status }: Props) {
   const router = useRouter()
+  const t = useTranslations("compBookingProviderBookingActions")
   const [loading, setLoading] = useState(false)
 
   if (status === "in_progress") {
@@ -17,18 +19,18 @@ export function ProviderBookingActions({ bookingId, status }: Props) {
         href={`/provider/bookings/${bookingId}/complete`}
         className="rounded-lg bg-[#2D7A5F] px-4 py-2 text-sm font-semibold text-white inline-block"
       >
-        Mark Complete
+        {t("markComplete")}
       </a>
     )
   }
 
   const actionMap: Record<string, { label: string; endpoint: string }> = {
     payment_authorized: {
-      label: "Confirm Booking",
+      label: t("confirmBooking"),
       endpoint: `/api/bookings/${bookingId}/confirm`,
     },
     confirmed: {
-      label: "Start Cleaning",
+      label: t("startCleaning"),
       endpoint: `/api/bookings/${bookingId}/start`,
     },
   }
@@ -57,7 +59,7 @@ export function ProviderBookingActions({ bookingId, status }: Props) {
       disabled={loading}
       className="rounded-lg bg-[#2D7A5F] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
     >
-      {loading ? "Processing…" : action.label}
+      {loading ? t("processing") : action.label}
     </button>
   )
 }

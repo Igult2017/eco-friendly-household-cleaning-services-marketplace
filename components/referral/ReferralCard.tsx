@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useTranslations } from "next-intl"
 import { Copy, Check, Users, TrendingUp, Gift, Wallet } from "lucide-react"
 
 interface ReferralStats {
@@ -15,6 +16,7 @@ function fmt(cents: number) {
 }
 
 export function ReferralCard() {
+  const t = useTranslations("compReferralReferralCard")
   const [data, setData] = useState<ReferralStats | null>(null)
   const [copied, setCopied] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -43,8 +45,8 @@ export function ReferralCard() {
             <Gift size={16} className="text-white" />
           </div>
           <div>
-            <h3 className="font-semibold text-white leading-tight">Referral Programme</h3>
-            <p className="text-xs text-white/60">Earn 5% on every booking your referrals make</p>
+            <h3 className="font-semibold text-white leading-tight">{t("title")}</h3>
+            <p className="text-xs text-white/60">{t("subtitle")}</p>
           </div>
         </div>
 
@@ -59,21 +61,21 @@ export function ReferralCard() {
               className="flex-shrink-0 flex items-center gap-1.5 text-xs font-semibold text-white bg-[#2D7A5F] hover:bg-[#256349] rounded-lg px-3 py-1.5 transition-colors"
             >
               {copied ? <Check size={12} /> : <Copy size={12} />}
-              {copied ? "Copied!" : "Copy"}
+              {copied ? t("copied") : t("copy")}
             </button>
           </div>
         ) : (
-          <p className="text-xs text-white/50">Unable to load referral link.</p>
+          <p className="text-xs text-white/50">{t("loadError")}</p>
         )}
       </div>
 
       {/* Stats row */}
       <div className="grid grid-cols-4 divide-x divide-gray-100">
         {[
-          { icon: Users, label: "Referred", value: loading ? "—" : String(data?.stats?.total ?? 0) },
-          { icon: TrendingUp, label: "Active", value: loading ? "—" : String(data?.stats?.active ?? 0) },
-          { icon: Gift, label: "Total Earned", value: loading ? "—" : fmt(data?.stats?.totalEarnedCents ?? 0) },
-          { icon: Wallet, label: "Credit Balance", value: loading ? "—" : fmt(data?.credit?.balanceCents ?? 0) },
+          { icon: Users, label: t("statReferred"), value: loading ? "—" : String(data?.stats?.total ?? 0) },
+          { icon: TrendingUp, label: t("statActive"), value: loading ? "—" : String(data?.stats?.active ?? 0) },
+          { icon: Gift, label: t("statTotalEarned"), value: loading ? "—" : fmt(data?.stats?.totalEarnedCents ?? 0) },
+          { icon: Wallet, label: t("statCreditBalance"), value: loading ? "—" : fmt(data?.credit?.balanceCents ?? 0) },
         ].map(({ icon: Icon, label, value }) => (
           <div key={label} className="flex flex-col items-center py-4 px-2 gap-1">
             <Icon size={14} className="text-[#2D7A5F]" />
@@ -85,13 +87,13 @@ export function ReferralCard() {
 
       {/* How it works */}
       <div className="px-6 py-4 border-t border-gray-100 bg-[#FAFAFA]">
-        <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280] mb-3">How it works</p>
+        <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280] mb-3">{t("howItWorks")}</p>
         <ol className="space-y-2">
           {[
-            "Share your link — anyone who signs up via it is tagged as your referral",
-            "They complete their first booking — your referral becomes active",
-            "You earn 5% of every booking they make, forever, as platform credit",
-            "Use your credit balance as a discount on your next booking",
+            t("step1"),
+            t("step2"),
+            t("step3"),
+            t("step4"),
           ].map((step, i) => (
             <li key={i} className="flex items-start gap-2.5 text-xs text-[#6B7280]">
               <span className="w-4 h-4 rounded-full bg-[#D1F0E0] text-[#2D7A5F] font-bold text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">

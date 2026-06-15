@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -13,8 +14,15 @@ import { usePostalValidation } from "@/hooks/usePostalValidation"
 import type { GeoResult } from "@/lib/nominatim"
 
 const ECO_OPTIONS = ["Eco-certified products only", "No single-use plastics", "Fragrance-free", "Energy-saving methods"]
+const ECO_OPTION_KEYS: Record<string, string> = {
+  "Eco-certified products only": "ecoOptionCertified",
+  "No single-use plastics": "ecoOptionNoPlastics",
+  "Fragrance-free": "ecoOptionFragranceFree",
+  "Energy-saving methods": "ecoOptionEnergySaving",
+}
 
 export default function PostJobPage() {
+  const t = useTranslations("customerPostjobPage")
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -91,12 +99,12 @@ export default function PostJobPage() {
       const all = [...formErrs, ...fieldErrs].filter(Boolean)
       if (all.length) return all.join(" · ")
     }
-    return "Something went wrong. Please try again."
+    return t("errorGeneric")
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!form.serviceLatitude) { setError("Please fill in city and postal code so we can locate your address."); return }
+    if (!form.serviceLatitude) { setError(t("errorMissingLocation")); return }
     setLoading(true); setError(null)
     try {
       const res = await fetch("/api/jobs", {
@@ -115,7 +123,7 @@ export default function PostJobPage() {
       }
       setSuccess(true)
     } catch {
-      setError("Network error. Please check your connection and try again.")
+      setError(t("errorNetwork"))
     } finally { setLoading(false) }
   }
 
@@ -125,11 +133,11 @@ export default function PostJobPage() {
         <div className="w-16 h-16 bg-[#D1F0E0] rounded-full flex items-center justify-center mb-6">
           <CheckCircle2 size={40} className="text-[#2D7A5F]" />
         </div>
-        <h1 className="font-serif text-2xl font-bold text-[#2B3441] text-center mb-2">Job Posted!</h1>
-        <p className="text-[#6B7280] text-center mb-8 max-w-sm">Providers near you have been notified. Check your bids in My Jobs.</p>
+        <h1 className="font-serif text-2xl font-bold text-[#2B3441] text-center mb-2">{t("successTitle")}</h1>
+        <p className="text-[#6B7280] text-center mb-8 max-w-sm">{t("successDescription")}</p>
         <div className="flex gap-3">
-          <Button onClick={() => router.push("/jobs")} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white">View My Jobs</Button>
-          <Button variant="outline" onClick={() => { setSuccess(false); setForm({ title: "", description: "", budgetMin: "", budgetMax: "", desiredDate: "", serviceAddress: { line1: "", city: "", postalCode: "", country: "DE" }, serviceLatitude: 0, serviceLongitude: 0, radiusKm: 25, ecoRequirements: [] }) }} className="border-[#E5EBF0]">Post Another</Button>
+          <Button onClick={() => router.push("/jobs")} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white">{t("viewMyJobs")}</Button>
+          <Button variant="outline" onClick={() => { setSuccess(false); setForm({ title: "", description: "", budgetMin: "", budgetMax: "", desiredDate: "", serviceAddress: { line1: "", city: "", postalCode: "", country: "DE" }, serviceLatitude: 0, serviceLongitude: 0, radiusKm: 25, ecoRequirements: [] }) }} className="border-[#E5EBF0]">{t("postAnother")}</Button>
         </div>
       </div>
     )
@@ -138,54 +146,54 @@ export default function PostJobPage() {
   return (
     <div className="min-h-screen bg-[#F4FAF6] py-10 px-4">
       <div className="max-w-2xl mx-auto">
-        <h1 className="font-serif text-2xl font-bold text-[#2B3441] mb-2">Post a Cleaning Job</h1>
-        <p className="text-[#6B7280] mb-8">Describe what you need — providers will bid on your job</p>
+        <h1 className="font-serif text-2xl font-bold text-[#2B3441] mb-2">{t("pageTitle")}</h1>
+        <p className="text-[#6B7280] mb-8">{t("pageSubtitle")}</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="bg-white rounded-2xl border border-[#E5EBF0] p-5 space-y-4">
             <div>
-              <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">Job title *</Label>
-              <Input value={form.title} onChange={(e) => set("title", e.target.value)} placeholder="e.g. Deep clean 3-bedroom apartment" required minLength={5} />
+              <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("jobTitleLabel")}</Label>
+              <Input value={form.title} onChange={(e) => set("title", e.target.value)} placeholder={t("jobTitlePlaceholder")} required minLength={5} />
             </div>
             <div>
-              <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">Description *</Label>
-              <Textarea value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="What do you need cleaned? Any special requirements? Access instructions?" rows={4} required minLength={20} className="resize-none" />
+              <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("descriptionLabel")}</Label>
+              <Textarea value={form.description} onChange={(e) => set("description", e.target.value)} placeholder={t("descriptionPlaceholder")} rows={4} required minLength={20} className="resize-none" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">Budget min (€)</Label>
+                <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("budgetMinLabel")}</Label>
                 <Input type="number" value={form.budgetMin} onChange={(e) => set("budgetMin", e.target.value)} placeholder="50" min={1} />
               </div>
               <div>
-                <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">Budget max (€)</Label>
+                <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("budgetMaxLabel")}</Label>
                 <Input type="number" value={form.budgetMax} onChange={(e) => set("budgetMax", e.target.value)} placeholder="150" min={1} />
               </div>
             </div>
             <div>
-              <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">Desired date</Label>
+              <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("desiredDateLabel")}</Label>
               <Input type="date" value={form.desiredDate} onChange={(e) => set("desiredDate", e.target.value)} min={new Date().toISOString().split("T")[0]} />
             </div>
           </div>
 
           <div className="bg-white rounded-2xl border border-[#E5EBF0] p-5 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="font-semibold text-[#2B3441]">Service location</h2>
+              <h2 className="font-semibold text-[#2B3441]">{t("serviceLocationTitle")}</h2>
               <LocationDetectButton onDetect={handleDetect} />
             </div>
             <div>
-              <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">Street address</Label>
+              <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">{t("streetAddressLabel")}</Label>
               <Input value={form.serviceAddress.line1} onChange={(e) => setForm((p) => ({ ...p, serviceAddress: { ...p.serviceAddress, line1: e.target.value } }))} placeholder="Hauptstraße 42" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">City *</Label>
+                <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">{t("cityLabel")}</Label>
                 <Input value={form.serviceAddress.city}
                   onChange={(e) => setForm((p) => ({ ...p, serviceAddress: { ...p.serviceAddress, city: e.target.value } }))}
                   placeholder="Berlin" required
                   onBlur={() => { geocodeAddress(); validatePostal() }} />
               </div>
               <div>
-                <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">Postal code *</Label>
+                <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">{t("postalCodeLabel")}</Label>
                 <Input value={form.serviceAddress.postalCode}
                   onChange={(e) => setForm((p) => ({ ...p, serviceAddress: { ...p.serviceAddress, postalCode: e.target.value } }))}
                   placeholder="10115" required
@@ -199,23 +207,23 @@ export default function PostJobPage() {
                 {postal.canonicalCity && (
                   <button type="button" onClick={() => { setForm((p) => ({ ...p, serviceAddress: { ...p.serviceAddress, city: postal.canonicalCity! } })); postal.clear(); setLocationValid(true) }}
                     className="shrink-0 font-semibold underline hover:text-amber-900 transition-colors">
-                    Use {postal.canonicalCity}
+                    {t("useCanonicalCity", { city: postal.canonicalCity })}
                   </button>
                 )}
               </div>
             )}
             <div className="flex items-center gap-2 text-xs text-[#6B7280]">
               <MapPin size={13} className={form.serviceLatitude ? "text-[#2D7A5F]" : "text-[#9CA3AF]"} />
-              {geocoding ? "Locating..." : form.serviceLatitude ? `Located: ${form.serviceLatitude.toFixed(4)}, ${form.serviceLongitude.toFixed(4)}` : "Fill in city and postal code to auto-locate"}
+              {geocoding ? t("locating") : form.serviceLatitude ? t("located", { lat: form.serviceLatitude.toFixed(4), lng: form.serviceLongitude.toFixed(4) }) : t("locationHint")}
             </div>
             <div>
-              <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">Provider search radius: {form.radiusKm} km</Label>
+              <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">{t("radiusLabel", { km: form.radiusKm })}</Label>
               <input type="range" min={5} max={100} value={form.radiusKm} onChange={(e) => set("radiusKm", parseInt(e.target.value))} className="w-full accent-[#2D7A5F]" />
             </div>
           </div>
 
           <div className="bg-white rounded-2xl border border-[#E5EBF0] p-5">
-            <h2 className="font-semibold text-[#2B3441] mb-3">Eco requirements</h2>
+            <h2 className="font-semibold text-[#2B3441] mb-3">{t("ecoRequirementsTitle")}</h2>
             <div className="space-y-2">
               {ECO_OPTIONS.map((opt) => (
                 <label key={opt} className={cn("flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all", form.ecoRequirements.includes(opt) ? "border-[#2D7A5F] bg-[#F4FAF6]" : "border-[#E5EBF0] hover:border-[#4CB87A]")}>
@@ -223,7 +231,7 @@ export default function PostJobPage() {
                     {form.ecoRequirements.includes(opt) && "✓"}
                   </div>
                   <input type="checkbox" className="hidden" checked={form.ecoRequirements.includes(opt)} onChange={() => toggleEco(opt)} />
-                  <span className="text-sm text-[#2B3441]">{opt}</span>
+                  <span className="text-sm text-[#2B3441]">{t(ECO_OPTION_KEYS[opt])}</span>
                 </label>
               ))}
             </div>
@@ -232,7 +240,7 @@ export default function PostJobPage() {
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
           <Button type="submit" disabled={loading || !locationValid} className="w-full h-12 bg-[#2D7A5F] hover:bg-[#235f49] text-white font-semibold">
-            {loading ? <><Loader2 size={16} className="animate-spin mr-2" /> Posting...</> : "Post Job & Get Bids"}
+            {loading ? <><Loader2 size={16} className="animate-spin mr-2" /> {t("posting")}</> : t("submitButton")}
           </Button>
         </form>
       </div>

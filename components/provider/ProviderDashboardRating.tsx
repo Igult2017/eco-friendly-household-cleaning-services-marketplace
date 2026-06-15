@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Star } from "lucide-react"
+import { getTranslations } from "next-intl/server"
 import { cn } from "@/lib/utils"
 
 type Review = {
@@ -35,13 +36,13 @@ function avg(vals: (number | null)[]): number | null {
 }
 
 const CATEGORIES = [
-  { key: "cleanlinessRating",    label: "Cleanliness" },
-  { key: "punctualityRating",    label: "Punctuality" },
-  { key: "ecoComplianceRating",  label: "Eco compliance" },
-  { key: "communicationRating",  label: "Communication" },
+  { key: "cleanlinessRating",    labelKey: "categoryCleanliness" },
+  { key: "punctualityRating",    labelKey: "categoryPunctuality" },
+  { key: "ecoComplianceRating",  labelKey: "categoryEcoCompliance" },
+  { key: "communicationRating",  labelKey: "categoryCommunication" },
 ] as const
 
-export function ProviderDashboardRating({
+export async function ProviderDashboardRating({
   overallRating,
   totalReviews,
   reviews,
@@ -50,8 +51,10 @@ export function ProviderDashboardRating({
   totalReviews: number
   reviews: Review[]
 }) {
+  const t = await getTranslations("compProviderProviderDashboardRating")
+
   const catAvgs = CATEGORIES.map((c) => ({
-    label: c.label,
+    label: t(c.labelKey),
     value: avg(reviews.map((r) => r[c.key])),
   }))
 
@@ -59,16 +62,16 @@ export function ProviderDashboardRating({
     <div className="bg-white rounded-2xl border border-[#E5EBF0] overflow-hidden">
       <div className="px-5 py-4 border-b border-[#F0F4F8] flex items-center justify-between">
         <h2 className="font-semibold text-[#2B3441] flex items-center gap-2">
-          <Star size={16} className="text-amber-400 fill-amber-400" /> Your Rating
+          <Star size={16} className="text-amber-400 fill-amber-400" /> {t("title")}
         </h2>
-        <Link href="/reviews" className="text-xs text-[#2D7A5F] hover:underline">All reviews →</Link>
+        <Link href="/reviews" className="text-xs text-[#2D7A5F] hover:underline">{t("allReviewsLink")}</Link>
       </div>
 
       {totalReviews === 0 ? (
         <div className="px-5 py-8 text-center">
           <Star size={36} className="mx-auto text-gray-200 fill-gray-200 mb-3" />
-          <p className="font-semibold text-[#2B3441] mb-1">No reviews yet</p>
-          <p className="text-sm text-[#6B7280]">Your ratings from completed jobs will appear here.</p>
+          <p className="font-semibold text-[#2B3441] mb-1">{t("emptyTitle")}</p>
+          <p className="text-sm text-[#6B7280]">{t("emptyDescription")}</p>
         </div>
       ) : (
         <>
@@ -79,7 +82,7 @@ export function ProviderDashboardRating({
             </p>
             <div>
               <Stars rating={overallRating ?? 0} size={18} />
-              <p className="text-xs text-[#9CA3AF] mt-1">{totalReviews} review{totalReviews !== 1 ? "s" : ""}</p>
+              <p className="text-xs text-[#9CA3AF] mt-1">{t("reviewCount", { count: totalReviews })}</p>
             </div>
           </div>
 
@@ -102,7 +105,7 @@ export function ProviderDashboardRating({
           {/* Recent reviews */}
           <div className="divide-y divide-[#F0F4F8]">
             {reviews.slice(0, 3).map((r) => {
-              const name = [r.customer?.firstName, r.customer?.lastName].filter(Boolean).join(" ") || "Client"
+              const name = [r.customer?.firstName, r.customer?.lastName].filter(Boolean).join(" ") || t("fallbackClientName")
               return (
                 <div key={r.id} className="px-5 py-4">
                   <div className="flex items-center justify-between mb-1">

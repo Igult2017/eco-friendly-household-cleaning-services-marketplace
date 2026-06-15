@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { MessageSquare, Send } from "lucide-react"
@@ -19,6 +20,7 @@ function formatDate(d: string) {
 }
 
 export function BlogComments({ slug, isSignedIn }: { slug: string; isSignedIn: boolean }) {
+  const t = useTranslations("compBlogBlogComments")
   const router = useRouter()
   const [comments, setComments] = useState<Comment[]>([])
   const [body, setBody] = useState("")
@@ -49,14 +51,14 @@ export function BlogComments({ slug, isSignedIn }: { slug: string; isSignedIn: b
       setComments(data.comments ?? [])
     } else {
       const d = await res.json()
-      setError(d.error ?? "Failed to post comment")
+      setError(d.error ?? t("errorFailedToPost"))
     }
   }
 
   return (
     <section className="mt-12 border-t border-[#E5EBF0] pt-10">
       <h2 className="font-serif text-2xl font-bold text-[#2B3441] mb-6 flex items-center gap-2">
-        <MessageSquare size={22} className="text-[#2D7A5F]" /> Comments ({comments.length})
+        <MessageSquare size={22} className="text-[#2D7A5F]" /> {t("heading", { count: comments.length })}
       </h2>
 
       {isSignedIn ? (
@@ -64,25 +66,31 @@ export function BlogComments({ slug, isSignedIn }: { slug: string; isSignedIn: b
           <Textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
-            placeholder="Share your thoughts…"
+            placeholder={t("placeholder")}
             rows={3}
             className="mb-3 border-[#E5EBF0] focus:border-[#2D7A5F] resize-none"
             maxLength={1000}
           />
           {error && <p className="text-red-600 text-sm mb-2">{error}</p>}
           <Button type="submit" disabled={submitting || !body.trim()} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white gap-2">
-            <Send size={14} /> {submitting ? "Posting…" : "Post comment"}
+            <Send size={14} /> {submitting ? t("posting") : t("postComment")}
           </Button>
         </form>
       ) : (
         <p className="text-sm text-[#6B7280] mb-8 bg-[#F4FAF6] border border-[#E5EBF0] rounded-xl p-4">
-          <a href="/sign-in" className="text-[#2D7A5F] font-medium hover:underline">Sign in</a> to leave a comment.
+          {t.rich("signInPrompt", {
+            link: (chunks) => (
+              <a href="/sign-in" className="text-[#2D7A5F] font-medium hover:underline">
+                {chunks}
+              </a>
+            ),
+          })}
         </p>
       )}
 
       <div className="space-y-6">
         {comments.map((c) => {
-          const name = [c.user?.firstName, c.user?.lastName].filter(Boolean).join(" ") || "Reader"
+          const name = [c.user?.firstName, c.user?.lastName].filter(Boolean).join(" ") || t("anonymousReader")
           return (
             <div key={c.id} className="flex gap-3">
               {c.user?.avatarUrl ? (
@@ -103,7 +111,7 @@ export function BlogComments({ slug, isSignedIn }: { slug: string; isSignedIn: b
           )
         })}
         {comments.length === 0 && (
-          <p className="text-sm text-[#9CA3AF] text-center py-6">No comments yet — be the first!</p>
+          <p className="text-sm text-[#9CA3AF] text-center py-6">{t("emptyState")}</p>
         )}
       </div>
     </section>

@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowLeftRight, Leaf, Home, AlertTriangle, Loader2 } from "lucide-react"
 import { toast } from "sonner"
+import { useTranslations } from "next-intl"
 
 interface Props {
   currentRole: "customer" | "provider"
@@ -12,30 +13,25 @@ interface Props {
 
 const ROLE_META = {
   provider: {
-    label: "Cleaner Account",
     icon: Leaf,
     color: "text-[#2D7A5F]",
     bg: "bg-[#EDF5F0]",
     accentBg: "bg-[#EDF5F0]",
     accentBorder: "border-[#2D7A5F]/20",
     accentIcon: "text-[#2D7A5F]",
-    toastTitle: "Switched to Cleaner Account",
-    toastDesc: "You are now browsing as a cleaner. Find and bid on nearby jobs.",
   },
   customer: {
-    label: "Provider Account",
     icon: Home,
     color: "text-[#2B3441]",
     bg: "bg-[#F4FAF6]",
     accentBg: "bg-[#FFF9F0]",
     accentBorder: "border-amber-200",
     accentIcon: "text-amber-500",
-    toastTitle: "Switched to Provider Account",
-    toastDesc: "You are now browsing as a provider. Post jobs and manage bookings.",
   },
 }
 
 export function RoleSwitcher({ currentRole, targetRole }: Props) {
+  const t = useTranslations("compLayoutRoleSwitcher")
   const router = useRouter()
   const [showModal, setShowModal] = useState(false)
   const [switching, setSwitching] = useState(false)
@@ -45,6 +41,15 @@ export function RoleSwitcher({ currentRole, targetRole }: Props) {
   const target  = ROLE_META[targetRole]
   const CurrentIcon = current.icon
   const TargetIcon  = target.icon
+
+  const roleLabel = (role: "customer" | "provider") =>
+    role === "provider" ? t("cleanerAccount") : t("providerAccount")
+  const currentLabel = roleLabel(currentRole)
+  const targetLabel  = roleLabel(targetRole)
+  const targetToastTitle =
+    targetRole === "provider" ? t("toastTitleCleaner") : t("toastTitleProvider")
+  const targetToastDesc =
+    targetRole === "provider" ? t("toastDescCleaner") : t("toastDescProvider")
 
   async function handleSwitch() {
     setSwitching(true)
@@ -57,7 +62,7 @@ export function RoleSwitcher({ currentRole, targetRole }: Props) {
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
-        setError((data as { error?: string }).error ?? "Switch failed")
+        setError((data as { error?: string }).error ?? t("switchFailed"))
         setSwitching(false)
         return
       }
@@ -65,8 +70,8 @@ export function RoleSwitcher({ currentRole, targetRole }: Props) {
       // Show the toast NOW — while still on this page — so the Toaster
       // is guaranteed to be in the DOM and the notification is visible.
       // After a short pause we navigate, giving the toast time to render.
-      toast.success(target.toastTitle, {
-        description: target.toastDesc,
+      toast.success(targetToastTitle, {
+        description: targetToastDesc,
         icon: <TargetIcon size={16} className={target.color} />,
         duration: 5000,
       })
@@ -75,7 +80,7 @@ export function RoleSwitcher({ currentRole, targetRole }: Props) {
       await new Promise(r => setTimeout(r, 400))
       router.push((data as { redirectTo?: string }).redirectTo ?? "/")
     } catch {
-      setError("Network error. Try again.")
+      setError(t("networkError"))
       setSwitching(false)
     }
   }
@@ -90,7 +95,7 @@ export function RoleSwitcher({ currentRole, targetRole }: Props) {
           ${current.bg} ${current.color} border-current/20 hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed`}
       >
         <CurrentIcon size={12} />
-        {current.label}
+        {currentLabel}
         <ArrowLeftRight size={10} className="opacity-60" />
       </button>
 
@@ -110,8 +115,8 @@ export function RoleSwitcher({ currentRole, targetRole }: Props) {
                   </div>
                 </div>
                 <div className="text-center">
-                  <p className="font-semibold text-[#2B3441] text-base">Switching account…</p>
-                  <p className="text-xs text-[#6B7280] mt-1">Taking you to your {target.label}</p>
+                  <p className="font-semibold text-[#2B3441] text-base">{t("switchingAccount")}</p>
+                  <p className="text-xs text-[#6B7280] mt-1">{t("takingYouTo", { role: targetLabel })}</p>
                 </div>
               </div>
             ) : (
@@ -122,8 +127,8 @@ export function RoleSwitcher({ currentRole, targetRole }: Props) {
                     <ArrowLeftRight size={18} className="text-amber-500" />
                   </div>
                   <div>
-                    <h2 className="font-semibold text-[#2B3441] text-base">Switch to {target.label}</h2>
-                    <p className="text-xs text-[#6B7280]">You are currently in {current.label}</p>
+                    <h2 className="font-semibold text-[#2B3441] text-base">{t("switchTo", { role: targetLabel })}</h2>
+                    <p className="text-xs text-[#6B7280]">{t("currentlyIn", { role: currentLabel })}</p>
                   </div>
                 </div>
 
@@ -131,12 +136,12 @@ export function RoleSwitcher({ currentRole, targetRole }: Props) {
                 <div className="flex items-center gap-2 rounded-xl bg-[#F8FAF9] border border-[#E5EDE9] px-4 py-3">
                   <div className="flex items-center gap-1.5">
                     <CurrentIcon size={14} className={current.color} />
-                    <span className="text-xs font-medium text-[#2B3441]">{current.label}</span>
+                    <span className="text-xs font-medium text-[#2B3441]">{currentLabel}</span>
                   </div>
                   <ArrowLeftRight size={12} className="text-[#6B7280] mx-1 flex-shrink-0" />
                   <div className="flex items-center gap-1.5">
                     <TargetIcon size={14} className={target.color} />
-                    <span className="text-xs font-semibold text-[#2B3441]">{target.label}</span>
+                    <span className="text-xs font-semibold text-[#2B3441]">{targetLabel}</span>
                   </div>
                 </div>
 
@@ -145,8 +150,8 @@ export function RoleSwitcher({ currentRole, targetRole }: Props) {
                   <AlertTriangle size={14} className={`${target.accentIcon} mt-0.5 shrink-0`} />
                   <p className="text-xs text-[#2B3441] leading-relaxed">
                     {targetRole === "provider"
-                      ? "You will see the Cleaner dashboard. Jobs you posted as a Provider will be hidden to prevent bidding on your own work."
-                      : "You will see the Provider dashboard. You cannot bid on jobs you previously posted as a Provider."}
+                      ? t("warningCleaner")
+                      : t("warningProvider")}
                   </p>
                 </div>
 
@@ -157,14 +162,14 @@ export function RoleSwitcher({ currentRole, targetRole }: Props) {
                     onClick={() => { setShowModal(false); setError(null) }}
                     className="flex-1 h-10 rounded-xl border border-[#E5EDE9] text-sm font-medium text-[#6B7280] hover:bg-[#F4FAF6] transition-colors"
                   >
-                    Cancel
+                    {t("cancel")}
                   </button>
                   <button
                     onClick={handleSwitch}
                     className="flex-1 h-10 rounded-xl bg-[#2D7A5F] hover:bg-[#235f49] text-white text-sm font-medium flex items-center justify-center gap-1.5 transition-colors"
                   >
                     <TargetIcon size={13} />
-                    Switch now
+                    {t("switchNow")}
                   </button>
                 </div>
               </div>

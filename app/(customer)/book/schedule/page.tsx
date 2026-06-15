@@ -8,13 +8,14 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Loader2, Clock } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useTranslations } from "next-intl"
 
 const DURATION_OPTIONS = [
-  { value: 60, label: "1 hour" },
-  { value: 120, label: "2 hours" },
-  { value: 180, label: "3 hours" },
-  { value: 240, label: "4 hours" },
-  { value: 360, label: "6 hours" },
+  { value: 60, hours: 1 },
+  { value: 120, hours: 2 },
+  { value: 180, hours: 3 },
+  { value: 240, hours: 4 },
+  { value: 360, hours: 6 },
 ]
 
 const TIME_SLOTS = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"]
@@ -31,6 +32,7 @@ function getNext14Days(): string[] {
 }
 
 export default function BookStep3Page() {
+  const t = useTranslations("customerBookSchedulePage")
   const router = useRouter()
   const { selectedProviderId, setSchedule, scheduledAt, durationMinutes } = useBookingStore()
 
@@ -87,12 +89,12 @@ export default function BookStep3Page() {
 
       <div className="max-w-2xl mx-auto">
         <h1 className="font-serif text-3xl font-bold text-[#2B3441] text-center mb-2">
-          When works for you?
+          {t("heading")}
         </h1>
-        <p className="text-center text-[#6B7280] mb-8">Pick a date and time that suits your schedule</p>
+        <p className="text-center text-[#6B7280] mb-8">{t("subheading")}</p>
 
         <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-4">
-          <Label className="text-sm font-semibold text-[#2B3441] mb-3 block">Select a date</Label>
+          <Label className="text-sm font-semibold text-[#2B3441] mb-3 block">{t("selectDateLabel")}</Label>
           <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
             {days.map((d) => {
               const date = new Date(d)
@@ -122,11 +124,11 @@ export default function BookStep3Page() {
         {selectedDate && (
           <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-4">
             <Label className="text-sm font-semibold text-[#2B3441] mb-3 flex items-center gap-2">
-              <Clock size={15} /> Select a time
+              <Clock size={15} /> {t("selectTimeLabel")}
               {loadingAvail && <Loader2 size={14} className="animate-spin text-[#2D7A5F]" />}
             </Label>
             {!availability?.available && !loadingAvail ? (
-              <p className="text-sm text-[#9CA3AF] py-2">This provider isn't available on this date. Please choose another.</p>
+              <p className="text-sm text-[#9CA3AF] py-2">{t("notAvailable")}</p>
             ) : (
               <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
                 {(loadingAvail ? TIME_SLOTS : availableSlots).map((t) => (
@@ -151,7 +153,7 @@ export default function BookStep3Page() {
         )}
 
         <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-6">
-          <Label className="text-sm font-semibold text-[#2B3441] mb-3 block">How long do you need?</Label>
+          <Label className="text-sm font-semibold text-[#2B3441] mb-3 block">{t("durationLabel")}</Label>
           <div className="flex flex-wrap gap-2">
             {DURATION_OPTIONS.map((opt) => (
               <button
@@ -164,7 +166,7 @@ export default function BookStep3Page() {
                     : "border-[#E5EBF0] hover:border-[#4CB87A] text-[#2B3441]"
                 )}
               >
-                {opt.label}
+                {t("durationOption", { hours: opt.hours })}
               </button>
             ))}
           </div>
@@ -172,14 +174,14 @@ export default function BookStep3Page() {
 
         <div className="flex gap-3">
           <Button variant="outline" onClick={() => router.push("/book/providers")} className="flex-1 h-11 border-[#E5EBF0]">
-            ← Back
+            {t("back")}
           </Button>
           <Button
             onClick={handleNext}
             disabled={!selectedDate || !selectedTime || availability?.available === false}
             className="flex-1 h-11 bg-[#2D7A5F] hover:bg-[#235f49] text-white"
           >
-            Continue — Add Details →
+            {t("continue")}
           </Button>
         </div>
       </div>

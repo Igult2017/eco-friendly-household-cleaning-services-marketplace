@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Briefcase, Plus } from "lucide-react"
+import { getTranslations } from "next-intl/server"
 import { cn } from "@/lib/utils"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
 
@@ -22,23 +23,24 @@ type Job = {
   category: { name: string } | null
 }
 
-export function DashboardJobs({ jobs }: { jobs: Job[] }) {
+export async function DashboardJobs({ jobs }: { jobs: Job[] }) {
+  const t = await getTranslations("compCustomerDashboardJobs")
   return (
     <div className="overflow-hidden rounded-2xl border border-[#E5EBF0] bg-white shadow-sm">
       <div className="flex items-center justify-between border-b border-[#F4FAF6] px-5 py-4">
         <h2 className="flex items-center gap-2 font-semibold text-[#2B3441]">
-          <Briefcase size={16} className="text-[#2D7A5F]" /> Job Posts
+          <Briefcase size={16} className="text-[#2D7A5F]" /> {t("jobPosts")}
         </h2>
         <Link href="/jobs" className="text-xs font-medium text-[#2D7A5F] hover:underline">
-          View all →
+          {t("viewAll")}
         </Link>
       </div>
 
       {jobs.length === 0 ? (
         <div className="py-12 text-center">
-          <p className="text-sm text-[#9CA3AF] mb-3">No jobs posted yet</p>
+          <p className="text-sm text-[#9CA3AF] mb-3">{t("noJobsYet")}</p>
           <Link href="/post-job" className="text-xs font-semibold text-[#2D7A5F] hover:underline">
-            Post a job and let cleaners bid →
+            {t("postJobCta")}
           </Link>
         </div>
       ) : (
@@ -56,11 +58,11 @@ export function DashboardJobs({ jobs }: { jobs: Job[] }) {
                   <p className="truncate text-sm font-medium text-[#2B3441]">{j.title}</p>
                   <div className="mt-0.5 flex items-center gap-2">
                     <span className="text-xs text-[#9CA3AF]">
-                      {totalBids} bid{totalBids !== 1 ? "s" : ""}
+                      {t("bidCount", { count: totalBids })}
                     </span>
                     {pendingBids > 0 && (
                       <span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-xs font-semibold text-amber-700">
-                        {pendingBids} new
+                        {t("newBids", { count: pendingBids })}
                       </span>
                     )}
                   </div>
@@ -72,7 +74,7 @@ export function DashboardJobs({ jobs }: { jobs: Job[] }) {
                     </p>
                   )}
                   <span className={cn("mt-0.5 inline-block rounded-full px-2 py-0.5 text-xs font-semibold capitalize", STATUS_COLOR[j.status] ?? "bg-gray-100 text-gray-500")}>
-                    {j.status}
+                    {t(`status_${j.status}`)}
                   </span>
                 </div>
               </Link>
@@ -83,7 +85,7 @@ export function DashboardJobs({ jobs }: { jobs: Job[] }) {
 
       <div className="border-t border-[#F4FAF6] px-5 py-3">
         <Link href="/post-job" className="flex items-center gap-1 text-xs font-medium text-[#2D7A5F] hover:underline">
-          <Plus size={11} /> Post a new job
+          <Plus size={11} /> {t("postNewJob")}
         </Link>
       </div>
     </div>

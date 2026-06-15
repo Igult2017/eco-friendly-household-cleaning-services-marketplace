@@ -3,6 +3,7 @@
 import { WizardProgress } from "@/components/booking/WizardProgress"
 import { StripePaymentForm } from "@/components/booking/StripePaymentForm"
 import { useBookingStore } from "@/stores/bookingStore"
+import { useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { loadStripe } from "@stripe/stripe-js"
@@ -14,18 +15,19 @@ import { Input } from "@/components/ui/input"
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
-const CATEGORY_SERVICE_MAP: Record<string, string> = {
-  "regular-cleaning": "Regular Cleaning",
-  "deep-cleaning": "Deep Cleaning",
-  "move-in-out": "Move-In / Move-Out",
-  "office-cleaning": "Office Cleaning",
-  "laundry": "Laundry Service",
-  "window-cleaning": "Window Cleaning",
+const CATEGORY_SERVICE_KEYS: Record<string, string> = {
+  "regular-cleaning": "categoryRegularCleaning",
+  "deep-cleaning": "categoryDeepCleaning",
+  "move-in-out": "categoryMoveInOut",
+  "office-cleaning": "categoryOfficeCleaning",
+  "laundry": "categoryLaundry",
+  "window-cleaning": "categoryWindowCleaning",
 }
 
 const CARBON_OFFSET_CENTS = 200
 
 export default function BookStep5Page() {
+  const t = useTranslations("customerBookConfirmPage")
   const router = useRouter()
   const store = useBookingStore()
 
@@ -73,7 +75,7 @@ export default function BookStep5Page() {
       const svcRes = await fetch(`/api/providers/${store.selectedProviderId}/services${store.categoryId ? `?categorySlug=${store.categoryId}` : ""}`)
       const svcData = await svcRes.json()
       const service = svcData.services?.[0]
-      if (!service) { setError("Service not found. Please contact support."); return }
+      if (!service) { setError(t("errorServiceNotFoundSupport")); return }
 
       const res = await fetch("/api/bookings", {
         method: "POST",
@@ -93,10 +95,10 @@ export default function BookStep5Page() {
         }),
       })
       const data = await res.json()
-      if (!res.ok) { setError(data.error ?? "Booking failed. Please contact support."); return }
+      if (!res.ok) { setError(data.error ?? t("errorBookingFailedSupport")); return }
       setSuccess({ bookingId: data.bookingId, bookingNumber: data.bookingNumber })
     } catch {
-      setError("Failed to complete booking. Please contact support.")
+      setError(t("errorCompleteBookingSupport"))
     } finally {
       setLoading(false)
     }
@@ -110,7 +112,7 @@ export default function BookStep5Page() {
       const svcRes = await fetch(`/api/providers/${store.selectedProviderId}/services${store.categoryId ? `?categorySlug=${store.categoryId}` : ""}`)
       const svcData = await svcRes.json()
       const service = svcData.services?.[0]
-      if (!service) { setError("This provider doesn't offer that service."); return }
+      if (!service) { setError(t("errorProviderNoService")); return }
       setServiceId(service.id)
       // Bug 5: bid-flow bookings use the accepted bid amount, not the service list price
       const subtotalCents: number = store.bidAmountCents ?? service.basePrice
@@ -118,7 +120,7 @@ export default function BookStep5Page() {
       const totalCharged = subtotalCents + platformFee
       setAmounts({ subtotalCents, platformFee, totalCharged })
     } catch {
-      setError("Failed to load pricing. Please try again.")
+      setError(t("errorLoadPricing"))
     } finally {
       setLoading(false)
     }
@@ -140,12 +142,12 @@ export default function BookStep5Page() {
         body: JSON.stringify({ code: promoCode.trim(), subtotalCents: amounts?.subtotalCents ?? 0 }),
       })
       const data = await res.json()
-      if (!res.ok) { setPromoError(data.error ?? "Invalid promo code"); return }
+      if (!res.ok) { setPromoError(data.error ?? t("errorInvalidPromo")); return }
       setPromoCodeId(data.promoCodeId)
       setPromoDiscountCents(data.discountCents)
       setPromoLabel(data.label ?? promoCode.trim().toUpperCase())
     } catch {
-      setPromoError("Failed to apply promo code. Please try again.")
+      setPromoError(t("errorApplyPromo"))
     } finally {
       setPromoLoading(false)
     }
@@ -166,7 +168,7 @@ export default function BookStep5Page() {
       const svcRes = await fetch(`/api/providers/${store.selectedProviderId}/services${store.categoryId ? `?categorySlug=${store.categoryId}` : ""}`)
       const svcData = await svcRes.json()
       const service = svcData.services?.[0]
-      if (!service) { setError("Service not found."); return }
+      if (!service) { setError(t("errorServiceNotFound")); return }
 
       const res = await fetch("/api/payments/intent", {
         method: "POST",
@@ -183,14 +185,14 @@ export default function BookStep5Page() {
         }),
       })
       const data = await res.json()
-      if (!res.ok) { setError(data.error ?? "Failed to prepare payment"); return }
+      if (!res.ok) { setError(data.error ?? t("errorPreparePayment")); return }
       setClientSecret(data.clientSecret)
       setIntentId(data.paymentIntentId)
       setAmounts(data.amounts)
       store.setCarbonOffset(addCarbonOffset ? CARBON_OFFSET_CENTS : 0)
       setStep("payment")
     } catch {
-      setError("Something went wrong. Please try again.")
+      setError(t("errorGeneric"))
     } finally {
       setLoading(false)
     }
@@ -213,13 +215,13 @@ export default function BookStep5Page() {
         <div className="w-16 h-16 bg-[#D1F0E0] rounded-full flex items-center justify-center mb-6">
           <CheckCircle2 size={40} className="text-[#2D7A5F]" />
         </div>
-        <h1 className="font-serif text-3xl font-bold text-[#2B3441] text-center mb-2">Booking Confirmed!</h1>
-        <p className="text-[#6B7280] text-center mb-2">Booking number: <strong className="text-[#2B3441]">{success.bookingNumber}</strong></p>
+        <h1 className="font-serif text-3xl font-bold text-[#2B3441] text-center mb-2">{t("bookingConfirmedTitle")}</h1>
+        <p className="text-[#6B7280] text-center mb-2">{t("bookingNumberLabel")} <strong className="text-[#2B3441]">{success.bookingNumber}</strong></p>
         <p className="text-sm text-[#6B7280] text-center mb-8 max-w-sm">
-          A confirmation has been sent to your email. Your card has been pre-authorised — you will only be charged once the cleaning is marked complete.
+          {t("confirmationEmailNote")}
         </p>
         <Button onClick={() => { store.reset(); router.push("/dashboard") }} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white px-8 h-11">
-          Go to My Bookings
+          {t("goToMyBookings")}
         </Button>
       </div>
     )
@@ -230,25 +232,25 @@ export default function BookStep5Page() {
       <WizardProgress current={5} />
 
       <div className="max-w-lg mx-auto">
-        <h1 className="font-serif text-3xl font-bold text-[#2B3441] text-center mb-2">Review & Pay</h1>
-        <p className="text-center text-[#6B7280] mb-8">Review your booking details and complete payment</p>
+        <h1 className="font-serif text-3xl font-bold text-[#2B3441] text-center mb-2">{t("reviewAndPayTitle")}</h1>
+        <p className="text-center text-[#6B7280] mb-8">{t("reviewAndPaySubtitle")}</p>
 
         {/* Order summary — always visible */}
         <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-4">
-          <h2 className="font-semibold text-[#2B3441] mb-4">Order Summary</h2>
+          <h2 className="font-semibold text-[#2B3441] mb-4">{t("orderSummary")}</h2>
           {loading && !amounts ? (
             <div className="flex items-center justify-center py-6 gap-3">
               <Loader2 size={18} className="animate-spin text-[#2D7A5F]" />
-              <span className="text-sm text-[#6B7280]">Loading pricing…</span>
+              <span className="text-sm text-[#6B7280]">{t("loadingPricing")}</span>
             </div>
           ) : amounts ? (
             <div className="space-y-2 text-sm">
               <div className="flex justify-between text-[#6B7280]">
-                <span>{CATEGORY_SERVICE_MAP[store.categoryId ?? ""] ?? "Cleaning Service"}</span>
+                <span>{CATEGORY_SERVICE_KEYS[store.categoryId ?? ""] ? t(CATEGORY_SERVICE_KEYS[store.categoryId ?? ""]) : t("defaultCleaningService")}</span>
                 <span>{formatCurrency(amounts.subtotalCents)}</span>
               </div>
               <div className="flex justify-between text-[#6B7280]">
-                <span>Service fee (15%)</span>
+                <span>{t("serviceFee")}</span>
                 <span>{formatCurrency(amounts.platformFee)}</span>
               </div>
 
@@ -261,11 +263,11 @@ export default function BookStep5Page() {
                       <div className="flex items-center gap-2">
                         <Tag size={13} className="text-[#2D7A5F]" />
                         <span className="text-[#2B3441] font-medium">{promoLabel}</span>
-                        <span className="text-xs text-[#2D7A5F]">applied</span>
+                        <span className="text-xs text-[#2D7A5F]">{t("promoApplied")}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-[#2D7A5F] font-semibold">-{formatCurrency(promoDiscountCents)}</span>
-                        <button onClick={removePromoCode} className="text-[#9CA3AF] hover:text-[#6B7280]" aria-label="Remove promo code">
+                        <button onClick={removePromoCode} className="text-[#9CA3AF] hover:text-[#6B7280]" aria-label={t("removePromoAria")}>
                           <X size={14} />
                         </button>
                       </div>
@@ -273,7 +275,7 @@ export default function BookStep5Page() {
                   ) : (
                     <div className="flex gap-2">
                       <Input
-                        placeholder="Promo code"
+                        placeholder={t("promoPlaceholder")}
                         value={promoCode}
                         onChange={(e) => { setPromoCode(e.target.value); setPromoError(null) }}
                         onKeyDown={(e) => e.key === "Enter" && applyPromoCode()}
@@ -286,7 +288,7 @@ export default function BookStep5Page() {
                         disabled={promoLoading || !promoCode.trim()}
                         className="h-9 px-4 border-[#2D7A5F] text-[#2D7A5F] hover:bg-[#F4FAF6] shrink-0"
                       >
-                        {promoLoading ? <Loader2 size={14} className="animate-spin" /> : "Apply"}
+                        {promoLoading ? <Loader2 size={14} className="animate-spin" /> : t("apply")}
                       </Button>
                     </div>
                   )}
@@ -308,9 +310,9 @@ export default function BookStep5Page() {
                   <div>
                     <div className="flex items-center gap-1.5">
                       <Leaf size={13} className="text-[#2D7A5F]" />
-                      <span className="text-[#2B3441] font-medium">Carbon offset</span>
+                      <span className="text-[#2B3441] font-medium">{t("carbonOffset")}</span>
                     </div>
-                    <p className="text-xs text-[#9CA3AF]">Plant trees to neutralise this service</p>
+                    <p className="text-xs text-[#9CA3AF]">{t("carbonOffsetDescription")}</p>
                   </div>
                 </div>
                 <span className="text-[#6B7280] font-medium">{addCarbonOffset ? formatCurrency(CARBON_OFFSET_CENTS) : "—"}</span>
@@ -318,10 +320,10 @@ export default function BookStep5Page() {
 
               <div className="border-t border-[#E5EBF0] my-2" />
               <div className="flex justify-between font-bold text-[#2B3441] text-base">
-                <span>Total charged today</span>
+                <span>{t("totalChargedToday")}</span>
                 <span className="text-[#2D7A5F]">{formatCurrency(totalWithOffset ?? amounts.totalCharged)}</span>
               </div>
-              <p className="text-xs text-[#9CA3AF]">Pre-authorisation only. Charged after completion.</p>
+              <p className="text-xs text-[#9CA3AF]">{t("preAuthNote")}</p>
             </div>
           ) : null}
         </div>
@@ -338,7 +340,7 @@ export default function BookStep5Page() {
               disabled={loading}
               className="w-full h-12 bg-[#2D7A5F] hover:bg-[#235f49] text-white font-semibold text-base"
             >
-              {loading ? <><Loader2 size={18} className="animate-spin mr-2" />Preparing payment…</> : "Continue to Payment"}
+              {loading ? <><Loader2 size={18} className="animate-spin mr-2" />{t("preparingPayment")}</> : t("continueToPayment")}
             </Button>
           </div>
         )}
@@ -368,7 +370,7 @@ export default function BookStep5Page() {
             ) : (
               <div className="flex items-center justify-center py-8 gap-3">
                 <Loader2 size={20} className="animate-spin text-[#2D7A5F]" />
-                <span className="text-[#6B7280]">Preparing payment…</span>
+                <span className="text-[#6B7280]">{t("preparingPayment")}</span>
               </div>
             )}
           </div>
@@ -376,7 +378,7 @@ export default function BookStep5Page() {
 
         {step === "summary" && !loading && (
           <Button variant="ghost" onClick={() => router.push("/book/extras")} className="w-full text-[#6B7280]">
-            ← Back to details
+            {t("backToDetails")}
           </Button>
         )}
       </div>

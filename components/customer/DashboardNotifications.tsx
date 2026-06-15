@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Bell } from "lucide-react"
+import { getTranslations } from "next-intl/server"
 
 const TYPE_ICON: Record<string, string> = {
   booking_confirmed:        "📅",
@@ -35,7 +36,8 @@ type Notif = {
   link: string | null
 }
 
-export function DashboardNotifications({ notifications }: { notifications: Notif[] }) {
+export async function DashboardNotifications({ notifications }: { notifications: Notif[] }) {
+  const t = await getTranslations("compCustomerDashboardNotifications")
   const unread = notifications.filter(n => !n.isRead).length
 
   return (
@@ -43,7 +45,7 @@ export function DashboardNotifications({ notifications }: { notifications: Notif
       <div className="flex items-center justify-between border-b border-[#F4FAF6] px-5 py-4">
         <h2 className="flex items-center gap-2 font-semibold text-[#2B3441]">
           <Bell size={16} className="text-[#2D7A5F]" />
-          Notifications
+          {t("title")}
           {unread > 0 && (
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
               {unread > 9 ? "9+" : unread}
@@ -51,12 +53,12 @@ export function DashboardNotifications({ notifications }: { notifications: Notif
           )}
         </h2>
         <Link href="/notifications" className="text-xs font-medium text-[#2D7A5F] hover:underline">
-          View all →
+          {t("viewAll")}
         </Link>
       </div>
 
       {notifications.length === 0 ? (
-        <div className="py-12 text-center text-sm text-[#9CA3AF]">No notifications yet</div>
+        <div className="py-12 text-center text-sm text-[#9CA3AF]">{t("empty")}</div>
       ) : (
         <div className="divide-y divide-gray-50">
           {notifications.slice(0, 5).map(n => {
@@ -84,7 +86,7 @@ export function DashboardNotifications({ notifications }: { notifications: Notif
 
       <div className="border-t border-[#F4FAF6] px-5 py-3">
         <Link href="/notifications" className="text-xs font-medium text-[#6B7280] hover:text-[#2D7A5F] hover:underline transition-colors">
-          See all notifications →
+          {t("seeAll")}
         </Link>
       </div>
     </div>

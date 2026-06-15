@@ -1,6 +1,7 @@
 "use client"
 
 import { Star, MapPin, Leaf } from "lucide-react"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { formatCurrencyShort, priceUnitSuffix } from "@/lib/utils/formatCurrency"
@@ -21,6 +22,7 @@ interface Props {
 }
 
 export function ProviderCard({ provider, onSelect, selected }: Props) {
+  const t = useTranslations("compBookingProviderCard")
   const distKm = (provider.distanceMeters / 1000).toFixed(1)
   const ecoLabel = provider.ecoLevel.replace("_", " ").replace(/\b\w/g, (c) => c.toUpperCase())
 
@@ -63,13 +65,13 @@ export function ProviderCard({ provider, onSelect, selected }: Props) {
                 )}
                 <span className="flex items-center gap-1 text-xs text-[#6B7280]">
                   <MapPin size={11} />
-                  {distKm} km away
+                  {t("distanceAway", { distance: distKm })}
                 </span>
               </div>
             </div>
             {provider.serviceBasePrice != null && (
               <p className="flex-shrink-0 text-right leading-none">
-                <span className="block text-[10px] font-medium text-[#9CA3AF]">From</span>
+                <span className="block text-[10px] font-medium text-[#9CA3AF]">{t("from")}</span>
                 <span className="text-lg font-bold text-[#2D7A5F]">{formatCurrencyShort(provider.serviceBasePrice)}</span>
                 <span className="text-[11px] font-medium text-[#6B7280]">{priceUnitSuffix[provider.priceUnit ?? "per_job"] ?? ""}</span>
               </p>
@@ -85,7 +87,7 @@ export function ProviderCard({ provider, onSelect, selected }: Props) {
               <Leaf size={11} className="mr-1" />
               {ecoLabel}
             </Badge>
-            <span className="text-xs text-[#9CA3AF]">{provider.totalJobsCompleted} jobs done</span>
+            <span className="text-xs text-[#9CA3AF]">{t("jobsDone", { count: provider.totalJobsCompleted })}</span>
           </div>
         </div>
       </div>
@@ -98,7 +100,7 @@ export function ProviderCard({ provider, onSelect, selected }: Props) {
         }`}
         onClick={(e) => { e.stopPropagation(); onSelect(provider.id) }}
       >
-        {selected ? "✓ Selected" : "Select Provider"}
+        {selected ? t("selected") : t("selectProvider")}
       </Button>
     </div>
   )

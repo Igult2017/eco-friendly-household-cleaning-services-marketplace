@@ -1,6 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Clock, Tag } from "lucide-react"
+import { getTranslations } from "next-intl/server"
 
 type Post = {
   slug: string
@@ -18,8 +19,9 @@ function formatDate(d: Date | string | null) {
   return new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
 }
 
-export function BlogPostCard({ post }: { post: Post }) {
-  const authorName = [post.author?.firstName, post.author?.lastName].filter(Boolean).join(" ") || "DORIXÉ Team"
+export async function BlogPostCard({ post }: { post: Post }) {
+  const t = await getTranslations("compBlogBlogPostCard")
+  const authorName = [post.author?.firstName, post.author?.lastName].filter(Boolean).join(" ") || t("authorFallback")
   return (
     <Link href={`/blog/${post.slug}`} className="group block bg-white rounded-2xl border border-[#E5EBF0] overflow-hidden hover:shadow-md transition-shadow">
       {post.coverImageUrl ? (
@@ -51,7 +53,7 @@ export function BlogPostCard({ post }: { post: Post }) {
         <div className="flex items-center justify-between text-xs text-[#9CA3AF]">
           <span>{authorName} · {formatDate(post.publishedAt)}</span>
           {post.readTimeMinutes && (
-            <span className="flex items-center gap-1"><Clock size={11} /> {post.readTimeMinutes} min</span>
+            <span className="flex items-center gap-1"><Clock size={11} /> {t("readTime", { minutes: post.readTimeMinutes })}</span>
           )}
         </div>
       </div>

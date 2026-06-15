@@ -8,15 +8,17 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
+import { useTranslations } from "next-intl"
 
 const ECO_EXTRAS = [
-  { id: "eco_products", label: "🌿 Eco-certified products only", desc: "Biodegradable, plant-based cleaning agents" },
-  { id: "no_plastic", label: "♻️ No single-use plastics", desc: "Reusable cloths and containers" },
-  { id: "energy_saving", label: "⚡ Energy-saving methods", desc: "Cold water wash, minimal appliance use" },
-  { id: "fragrance_free", label: "🌸 Fragrance-free", desc: "Unscented products for sensitive households" },
-]
+  { id: "eco_products", labelKey: "ecoProductsLabel", descKey: "ecoProductsDesc" },
+  { id: "no_plastic", labelKey: "noPlasticLabel", descKey: "noPlasticDesc" },
+  { id: "energy_saving", labelKey: "energySavingLabel", descKey: "energySavingDesc" },
+  { id: "fragrance_free", labelKey: "fragranceFreeLabel", descKey: "fragranceFreeDesc" },
+] as const
 
 export default function BookStep4Page() {
+  const t = useTranslations("customerBookExtrasPage")
   const router = useRouter()
   const { selectedProviderId, scheduledAt, setExtras, specialInstructions, ecoOptions } = useBookingStore()
 
@@ -42,26 +44,26 @@ export default function BookStep4Page() {
 
       <div className="max-w-2xl mx-auto">
         <h1 className="font-serif text-3xl font-bold text-[#2B3441] text-center mb-2">
-          Any special requests?
+          {t("heading")}
         </h1>
-        <p className="text-center text-[#6B7280] mb-8">Help your cleaner prepare for the perfect visit</p>
+        <p className="text-center text-[#6B7280] mb-8">{t("subheading")}</p>
 
         <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-4">
-          <Label className="text-sm font-semibold text-[#2B3441] mb-2 block">Special instructions</Label>
+          <Label className="text-sm font-semibold text-[#2B3441] mb-2 block">{t("specialInstructionsLabel")}</Label>
           <Textarea
             value={instructions}
             onChange={(e) => setInstructions(e.target.value)}
-            placeholder="e.g. Please focus on the kitchen and bathrooms. The dog is friendly but may bark. Key is under the mat."
+            placeholder={t("specialInstructionsPlaceholder")}
             rows={4}
             maxLength={1000}
             className="resize-none"
           />
-          <p className="text-xs text-[#9CA3AF] mt-1">{instructions.length} / 1000</p>
+          <p className="text-xs text-[#9CA3AF] mt-1">{t("charCount", { count: instructions.length })}</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-6">
-          <Label className="text-sm font-semibold text-[#2B3441] mb-1 block">Eco preferences</Label>
-          <p className="text-xs text-[#6B7280] mb-4">Select any preferences for your cleaning session</p>
+          <Label className="text-sm font-semibold text-[#2B3441] mb-1 block">{t("ecoPreferencesLabel")}</Label>
+          <p className="text-xs text-[#6B7280] mb-4">{t("ecoPreferencesHint")}</p>
           <div className="space-y-2">
             {ECO_EXTRAS.map((opt) => (
               <button
@@ -78,8 +80,8 @@ export default function BookStep4Page() {
                   {selected.includes(opt.id) && "✓"}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-[#2B3441]">{opt.label}</p>
-                  <p className="text-xs text-[#6B7280]">{opt.desc}</p>
+                  <p className="text-sm font-medium text-[#2B3441]">{t(opt.labelKey)}</p>
+                  <p className="text-xs text-[#6B7280]">{t(opt.descKey)}</p>
                 </div>
               </button>
             ))}
@@ -88,10 +90,10 @@ export default function BookStep4Page() {
 
         <div className="flex gap-3">
           <Button variant="outline" onClick={() => router.push("/book/schedule")} className="flex-1 h-11 border-[#E5EBF0]">
-            ← Back
+            {t("backButton")}
           </Button>
           <Button onClick={handleNext} className="flex-1 h-11 bg-[#2D7A5F] hover:bg-[#235f49] text-white">
-            Continue — Review & Pay →
+            {t("continueButton")}
           </Button>
         </div>
       </div>
