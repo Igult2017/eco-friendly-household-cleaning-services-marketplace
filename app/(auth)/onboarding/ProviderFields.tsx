@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useTranslations } from "next-intl"
 import { AlertTriangle } from "lucide-react"
 import { LocationDetectButton } from "@/components/location/LocationDetectButton"
 import { usePostalValidation } from "@/hooks/usePostalValidation"
@@ -32,14 +33,17 @@ const EU_COUNTRIES: [string, string][] = [
   ["CH", "Switzerland"], ["PT", "Portugal"], ["IE", "Ireland"],
 ]
 
-const ECO_LEVELS: [string, string][] = [
-  ["basic", "Basic — eco-aware products"],
-  ["certified", "Certified — verified green products"],
-  ["premium", "Premium — zero-toxin only"],
-  ["zero_impact", "Zero Impact — carbon-neutral operations"],
-]
+const ECO_LEVEL_KEYS = ["basic", "certified", "premium", "zero_impact"] as const
+
+const ECO_LEVEL_LABEL_KEYS: Record<string, string> = {
+  basic: "ecoLevelBasic",
+  certified: "ecoLevelCertified",
+  premium: "ecoLevelPremium",
+  zero_impact: "ecoLevelZeroImpact",
+}
 
 export function ProviderFields({ values, onChange, onValidChange }: Props) {
+  const t = useTranslations("authOnboardingProviderFields")
   const postal = usePostalValidation()
 
   function handleDetect(result: GeoResult) {
@@ -57,35 +61,35 @@ export function ProviderFields({ values, onChange, onValidChange }: Props) {
 
   return (
     <div className="space-y-4 border-t border-[#E5EDE9] pt-5">
-      <p className="text-xs font-semibold text-[#2D7A5F] uppercase tracking-wide">Business info</p>
+      <p className="text-xs font-semibold text-[#2D7A5F] uppercase tracking-wide">{t("businessInfo")}</p>
 
       <div>
-        <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">Business / trading name *</Label>
-        <Input value={values.businessName} onChange={e => onChange("businessName", e.target.value)} placeholder="e.g. GreenSpark Cleaning" />
+        <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">{t("businessNameLabel")}</Label>
+        <Input value={values.businessName} onChange={e => onChange("businessName", e.target.value)} placeholder={t("businessNamePlaceholder")} />
       </div>
 
       <div>
-        <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">About you *</Label>
+        <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">{t("aboutYouLabel")}</Label>
         <Textarea value={values.bio} onChange={e => onChange("bio", e.target.value)}
-          placeholder="Describe your experience and eco approach (min 20 characters)..." rows={3} />
+          placeholder={t("bioPlaceholder")} rows={3} />
       </div>
 
       <div>
         <div className="flex items-center justify-between mb-2">
-          <p className="text-xs font-semibold text-[#2B3441] uppercase tracking-wide">Location</p>
+          <p className="text-xs font-semibold text-[#2B3441] uppercase tracking-wide">{t("location")}</p>
           <LocationDetectButton onDetect={handleDetect} />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">City *</Label>
+            <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">{t("cityLabel")}</Label>
             <Input value={values.city} onChange={e => onChange("city", e.target.value)}
-              onBlur={validatePostal} placeholder="Amsterdam" />
+              onBlur={validatePostal} placeholder={t("cityPlaceholder")} />
           </div>
           <div>
-            <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">Postal code *</Label>
+            <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">{t("postalCodeLabel")}</Label>
             <Input value={values.postalCode} onChange={e => onChange("postalCode", e.target.value)}
-              onBlur={validatePostal} placeholder="1012 AB" />
+              onBlur={validatePostal} placeholder={t("postalCodePlaceholder")} />
           </div>
         </div>
 
@@ -96,7 +100,7 @@ export function ProviderFields({ values, onChange, onValidChange }: Props) {
             {postal.canonicalCity && (
               <button type="button" onClick={() => { onChange("city", postal.canonicalCity!); postal.clear(); onValidChange?.(true) }}
                 className="shrink-0 font-semibold underline hover:text-amber-900 transition-colors">
-                Use {postal.canonicalCity}
+                {t("useCanonicalCity", { city: postal.canonicalCity })}
               </button>
             )}
           </div>

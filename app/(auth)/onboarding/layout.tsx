@@ -10,7 +10,7 @@ export default async function OnboardingLayout({ children }: { children: React.R
       <header className="relative flex items-center justify-center py-6 border-b border-[#E5EDE9] bg-white px-4">
         <Link href="/" className="absolute left-4 flex items-center gap-1.5 text-sm font-medium text-[#6B7280] hover:text-[#2D7A5F] transition-colors">
           <ArrowLeft className="w-4 h-4" />
-          Back
+          {t("back")}
         </Link>
         <Link href="/">
           <Image src="/logo.png" alt="DORIXÉ" width={110} height={40} priority />

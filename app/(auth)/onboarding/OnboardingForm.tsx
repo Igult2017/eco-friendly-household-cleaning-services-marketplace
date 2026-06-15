@@ -12,8 +12,8 @@ import { ProviderFields } from "./ProviderFields"
 type Role = "customer" | "provider"
 
 const ROLE_CARDS = [
-  { value: "customer" as Role, icon: Home, title: "I need cleaning", desc: "Book eco-friendly professionals for your home or office." },
-  { value: "provider" as Role, icon: Briefcase, title: "I am a cleaner", desc: "List your eco-certified services and earn on DORIXÉ." },
+  { value: "customer" as Role, icon: Home, titleKey: "customerCardTitle", descKey: "customerCardDesc" },
+  { value: "provider" as Role, icon: Briefcase, titleKey: "providerCardTitle", descKey: "providerCardDesc" },
 ]
 
 interface Props {
@@ -22,6 +22,7 @@ interface Props {
 }
 
 export function OnboardingForm({ defaultFirstName = "", defaultLastName = "" }: Props) {
+  const t = useTranslations("authOnboardingOnboardingForm")
   const [role, setRole] = useState<Role | null>(null)
   const [firstName, setFirstName] = useState(defaultFirstName)
   const [lastName, setLastName] = useState(defaultLastName)
@@ -65,12 +66,12 @@ export function OnboardingForm({ defaultFirstName = "", defaultLastName = "" }: 
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
-        setError((data as { error?: string }).error ?? "Something went wrong. Please try again.")
+        setError((data as { error?: string }).error ?? t("genericError"))
         return
       }
       window.location.href = (data as { redirect?: string }).redirect ?? "/dashboard"
     } catch {
-      setError("Network error. Please check your connection and try again.")
+      setError(t("networkError"))
     } finally {
       setLoading(false)
     }
@@ -79,12 +80,12 @@ export function OnboardingForm({ defaultFirstName = "", defaultLastName = "" }: 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="text-center mb-2">
-        <h1 className="text-2xl font-serif font-bold text-[#2B3441] mb-1">Complete your profile</h1>
-        <p className="text-[#6B7280] text-sm">Tell us who you are to get started on DORIXÉ.</p>
+        <h1 className="text-2xl font-serif font-bold text-[#2B3441] mb-1">{t("heading")}</h1>
+        <p className="text-[#6B7280] text-sm">{t("subheading")}</p>
       </div>
 
       <div className="space-y-3">
-        {ROLE_CARDS.map(({ value, icon: Icon, title, desc }) => (
+        {ROLE_CARDS.map(({ value, icon: Icon, titleKey, descKey }) => (
           <button type="button" key={value} onClick={() => setRole(value)}
             className={cn(
               "w-full flex items-start gap-4 p-4 rounded-2xl border-2 text-left transition-all",
@@ -95,8 +96,8 @@ export function OnboardingForm({ defaultFirstName = "", defaultLastName = "" }: 
               <Icon className={cn("w-5 h-5", role === value ? "text-white" : "text-[#2D7A5F]")} />
             </div>
             <div>
-              <p className="font-semibold text-[#2B3441] mb-0.5">{title}</p>
-              <p className="text-sm text-[#6B7280] leading-snug">{desc}</p>
+              <p className="font-semibold text-[#2B3441] mb-0.5">{t(titleKey)}</p>
+              <p className="text-sm text-[#6B7280] leading-snug">{t(descKey)}</p>
             </div>
             {role === value && (
               <div className="ml-auto flex-shrink-0 w-5 h-5 rounded-full bg-[#2D7A5F] flex items-center justify-center">
@@ -110,18 +111,18 @@ export function OnboardingForm({ defaultFirstName = "", defaultLastName = "" }: 
       <div className="bg-white rounded-2xl border border-[#E5EDE9] shadow-sm p-5 space-y-4">
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">First name *</Label>
-            <Input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Jan" required />
+            <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">{t("firstNameLabel")}</Label>
+            <Input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder={t("firstNamePlaceholder")} required />
           </div>
           <div>
-            <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">Last name *</Label>
-            <Input value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Müller" required />
+            <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">{t("lastNameLabel")}</Label>
+            <Input value={lastName} onChange={e => setLastName(e.target.value)} placeholder={t("lastNamePlaceholder")} required />
           </div>
         </div>
 
         <div>
           <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">
-            Phone <span className="text-[#6B7280] font-normal">(optional)</span>
+            {t("phoneLabel")} <span className="text-[#6B7280] font-normal">{t("phoneOptional")}</span>
           </Label>
           <Input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+31 6 12345678" />
         </div>
@@ -132,11 +133,14 @@ export function OnboardingForm({ defaultFirstName = "", defaultLastName = "" }: 
           <input type="checkbox" checked={gdpr} onChange={e => setGdpr(e.target.checked)}
             className="mt-0.5 rounded accent-[#2D7A5F]" />
           <span className="text-xs text-[#6B7280] leading-relaxed">
-            I agree to DORIXÉ&apos;s{" "}
-            <a href="/legal/terms" target="_blank" className="text-[#2D7A5F] underline">Terms of Service</a>
-            {" "}and{" "}
-            <a href="/legal/privacy" target="_blank" className="text-[#2D7A5F] underline">Privacy Policy</a>.
-            I consent to processing of my personal data under GDPR.
+            {t.rich("gdprConsent", {
+              terms: (chunks) => (
+                <a href="/legal/terms" target="_blank" className="text-[#2D7A5F] underline">{chunks}</a>
+              ),
+              privacy: (chunks) => (
+                <a href="/legal/privacy" target="_blank" className="text-[#2D7A5F] underline">{chunks}</a>
+              ),
+            })}
           </span>
         </label>
       </div>
@@ -150,7 +154,7 @@ export function OnboardingForm({ defaultFirstName = "", defaultLastName = "" }: 
 
       <Button type="submit" disabled={!isValid || loading}
         className="w-full bg-[#2D7A5F] hover:bg-[#235f49] text-white h-12 text-base">
-        {loading ? "Setting up your account..." : role === "provider" ? "Join as cleaner →" : "Start booking →"}
+        {loading ? t("submitLoading") : role === "provider" ? t("submitProvider") : t("submitCustomer")}
       </Button>
     </form>
   )
