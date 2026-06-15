@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowLeftRight, Leaf, Home, AlertTriangle, Loader2 } from "lucide-react"
+import { toast } from "sonner"
 import { useTranslations } from "next-intl"
 
 interface Props {
@@ -66,9 +67,16 @@ export function RoleSwitcher({ currentRole, targetRole }: Props) {
         return
       }
 
-      // Stash the toast so it fires on the DESTINATION page — firing it here
-      // races the route-group navigation and the notification is usually lost.
-      // RoleSwitchToast (mounted in the root layout) replays it after we land.
+      // Belt-and-suspenders so the notification ALWAYS shows:
+      // 1) fire it now (works when the toast survives the transition), and
+      // 2) stash it so RoleSwitchToast replays it on the destination page.
+      // Both use the same toast id, so sonner shows exactly one — never two.
+      toast.success(targetToastTitle, {
+        id: "role-switch",
+        description: targetToastDesc,
+        icon: <TargetIcon size={16} className={target.color} />,
+        duration: 5000,
+      })
       sessionStorage.setItem(
         "dorix_switch_toast",
         JSON.stringify({ title: targetToastTitle, description: targetToastDesc, role: targetRole }),

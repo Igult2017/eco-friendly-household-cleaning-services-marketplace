@@ -25,6 +25,7 @@ export function RoleSwitchToast() {
       }
       const Icon = role === "provider" ? Leaf : Home
       toast.success(title, {
+        id: "role-switch", // same id as the immediate toast → sonner shows one, not two
         description,
         icon: <Icon size={16} className="text-[#2D7A5F]" />,
         duration: 5000,
