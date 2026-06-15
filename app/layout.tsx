@@ -7,6 +7,7 @@ import { QueryProvider } from "@/components/providers/QueryProvider"
 import { Toaster } from "@/components/ui/sonner"
 import { CookieBanner } from "@/components/gdpr/CookieBanner"
 import { LocaleDetector } from "@/components/i18n/LocaleDetector"
+import { RoleSwitchToast } from "@/components/layout/RoleSwitchToast"
 import { cn } from "@/lib/utils"
 import "./globals.css"
 
@@ -58,6 +59,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <Toaster richColors position="top-right" />
           <CookieBanner />
           <LocaleDetector />
+          <RoleSwitchToast />
         </NextIntlClientProvider>
       </body>
     </html>
