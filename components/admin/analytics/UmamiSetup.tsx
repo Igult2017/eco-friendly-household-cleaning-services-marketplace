@@ -13,14 +13,15 @@ export function UmamiSetup() {
         <li><span className="font-semibold text-[#2B3441]">1.</span> Start the stack — Umami runs at <code className="bg-gray-100 px-1 rounded text-xs">http://&lt;VPS-IP&gt;:3001</code></li>
         <li><span className="font-semibold text-[#2B3441]">2.</span> Log in with <code className="bg-gray-100 px-1 rounded text-xs">admin / umami</code> (change immediately)</li>
         <li><span className="font-semibold text-[#2B3441]">3.</span> Add website → copy the Website ID</li>
-        <li><span className="font-semibold text-[#2B3441]">4.</span> Settings → API Keys → create a key</li>
+        <li><span className="font-semibold text-[#2B3441]">4.</span> Note your admin login (self-hosted Umami authenticates with username + password — no API keys)</li>
         <li>
-          <span className="font-semibold text-[#2B3441]">5.</span> Add to <code className="bg-gray-100 px-1 rounded text-xs">.env.local</code>:
+          <span className="font-semibold text-[#2B3441]">5.</span> Add to your environment:
           <pre className="mt-1 bg-gray-50 rounded p-2 text-xs overflow-x-auto">
-{`UMAMI_API_KEY=your-key
+{`UMAMI_USERNAME=admin
+UMAMI_PASSWORD=your-password
 UMAMI_WEBSITE_ID=your-website-id
 UMAMI_INTERNAL_URL=http://umami:3000
-NEXT_PUBLIC_UMAMI_URL=http://<VPS-IP>:3001`}
+NEXT_PUBLIC_UMAMI_WEBSITE_ID=your-website-id`}
           </pre>
         </li>
       </ol>

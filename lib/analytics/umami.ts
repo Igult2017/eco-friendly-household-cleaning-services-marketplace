@@ -1,6 +1,32 @@
-const BASE = process.env.UMAMI_INTERNAL_URL ?? "http://umami:3000"
-const API_KEY = process.env.UMAMI_API_KEY ?? ""
+const BASE = (process.env.UMAMI_INTERNAL_URL ?? "http://umami:3000").replace(/\/$/, "")
+// Self-hosted Umami authenticates via POST /api/auth/login (username + password)
+// → JWT, sent as `Authorization: Bearer`. (API keys are a Umami Cloud-only feature.)
+const USERNAME = process.env.UMAMI_USERNAME ?? ""
+const PASSWORD = process.env.UMAMI_PASSWORD ?? ""
 export const WEBSITE_ID = process.env.UMAMI_WEBSITE_ID ?? ""
+
+// Cache the JWT in module scope to avoid logging in on every request.
+let cachedToken: { token: string; expires: number } | null = null
+
+async function getToken(forceRefresh = false): Promise<string | null> {
+  if (!USERNAME || !PASSWORD) return null
+  if (!forceRefresh && cachedToken && cachedToken.expires > Date.now()) return cachedToken.token
+  try {
+    const res = await fetch(`${BASE}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: USERNAME, password: PASSWORD }),
+      cache: "no-store",
+    })
+    if (!res.ok) return null
+    const data = (await res.json()) as { token?: string }
+    if (!data.token) return null
+    cachedToken = { token: data.token, expires: Date.now() + 60 * 60 * 1000 } // 1h
+    return data.token
+  } catch {
+    return null
+  }
+}
 
 export type UmamiMetric = { x: string; y: number }
 export type UmamiStats = {
@@ -16,12 +42,23 @@ export type UmamiPageviews = {
 }
 
 async function umamiGet<T>(path: string): Promise<T | null> {
-  if (!API_KEY || !WEBSITE_ID) return null
+  if (!WEBSITE_ID) return null
+  let token = await getToken()
+  if (!token) return null
   try {
-    const res = await fetch(`${BASE}/api${path}`, {
-      headers: { "x-umami-api-key": API_KEY },
+    let res = await fetch(`${BASE}/api${path}`, {
+      headers: { Authorization: `Bearer ${token}` },
       next: { revalidate: 300 },
     })
+    // Token expired/invalid → log in again once and retry.
+    if (res.status === 401 || res.status === 403) {
+      token = await getToken(true)
+      if (!token) return null
+      res = await fetch(`${BASE}/api${path}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        next: { revalidate: 300 },
+      })
+    }
     if (!res.ok) return null
     return res.json() as Promise<T>
   } catch {
@@ -31,20 +68,45 @@ async function umamiGet<T>(path: string): Promise<T | null> {
 
 const DAYS = 30
 
+// Umami's /stats shape varies by version: older returns { pageviews: {value,prev} },
+// newer returns flat { pageviews: 8, ..., comparison: { pageviews: 0 } }. Normalize
+// both into the { value, prev } shape the dashboard renders.
+function normalizeStats(raw: Record<string, unknown> | null): UmamiStats | null {
+  if (!raw) return null
+  const cmp = (raw.comparison ?? {}) as Record<string, unknown>
+  const metric = (key: string) => {
+    const cur = raw[key]
+    if (cur && typeof cur === "object") {
+      const o = cur as { value?: number; prev?: number }
+      return { value: o.value ?? 0, prev: o.prev ?? 0 }
+    }
+    const prevRaw = cmp[key]
+    const prev = prevRaw && typeof prevRaw === "object" ? ((prevRaw as { value?: number }).value ?? 0) : Number(prevRaw ?? 0)
+    return { value: Number(cur ?? 0), prev }
+  }
+  return {
+    pageviews: metric("pageviews"),
+    visitors: metric("visitors"),
+    visits: metric("visits"),
+    bounces: metric("bounces"),
+    totaltime: metric("totaltime"),
+  }
+}
+
 export async function getAnalytics() {
   const end = Date.now()
   const start = end - DAYS * 24 * 60 * 60 * 1000
   const qs = `startAt=${start}&endAt=${end}`
-  const [stats, countries, referrers, pages, pageviews] = await Promise.all([
-    umamiGet<UmamiStats>(`/websites/${WEBSITE_ID}/stats?${qs}`),
+  const [statsRaw, countries, referrers, pages, pageviews] = await Promise.all([
+    umamiGet<Record<string, unknown>>(`/websites/${WEBSITE_ID}/stats?${qs}`),
     umamiGet<UmamiMetric[]>(`/websites/${WEBSITE_ID}/metrics?type=country&${qs}&limit=20`),
     umamiGet<UmamiMetric[]>(`/websites/${WEBSITE_ID}/metrics?type=referrer&${qs}&limit=100`),
     umamiGet<UmamiMetric[]>(`/websites/${WEBSITE_ID}/metrics?type=url&${qs}&limit=20`),
     umamiGet<UmamiPageviews>(`/websites/${WEBSITE_ID}/pageviews?${qs}&unit=day&timezone=Europe%2FBerlin`),
   ])
   return {
-    configured: !!(API_KEY && WEBSITE_ID),
-    stats,
+    configured: !!(USERNAME && PASSWORD && WEBSITE_ID),
+    stats: normalizeStats(statsRaw),
     countries,
     referrers,
     pages,
