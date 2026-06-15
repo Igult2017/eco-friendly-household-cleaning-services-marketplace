@@ -20,6 +20,7 @@ const isPublicRoute = createRouteMatcher([
   "/api/geo/(.*)",
   "/api/jobs/public(.*)",
   "/api/blog/(.*)",
+  "/_a/(.*)", // Umami analytics proxy (script + event collection) — must be public
 ])
 
 const isCustomerOnlyRoute = createRouteMatcher([
