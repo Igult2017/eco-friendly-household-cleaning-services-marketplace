@@ -1,9 +1,17 @@
 import { inngest } from "../client"
 import { db } from "@/lib/db"
 import { payments, payouts, bookings, providers, users } from "@/lib/db/schema"
-import { stripe } from "@/lib/stripe/client"
 import { resend, FROM } from "@/lib/resend/client"
 import { eq, and, gte, lte, inArray, isNull } from "drizzle-orm"
+
+// PAYOUT MODEL — read before changing anything here.
+// Providers are paid INSTANTLY via Stripe destination charges: the PaymentIntent
+// (app/api/payments/intent/route.ts) sets transfer_data.destination + application_fee_amount,
+// so at capture (job completion) Stripe routes the provider's share straight into their
+// connected account — no separate transfer needed.
+// This weekly job is therefore a LEDGER ONLY: it groups each provider's already-paid bookings
+// into a payout row + earnings-summary email. It must NOT call stripe.transfers.create —
+// doing so would pay the provider a second time for the same bookings.
 
 export const weeklyPayoutRun = inngest.createFunction(
   { id: "weekly-payout-run", retries: 3, triggers: [{ cron: "0 2 * * 1" }] },
@@ -104,24 +112,14 @@ export const processProviderPayout = inngest.createFunction(
     const bookingIdList = rows.map((b: { id: string }) => b.id)
     const paymentIdList = rows.map((b: { paymentId: string }) => b.paymentId)
 
-    const transfer = await step.run("stripe-transfer", async () => {
-      return stripe.transfers.create(
-        {
-          amount: totalPayout,
-          currency: "eur",
-          destination: provider.stripeAccountId!,
-          metadata: { provider_id: providerId, period_start: periodStart, period_end: periodEnd },
-        },
-        { idempotencyKey: `transfer-${providerId}-${periodStart}-${periodEnd}` },
-      )
-    })
-
+    // No stripe.transfers.create here — the provider was already paid at capture via the
+    // destination charge. We only record a ledger row summarising the period's earnings.
     const [payout] = await step.run("record-payout", async () => {
       return db
         .insert(payouts)
         .values({
           providerId,
-          stripeTransferId: transfer.id,
+          stripeTransferId: null, // ledger entry; funds moved via destination charge, not a transfer
           status: "paid",
           amount: totalPayout,
           currency: "eur",
@@ -133,7 +131,8 @@ export const processProviderPayout = inngest.createFunction(
         .returning({ id: payouts.id })
     })
 
-    // Bug 3: mark these payments as settled — prevents double-payout on Inngest retry
+    // Mark these payments as ledgered — prevents the same bookings being summarised twice
+    // on an Inngest retry or in a later run.
     await step.run("mark-payments-settled", async () => {
       await db
         .update(payments)
@@ -150,18 +149,19 @@ export const processProviderPayout = inngest.createFunction(
       await resend.emails.send({
         from: FROM,
         to: user.email,
-        subject: `Payout of €${(totalPayout / 100).toFixed(2)} sent to your account`,
+        subject: `Your weekly earnings summary: €${(totalPayout / 100).toFixed(2)}`,
         html: `
-          <h2>Your weekly payout is on the way!</h2>
+          <h2>Your earnings this week</h2>
           <p>Hi ${user.firstName ?? "there"},</p>
-          <p>We've sent <strong>€${(totalPayout / 100).toFixed(2)}</strong> to your connected bank account.</p>
-          <p>Period: ${periodStart} to ${periodEnd} | Bookings: ${bookingIdList.length}</p>
-          <p>Transfers typically arrive within 1–2 business days.</p>
+          <p>You earned <strong>€${(totalPayout / 100).toFixed(2)}</strong> across ${bookingIdList.length} booking(s).</p>
+          <p>Period: ${periodStart} to ${periodEnd}</p>
+          <p>These funds are paid directly into your connected Stripe account as each job completes,
+          and Stripe pays out to your bank on your account's payout schedule.</p>
           <p>Thank you for being part of DORIXÉ 🌿</p>
         `,
       })
     })
 
-    return { payoutId: payout.id, amount: totalPayout, transferId: transfer.id }
+    return { payoutId: payout.id, amount: totalPayout, ledger: true }
   }
 )

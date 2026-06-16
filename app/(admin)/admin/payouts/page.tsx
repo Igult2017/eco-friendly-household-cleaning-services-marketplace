@@ -103,7 +103,7 @@ export default async function AdminPayoutsPage() {
         </div>
         <div>
           <h1 className="font-serif text-2xl font-bold text-[#2B3441]">Payouts</h1>
-          <p className="text-sm text-[#6B7280]">Provider payout runs — triggered weekly by Inngest on Mondays 02:00 UTC</p>
+          <p className="text-sm text-[#6B7280]">Providers are paid instantly per job via Stripe. This is a weekly earnings ledger (Mondays 02:00 UTC).</p>
         </div>
       </div>
 
@@ -134,7 +134,7 @@ export default async function AdminPayoutsPage() {
             <table className="min-w-full">
               <thead>
                 <tr className="bg-[#FAFAFA] border-b border-gray-100">
-                  {["Provider", "Period", "Amount", "Status", "Stripe Transfer", "Processed"].map(h => (
+                  {["Provider", "Period", "Amount", "Status", "Settlement", "Processed"].map(h => (
                     <th key={h} className="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-[#6B7280]">{h}</th>
                   ))}
                 </tr>
@@ -149,7 +149,7 @@ export default async function AdminPayoutsPage() {
                     <td className="px-5 py-3 text-sm font-semibold text-[#2B3441]">{fmt(r.amount)}</td>
                     <td className="px-5 py-3"><StatusBadge status={r.status} /></td>
                     <td className="px-5 py-3 font-mono text-xs text-[#6B7280]">
-                      {r.stripeTransferId ? r.stripeTransferId.slice(-14) : "—"}
+                      {r.stripeTransferId ? r.stripeTransferId.slice(-14) : "Direct / instant"}
                     </td>
                     <td className="px-5 py-3 text-xs text-[#6B7280]">
                       {r.processedAt ? new Date(r.processedAt).toLocaleDateString("de-DE") : "Pending"}
