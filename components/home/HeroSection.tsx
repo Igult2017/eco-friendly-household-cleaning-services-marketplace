@@ -14,13 +14,20 @@ export async function HeroSection() {
   ]
   return (
     <section className="relative isolate overflow-hidden py-16 md:py-24">
-      {/* Full-bleed background photo (decorative — text conveys all meaning) */}
+      {/* Full-bleed background — two cleaning photos that gently crossfade
+          (decorative; the text conveys all meaning) */}
       <img
-        src="/hero/hero-home.jpg"
+        src="/hero/hero-clean-1.jpg"
         alt=""
         aria-hidden="true"
         fetchPriority="high"
         className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
+      />
+      <img
+        src="/hero/hero-clean-2.jpg"
+        alt=""
+        aria-hidden="true"
+        className="hero-crossfade absolute inset-0 -z-20 h-full w-full object-cover object-center"
       />
       {/* Contrast scrim — vertical layer tames the bright top of the photo so the
           headline stays readable; horizontal layer deepens the left for the text column. */}

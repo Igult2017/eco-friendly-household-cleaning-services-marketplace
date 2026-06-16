@@ -224,3 +224,17 @@ h4, h5, h6 {
 .animate-fade-in {
   animation: fade-in 0.4s ease-out both;
 }
+
+/* Hero background: gently crossfade between the two cleaning photos.
+   The top image fades out to reveal the base image, then back. */
+@keyframes hero-crossfade {
+  0%, 40%  { opacity: 0; }
+  50%, 90% { opacity: 1; }
+  100%     { opacity: 0; }
+}
+.hero-crossfade {
+  animation: hero-crossfade 18s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-crossfade { animation: none; opacity: 0; }
+}
