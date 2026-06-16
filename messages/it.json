@@ -932,7 +932,8 @@
     "bookings": "Prenotazioni",
     "earnings": "Guadagni",
     "profile": "Profilo",
-    "adminPanel": "Pannello di amministrazione"
+    "adminPanel": "Pannello di amministrazione",
+    "pricing": "Tariffe"
   },
   "providerProviderBookingsPage": {
     "title": "Le mie prenotazioni",
@@ -1600,5 +1601,12 @@
     "submit": "Invia valutazione",
     "thanks": "Grazie — la tua valutazione è stata salvata.",
     "failed": "Invio non riuscito. Riprova."
+  },
+  "compProviderPricing": {
+    "title": "Le tue tariffe",
+    "description": "Imposta la tua tariffa oraria (o a servizio) per ogni servizio offerto: i clienti prenotano e pagano in base a queste tariffe.",
+    "empty": "Non hai ancora impostato tariffe. I clienti non possono prenotarti finché non aggiungi almeno un servizio con una tariffa.",
+    "setButton": "Imposta la tariffa oraria",
+    "manageButton": "Gestisci"
   }
 }

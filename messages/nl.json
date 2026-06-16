@@ -932,7 +932,8 @@
     "bookings": "Boekingen",
     "earnings": "Inkomsten",
     "profile": "Profiel",
-    "adminPanel": "Beheerderspaneel"
+    "adminPanel": "Beheerderspaneel",
+    "pricing": "Tarieven"
   },
   "providerProviderBookingsPage": {
     "title": "Mijn boekingen",
@@ -1600,5 +1601,12 @@
     "submit": "Beoordeling versturen",
     "thanks": "Bedankt — je beoordeling is opgeslagen.",
     "failed": "Versturen mislukt. Probeer het opnieuw."
+  },
+  "compProviderPricing": {
+    "title": "Jouw tarieven",
+    "description": "Stel je uurtarief (of prijs per klus) in voor elke dienst die je aanbiedt — klanten boeken en betalen op basis van deze tarieven.",
+    "empty": "Je hebt nog geen tarieven ingesteld. Klanten kunnen je pas boeken als je minstens één dienst met een tarief toevoegt.",
+    "setButton": "Stel je uurtarief in",
+    "manageButton": "Beheren"
   }
 }

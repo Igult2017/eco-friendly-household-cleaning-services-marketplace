@@ -42,6 +42,7 @@ export default async function ProviderLayout({ children }: { children: React.Rea
             <Link href="/provider/jobs" className="hover:text-[#2D7A5F] transition-colors">{t("findJobs")}</Link>
             <Link href="/provider/bookings" className="hover:text-[#2D7A5F] transition-colors">{t("bookings")}</Link>
             <Link href="/provider/earnings" className="hover:text-[#2D7A5F] transition-colors">{t("earnings")}</Link>
+            <Link href="/provider/profile/services" className="hover:text-[#2D7A5F] transition-colors">{t("pricing")}</Link>
             <Link href="/provider/profile" className="hover:text-[#2D7A5F] transition-colors">{t("profile")}</Link>
           </nav>
           <div className="flex items-center gap-2">

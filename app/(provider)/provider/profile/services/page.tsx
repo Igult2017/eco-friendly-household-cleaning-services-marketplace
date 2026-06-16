@@ -24,7 +24,7 @@ const PRICE_UNITS = [
   { value: "per_sqft", labelKey: "priceUnitPerSqft" },
 ]
 
-const EMPTY_FORM = { categoryId: "", name: "", description: "", basePrice: "", priceUnit: "per_job", minDurationMinutes: "60" }
+const EMPTY_FORM = { categoryId: "", name: "", description: "", basePrice: "", priceUnit: "per_hour", minDurationMinutes: "60" }
 
 export default function ProviderServicesPage() {
   const t = useTranslations("providerProviderProfileServicesPage")

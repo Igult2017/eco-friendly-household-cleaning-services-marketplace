@@ -932,7 +932,8 @@
     "bookings": "Reservas",
     "earnings": "Ganhos",
     "profile": "Perfil",
-    "adminPanel": "Painel de administração"
+    "adminPanel": "Painel de administração",
+    "pricing": "Preços"
   },
   "providerProviderBookingsPage": {
     "title": "Minhas reservas",
@@ -1600,5 +1601,12 @@
     "submit": "Enviar avaliação",
     "thanks": "Obrigado — a sua avaliação foi guardada.",
     "failed": "Falha ao enviar. Tente novamente."
+  },
+  "compProviderPricing": {
+    "title": "Os seus preços",
+    "description": "Defina a sua tarifa horária (ou por serviço) para cada serviço que oferece — os clientes reservam e pagam com base nestas tarifas.",
+    "empty": "Ainda não definiu preços. Os clientes não o podem reservar até adicionar pelo menos um serviço com tarifa.",
+    "setButton": "Definir tarifa horária",
+    "manageButton": "Gerir"
   }
 }

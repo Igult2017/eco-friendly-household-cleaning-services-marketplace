@@ -932,7 +932,8 @@
     "bookings": "Rezerwacje",
     "earnings": "Zarobki",
     "profile": "Profil",
-    "adminPanel": "Panel administratora"
+    "adminPanel": "Panel administratora",
+    "pricing": "Cennik"
   },
   "providerProviderBookingsPage": {
     "title": "Moje rezerwacje",
@@ -1600,5 +1601,12 @@
     "submit": "Wyślij ocenę",
     "thanks": "Dziękujemy — Twoja ocena została zapisana.",
     "failed": "Nie udało się wysłać. Spróbuj ponownie."
+  },
+  "compProviderPricing": {
+    "title": "Twoje stawki",
+    "description": "Ustaw stawkę godzinową (lub za usługę) dla każdej oferowanej usługi — klienci rezerwują i płacą według tych stawek.",
+    "empty": "Nie ustawiłeś jeszcze żadnych stawek. Klienci nie mogą Cię zarezerwować, dopóki nie dodasz co najmniej jednej usługi ze stawką.",
+    "setButton": "Ustaw stawkę godzinową",
+    "manageButton": "Zarządzaj"
   }
 }

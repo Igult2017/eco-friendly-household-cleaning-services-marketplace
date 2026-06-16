@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
 import { Loader2, Save, AlertTriangle } from "lucide-react"
 import { LocationDetectButton } from "@/components/location/LocationDetectButton"
+import { PricingSummaryCard } from "@/components/provider/PricingSummaryCard"
 import { usePostalValidation } from "@/hooks/usePostalValidation"
 import type { GeoResult } from "@/lib/nominatim"
 
@@ -168,6 +169,8 @@ export default function ProviderProfilePage() {
           {saved ? t("saveButtonSaved") : saving ? t("saveButtonSaving") : t("saveButton")}
         </button>
       </div>
+
+      <PricingSummaryCard />
     </div>
   )
 }

@@ -932,7 +932,8 @@
     "bookings": "Buchungen",
     "earnings": "Verdienst",
     "profile": "Profil",
-    "adminPanel": "Admin-Bereich"
+    "adminPanel": "Admin-Bereich",
+    "pricing": "Preise"
   },
   "providerProviderBookingsPage": {
     "title": "Meine Buchungen",
@@ -1600,5 +1601,12 @@
     "submit": "Bewertung senden",
     "thanks": "Danke — deine Bewertung wurde gespeichert.",
     "failed": "Senden fehlgeschlagen. Bitte versuche es erneut."
+  },
+  "compProviderPricing": {
+    "title": "Deine Preise",
+    "description": "Lege deinen Stundensatz (oder Festpreis) für jede angebotene Leistung fest – Kund:innen buchen und zahlen auf Basis dieser Preise.",
+    "empty": "Du hast noch keine Preise festgelegt. Kund:innen können dich erst buchen, wenn du mindestens eine Leistung mit Preis hinzufügst.",
+    "setButton": "Stundensatz festlegen",
+    "manageButton": "Verwalten"
   }
 }

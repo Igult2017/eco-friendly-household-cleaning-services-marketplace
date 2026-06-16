@@ -932,7 +932,8 @@
     "bookings": "Bookings",
     "earnings": "Earnings",
     "profile": "Profile",
-    "adminPanel": "Admin Panel"
+    "adminPanel": "Admin Panel",
+    "pricing": "Pricing"
   },
   "providerProviderBookingsPage": {
     "title": "My Bookings",
@@ -1600,5 +1601,12 @@
     "submit": "Submit review",
     "thanks": "Thanks — your review has been saved.",
     "failed": "Couldn't submit. Please try again."
+  },
+  "compProviderPricing": {
+    "title": "Your pricing",
+    "description": "Set your hourly rate (or per-job price) for each service you offer — customers book and pay based on these rates.",
+    "empty": "You haven't set any prices yet. Customers can't book you until you add at least one service with a rate.",
+    "setButton": "Set your hourly rate",
+    "manageButton": "Manage"
   }
 }
