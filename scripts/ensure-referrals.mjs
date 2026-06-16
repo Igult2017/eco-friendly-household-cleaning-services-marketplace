@@ -109,6 +109,22 @@ ON CONFLICT (slug) DO UPDATE SET
   base_eco_points = EXCLUDED.base_eco_points,
   is_active = true,
   sort_order = EXCLUDED.sort_order;
+
+-- Platform settings (key/value config used by the admin Settings page). Migration
+-- 0014 was recorded as applied but the table was never created on prod (journal
+-- drift), so every save threw a 500. Create + seed defaults; never overwrite values.
+CREATE TABLE IF NOT EXISTS platform_settings (
+  key        VARCHAR(100) PRIMARY KEY,
+  value      TEXT         NOT NULL,
+  updated_at TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+);
+INSERT INTO platform_settings (key, value) VALUES
+  ('commission_pct','15'),
+  ('referral_pct','5'),
+  ('payout_schedule','weekly'),
+  ('max_service_radius_km','100'),
+  ('platform_name','DORIXÉ')
+ON CONFLICT (key) DO NOTHING;
 `
 
 function isValidUrl(url) {
@@ -129,7 +145,7 @@ async function main() {
   const sql = postgres(url, { max: 1, prepare: false })
   try {
     await sql.unsafe(DDL)
-    console.log("[ensure-referrals] referral + customer_reviews tables + service_categories seed ensured ✓")
+    console.log("[ensure-referrals] referral + customer_reviews + service_categories + platform_settings ensured ✓")
   } finally {
     await sql.end({ timeout: 5 })
   }
