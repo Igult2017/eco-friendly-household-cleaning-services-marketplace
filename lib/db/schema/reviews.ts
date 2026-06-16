@@ -51,3 +51,25 @@ export const reviews = pgTable(
 
 export type Review = typeof reviews.$inferSelect
 export type NewReview = typeof reviews.$inferInsert
+
+// Provider → customer review (the other direction). One per booking.
+export const customerReviews = pgTable(
+  "customer_reviews",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    bookingId: uuid("booking_id").notNull().references(() => bookings.id),
+    providerId: uuid("provider_id").notNull().references(() => providers.id), // author
+    customerId: text("customer_id").notNull().references(() => users.id),      // subject
+    rating: integer("rating").notNull(), // 1–5
+    body: text("body"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("customer_reviews_booking_idx").on(t.bookingId), // one per booking
+    index("customer_reviews_customer_idx").on(t.customerId),
+    index("customer_reviews_provider_idx").on(t.providerId),
+  ]
+)
+
+export type CustomerReview = typeof customerReviews.$inferSelect
+export type NewCustomerReview = typeof customerReviews.$inferInsert

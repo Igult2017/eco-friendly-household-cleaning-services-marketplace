@@ -583,7 +583,10 @@
     "preAuthNote": "Pre-authorisation only. Charged after completion.",
     "preparingPayment": "Preparing payment…",
     "continueToPayment": "Continue to Payment",
-    "backToDetails": "← Back to details"
+    "backToDetails": "← Back to details",
+    "recurringPromptTitle": "Make it recurring",
+    "recurringPromptText": "You chose a repeating schedule. Set it up to auto-book future cleans.",
+    "setUpRecurring": "Set up recurring"
   },
   "customerBookExtrasPage": {
     "heading": "Any special requests?",
@@ -653,7 +656,13 @@
     "durationLabel": "How long do you need?",
     "durationOption": "{hours, plural, one {# hour} other {# hours}}",
     "back": "← Back",
-    "continue": "Continue — Add Details →"
+    "continue": "Continue — Add Details →",
+    "frequencyLabel": "How often?",
+    "frequencyHint": "Choose a one-off clean or set up a recurring schedule.",
+    "freq_one_time": "One-time",
+    "freq_weekly": "Weekly",
+    "freq_biweekly": "Every 2 weeks",
+    "freq_monthly": "Monthly"
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Failed to load booking",
@@ -1582,5 +1591,14 @@
   },
   "compUiSheet": {
     "close": "Close"
+  },
+  "compReviewsRateCustomer": {
+    "heading": "Rate this customer",
+    "subtitle": "Share your experience working with them.",
+    "pickRating": "Please select a rating.",
+    "placeholder": "How was your experience? (optional)",
+    "submit": "Submit review",
+    "thanks": "Thanks — your review has been saved.",
+    "failed": "Couldn't submit. Please try again."
   }
 }

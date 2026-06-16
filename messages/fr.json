@@ -583,7 +583,10 @@
     "preAuthNote": "Pré-autorisation uniquement. Débité après la prestation.",
     "preparingPayment": "Préparation du paiement…",
     "continueToPayment": "Continuer vers le paiement",
-    "backToDetails": "← Retour aux détails"
+    "backToDetails": "← Retour aux détails",
+    "recurringPromptTitle": "Rendre récurrent",
+    "recurringPromptText": "Vous avez choisi un rythme récurrent. Configurez-le pour réserver automatiquement les prochains ménages.",
+    "setUpRecurring": "Configurer la récurrence"
   },
   "customerBookExtrasPage": {
     "heading": "Des demandes particulières ?",
@@ -653,7 +656,13 @@
     "durationLabel": "Combien de temps vous faut-il ?",
     "durationOption": "{hours, plural, one {# heure} other {# heures}}",
     "back": "← Retour",
-    "continue": "Continuer — Ajouter les détails →"
+    "continue": "Continuer — Ajouter les détails →",
+    "frequencyLabel": "À quelle fréquence ?",
+    "frequencyHint": "Choisissez un ménage ponctuel ou configurez un programme récurrent.",
+    "freq_one_time": "Une fois",
+    "freq_weekly": "Hebdomadaire",
+    "freq_biweekly": "Toutes les 2 semaines",
+    "freq_monthly": "Mensuel"
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Échec du chargement de la réservation",
@@ -1582,5 +1591,14 @@
   },
   "compUiSheet": {
     "close": "Fermer"
+  },
+  "compReviewsRateCustomer": {
+    "heading": "Évaluer ce client",
+    "subtitle": "Partagez votre expérience avec lui.",
+    "pickRating": "Veuillez sélectionner une note.",
+    "placeholder": "Comment s'est passée votre expérience ? (facultatif)",
+    "submit": "Envoyer l'évaluation",
+    "thanks": "Merci — votre évaluation a été enregistrée.",
+    "failed": "Échec de l'envoi. Veuillez réessayer."
   }
 }

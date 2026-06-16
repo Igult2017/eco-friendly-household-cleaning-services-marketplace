@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { CheckCircle2, Upload, Loader2, X, Camera } from "lucide-react"
 import { BeforePhotoUpload } from "@/components/booking/BeforePhotoUpload"
+import { RateCustomerForm } from "@/components/reviews/RateCustomerForm"
 
 export default function MarkCompletePage() {
   const t = useTranslations("providerProviderBookingsIdCompletePage")
@@ -83,9 +84,12 @@ export default function MarkCompletePage() {
           <CheckCircle2 size={40} className="text-[#2D7A5F]" />
         </div>
         <h1 className="font-serif text-2xl font-bold text-[#2B3441] mb-2">{t("doneTitle")}</h1>
-        <p className="text-[#6B7280] mb-8 max-w-sm">
+        <p className="text-[#6B7280] mb-6 max-w-sm">
           {t("donePayment")}
         </p>
+        <div className="mb-6 flex justify-center">
+          <RateCustomerForm bookingId={bookingId} />
+        </div>
         <Button onClick={() => router.push("/provider/dashboard")} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white px-8 h-11">
           {t("backToDashboard")}
         </Button>

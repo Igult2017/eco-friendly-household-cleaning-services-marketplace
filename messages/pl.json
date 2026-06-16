@@ -583,7 +583,10 @@
     "preAuthNote": "Tylko wstępna autoryzacja. Obciążenie po zakończeniu.",
     "preparingPayment": "Przygotowywanie płatności…",
     "continueToPayment": "Przejdź do płatności",
-    "backToDetails": "← Powrót do szczegółów"
+    "backToDetails": "← Powrót do szczegółów",
+    "recurringPromptTitle": "Ustaw cyklicznie",
+    "recurringPromptText": "Wybrano powtarzalny rytm. Skonfiguruj go, aby automatycznie rezerwować kolejne sprzątania.",
+    "setUpRecurring": "Ustaw cykliczne"
   },
   "customerBookExtrasPage": {
     "heading": "Masz specjalne życzenia?",
@@ -653,7 +656,13 @@
     "durationLabel": "Ile czasu potrzebujesz?",
     "durationOption": "{hours, plural, one {# godzina} few {# godziny} many {# godzin} other {# godziny}}",
     "back": "← Wstecz",
-    "continue": "Dalej — Dodaj szczegóły →"
+    "continue": "Dalej — Dodaj szczegóły →",
+    "frequencyLabel": "Jak często?",
+    "frequencyHint": "Wybierz jednorazowe sprzątanie lub ustaw harmonogram cykliczny.",
+    "freq_one_time": "Jednorazowo",
+    "freq_weekly": "Co tydzień",
+    "freq_biweekly": "Co 2 tygodnie",
+    "freq_monthly": "Co miesiąc"
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Nie udało się załadować rezerwacji",
@@ -1582,5 +1591,14 @@
   },
   "compUiSheet": {
     "close": "Zamknij"
+  },
+  "compReviewsRateCustomer": {
+    "heading": "Oceń tego klienta",
+    "subtitle": "Podziel się swoim doświadczeniem ze współpracy.",
+    "pickRating": "Wybierz ocenę.",
+    "placeholder": "Jak minęła współpraca? (opcjonalnie)",
+    "submit": "Wyślij ocenę",
+    "thanks": "Dziękujemy — Twoja ocena została zapisana.",
+    "failed": "Nie udało się wysłać. Spróbuj ponownie."
   }
 }

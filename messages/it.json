@@ -583,7 +583,10 @@
     "preAuthNote": "Solo preautorizzazione. Addebito dopo il completamento.",
     "preparingPayment": "Preparazione del pagamento…",
     "continueToPayment": "Continua al pagamento",
-    "backToDetails": "← Torna ai dettagli"
+    "backToDetails": "← Torna ai dettagli",
+    "recurringPromptTitle": "Rendi ricorrente",
+    "recurringPromptText": "Hai scelto una cadenza ricorrente. Impostala per prenotare automaticamente le prossime pulizie.",
+    "setUpRecurring": "Imposta ricorrenza"
   },
   "customerBookExtrasPage": {
     "heading": "Richieste particolari?",
@@ -653,7 +656,13 @@
     "durationLabel": "Di quanto tempo hai bisogno?",
     "durationOption": "{hours, plural, one {# ora} other {# ore}}",
     "back": "← Indietro",
-    "continue": "Continua — Aggiungi dettagli →"
+    "continue": "Continua — Aggiungi dettagli →",
+    "frequencyLabel": "Con quale frequenza?",
+    "frequencyHint": "Scegli una pulizia una tantum o imposta un programma ricorrente.",
+    "freq_one_time": "Una tantum",
+    "freq_weekly": "Settimanale",
+    "freq_biweekly": "Ogni 2 settimane",
+    "freq_monthly": "Mensile"
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Impossibile caricare la prenotazione",
@@ -1582,5 +1591,14 @@
   },
   "compUiSheet": {
     "close": "Chiudi"
+  },
+  "compReviewsRateCustomer": {
+    "heading": "Valuta questo cliente",
+    "subtitle": "Condividi la tua esperienza con lui.",
+    "pickRating": "Seleziona una valutazione.",
+    "placeholder": "Com'è andata la tua esperienza? (facoltativo)",
+    "submit": "Invia valutazione",
+    "thanks": "Grazie — la tua valutazione è stata salvata.",
+    "failed": "Invio non riuscito. Riprova."
   }
 }

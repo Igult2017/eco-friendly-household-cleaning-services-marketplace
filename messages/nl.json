@@ -583,7 +583,10 @@
     "preAuthNote": "Alleen voorautorisatie. Afgeschreven na voltooiing.",
     "preparingPayment": "Betaling voorbereiden…",
     "continueToPayment": "Doorgaan naar betaling",
-    "backToDetails": "← Terug naar details"
+    "backToDetails": "← Terug naar details",
+    "recurringPromptTitle": "Maak het terugkerend",
+    "recurringPromptText": "Je hebt een terugkerend ritme gekozen. Stel het in om toekomstige schoonmaakbeurten automatisch te boeken.",
+    "setUpRecurring": "Terugkerend instellen"
   },
   "customerBookExtrasPage": {
     "heading": "Speciale verzoeken?",
@@ -653,7 +656,13 @@
     "durationLabel": "Hoeveel tijd heeft u nodig?",
     "durationOption": "{hours, plural, one {# uur} other {# uur}}",
     "back": "← Terug",
-    "continue": "Doorgaan — Details toevoegen →"
+    "continue": "Doorgaan — Details toevoegen →",
+    "frequencyLabel": "Hoe vaak?",
+    "frequencyHint": "Kies een eenmalige schoonmaak of stel een terugkerend schema in.",
+    "freq_one_time": "Eenmalig",
+    "freq_weekly": "Wekelijks",
+    "freq_biweekly": "Om de 2 weken",
+    "freq_monthly": "Maandelijks"
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Boeking kon niet worden geladen",
@@ -1582,5 +1591,14 @@
   },
   "compUiSheet": {
     "close": "Sluiten"
+  },
+  "compReviewsRateCustomer": {
+    "heading": "Beoordeel deze klant",
+    "subtitle": "Deel je ervaring met de klant.",
+    "pickRating": "Selecteer een beoordeling.",
+    "placeholder": "Hoe was je ervaring? (optioneel)",
+    "submit": "Beoordeling versturen",
+    "thanks": "Bedankt — je beoordeling is opgeslagen.",
+    "failed": "Versturen mislukt. Probeer het opnieuw."
   }
 }

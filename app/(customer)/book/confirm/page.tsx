@@ -225,9 +225,18 @@ export default function BookStep5Page() {
         </div>
         <h1 className="font-serif text-3xl font-bold text-[#2B3441] text-center mb-2">{t("bookingConfirmedTitle")}</h1>
         <p className="text-[#6B7280] text-center mb-2">{t("bookingNumberLabel")} <strong className="text-[#2B3441]">{success.bookingNumber}</strong></p>
-        <p className="text-sm text-[#6B7280] text-center mb-8 max-w-sm">
+        <p className="text-sm text-[#6B7280] text-center mb-6 max-w-sm">
           {t("confirmationEmailNote")}
         </p>
+        {store.frequency !== "one_time" && (
+          <div className="mb-6 max-w-sm w-full rounded-xl border border-[#2D7A5F]/20 bg-[#EDF5F0] px-5 py-4 text-center">
+            <p className="text-sm font-semibold text-[#2B3441] mb-1">{t("recurringPromptTitle")}</p>
+            <p className="text-xs text-[#6B7280] mb-3">{t("recurringPromptText")}</p>
+            <Button onClick={() => { store.reset(); router.push("/recurring") }} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white h-9 text-sm">
+              {t("setUpRecurring")}
+            </Button>
+          </div>
+        )}
         <Button onClick={() => { store.reset(); router.push("/dashboard") }} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white px-8 h-11">
           {t("goToMyBookings")}
         </Button>

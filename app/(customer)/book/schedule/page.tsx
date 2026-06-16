@@ -20,6 +20,8 @@ const DURATION_OPTIONS = [
 
 const TIME_SLOTS = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"]
 
+const FREQUENCY_OPTIONS = ["one_time", "weekly", "biweekly", "monthly"] as const
+
 function getNext14Days(): string[] {
   const days: string[] = []
   const today = new Date()
@@ -34,7 +36,7 @@ function getNext14Days(): string[] {
 export default function BookStep3Page() {
   const t = useTranslations("customerBookSchedulePage")
   const router = useRouter()
-  const { selectedProviderId, setSchedule, scheduledAt, durationMinutes } = useBookingStore()
+  const { selectedProviderId, setSchedule, scheduledAt, durationMinutes, frequency, setFrequency } = useBookingStore()
 
   // scheduledAt is now an ISO string; convert back to local date/time parts for display
   const restoreDate = (iso: string | null) => {
@@ -167,6 +169,27 @@ export default function BookStep3Page() {
                 )}
               >
                 {t("durationOption", { hours: opt.hours })}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-6">
+          <Label className="text-sm font-semibold text-[#2B3441] mb-1 block">{t("frequencyLabel")}</Label>
+          <p className="text-xs text-[#6B7280] mb-3">{t("frequencyHint")}</p>
+          <div className="flex flex-wrap gap-2">
+            {FREQUENCY_OPTIONS.map((f) => (
+              <button
+                key={f}
+                onClick={() => setFrequency(f)}
+                className={cn(
+                  "px-4 py-2 rounded-lg text-sm font-medium border-2 transition-all",
+                  frequency === f
+                    ? "border-[#2D7A5F] bg-[#2D7A5F] text-white"
+                    : "border-[#E5EBF0] hover:border-[#4CB87A] text-[#2B3441]"
+                )}
+              >
+                {t(`freq_${f}`)}
               </button>
             ))}
           </div>

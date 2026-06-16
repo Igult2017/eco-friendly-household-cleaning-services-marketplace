@@ -583,7 +583,10 @@
     "preAuthNote": "Apenas pré-autorização. Cobrado após a conclusão.",
     "preparingPayment": "A preparar o pagamento…",
     "continueToPayment": "Continuar para o pagamento",
-    "backToDetails": "← Voltar aos detalhes"
+    "backToDetails": "← Voltar aos detalhes",
+    "recurringPromptTitle": "Tornar recorrente",
+    "recurringPromptText": "Escolheu uma frequência recorrente. Configure-a para marcar automaticamente as próximas limpezas.",
+    "setUpRecurring": "Configurar recorrência"
   },
   "customerBookExtrasPage": {
     "heading": "Algum pedido especial?",
@@ -653,7 +656,13 @@
     "durationLabel": "De quanto tempo precisa?",
     "durationOption": "{hours, plural, one {# hora} other {# horas}}",
     "back": "← Voltar",
-    "continue": "Continuar — Adicionar detalhes →"
+    "continue": "Continuar — Adicionar detalhes →",
+    "frequencyLabel": "Com que frequência?",
+    "frequencyHint": "Escolha uma limpeza pontual ou configure um agendamento recorrente.",
+    "freq_one_time": "Uma vez",
+    "freq_weekly": "Semanal",
+    "freq_biweekly": "A cada 2 semanas",
+    "freq_monthly": "Mensal"
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Falha ao carregar a reserva",
@@ -1582,5 +1591,14 @@
   },
   "compUiSheet": {
     "close": "Fechar"
+  },
+  "compReviewsRateCustomer": {
+    "heading": "Avaliar este cliente",
+    "subtitle": "Partilhe a sua experiência a trabalhar com ele.",
+    "pickRating": "Selecione uma avaliação.",
+    "placeholder": "Como foi a sua experiência? (opcional)",
+    "submit": "Enviar avaliação",
+    "thanks": "Obrigado — a sua avaliação foi guardada.",
+    "failed": "Falha ao enviar. Tente novamente."
   }
 }
