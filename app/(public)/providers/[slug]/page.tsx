@@ -8,6 +8,8 @@ import Link from "next/link"
 import type { Metadata } from "next"
 import { formatCurrencyShort, priceUnitSuffix } from "@/lib/utils/formatCurrency"
 import { getTranslations } from "next-intl/server"
+import { JsonLd } from "@/components/seo/JsonLd"
+import { providerSchema, breadcrumbSchema } from "@/lib/seo/schemas"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   try {
@@ -85,6 +87,27 @@ export default async function ProviderProfilePage({ params }: { params: Promise<
 
   return (
     <div className="max-w-4xl mx-auto py-10 px-4 space-y-10">
+      <JsonLd
+        data={[
+          providerSchema({
+            slug,
+            businessName: provider.businessName,
+            bio: provider.bio,
+            city: provider.city,
+            country: provider.country,
+            averageRating: provider.averageRating,
+            totalReviews: provider.totalReviews,
+            profilePhotoUrl: provider.profilePhotoUrl,
+            services: activeServices.map((s) => ({ name: s.name, description: s.description, basePrice: s.basePrice, priceUnit: s.priceUnit })),
+            reviews: recentReviews.map((r) => ({ rating: r.overallRating, title: r.title, body: r.body, createdAt: r.createdAt })),
+          }),
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Find cleaners", path: "/browse" },
+            { name: provider.businessName, path: `/providers/${slug}` },
+          ]),
+        ]}
+      />
       {/* Header */}
       <div className="flex items-start gap-6">
         {provider.profilePhotoUrl ? (

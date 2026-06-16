@@ -21,6 +21,11 @@ const isPublicRoute = createRouteMatcher([
   "/api/jobs/public(.*)",
   "/api/blog/(.*)",
   "/_a/(.*)", // Umami analytics proxy (script + event collection) — must be public
+  // SEO infra — crawlers must reach these without auth
+  "/robots.txt",
+  "/sitemap.xml",
+  "/manifest.webmanifest",
+  "/llms.txt",
 ])
 
 const isCustomerOnlyRoute = createRouteMatcher([
@@ -177,6 +182,6 @@ export default async function middleware(req: NextRequest, event: NextFetchEvent
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|manifest.webmanifest|llms.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|txt|xml|webmanifest)$).*)",
   ],
 }

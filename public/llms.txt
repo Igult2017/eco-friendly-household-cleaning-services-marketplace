@@ -1,0 +1,26 @@
+# DORIXÉ
+
+> DORIXÉ is an eco-friendly household cleaning marketplace connecting customers with vetted, insured cleaning professionals who use sustainable, non-toxic products. Operating across Europe (EUR pricing) and expanding to the US.
+
+## What DORIXÉ offers
+- Book trusted **eco-friendly cleaners** by postcode — regular cleaning, deep cleaning, move-in/move-out, office cleaning, laundry, and window cleaning.
+- **Cleaner-set hourly rates** shown transparently (e.g. €X/hr). The platform adds a small commission on top; cleaners keep 100% of their quoted rate.
+- **Vetted & insured** providers with eco certifications and an eco score.
+- **Secure payment**: cards are pre-authorised at booking and only charged when the job is marked complete. Tiered, fair cancellation refunds.
+- **No long-term contract** — book a one-off clean or a recurring (weekly/biweekly/monthly) schedule, cancel anytime.
+- Two-way reviews (customers and cleaners rate each other) and real-time booking updates.
+- A bidding marketplace: post a job and receive bids from local eco cleaners.
+
+## Why eco
+DORIXÉ providers use plant-based, non-toxic cleaning products — better for families, pets, and the planet. Tagline: "Clean Home. Green Future."
+
+## Key pages
+- Find cleaners: /browse
+- How it works: /how-it-works
+- Pricing & fees: /pricing
+- Sustainability: /sustainability
+- Become a cleaner: /become-a-cleaner
+- Affiliate programme: /affiliate
+
+## Who it's for
+Households and offices in Europe and the US looking for reliable, environmentally responsible cleaning with transparent pricing and no lock-in contracts.

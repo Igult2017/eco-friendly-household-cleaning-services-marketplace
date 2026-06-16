@@ -2,6 +2,8 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 import { CheckCircle2, XCircle, ArrowRight, Euro, ShieldCheck, Leaf, Zap } from "lucide-react"
+import { JsonLd } from "@/components/seo/JsonLd"
+import { faqSchema } from "@/lib/seo/schemas"
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("pricing")
@@ -56,6 +58,7 @@ export default async function PricingPage() {
 
   return (
     <div className="bg-[#F4FAF6] min-h-screen">
+      <JsonLd data={faqSchema(FAQS)} />
 
       {/* Hero */}
       <section className="bg-[#2B3441] text-white py-20 px-4">
