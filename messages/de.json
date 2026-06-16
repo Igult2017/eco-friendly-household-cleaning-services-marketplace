@@ -24,7 +24,11 @@
     "trustInstantConfirmation": "Sofortige Bestätigung",
     "ourServices": "Unsere Leistungen",
     "orPrefix": "Oder",
-    "postJobLink": "Auftrag ausschreiben und Angebote erhalten →"
+    "postJobLink": "Auftrag ausschreiben und Angebote erhalten →",
+    "checking": "Verfügbarkeit wird geprüft…",
+    "availableNear": "{count} Öko-Reinigungskräfte in deiner Nähe verfügbar",
+    "noneNear": "Noch keine Reinigungskräfte in deiner Region — schau bald wieder vorbei.",
+    "viewCleaners": "Reinigungskräfte ansehen"
   },
   "homeTrustTicker": {
     "backgroundCheckedProviders": "GEPRÜFTE ANBIETER",
@@ -163,7 +167,10 @@
     "jobsCount": "{count, plural, one {# Auftrag} other {# Aufträge}}",
     "priceFrom": "Ab",
     "viewButton": "Ansehen",
-    "bookButton": "Buchen"
+    "bookButton": "Buchen",
+    "priceRangeLabel": "Preis (€/Std.)",
+    "minPricePlaceholder": "Min",
+    "maxPricePlaceholder": "Max"
   },
   "browseJobs": {
     "heroTitle": "Offene Reinigungsaufträge",
@@ -402,7 +409,11 @@
     "ctaHeading": "Bereit loszulegen?",
     "ctaSubtitle": "Buche deine erste umweltfreundliche Reinigung oder werde Reinigungskraft — ganz unverbindlich.",
     "ctaBookButton": "Reinigung buchen",
-    "ctaCleanerButton": "Reinigungskraft werden"
+    "ctaCleanerButton": "Reinigungskraft werden",
+    "faqContractQ": "Gibt es einen langfristigen Vertrag oder eine Mindestlaufzeit?",
+    "faqContractA": "Nein. Es gibt keinen langfristigen Vertrag und keine Mindestlaufzeit — buche eine einmalige Reinigung oder einen wiederkehrenden Termin und ändere oder storniere jederzeit.",
+    "faqTasksQ": "Was ist in einer Standardreinigung enthalten?",
+    "faqTasksA": "Eine Standardreinigung umfasst in der Regel Staubwischen, Staubsaugen, Wischen sowie die Reinigung von Küchen und Bädern. Beim Buchen kannst du besondere Wünsche hinzufügen."
   },
   "affiliate": {
     "metaTitle": "Partnerprogramm — DORIXÉ",

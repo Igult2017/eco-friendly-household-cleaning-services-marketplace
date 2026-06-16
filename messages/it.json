@@ -24,7 +24,11 @@
     "trustInstantConfirmation": "Conferma immediata",
     "ourServices": "I nostri servizi",
     "orPrefix": "Oppure",
-    "postJobLink": "pubblica un annuncio e ricevi offerte →"
+    "postJobLink": "pubblica un annuncio e ricevi offerte →",
+    "checking": "Verifica della disponibilità…",
+    "availableNear": "{count} addetti alle pulizie eco disponibili vicino a te",
+    "noneNear": "Ancora nessun addetto nella tua zona — torna presto.",
+    "viewCleaners": "Vedi gli addetti"
   },
   "homeTrustTicker": {
     "backgroundCheckedProviders": "PROFESSIONISTI VERIFICATI",
@@ -163,7 +167,10 @@
     "jobsCount": "{count, plural, one {# lavoro} other {# lavori}}",
     "priceFrom": "Da",
     "viewButton": "Vedi",
-    "bookButton": "Prenota"
+    "bookButton": "Prenota",
+    "priceRangeLabel": "Prezzo (€/h)",
+    "minPricePlaceholder": "Min",
+    "maxPricePlaceholder": "Max"
   },
   "browseJobs": {
     "heroTitle": "Lavori di pulizia disponibili",
@@ -402,7 +409,11 @@
     "ctaHeading": "Pronto a iniziare?",
     "ctaSubtitle": "Prenota la tua prima pulizia ecologica o iscriviti come addetto — senza alcun impegno.",
     "ctaBookButton": "Prenota una pulizia",
-    "ctaCleanerButton": "Diventa un addetto"
+    "ctaCleanerButton": "Diventa un addetto",
+    "faqContractQ": "C'è un contratto a lungo termine o una durata minima?",
+    "faqContractA": "No. Nessun contratto a lungo termine né durata minima: prenota una pulizia una tantum o ricorrente e modificala o annullala quando vuoi.",
+    "faqTasksQ": "Cosa include una pulizia standard?",
+    "faqTasksA": "Una pulizia standard comprende di solito spolverare, passare l'aspirapolvere, lavare i pavimenti e pulire cucine e bagni. Puoi aggiungere richieste specifiche al momento della prenotazione."
   },
   "affiliate": {
     "metaTitle": "Programma di affiliazione — DORIXÉ",

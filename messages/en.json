@@ -24,7 +24,11 @@
     "trustInstantConfirmation": "Instant Confirmation",
     "ourServices": "Our services",
     "orPrefix": "Or",
-    "postJobLink": "post a job and receive bids →"
+    "postJobLink": "post a job and receive bids →",
+    "checking": "Checking availability…",
+    "availableNear": "{count} eco cleaners available near you",
+    "noneNear": "No cleaners in your area yet — check back soon.",
+    "viewCleaners": "View cleaners"
   },
   "homeTrustTicker": {
     "backgroundCheckedProviders": "BACKGROUND-CHECKED PROVIDERS",
@@ -163,7 +167,10 @@
     "jobsCount": "{count, plural, one {# job} other {# jobs}}",
     "priceFrom": "From",
     "viewButton": "View",
-    "bookButton": "Book"
+    "bookButton": "Book",
+    "priceRangeLabel": "Price (€/hr)",
+    "minPricePlaceholder": "Min",
+    "maxPricePlaceholder": "Max"
   },
   "browseJobs": {
     "heroTitle": "Open Cleaning Jobs",
@@ -402,7 +409,11 @@
     "ctaHeading": "Ready to get started?",
     "ctaSubtitle": "Book your first eco-friendly cleaning or join as a cleaner — no commitment required.",
     "ctaBookButton": "Book a cleaning",
-    "ctaCleanerButton": "Become a cleaner"
+    "ctaCleanerButton": "Become a cleaner",
+    "faqContractQ": "Is there a long-term contract or minimum term?",
+    "faqContractA": "No. There's no long-term contract and no minimum term — book a one-off clean or a recurring schedule, and cancel or change anytime.",
+    "faqTasksQ": "What's included in a standard clean?",
+    "faqTasksA": "A standard clean typically covers dusting, vacuuming, mopping, and cleaning kitchens and bathrooms. You can add specific requests when you book."
   },
   "affiliate": {
     "metaTitle": "Affiliate Programme — DORIXÉ",

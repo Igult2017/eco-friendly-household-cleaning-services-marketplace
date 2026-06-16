@@ -3,7 +3,8 @@ import { db } from "@/lib/db"
 import { recurringSchedules, bookings, notifications, providerServices, providers, users, payments } from "@/lib/db/schema"
 import { eq, and, lte, isNotNull } from "drizzle-orm"
 import { redis } from "@/lib/redis/client"
-import { calculateBookingAmounts, PLATFORM_FEE_PERCENT, stripe } from "@/lib/stripe/client"
+import { calculateBookingAmounts, stripe } from "@/lib/stripe/client"
+import { getCommissionPct } from "@/lib/platform/settings"
 
 async function generateBookingNumber(): Promise<string> {
   const seq = await redis.incr("booking:seq")
@@ -105,7 +106,8 @@ export const recurringBookingCron = inngest.createFunction(
           .where(eq(providers.id, schedule.providerId))
 
         const subtotal = service?.basePrice ?? 0
-        const amounts = calculateBookingAmounts(subtotal)
+        const commissionPct = await getCommissionPct()
+        const amounts = calculateBookingAmounts(subtotal, commissionPct)
         const bookingNumber = await generateBookingNumber()
 
         const [newBooking] = await db
@@ -123,7 +125,7 @@ export const recurringBookingCron = inngest.createFunction(
             },
             specialInstructions: schedule.specialInstructions ?? null,
             ecoOptionsSelected: (schedule.ecoOptions as string[]) ?? [],
-            platformFeePercent: PLATFORM_FEE_PERCENT,
+            platformFeePercent: commissionPct,
             subtotalAmount: amounts.subtotalCents,
             platformFeeAmount: amounts.platformFee,
             totalAmount: amounts.totalCharged,

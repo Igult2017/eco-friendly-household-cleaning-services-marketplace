@@ -46,6 +46,7 @@ export default function BookStep5Page() {
   const [promoLabel, setPromoLabel] = useState<string | null>(null)
   const [promoLoading, setPromoLoading] = useState(false)
   const [promoError, setPromoError] = useState<string | null>(null)
+  const [feePct, setFeePct] = useState(15) // admin commission %; loaded with the price preview
 
   // Bid-flow bookings (accepted bid) may have null categoryId or a slug instead of UUID.
   // They always have bidAmountCents set. Loosen the guard accordingly.
@@ -114,9 +115,16 @@ export default function BookStep5Page() {
       const service = svcData.services?.[0]
       if (!service) { setError(t("errorProviderNoService")); return }
       setServiceId(service.id)
+      // Load the live commission % so the preview matches the real charge.
+      let pct = 15
+      try {
+        const feeRes = await fetch("/api/platform/fee")
+        const feeData = await feeRes.json()
+        if (typeof feeData.pct === "number") { pct = feeData.pct; setFeePct(feeData.pct) }
+      } catch { /* keep default 15% */ }
       // Bug 5: bid-flow bookings use the accepted bid amount, not the service list price
       const subtotalCents: number = store.bidAmountCents ?? service.basePrice
-      const platformFee = Math.round(subtotalCents * 0.15)
+      const platformFee = Math.round(subtotalCents * (pct / 100))
       const totalCharged = subtotalCents + platformFee
       setAmounts({ subtotalCents, platformFee, totalCharged })
     } catch {
@@ -201,7 +209,7 @@ export default function BookStep5Page() {
   // When amounts come from the PI response they already incorporate the promo discount.
   // In preview mode (before PI is created) we subtract the discount ourselves.
   const previewSubtotal = amounts ? Math.max(0, amounts.subtotalCents - (promoCodeId ? promoDiscountCents : 0)) : null
-  const previewPlatformFee = previewSubtotal !== null ? Math.round(previewSubtotal * 0.15) : null
+  const previewPlatformFee = previewSubtotal !== null ? Math.round(previewSubtotal * (feePct / 100)) : null
   const previewTotal = previewSubtotal !== null && previewPlatformFee !== null ? previewSubtotal + previewPlatformFee : null
   const totalWithOffset = previewTotal !== null
     ? previewTotal + (addCarbonOffset ? CARBON_OFFSET_CENTS : 0)

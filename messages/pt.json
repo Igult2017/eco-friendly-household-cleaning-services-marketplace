@@ -24,7 +24,11 @@
     "trustInstantConfirmation": "Confirmação imediata",
     "ourServices": "Os nossos serviços",
     "orPrefix": "Ou",
-    "postJobLink": "publique um trabalho e receba propostas →"
+    "postJobLink": "publique um trabalho e receba propostas →",
+    "checking": "A verificar disponibilidade…",
+    "availableNear": "{count} profissionais de limpeza eco disponíveis perto de si",
+    "noneNear": "Ainda não há profissionais na sua zona — volte em breve.",
+    "viewCleaners": "Ver profissionais"
   },
   "homeTrustTicker": {
     "backgroundCheckedProviders": "PRESTADORES VERIFICADOS",
@@ -163,7 +167,10 @@
     "jobsCount": "{count, plural, one {# serviço} other {# serviços}}",
     "priceFrom": "A partir de",
     "viewButton": "Ver",
-    "bookButton": "Reservar"
+    "bookButton": "Reservar",
+    "priceRangeLabel": "Preço (€/h)",
+    "minPricePlaceholder": "Mín",
+    "maxPricePlaceholder": "Máx"
   },
   "browseJobs": {
     "heroTitle": "Trabalhos de limpeza disponíveis",
@@ -402,7 +409,11 @@
     "ctaHeading": "Pronto para começar?",
     "ctaSubtitle": "Reserve a sua primeira limpeza ecológica ou junte-se como profissional — sem qualquer compromisso.",
     "ctaBookButton": "Reservar uma limpeza",
-    "ctaCleanerButton": "Torne-se profissional"
+    "ctaCleanerButton": "Torne-se profissional",
+    "faqContractQ": "Existe um contrato de longo prazo ou período mínimo?",
+    "faqContractA": "Não. Não há contrato de longo prazo nem período mínimo — marque uma limpeza pontual ou recorrente e altere ou cancele quando quiser.",
+    "faqTasksQ": "O que está incluído numa limpeza padrão?",
+    "faqTasksA": "Uma limpeza padrão inclui normalmente tirar o pó, aspirar, lavar o chão e limpar cozinhas e casas de banho. Pode adicionar pedidos específicos ao reservar."
   },
   "affiliate": {
     "metaTitle": "Programa de afiliados — DORIXÉ",

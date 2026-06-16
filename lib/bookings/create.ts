@@ -1,7 +1,8 @@
 import { db } from "@/lib/db"
 import { bookings, payments, providers, providerServices, carbonOffsetContributions, promoCodes, promoCodeUsages } from "@/lib/db/schema"
 import type { NewBooking } from "@/lib/db/schema/bookings"
-import { stripe, PLATFORM_FEE_PERCENT, calculateBookingAmounts } from "@/lib/stripe/client"
+import { stripe, calculateBookingAmounts } from "@/lib/stripe/client"
+import { getCommissionPct } from "@/lib/platform/settings"
 import { inngest } from "@/lib/inngest/client"
 import { redis } from "@/lib/redis/client"
 import { eq, and, sql } from "drizzle-orm"
@@ -62,7 +63,8 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
   const promoCodeId = intent.metadata.promo_code_id ?? null
   const discountCents = intent.metadata.promo_code_discount_cents ? parseInt(intent.metadata.promo_code_discount_cents, 10) : 0
   const subtotalAfterDiscount = Math.max(0, subtotal - discountCents)
-  const amounts = calculateBookingAmounts(subtotalAfterDiscount)
+  const commissionPct = await getCommissionPct()
+  const amounts = calculateBookingAmounts(subtotalAfterDiscount, commissionPct)
   const bookingNumber = await generateBookingNumber()
   const scheduledEnd = new Date(new Date(scheduledAt).getTime() + durationMinutes * 60_000)
 
@@ -79,7 +81,7 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     serviceLongitude: serviceLongitude ?? null,
     specialInstructions: specialInstructions ?? null,
     ecoOptionsSelected: ecoOptions,
-    platformFeePercent: PLATFORM_FEE_PERCENT,
+    platformFeePercent: commissionPct,
     subtotalAmount: subtotalAfterDiscount,
     platformFeeAmount: amounts.platformFee,
     totalAmount: amounts.totalCharged,

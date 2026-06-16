@@ -24,7 +24,11 @@
     "trustInstantConfirmation": "Directe bevestiging",
     "ourServices": "Onze diensten",
     "orPrefix": "Of",
-    "postJobLink": "plaats een klus en ontvang biedingen →"
+    "postJobLink": "plaats een klus en ontvang biedingen →",
+    "checking": "Beschikbaarheid controleren…",
+    "availableNear": "{count} eco-schoonmakers bij jou in de buurt beschikbaar",
+    "noneNear": "Nog geen schoonmakers in jouw regio — kom snel terug.",
+    "viewCleaners": "Schoonmakers bekijken"
   },
   "homeTrustTicker": {
     "backgroundCheckedProviders": "GESCREENDE AANBIEDERS",
@@ -163,7 +167,10 @@
     "jobsCount": "{count, plural, one {# klus} other {# klussen}}",
     "priceFrom": "Vanaf",
     "viewButton": "Bekijken",
-    "bookButton": "Boeken"
+    "bookButton": "Boeken",
+    "priceRangeLabel": "Prijs (€/uur)",
+    "minPricePlaceholder": "Min",
+    "maxPricePlaceholder": "Max"
   },
   "browseJobs": {
     "heroTitle": "Open schoonmaakklussen",
@@ -402,7 +409,11 @@
     "ctaHeading": "Klaar om te beginnen?",
     "ctaSubtitle": "Boek je eerste milieuvriendelijke schoonmaakbeurt of meld je aan als schoonmaker — geheel vrijblijvend.",
     "ctaBookButton": "Boek een schoonmaakbeurt",
-    "ctaCleanerButton": "Word schoonmaker"
+    "ctaCleanerButton": "Word schoonmaker",
+    "faqContractQ": "Is er een langlopend contract of minimale looptijd?",
+    "faqContractA": "Nee. Er is geen langlopend contract en geen minimale looptijd — boek een eenmalige of terugkerende schoonmaak en wijzig of annuleer wanneer je wilt.",
+    "faqTasksQ": "Wat is inbegrepen bij een standaardschoonmaak?",
+    "faqTasksA": "Een standaardschoonmaak omvat doorgaans afstoffen, stofzuigen, dweilen en het schoonmaken van keukens en badkamers. Je kunt bij het boeken specifieke wensen toevoegen."
   },
   "affiliate": {
     "metaTitle": "Partnerprogramma — DORIXÉ",

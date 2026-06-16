@@ -24,7 +24,11 @@
     "trustInstantConfirmation": "Confirmation immédiate",
     "ourServices": "Nos services",
     "orPrefix": "Ou",
-    "postJobLink": "publiez une demande et recevez des offres →"
+    "postJobLink": "publiez une demande et recevez des offres →",
+    "checking": "Vérification de la disponibilité…",
+    "availableNear": "{count} agents d'entretien éco disponibles près de chez vous",
+    "noneNear": "Aucun agent dans votre région pour le moment — revenez bientôt.",
+    "viewCleaners": "Voir les agents"
   },
   "homeTrustTicker": {
     "backgroundCheckedProviders": "PRESTATAIRES VÉRIFIÉS",
@@ -163,7 +167,10 @@
     "jobsCount": "{count, plural, one {# mission} other {# missions}}",
     "priceFrom": "À partir de",
     "viewButton": "Voir",
-    "bookButton": "Réserver"
+    "bookButton": "Réserver",
+    "priceRangeLabel": "Prix (€/h)",
+    "minPricePlaceholder": "Min",
+    "maxPricePlaceholder": "Max"
   },
   "browseJobs": {
     "heroTitle": "Missions de ménage disponibles",
@@ -402,7 +409,11 @@
     "ctaHeading": "Prêt à vous lancer ?",
     "ctaSubtitle": "Réservez votre premier ménage écologique ou inscrivez-vous comme professionnel — sans aucun engagement.",
     "ctaBookButton": "Réserver un ménage",
-    "ctaCleanerButton": "Devenir professionnel"
+    "ctaCleanerButton": "Devenir professionnel",
+    "faqContractQ": "Y a-t-il un contrat à long terme ou une durée minimale ?",
+    "faqContractA": "Non. Aucun contrat à long terme ni durée minimale — réservez un ménage ponctuel ou récurrent, et modifiez ou annulez à tout moment.",
+    "faqTasksQ": "Qu'inclut un ménage standard ?",
+    "faqTasksA": "Un ménage standard comprend généralement l'époussetage, l'aspiration, le lavage des sols ainsi que le nettoyage des cuisines et des salles de bain. Vous pouvez ajouter des demandes spécifiques lors de la réservation."
   },
   "affiliate": {
     "metaTitle": "Programme d'affiliation — DORIXÉ",

@@ -1,8 +1,8 @@
 import Link from "next/link"
-import { MapPin, CheckCircle } from "lucide-react"
+import { CheckCircle } from "lucide-react"
 import { getTranslations } from "next-intl/server"
-import { Button } from "@/components/ui/button"
 import { ServiceGrid } from "./ServiceGrid"
+import { HeroPostcodeSearch } from "./HeroPostcodeSearch"
 
 export async function HeroSection() {
   const t = await getTranslations("homeHero")
@@ -29,22 +29,15 @@ export async function HeroSection() {
               {t("subheadline")}
             </p>
 
-            {/* Postcode search */}
-            <div className="flex gap-2 mb-8 max-w-md">
-              <label className="flex-1 flex items-center gap-2 bg-white border border-[#E5EDE9] rounded-xl px-4 py-3 shadow-sm focus-within:border-[#2D7A5F] transition-colors">
-                <MapPin className="w-4 h-4 text-[#6B7280] flex-shrink-0" />
-                <input
-                  type="text"
-                  placeholder={t("postcodePlaceholder")}
-                  className="flex-1 text-sm outline-none text-[#2B3441] placeholder:text-[#9ca3af] bg-transparent"
-                />
-              </label>
-              <Link href="/browse">
-                <Button className="bg-[#2D7A5F] hover:bg-[#235f49] text-white rounded-xl px-5 h-full whitespace-nowrap">
-                  {t("findCleaners")}
-                </Button>
-              </Link>
-            </div>
+            {/* Postcode search — checks real area availability (Step 1) */}
+            <HeroPostcodeSearch
+              placeholder={t("postcodePlaceholder")}
+              buttonLabel={t("findCleaners")}
+              checkingLabel={t("checking")}
+              availableTemplate={t("availableNear")}
+              noneLabel={t("noneNear")}
+              viewLabel={t("viewCleaners")}
+            />
 
             {/* Trust badges */}
             <div className="flex flex-wrap gap-x-5 gap-y-2">

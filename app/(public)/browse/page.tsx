@@ -23,7 +23,7 @@ const ecoLabelColors: Record<string, string> = {
   zero_impact: "bg-[#2D7A5F]/10 text-[#2D7A5F]",
 }
 
-async function getProviders(filters: { city?: string; ecoLevel?: string; minRating?: string }) {
+async function getProviders(filters: { city?: string; ecoLevel?: string; minRating?: string; minPrice?: string; maxPrice?: string }) {
   const conditions: Parameters<typeof and>[0][] = [eq(providers.isApproved, true)]
 
   if (filters.city) conditions.push(ilike(providers.city, "%" + filters.city + "%"))
@@ -73,20 +73,36 @@ async function getProviders(filters: { city?: string; ecoLevel?: string; minRati
       if (!cur || s.basePrice < cur.price) cheapest.set(s.providerId, { price: s.basePrice, unit: s.priceUnit })
     }
 
-    return rows.map((r) => ({
+    let result = rows.map((r) => ({
       ...r,
       priceFrom: cheapest.get(r.id)?.price ?? null,
       priceUnit: cheapest.get(r.id)?.unit ?? null,
     }))
+
+    // Price-range filter (user enters euros; priceFrom is in cents). Providers
+    // with no listed price are excluded once a range is set.
+    const min = filters.minPrice ? parseFloat(filters.minPrice) : null
+    const max = filters.maxPrice ? parseFloat(filters.maxPrice) : null
+    if ((min != null && !isNaN(min)) || (max != null && !isNaN(max))) {
+      result = result.filter((p) => {
+        if (p.priceFrom == null) return false
+        const eur = p.priceFrom / 100
+        if (min != null && !isNaN(min) && eur < min) return false
+        if (max != null && !isNaN(max) && eur > max) return false
+        return true
+      })
+    }
+    return result
   } catch {
     return []
   }
 }
 
-export default async function BrowsePage({ searchParams }: { searchParams: Promise<{ city?: string; ecoLevel?: string; minRating?: string }> }) {
-  const { city, ecoLevel, minRating } = await searchParams
-  const providerList = await getProviders({ city, ecoLevel, minRating })
+export default async function BrowsePage({ searchParams }: { searchParams: Promise<{ city?: string; ecoLevel?: string; minRating?: string; minPrice?: string; maxPrice?: string }> }) {
+  const { city, ecoLevel, minRating, minPrice, maxPrice } = await searchParams
+  const providerList = await getProviders({ city, ecoLevel, minRating, minPrice, maxPrice })
   const t = await getTranslations("browse")
+  const hasFilters = !!(city || ecoLevel || minRating || minPrice || maxPrice)
 
   const ecoLabelText: Record<string, string> = {
     basic: t("ecoBasic"),
@@ -121,14 +137,22 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
             <option value="4.5">{t("rating45")}</option>
           </select>
         </div>
+        <div>
+          <label className="mb-1 block text-xs text-[#6B7280]">{t("priceRangeLabel")}</label>
+          <div className="flex items-center gap-1.5">
+            <input name="minPrice" type="number" min="0" step="1" inputMode="numeric" defaultValue={minPrice ?? ""} placeholder={t("minPricePlaceholder")} className="w-20 rounded-lg border border-[#E5EBF0] px-3 py-2 text-sm" />
+            <span className="text-[#9CA3AF]">–</span>
+            <input name="maxPrice" type="number" min="0" step="1" inputMode="numeric" defaultValue={maxPrice ?? ""} placeholder={t("maxPricePlaceholder")} className="w-20 rounded-lg border border-[#E5EBF0] px-3 py-2 text-sm" />
+          </div>
+        </div>
         <button type="submit" className="rounded-lg bg-[#2D7A5F] px-4 py-2 text-sm font-semibold text-white">{t("filterButton")}</button>
-        {(city || ecoLevel || minRating) && (
+        {hasFilters && (
           <a href="/browse" className="rounded-lg border border-[#E5EBF0] px-4 py-2 text-sm text-[#6B7280]">{t("clearButton")}</a>
         )}
       </form>
       <div className="mb-8">
         <h1 className="font-serif text-4xl font-bold text-[#2B3441]">{t("heading")}</h1>
-        <p className="text-[#6B7280] mt-2">{(city || ecoLevel || minRating) ? t("resultsFiltered", { count: providerList.length }) : t("resultsAvailable", { count: providerList.length })}</p>
+        <p className="text-[#6B7280] mt-2">{hasFilters ? t("resultsFiltered", { count: providerList.length }) : t("resultsAvailable", { count: providerList.length })}</p>
       </div>
 
       {providerList.length === 0 ? (

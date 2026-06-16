@@ -24,7 +24,11 @@
     "trustInstantConfirmation": "Natychmiastowe potwierdzenie",
     "ourServices": "Nasze usługi",
     "orPrefix": "Lub",
-    "postJobLink": "opublikuj zlecenie i otrzymuj oferty →"
+    "postJobLink": "opublikuj zlecenie i otrzymuj oferty →",
+    "checking": "Sprawdzanie dostępności…",
+    "availableNear": "{count} ekosprzątaczy dostępnych w pobliżu",
+    "noneNear": "Brak sprzątaczy w Twojej okolicy — zajrzyj wkrótce.",
+    "viewCleaners": "Zobacz sprzątaczy"
   },
   "homeTrustTicker": {
     "backgroundCheckedProviders": "ZWERYFIKOWANI WYKONAWCY",
@@ -163,7 +167,10 @@
     "jobsCount": "{count, plural, one {# zlecenie} few {# zlecenia} many {# zleceń} other {# zlecenia}}",
     "priceFrom": "Od",
     "viewButton": "Zobacz",
-    "bookButton": "Rezerwuj"
+    "bookButton": "Rezerwuj",
+    "priceRangeLabel": "Cena (€/godz.)",
+    "minPricePlaceholder": "Min",
+    "maxPricePlaceholder": "Maks"
   },
   "browseJobs": {
     "heroTitle": "Otwarte zlecenia sprzątania",
@@ -402,7 +409,11 @@
     "ctaHeading": "Gotowy, by zacząć?",
     "ctaSubtitle": "Zarezerwuj swoje pierwsze ekologiczne sprzątanie lub dołącz jako osoba sprzątająca — bez żadnych zobowiązań.",
     "ctaBookButton": "Zarezerwuj sprzątanie",
-    "ctaCleanerButton": "Zostań osobą sprzątającą"
+    "ctaCleanerButton": "Zostań osobą sprzątającą",
+    "faqContractQ": "Czy obowiązuje długoterminowa umowa lub minimalny okres?",
+    "faqContractA": "Nie. Nie ma długoterminowej umowy ani minimalnego okresu — zamów jednorazowe lub cykliczne sprzątanie i zmień je albo anuluj w dowolnej chwili.",
+    "faqTasksQ": "Co obejmuje standardowe sprzątanie?",
+    "faqTasksA": "Standardowe sprzątanie zwykle obejmuje odkurzanie, ścieranie kurzu, mycie podłóg oraz sprzątanie kuchni i łazienek. Przy rezerwacji możesz dodać szczególne życzenia."
   },
   "affiliate": {
     "metaTitle": "Program partnerski — DORIXÉ",

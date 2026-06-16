@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { providers, providerServices, users, bids, jobPosts, promoCodes } from "@/lib/db/schema"
 import { stripe, calculateBookingAmounts } from "@/lib/stripe/client"
+import { getCommissionPct } from "@/lib/platform/settings"
 import { bookingRatelimit } from "@/lib/redis/client"
 import { paymentIntentSchema } from "@/lib/validations/booking"
 import { and, eq } from "drizzle-orm"
@@ -89,7 +90,8 @@ export async function POST(req: Request) {
     }
 
     const subtotalAfterDiscount = Math.max(0, subtotal - resolvedDiscountCents)
-    const amounts = calculateBookingAmounts(subtotalAfterDiscount)
+    const commissionPct = await getCommissionPct()
+    const amounts = calculateBookingAmounts(subtotalAfterDiscount, commissionPct)
     const totalWithOffset = amounts.totalCharged + carbonOffsetCents
 
     let stripeCustomerId: string | undefined
@@ -134,7 +136,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       clientSecret: intent.client_secret,
       paymentIntentId: intent.id,
-      amounts: { ...amounts, carbonOffsetCents, totalCharged: totalWithOffset },
+      amounts: { ...amounts, carbonOffsetCents, totalCharged: totalWithOffset, commissionPct },
     })
   } catch (err) {
     console.error("[payments/intent POST]", err)

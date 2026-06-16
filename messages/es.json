@@ -24,7 +24,11 @@
     "trustInstantConfirmation": "Confirmación instantánea",
     "ourServices": "Nuestros servicios",
     "orPrefix": "O",
-    "postJobLink": "publica un trabajo y recibe ofertas →"
+    "postJobLink": "publica un trabajo y recibe ofertas →",
+    "checking": "Comprobando disponibilidad…",
+    "availableNear": "{count} limpiadores ecológicos disponibles cerca de ti",
+    "noneNear": "Aún no hay limpiadores en tu zona — vuelve pronto.",
+    "viewCleaners": "Ver limpiadores"
   },
   "homeTrustTicker": {
     "backgroundCheckedProviders": "PROVEEDORES VERIFICADOS",
@@ -163,7 +167,10 @@
     "jobsCount": "{count, plural, one {# trabajo} other {# trabajos}}",
     "priceFrom": "Desde",
     "viewButton": "Ver",
-    "bookButton": "Reservar"
+    "bookButton": "Reservar",
+    "priceRangeLabel": "Precio (€/h)",
+    "minPricePlaceholder": "Mín",
+    "maxPricePlaceholder": "Máx"
   },
   "browseJobs": {
     "heroTitle": "Trabajos de limpieza disponibles",
@@ -402,7 +409,11 @@
     "ctaHeading": "¿Listo para empezar?",
     "ctaSubtitle": "Reserva tu primera limpieza ecológica o únete como profesional — sin compromiso alguno.",
     "ctaBookButton": "Reservar una limpieza",
-    "ctaCleanerButton": "Hazte profesional"
+    "ctaCleanerButton": "Hazte profesional",
+    "faqContractQ": "¿Hay contrato de permanencia o duración mínima?",
+    "faqContractA": "No. No hay contrato de permanencia ni duración mínima: reserva una limpieza puntual o periódica y cámbiala o cancélala cuando quieras.",
+    "faqTasksQ": "¿Qué incluye una limpieza estándar?",
+    "faqTasksA": "Una limpieza estándar suele incluir quitar el polvo, aspirar, fregar y limpiar cocinas y baños. Puedes añadir peticiones específicas al reservar."
   },
   "affiliate": {
     "metaTitle": "Programa de afiliados — DORIXÉ",

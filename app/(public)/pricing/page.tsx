@@ -47,6 +47,8 @@ export default async function PricingPage() {
 
   const FAQS = [
     { q: t("faqChargedQ"), a: t("faqChargedA") },
+    { q: t("faqContractQ"), a: t("faqContractA") },
+    { q: t("faqTasksQ"), a: t("faqTasksA") },
     { q: t("faqCancelQ"), a: t("faqCancelA") },
     { q: t("faqPayoutQ"), a: t("faqPayoutA") },
     { q: t("faqMinimumQ"), a: t("faqMinimumA") },
