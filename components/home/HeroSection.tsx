@@ -33,11 +33,11 @@ export async function HeroSection() {
           headline stays readable; horizontal layer deepens the left for the text column. */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0d1f16]/60 via-[#0d1f16]/38 to-[#0d1f16]/28"
+        className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0d1f16]/40 via-[#0d1f16]/18 to-[#0d1f16]/12"
       />
       <div
         aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0d1f16]/90 via-[#0d1f16]/55 to-transparent"
+        className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0d1f16]/80 via-[#0d1f16]/30 to-transparent"
       />
       {/* Bottom blend into the page background */}
       <div
