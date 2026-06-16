@@ -34,7 +34,7 @@ export default async function BecomeACleanerPage() {
             <Leaf size={11} /> {t("heroBadge")}
           </span>
           <h1 className="font-serif text-5xl font-bold leading-tight">
-            {t("heroTitleLine1")}<br />{t("heroTitleLine2")}
+            <span className="text-white">{t("heroTitleLine1")}<br />{t("heroTitleLine2")}</span>
           </h1>
           <p className="text-white/70 text-lg max-w-xl mx-auto">
             {t("heroSubtitle")}

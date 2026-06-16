@@ -149,8 +149,8 @@ export default async function AffiliatePage() {
               <Leaf className="w-3 h-3 mr-1" />
               {t("heroBadge")}
             </span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold leading-tight mb-6 text-white">
-              <span className="block">{t("heroTitleLine1")}</span>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold leading-tight mb-6">
+              <span className="block text-white">{t("heroTitleLine1")}</span>
               <span className="block bg-gradient-to-r from-[#4CB87A] to-[#2D7A5F] bg-clip-text text-transparent">
                 {t("heroTitleLine2")}
               </span>

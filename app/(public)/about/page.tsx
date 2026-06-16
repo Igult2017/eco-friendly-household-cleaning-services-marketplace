@@ -95,7 +95,7 @@ export default async function AboutPage() {
             {t("tagline")}
           </div>
           <h1 className="font-serif text-5xl md:text-6xl font-bold mb-6 leading-tight">
-            {t("heroTitleLine1")}<br className="hidden md:block" /> {t("heroTitleLine2")}
+            <span className="text-white">{t("heroTitleLine1")}<br className="hidden md:block" /> {t("heroTitleLine2")}</span>
           </h1>
           <p className="text-white/60 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
             {t("heroSubtitle")}

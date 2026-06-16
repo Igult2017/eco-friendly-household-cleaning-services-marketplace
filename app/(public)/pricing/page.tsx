@@ -63,8 +63,8 @@ export default async function PricingPage() {
           <span className="inline-flex items-center gap-1.5 rounded-full bg-[#2D7A5F]/30 border border-[#2D7A5F]/40 px-4 py-1 text-xs font-semibold text-[#4CB87A] uppercase tracking-wide">
             <Euro size={11} /> {t("heroBadge")}
           </span>
-          <h1 className="font-serif text-4xl sm:text-5xl font-bold text-white leading-tight">
-            {t("heroTitleLine1")}<br />{t("heroTitleLine2")}
+          <h1 className="font-serif text-4xl sm:text-5xl font-bold leading-tight">
+            <span className="text-white">{t("heroTitleLine1")}<br />{t("heroTitleLine2")}</span>
           </h1>
           <p className="text-white/70 text-lg max-w-xl mx-auto">
             {t("heroSubtitle")}
