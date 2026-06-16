@@ -53,3 +53,6 @@ uploads/
 .idea/
 .vscode/settings.json
 package-lock.json
+
+# Playwright MCP visual-QA artifacts (screenshots, snapshots, console logs)
+.playwright-mcp/

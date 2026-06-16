@@ -10,15 +10,20 @@ const SERVICES = [
   { icon: "🪟", nameKey: "windowCleaning", from: "€20", slug: "window-cleaning" },
 ]
 
-export async function ServiceGrid() {
+export async function ServiceGrid({ glass = false }: { glass?: boolean }) {
   const t = await getTranslations("homeServiceGrid")
+  // `glass` renders frosted, translucent cards that float over the hero photo;
+  // the default solid white cards are used anywhere with a plain background.
+  const cardClass = glass
+    ? "group bg-white/80 backdrop-blur-md rounded-2xl p-4 shadow-lg border border-white/60 hover:bg-white hover:border-[#2D7A5F] hover:-translate-y-0.5 hover:shadow-xl transition-all duration-200 cursor-pointer"
+    : "group bg-white rounded-2xl p-4 shadow-sm border border-[#E5EDE9] hover:border-[#2D7A5F] hover:shadow-md transition-all duration-200 cursor-pointer"
   return (
     <div className="grid grid-cols-2 gap-3">
       {SERVICES.map((s) => (
         <Link
           key={s.slug}
           href={`/book?service=${s.slug}`}
-          className="group bg-white rounded-2xl p-4 shadow-sm border border-[#E5EDE9] hover:border-[#2D7A5F] hover:shadow-md transition-all duration-200 cursor-pointer"
+          className={cardClass}
         >
           <div className="text-2xl mb-2.5">{s.icon}</div>
           <p className="text-sm font-semibold text-[#2B3441] group-hover:text-[#2D7A5F] transition-colors leading-tight mb-0.5">

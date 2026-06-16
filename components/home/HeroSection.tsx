@@ -13,19 +13,45 @@ export async function HeroSection() {
     t("trustInstantConfirmation"),
   ]
   return (
-    <section className="bg-gradient-to-br from-[#F4FAF6] to-[#e8f5ed] py-16 md:py-24 overflow-hidden">
+    <section className="relative isolate overflow-hidden py-16 md:py-24">
+      {/* Full-bleed background photo (decorative — text conveys all meaning) */}
+      <img
+        src="/hero/hero-home.jpg"
+        alt=""
+        aria-hidden="true"
+        fetchPriority="high"
+        className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
+      />
+      {/* Contrast scrim — vertical layer tames the bright top of the photo so the
+          headline stays readable; horizontal layer deepens the left for the text column. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0d1f16]/60 via-[#0d1f16]/38 to-[#0d1f16]/28"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0d1f16]/90 via-[#0d1f16]/55 to-transparent"
+      />
+      {/* Bottom blend into the page background */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 -z-10 h-24 bg-gradient-to-t from-[#F4FAF6] to-transparent"
+      />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Left */}
           <div>
-            <div className="inline-flex items-center gap-2 bg-[#D1F0E0] text-[#2D7A5F] text-xs font-semibold px-3 py-1.5 rounded-full mb-6">
+            <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/25 text-white text-xs font-semibold px-3 py-1.5 rounded-full mb-6">
               🌿 {t("badge")}
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-[#2B3441] leading-[1.1] mb-5">
-              {t("headlineLine1")}<br />
-              <span className="text-[#2D7A5F]">{t("headlineLine2")}</span>
+            {/* Each line is wrapped in a span so the global `h1 { color }` rule (unlayered,
+                wins over Tailwind's layered text-* utilities) doesn't force charcoal text. */}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold leading-[1.1] mb-5 [text-shadow:0_2px_14px_rgba(0,0,0,0.55)]">
+              <span className="text-white">{t("headlineLine1")}</span><br />
+              <span className="text-[#7BD8A8]">{t("headlineLine2")}</span>
             </h1>
-            <p className="text-lg text-[#6B7280] mb-8 max-w-md leading-relaxed">
+            <p className="text-lg text-white/90 mb-8 max-w-md leading-relaxed drop-shadow-sm">
               {t("subheadline")}
             </p>
 
@@ -42,23 +68,23 @@ export async function HeroSection() {
             {/* Trust badges */}
             <div className="flex flex-wrap gap-x-5 gap-y-2">
               {TRUST.map((badge) => (
-                <div key={badge} className="flex items-center gap-1.5 text-xs text-[#2B3441]">
-                  <CheckCircle className="w-3.5 h-3.5 text-[#2D7A5F] flex-shrink-0" />
+                <div key={badge} className="flex items-center gap-1.5 text-xs font-medium text-white drop-shadow-sm">
+                  <CheckCircle className="w-3.5 h-3.5 text-[#7BD8A8] flex-shrink-0" />
                   {badge}
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Right — service grid */}
+          {/* Right — service grid (frosted glass over the photo) */}
           <div>
-            <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-widest mb-4">
+            <p className="text-xs font-semibold text-white/80 uppercase tracking-widest mb-4 drop-shadow-sm">
               {t("ourServices")}
             </p>
-            <ServiceGrid />
-            <p className="text-xs text-[#6B7280] mt-4 text-center">
+            <ServiceGrid glass />
+            <p className="text-xs text-white/85 mt-4 text-center drop-shadow-sm">
               {t("orPrefix")}{" "}
-              <Link href="/post-job" className="text-[#2D7A5F] font-semibold hover:underline">
+              <Link href="/post-job" className="text-[#7BD8A8] font-semibold hover:underline">
                 {t("postJobLink")}
               </Link>
             </p>
