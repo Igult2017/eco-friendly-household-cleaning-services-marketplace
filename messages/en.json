@@ -170,7 +170,8 @@
     "bookButton": "Book",
     "priceRangeLabel": "Price (€/hr)",
     "minPricePlaceholder": "Min",
-    "maxPricePlaceholder": "Max"
+    "maxPricePlaceholder": "Max",
+    "priceOnRequest": "Price on request"
   },
   "browseJobs": {
     "heroTitle": "Open Cleaning Jobs",

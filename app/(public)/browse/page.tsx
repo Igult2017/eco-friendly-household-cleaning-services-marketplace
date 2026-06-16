@@ -67,17 +67,25 @@ async function getProviders(filters: { city?: string; ecoLevel?: string; minRati
       .from(providerServices)
       .where(and(eq(providerServices.isActive, true), inArray(providerServices.providerId, ids)))
 
+    // Prefer the cheapest per-hour rate (what we show as "€X/hr"); fall back to the
+    // cheapest service of any unit so providers who price per job still show a price.
+    const hourly = new Map<string, number>()
     const cheapest = new Map<string, { price: number; unit: string }>()
     for (const s of svc) {
+      if (s.priceUnit === "per_hour") {
+        const h = hourly.get(s.providerId)
+        if (h == null || s.basePrice < h) hourly.set(s.providerId, s.basePrice)
+      }
       const cur = cheapest.get(s.providerId)
       if (!cur || s.basePrice < cur.price) cheapest.set(s.providerId, { price: s.basePrice, unit: s.priceUnit })
     }
 
-    let result = rows.map((r) => ({
-      ...r,
-      priceFrom: cheapest.get(r.id)?.price ?? null,
-      priceUnit: cheapest.get(r.id)?.unit ?? null,
-    }))
+    let result = rows.map((r) => {
+      const chosen = hourly.has(r.id)
+        ? { price: hourly.get(r.id)!, unit: "per_hour" }
+        : cheapest.get(r.id) ?? null
+      return { ...r, priceFrom: chosen?.price ?? null, priceUnit: chosen?.unit ?? null }
+    })
 
     // Price-range filter (user enters euros; priceFrom is in cents). Providers
     // with no listed price are excluded once a range is set.
@@ -199,13 +207,16 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
                       <span>·</span>
                       <span>{t("jobsCount", { count: p.totalJobsCompleted })}</span>
                     </div>
-                    {p.priceFrom != null && (
+                    {p.priceFrom != null ? (
                       <span className="whitespace-nowrap text-sm font-bold text-[#2D7A5F]">
-                        {t("priceFrom")} {formatCurrencyShort(p.priceFrom)}
+                        {p.priceUnit !== "per_hour" && `${t("priceFrom")} `}
+                        {formatCurrencyShort(p.priceFrom)}
                         <span className="text-[11px] font-medium text-[#6B7280]">
                           {priceUnitSuffix[p.priceUnit ?? "per_job"] ?? ""}
                         </span>
                       </span>
+                    ) : (
+                      <span className="whitespace-nowrap text-xs italic text-[#9CA3AF]">{t("priceOnRequest")}</span>
                     )}
                   </div>
 

@@ -170,7 +170,8 @@
     "bookButton": "Reservar",
     "priceRangeLabel": "Preço (€/h)",
     "minPricePlaceholder": "Mín",
-    "maxPricePlaceholder": "Máx"
+    "maxPricePlaceholder": "Máx",
+    "priceOnRequest": "Preço sob consulta"
   },
   "browseJobs": {
     "heroTitle": "Trabalhos de limpeza disponíveis",

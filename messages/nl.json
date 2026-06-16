@@ -170,7 +170,8 @@
     "bookButton": "Boeken",
     "priceRangeLabel": "Prijs (€/uur)",
     "minPricePlaceholder": "Min",
-    "maxPricePlaceholder": "Max"
+    "maxPricePlaceholder": "Max",
+    "priceOnRequest": "Prijs op aanvraag"
   },
   "browseJobs": {
     "heroTitle": "Open schoonmaakklussen",

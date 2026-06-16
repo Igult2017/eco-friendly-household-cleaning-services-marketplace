@@ -170,7 +170,8 @@
     "bookButton": "Buchen",
     "priceRangeLabel": "Preis (€/Std.)",
     "minPricePlaceholder": "Min",
-    "maxPricePlaceholder": "Max"
+    "maxPricePlaceholder": "Max",
+    "priceOnRequest": "Preis auf Anfrage"
   },
   "browseJobs": {
     "heroTitle": "Offene Reinigungsaufträge",

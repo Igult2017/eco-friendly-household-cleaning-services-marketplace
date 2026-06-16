@@ -170,7 +170,8 @@
     "bookButton": "Prenota",
     "priceRangeLabel": "Prezzo (€/h)",
     "minPricePlaceholder": "Min",
-    "maxPricePlaceholder": "Max"
+    "maxPricePlaceholder": "Max",
+    "priceOnRequest": "Prezzo su richiesta"
   },
   "browseJobs": {
     "heroTitle": "Lavori di pulizia disponibili",

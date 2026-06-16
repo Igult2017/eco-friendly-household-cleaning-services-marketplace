@@ -170,7 +170,8 @@
     "bookButton": "Réserver",
     "priceRangeLabel": "Prix (€/h)",
     "minPricePlaceholder": "Min",
-    "maxPricePlaceholder": "Max"
+    "maxPricePlaceholder": "Max",
+    "priceOnRequest": "Prix sur demande"
   },
   "browseJobs": {
     "heroTitle": "Missions de ménage disponibles",

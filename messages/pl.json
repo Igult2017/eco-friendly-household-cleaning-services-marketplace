@@ -170,7 +170,8 @@
     "bookButton": "Rezerwuj",
     "priceRangeLabel": "Cena (€/godz.)",
     "minPricePlaceholder": "Min",
-    "maxPricePlaceholder": "Maks"
+    "maxPricePlaceholder": "Maks",
+    "priceOnRequest": "Cena na zapytanie"
   },
   "browseJobs": {
     "heroTitle": "Otwarte zlecenia sprzątania",
