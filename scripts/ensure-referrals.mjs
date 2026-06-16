@@ -78,6 +78,37 @@ CREATE TABLE IF NOT EXISTS customer_reviews (
 CREATE UNIQUE INDEX IF NOT EXISTS customer_reviews_booking_idx   ON customer_reviews(booking_id);
 CREATE INDEX        IF NOT EXISTS customer_reviews_customer_idx  ON customer_reviews(customer_id);
 CREATE INDEX        IF NOT EXISTS customer_reviews_provider_idx  ON customer_reviews(provider_id);
+
+-- Service categories seed. The DB seed (lib/db/seed.ts) never ran in prod, so the
+-- category list was empty — the provider "Add service" dropdown had no options and
+-- cleaners could not price/list any service. Idempotent upsert on slug.
+CREATE TABLE IF NOT EXISTS service_categories (
+  id              UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
+  name            VARCHAR(100) NOT NULL,
+  slug            VARCHAR(100) NOT NULL,
+  description     TEXT,
+  icon_url        TEXT,
+  base_eco_points INTEGER      NOT NULL DEFAULT 0,
+  is_active       BOOLEAN      NOT NULL DEFAULT true,
+  sort_order      INTEGER      NOT NULL DEFAULT 0
+);
+CREATE UNIQUE INDEX IF NOT EXISTS service_categories_slug_idx ON service_categories(slug);
+
+INSERT INTO service_categories (name, slug, description, icon_url, base_eco_points, is_active, sort_order) VALUES
+  ('Regular Cleaning','regular-cleaning','Routine maintenance cleaning: vacuuming, mopping, surfaces, bathrooms, kitchen.','🌿',10,true,1),
+  ('Deep Cleaning','deep-cleaning','Thorough top-to-bottom clean covering all surfaces, appliances, and hidden areas.','✨',20,true,2),
+  ('Move-in / Move-out','move-cleaning','End-of-tenancy or pre-move-in clean to prepare a property for new occupants.','📦',25,true,3),
+  ('Office Cleaning','office-cleaning','Professional eco-cleaning for offices, co-working spaces, and commercial premises.','🏢',15,true,4),
+  ('Laundry','laundry','Washing, drying, folding and ironing using eco-certified detergents.','👕',8,true,5),
+  ('Window Cleaning','window-cleaning','Interior and exterior window cleaning with streak-free, plant-based solutions.','🪟',12,true,6),
+  ('Appliance Cleaning','appliance-cleaning','Deep cleaning of ovens, fridges, dishwashers, and washing machines.','🔧',18,true,7)
+ON CONFLICT (slug) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description,
+  icon_url = EXCLUDED.icon_url,
+  base_eco_points = EXCLUDED.base_eco_points,
+  is_active = true,
+  sort_order = EXCLUDED.sort_order;
 `
 
 function isValidUrl(url) {
@@ -98,7 +129,7 @@ async function main() {
   const sql = postgres(url, { max: 1, prepare: false })
   try {
     await sql.unsafe(DDL)
-    console.log("[ensure-referrals] referral + customer_reviews tables ensured ✓")
+    console.log("[ensure-referrals] referral + customer_reviews tables + service_categories seed ensured ✓")
   } finally {
     await sql.end({ timeout: 5 })
   }
