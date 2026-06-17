@@ -50,14 +50,16 @@
     "priceFrom": "From {price}/hr"
   },
   "homeHowItWorks": {
-    "heading": "How DORIXÉ works",
-    "subheading": "From search to spotless in three simple steps — no hidden fees, no hassle.",
-    "step1Title": "Search by location",
-    "step1Desc": "Enter your postcode to find eco-certified cleaning professionals near you, filtered by service type, price, and availability.",
-    "step2Title": "Book in minutes",
-    "step2Desc": "Choose your cleaner, pick a time slot, and confirm with secure card pre-authorisation. Payment is only captured after the job is done.",
-    "step3Title": "Relax & review",
-    "step3Desc": "Your cleaner arrives with eco-friendly products. Rate their work, track your carbon savings, and earn loyalty credits."
+    "heading": "How Dorixé works",
+    "subheading": "Dorixé connects you with trusted, independent cleaning professionals — booked online and tailored to your home. One-time or recurring, we make it simple to keep your home clean, fresh, and stress-free.",
+    "step1Title": "Tell us what you need",
+    "step1Desc": "Choose your location, the cleaning service, and any preferences.",
+    "step2Title": "See upfront pricing",
+    "step2Desc": "Compare cleaners' hourly rates before you book — no hidden fees.",
+    "step3Title": "Book securely online",
+    "step3Desc": "Pick a date and time and pay safely through our platform.",
+    "step4Title": "Enjoy a spotless home",
+    "step4Desc": "A vetted, independent cleaning professional takes care of the rest."
   },
   "homeFeaturedProviders": {
     "heading": "Top-rated professionals",
@@ -1603,5 +1605,29 @@
     "empty": "You haven't set any prices yet. Customers can't book you until you add at least one service with a rate.",
     "setButton": "Set your hourly rate",
     "manageButton": "Manage"
+  },
+  "homeWhatsIncluded": {
+    "heading": "What's included",
+    "subheading": "Everything for a fresh, healthy home — with eco-friendly options and flexible scheduling.",
+    "item1": "General cleaning of living areas, kitchen, and bathroom",
+    "item2": "Dusting, vacuuming, and mopping",
+    "item3": "Extra services like deep cleaning, window cleaning, and move-in / move-out",
+    "item4": "Eco preferences — plant-based products, plastic-free, and fragrance-free options",
+    "item5": "One-time or recurring bookings — weekly, bi-weekly, or monthly"
+  },
+  "homeWhyChoose": {
+    "heading": "Why choose Dorixé",
+    "subheading": "Quality cleaning you can trust, with the flexibility and transparency you deserve.",
+    "reason1Title": "Trusted professionals",
+    "reason1Desc": "Verified, experienced, independent cleaners.",
+    "reason2Title": "Transparent pricing",
+    "reason2Desc": "See each cleaner's hourly rate before you book — no hidden fees.",
+    "reason3Title": "Flexible scheduling",
+    "reason3Desc": "One-time or recurring — weekly, bi-weekly, or monthly.",
+    "reason4Title": "Secure payments",
+    "reason4Desc": "Pay safely online through our platform — no cash required.",
+    "reason5Title": "Eco-conscious approach",
+    "reason5Desc": "Sustainable products and practices — better for your home and the planet.",
+    "trustNote": "Pricing reflects the service, how long it takes, and each cleaner's hourly rate — all shown upfront. Payments are handled securely online, and after every clean you can leave a review to help keep quality high."
   }
 }

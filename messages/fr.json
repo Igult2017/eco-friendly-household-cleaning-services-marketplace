@@ -50,14 +50,16 @@
     "priceFrom": "À partir de {price}/h"
   },
   "homeHowItWorks": {
-    "heading": "Comment fonctionne DORIXÉ",
-    "subheading": "De la recherche à l'impeccable en trois étapes simples — sans frais cachés, sans complications.",
-    "step1Title": "Rechercher par localisation",
-    "step1Desc": "Saisissez votre code postal pour trouver des professionnels du nettoyage éco-certifiés près de chez vous, filtrés par type de service, prix et disponibilité.",
-    "step2Title": "Réserver en quelques minutes",
-    "step2Desc": "Choisissez votre intervenant, sélectionnez un créneau et confirmez avec une pré-autorisation sécurisée par carte. Le paiement n'est prélevé qu'une fois la prestation effectuée.",
-    "step3Title": "Détendez-vous & évaluez",
-    "step3Desc": "Votre intervenant arrive avec des produits écologiques. Évaluez son travail, suivez vos économies de carbone et gagnez des crédits de fidélité."
+    "heading": "Comment fonctionne Dorixé",
+    "subheading": "Dorixé vous met en relation avec des professionnels du ménage indépendants et de confiance – réservés en ligne et adaptés à votre logement. Ponctuel ou récurrent, gardez votre maison propre, fraîche et sans stress.",
+    "step1Title": "Dites-nous ce dont vous avez besoin",
+    "step1Desc": "Choisissez votre lieu, le service de ménage et vos préférences.",
+    "step2Title": "Un prix transparent à l'avance",
+    "step2Desc": "Comparez les tarifs horaires des agents avant de réserver – sans frais cachés.",
+    "step3Title": "Réservez en ligne en toute sécurité",
+    "step3Desc": "Choisissez une date et une heure et payez en toute sécurité via notre plateforme.",
+    "step4Title": "Profitez d'une maison impeccable",
+    "step4Desc": "Un professionnel du ménage vérifié et indépendant s'occupe du reste."
   },
   "homeFeaturedProviders": {
     "heading": "Professionnels les mieux notés",
@@ -1603,5 +1605,29 @@
     "empty": "Vous n'avez pas encore défini de tarifs. Les clients ne peuvent pas vous réserver tant que vous n'avez pas ajouté au moins un service avec un tarif.",
     "setButton": "Définir le tarif horaire",
     "manageButton": "Gérer"
+  },
+  "homeWhatsIncluded": {
+    "heading": "Ce qui est inclus",
+    "subheading": "Tout pour une maison fraîche et saine – avec des options écologiques et un planning flexible.",
+    "item1": "Nettoyage général des pièces de vie, de la cuisine et de la salle de bain",
+    "item2": "Dépoussiérage, aspiration et lavage des sols",
+    "item3": "Services supplémentaires comme le nettoyage en profondeur, des vitres et l'état des lieux",
+    "item4": "Préférences écologiques – produits d'origine végétale, sans plastique et sans parfum",
+    "item5": "Réservations ponctuelles ou récurrentes – hebdomadaire, bimensuelle ou mensuelle"
+  },
+  "homeWhyChoose": {
+    "heading": "Pourquoi choisir Dorixé",
+    "subheading": "Un ménage de qualité en qui vous pouvez avoir confiance, avec la flexibilité et la transparence que vous méritez.",
+    "reason1Title": "Professionnels de confiance",
+    "reason1Desc": "Des agents d'entretien vérifiés, expérimentés et indépendants.",
+    "reason2Title": "Tarification transparente",
+    "reason2Desc": "Voyez le tarif horaire de chaque agent avant de réserver – sans frais cachés.",
+    "reason3Title": "Planning flexible",
+    "reason3Desc": "Ponctuel ou récurrent – hebdomadaire, bimensuel ou mensuel.",
+    "reason4Title": "Paiements sécurisés",
+    "reason4Desc": "Payez en toute sécurité en ligne via notre plateforme – sans espèces.",
+    "reason5Title": "Approche éco-responsable",
+    "reason5Desc": "Des produits et des pratiques durables – meilleurs pour votre maison et la planète.",
+    "trustNote": "Le prix dépend du service, de sa durée et du tarif horaire de chaque agent – le tout affiché à l'avance. Les paiements sont sécurisés en ligne, et après chaque ménage vous pouvez laisser un avis pour maintenir un haut niveau de qualité."
   }
 }

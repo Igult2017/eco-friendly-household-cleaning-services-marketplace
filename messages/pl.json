@@ -50,14 +50,16 @@
     "priceFrom": "Od {price}/godz."
   },
   "homeHowItWorks": {
-    "heading": "Jak działa DORIXÉ",
-    "subheading": "Od wyszukiwania do nieskazitelnej czystości w trzech prostych krokach — bez ukrytych opłat, bez kłopotów.",
-    "step1Title": "Szukaj według lokalizacji",
-    "step1Desc": "Wpisz swój kod pocztowy, aby znaleźć ekologicznie certyfikowanych specjalistów od sprzątania w pobliżu, z filtrami według rodzaju usługi, ceny i dostępności.",
-    "step2Title": "Zarezerwuj w kilka minut",
-    "step2Desc": "Wybierz osobę sprzątającą, wskaż termin i potwierdź bezpieczną wstępną autoryzacją karty. Płatność jest pobierana dopiero po wykonaniu usługi.",
-    "step3Title": "Odpocznij i oceń",
-    "step3Desc": "Osoba sprzątająca przyjeżdża z ekologicznymi środkami. Oceń jej pracę, śledź swoje oszczędności CO2 i zbieraj punkty lojalnościowe."
+    "heading": "Jak działa Dorixé",
+    "subheading": "Dorixé łączy Cię z zaufanymi, niezależnymi specjalistami od sprzątania – rezerwacja online, dopasowana do Twojego domu. Jednorazowo lub regularnie: utrzymaj dom czysty, świeży i bez stresu.",
+    "step1Title": "Powiedz nam, czego potrzebujesz",
+    "step1Desc": "Wybierz lokalizację, usługę sprzątania i swoje preferencje.",
+    "step2Title": "Od razu przejrzysta cena",
+    "step2Desc": "Porównaj stawki godzinowe sprzątaczy przed rezerwacją – bez ukrytych opłat.",
+    "step3Title": "Rezerwuj bezpiecznie online",
+    "step3Desc": "Wybierz datę i godzinę oraz zapłać bezpiecznie przez naszą platformę.",
+    "step4Title": "Ciesz się czystym domem",
+    "step4Desc": "Zweryfikowany, niezależny specjalista od sprzątania zajmie się resztą."
   },
   "homeFeaturedProviders": {
     "heading": "Najwyżej oceniani specjaliści",
@@ -1603,5 +1605,29 @@
     "empty": "Nie ustawiłeś jeszcze żadnych stawek. Klienci nie mogą Cię zarezerwować, dopóki nie dodasz co najmniej jednej usługi ze stawką.",
     "setButton": "Ustaw stawkę godzinową",
     "manageButton": "Zarządzaj"
+  },
+  "homeWhatsIncluded": {
+    "heading": "Co jest w cenie",
+    "subheading": "Wszystko dla świeżego, zdrowego domu – z ekologicznymi opcjami i elastycznym grafikiem.",
+    "item1": "Ogólne sprzątanie pokoi, kuchni i łazienki",
+    "item2": "Odkurzanie, ścieranie kurzu i mycie podłóg",
+    "item3": "Usługi dodatkowe, takie jak sprzątanie gruntowne, mycie okien i sprzątanie po przeprowadzce",
+    "item4": "Preferencje ekologiczne – produkty roślinne, bez plastiku i bez zapachu",
+    "item5": "Rezerwacje jednorazowe lub cykliczne – co tydzień, co dwa tygodnie lub co miesiąc"
+  },
+  "homeWhyChoose": {
+    "heading": "Dlaczego Dorixé",
+    "subheading": "Sprzątanie wysokiej jakości, któremu możesz zaufać, z elastycznością i przejrzystością, na jaką zasługujesz.",
+    "reason1Title": "Zaufani specjaliści",
+    "reason1Desc": "Zweryfikowani, doświadczeni i niezależni sprzątacze.",
+    "reason2Title": "Przejrzyste ceny",
+    "reason2Desc": "Zobacz stawkę godzinową każdego sprzątacza przed rezerwacją – bez ukrytych opłat.",
+    "reason3Title": "Elastyczny grafik",
+    "reason3Desc": "Jednorazowo lub cyklicznie – co tydzień, co dwa tygodnie lub co miesiąc.",
+    "reason4Title": "Bezpieczne płatności",
+    "reason4Desc": "Płać bezpiecznie online przez naszą platformę – bez gotówki.",
+    "reason5Title": "Podejście ekologiczne",
+    "reason5Desc": "Zrównoważone produkty i praktyki – lepsze dla Twojego domu i planety.",
+    "trustNote": "Cena zależy od usługi, czasu jej trwania i stawki godzinowej każdego sprzątacza – wszystko widoczne z góry. Płatności są realizowane bezpiecznie online, a po każdym sprzątaniu możesz zostawić opinię, aby utrzymać wysoką jakość."
   }
 }

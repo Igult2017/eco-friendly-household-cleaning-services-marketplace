@@ -50,14 +50,16 @@
     "priceFrom": "A partir de {price}/h"
   },
   "homeHowItWorks": {
-    "heading": "Como funciona a DORIXÉ",
-    "subheading": "Da pesquisa ao impecável em três passos simples — sem taxas ocultas, sem complicações.",
-    "step1Title": "Pesquisar por localização",
-    "step1Desc": "Introduza o seu código postal para encontrar profissionais de limpeza com certificação ecológica perto de si, filtrados por tipo de serviço, preço e disponibilidade.",
-    "step2Title": "Reserve em minutos",
-    "step2Desc": "Escolha o seu profissional de limpeza, selecione um horário e confirme com uma pré-autorização segura do cartão. O pagamento só é cobrado após a conclusão do serviço.",
-    "step3Title": "Relaxe e avalie",
-    "step3Desc": "O seu profissional chega com produtos ecológicos. Avalie o trabalho, acompanhe a sua poupança de carbono e ganhe créditos de fidelidade."
+    "heading": "Como funciona o Dorixé",
+    "subheading": "O Dorixé liga-o a profissionais de limpeza independentes e de confiança – reservados online e adaptados à sua casa. Pontual ou recorrente: mantenha a casa limpa, fresca e sem stress.",
+    "step1Title": "Diga-nos o que precisa",
+    "step1Desc": "Escolha a sua localização, o serviço de limpeza e as suas preferências.",
+    "step2Title": "Preço transparente na hora",
+    "step2Desc": "Compare as tarifas horárias dos profissionais antes de reservar – sem custos ocultos.",
+    "step3Title": "Reserve online em segurança",
+    "step3Desc": "Escolha a data e a hora e pague em segurança através da nossa plataforma.",
+    "step4Title": "Desfrute de uma casa impecável",
+    "step4Desc": "Um profissional de limpeza verificado e independente trata do resto."
   },
   "homeFeaturedProviders": {
     "heading": "Profissionais mais bem avaliados",
@@ -1603,5 +1605,29 @@
     "empty": "Ainda não definiu preços. Os clientes não o podem reservar até adicionar pelo menos um serviço com tarifa.",
     "setButton": "Definir tarifa horária",
     "manageButton": "Gerir"
+  },
+  "homeWhatsIncluded": {
+    "heading": "O que está incluído",
+    "subheading": "Tudo para uma casa fresca e saudável – com opções ecológicas e horários flexíveis.",
+    "item1": "Limpeza geral das áreas comuns, cozinha e casa de banho",
+    "item2": "Tirar o pó, aspirar e lavar o chão",
+    "item3": "Serviços adicionais como limpeza profunda, de vidros e entrada/saída de casa",
+    "item4": "Preferências ecológicas – produtos de origem vegetal, sem plástico e sem fragrância",
+    "item5": "Reservas pontuais ou recorrentes – semanal, quinzenal ou mensal"
+  },
+  "homeWhyChoose": {
+    "heading": "Porquê escolher o Dorixé",
+    "subheading": "Limpeza de qualidade em que pode confiar, com a flexibilidade e transparência que merece.",
+    "reason1Title": "Profissionais de confiança",
+    "reason1Desc": "Profissionais de limpeza verificados, experientes e independentes.",
+    "reason2Title": "Preços transparentes",
+    "reason2Desc": "Veja a tarifa horária de cada profissional antes de reservar – sem custos ocultos.",
+    "reason3Title": "Horários flexíveis",
+    "reason3Desc": "Pontual ou recorrente – semanal, quinzenal ou mensal.",
+    "reason4Title": "Pagamentos seguros",
+    "reason4Desc": "Pague em segurança online através da nossa plataforma – sem dinheiro.",
+    "reason5Title": "Abordagem ecológica",
+    "reason5Desc": "Produtos e práticas sustentáveis – melhores para a sua casa e para o planeta.",
+    "trustNote": "O preço depende do serviço, da duração e da tarifa horária de cada profissional – tudo apresentado antecipadamente. Os pagamentos são processados em segurança online e, após cada limpeza, pode deixar uma avaliação para manter a qualidade elevada."
   }
 }

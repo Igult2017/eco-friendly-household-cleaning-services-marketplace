@@ -50,14 +50,16 @@
     "priceFrom": "Da {price}/ora"
   },
   "homeHowItWorks": {
-    "heading": "Come funziona DORIXÉ",
-    "subheading": "Dalla ricerca al pulito splendente in tre semplici passi — nessun costo nascosto, nessun pensiero.",
-    "step1Title": "Cerca per posizione",
-    "step1Desc": "Inserisci il tuo codice postale per trovare professionisti delle pulizie eco-certificati vicino a te, filtrati per tipo di servizio, prezzo e disponibilità.",
-    "step2Title": "Prenota in pochi minuti",
-    "step2Desc": "Scegli il tuo addetto alle pulizie, seleziona una fascia oraria e conferma con una pre-autorizzazione sicura della carta. Il pagamento viene addebitato solo a lavoro concluso.",
-    "step3Title": "Rilassati e recensisci",
-    "step3Desc": "Il tuo addetto arriva con prodotti ecologici. Valuta il suo lavoro, monitora il tuo risparmio di CO2 e accumula crediti fedeltà."
+    "heading": "Come funziona Dorixé",
+    "subheading": "Dorixé ti mette in contatto con professionisti delle pulizie indipendenti e affidabili, prenotati online e su misura per la tua casa. Una tantum o ricorrente: mantieni la casa pulita, fresca e senza stress.",
+    "step1Title": "Dicci di cosa hai bisogno",
+    "step1Desc": "Scegli la tua zona, il servizio di pulizia e le tue preferenze.",
+    "step2Title": "Prezzo trasparente subito",
+    "step2Desc": "Confronta le tariffe orarie degli addetti prima di prenotare, senza costi nascosti.",
+    "step3Title": "Prenota online in sicurezza",
+    "step3Desc": "Scegli data e ora e paga in sicurezza tramite la nostra piattaforma.",
+    "step4Title": "Goditi una casa splendente",
+    "step4Desc": "Un professionista delle pulizie verificato e indipendente pensa al resto."
   },
   "homeFeaturedProviders": {
     "heading": "Professionisti più apprezzati",
@@ -1603,5 +1605,29 @@
     "empty": "Non hai ancora impostato tariffe. I clienti non possono prenotarti finché non aggiungi almeno un servizio con una tariffa.",
     "setButton": "Imposta la tariffa oraria",
     "manageButton": "Gestisci"
+  },
+  "homeWhatsIncluded": {
+    "heading": "Cosa è incluso",
+    "subheading": "Tutto per una casa fresca e sana, con opzioni ecologiche e orari flessibili.",
+    "item1": "Pulizia generale di zona giorno, cucina e bagno",
+    "item2": "Spolverare, aspirare e lavare i pavimenti",
+    "item3": "Servizi extra come pulizia profonda, dei vetri e trasloco (ingresso/uscita)",
+    "item4": "Preferenze ecologiche: prodotti di origine vegetale, senza plastica e senza profumo",
+    "item5": "Prenotazioni singole o ricorrenti: settimanali, quindicinali o mensili"
+  },
+  "homeWhyChoose": {
+    "heading": "Perché scegliere Dorixé",
+    "subheading": "Pulizie di qualità di cui fidarti, con la flessibilità e la trasparenza che meriti.",
+    "reason1Title": "Professionisti affidabili",
+    "reason1Desc": "Addetti alle pulizie verificati, esperti e indipendenti.",
+    "reason2Title": "Prezzi trasparenti",
+    "reason2Desc": "Vedi la tariffa oraria di ogni addetto prima di prenotare, senza costi nascosti.",
+    "reason3Title": "Orari flessibili",
+    "reason3Desc": "Una tantum o ricorrente: settimanale, quindicinale o mensile.",
+    "reason4Title": "Pagamenti sicuri",
+    "reason4Desc": "Paga in sicurezza online tramite la nostra piattaforma, senza contanti.",
+    "reason5Title": "Approccio eco-sostenibile",
+    "reason5Desc": "Prodotti e pratiche sostenibili, migliori per la tua casa e il pianeta.",
+    "trustNote": "Il prezzo dipende dal servizio, dalla durata e dalla tariffa oraria di ogni addetto, tutto mostrato in anticipo. I pagamenti avvengono in sicurezza online e, dopo ogni pulizia, puoi lasciare una recensione per mantenere alta la qualità."
   }
 }

@@ -2,6 +2,8 @@ import { getTranslations } from "next-intl/server"
 import { HeroSection } from "@/components/home/HeroSection"
 import { TrustTicker } from "@/components/home/TrustTicker"
 import { HowItWorks } from "@/components/home/HowItWorks"
+import { WhatsIncluded } from "@/components/home/WhatsIncluded"
+import { WhyChoose } from "@/components/home/WhyChoose"
 import { FeaturedProviders } from "@/components/home/FeaturedProviders"
 import { EcoScoreBand } from "@/components/home/EcoScoreBand"
 import { JobPostSection } from "@/components/home/JobPostSection"
@@ -22,6 +24,8 @@ export default function HomePage() {
       <HeroSection />
       <TrustTicker />
       <HowItWorks />
+      <WhatsIncluded />
+      <WhyChoose />
       <FeaturedProviders />
       <EcoScoreBand />
       <JobPostSection />

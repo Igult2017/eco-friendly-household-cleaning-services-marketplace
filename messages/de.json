@@ -50,14 +50,16 @@
     "priceFrom": "Ab {price}/Std."
   },
   "homeHowItWorks": {
-    "heading": "So funktioniert DORIXÉ",
-    "subheading": "Von der Suche bis blitzsauber in drei einfachen Schritten — keine versteckten Gebühren, kein Aufwand.",
-    "step1Title": "Nach Standort suchen",
-    "step1Desc": "Geben Sie Ihre Postleitzahl ein, um öko-zertifizierte Reinigungsprofis in Ihrer Nähe zu finden – gefiltert nach Serviceart, Preis und Verfügbarkeit.",
-    "step2Title": "In Minuten buchen",
-    "step2Desc": "Wählen Sie Ihre Reinigungskraft, ein Zeitfenster und bestätigen Sie mit sicherer Kartenvorautorisierung. Die Zahlung wird erst nach Abschluss des Auftrags eingezogen.",
-    "step3Title": "Entspannen & bewerten",
-    "step3Desc": "Ihre Reinigungskraft kommt mit umweltfreundlichen Produkten. Bewerten Sie die Arbeit, verfolgen Sie Ihre CO2-Einsparungen und sammeln Sie Treuepunkte."
+    "heading": "So funktioniert Dorixé",
+    "subheading": "Dorixé verbindet Sie mit geprüften, selbstständigen Reinigungskräften – online gebucht und auf Ihr Zuhause abgestimmt. Einmalig oder regelmäßig: So bleibt Ihr Zuhause sauber, frisch und stressfrei.",
+    "step1Title": "Sagen Sie uns, was Sie brauchen",
+    "step1Desc": "Wählen Sie Ihren Standort, die Reinigungsleistung und Ihre Wünsche.",
+    "step2Title": "Transparenter Preis vorab",
+    "step2Desc": "Vergleichen Sie die Stundensätze der Reinigungskräfte vor der Buchung – keine versteckten Kosten.",
+    "step3Title": "Sicher online buchen",
+    "step3Desc": "Datum und Uhrzeit wählen und sicher über unsere Plattform bezahlen.",
+    "step4Title": "Genießen Sie ein sauberes Zuhause",
+    "step4Desc": "Eine geprüfte, selbstständige Reinigungskraft kümmert sich um den Rest."
   },
   "homeFeaturedProviders": {
     "heading": "Spitzenbewertete Fachkräfte",
@@ -1603,5 +1605,29 @@
     "empty": "Du hast noch keine Preise festgelegt. Kund:innen können dich erst buchen, wenn du mindestens eine Leistung mit Preis hinzufügst.",
     "setButton": "Stundensatz festlegen",
     "manageButton": "Verwalten"
+  },
+  "homeWhatsIncluded": {
+    "heading": "Was enthalten ist",
+    "subheading": "Alles für ein frisches, gesundes Zuhause – mit umweltfreundlichen Optionen und flexibler Planung.",
+    "item1": "Allgemeine Reinigung von Wohnbereichen, Küche und Bad",
+    "item2": "Staubwischen, Saugen und Wischen",
+    "item3": "Zusatzleistungen wie Grundreinigung, Fensterreinigung und Ein-/Auszugsreinigung",
+    "item4": "Öko-Präferenzen – pflanzenbasierte Produkte, plastikfrei und duftfrei",
+    "item5": "Einmalige oder wiederkehrende Buchungen – wöchentlich, zweiwöchentlich oder monatlich"
+  },
+  "homeWhyChoose": {
+    "heading": "Warum Dorixé",
+    "subheading": "Hochwertige Reinigung, der Sie vertrauen können – mit der Flexibilität und Transparenz, die Sie verdienen.",
+    "reason1Title": "Geprüfte Fachkräfte",
+    "reason1Desc": "Verifizierte, erfahrene und selbstständige Reinigungskräfte.",
+    "reason2Title": "Transparente Preise",
+    "reason2Desc": "Sehen Sie den Stundensatz jeder Reinigungskraft vor der Buchung – keine versteckten Kosten.",
+    "reason3Title": "Flexible Planung",
+    "reason3Desc": "Einmalig oder wiederkehrend – wöchentlich, zweiwöchentlich oder monatlich.",
+    "reason4Title": "Sichere Zahlungen",
+    "reason4Desc": "Zahlen Sie sicher online über unsere Plattform – kein Bargeld nötig.",
+    "reason5Title": "Umweltbewusster Ansatz",
+    "reason5Desc": "Nachhaltige Produkte und Methoden – besser für Ihr Zuhause und den Planeten.",
+    "trustNote": "Der Preis richtet sich nach der Leistung, der Dauer und dem Stundensatz der Reinigungskraft – alles vorab sichtbar. Zahlungen erfolgen sicher online, und nach jeder Reinigung können Sie eine Bewertung abgeben, um die Qualität hoch zu halten."
   }
 }

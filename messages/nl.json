@@ -50,14 +50,16 @@
     "priceFrom": "Vanaf {price}/uur"
   },
   "homeHowItWorks": {
-    "heading": "Hoe DORIXÉ werkt",
-    "subheading": "Van zoeken tot spik en span in drie eenvoudige stappen — geen verborgen kosten, geen gedoe.",
-    "step1Title": "Zoeken op locatie",
-    "step1Desc": "Voer je postcode in om eco-gecertificeerde schoonmaakprofessionals bij jou in de buurt te vinden, gefilterd op type service, prijs en beschikbaarheid.",
-    "step2Title": "Boek in enkele minuten",
-    "step2Desc": "Kies je schoonmaker, selecteer een tijdslot en bevestig met een veilige pre-autorisatie van je kaart. De betaling wordt pas geïnd nadat de klus is afgerond.",
-    "step3Title": "Ontspan & beoordeel",
-    "step3Desc": "Je schoonmaker komt met milieuvriendelijke producten. Beoordeel het werk, volg je CO2-besparing en verdien loyaliteitspunten."
+    "heading": "Zo werkt Dorixé",
+    "subheading": "Dorixé verbindt je met betrouwbare, zelfstandige schoonmaakprofessionals – online geboekt en afgestemd op jouw huis. Eenmalig of terugkerend: houd je huis schoon, fris en zorgeloos.",
+    "step1Title": "Vertel ons wat je nodig hebt",
+    "step1Desc": "Kies je locatie, de schoonmaakdienst en je voorkeuren.",
+    "step2Title": "Direct een transparante prijs",
+    "step2Desc": "Vergelijk de uurtarieven van schoonmakers voordat je boekt – geen verborgen kosten.",
+    "step3Title": "Boek veilig online",
+    "step3Desc": "Kies een datum en tijd en betaal veilig via ons platform.",
+    "step4Title": "Geniet van een schoon huis",
+    "step4Desc": "Een gecontroleerde, zelfstandige schoonmaakprofessional doet de rest."
   },
   "homeFeaturedProviders": {
     "heading": "Best beoordeelde professionals",
@@ -1603,5 +1605,29 @@
     "empty": "Je hebt nog geen tarieven ingesteld. Klanten kunnen je pas boeken als je minstens één dienst met een tarief toevoegt.",
     "setButton": "Stel je uurtarief in",
     "manageButton": "Beheren"
+  },
+  "homeWhatsIncluded": {
+    "heading": "Wat is inbegrepen",
+    "subheading": "Alles voor een fris, gezond huis – met milieuvriendelijke opties en flexibele planning.",
+    "item1": "Algemene schoonmaak van woonruimtes, keuken en badkamer",
+    "item2": "Afstoffen, stofzuigen en dweilen",
+    "item3": "Extra diensten zoals dieptereiniging, ramen wassen en in-/uitverhuis",
+    "item4": "Eco-voorkeuren – plantaardige producten, plasticvrij en geurvrij",
+    "item5": "Eenmalige of terugkerende boekingen – wekelijks, tweewekelijks of maandelijks"
+  },
+  "homeWhyChoose": {
+    "heading": "Waarom Dorixé",
+    "subheading": "Kwaliteitsschoonmaak die je kunt vertrouwen, met de flexibiliteit en transparantie die je verdient.",
+    "reason1Title": "Betrouwbare professionals",
+    "reason1Desc": "Geverifieerde, ervaren en zelfstandige schoonmakers.",
+    "reason2Title": "Transparante prijzen",
+    "reason2Desc": "Zie het uurtarief van elke schoonmaker voordat je boekt – geen verborgen kosten.",
+    "reason3Title": "Flexibele planning",
+    "reason3Desc": "Eenmalig of terugkerend – wekelijks, tweewekelijks of maandelijks.",
+    "reason4Title": "Veilige betalingen",
+    "reason4Desc": "Betaal veilig online via ons platform – geen contant geld nodig.",
+    "reason5Title": "Milieubewuste aanpak",
+    "reason5Desc": "Duurzame producten en werkwijzen – beter voor je huis en de planeet.",
+    "trustNote": "De prijs hangt af van de dienst, de duur en het uurtarief van elke schoonmaker – allemaal vooraf zichtbaar. Betalingen verlopen veilig online en na elke schoonmaak kun je een beoordeling achterlaten om de kwaliteit hoog te houden."
   }
 }

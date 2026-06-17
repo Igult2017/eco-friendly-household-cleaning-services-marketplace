@@ -1,28 +1,14 @@
-import { Search, Calendar, Star } from "lucide-react"
+import { MapPin, Tag, CalendarCheck, Sparkles } from "lucide-react"
 import { getTranslations } from "next-intl/server"
 
 export async function HowItWorks() {
   const t = await getTranslations("homeHowItWorks")
 
   const STEPS = [
-    {
-      number: "01",
-      Icon: Search,
-      title: t("step1Title"),
-      desc: t("step1Desc"),
-    },
-    {
-      number: "02",
-      Icon: Calendar,
-      title: t("step2Title"),
-      desc: t("step2Desc"),
-    },
-    {
-      number: "03",
-      Icon: Star,
-      title: t("step3Title"),
-      desc: t("step3Desc"),
-    },
+    { number: "01", Icon: MapPin, title: t("step1Title"), desc: t("step1Desc") },
+    { number: "02", Icon: Tag, title: t("step2Title"), desc: t("step2Desc") },
+    { number: "03", Icon: CalendarCheck, title: t("step3Title"), desc: t("step3Desc") },
+    { number: "04", Icon: Sparkles, title: t("step4Title"), desc: t("step4Desc") },
   ]
 
   return (
@@ -32,11 +18,11 @@ export async function HowItWorks() {
           <h2 className="text-3xl md:text-4xl font-serif font-bold text-[#2B3441] mb-3">
             {t("heading")}
           </h2>
-          <p className="text-[#6B7280] max-w-xl mx-auto text-sm">
+          <p className="text-[#6B7280] max-w-2xl mx-auto text-sm leading-relaxed">
             {t("subheading")}
           </p>
         </div>
-        <div className="grid md:grid-cols-3 gap-10">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {STEPS.map(({ number, Icon, title, desc }) => (
             <div key={number}>
               <div className="flex items-center gap-3 mb-4">
