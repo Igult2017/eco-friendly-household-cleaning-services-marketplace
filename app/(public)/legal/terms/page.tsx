@@ -18,17 +18,17 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-[#2B3441] mb-3">2. Services</h2>
-          <p>DORIXÉ is a marketplace connecting customers with independent eco-friendly cleaning service providers. We are not the employer of any service provider. DORIXÉ is not responsible for the quality of services delivered by providers but mediates disputes in good faith.</p>
+          <p>DORIXÉ is a marketplace connecting Clients with independent eco-friendly Cleaning Professionals. We are not the employer of any Cleaning Professional. DORIXÉ is not responsible for the quality of services delivered by Cleaning Professionals but mediates disputes in good faith.</p>
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold text-[#2B3441] mb-3">3. Platform fee</h2>
-          <p>DORIXÉ charges a <strong>15% service fee</strong> on top of the provider's quoted price. This fee is paid by the customer at the time of booking and covers platform costs, payment processing, and customer support.</p>
+          <h2 className="text-xl font-semibold text-[#2B3441] mb-3">3. Commission</h2>
+          <p>DORIXÉ deducts a small commission from each completed booking — the Cleaning Professional&apos;s fee for using the platform to reach Clients. The Client pays the Cleaning Professional&apos;s quoted rate; the commission is not added on top. The commission rate is set by DORIXÉ and may be adjusted from time to time, and it covers platform costs, payment processing, and support.</p>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold text-[#2B3441] mb-3">4. Payments</h2>
-          <p>All payments are processed by Stripe. Funds are held in escrow until the service is completed. Providers are paid via Stripe Connect after job completion, subject to a standard 7-day rolling payout schedule.</p>
+          <p>All payments are processed by Stripe. Funds are held in escrow until the service is completed. Cleaning Professionals are paid via Stripe Connect after job completion (net of the platform commission), subject to a standard 7-day rolling payout schedule.</p>
         </section>
 
         <section>
@@ -37,13 +37,13 @@ export default function TermsPage() {
             <li>More than 48h before service: 100% refund</li>
             <li>24–48h before service: 50% refund</li>
             <li>Less than 24h before service: no refund</li>
-            <li>Provider cancellation: 100% refund, no exceptions</li>
+            <li>Cleaning Professional cancellation: 100% refund, no exceptions</li>
           </ul>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold text-[#2B3441] mb-3">6. Prohibited uses</h2>
-          <p>You may not use DORIXÉ to: circumvent platform payments, solicit providers off-platform, post false reviews, discriminate unlawfully, or violate applicable EU laws.</p>
+          <p>You may not use DORIXÉ to: circumvent platform payments, solicit Cleaning Professionals off-platform, post false reviews, discriminate unlawfully, or violate applicable EU laws.</p>
         </section>
 
         <section>

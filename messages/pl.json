@@ -1400,7 +1400,7 @@
     "takingYouTo": "Przenosimy Cię do Twojego {role}",
     "switchTo": "Przełącz na {role}",
     "currentlyIn": "Obecnie jesteś w {role}",
-    "warningCleaner": "Zobaczysz panel sprzątacza. Zlecenia opublikowane przez Ciebie jako zleceniodawcę zostaną ukryte, aby uniemożliwić licytowanie własnej pracy.",
+    "warningCleaner": "Zobaczysz panel sprzątacza. Zlecenia dodane przez Ciebie jako klient zostaną ukryte, aby nie licytować własnej pracy.",
     "cancel": "Anuluj",
     "switchNow": "Przełącz teraz",
     "customerAccount": "Konto klienta",

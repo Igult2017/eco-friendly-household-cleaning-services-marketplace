@@ -103,7 +103,7 @@ export default async function ProviderProfilePage({ params }: { params: Promise<
           }),
           breadcrumbSchema([
             { name: "Home", path: "/" },
-            { name: "Find cleaners", path: "/browse" },
+            { name: "Find cleaning professionals", path: "/browse" },
             { name: provider.businessName, path: `/providers/${slug}` },
           ]),
         ]}

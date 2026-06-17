@@ -1400,7 +1400,7 @@
     "takingYouTo": "Je wordt naar je {role} gebracht",
     "switchTo": "Wisselen naar {role}",
     "currentlyIn": "Je bent momenteel in {role}",
-    "warningCleaner": "Je ziet het schoonmaakdashboard. Klussen die je als opdrachtgever hebt geplaatst, worden verborgen zodat je niet op je eigen werk kunt bieden.",
+    "warningCleaner": "Je ziet het schoonmakersdashboard. Klussen die je als klant hebt geplaatst, worden verborgen zodat je niet op je eigen werk biedt.",
     "cancel": "Annuleren",
     "switchNow": "Nu wisselen",
     "customerAccount": "Klantaccount",

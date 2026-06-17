@@ -1400,7 +1400,7 @@
     "takingYouTo": "A encaminhá-lo para a sua {role}",
     "switchTo": "Mudar para {role}",
     "currentlyIn": "Encontra-se atualmente em {role}",
-    "warningCleaner": "Verá o painel de profissional de limpeza. Os trabalhos que publicou como cliente ficarão ocultos para impedir que faça propostas ao seu próprio trabalho.",
+    "warningCleaner": "Verá o painel do profissional de limpeza. Os trabalhos que publicou como cliente ficarão ocultos para evitar licitar no seu próprio trabalho.",
     "cancel": "Cancelar",
     "switchNow": "Mudar agora",
     "customerAccount": "Conta de cliente",

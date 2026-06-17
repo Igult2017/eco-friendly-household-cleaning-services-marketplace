@@ -1400,7 +1400,7 @@
     "takingYouTo": "Sie werden zu Ihrem {role} weitergeleitet",
     "switchTo": "Zu {role} wechseln",
     "currentlyIn": "Sie befinden sich derzeit im {role}",
-    "warningCleaner": "Sie sehen das Reinigungs-Dashboard. Aufträge, die Sie als Auftraggeber veröffentlicht haben, werden ausgeblendet, damit Sie nicht auf Ihre eigenen Aufträge bieten.",
+    "warningCleaner": "Sie sehen das Dashboard für Reinigungskräfte. Aufträge, die Sie als Kunde erstellt haben, werden ausgeblendet, damit Sie nicht auf Ihre eigene Arbeit bieten.",
     "cancel": "Abbrechen",
     "switchNow": "Jetzt wechseln",
     "customerAccount": "Kundenkonto",

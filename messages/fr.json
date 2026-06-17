@@ -1400,7 +1400,7 @@
     "takingYouTo": "Redirection vers votre {role}",
     "switchTo": "Passer au {role}",
     "currentlyIn": "Vous êtes actuellement sur le {role}",
-    "warningCleaner": "Vous verrez le tableau de bord intervenant. Les missions que vous avez publiées en tant que client seront masquées afin d'éviter de proposer une offre sur votre propre travail.",
+    "warningCleaner": "Vous verrez le tableau de bord agent d’entretien. Les demandes que vous avez publiées en tant que client seront masquées pour éviter d’enchérir sur votre propre travail.",
     "cancel": "Annuler",
     "switchNow": "Changer maintenant",
     "customerAccount": "Compte client",
