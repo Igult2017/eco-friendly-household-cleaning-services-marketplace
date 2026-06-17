@@ -47,7 +47,7 @@ export async function POST(req: Request) {
     const adminId = await requireAdmin()
     if (!adminId) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
-    const body = await req.json()
+    const body = await req.json().catch(() => ({}))
     const parsed = blogSchema.safeParse(body)
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 

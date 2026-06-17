@@ -25,7 +25,7 @@ export async function PATCH(
 
     const { id } = await params
 
-    const parsed = patchSchema.safeParse(await req.json())
+    const parsed = patchSchema.safeParse(await req.json().catch(() => ({})))
     if (!parsed.success) {
       return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
     }

@@ -31,7 +31,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     if (!adminId) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
     const { id } = await params
-    const body = await req.json()
+    const body = await req.json().catch(() => ({}))
     const parsed = updateSchema.safeParse(body)
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 

@@ -55,7 +55,7 @@ export async function POST(req: Request) {
     const [provider] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, userId))
     if (!provider) return NextResponse.json({ error: "Provider not found" }, { status: 404 })
 
-    const body = await req.json()
+    const body = await req.json().catch(() => ({}))
     const parsed = serviceSchema.safeParse(body)
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
@@ -81,7 +81,7 @@ export async function DELETE(req: Request) {
     const [provider] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, userId))
     if (!provider) return NextResponse.json({ error: "Provider not found" }, { status: 404 })
 
-    const { serviceId } = await req.json()
+    const { serviceId } = await req.json().catch(() => ({}))
     if (!serviceId) return NextResponse.json({ error: "serviceId required" }, { status: 400 })
 
     // Ownership check — prevents a provider from deactivating a competitor's service

@@ -21,7 +21,7 @@ export async function POST(req: Request) {
       console.warn("[upload/presigned POST] Redis rate limit unavailable, allowing through:", redisErr)
     }
 
-    const { contentType, contentLength, folder } = await req.json()
+    const { contentType, contentLength, folder } = await req.json().catch(() => ({}))
 
     if (!contentType || !contentLength) {
       return NextResponse.json({ error: "contentType and contentLength required" }, { status: 400 })

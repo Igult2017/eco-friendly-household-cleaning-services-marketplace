@@ -22,7 +22,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const [review] = await db.select({ id: reviews.id, providerId: reviews.providerId }).from(reviews).where(eq(reviews.id, reviewId))
     if (!review || review.providerId !== provider.id) return NextResponse.json({ error: "Not authorized" }, { status: 403 })
 
-    const body = await req.json()
+    const body = await req.json().catch(() => ({}))
     const parsed = respondSchema.safeParse(body)
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 

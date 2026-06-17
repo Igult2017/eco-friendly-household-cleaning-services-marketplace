@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     if (!caller) return NextResponse.json({ error: "User not found" }, { status: 404 })
     if (caller.role !== "customer") return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
-    const body = await req.json()
+    const body = await req.json().catch(() => ({}))
     const parsed = paymentIntentSchema.safeParse(body)
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 

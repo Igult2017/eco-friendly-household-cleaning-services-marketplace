@@ -80,7 +80,7 @@ export async function POST(req: Request, { params }: RouteContext) {
 
     const { booking, provider, isCustomer } = access
 
-    const parsed = sendMessageSchema.safeParse(await req.json())
+    const parsed = sendMessageSchema.safeParse(await req.json().catch(() => ({})))
     if (!parsed.success) {
       return NextResponse.json({ error: "Invalid body", details: parsed.error.flatten() }, { status: 400 })
     }

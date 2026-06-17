@@ -19,7 +19,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const { adminId: userId } = guard
 
     const { id: disputeId } = await params
-    const body = await req.json()
+    const body = await req.json().catch(() => ({}))
     const parsed = resolveSchema.safeParse(body)
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 

@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     const [provider] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, userId))
     if (!provider) return NextResponse.json({ error: "Not a provider" }, { status: 403 })
 
-    const parsed = schema.safeParse(await req.json())
+    const parsed = schema.safeParse(await req.json().catch(() => ({})))
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
     const { bookingId, rating, body } = parsed.data
 

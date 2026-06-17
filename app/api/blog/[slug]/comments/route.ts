@@ -36,7 +36,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ slug: s
     if (!userId) return NextResponse.json({ error: "Sign in to comment" }, { status: 401 })
 
     const { slug } = await params
-    const body = await req.json()
+    const body = await req.json().catch(() => ({}))
     const parsed = z.object({ body: z.string().min(2).max(1000) }).safeParse(body)
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 

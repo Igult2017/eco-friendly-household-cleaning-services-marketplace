@@ -19,7 +19,7 @@ export async function PATCH(
 
     const { id: scheduleId } = await params
 
-    const body = await req.json()
+    const body = await req.json().catch(() => ({}))
     const parsed = patchSchema.safeParse(body)
     if (!parsed.success) {
       return NextResponse.json({ error: "Invalid input", details: parsed.error.flatten() }, { status: 422 })

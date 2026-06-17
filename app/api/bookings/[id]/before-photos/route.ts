@@ -34,7 +34,7 @@ export async function POST(req: Request, { params }: Params) {
       )
     }
 
-    const body = await req.json() as { photoUrls?: unknown }
+    const body = await req.json().catch(() => ({})) as { photoUrls?: unknown }
     const { photoUrls } = body
 
     if (!Array.isArray(photoUrls) || photoUrls.length === 0) {
