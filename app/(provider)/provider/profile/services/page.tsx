@@ -18,10 +18,10 @@ type Service = {
 
 type Category = { id: string; name: string }
 
+// per-hour and per-job only for now; per-area pricing is held until we capture home size.
 const PRICE_UNITS = [
-  { value: "per_job", labelKey: "priceUnitPerJob" },
   { value: "per_hour", labelKey: "priceUnitPerHour" },
-  { value: "per_sqft", labelKey: "priceUnitPerSqft" },
+  { value: "per_job", labelKey: "priceUnitPerJob" },
 ]
 
 const EMPTY_FORM = { categoryId: "", name: "", description: "", basePrice: "", priceUnit: "per_hour", minDurationMinutes: "60" }
