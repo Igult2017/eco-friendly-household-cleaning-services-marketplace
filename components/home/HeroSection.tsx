@@ -3,6 +3,7 @@ import { CheckCircle } from "lucide-react"
 import { getTranslations } from "next-intl/server"
 import { ServiceGrid } from "./ServiceGrid"
 import { HeroPostcodeSearch } from "./HeroPostcodeSearch"
+import { HeroBackground } from "./HeroBackground"
 
 export async function HeroSection() {
   const t = await getTranslations("homeHero")
@@ -14,21 +15,9 @@ export async function HeroSection() {
   ]
   return (
     <section className="relative isolate overflow-hidden py-16 md:py-24">
-      {/* Full-bleed background — two cleaning photos that gently crossfade
+      {/* Full-bleed background — seven cleaning photos that gently crossfade
           (decorative; the text conveys all meaning) */}
-      <img
-        src="/hero/hero-clean-1.jpg"
-        alt=""
-        aria-hidden="true"
-        fetchPriority="high"
-        className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
-      />
-      <img
-        src="/hero/hero-clean-2.jpg"
-        alt=""
-        aria-hidden="true"
-        className="hero-crossfade absolute inset-0 -z-20 h-full w-full object-cover object-center"
-      />
+      <HeroBackground />
       {/* Contrast scrim — vertical layer tames the bright top of the photo so the
           headline stays readable; horizontal layer deepens the left for the text column. */}
       <div
