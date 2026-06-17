@@ -55,6 +55,22 @@ export const providerServices = pgTable(
   ]
 )
 
+// Cleaner-defined paid add-ons (e.g. oven cleaning, ironing) selectable at booking.
+export const providerAddons = pgTable(
+  "provider_addons",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    providerId: uuid("provider_id")
+      .notNull()
+      .references(() => providers.id, { onDelete: "cascade" }),
+    name: varchar("name", { length: 120 }).notNull(),
+    priceCents: integer("price_cents").notNull(), // euro cents
+    isActive: boolean("is_active").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("provider_addons_provider_idx").on(t.providerId)]
+)
+
 export const providerAvailability = pgTable(
   "provider_availability",
   {
@@ -86,4 +102,6 @@ export const providerBlackoutDates = pgTable(
 export type ServiceCategory = typeof serviceCategories.$inferSelect
 export type ProviderService = typeof providerServices.$inferSelect
 export type NewProviderService = typeof providerServices.$inferInsert
+export type ProviderAddon = typeof providerAddons.$inferSelect
+export type NewProviderAddon = typeof providerAddons.$inferInsert
 export type ProviderAvailability = typeof providerAvailability.$inferSelect

@@ -15,6 +15,7 @@ interface BookingDraft {
   durationMinutes: number
   specialInstructions: string
   ecoOptions: string[]
+  addOnIds: string[]           // selected provider add-on ids
   carbonOffsetCents: number    // 0 | 200 — persisted so 3DS redirect restores it
   bidAmountCents: number | null // non-null when booking originates from an accepted bid
   frequency: "one_time" | "weekly" | "biweekly" | "monthly"
@@ -38,7 +39,7 @@ interface BookingStore extends BookingDraft {
   setAddress: (address: Address, lat: number, lng: number) => void
   setProvider: (providerId: string) => void
   setSchedule: (date: Date, durationMinutes: number) => void
-  setExtras: (instructions: string, ecoOptions: string[]) => void
+  setExtras: (instructions: string, ecoOptions: string[], addOnIds: string[]) => void
   setCarbonOffset: (cents: number) => void
   setFrequency: (frequency: BookingDraft["frequency"]) => void
   setStep: (step: BookingDraft["step"]) => void
@@ -57,6 +58,7 @@ const initialState: BookingDraft = {
   durationMinutes: 120,
   specialInstructions: "",
   ecoOptions: [],
+  addOnIds: [],
   carbonOffsetCents: 0,
   bidAmountCents: null,
   frequency: "one_time",
@@ -72,8 +74,8 @@ export const useBookingStore = create<BookingStore>()(
       setProvider: (selectedProviderId) => set({ selectedProviderId, step: 3 }),
       setSchedule: (date, durationMinutes) =>
         set({ scheduledAt: date.toISOString(), durationMinutes, step: 4 }),
-      setExtras: (specialInstructions, ecoOptions) =>
-        set({ specialInstructions, ecoOptions, step: 5 }),
+      setExtras: (specialInstructions, ecoOptions, addOnIds) =>
+        set({ specialInstructions, ecoOptions, addOnIds, step: 5 }),
       setCarbonOffset: (carbonOffsetCents) => set({ carbonOffsetCents }),
       setFrequency: (frequency) => set({ frequency }),
       setStep: (step) => set({ step }),

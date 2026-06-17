@@ -610,7 +610,9 @@
     "fragranceFreeLabel": "🌸 Bez zapachu",
     "fragranceFreeDesc": "Produkty bezzapachowe dla wrażliwych gospodarstw domowych",
     "backButton": "← Wstecz",
-    "continueButton": "Kontynuuj — Sprawdź i zapłać →"
+    "continueButton": "Kontynuuj — Sprawdź i zapłać →",
+    "addOnsLabel": "Dodatki",
+    "addOnsHint": "Opcjonalne dodatki oferowane przez tego sprzątacza."
   },
   "customerBookPage": {
     "heading": "Co mamy posprzątać?",
@@ -1634,5 +1636,16 @@
     "reason5Title": "Podejście ekologiczne",
     "reason5Desc": "Zrównoważone produkty i praktyki – lepsze dla Twojego domu i planety.",
     "trustNote": "Cena zależy od usługi, czasu jej trwania i stawki godzinowej każdego sprzątacza – wszystko widoczne z góry. Płatności są realizowane bezpiecznie online, a po każdym sprzątaniu możesz zostawić opinię, aby utrzymać wysoką jakość."
+  },
+  "compProviderAddons": {
+    "title": "Dodatki",
+    "subtitle": "Opcjonalne płatne dodatki, które klienci mogą dodać do rezerwacji (np. czyszczenie piekarnika, prasowanie).",
+    "namePlaceholder": "Nazwa dodatku (np. Czyszczenie piekarnika)",
+    "pricePlaceholder": "Cena €",
+    "addButton": "Dodaj",
+    "empty": "Brak dodatków.",
+    "invalid": "Podaj nazwę i cenę co najmniej 0,50 €.",
+    "addFailed": "Nie udało się dodać. Spróbuj ponownie.",
+    "remove": "Usuń dodatek"
   }
 }

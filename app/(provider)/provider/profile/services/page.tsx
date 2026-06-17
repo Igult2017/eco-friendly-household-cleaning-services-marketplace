@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
 import { Plus, Trash2, Loader2 } from "lucide-react"
+import { AddonsManager } from "@/components/provider/AddonsManager"
 
 type Service = {
   id: string
@@ -186,6 +187,8 @@ export default function ProviderServicesPage() {
           </div>
         )}
       </div>
+
+      <AddonsManager />
     </div>
   )
 }

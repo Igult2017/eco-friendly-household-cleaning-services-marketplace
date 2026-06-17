@@ -610,7 +610,9 @@
     "fragranceFreeLabel": "🌸 Sin fragancia",
     "fragranceFreeDesc": "Productos sin perfume para hogares sensibles",
     "backButton": "← Atrás",
-    "continueButton": "Continuar — Revisar y pagar →"
+    "continueButton": "Continuar — Revisar y pagar →",
+    "addOnsLabel": "Extras",
+    "addOnsHint": "Extras opcionales que ofrece este limpiador."
   },
   "customerBookPage": {
     "heading": "¿Qué necesitas que limpiemos?",
@@ -1634,5 +1636,16 @@
     "reason5Title": "Enfoque ecológico",
     "reason5Desc": "Productos y prácticas sostenibles, mejores para tu hogar y el planeta.",
     "trustNote": "El precio depende del servicio, su duración y la tarifa por hora de cada limpiador, todo mostrado por adelantado. Los pagos se gestionan de forma segura en línea y, después de cada limpieza, puedes dejar una reseña para mantener una alta calidad."
+  },
+  "compProviderAddons": {
+    "title": "Extras",
+    "subtitle": "Extras opcionales de pago que los clientes pueden añadir a una reserva (p. ej. limpieza del horno, planchado).",
+    "namePlaceholder": "Nombre del extra (p. ej. Limpieza del horno)",
+    "pricePlaceholder": "Precio €",
+    "addButton": "Añadir",
+    "empty": "Aún no hay extras.",
+    "invalid": "Introduce un nombre y un precio de al menos 0,50 €.",
+    "addFailed": "No se pudo añadir. Inténtalo de nuevo.",
+    "remove": "Eliminar extra"
   }
 }

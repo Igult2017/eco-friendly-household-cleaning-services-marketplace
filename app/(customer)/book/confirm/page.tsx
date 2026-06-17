@@ -114,10 +114,20 @@ export default function BookStep5Page() {
       const service = svcData.services?.[0]
       if (!service) { setError(t("errorProviderNoService")); return }
       setServiceId(service.id)
+      // Sum any selected add-ons so the preview total matches what the PI will charge.
+      let addOnsTotal = 0
+      if (store.addOnIds.length > 0) {
+        try {
+          const aRes = await fetch(`/api/providers/${store.selectedProviderId}/addons`)
+          const aData = await aRes.json()
+          const list: { id: string; priceCents: number }[] = Array.isArray(aData.addons) ? aData.addons : []
+          addOnsTotal = list.filter((a) => store.addOnIds.includes(a.id)).reduce((s, a) => s + a.priceCents, 0)
+        } catch { /* ignore — PI recomputes server-side anyway */ }
+      }
       // Commission is deducted from the cleaner, so the customer's price is simply the
-      // service price (after any promo) + the optional offset — no fee added on top.
+      // service price (+ add-ons, after any promo) + the optional offset — no fee on top.
       // Bug 5: bid-flow bookings use the accepted bid amount, not the service list price
-      const subtotalCents: number = store.bidAmountCents ?? service.basePrice
+      const subtotalCents: number = (store.bidAmountCents ?? service.basePrice) + addOnsTotal
       setAmounts({ subtotalCents, totalCharged: subtotalCents })
     } catch {
       setError(t("errorLoadPricing"))
@@ -179,6 +189,7 @@ export default function BookStep5Page() {
           scheduledAt: store.scheduledAt!,
           durationMinutes: store.durationMinutes,
           carbonOffsetCents: addCarbonOffset ? CARBON_OFFSET_CENTS : 0,
+          addOnIds: store.addOnIds,
           // Bug 5: pass bid amount so PI uses the accepted price, not the list price
           ...(store.bidAmountCents !== null ? { bidAmountCents: store.bidAmountCents } : {}),
           ...(promoCodeId ? { promoCodeId, promoCodeDiscountCents: promoDiscountCents } : {}),

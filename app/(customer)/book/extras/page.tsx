@@ -9,6 +9,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { useTranslations } from "next-intl"
+import { formatCurrency } from "@/lib/utils/formatCurrency"
+
+type Addon = { id: string; name: string; priceCents: number }
 
 const ECO_EXTRAS = [
   { id: "eco_products", labelKey: "ecoProductsLabel", descKey: "ecoProductsDesc" },
@@ -20,21 +23,33 @@ const ECO_EXTRAS = [
 export default function BookStep4Page() {
   const t = useTranslations("customerBookExtrasPage")
   const router = useRouter()
-  const { selectedProviderId, scheduledAt, setExtras, specialInstructions, ecoOptions } = useBookingStore()
+  const { selectedProviderId, scheduledAt, setExtras, specialInstructions, ecoOptions, addOnIds } = useBookingStore()
 
   const [instructions, setInstructions] = useState(specialInstructions)
   const [selected, setSelected] = useState<string[]>(ecoOptions)
+  const [addons, setAddons] = useState<Addon[]>([])
+  const [selectedAddOns, setSelectedAddOns] = useState<string[]>(addOnIds)
 
   useEffect(() => {
     if (!selectedProviderId || !scheduledAt) { router.replace("/book"); return }
+    fetch(`/api/providers/${selectedProviderId}/addons`)
+      .then((r) => r.json())
+      .then((d) => setAddons(Array.isArray(d.addons) ? d.addons : []))
+      .catch(() => setAddons([]))
   }, [selectedProviderId, scheduledAt, router])
 
   function toggleEco(id: string) {
     setSelected((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id])
   }
 
+  function toggleAddOn(id: string) {
+    setSelectedAddOns((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id])
+  }
+
   function handleNext() {
-    setExtras(instructions, selected)
+    // Only keep add-ons that still belong to this provider's current list.
+    const validAddOns = selectedAddOns.filter((id) => addons.some((a) => a.id === id))
+    setExtras(instructions, selected, validAddOns)
     router.push("/book/confirm")
   }
 
@@ -87,6 +102,33 @@ export default function BookStep4Page() {
             ))}
           </div>
         </div>
+
+        {addons.length > 0 && (
+          <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-6">
+            <Label className="text-sm font-semibold text-[#2B3441] mb-1 block">{t("addOnsLabel")}</Label>
+            <p className="text-xs text-[#6B7280] mb-4">{t("addOnsHint")}</p>
+            <div className="space-y-2">
+              {addons.map((a) => (
+                <button
+                  key={a.id}
+                  onClick={() => toggleAddOn(a.id)}
+                  className={cn(
+                    "w-full flex items-center justify-between gap-3 p-3 rounded-xl border-2 text-left transition-all",
+                    selectedAddOns.includes(a.id) ? "border-[#2D7A5F] bg-[#F4FAF6]" : "border-[#E5EBF0] hover:border-[#4CB87A]"
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={cn("w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center text-white text-xs transition-all", selectedAddOns.includes(a.id) ? "border-[#2D7A5F] bg-[#2D7A5F]" : "border-[#9CA3AF]")}>
+                      {selectedAddOns.includes(a.id) && "✓"}
+                    </div>
+                    <span className="text-sm font-medium text-[#2B3441]">{a.name}</span>
+                  </div>
+                  <span className="text-sm font-semibold text-[#2D7A5F]">+{formatCurrency(a.priceCents)}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="flex gap-3">
           <Button variant="outline" onClick={() => router.push("/book/schedule")} className="flex-1 h-11 border-[#E5EBF0]">

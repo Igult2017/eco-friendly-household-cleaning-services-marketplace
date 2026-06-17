@@ -610,7 +610,9 @@
     "fragranceFreeLabel": "🌸 Sem fragrância",
     "fragranceFreeDesc": "Produtos sem perfume para lares sensíveis",
     "backButton": "← Voltar",
-    "continueButton": "Continuar — Rever e pagar →"
+    "continueButton": "Continuar — Rever e pagar →",
+    "addOnsLabel": "Extras",
+    "addOnsHint": "Extras opcionais oferecidos por este profissional."
   },
   "customerBookPage": {
     "heading": "O que precisa de ser limpo?",
@@ -1634,5 +1636,16 @@
     "reason5Title": "Abordagem ecológica",
     "reason5Desc": "Produtos e práticas sustentáveis – melhores para a sua casa e para o planeta.",
     "trustNote": "O preço depende do serviço, da duração e da tarifa horária de cada profissional – tudo apresentado antecipadamente. Os pagamentos são processados em segurança online e, após cada limpeza, pode deixar uma avaliação para manter a qualidade elevada."
+  },
+  "compProviderAddons": {
+    "title": "Extras",
+    "subtitle": "Extras pagos opcionais que os clientes podem adicionar a uma reserva (ex. limpeza do forno, engomadoria).",
+    "namePlaceholder": "Nome do extra (ex. Limpeza do forno)",
+    "pricePlaceholder": "Preço €",
+    "addButton": "Adicionar",
+    "empty": "Ainda sem extras.",
+    "invalid": "Introduza um nome e um preço de pelo menos 0,50 €.",
+    "addFailed": "Não foi possível adicionar. Tente novamente.",
+    "remove": "Remover extra"
   }
 }

@@ -610,7 +610,9 @@
     "fragranceFreeLabel": "🌸 Duftfrei",
     "fragranceFreeDesc": "Unparfümierte Produkte für empfindliche Haushalte",
     "backButton": "← Zurück",
-    "continueButton": "Weiter — Prüfen & Bezahlen →"
+    "continueButton": "Weiter — Prüfen & Bezahlen →",
+    "addOnsLabel": "Zusatzleistungen",
+    "addOnsHint": "Optionale Extras dieser Reinigungskraft."
   },
   "customerBookPage": {
     "heading": "Was soll gereinigt werden?",
@@ -1634,5 +1636,16 @@
     "reason5Title": "Umweltbewusster Ansatz",
     "reason5Desc": "Nachhaltige Produkte und Methoden – besser für Ihr Zuhause und den Planeten.",
     "trustNote": "Der Preis richtet sich nach der Leistung, der Dauer und dem Stundensatz der Reinigungskraft – alles vorab sichtbar. Zahlungen erfolgen sicher online, und nach jeder Reinigung können Sie eine Bewertung abgeben, um die Qualität hoch zu halten."
+  },
+  "compProviderAddons": {
+    "title": "Zusatzleistungen",
+    "subtitle": "Optionale kostenpflichtige Extras, die Kund:innen zur Buchung hinzufügen können (z. B. Backofenreinigung, Bügeln).",
+    "namePlaceholder": "Name der Zusatzleistung (z. B. Backofenreinigung)",
+    "pricePlaceholder": "Preis €",
+    "addButton": "Hinzufügen",
+    "empty": "Noch keine Zusatzleistungen.",
+    "invalid": "Geben Sie einen Namen und einen Preis von mindestens 0,50 € ein.",
+    "addFailed": "Konnte nicht hinzugefügt werden. Erneut versuchen.",
+    "remove": "Zusatzleistung entfernen"
   }
 }

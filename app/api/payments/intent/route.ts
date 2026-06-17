@@ -1,12 +1,12 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { providers, providerServices, users, bids, jobPosts, promoCodes } from "@/lib/db/schema"
+import { providers, providerServices, users, bids, jobPosts, promoCodes, providerAddons } from "@/lib/db/schema"
 import { stripe, calculateBookingAmounts } from "@/lib/stripe/client"
 import { getCommissionPct } from "@/lib/platform/settings"
 import { bookingRatelimit } from "@/lib/redis/client"
 import { paymentIntentSchema } from "@/lib/validations/booking"
-import { and, eq } from "drizzle-orm"
+import { and, eq, inArray } from "drizzle-orm"
 
 export async function POST(req: Request) {
   try {
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     const parsed = paymentIntentSchema.safeParse(body)
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
-    const { providerId, serviceId, scheduledAt, carbonOffsetCents = 0, bidAmountCents, promoCodeId, promoCodeDiscountCents } = parsed.data
+    const { providerId, serviceId, scheduledAt, carbonOffsetCents = 0, bidAmountCents, promoCodeId, promoCodeDiscountCents, addOnIds = [] } = parsed.data
 
     const [[provider], [service]] = await Promise.all([
       db
@@ -63,7 +63,19 @@ export async function POST(req: Request) {
       if (!acceptedBid) return NextResponse.json({ error: "Accepted bid not found" }, { status: 422 })
     }
 
-    const subtotal = bidAmountCents ?? service.basePrice
+    // Sum the selected add-ons server-side, validated against this provider's active add-ons.
+    let addOnsTotal = 0
+    let validAddOnIds: string[] = []
+    if (addOnIds.length > 0) {
+      const rows = await db
+        .select({ id: providerAddons.id, priceCents: providerAddons.priceCents })
+        .from(providerAddons)
+        .where(and(eq(providerAddons.providerId, providerId), eq(providerAddons.isActive, true), inArray(providerAddons.id, addOnIds)))
+      addOnsTotal = rows.reduce((s, r) => s + r.priceCents, 0)
+      validAddOnIds = rows.map((r) => r.id)
+    }
+
+    const subtotal = (bidAmountCents ?? service.basePrice) + addOnsTotal
 
     // Resolve promo discount: prefer the pre-computed promoCodeDiscountCents from the client,
     // but verify the promo code exists and is active when promoCodeId is supplied.
@@ -116,6 +128,10 @@ export async function POST(req: Request) {
     if (bidAmountCents !== undefined) metadata.bid_amount_cents = String(bidAmountCents)
     if (promoCodeId) metadata.promo_code_id = promoCodeId
     if (resolvedDiscountCents > 0) metadata.promo_code_discount_cents = String(resolvedDiscountCents)
+    if (addOnsTotal > 0) {
+      metadata.addon_total_cents = String(addOnsTotal)
+      metadata.addon_ids = validAddOnIds.join(",")
+    }
 
     const intent = await stripe.paymentIntents.create(
       {

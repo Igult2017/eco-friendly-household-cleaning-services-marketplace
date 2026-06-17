@@ -610,7 +610,9 @@
     "fragranceFreeLabel": "🌸 Senza profumo",
     "fragranceFreeDesc": "Prodotti senza profumo per case sensibili",
     "backButton": "← Indietro",
-    "continueButton": "Continua — Verifica e paga →"
+    "continueButton": "Continua — Verifica e paga →",
+    "addOnsLabel": "Servizi extra",
+    "addOnsHint": "Extra opzionali offerti da questo addetto."
   },
   "customerBookPage": {
     "heading": "Cosa hai bisogno di pulire?",
@@ -1634,5 +1636,16 @@
     "reason5Title": "Approccio eco-sostenibile",
     "reason5Desc": "Prodotti e pratiche sostenibili, migliori per la tua casa e il pianeta.",
     "trustNote": "Il prezzo dipende dal servizio, dalla durata e dalla tariffa oraria di ogni addetto, tutto mostrato in anticipo. I pagamenti avvengono in sicurezza online e, dopo ogni pulizia, puoi lasciare una recensione per mantenere alta la qualità."
+  },
+  "compProviderAddons": {
+    "title": "Servizi extra",
+    "subtitle": "Extra opzionali a pagamento che i clienti possono aggiungere a una prenotazione (es. pulizia del forno, stiratura).",
+    "namePlaceholder": "Nome del servizio extra (es. Pulizia del forno)",
+    "pricePlaceholder": "Prezzo €",
+    "addButton": "Aggiungi",
+    "empty": "Ancora nessun servizio extra.",
+    "invalid": "Inserisci un nome e un prezzo di almeno 0,50 €.",
+    "addFailed": "Impossibile aggiungere. Riprova.",
+    "remove": "Rimuovi servizio extra"
   }
 }

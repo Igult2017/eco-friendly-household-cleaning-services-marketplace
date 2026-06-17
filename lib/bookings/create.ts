@@ -57,7 +57,9 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
 
   // Bug 5: use bid amount from PI metadata when present (bid-flow bookings)
   const bidAmountCents = intent.metadata.bid_amount_cents ? parseInt(intent.metadata.bid_amount_cents, 10) : null
-  const subtotal = bidAmountCents ?? service!.basePrice
+  // Add-ons were summed + validated server-side at PI creation; their total rides in metadata.
+  const addOnsTotal = intent.metadata.addon_total_cents ? parseInt(intent.metadata.addon_total_cents, 10) : 0
+  const subtotal = (bidAmountCents ?? service!.basePrice) + addOnsTotal
 
   // Promo code from PI metadata
   const promoCodeId = intent.metadata.promo_code_id ?? null

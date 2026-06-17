@@ -610,7 +610,9 @@
     "fragranceFreeLabel": "🌸 Fragrance-free",
     "fragranceFreeDesc": "Unscented products for sensitive households",
     "backButton": "← Back",
-    "continueButton": "Continue — Review & Pay →"
+    "continueButton": "Continue — Review & Pay →",
+    "addOnsLabel": "Add-ons",
+    "addOnsHint": "Optional extras offered by this cleaner."
   },
   "customerBookPage": {
     "heading": "What do you need cleaned?",
@@ -1634,5 +1636,16 @@
     "reason5Title": "Eco-conscious approach",
     "reason5Desc": "Sustainable products and practices — better for your home and the planet.",
     "trustNote": "Pricing reflects the service, how long it takes, and each cleaner's hourly rate — all shown upfront. Payments are handled securely online, and after every clean you can leave a review to help keep quality high."
+  },
+  "compProviderAddons": {
+    "title": "Add-ons",
+    "subtitle": "Optional paid extras customers can add to a booking (e.g. oven cleaning, ironing).",
+    "namePlaceholder": "Add-on name (e.g. Oven cleaning)",
+    "pricePlaceholder": "Price €",
+    "addButton": "Add",
+    "empty": "No add-ons yet.",
+    "invalid": "Enter a name and a price of at least €0.50.",
+    "addFailed": "Could not add. Try again.",
+    "remove": "Remove add-on"
   }
 }

@@ -610,7 +610,9 @@
     "fragranceFreeLabel": "🌸 Parfumvrij",
     "fragranceFreeDesc": "Geurloze producten voor gevoelige huishoudens",
     "backButton": "← Terug",
-    "continueButton": "Doorgaan — Controleren en betalen →"
+    "continueButton": "Doorgaan — Controleren en betalen →",
+    "addOnsLabel": "Extra's",
+    "addOnsHint": "Optionele extra's van deze schoonmaker."
   },
   "customerBookPage": {
     "heading": "Wat wil je laten schoonmaken?",
@@ -1634,5 +1636,16 @@
     "reason5Title": "Milieubewuste aanpak",
     "reason5Desc": "Duurzame producten en werkwijzen – beter voor je huis en de planeet.",
     "trustNote": "De prijs hangt af van de dienst, de duur en het uurtarief van elke schoonmaker – allemaal vooraf zichtbaar. Betalingen verlopen veilig online en na elke schoonmaak kun je een beoordeling achterlaten om de kwaliteit hoog te houden."
+  },
+  "compProviderAddons": {
+    "title": "Extra's",
+    "subtitle": "Optionele betaalde extra's die klanten aan een boeking kunnen toevoegen (bijv. ovenreiniging, strijken).",
+    "namePlaceholder": "Naam extra (bijv. Ovenreiniging)",
+    "pricePlaceholder": "Prijs €",
+    "addButton": "Toevoegen",
+    "empty": "Nog geen extra's.",
+    "invalid": "Voer een naam en een prijs van minimaal € 0,50 in.",
+    "addFailed": "Toevoegen mislukt. Probeer opnieuw.",
+    "remove": "Extra verwijderen"
   }
 }

@@ -610,7 +610,9 @@
     "fragranceFreeLabel": "🌸 Sans parfum",
     "fragranceFreeDesc": "Produits sans parfum pour les foyers sensibles",
     "backButton": "← Retour",
-    "continueButton": "Continuer — Vérifier et payer →"
+    "continueButton": "Continuer — Vérifier et payer →",
+    "addOnsLabel": "Options",
+    "addOnsHint": "Extras facultatifs proposés par cet agent."
   },
   "customerBookPage": {
     "heading": "Que souhaitez-vous faire nettoyer ?",
@@ -1634,5 +1636,16 @@
     "reason5Title": "Approche éco-responsable",
     "reason5Desc": "Des produits et des pratiques durables – meilleurs pour votre maison et la planète.",
     "trustNote": "Le prix dépend du service, de sa durée et du tarif horaire de chaque agent – le tout affiché à l'avance. Les paiements sont sécurisés en ligne, et après chaque ménage vous pouvez laisser un avis pour maintenir un haut niveau de qualité."
+  },
+  "compProviderAddons": {
+    "title": "Options",
+    "subtitle": "Extras payants facultatifs que les clients peuvent ajouter à une réservation (ex. nettoyage du four, repassage).",
+    "namePlaceholder": "Nom de l'option (ex. Nettoyage du four)",
+    "pricePlaceholder": "Prix €",
+    "addButton": "Ajouter",
+    "empty": "Aucune option pour le moment.",
+    "invalid": "Saisissez un nom et un prix d'au moins 0,50 €.",
+    "addFailed": "Échec de l'ajout. Réessayez.",
+    "remove": "Supprimer l'option"
   }
 }

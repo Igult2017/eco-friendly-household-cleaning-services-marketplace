@@ -66,6 +66,17 @@ CREATE UNIQUE INDEX IF NOT EXISTS referral_credits_user_idx ON referral_credits(
 ALTER TABLE users ADD COLUMN IF NOT EXISTS dual_role_enabled boolean NOT NULL DEFAULT false;
 ALTER TABLE providers ADD COLUMN IF NOT EXISTS recurring_discount_pct integer NOT NULL DEFAULT 0;
 
+-- Cleaner-defined paid add-ons selectable at booking.
+CREATE TABLE IF NOT EXISTS provider_addons (
+  id          UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
+  provider_id UUID         NOT NULL REFERENCES providers(id) ON DELETE CASCADE,
+  name        VARCHAR(120) NOT NULL,
+  price_cents INTEGER      NOT NULL,
+  is_active   BOOLEAN      NOT NULL DEFAULT true,
+  created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS provider_addons_provider_idx ON provider_addons(provider_id);
+
 -- Provider → customer reviews (two-way reviews).
 CREATE TABLE IF NOT EXISTS customer_reviews (
   id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
