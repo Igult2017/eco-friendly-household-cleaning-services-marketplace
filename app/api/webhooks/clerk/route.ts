@@ -45,11 +45,32 @@ export async function POST(req: NextRequest) {
           target: users.id,
           set: { email, firstName: first_name, lastName: last_name, phone, avatarUrl: image_url, updatedAt: new Date() },
         })
-        .catch(() => {
-          // email unique constraint: a different Clerk user already owns this email.
-          // The first account is authoritative; log and swallow rather than 500 (which
-          // would make Svix retry forever).
-          console.error(`[clerk-webhook] duplicate email on user.created — clerk id ${id}, email ${email}`)
+        .catch(async () => {
+          // email unique constraint hit. BUG-007: the usual cause is that this person
+          // previously deleted their account — user.deleted soft-deletes (row + email kept)
+          // — and signed up again with a NEW Clerk id. Without handling this, the new id
+          // gets no DB row and the account is orphaned (auth works, every DB lookup is null).
+          try {
+            const [existing] = await db
+              .select({ id: users.id, deletedAt: users.deletedAt })
+              .from(users)
+              .where(eq(users.email, email))
+            if (existing && existing.deletedAt && existing.id !== id) {
+              // Stale, soft-deleted account: free its email (tombstone, kept FK-intact) and
+              // create the new account so the new Clerk id is properly linked.
+              await db.update(users).set({ email: `deleted+${existing.id}@dorixe.invalid` }).where(eq(users.id, existing.id))
+              await db
+                .insert(users)
+                .values({ id, email, firstName: first_name, lastName: last_name, phone, avatarUrl: image_url, role: resolveRole(evt.data.public_metadata) })
+                .onConflictDoNothing()
+              console.warn(`[clerk-webhook] reclaimed email for new clerk id ${id} from soft-deleted ${existing.id}`)
+            } else {
+              // An ACTIVE different account already owns this email — do NOT hijack it.
+              console.error(`[clerk-webhook] duplicate email on user.created — clerk id ${id}, email ${email} (active account exists; not reclaiming)`)
+            }
+          } catch (reclaimErr) {
+            console.error(`[clerk-webhook] failed to reclaim email for clerk id ${id}:`, reclaimErr)
+          }
         })
     }
 
