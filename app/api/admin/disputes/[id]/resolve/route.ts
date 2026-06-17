@@ -54,6 +54,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
           { payment_intent: payment.stripePaymentIntentId, amount: refundAmount },
           { idempotencyKey: `refund-dispute-${disputeId}` },
         )
+        // FIN-005: record the refund on the payment row so the ledger and the customer's
+        // booking page reflect it (the field was previously never updated on a dispute refund).
+        await db
+          .update(payments)
+          .set({ refundedAmount: refundAmount, status: refundPercent === 100 ? "refunded" : "partially_refunded" })
+          .where(eq(payments.bookingId, dispute.bookingId))
       }
     }
 

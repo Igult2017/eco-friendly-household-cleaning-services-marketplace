@@ -3,13 +3,14 @@ import { stripe, calculateBookingAmounts } from "./client"
 /** Create a pre-authorized PaymentIntent (not yet captured) */
 export async function createBookingPaymentIntent(params: {
   subtotalCents: number
+  commissionPct: number // FIN-013: must be passed (use getCommissionPct) — never silently fall back to the env default
   stripeCustomerId: string
   providerStripeAccountId: string
   bookingMetadata: Record<string, string>
   idempotencyKey: string
 }) {
   const { subtotalCents, platformFee, totalCharged } =
-    calculateBookingAmounts(params.subtotalCents)
+    calculateBookingAmounts(params.subtotalCents, params.commissionPct)
 
   return stripe.paymentIntents.create(
     {

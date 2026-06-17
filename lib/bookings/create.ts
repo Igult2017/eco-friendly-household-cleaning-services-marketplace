@@ -65,7 +65,11 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
   const promoCodeId = intent.metadata.promo_code_id ?? null
   const discountCents = intent.metadata.promo_code_discount_cents ? parseInt(intent.metadata.promo_code_discount_cents, 10) : 0
   const subtotalAfterDiscount = Math.max(0, subtotal - discountCents)
-  const commissionPct = await getCommissionPct()
+  // FIN-010: use the commission rate pinned on the PI (set at PI creation) so the stored
+  // split matches what Stripe was told, even if an admin changed the rate in between.
+  const commissionPct = intent.metadata.commission_pct
+    ? parseInt(intent.metadata.commission_pct, 10)
+    : await getCommissionPct()
   const amounts = calculateBookingAmounts(subtotalAfterDiscount, commissionPct)
   const bookingNumber = await generateBookingNumber()
   const scheduledEnd = new Date(new Date(scheduledAt).getTime() + durationMinutes * 60_000)

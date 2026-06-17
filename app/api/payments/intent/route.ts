@@ -32,7 +32,9 @@ export async function POST(req: Request) {
     const parsed = paymentIntentSchema.safeParse(body)
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
-    const { providerId, serviceId, scheduledAt, carbonOffsetCents = 0, bidAmountCents, promoCodeId, promoCodeDiscountCents, addOnIds = [] } = parsed.data
+    // promoCodeDiscountCents is intentionally NOT destructured — the discount is recomputed
+    // server-side (FIN-003); any client-supplied amount is ignored.
+    const { providerId, serviceId, scheduledAt, carbonOffsetCents = 0, bidAmountCents, promoCodeId, addOnIds = [] } = parsed.data
 
     const [[provider], [service]] = await Promise.all([
       db
@@ -91,10 +93,11 @@ export async function POST(req: Request) {
       if (promo.maxUses !== null && promo.usedCount >= promo.maxUses) return NextResponse.json({ error: "Promo code usage limit reached" }, { status: 422 })
       if (subtotal < promo.minOrderCents) return NextResponse.json({ error: "Order total too low for this promo code" }, { status: 422 })
 
-      if (promoCodeDiscountCents !== undefined) {
-        resolvedDiscountCents = promoCodeDiscountCents
-      } else if (promo.discountType === "fixed") {
-        resolvedDiscountCents = promo.discountValue
+      // SECURITY (FIN-003): never trust a client-supplied discount. Always recompute the
+      // discount from the promo code's own definition; the request's promoCodeDiscountCents
+      // is display-only and is deliberately ignored here.
+      if (promo.discountType === "fixed") {
+        resolvedDiscountCents = Math.min(promo.discountValue, subtotal)
       } else {
         // percentage
         const raw = Math.round(subtotal * promo.discountValue / 100)
@@ -125,6 +128,9 @@ export async function POST(req: Request) {
       provider_id: providerId,
       service_id: serviceId,
       carbon_offset_cents: String(carbonOffsetCents),
+      // FIN-010: pin the commission rate used for THIS PI so booking creation stores the
+      // same split even if an admin changes the commission between PI creation and confirm.
+      commission_pct: String(commissionPct),
     }
     if (bidAmountCents !== undefined) metadata.bid_amount_cents = String(bidAmountCents)
     if (promoCodeId) metadata.promo_code_id = promoCodeId

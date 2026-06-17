@@ -142,15 +142,22 @@ export async function POST(req: NextRequest) {
 
     if (!service) return NextResponse.json({ error: "Service not found for this provider" }, { status: 404 })
 
-    // Get or create Stripe Customer to attach the payment method
+    // Get or create Stripe Customer to attach the payment method.
+    // FIN-017: search first + idempotency key so a retry after a failed DB write doesn't
+    // create a duplicate customer. Use the same `clerk_id` metadata key as the booking flow
+    // (payments/intent) so both paths resolve to ONE customer per user.
     let stripeCustomerId = user.stripeCustomerId
     if (!stripeCustomerId) {
-      const customer = await stripe.customers.create({
-        email: user.email,
-        name: user.firstName ?? undefined,
-        metadata: { userId },
-      })
-      stripeCustomerId = customer.id
+      const existing = await stripe.customers.search({ query: `metadata['clerk_id']:'${userId}'`, limit: 1 })
+      if (existing.data[0]) {
+        stripeCustomerId = existing.data[0].id
+      } else {
+        const customer = await stripe.customers.create(
+          { email: user.email, name: user.firstName ?? undefined, metadata: { clerk_id: userId } },
+          { idempotencyKey: `cus-create-${userId}` },
+        )
+        stripeCustomerId = customer.id
+      }
       await db.update(users).set({ stripeCustomerId }).where(eq(users.id, userId))
     }
 

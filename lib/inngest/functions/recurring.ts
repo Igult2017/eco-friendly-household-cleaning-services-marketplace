@@ -101,9 +101,26 @@ export const recurringBookingCron = inngest.createFunction(
           .where(eq(providerServices.id, schedule.serviceId))
 
         const [providerRow] = await db
-          .select({ stripeAccountId: providers.stripeAccountId, recurringDiscountPct: providers.recurringDiscountPct })
+          .select({ stripeAccountId: providers.stripeAccountId, recurringDiscountPct: providers.recurringDiscountPct, isApproved: providers.isApproved, isSuspended: providers.isSuspended })
           .from(providers)
           .where(eq(providers.id, schedule.providerId))
+
+        // FIN-008: a provider suspended/unapproved after the schedule was set up must not keep
+        // receiving recurring bookings or off-session charges. Skip this cycle and advance.
+        if (!providerRow?.isApproved || providerRow.isSuspended) {
+          const nextDate = addFrequencyInTZ(scheduledAt, schedule.frequency, schedule.timezone)
+          await db.update(recurringSchedules)
+            .set({ nextBookingAt: nextDate, updatedAt: new Date() })
+            .where(eq(recurringSchedules.id, schedule.id))
+          await db.insert(notifications).values({
+            userId: schedule.customerId,
+            type: "recurring_booking_created",
+            title: "Recurring booking skipped",
+            body: "Your recurring cleaning professional is temporarily unavailable, so this cycle was skipped. We'll try again next time.",
+            link: `/dashboard`,
+          })
+          return
+        }
 
         // Cleaner-set recurring loyalty discount: applied to every recurring booking.
         const baseSubtotal = service?.basePrice ?? 0
@@ -140,6 +157,7 @@ export const recurringBookingCron = inngest.createFunction(
           .returning({ id: bookings.id })
 
         // Attempt off-session Stripe payment if a saved payment method is on file
+        let paymentFailed = false
         if (schedule.stripePaymentMethodId && providerRow?.stripeAccountId) {
           const [customerRow] = await db
             .select({ stripeCustomerId: users.stripeCustomerId })
@@ -176,26 +194,44 @@ export const recurringBookingCron = inngest.createFunction(
                 currency: "eur",
               })
             } catch (err: unknown) {
+              // FIN-006: an off-session charge can fail (declined/expired/insufficient funds).
+              // Don't leave a phantom unpaid booking the cleaner might act on — cancel it and
+              // tell the customer to update their card. The schedule still advances so a fixed
+              // card is retried next cycle.
               console.error("[recurring-cron] Off-session payment failed:", (err as Error).message)
+              paymentFailed = true
+              await db.update(bookings)
+                .set({ status: "cancelled", cancellationReason: "Recurring payment failed", cancelledAt: new Date() })
+                .where(eq(bookings.id, newBooking.id))
             }
           }
         }
 
         const notifBody = scheduledAt.toLocaleString("en-GB", { dateStyle: "long", timeStyle: "short" })
-        await db.insert(notifications).values({
-          userId: schedule.customerId,
-          type: "recurring_booking_created",
-          title: "Recurring booking scheduled",
-          body: `Your recurring booking has been scheduled for ${notifBody}.`,
-          link: `/bookings/${newBooking.id}`,
-        })
+        await db.insert(notifications).values(
+          paymentFailed
+            ? {
+                userId: schedule.customerId,
+                type: "recurring_booking_created",
+                title: "Recurring booking payment failed",
+                body: `We couldn't charge your saved card for the booking on ${notifBody}. Please update your payment method to keep your recurring schedule active.`,
+                link: `/dashboard`,
+              }
+            : {
+                userId: schedule.customerId,
+                type: "recurring_booking_created",
+                title: "Recurring booking scheduled",
+                body: `Your recurring booking has been scheduled for ${notifBody}.`,
+                link: `/bookings/${newBooking.id}`,
+              }
+        )
 
         const nextDate = addFrequencyInTZ(scheduledAt, schedule.frequency, schedule.timezone)
         await db.update(recurringSchedules)
           .set({ nextBookingAt: nextDate, updatedAt: new Date() })
           .where(eq(recurringSchedules.id, schedule.id))
 
-        created++
+        if (!paymentFailed) created++
       })
     }
 
