@@ -1081,7 +1081,10 @@
     "carbonOffsetDescription": "Kunden erlauben, an der Kasse einen Beitrag zum CO2-Ausgleich hinzuzufügen",
     "saveButton": "Änderungen speichern",
     "saveButtonSaving": "Wird gespeichert...",
-    "saveButtonSaved": "Gespeichert!"
+    "saveButtonSaved": "Gespeichert!",
+    "recurringDiscountLabel": "Rabatt für wiederkehrende Buchungen",
+    "recurringDiscountSuffix": "% Rabatt auf wiederkehrende Buchungen",
+    "recurringDiscountHint": "Kund:innen, die Sie wöchentlich, zweiwöchentlich oder monatlich buchen, erhalten diesen Rabatt pro Reinigung. 0 = kein Rabatt."
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "Meine Leistungen",

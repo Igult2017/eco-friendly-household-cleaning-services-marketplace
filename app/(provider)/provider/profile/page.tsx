@@ -16,13 +16,14 @@ type Profile = {
   country: string
   serviceRadiusKm: number
   carbonOffsetEnabled: boolean
+  recurringDiscountPct: number
 }
 
 export default function ProviderProfilePage() {
   const t = useTranslations("providerProviderProfilePage")
   const [profile, setProfile] = useState<Profile>({
     businessName: "", bio: "", city: "", postalCode: "",
-    country: "DE", serviceRadiusKm: 25, carbonOffsetEnabled: false,
+    country: "DE", serviceRadiusKm: 25, carbonOffsetEnabled: false, recurringDiscountPct: 0,
   })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -54,6 +55,7 @@ export default function ProviderProfilePage() {
             country: d.provider.country ?? "DE",
             serviceRadiusKm: d.provider.serviceRadiusKm ?? 25,
             carbonOffsetEnabled: d.provider.carbonOffsetEnabled ?? false,
+            recurringDiscountPct: d.provider.recurringDiscountPct ?? 0,
           })
         }
         setLoading(false)
@@ -161,6 +163,19 @@ export default function ProviderProfilePage() {
             <p className="text-xs text-[#6B7280]">{t("carbonOffsetDescription")}</p>
           </div>
         </label>
+
+        <div>
+          <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">{t("recurringDiscountLabel")}</label>
+          <div className="flex items-center gap-2">
+            <input
+              type="number" min={0} max={50} step={1} value={profile.recurringDiscountPct}
+              onChange={(e) => setProfile((p) => ({ ...p, recurringDiscountPct: Math.max(0, Math.min(50, Number(e.target.value) || 0)) }))}
+              className="w-24 rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]"
+            />
+            <span className="text-sm text-[#6B7280]">{t("recurringDiscountSuffix")}</span>
+          </div>
+          <p className="text-xs text-[#6B7280] mt-1">{t("recurringDiscountHint")}</p>
+        </div>
 
         <button onClick={save} disabled={saving || !locationValid}
           className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#2D7A5F] py-3 text-sm font-semibold text-white disabled:opacity-50 hover:bg-[#256349] transition-colors"

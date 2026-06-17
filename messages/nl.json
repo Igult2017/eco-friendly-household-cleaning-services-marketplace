@@ -1081,7 +1081,10 @@
     "carbonOffsetDescription": "Klanten toestaan een bijdrage voor CO2-compensatie toe te voegen bij het afrekenen",
     "saveButton": "Wijzigingen opslaan",
     "saveButtonSaving": "Opslaan...",
-    "saveButtonSaved": "Opgeslagen!"
+    "saveButtonSaved": "Opgeslagen!",
+    "recurringDiscountLabel": "Korting voor terugkerende boekingen",
+    "recurringDiscountSuffix": "% korting op terugkerende boekingen",
+    "recurringDiscountHint": "Klanten die je wekelijks, tweewekelijks of maandelijks boeken, krijgen deze korting per schoonmaak. 0 = geen korting."
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "Mijn diensten",

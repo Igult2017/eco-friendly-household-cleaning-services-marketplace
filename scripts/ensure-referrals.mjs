@@ -64,6 +64,7 @@ CREATE TABLE IF NOT EXISTS referral_credits (
 CREATE UNIQUE INDEX IF NOT EXISTS referral_credits_user_idx ON referral_credits(user_id);
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS dual_role_enabled boolean NOT NULL DEFAULT false;
+ALTER TABLE providers ADD COLUMN IF NOT EXISTS recurring_discount_pct integer NOT NULL DEFAULT 0;
 
 -- Provider → customer reviews (two-way reviews).
 CREATE TABLE IF NOT EXISTS customer_reviews (

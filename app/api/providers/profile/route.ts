@@ -65,6 +65,7 @@ export async function PATCH(req: Request) {
     if (data.postalCode !== undefined) updateFields.postalCode = data.postalCode
     if (data.country !== undefined) updateFields.country = data.country
     if (data.serviceRadiusKm !== undefined) updateFields.serviceRadiusKm = data.serviceRadiusKm
+    if (data.recurringDiscountPct !== undefined) updateFields.recurringDiscountPct = data.recurringDiscountPct
     if (data.ecoLevel !== undefined) updateFields.ecoLevel = data.ecoLevel
     if (data.profilePhotoUrl !== undefined) updateFields.profilePhotoUrl = data.profilePhotoUrl
     if ("carbonOffsetEnabled" in body) updateFields.carbonOffsetEnabled = Boolean(body.carbonOffsetEnabled)

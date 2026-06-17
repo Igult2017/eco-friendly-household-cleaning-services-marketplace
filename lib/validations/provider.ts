@@ -11,6 +11,8 @@ export const providerProfileSchema = z.object({
   latitude: z.number().min(-90).max(90).optional(),
   longitude: z.number().min(-180).max(180).optional(),
   profilePhotoUrl: z.string().url().optional(),
+  // Cleaner-set loyalty discount applied to their recurring bookings (0–50%).
+  recurringDiscountPct: z.number().int().min(0).max(50).optional(),
 })
 
 export const providerServicesSchema = z.object({

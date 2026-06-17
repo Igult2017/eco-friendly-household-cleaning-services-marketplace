@@ -1081,7 +1081,10 @@
     "carbonOffsetDescription": "Permettre aux clients d'ajouter une contribution de compensation carbone au paiement",
     "saveButton": "Enregistrer les modifications",
     "saveButtonSaving": "Enregistrement...",
-    "saveButtonSaved": "Enregistré !"
+    "saveButtonSaved": "Enregistré !",
+    "recurringDiscountLabel": "Réduction pour réservations récurrentes",
+    "recurringDiscountSuffix": "% de réduction sur les réservations récurrentes",
+    "recurringDiscountHint": "Les clients qui vous réservent chaque semaine, toutes les deux semaines ou chaque mois bénéficient de cette réduction à chaque ménage. 0 = aucune réduction."
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "Mes prestations",

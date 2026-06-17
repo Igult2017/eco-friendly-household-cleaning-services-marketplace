@@ -101,11 +101,14 @@ export const recurringBookingCron = inngest.createFunction(
           .where(eq(providerServices.id, schedule.serviceId))
 
         const [providerRow] = await db
-          .select({ stripeAccountId: providers.stripeAccountId })
+          .select({ stripeAccountId: providers.stripeAccountId, recurringDiscountPct: providers.recurringDiscountPct })
           .from(providers)
           .where(eq(providers.id, schedule.providerId))
 
-        const subtotal = service?.basePrice ?? 0
+        // Cleaner-set recurring loyalty discount: applied to every recurring booking.
+        const baseSubtotal = service?.basePrice ?? 0
+        const recurringDiscountCents = Math.round(baseSubtotal * (providerRow?.recurringDiscountPct ?? 0) / 100)
+        const subtotal = Math.max(0, baseSubtotal - recurringDiscountCents)
         const commissionPct = await getCommissionPct()
         const amounts = calculateBookingAmounts(subtotal, commissionPct)
         const bookingNumber = await generateBookingNumber()
@@ -131,6 +134,7 @@ export const recurringBookingCron = inngest.createFunction(
             totalAmount: amounts.totalCharged,
             providerPayout: amounts.providerPayout,
             carbonOffsetAmount: 0,
+            discountAmount: recurringDiscountCents,
             completionPhotoUrls: [],
           })
           .returning({ id: bookings.id })

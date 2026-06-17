@@ -59,6 +59,8 @@ export const providers = pgTable(
     ecoScore: integer("eco_score").notNull().default(0),
     certifications: jsonb("certifications").$type<string[]>().default([]),
     carbonOffsetEnabled: boolean("carbon_offset_enabled").notNull().default(false),
+    // Cleaner-set loyalty discount (%) applied to their recurring bookings.
+    recurringDiscountPct: integer("recurring_discount_pct").notNull().default(0),
     verificationStatus: verificationStatusEnum("verification_status")
       .notNull()
       .default("not_started"),

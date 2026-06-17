@@ -1081,7 +1081,10 @@
     "carbonOffsetDescription": "Consenti ai clienti di aggiungere un contributo per la compensazione del carbonio al momento del pagamento",
     "saveButton": "Salva modifiche",
     "saveButtonSaving": "Salvataggio...",
-    "saveButtonSaved": "Salvato!"
+    "saveButtonSaved": "Salvato!",
+    "recurringDiscountLabel": "Sconto per prenotazioni ricorrenti",
+    "recurringDiscountSuffix": "% di sconto sulle prenotazioni ricorrenti",
+    "recurringDiscountHint": "I clienti che ti prenotano ogni settimana, ogni due settimane o ogni mese ricevono questo sconto su ogni pulizia. 0 = nessuno sconto."
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "I miei servizi",

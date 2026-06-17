@@ -1081,7 +1081,10 @@
     "carbonOffsetDescription": "Pozwól klientom dodać wkład na kompensację emisji CO2 przy płatności",
     "saveButton": "Zapisz zmiany",
     "saveButtonSaving": "Zapisywanie...",
-    "saveButtonSaved": "Zapisano!"
+    "saveButtonSaved": "Zapisano!",
+    "recurringDiscountLabel": "Rabat za rezerwacje cykliczne",
+    "recurringDiscountSuffix": "% rabatu na rezerwacje cykliczne",
+    "recurringDiscountHint": "Klienci, którzy rezerwują co tydzień, co dwa tygodnie lub co miesiąc, otrzymują ten rabat na każde sprzątanie. 0 = brak rabatu."
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "Moje usługi",

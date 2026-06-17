@@ -1081,7 +1081,10 @@
     "carbonOffsetDescription": "Allow customers to add a carbon offset contribution at checkout",
     "saveButton": "Save changes",
     "saveButtonSaving": "Saving...",
-    "saveButtonSaved": "Saved!"
+    "saveButtonSaved": "Saved!",
+    "recurringDiscountLabel": "Recurring booking discount",
+    "recurringDiscountSuffix": "% off recurring bookings",
+    "recurringDiscountHint": "Customers who book you weekly, bi-weekly or monthly get this discount on each clean. Set to 0 for no discount."
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "My Services",
