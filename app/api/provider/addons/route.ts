@@ -64,7 +64,9 @@ export async function DELETE(req: Request) {
     if (!providerId) return NextResponse.json({ error: "Provider not found" }, { status: 404 })
 
     const { addonId } = await req.json().catch(() => ({} as { addonId?: string }))
-    if (!addonId) return NextResponse.json({ error: "addonId required" }, { status: 400 })
+    if (!addonId || !z.string().uuid().safeParse(addonId).success) {
+      return NextResponse.json({ error: "Valid addonId required" }, { status: 400 })
+    }
 
     // Ownership-scoped soft delete (keeps the WHERE bound to this provider).
     await db

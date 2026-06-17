@@ -152,7 +152,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
           <div className="border-t border-[#E5EBF0] my-2" />
           <div className="flex justify-between font-bold text-[#2B3441]">
             <span>{t("totalLabel")}</span>
-            <span>{formatCurrency(booking.totalAmount)}</span>
+            <span>{formatCurrency(booking.totalAmount + (booking.carbonOffsetAmount ?? 0))}</span>
           </div>
           {payment && (
             <p className="text-xs text-[#9CA3AF] pt-1">

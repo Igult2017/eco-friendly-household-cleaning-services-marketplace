@@ -36,7 +36,7 @@ export default function BookStep5Page() {
   const [error, setError] = useState<string | null>(null)
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const [intentId, setIntentId] = useState<string | null>(null)
-  const [amounts, setAmounts] = useState<{ subtotalCents: number; totalCharged: number } | null>(null)
+  const [amounts, setAmounts] = useState<{ subtotalCents: number; platformFee: number; totalCharged: number } | null>(null)
   const [serviceId, setServiceId] = useState<string | null>(null)
   const [success, setSuccess] = useState<{ bookingId: string; bookingNumber: string } | null>(null)
   const [addCarbonOffset, setAddCarbonOffset] = useState(false)
@@ -46,6 +46,7 @@ export default function BookStep5Page() {
   const [promoLabel, setPromoLabel] = useState<string | null>(null)
   const [promoLoading, setPromoLoading] = useState(false)
   const [promoError, setPromoError] = useState<string | null>(null)
+  const [feePct, setFeePct] = useState(15) // admin commission %; loaded with the price preview
 
   // Bid-flow bookings (accepted bid) may have null categoryId or a slug instead of UUID.
   // They always have bidAmountCents set. Loosen the guard accordingly.
@@ -114,21 +115,18 @@ export default function BookStep5Page() {
       const service = svcData.services?.[0]
       if (!service) { setError(t("errorProviderNoService")); return }
       setServiceId(service.id)
-      // Sum any selected add-ons so the preview total matches what the PI will charge.
-      let addOnsTotal = 0
-      if (store.addOnIds.length > 0) {
-        try {
-          const aRes = await fetch(`/api/providers/${store.selectedProviderId}/addons`)
-          const aData = await aRes.json()
-          const list: { id: string; priceCents: number }[] = Array.isArray(aData.addons) ? aData.addons : []
-          addOnsTotal = list.filter((a) => store.addOnIds.includes(a.id)).reduce((s, a) => s + a.priceCents, 0)
-        } catch { /* ignore — PI recomputes server-side anyway */ }
-      }
-      // Commission is deducted from the cleaner, so the customer's price is simply the
-      // service price (+ add-ons, after any promo) + the optional offset — no fee on top.
+      // Load the live commission % so the preview matches the real charge.
+      let pct = 15
+      try {
+        const feeRes = await fetch("/api/platform/fee")
+        const feeData = await feeRes.json()
+        if (typeof feeData.pct === "number") { pct = feeData.pct; setFeePct(feeData.pct) }
+      } catch { /* keep default 15% */ }
       // Bug 5: bid-flow bookings use the accepted bid amount, not the service list price
-      const subtotalCents: number = (store.bidAmountCents ?? service.basePrice) + addOnsTotal
-      setAmounts({ subtotalCents, totalCharged: subtotalCents })
+      const subtotalCents: number = store.bidAmountCents ?? service.basePrice
+      const platformFee = Math.round(subtotalCents * (pct / 100))
+      const totalCharged = subtotalCents + platformFee
+      setAmounts({ subtotalCents, platformFee, totalCharged })
     } catch {
       setError(t("errorLoadPricing"))
     } finally {
@@ -189,7 +187,6 @@ export default function BookStep5Page() {
           scheduledAt: store.scheduledAt!,
           durationMinutes: store.durationMinutes,
           carbonOffsetCents: addCarbonOffset ? CARBON_OFFSET_CENTS : 0,
-          addOnIds: store.addOnIds,
           // Bug 5: pass bid amount so PI uses the accepted price, not the list price
           ...(store.bidAmountCents !== null ? { bidAmountCents: store.bidAmountCents } : {}),
           ...(promoCodeId ? { promoCodeId, promoCodeDiscountCents: promoDiscountCents } : {}),
@@ -209,17 +206,16 @@ export default function BookStep5Page() {
     }
   }
 
-  // Commission is deducted from the cleaner — the customer pays the service price
-  // (after any promo) plus the optional carbon offset. No fee is added on top.
-  // In SUMMARY mode `amounts` is the local preview (base + add-ons, no promo applied) so we
-  // subtract the promo here. In PAYMENT mode `amounts` is the PI response, whose subtotalCents
-  // ALREADY has the promo applied — subtracting again would under-count the total.
-  const previewSubtotal = amounts
-    ? (step === "summary" ? Math.max(0, amounts.subtotalCents - (promoCodeId ? promoDiscountCents : 0)) : amounts.subtotalCents)
-    : null
-  const totalWithOffset = previewSubtotal !== null
-    ? previewSubtotal + (addCarbonOffset ? CARBON_OFFSET_CENTS : 0)
-    : null
+  // When amounts come from the PI response they already incorporate the promo discount.
+  // In preview mode (before PI is created) we subtract the discount ourselves.
+  const previewSubtotal = amounts ? Math.max(0, amounts.subtotalCents - (promoCodeId ? promoDiscountCents : 0)) : null
+  const previewPlatformFee = previewSubtotal !== null ? Math.round(previewSubtotal * (feePct / 100)) : null
+  const previewTotal = previewSubtotal !== null && previewPlatformFee !== null ? previewSubtotal + previewPlatformFee : null
+  const totalWithOffset = previewTotal !== null
+    ? previewTotal + (addCarbonOffset ? CARBON_OFFSET_CENTS : 0)
+    : amounts
+      ? amounts.totalCharged + (addCarbonOffset ? CARBON_OFFSET_CENTS : 0)
+      : null
 
   if (success) {
     return (
@@ -269,6 +265,10 @@ export default function BookStep5Page() {
               <div className="flex justify-between text-[#6B7280]">
                 <span>{CATEGORY_SERVICE_KEYS[store.categoryId ?? ""] ? t(CATEGORY_SERVICE_KEYS[store.categoryId ?? ""]) : t("defaultCleaningService")}</span>
                 <span>{formatCurrency(amounts.subtotalCents)}</span>
+              </div>
+              <div className="flex justify-between text-[#6B7280]">
+                <span>{t("serviceFee")}</span>
+                <span>{formatCurrency(amounts.platformFee)}</span>
               </div>
 
               {/* Promo code input */}

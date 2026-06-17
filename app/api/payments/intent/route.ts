@@ -7,6 +7,7 @@ import { getCommissionPct } from "@/lib/platform/settings"
 import { bookingRatelimit } from "@/lib/redis/client"
 import { paymentIntentSchema } from "@/lib/validations/booking"
 import { and, eq, inArray } from "drizzle-orm"
+import { createHash } from "node:crypto"
 
 export async function POST(req: Request) {
   try {
@@ -130,8 +131,15 @@ export async function POST(req: Request) {
     if (resolvedDiscountCents > 0) metadata.promo_code_discount_cents = String(resolvedDiscountCents)
     if (addOnsTotal > 0) {
       metadata.addon_total_cents = String(addOnsTotal)
-      metadata.addon_ids = validAddOnIds.join(",")
+      // Stripe caps each metadata value at 500 chars — only store the ids when they fit.
+      const idsStr = validAddOnIds.join(",")
+      if (idsStr.length <= 480) metadata.addon_ids = idsStr
     }
+    // Stable signature of the selected add-on set so swapping equal-priced add-ons on the
+    // same slot creates a NEW PI instead of reusing the cached one (the total alone wouldn't differ).
+    const addonSig = validAddOnIds.length
+      ? createHash("sha1").update([...validAddOnIds].sort().join(",")).digest("hex").slice(0, 12)
+      : "0"
 
     const intent = await stripe.paymentIntents.create(
       {
@@ -148,7 +156,7 @@ export async function POST(req: Request) {
       // (final total + promo code) so changing the promo or carbon offset on the same slot
       // creates a NEW PI with the correct amount, while pure network retries of the same
       // request still return the cached PI.
-      { idempotencyKey: `pi-${userId}-${providerId}-${serviceId}-${scheduledAt}-${totalWithOffset}-${promoCodeId ?? "none"}` },
+      { idempotencyKey: `pi-${userId}-${providerId}-${serviceId}-${scheduledAt}-${totalWithOffset}-${promoCodeId ?? "none"}-${addonSig}` },
     )
 
     return NextResponse.json({
