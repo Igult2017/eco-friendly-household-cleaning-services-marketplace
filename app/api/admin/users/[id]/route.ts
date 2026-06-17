@@ -28,7 +28,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     if (!adminId) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
     const { id } = await params
-    const { role } = await req.json() as { role: Role }
+    const body = await req.json().catch(() => ({} as { role?: Role }))
+    const role = (body as { role?: Role }).role as Role
 
     if (!VALID_ROLES.includes(role)) {
       return NextResponse.json({ error: "Invalid role" }, { status: 400 })
@@ -48,7 +49,14 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
     const client = await clerkClient()
     await client.users.updateUser(id, { publicMetadata: { role } })
-    await db.update(users).set({ role }).where(eq(users.id, id))
+    try {
+      await db.update(users).set({ role }).where(eq(users.id, id))
+    } catch (dbErr) {
+      // BUG-008a: Clerk role (the auth source of truth) already changed but the DB mirror
+      // failed — log enough to reconcile the drift rather than failing silently.
+      console.error(`[admin/users PATCH] Clerk role set to "${role}" for ${id} but DB update failed — reconcile:`, dbErr)
+      throw dbErr
+    }
 
     return NextResponse.json({ success: true, role })
   } catch (err) {
@@ -80,7 +88,14 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
 
     const client = await clerkClient()
     await client.users.deleteUser(id)
-    await db.delete(users).where(eq(users.id, id))
+    try {
+      await db.delete(users).where(eq(users.id, id))
+    } catch (dbErr) {
+      // BUG-008b: user removed from Clerk but the DB delete failed (likely FK references) —
+      // log the id so the orphaned row can be cleaned up manually.
+      console.error(`[admin/users DELETE] user ${id} deleted from Clerk but DB delete failed — orphaned row:`, dbErr)
+      throw dbErr
+    }
 
     return NextResponse.json({ success: true, self: isSelf })
   } catch (err) {
