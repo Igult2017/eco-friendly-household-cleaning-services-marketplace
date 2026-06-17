@@ -2,7 +2,7 @@ import { headers } from "next/headers"
 import { stripe } from "@/lib/stripe/client"
 import { redis } from "@/lib/redis/client"
 import { db } from "@/lib/db"
-import { payments, providers, notifications } from "@/lib/db/schema"
+import { payments, providers, notifications, bookings, disputes, users } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import type Stripe from "stripe"
 
@@ -96,6 +96,48 @@ export async function POST(req: Request) {
               body: "We need more information to verify your identity. Please resubmit your documents.",
               link: "/provider/profile",
             })
+          }
+        }
+        break
+      }
+
+      case "charge.dispute.created": {
+        // FIN-007: a customer filed a BANK chargeback. Flag the booking, open a dispute record,
+        // and alert every admin so it can be contested in Stripe before the evidence deadline.
+        const chargeDispute = event.data.object as Stripe.Dispute
+        const piId = typeof chargeDispute.payment_intent === "string"
+          ? chargeDispute.payment_intent
+          : chargeDispute.payment_intent?.id
+        if (piId) {
+          const [payment] = await db
+            .select({ bookingId: payments.bookingId, customerId: payments.customerId })
+            .from(payments)
+            .where(eq(payments.stripePaymentIntentId, piId))
+          if (payment?.bookingId) {
+            await db.update(bookings).set({ status: "disputed" }).where(eq(bookings.id, payment.bookingId))
+            // Unique index on booking_id makes this idempotent if a dispute already exists.
+            await db
+              .insert(disputes)
+              .values({
+                bookingId: payment.bookingId,
+                openedBy: payment.customerId,
+                status: "open",
+                reason: "chargeback",
+                description: `Stripe chargeback opened (reason: ${chargeDispute.reason}). Respond in the Stripe dashboard before the evidence deadline.`,
+              })
+              .onConflictDoNothing()
+            const admins = await db.select({ id: users.id }).from(users).where(eq(users.role, "admin"))
+            if (admins.length > 0) {
+              await db.insert(notifications).values(
+                admins.map((a) => ({
+                  userId: a.id,
+                  type: "dispute_opened" as const,
+                  title: "⚠️ Chargeback opened",
+                  body: `A customer filed a bank chargeback (${chargeDispute.reason}). Review and submit evidence in Stripe before the deadline.`,
+                  link: "/admin/disputes",
+                })),
+              )
+            }
           }
         }
         break

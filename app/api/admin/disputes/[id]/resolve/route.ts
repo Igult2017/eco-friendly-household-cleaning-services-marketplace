@@ -51,7 +51,17 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       if (payment?.status === "captured") {
         // Bug 7: idempotency key prevents double-refund if server crashes after Stripe responds but before DB update
         await stripe.refunds.create(
-          { payment_intent: payment.stripePaymentIntentId, amount: refundAmount },
+          {
+            payment_intent: payment.stripePaymentIntentId,
+            amount: refundAmount,
+            // FIN-005: when the cleaning professional is at fault (customer wins), claw the
+            // refund back from THEIR transfer and refund the platform commission proportionally
+            // instead of the platform absorbing 100%. When the provider wins a goodwill refund,
+            // the platform absorbs it (no clawback).
+            ...(outcome === "resolved_customer"
+              ? { reverse_transfer: true, refund_application_fee: true }
+              : {}),
+          },
           { idempotencyKey: `refund-dispute-${disputeId}` },
         )
         // FIN-005: record the refund on the payment row so the ledger and the customer's
