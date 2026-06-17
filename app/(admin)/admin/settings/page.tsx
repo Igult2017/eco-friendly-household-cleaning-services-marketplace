@@ -86,11 +86,12 @@ export default function AdminSettingsPage() {
         {/* Commission */}
         <div className="px-6 py-5">
           <label className="block text-sm font-semibold text-[#2B3441] mb-1">
-            Customer Commission %
+            Platform Commission %
           </label>
           <p className="text-xs text-[#6B7280] mb-3">
-            Added on top of the provider&apos;s price. Provider keeps 100% of their quoted rate.
-            Changing this only affects new bookings — existing bookings retain their original rate.
+            Deducted from the cleaner&apos;s payout (the cleaner pays this to use the platform).
+            The customer pays the cleaner&apos;s rate — nothing is added on top. Changing this
+            only affects new bookings — existing bookings keep their original rate.
           </p>
           <div className="flex items-center gap-3">
             <input
@@ -101,12 +102,13 @@ export default function AdminSettingsPage() {
               onChange={e => set("commission_pct", e.target.value)}
               className="w-24 h-10 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]"
             />
-            <span className="text-sm text-[#6B7280]">% of provider&apos;s price</span>
+            <span className="text-sm text-[#6B7280]">% of the cleaner&apos;s rate</span>
           </div>
           <div className="mt-3 bg-[#F4FAF6] rounded-xl px-4 py-3 text-xs text-[#2B3441] space-y-1">
-            <p>Provider quotes <span className="font-semibold">€100</span></p>
-            <p>Customer pays <span className="font-semibold">€{(100 * (1 + (parseInt(cfg.commission_pct ?? "15") / 100))).toFixed(0)}</span> (€100 + {cfg.commission_pct ?? 15}% fee)</p>
-            <p>Platform earns <span className="font-semibold text-[#2D7A5F]">€{(100 * (parseInt(cfg.commission_pct ?? "15") / 100)).toFixed(0)}</span></p>
+            <p>Cleaner&apos;s rate <span className="font-semibold">€100</span></p>
+            <p>Customer pays <span className="font-semibold">€100</span> (nothing added)</p>
+            <p>Platform commission <span className="font-semibold text-[#2D7A5F]">€{parseInt(cfg.commission_pct ?? "15")}</span> ({cfg.commission_pct ?? 15}%)</p>
+            <p>Cleaner receives <span className="font-semibold">€{100 - parseInt(cfg.commission_pct ?? "15")}</span></p>
           </div>
         </div>
 
