@@ -34,7 +34,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       return NextResponse.json({ error: "Booking cannot be rescheduled in its current status" }, { status: 422 })
     }
 
-    const body = await req.json()
+    const body = await req.json().catch(() => ({}))
     const parsed = rescheduleSchema.safeParse(body)
     if (!parsed.success) {
       return NextResponse.json({ error: "Invalid request body", details: parsed.error.flatten() }, { status: 422 })
@@ -118,7 +118,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       .from(providers)
       .where(eq(providers.id, booking.providerId))
 
+    // BUG-015: pin the market timezone so a near-midnight slot doesn't render the
+    // wrong calendar day/time on a UTC server.
     const formattedDate = newStart.toLocaleDateString("en-GB", {
+      timeZone: "Europe/Berlin",
       weekday: "long",
       year: "numeric",
       month: "long",
@@ -138,10 +141,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       })
     }
 
-    // Notify customer
+    // Notify customer — BUG-012: was "booking_confirmed" (wrong icon + could re-trigger
+    // payment-confirmation UI); a reschedule is its own notification type.
     await db.insert(notifications).values({
       userId: booking.customerId,
-      type: "booking_confirmed",
+      type: "booking_rescheduled",
       title: "Booking rescheduled",
       body: "Your booking has been rescheduled.",
       link: `/bookings/${bookingId}`,

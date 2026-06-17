@@ -91,6 +91,23 @@ export async function POST(req: NextRequest) {
         isSuspended: false,
       }
       await db.insert(providers).values(insertData)
+    } else {
+      // BUG-014: a profile already exists (e.g. a prior failed attempt) — apply the
+      // submitted details instead of silently keeping the stale row. Preserve slug,
+      // approval and suspension state.
+      await db
+        .update(providers)
+        .set({
+          businessName: data.businessName,
+          bio: data.bio,
+          city: data.city,
+          postalCode: data.postalCode,
+          country: data.country,
+          serviceRadiusKm: data.serviceRadiusKm,
+          ecoLevel: data.ecoLevel,
+          updatedAt: new Date(),
+        })
+        .where(eq(providers.id, existing.id))
     }
 
     const clerk = await clerkClient()

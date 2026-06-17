@@ -158,8 +158,15 @@ export async function POST(req: NextRequest) {
     try {
       await stripe.paymentMethods.attach(paymentMethodId, { customer: stripeCustomerId })
     } catch (err: unknown) {
-      const stripeErr = err as { code?: string }
-      if (stripeErr?.code !== "resource_already_exists") throw err
+      const stripeErr = err as { code?: string; type?: string }
+      if (stripeErr?.code === "resource_already_exists") {
+        // already attached to this customer — fine
+      } else if (stripeErr?.type === "StripeInvalidRequestError" || stripeErr?.type === "StripeCardError") {
+        // BUG-023: invalid/declined/foreign payment method → client error, not an opaque 500
+        return NextResponse.json({ error: "That payment method can't be used. Please add it again." }, { status: 422 })
+      } else {
+        throw err
+      }
     }
 
     const nextBookingAt = nextOccurrenceUTC(dayOfWeek, preferredTime, timezone)

@@ -43,7 +43,11 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
 
     if (!bid) return NextResponse.json({ error: "Bid not found or not pending" }, { status: 404 })
 
-    // TOCTOU: row-lock the job row inside a transaction before mutating state
+    // TOCTOU: row-lock the job row inside a transaction before mutating state.
+    // BUG-011: don't call tx.rollback() for the race-loser — it throws and the outer
+    // catch turns it into a 500. Flag it and return a 409 below. Returning early from
+    // the callback (before any write) just commits a harmless no-op transaction.
+    let lostRace = false
     await db.transaction(async (tx) => {
       const [locked] = await tx
         .select({ status: jobPosts.status })
@@ -52,7 +56,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
         .for("update")
 
       if (!locked || !["open", "bidding"].includes(locked.status)) {
-        tx.rollback()
+        lostRace = true
         return
       }
 
@@ -63,6 +67,10 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
         .where(and(eq(bids.jobPostId, jobPostId), ne(bids.id, bidId), eq(bids.status, "pending")))
       await tx.update(jobPosts).set({ status: "assigned", acceptedBidId: bidId }).where(eq(jobPosts.id, jobPostId))
     })
+
+    if (lostRace) {
+      return NextResponse.json({ error: "This job is no longer accepting bids" }, { status: 409 })
+    }
 
     // Look up category slug for bid-flow store hydration
     let categorySlug: string | null = null

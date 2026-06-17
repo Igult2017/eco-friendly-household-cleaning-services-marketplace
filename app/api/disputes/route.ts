@@ -19,16 +19,18 @@ export async function POST(req: Request) {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-    const body = await req.json()
+    const body = await req.json().catch(() => ({}))
     const parsed = openDisputeSchema.safeParse(body)
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
     const { bookingId, reason, description, evidenceUrls } = parsed.data
 
-    // Bug 6: only allow evidence files from our own R2 bucket — any external URL is an XSS vector
+    // Bug 6: only allow evidence files from our own R2 bucket — any external URL is an XSS vector.
+    // BUG-006: if storage isn't configured, user-supplied URLs can never be valid → reject as a
+    // 400 (client error) instead of a 500 that looks like a server fault.
     const r2Base = process.env.R2_PUBLIC_URL
     if (evidenceUrls.length > 0) {
-      if (!r2Base) return NextResponse.json({ error: "File storage not configured" }, { status: 500 })
+      if (!r2Base) return NextResponse.json({ error: "Evidence uploads are not available" }, { status: 400 })
       const invalid = evidenceUrls.filter((u) => !u.startsWith(r2Base))
       if (invalid.length > 0) return NextResponse.json({ error: "Invalid evidence file URLs" }, { status: 400 })
     }

@@ -143,6 +143,19 @@ const clerkHandler = clerkMiddleware(async (auth, req) => {
   return res
 })
 
+// BUG-002: when Clerk errors, fail OPEN only for public routes; fail CLOSED for
+// protected ones so an outage / key mismatch can't expose /admin, /provider, /book, etc.
+function clerkErrorFallback(req: NextRequest): NextResponse {
+  if (isPublicRoute(req)) return NextResponse.next()
+  if (req.nextUrl.pathname.startsWith("/api/")) {
+    return NextResponse.json({ error: "Authentication temporarily unavailable" }, { status: 503 })
+  }
+  const base = publicBase(req)
+  const signInUrl = new URL("/sign-in", base)
+  signInUrl.searchParams.set("redirect_url", `${base}${req.nextUrl.pathname}${req.nextUrl.search}`)
+  return NextResponse.redirect(signInUrl)
+}
+
 export default async function middleware(req: NextRequest, event: NextFetchEvent) {
   // Capture ?ref=CODE and store in a 30-day cookie so the referral survives sign-up
   const refCode = req.nextUrl.searchParams.get("ref")
@@ -154,8 +167,9 @@ export default async function middleware(req: NextRequest, event: NextFetchEvent
       try {
         const handled = await clerkHandler(req, event)
         base = (handled instanceof NextResponse ? handled : null) ?? NextResponse.next()
-      } catch {
-        base = NextResponse.next()
+      } catch (err) {
+        console.error("[middleware] Clerk error (ref path):", err)
+        base = clerkErrorFallback(req)
       }
     }
     base.cookies.set("dorix_ref", refCode.toUpperCase(), {
@@ -174,9 +188,9 @@ export default async function middleware(req: NextRequest, event: NextFetchEvent
   try {
     return (await clerkHandler(req, event)) ?? NextResponse.next()
   } catch (err) {
-    // Clerk misconfiguration or key mismatch — log and fail open so the UI is reachable
-    console.error("[middleware] Clerk error, passing request through:", err)
-    return NextResponse.next()
+    // BUG-002: fail closed for protected routes (public routes still pass through).
+    console.error("[middleware] Clerk error:", err)
+    return clerkErrorFallback(req)
   }
 }
 

@@ -1,25 +1,31 @@
 import { stripe } from "./client"
 
-/** Create a Stripe Connect Express account for a new provider */
+/** Create a Stripe Connect Express account for a new provider.
+ * Pass `idempotencyKey` (e.g. per provider id) so a retry after a failed DB write
+ * returns the SAME account instead of creating an orphaned duplicate (BUG-008d). */
 export async function createConnectAccount(params: {
-  email: string
+  email?: string
   country: string // ISO 3166-1 alpha-2 e.g. "DE"
+  idempotencyKey?: string
 }) {
-  return stripe.accounts.create({
-    type: "express",
-    country: params.country,
-    email: params.email,
-    capabilities: {
-      card_payments: { requested: true },
-      transfers: { requested: true },
-    },
-    business_type: "individual",
-    settings: {
-      payouts: {
-        schedule: { interval: "weekly", weekly_anchor: "monday" },
+  return stripe.accounts.create(
+    {
+      type: "express",
+      country: params.country,
+      email: params.email,
+      capabilities: {
+        card_payments: { requested: true },
+        transfers: { requested: true },
+      },
+      business_type: "individual",
+      settings: {
+        payouts: {
+          schedule: { interval: "weekly", weekly_anchor: "monday" },
+        },
       },
     },
-  })
+    params.idempotencyKey ? { idempotencyKey: params.idempotencyKey } : undefined,
+  )
 }
 
 /** Generate a Stripe Connect onboarding link */

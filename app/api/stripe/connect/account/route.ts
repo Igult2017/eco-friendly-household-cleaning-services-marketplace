@@ -24,16 +24,26 @@ export async function POST(req: Request) {
 
     if (!stripeAccountId) {
       const body = await req.json().catch(() => ({}))
+      // BUG-008d: idempotency-key the account creation per provider so a retry after a
+      // failed DB write returns the same account rather than orphaning a duplicate.
       const account = await createConnectAccount({
         email: user?.email ?? undefined,
         country: body.country ?? "DE",
+        idempotencyKey: `connect-acct-${provider.id}`,
       })
       stripeAccountId = account.id
 
-      await db
-        .update(providers)
-        .set({ stripeAccountId, stripeAccountStatus: "pending" })
-        .where(eq(providers.id, provider.id))
+      try {
+        await db
+          .update(providers)
+          .set({ stripeAccountId, stripeAccountStatus: "pending" })
+          .where(eq(providers.id, provider.id))
+      } catch (dbErr) {
+        // The Stripe account exists but we failed to record it. Log the id so it's
+        // reconcilable; the idempotency key makes a retry reuse this same account.
+        console.error(`[stripe/connect/account] account ${account.id} created for provider ${provider.id} but DB update failed:`, dbErr)
+        throw dbErr
+      }
     }
 
     const origin = req.headers.get("origin") ?? process.env.NEXT_PUBLIC_APP_URL!

@@ -32,13 +32,17 @@ export async function GET() {
 
     let providerData = null
     if (providerProfile) {
-      const [provServices, certifications] = await Promise.all([
+      // BUG-016: a user who is also a provider must get their provider-side bookings
+      // in the Art. 20 export, not only the bookings they made as a customer.
+      const [provServices, certifications, providerBookings] = await Promise.all([
         db.select({ id: providerServices.id, name: providerServices.name, basePrice: providerServices.basePrice, isActive: providerServices.isActive })
           .from(providerServices).where(eq(providerServices.providerId, providerProfile.id)),
         db.select({ id: ecoCertifications.id, name: ecoCertifications.name, issuingBody: ecoCertifications.issuingBody, verifiedAt: ecoCertifications.verifiedAt })
           .from(ecoCertifications).where(eq(ecoCertifications.providerId, providerProfile.id)),
+        db.select({ id: bookings.id, bookingNumber: bookings.bookingNumber, status: bookings.status, scheduledAt: bookings.scheduledAt, totalAmount: bookings.totalAmount, providerPayout: bookings.providerPayout, createdAt: bookings.createdAt })
+          .from(bookings).where(eq(bookings.providerId, providerProfile.id)),
       ])
-      providerData = { ...providerProfile, services: provServices, certifications }
+      providerData = { ...providerProfile, services: provServices, certifications, bookingsAsProvider: providerBookings }
     }
 
     const exportData = {

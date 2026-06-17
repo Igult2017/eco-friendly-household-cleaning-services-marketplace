@@ -128,9 +128,11 @@ export async function POST(req: Request) {
         transfer_data: { destination: provider.stripeAccountId },
         metadata,
       },
-      // Bug 1: stable idempotency key — includes scheduledAt so re-booking same service at a different time
-      // creates a new PI, while network retries for the same request return the cached PI
-      { idempotencyKey: `pi-${userId}-${providerId}-${serviceId}-${scheduledAt}` },
+      // Bug 1 + BUG-005: idempotency key includes scheduledAt AND the price-affecting inputs
+      // (final total + promo code) so changing the promo or carbon offset on the same slot
+      // creates a NEW PI with the correct amount, while pure network retries of the same
+      // request still return the cached PI.
+      { idempotencyKey: `pi-${userId}-${providerId}-${serviceId}-${scheduledAt}-${totalWithOffset}-${promoCodeId ?? "none"}` },
     )
 
     return NextResponse.json({

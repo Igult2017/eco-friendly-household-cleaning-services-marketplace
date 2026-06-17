@@ -45,7 +45,7 @@ export async function POST(req: Request) {
     const [provider] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, userId))
     if (!provider) return NextResponse.json({ error: "Provider not found" }, { status: 404 })
 
-    const body = await req.json()
+    const body = await req.json().catch(() => ({}))
 
     if (body.type === "availability") {
       const parsed = availabilitySchema.safeParse(body.data)
@@ -58,8 +58,9 @@ export async function POST(req: Request) {
         .where(and(eq(providerAvailability.providerId, provider.id), eq(providerAvailability.dayOfWeek, dayOfWeek)))
 
       if (existing.length > 0) {
+        // BUG-022: scope the mutating WHERE by providerId too (defense-in-depth IDOR guard).
         await db.update(providerAvailability).set({ startTime, endTime, isActive })
-          .where(eq(providerAvailability.id, existing[0].id))
+          .where(and(eq(providerAvailability.id, existing[0].id), eq(providerAvailability.providerId, provider.id)))
       } else {
         await db.insert(providerAvailability).values({ providerId: provider.id, dayOfWeek, startTime, endTime, isActive })
       }
@@ -71,7 +72,12 @@ export async function POST(req: Request) {
       const parsed = blackoutSchema.safeParse(body.data)
       if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
-      await db.insert(providerBlackoutDates).values({ providerId: provider.id, date: parsed.data.date, reason: parsed.data.reason })
+      // BUG-017: skip if this provider already has a blackout for that date (no duplicate rows).
+      const dup = await db.select({ id: providerBlackoutDates.id }).from(providerBlackoutDates)
+        .where(and(eq(providerBlackoutDates.providerId, provider.id), eq(providerBlackoutDates.date, parsed.data.date)))
+      if (dup.length === 0) {
+        await db.insert(providerBlackoutDates).values({ providerId: provider.id, date: parsed.data.date, reason: parsed.data.reason })
+      }
       return NextResponse.json({ success: true })
     }
 

@@ -28,7 +28,8 @@ export async function PATCH(req: Request) {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-    const { id } = await req.json()
+    const { id } = await req.json().catch(() => ({} as { id?: string }))
+    if (!id) return NextResponse.json({ error: "id required" }, { status: 400 })
 
     if (id === "all") {
       await db.update(notifications).set({ isRead: true }).where(eq(notifications.userId, userId))

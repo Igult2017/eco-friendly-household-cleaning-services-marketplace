@@ -12,7 +12,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
     const { id: bookingId } = await params
-    const { reason } = await req.json()
+    const { reason } = await req.json().catch(() => ({} as { reason?: string }))
 
     const [booking] = await db
       .select({
@@ -49,36 +49,40 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const refundPercent = calculateRefundPercent(hoursUntilJob, callerRole)
     const refundAmount = calculateRefundAmount(booking.totalAmount, hoursUntilJob, callerRole)
 
+    // Bug 9: authorized payments that are cancelled never reach "captured" — use the correct status
+    let newPaymentStatus: "cancelled" | "refunded" | "captured" = "captured"
     if (payment) {
+      // Idempotency keys: a retry after a partial failure must NOT issue a second
+      // refund / cancel for the same booking (BUG-004).
       if (payment.status === "authorized") {
         // Always cancel the intent to release the card hold, regardless of refund amount
-        await stripe.paymentIntents.cancel(payment.stripePaymentIntentId)
-      } else if (payment.status === "captured" && refundAmount > 0) {
-        await stripe.refunds.create({
-          payment_intent: payment.stripePaymentIntentId,
-          amount: refundAmount,
-        })
-      }
-
-      // Bug 9: authorized payments that are cancelled never reach "captured" — use the correct status
-      let newPaymentStatus: "cancelled" | "refunded" | "captured" = "captured"
-      if (payment.status === "authorized") {
+        await stripe.paymentIntents.cancel(payment.stripePaymentIntentId, {}, { idempotencyKey: `cancel-${bookingId}` })
         newPaymentStatus = "cancelled"  // card hold released, no charge
-      } else if (refundAmount > 0) {
+      } else if (payment.status === "captured" && refundAmount > 0) {
+        await stripe.refunds.create(
+          { payment_intent: payment.stripePaymentIntentId, amount: refundAmount },
+          { idempotencyKey: `refund-${bookingId}` },
+        )
         newPaymentStatus = "refunded"
       }
-      await db.update(payments).set({ status: newPaymentStatus }).where(eq(payments.bookingId, bookingId))
     }
 
-    await db
-      .update(bookings)
-      .set({
-        status: "cancelled",
-        cancellationReason: reason ?? null,
-        cancelledAt: new Date(),
-        cancelledBy: userId,
-      })
-      .where(eq(bookings.id, bookingId))
+    // BUG-004: commit the payment + booking status together so we never end up
+    // with money refunded while the booking still reads "confirmed".
+    await db.transaction(async (tx) => {
+      if (payment) {
+        await tx.update(payments).set({ status: newPaymentStatus }).where(eq(payments.bookingId, bookingId))
+      }
+      await tx
+        .update(bookings)
+        .set({
+          status: "cancelled",
+          cancellationReason: reason ?? null,
+          cancelledAt: new Date(),
+          cancelledBy: userId,
+        })
+        .where(eq(bookings.id, bookingId))
+    })
 
     return NextResponse.json({ success: true, refundPercent, refundAmount })
   } catch (err) {

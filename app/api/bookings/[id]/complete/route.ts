@@ -34,7 +34,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       return NextResponse.json({ error: "Booking cannot be completed in its current state" }, { status: 422 })
     }
 
-    const body = await req.json()
+    const body = await req.json().catch(() => ({} as { photoUrls?: unknown }))
     const rawUrls: unknown[] = Array.isArray(body.photoUrls) ? body.photoUrls : []
 
     // Only accept URLs from our own R2 bucket to prevent stored XSS via external URLs
