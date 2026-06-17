@@ -1383,11 +1383,8 @@
   },
   "compLayoutRoleSwitcher": {
     "cleanerAccount": "Compte intervenant",
-    "providerAccount": "Compte client",
     "toastTitleCleaner": "Basculé vers le compte intervenant",
-    "toastTitleProvider": "Basculé vers le compte client",
     "toastDescCleaner": "Vous naviguez désormais en tant qu'intervenant. Trouvez des missions à proximité et proposez vos offres.",
-    "toastDescProvider": "Vous naviguez désormais en tant que client. Publiez des missions et gérez vos réservations.",
     "switchFailed": "Échec du changement",
     "networkError": "Erreur réseau. Veuillez réessayer.",
     "switchingAccount": "Changement de compte…",
@@ -1395,15 +1392,12 @@
     "switchTo": "Passer au {role}",
     "currentlyIn": "Vous êtes actuellement sur le {role}",
     "warningCleaner": "Vous verrez le tableau de bord intervenant. Les missions que vous avez publiées en tant que client seront masquées afin d'éviter de proposer une offre sur votre propre travail.",
-    "warningProvider": "Vous verrez le tableau de bord client. Vous ne pouvez pas proposer d'offre sur des missions que vous avez déjà publiées en tant que client.",
     "cancel": "Annuler",
-    "switchNow": "Changer maintenant"
-  },
-  "compLayoutSwitchNotifier": {
-    "switchedToCleanerTitle": "Passé au compte agent d'entretien",
-    "switchedToCleanerDescription": "Vous naviguez désormais en tant qu'agent d'entretien. Trouvez des missions à proximité et faites des offres.",
-    "switchedToProviderTitle": "Passé au compte prestataire",
-    "switchedToProviderDescription": "Vous naviguez désormais en tant que prestataire. Publiez des missions et gérez vos réservations."
+    "switchNow": "Changer maintenant",
+    "customerAccount": "Compte client",
+    "toastTitleCustomer": "Basculé vers le compte client",
+    "toastDescCustomer": "Vous naviguez maintenant en tant que client. Publiez des demandes et gérez vos réservations.",
+    "warningCustomer": "Vous verrez le tableau de bord client, où vous publiez des demandes et réservez des agents d'entretien — pas l'espace de travail des agents."
   },
   "compLocationLocationDetectButton": {
     "detecting": "Localisation en cours…",

@@ -1383,11 +1383,8 @@
   },
   "compLayoutRoleSwitcher": {
     "cleanerAccount": "Cuenta de limpiador",
-    "providerAccount": "Cuenta de cliente",
     "toastTitleCleaner": "Cambiado a cuenta de limpiador",
-    "toastTitleProvider": "Cambiado a cuenta de cliente",
     "toastDescCleaner": "Ahora navegas como limpiador. Encuentra trabajos cercanos y haz tus ofertas.",
-    "toastDescProvider": "Ahora navegas como cliente. Publica trabajos y gestiona tus reservas.",
     "switchFailed": "Error al cambiar",
     "networkError": "Error de red. Inténtalo de nuevo.",
     "switchingAccount": "Cambiando de cuenta…",
@@ -1395,15 +1392,12 @@
     "switchTo": "Cambiar a {role}",
     "currentlyIn": "Actualmente estás en {role}",
     "warningCleaner": "Verás el panel de limpiador. Los trabajos que publicaste como cliente se ocultarán para evitar que ofertes en tu propio trabajo.",
-    "warningProvider": "Verás el panel de cliente. No puedes ofertar en trabajos que publicaste anteriormente como cliente.",
     "cancel": "Cancelar",
-    "switchNow": "Cambiar ahora"
-  },
-  "compLayoutSwitchNotifier": {
-    "switchedToCleanerTitle": "Cambiado a cuenta de personal de limpieza",
-    "switchedToCleanerDescription": "Ahora navegas como personal de limpieza. Encuentra trabajos cercanos y haz tus ofertas.",
-    "switchedToProviderTitle": "Cambiado a cuenta de proveedor",
-    "switchedToProviderDescription": "Ahora navegas como proveedor. Publica trabajos y gestiona tus reservas."
+    "switchNow": "Cambiar ahora",
+    "customerAccount": "Cuenta de cliente",
+    "toastTitleCustomer": "Cambiado a cuenta de cliente",
+    "toastDescCustomer": "Ahora navegas como cliente. Publica trabajos y gestiona tus reservas.",
+    "warningCustomer": "Verás el panel de cliente, donde publicas trabajos y reservas limpiadores, no el espacio de trabajo del limpiador."
   },
   "compLocationLocationDetectButton": {
     "detecting": "Detectando ubicación…",

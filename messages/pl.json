@@ -1383,11 +1383,8 @@
   },
   "compLayoutRoleSwitcher": {
     "cleanerAccount": "Konto sprzątacza",
-    "providerAccount": "Konto zleceniodawcy",
     "toastTitleCleaner": "Przełączono na konto sprzątacza",
-    "toastTitleProvider": "Przełączono na konto zleceniodawcy",
     "toastDescCleaner": "Przeglądasz teraz jako sprzątacz. Znajduj zlecenia w pobliżu i składaj oferty.",
-    "toastDescProvider": "Przeglądasz teraz jako zleceniodawca. Publikuj zlecenia i zarządzaj rezerwacjami.",
     "switchFailed": "Przełączenie nie powiodło się",
     "networkError": "Błąd sieci. Spróbuj ponownie.",
     "switchingAccount": "Przełączanie konta…",
@@ -1395,15 +1392,12 @@
     "switchTo": "Przełącz na {role}",
     "currentlyIn": "Obecnie jesteś w {role}",
     "warningCleaner": "Zobaczysz panel sprzątacza. Zlecenia opublikowane przez Ciebie jako zleceniodawcę zostaną ukryte, aby uniemożliwić licytowanie własnej pracy.",
-    "warningProvider": "Zobaczysz panel zleceniodawcy. Nie możesz licytować zleceń, które wcześniej opublikowałeś jako zleceniodawca.",
     "cancel": "Anuluj",
-    "switchNow": "Przełącz teraz"
-  },
-  "compLayoutSwitchNotifier": {
-    "switchedToCleanerTitle": "Przełączono na konto osoby sprzątającej",
-    "switchedToCleanerDescription": "Przeglądasz teraz jako osoba sprzątająca. Znajdź zlecenia w pobliżu i składaj oferty.",
-    "switchedToProviderTitle": "Przełączono na konto usługodawcy",
-    "switchedToProviderDescription": "Przeglądasz teraz jako usługodawca. Publikuj zlecenia i zarządzaj rezerwacjami."
+    "switchNow": "Przełącz teraz",
+    "customerAccount": "Konto klienta",
+    "toastTitleCustomer": "Przełączono na konto klienta",
+    "toastDescCustomer": "Przeglądasz teraz jako klient. Dodawaj zlecenia i zarządzaj rezerwacjami.",
+    "warningCustomer": "Zobaczysz panel klienta, w którym dodajesz zlecenia i rezerwujesz sprzątaczy — a nie obszar roboczy sprzątacza."
   },
   "compLocationLocationDetectButton": {
     "detecting": "Wykrywanie lokalizacji…",

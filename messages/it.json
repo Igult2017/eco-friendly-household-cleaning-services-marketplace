@@ -1383,11 +1383,8 @@
   },
   "compLayoutRoleSwitcher": {
     "cleanerAccount": "Account addetto pulizie",
-    "providerAccount": "Account cliente",
     "toastTitleCleaner": "Passato all'account addetto pulizie",
-    "toastTitleProvider": "Passato all'account cliente",
     "toastDescCleaner": "Ora navighi come addetto alle pulizie. Trova lavori nelle vicinanze e fai le tue offerte.",
-    "toastDescProvider": "Ora navighi come cliente. Pubblica lavori e gestisci le prenotazioni.",
     "switchFailed": "Cambio non riuscito",
     "networkError": "Errore di rete. Riprova.",
     "switchingAccount": "Cambio account in corso…",
@@ -1395,15 +1392,12 @@
     "switchTo": "Passa a {role}",
     "currentlyIn": "Attualmente sei in {role}",
     "warningCleaner": "Vedrai la dashboard addetto pulizie. I lavori che hai pubblicato come cliente saranno nascosti per evitare di fare offerte sul tuo stesso lavoro.",
-    "warningProvider": "Vedrai la dashboard cliente. Non puoi fare offerte sui lavori che hai pubblicato in precedenza come cliente.",
     "cancel": "Annulla",
-    "switchNow": "Cambia ora"
-  },
-  "compLayoutSwitchNotifier": {
-    "switchedToCleanerTitle": "Passato all'account addetto alle pulizie",
-    "switchedToCleanerDescription": "Ora navighi come addetto alle pulizie. Trova lavori nelle vicinanze e invia le tue offerte.",
-    "switchedToProviderTitle": "Passato all'account fornitore",
-    "switchedToProviderDescription": "Ora navighi come fornitore. Pubblica lavori e gestisci le prenotazioni."
+    "switchNow": "Cambia ora",
+    "customerAccount": "Account cliente",
+    "toastTitleCustomer": "Passato all'account cliente",
+    "toastDescCustomer": "Ora navighi come cliente. Pubblica lavori e gestisci le prenotazioni.",
+    "warningCustomer": "Vedrai la dashboard cliente, dove pubblichi lavori e prenoti addetti alle pulizie, non lo spazio di lavoro dell'addetto."
   },
   "compLocationLocationDetectButton": {
     "detecting": "Rilevamento posizione…",

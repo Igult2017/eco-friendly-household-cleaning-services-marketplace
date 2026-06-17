@@ -42,14 +42,15 @@ export function RoleSwitcher({ currentRole, targetRole }: Props) {
   const CurrentIcon = current.icon
   const TargetIcon  = target.icon
 
+  // RSN-001/002: the customer branch must use customer copy, not the provider keys.
   const roleLabel = (role: "customer" | "provider") =>
-    role === "provider" ? t("cleanerAccount") : t("providerAccount")
+    role === "provider" ? t("cleanerAccount") : t("customerAccount")
   const currentLabel = roleLabel(currentRole)
   const targetLabel  = roleLabel(targetRole)
   const targetToastTitle =
-    targetRole === "provider" ? t("toastTitleCleaner") : t("toastTitleProvider")
+    targetRole === "provider" ? t("toastTitleCleaner") : t("toastTitleCustomer")
   const targetToastDesc =
-    targetRole === "provider" ? t("toastDescCleaner") : t("toastDescProvider")
+    targetRole === "provider" ? t("toastDescCleaner") : t("toastDescCustomer")
 
   async function handleSwitch() {
     setSwitching(true)
@@ -77,9 +78,12 @@ export function RoleSwitcher({ currentRole, targetRole }: Props) {
         icon: <TargetIcon size={16} className={target.color} />,
         duration: 5000,
       })
+      // RSN-005/006: store only the role + timestamp. RoleSwitchToast re-translates on the
+      // destination page (so a mid-switch language change shows the CURRENT locale) and uses
+      // the timestamp to ignore stale entries from a failed switch.
       sessionStorage.setItem(
         "dorix_switch_toast",
-        JSON.stringify({ title: targetToastTitle, description: targetToastDesc, role: targetRole }),
+        JSON.stringify({ role: targetRole, ts: Date.now() }),
       )
       router.push((data as { redirectTo?: string }).redirectTo ?? "/")
     } catch {
@@ -154,7 +158,7 @@ export function RoleSwitcher({ currentRole, targetRole }: Props) {
                   <p className="text-xs text-[#2B3441] leading-relaxed">
                     {targetRole === "provider"
                       ? t("warningCleaner")
-                      : t("warningProvider")}
+                      : t("warningCustomer")}
                   </p>
                 </div>
 

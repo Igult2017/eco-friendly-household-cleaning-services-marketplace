@@ -1383,11 +1383,8 @@
   },
   "compLayoutRoleSwitcher": {
     "cleanerAccount": "Conta de profissional de limpeza",
-    "providerAccount": "Conta de cliente",
     "toastTitleCleaner": "Mudou para a conta de profissional de limpeza",
-    "toastTitleProvider": "Mudou para a conta de cliente",
     "toastDescCleaner": "Está agora a navegar como profissional de limpeza. Encontre trabalhos próximos e faça as suas propostas.",
-    "toastDescProvider": "Está agora a navegar como cliente. Publique trabalhos e faça a gestão das reservas.",
     "switchFailed": "Falha ao mudar",
     "networkError": "Erro de rede. Tente novamente.",
     "switchingAccount": "A mudar de conta…",
@@ -1395,15 +1392,12 @@
     "switchTo": "Mudar para {role}",
     "currentlyIn": "Encontra-se atualmente em {role}",
     "warningCleaner": "Verá o painel de profissional de limpeza. Os trabalhos que publicou como cliente ficarão ocultos para impedir que faça propostas ao seu próprio trabalho.",
-    "warningProvider": "Verá o painel de cliente. Não pode fazer propostas em trabalhos que publicou anteriormente como cliente.",
     "cancel": "Cancelar",
-    "switchNow": "Mudar agora"
-  },
-  "compLayoutSwitchNotifier": {
-    "switchedToCleanerTitle": "Mudou para conta de profissional de limpeza",
-    "switchedToCleanerDescription": "Está agora a navegar como profissional de limpeza. Encontre trabalhos próximos e faça as suas propostas.",
-    "switchedToProviderTitle": "Mudou para conta de fornecedor",
-    "switchedToProviderDescription": "Está agora a navegar como fornecedor. Publique trabalhos e faça a gestão das reservas."
+    "switchNow": "Mudar agora",
+    "customerAccount": "Conta de cliente",
+    "toastTitleCustomer": "Mudou para a conta de cliente",
+    "toastDescCustomer": "Agora está a navegar como cliente. Publique trabalhos e faça a gestão das reservas.",
+    "warningCustomer": "Verá o painel de cliente, onde publica trabalhos e reserva profissionais de limpeza — não o espaço de trabalho do profissional."
   },
   "compLocationLocationDetectButton": {
     "detecting": "A detetar localização…",

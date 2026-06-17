@@ -1383,11 +1383,8 @@
   },
   "compLayoutRoleSwitcher": {
     "cleanerAccount": "Cleaner Account",
-    "providerAccount": "Provider Account",
     "toastTitleCleaner": "Switched to Cleaner Account",
-    "toastTitleProvider": "Switched to Provider Account",
     "toastDescCleaner": "You are now browsing as a cleaner. Find and bid on nearby jobs.",
-    "toastDescProvider": "You are now browsing as a provider. Post jobs and manage bookings.",
     "switchFailed": "Switch failed",
     "networkError": "Network error. Try again.",
     "switchingAccount": "Switching account…",
@@ -1395,15 +1392,12 @@
     "switchTo": "Switch to {role}",
     "currentlyIn": "You are currently in {role}",
     "warningCleaner": "You will see the Cleaner dashboard. Jobs you posted as a Provider will be hidden to prevent bidding on your own work.",
-    "warningProvider": "You will see the Provider dashboard. You cannot bid on jobs you previously posted as a Provider.",
     "cancel": "Cancel",
-    "switchNow": "Switch now"
-  },
-  "compLayoutSwitchNotifier": {
-    "switchedToCleanerTitle": "Switched to Cleaner Account",
-    "switchedToCleanerDescription": "You are now browsing as a cleaner. Find and bid on nearby jobs.",
-    "switchedToProviderTitle": "Switched to Provider Account",
-    "switchedToProviderDescription": "You are now browsing as a provider. Post jobs and manage bookings."
+    "switchNow": "Switch now",
+    "customerAccount": "Customer Account",
+    "toastTitleCustomer": "Switched to Customer Account",
+    "toastDescCustomer": "You are now browsing as a customer. Post jobs and manage bookings.",
+    "warningCustomer": "You will see the customer dashboard, where you post jobs and book cleaners — not the cleaner workspace."
   },
   "compLocationLocationDetectButton": {
     "detecting": "Detecting location…",

@@ -1383,11 +1383,8 @@
   },
   "compLayoutRoleSwitcher": {
     "cleanerAccount": "Schoonmaakaccount",
-    "providerAccount": "Opdrachtgeveraccount",
     "toastTitleCleaner": "Overgeschakeld naar schoonmaakaccount",
-    "toastTitleProvider": "Overgeschakeld naar opdrachtgeveraccount",
     "toastDescCleaner": "Je bent nu als schoonmaker bezig. Vind klussen in de buurt en breng een bod uit.",
-    "toastDescProvider": "Je bent nu als opdrachtgever bezig. Plaats klussen en beheer je boekingen.",
     "switchFailed": "Wisselen mislukt",
     "networkError": "Netwerkfout. Probeer het opnieuw.",
     "switchingAccount": "Account wisselen…",
@@ -1395,15 +1392,12 @@
     "switchTo": "Wisselen naar {role}",
     "currentlyIn": "Je bent momenteel in {role}",
     "warningCleaner": "Je ziet het schoonmaakdashboard. Klussen die je als opdrachtgever hebt geplaatst, worden verborgen zodat je niet op je eigen werk kunt bieden.",
-    "warningProvider": "Je ziet het opdrachtgeverdashboard. Je kunt niet bieden op klussen die je eerder als opdrachtgever hebt geplaatst.",
     "cancel": "Annuleren",
-    "switchNow": "Nu wisselen"
-  },
-  "compLayoutSwitchNotifier": {
-    "switchedToCleanerTitle": "Overgeschakeld naar schoonmaker-account",
-    "switchedToCleanerDescription": "Je bladert nu als schoonmaker. Vind klussen in de buurt en breng je bod uit.",
-    "switchedToProviderTitle": "Overgeschakeld naar aanbieder-account",
-    "switchedToProviderDescription": "Je bladert nu als aanbieder. Plaats klussen en beheer je boekingen."
+    "switchNow": "Nu wisselen",
+    "customerAccount": "Klantaccount",
+    "toastTitleCustomer": "Overgeschakeld naar klantaccount",
+    "toastDescCustomer": "Je browst nu als klant. Plaats klussen en beheer boekingen.",
+    "warningCustomer": "Je ziet het klantdashboard, waar je klussen plaatst en schoonmakers boekt — niet de werkruimte voor schoonmakers."
   },
   "compLocationLocationDetectButton": {
     "detecting": "Locatie wordt bepaald…",

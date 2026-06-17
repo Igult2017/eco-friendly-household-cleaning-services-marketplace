@@ -1383,11 +1383,8 @@
   },
   "compLayoutRoleSwitcher": {
     "cleanerAccount": "Reinigungskonto",
-    "providerAccount": "Auftraggeberkonto",
     "toastTitleCleaner": "Zum Reinigungskonto gewechselt",
-    "toastTitleProvider": "Zum Auftraggeberkonto gewechselt",
     "toastDescCleaner": "Sie sind jetzt als Reinigungskraft unterwegs. Finden Sie Aufträge in Ihrer Nähe und geben Sie Angebote ab.",
-    "toastDescProvider": "Sie sind jetzt als Auftraggeber unterwegs. Veröffentlichen Sie Aufträge und verwalten Sie Buchungen.",
     "switchFailed": "Wechsel fehlgeschlagen",
     "networkError": "Netzwerkfehler. Bitte erneut versuchen.",
     "switchingAccount": "Konto wird gewechselt…",
@@ -1395,15 +1392,12 @@
     "switchTo": "Zu {role} wechseln",
     "currentlyIn": "Sie befinden sich derzeit im {role}",
     "warningCleaner": "Sie sehen das Reinigungs-Dashboard. Aufträge, die Sie als Auftraggeber veröffentlicht haben, werden ausgeblendet, damit Sie nicht auf Ihre eigenen Aufträge bieten.",
-    "warningProvider": "Sie sehen das Auftraggeber-Dashboard. Sie können nicht auf Aufträge bieten, die Sie zuvor als Auftraggeber veröffentlicht haben.",
     "cancel": "Abbrechen",
-    "switchNow": "Jetzt wechseln"
-  },
-  "compLayoutSwitchNotifier": {
-    "switchedToCleanerTitle": "Zum Reinigungskraft-Konto gewechselt",
-    "switchedToCleanerDescription": "Sie sind jetzt als Reinigungskraft unterwegs. Finden Sie Aufträge in der Nähe und geben Sie Angebote ab.",
-    "switchedToProviderTitle": "Zum Anbieter-Konto gewechselt",
-    "switchedToProviderDescription": "Sie sind jetzt als Anbieter unterwegs. Stellen Sie Aufträge ein und verwalten Sie Buchungen."
+    "switchNow": "Jetzt wechseln",
+    "customerAccount": "Kundenkonto",
+    "toastTitleCustomer": "Zu Kundenkonto gewechselt",
+    "toastDescCustomer": "Sie surfen jetzt als Kunde. Erstellen Sie Aufträge und verwalten Sie Buchungen.",
+    "warningCustomer": "Sie sehen das Kunden-Dashboard, wo Sie Aufträge erstellen und Reinigungskräfte buchen – nicht den Arbeitsbereich für Reinigungskräfte."
   },
   "compLocationLocationDetectButton": {
     "detecting": "Standort wird ermittelt…",
