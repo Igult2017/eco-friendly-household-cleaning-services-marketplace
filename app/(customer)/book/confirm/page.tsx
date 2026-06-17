@@ -36,7 +36,7 @@ export default function BookStep5Page() {
   const [error, setError] = useState<string | null>(null)
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const [intentId, setIntentId] = useState<string | null>(null)
-  const [amounts, setAmounts] = useState<{ subtotalCents: number; platformFee: number; totalCharged: number } | null>(null)
+  const [amounts, setAmounts] = useState<{ subtotalCents: number; totalCharged: number } | null>(null)
   const [serviceId, setServiceId] = useState<string | null>(null)
   const [success, setSuccess] = useState<{ bookingId: string; bookingNumber: string } | null>(null)
   const [addCarbonOffset, setAddCarbonOffset] = useState(false)
@@ -46,7 +46,6 @@ export default function BookStep5Page() {
   const [promoLabel, setPromoLabel] = useState<string | null>(null)
   const [promoLoading, setPromoLoading] = useState(false)
   const [promoError, setPromoError] = useState<string | null>(null)
-  const [feePct, setFeePct] = useState(15) // admin commission %; loaded with the price preview
 
   // Bid-flow bookings (accepted bid) may have null categoryId or a slug instead of UUID.
   // They always have bidAmountCents set. Loosen the guard accordingly.
@@ -115,18 +114,11 @@ export default function BookStep5Page() {
       const service = svcData.services?.[0]
       if (!service) { setError(t("errorProviderNoService")); return }
       setServiceId(service.id)
-      // Load the live commission % so the preview matches the real charge.
-      let pct = 15
-      try {
-        const feeRes = await fetch("/api/platform/fee")
-        const feeData = await feeRes.json()
-        if (typeof feeData.pct === "number") { pct = feeData.pct; setFeePct(feeData.pct) }
-      } catch { /* keep default 15% */ }
+      // Commission is deducted from the cleaner, so the customer's price is simply the
+      // service price (after any promo) + the optional offset — no fee added on top.
       // Bug 5: bid-flow bookings use the accepted bid amount, not the service list price
       const subtotalCents: number = store.bidAmountCents ?? service.basePrice
-      const platformFee = Math.round(subtotalCents * (pct / 100))
-      const totalCharged = subtotalCents + platformFee
-      setAmounts({ subtotalCents, platformFee, totalCharged })
+      setAmounts({ subtotalCents, totalCharged: subtotalCents })
     } catch {
       setError(t("errorLoadPricing"))
     } finally {
@@ -208,11 +200,11 @@ export default function BookStep5Page() {
 
   // When amounts come from the PI response they already incorporate the promo discount.
   // In preview mode (before PI is created) we subtract the discount ourselves.
+  // Commission is deducted from the cleaner — the customer pays the service price
+  // (after any promo) plus the optional carbon offset. No fee is added on top.
   const previewSubtotal = amounts ? Math.max(0, amounts.subtotalCents - (promoCodeId ? promoDiscountCents : 0)) : null
-  const previewPlatformFee = previewSubtotal !== null ? Math.round(previewSubtotal * (feePct / 100)) : null
-  const previewTotal = previewSubtotal !== null && previewPlatformFee !== null ? previewSubtotal + previewPlatformFee : null
-  const totalWithOffset = previewTotal !== null
-    ? previewTotal + (addCarbonOffset ? CARBON_OFFSET_CENTS : 0)
+  const totalWithOffset = previewSubtotal !== null
+    ? previewSubtotal + (addCarbonOffset ? CARBON_OFFSET_CENTS : 0)
     : amounts
       ? amounts.totalCharged + (addCarbonOffset ? CARBON_OFFSET_CENTS : 0)
       : null
@@ -265,10 +257,6 @@ export default function BookStep5Page() {
               <div className="flex justify-between text-[#6B7280]">
                 <span>{CATEGORY_SERVICE_KEYS[store.categoryId ?? ""] ? t(CATEGORY_SERVICE_KEYS[store.categoryId ?? ""]) : t("defaultCleaningService")}</span>
                 <span>{formatCurrency(amounts.subtotalCents)}</span>
-              </div>
-              <div className="flex justify-between text-[#6B7280]">
-                <span>{t("serviceFee")}</span>
-                <span>{formatCurrency(amounts.platformFee)}</span>
               </div>
 
               {/* Promo code input */}

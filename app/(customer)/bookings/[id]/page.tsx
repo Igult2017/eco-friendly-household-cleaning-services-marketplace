@@ -143,10 +143,6 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
             <span>{t("serviceLabel")}</span>
             <span>{formatCurrency(booking.subtotalAmount)}</span>
           </div>
-          <div className="flex justify-between text-[#6B7280]">
-            <span>{t("platformFeeLabel")}</span>
-            <span>{formatCurrency(booking.platformFeeAmount)}</span>
-          </div>
           {(booking.carbonOffsetAmount ?? 0) > 0 && (
             <div className="flex justify-between text-[#2D7A5F]">
               <span className="flex items-center gap-1"><Leaf size={12} /> {t("carbonOffsetLabel")}</span>

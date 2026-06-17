@@ -88,7 +88,7 @@ export default async function PricingPage() {
               <h2 className="font-serif text-2xl font-bold mb-1">{t("customerCardTitle")}</h2>
               <p className="text-white/60 text-sm">{t("customerCardSubtitle")}</p>
               <div className="mt-6 flex items-end gap-1">
-                <span className="text-5xl font-bold">15%</span>
+                <span className="text-5xl font-bold">€0</span>
                 <span className="text-white/60 mb-1.5 text-sm">{t("customerPriceLabel")}</span>
               </div>
               <p className="text-white/50 text-xs mt-1">{t("customerPriceNote")}</p>
@@ -109,11 +109,11 @@ export default async function PricingPage() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-[#6B7280]">{t("customerExampleFee")}</span>
-                    <span className="font-medium text-[#2B3441]">€12</span>
+                    <span className="font-medium text-[#2D7A5F]">€0</span>
                   </div>
                   <div className="flex justify-between text-sm font-bold border-t border-gray-200 pt-2">
                     <span className="text-[#2B3441]">{t("customerExampleTotal")}</span>
-                    <span className="text-[#2D7A5F]">€92</span>
+                    <span className="text-[#2D7A5F]">€80</span>
                   </div>
                 </div>
               </div>
@@ -151,20 +151,9 @@ export default async function PricingPage() {
                 </div>
               ))}
               <div className="pt-4">
-                <div className="bg-[#EDF5F0] rounded-xl px-4 py-4 text-sm space-y-2">
-                  <p className="font-semibold text-[#2B3441] text-xs uppercase tracking-wide">{t("exampleBooking")}</p>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-[#6B7280]">{t("providerExampleRate")}</span>
-                    <span className="font-medium text-[#2B3441]">€80</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-[#6B7280]">{t("providerExampleFee")}</span>
-                    <span className="font-medium text-[#2D7A5F] font-bold">€0</span>
-                  </div>
-                  <div className="flex justify-between text-sm font-bold border-t border-[#2D7A5F]/20 pt-2">
-                    <span className="text-[#2B3441]">{t("providerExampleReceive")}</span>
-                    <span className="text-[#2D7A5F]">€80</span>
-                  </div>
+                <div className="bg-[#EDF5F0] rounded-xl px-4 py-4 text-sm">
+                  <p className="font-semibold text-[#2B3441] text-xs uppercase tracking-wide mb-2">{t("providerHowFeeTitle")}</p>
+                  <p className="text-[#6B7280] leading-relaxed">{t("providerExampleNote")}</p>
                 </div>
               </div>
               <Link

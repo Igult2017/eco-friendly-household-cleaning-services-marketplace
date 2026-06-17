@@ -47,7 +47,7 @@ export default async function AboutPage() {
 
   const STATS = [
     { value: "100%", label: t("statEcoCertified") },
-    { value: "15%", label: t("statPlatformFee") },
+    { value: "€0", label: t("statPlatformFee") },
     { value: "72h", label: t("statDisputeTarget") },
     { value: "€0", label: t("statDeducted") },
   ]
