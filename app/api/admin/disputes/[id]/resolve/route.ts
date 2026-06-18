@@ -54,7 +54,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
           {
             payment_intent: payment.stripePaymentIntentId,
             amount: refundAmount,
-            // FIN-005: when the cleaning professional is at fault (customer wins), claw the
+            // FIN-005: when the cleaner is at fault (customer wins), claw the
             // refund back from THEIR transfer and refund the platform commission proportionally
             // instead of the platform absorbing 100%. When the provider wins a goodwill refund,
             // the platform absorbs it (no clawback).

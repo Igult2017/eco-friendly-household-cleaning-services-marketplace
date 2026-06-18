@@ -116,7 +116,7 @@ export const recurringBookingCron = inngest.createFunction(
             userId: schedule.customerId,
             type: "recurring_booking_created",
             title: "Recurring booking skipped",
-            body: "Your recurring cleaning professional is temporarily unavailable, so this cycle was skipped. We'll try again next time.",
+            body: "Your recurring cleaner is temporarily unavailable, so this cycle was skipped. We'll try again next time.",
             link: `/dashboard`,
           })
           return
