@@ -56,3 +56,8 @@ package-lock.json
 
 # Playwright MCP visual-QA artifacts (screenshots, snapshots, console logs)
 .playwright-mcp/
+
+# Installed skill bundles — materialized files are reproducible from skills-lock.json
+# (the lock IS tracked). Don't commit the 100s of skill files / agent symlinks.
+.agents/
+.claude/skills/
