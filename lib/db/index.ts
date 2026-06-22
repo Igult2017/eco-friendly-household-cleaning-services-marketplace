@@ -18,7 +18,10 @@ function resolveDbUrl(): string {
   return "postgres://placeholder:placeholder@localhost:5432/dorix"
 }
 
-const client = postgres(resolveDbUrl(), { max: 1, prepare: false })
+// Pool size: this app runs as a long-lived server (not per-request serverless), so a single
+// connection serialized every DB query across all users. 15 lets ~15 queries run concurrently.
+// Keep (replicas × max) under Postgres max_connections (default 100) if you scale out replicas.
+const client = postgres(resolveDbUrl(), { max: 15, prepare: false })
 
 export const db = drizzle(client, { schema })
 export type DB = typeof db
