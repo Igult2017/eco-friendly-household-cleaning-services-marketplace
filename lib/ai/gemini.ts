@@ -33,6 +33,16 @@ async function callGemini(prompt: string, json = true): Promise<string> {
   return text
 }
 
+// Robustly extract a JSON object even if the model wraps it in ```fences``` or prose.
+function parseJson<T>(raw: string): T {
+  const match = raw.match(/\{[\s\S]*\}/)
+  try {
+    return JSON.parse(match ? match[0] : raw) as T
+  } catch {
+    throw new GeminiError("Gemini returned invalid JSON")
+  }
+}
+
 const TYPE_GUIDANCE: Record<CampaignType, string> = {
   welcome:
     "A warm welcome. Thank them for joining, briefly explain what DORIXÉ offers, and highlight 2-3 services they might like. No hard sell — make them feel at home.",
@@ -72,7 +82,7 @@ Rules:
 Return strict JSON: {"subject": "...", "html": "..."}`
 
   const raw = await callGemini(prompt, true)
-  const parsed = JSON.parse(raw) as Partial<EmailDraft>
+  const parsed = parseJson<Partial<EmailDraft>>(raw)
   if (!parsed.subject || !parsed.html) throw new GeminiError("Email draft missing subject/html")
   return { subject: parsed.subject, html: parsed.html }
 }
@@ -96,6 +106,6 @@ Available filter fields (omit ones that don't apply):
 Return strict JSON: {"filter": { ... }, "rationale": "one short sentence"}`
 
   const raw = await callGemini(prompt, true)
-  const parsed = JSON.parse(raw) as { filter?: AudienceFilter; rationale?: string }
+  const parsed = parseJson<{ filter?: AudienceFilter; rationale?: string }>(raw)
   return { filter: parsed.filter ?? {}, rationale: parsed.rationale ?? "" }
 }

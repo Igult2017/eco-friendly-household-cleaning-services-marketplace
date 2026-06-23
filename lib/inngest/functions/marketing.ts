@@ -1,7 +1,7 @@
 import { inngest } from "../client"
 import { db } from "@/lib/db"
 import { emailCampaigns, emailSends, users } from "@/lib/db/schema"
-import { and, eq } from "drizzle-orm"
+import { and, eq, sql } from "drizzle-orm"
 import { generateMarketingEmail } from "@/lib/ai/gemini"
 import { sendMarketingEmail } from "@/lib/marketing/send"
 import { resolveAudience } from "@/lib/marketing/audience"
@@ -37,7 +37,8 @@ export const onUserWelcome = inngest.createFunction(
 
     const res = await step.run("send", async () => {
       try {
-        const id = await sendMarketingEmail({ to: u.email, subject: draft.subject, contentHtml: draft.html, userId })
+        // Idempotency key → Resend dedupes if this step retries after a partial failure.
+        const id = await sendMarketingEmail({ to: u.email, subject: draft.subject, contentHtml: draft.html, userId, idempotencyKey: `welcome-${userId}` })
         return { ok: true, id }
       } catch (e) {
         return { ok: false, error: (e as Error).message }
@@ -45,12 +46,13 @@ export const onUserWelcome = inngest.createFunction(
     })
 
     await step.run("record", async () => {
+      // Partial unique index (type='welcome') makes this the DB-level dedupe.
       await db.insert(emailSends).values({
         userId, email: u.email, type: "welcome",
         status: res.ok ? "sent" : "failed", subject: draft.subject,
         resendMessageId: res.ok ? res.id : null, error: res.ok ? null : res.error,
         sentAt: res.ok ? new Date() : null,
-      })
+      }).onConflictDoNothing()
     })
     return { sent: res.ok }
   }
@@ -65,11 +67,16 @@ export const sendCampaign = inngest.createFunction(
     const [c] = await db.select().from(emailCampaigns).where(eq(emailCampaigns.id, campaignId))
     if (!c || c.status === "completed") return { skipped: true }
 
+    // A non-personalized campaign with no body would send blank emails — refuse it.
+    if (!c.personalizePerUser && !(c.bodyHtml ?? "").trim()) {
+      await db.update(emailCampaigns).set({ status: "failed", updatedAt: new Date() }).where(eq(emailCampaigns.id, campaignId))
+      return { skipped: "empty_body" }
+    }
+
     await db.update(emailCampaigns).set({ status: "sending", updatedAt: new Date() }).where(eq(emailCampaigns.id, campaignId))
     const audience = await resolveAudience((c.audience as AudienceFilter) ?? {}, true)
 
-    const tally = await step.run("send-all", async () => {
-      let sent = 0, failed = 0
+    await step.run("send-all", async () => {
       for (const user of audience) {
         const [ex] = await db.select({ id: emailSends.id }).from(emailSends).where(and(eq(emailSends.campaignId, campaignId), eq(emailSends.userId, user.id))).limit(1)
         if (ex) continue
@@ -81,21 +88,34 @@ export const sendCampaign = inngest.createFunction(
             subject = d.subject; html = d.html
           } catch { /* fall back to base subject/body */ }
         }
+        if (!html.trim()) {
+          // Never send a blank email (Gemini failed + no base body) — record as skipped.
+          await db.insert(emailSends).values({ campaignId, userId: user.id, email: user.email, type: c.type, status: "skipped", subject, error: "empty body" }).onConflictDoNothing()
+          continue
+        }
         let ok = false, mid: string | null = null, err: string | null = null
-        try { mid = await sendMarketingEmail({ to: user.email, subject, contentHtml: html, userId: user.id }); ok = true } catch (e) { err = (e as Error).message }
+        try { mid = await sendMarketingEmail({ to: user.email, subject, contentHtml: html, userId: user.id, idempotencyKey: `camp-${campaignId}-${user.id}` }); ok = true } catch (e) { err = (e as Error).message }
         await db.insert(emailSends).values({
           campaignId, userId: user.id, email: user.email, type: c.type,
           status: ok ? "sent" : "failed", subject, resendMessageId: mid, error: err, sentAt: ok ? new Date() : null,
         }).onConflictDoNothing()
-        ok ? sent++ : failed++
       }
-      return { sent, failed }
     })
 
+    // Counts from the DB → accurate even if the step retried mid-loop. Status reflects reality.
+    const [counts] = await db
+      .select({
+        sent: sql<number>`cast(count(*) filter (where ${emailSends.status} = 'sent') as int)`,
+        failed: sql<number>`cast(count(*) filter (where ${emailSends.status} = 'failed') as int)`,
+      })
+      .from(emailSends)
+      .where(eq(emailSends.campaignId, campaignId))
+    const sent = counts?.sent ?? 0
+    const failed = counts?.failed ?? 0
     await db.update(emailCampaigns).set({
-      status: "completed", sentCount: tally.sent, failedCount: tally.failed,
+      status: sent > 0 ? "completed" : "failed", sentCount: sent, failedCount: failed,
       totalRecipients: audience.length, sentAt: new Date(), updatedAt: new Date(),
     }).where(eq(emailCampaigns.id, campaignId))
-    return { ...tally, total: audience.length }
+    return { sent, failed, total: audience.length }
   }
 )

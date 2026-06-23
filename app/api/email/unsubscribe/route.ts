@@ -11,16 +11,16 @@ async function optOut(token: string | null): Promise<boolean> {
   return true
 }
 
-// Link click → opt out, then show a confirmation page.
+// GET does NOT mutate (email link scanners / prefetchers issue GETs and would otherwise
+// auto-unsubscribe people). It just forwards to the confirmation page, which POSTs to opt out.
 export async function GET(req: Request) {
-  const token = new URL(req.url).searchParams.get("token")
-  const ok = await optOut(token)
-  return NextResponse.redirect(new URL(`/unsubscribe?ok=${ok ? 1 : 0}`, req.url))
+  const token = new URL(req.url).searchParams.get("token") ?? ""
+  return NextResponse.redirect(new URL(`/unsubscribe?token=${encodeURIComponent(token)}`, req.url))
 }
 
-// RFC 8058 one-click (email clients POST here automatically) → opt out, 200.
+// POST opts out — used by the confirmation button AND by RFC 8058 one-click (List-Unsubscribe-Post).
 export async function POST(req: Request) {
   const token = new URL(req.url).searchParams.get("token")
-  await optOut(token)
-  return new NextResponse(null, { status: 200 })
+  const ok = await optOut(token)
+  return NextResponse.json({ ok }, { status: ok ? 200 : 400 })
 }

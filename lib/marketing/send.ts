@@ -1,5 +1,15 @@
 import { resend, FROM } from "@/lib/resend/client"
-import { unsubscribeUrl } from "./unsubscribe"
+import { unsubscribePageUrl, unsubscribeApiUrl } from "./unsubscribe"
+
+// Strip HTML to a plain-text fallback (a text part materially improves deliverability).
+function toText(html: string): string {
+  return html
+    .replace(/<style[\s\S]*?<\/style>/gi, "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+}
 
 // Wrap AI-generated body HTML in a branded, email-client-safe shell + GDPR footer.
 export function wrapEmail(contentHtml: string, unsubUrl: string): string {
@@ -20,24 +30,31 @@ export function wrapEmail(contentHtml: string, unsubUrl: string): string {
 }
 
 // Send a marketing email to one recipient. Returns the Resend message ID.
+// `idempotencyKey` makes retries safe (Resend dedupes identical sends within 24h).
 export async function sendMarketingEmail(params: {
   to: string
   subject: string
   contentHtml: string
   userId: string
+  idempotencyKey?: string
 }): Promise<string> {
-  const unsubUrl = unsubscribeUrl(params.userId)
-  const { data, error } = await resend.emails.send({
-    from: FROM,
-    to: params.to,
-    subject: params.subject,
-    html: wrapEmail(params.contentHtml, unsubUrl),
-    headers: {
-      // One-click unsubscribe (RFC 8058) — major deliverability + spam-compliance win.
-      "List-Unsubscribe": `<${unsubUrl}>`,
-      "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+  const pageUrl = unsubscribePageUrl(params.userId)
+  const apiUrl = unsubscribeApiUrl(params.userId)
+  const { data, error } = await resend.emails.send(
+    {
+      from: FROM,
+      to: params.to,
+      subject: params.subject,
+      html: wrapEmail(params.contentHtml, pageUrl),
+      text: toText(params.contentHtml),
+      headers: {
+        // One-click unsubscribe (RFC 8058) → POST endpoint; major deliverability win.
+        "List-Unsubscribe": `<${apiUrl}>`,
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+      },
     },
-  })
+    params.idempotencyKey ? { idempotencyKey: params.idempotencyKey } : undefined
+  )
   if (error) throw new Error(`Resend error: ${error.message}`)
   return data!.id
 }

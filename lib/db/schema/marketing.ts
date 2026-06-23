@@ -11,6 +11,7 @@ import {
   uniqueIndex,
   index,
 } from "drizzle-orm/pg-core"
+import { sql } from "drizzle-orm"
 import { users } from "./users"
 
 // Lifecycle steps: welcome (auto on signup) → value ×2 → soft_sell → hard_sell. custom = ad-hoc blast.
@@ -86,8 +87,10 @@ export const emailSends = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
-    // Dedupe a campaign per user (NULL campaign_id = lifecycle/welcome sends, deduped in code by type).
+    // Dedupe a campaign per user (campaign_id is NULL for welcome — handled by the partial index below).
     uniqueIndex("email_sends_campaign_user_idx").on(t.campaignId, t.userId),
+    // One welcome per user, enforced at the DB level (campaign_id is NULL so the index above can't).
+    uniqueIndex("email_sends_welcome_user_idx").on(t.userId).where(sql`type = 'welcome'`),
     index("email_sends_user_idx").on(t.userId),
     index("email_sends_type_idx").on(t.type),
   ]

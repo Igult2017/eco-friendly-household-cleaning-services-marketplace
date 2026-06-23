@@ -180,6 +180,7 @@ CREATE TABLE IF NOT EXISTS email_sends (
   created_at        TIMESTAMPTZ         NOT NULL DEFAULT NOW()
 );
 CREATE UNIQUE INDEX IF NOT EXISTS email_sends_campaign_user_idx ON email_sends(campaign_id, user_id);
+CREATE UNIQUE INDEX IF NOT EXISTS email_sends_welcome_user_idx  ON email_sends(user_id) WHERE type = 'welcome';
 CREATE INDEX        IF NOT EXISTS email_sends_user_idx          ON email_sends(user_id);
 CREATE INDEX        IF NOT EXISTS email_sends_type_idx          ON email_sends(type);
 `
