@@ -17,6 +17,8 @@ const isPublicRoute = createRouteMatcher([
   "/about(.*)",
   "/become-a-cleaner(.*)",
   "/api/webhooks/(.*)",
+  "/unsubscribe(.*)", // email unsubscribe confirmation — clicked from emails while logged out
+  "/api/email/(.*)", // one-click unsubscribe endpoint (RFC 8058) — must be public
   "/api/geo/(.*)",
   "/api/jobs/public(.*)",
   "/api/blog/(.*)",
