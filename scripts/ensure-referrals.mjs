@@ -137,6 +137,51 @@ INSERT INTO platform_settings (key, value) VALUES
   ('max_service_radius_km','100'),
   ('platform_name','DORIXÉ')
 ON CONFLICT (key) DO NOTHING;
+
+-- AI email marketing: campaigns + per-recipient send log.
+DO $$ BEGIN CREATE TYPE email_campaign_type   AS ENUM ('welcome','value','soft_sell','hard_sell','custom'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN CREATE TYPE email_campaign_status AS ENUM ('draft','scheduled','sending','completed','failed');  EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN CREATE TYPE email_send_status     AS ENUM ('queued','sent','delivered','opened','bounced','failed','skipped'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+CREATE TABLE IF NOT EXISTS email_campaigns (
+  id                   UUID                  PRIMARY KEY DEFAULT gen_random_uuid(),
+  name                 VARCHAR(160)          NOT NULL,
+  type                 email_campaign_type   NOT NULL DEFAULT 'custom',
+  status               email_campaign_status NOT NULL DEFAULT 'draft',
+  subject              VARCHAR(240),
+  brief                TEXT,
+  body_html            TEXT,
+  ai_generated         BOOLEAN               NOT NULL DEFAULT false,
+  personalize_per_user BOOLEAN               NOT NULL DEFAULT true,
+  audience             JSONB,
+  scheduled_at         TIMESTAMPTZ,
+  created_by           TEXT                  REFERENCES users(id),
+  total_recipients     INTEGER               NOT NULL DEFAULT 0,
+  sent_count           INTEGER               NOT NULL DEFAULT 0,
+  failed_count         INTEGER               NOT NULL DEFAULT 0,
+  sent_at              TIMESTAMPTZ,
+  created_at           TIMESTAMPTZ           NOT NULL DEFAULT NOW(),
+  updated_at           TIMESTAMPTZ           NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS email_campaigns_status_idx ON email_campaigns(status);
+CREATE INDEX IF NOT EXISTS email_campaigns_type_idx   ON email_campaigns(type);
+
+CREATE TABLE IF NOT EXISTS email_sends (
+  id                UUID                PRIMARY KEY DEFAULT gen_random_uuid(),
+  campaign_id       UUID                REFERENCES email_campaigns(id) ON DELETE CASCADE,
+  user_id           TEXT                NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  email             VARCHAR(320)        NOT NULL,
+  type              email_campaign_type NOT NULL,
+  status            email_send_status   NOT NULL DEFAULT 'queued',
+  subject           VARCHAR(240),
+  resend_message_id VARCHAR(120),
+  error             TEXT,
+  sent_at           TIMESTAMPTZ,
+  created_at        TIMESTAMPTZ         NOT NULL DEFAULT NOW()
+);
+CREATE UNIQUE INDEX IF NOT EXISTS email_sends_campaign_user_idx ON email_sends(campaign_id, user_id);
+CREATE INDEX        IF NOT EXISTS email_sends_user_idx          ON email_sends(user_id);
+CREATE INDEX        IF NOT EXISTS email_sends_type_idx          ON email_sends(type);
 `
 
 function isValidUrl(url) {

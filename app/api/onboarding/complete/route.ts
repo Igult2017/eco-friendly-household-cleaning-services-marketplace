@@ -6,6 +6,7 @@ import type { NewProvider } from "@/lib/db/schema/providers"
 import { eq } from "drizzle-orm"
 import { onboardingSchema } from "@/lib/validations/onboarding"
 import { nanoid } from "nanoid"
+import { inngest } from "@/lib/inngest/client"
 
 const ROLE_COOKIE = "dorix_role"
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -39,6 +40,11 @@ export async function POST(req: NextRequest) {
     const email = clerkUser.emailAddresses[0]?.emailAddress ?? ""
 
     await clerk.users.updateUser(userId, { publicMetadata: { role: data.role } })
+
+    // Detect first-time onboarding so the welcome email fires once (the upsert below
+    // also covers re-onboarding). The welcome Inngest fn dedupes as a safety net.
+    const [pre] = await db.select({ id: users.id }).from(users).where(eq(users.id, userId))
+    const isNewUser = !pre
 
     await db
       .insert(users)
@@ -114,6 +120,15 @@ export async function POST(req: NextRequest) {
         }
       } catch (refErr) {
         console.warn("[onboarding/complete] referral recording failed:", refErr)
+      }
+    }
+
+    // First email a client receives: the AI welcome (explains products they may like).
+    if (isNewUser) {
+      try {
+        await inngest.send({ name: "user/welcome", data: { userId } })
+      } catch (e) {
+        console.warn("[onboarding/complete] welcome email enqueue failed:", e)
       }
     }
 

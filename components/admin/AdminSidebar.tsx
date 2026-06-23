@@ -20,6 +20,7 @@ import {
   Gift,
   ExternalLink,
   Banknote,
+  Mail,
   Settings,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -39,6 +40,7 @@ const nav = [
   { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
   { label: "Promo Codes", href: "/admin/promo-codes", icon: Tag },
   { label: "Referrals",   href: "/admin/referrals",   icon: Gift },
+  { label: "Marketing", href: "/admin/marketing", icon: Mail },
   { label: "Blog",     href: "/admin/content/blog", icon: Newspaper },
   { label: "Settings", href: "/admin/settings",    icon: Settings },
 ]
