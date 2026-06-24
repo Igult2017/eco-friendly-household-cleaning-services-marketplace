@@ -12,14 +12,19 @@ function localizedPath(href: string, locale: string): string {
 
 // Canonical + hreflang `languages` alternates for a public page. `href` is the locale-less
 // path, e.g. "/about" or "/".
-export function localeAlternates(href: string): { canonical: string; languages: Record<string, string> } {
+export function localeAlternates(
+  href: string,
+  currentLocale: string,
+): { canonical: string; languages: Record<string, string> } {
   const languages: Record<string, string> = {}
   for (const locale of routing.locales) {
     languages[locale] = base + localizedPath(href, locale)
   }
   languages["x-default"] = base + localizedPath(href, routing.defaultLocale)
   return {
-    canonical: base + localizedPath(href, routing.defaultLocale),
+    // Self-referential canonical (this locale's own URL) — required for hreflang to work; a
+    // cross-language canonical would tell Google the localized page is a duplicate of the default.
+    canonical: base + localizedPath(href, currentLocale),
     languages,
   }
 }

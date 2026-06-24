@@ -5,12 +5,12 @@ import { localeAlternates } from "@/lib/seo/alternates"
 import { Leaf, ShieldCheck, Star, Euro, Heart, Globe2, Users, Zap } from "lucide-react"
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
-  await params
+  const { locale } = await params
   return {
     title: "About Us — DORIXÉ",
     description:
       "DORIXÉ connects eco-conscious households with vetted, eco-certified cleaners across Europe. Clean home. Green future.",
-    alternates: localeAlternates("/about"),
+    alternates: localeAlternates("/about", locale),
   }
 }
 
