@@ -1,4 +1,5 @@
 import { getTranslations, setRequestLocale } from "next-intl/server"
+import { localeAlternates } from "@/lib/seo/alternates"
 import { HeroSection } from "@/components/home/HeroSection"
 import { TrustTicker } from "@/components/home/TrustTicker"
 import { HowItWorks } from "@/components/home/HowItWorks"
@@ -19,6 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     title: t("metaTitle"),
     description: t("metaDescription"),
+    alternates: localeAlternates("/"),
   }
 }
 

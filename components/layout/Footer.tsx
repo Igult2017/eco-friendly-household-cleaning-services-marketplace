@@ -1,4 +1,5 @@
-import Link from "next/link"
+import { Link } from "@/i18n/navigation"
+import NextLink from "next/link"
 import { Leaf } from "lucide-react"
 import { getTranslations } from "next-intl/server"
 
@@ -33,6 +34,9 @@ const SECTIONS = [
   },
 ]
 
+// Auth-only routes have no /[locale] variant, so they must NOT be locale-prefixed — keep next/link.
+const AUTH_HREFS = new Set<string>(["/post-job"])
+
 export async function Footer() {
   const t = await getTranslations("footer")
   return (
@@ -57,9 +61,15 @@ export async function Footer() {
               <ul className="space-y-2.5">
                 {links.map(({ key: linkKey, href }) => (
                   <li key={href}>
-                    <Link href={href} className="text-sm hover:text-white transition-colors">
-                      {t(`link_${linkKey}`)}
-                    </Link>
+                    {AUTH_HREFS.has(href) ? (
+                      <NextLink href={href} className="text-sm hover:text-white transition-colors">
+                        {t(`link_${linkKey}`)}
+                      </NextLink>
+                    ) : (
+                      <Link href={href} className="text-sm hover:text-white transition-colors">
+                        {t(`link_${linkKey}`)}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>

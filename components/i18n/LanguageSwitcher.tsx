@@ -1,14 +1,15 @@
 "use client"
 
 import { useState, useRef, useEffect, useTransition } from "react"
-import { useRouter } from "next/navigation"
 import { useLocale } from "next-intl"
+import { useRouter, usePathname } from "@/i18n/navigation"
 import { Globe, Check, ChevronDown } from "lucide-react"
 import { locales, localeNames, localeFlags, type Locale } from "@/i18n/config"
 
 export function LanguageSwitcher() {
   const current = useLocale() as Locale
   const router = useRouter()
+  const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
   const ref = useRef<HTMLDivElement>(null)
@@ -22,9 +23,12 @@ export function LanguageSwitcher() {
   }, [])
 
   function choose(l: Locale) {
+    // Persist the choice (so authenticated, cookie-based areas follow too)...
     document.cookie = `locale=${l}; path=/; max-age=31536000; samesite=lax`
     setOpen(false)
-    startTransition(() => router.refresh())
+    // ...and navigate to this same page in the new locale (URL wins over cookie on prefixed paths,
+    // so an explicit nav is required to switch between non-default locales).
+    startTransition(() => router.replace(pathname, { locale: l }))
   }
 
   return (

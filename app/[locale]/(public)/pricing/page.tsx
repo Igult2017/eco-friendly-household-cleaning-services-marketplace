@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { getTranslations, setRequestLocale } from "next-intl/server"
+import { localeAlternates } from "@/lib/seo/alternates"
 import { CheckCircle2, XCircle, ArrowRight, Euro, ShieldCheck, Leaf, Zap } from "lucide-react"
 import { JsonLd } from "@/components/seo/JsonLd"
 import { faqSchema } from "@/lib/seo/schemas"
@@ -11,6 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     title: t("metaTitle"),
     description: t("metaDescription"),
+    alternates: localeAlternates("/pricing"),
   }
 }
 

@@ -1,12 +1,17 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { getTranslations, setRequestLocale } from "next-intl/server"
+import { localeAlternates } from "@/lib/seo/alternates"
 import { Leaf, ShieldCheck, Star, Euro, Heart, Globe2, Users, Zap } from "lucide-react"
 
-export const metadata: Metadata = {
-  title: "About Us — DORIXÉ",
-  description:
-    "DORIXÉ connects eco-conscious households with vetted, eco-certified cleaners across Europe. Clean home. Green future.",
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  await params
+  return {
+    title: "About Us — DORIXÉ",
+    description:
+      "DORIXÉ connects eco-conscious households with vetted, eco-certified cleaners across Europe. Clean home. Green future.",
+    alternates: localeAlternates("/about"),
+  }
 }
 
 export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {

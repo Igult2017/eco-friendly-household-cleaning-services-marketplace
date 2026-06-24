@@ -1,6 +1,7 @@
 "use client"
 
-import Link from "next/link"
+import { Link } from "@/i18n/navigation"
+import NextLink from "next/link"
 import Image from "next/image"
 import { useState } from "react"
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs"
@@ -57,14 +58,14 @@ export function Navbar() {
           {isSignedIn ? (
             <>
               {role === "admin" && <AdminCleanerSwitch />}
-              <Link
+              <NextLink
                 href={isLoaded ? href : "#"}
                 onClick={!isLoaded ? (e) => e.preventDefault() : undefined}
                 className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg bg-[#EDF5F0] text-[#2D7A5F] hover:bg-[#D4EDE2] transition-colors"
               >
                 <LayoutDashboard size={15} />
                 {label}
-              </Link>
+              </NextLink>
               <UserButton />
             </>
           ) : (
@@ -106,13 +107,13 @@ export function Navbar() {
           ))}
           <div className="pt-2 border-t border-[#E5EDE9] mt-1">
             {isSignedIn ? (
-              <Link
+              <NextLink
                 href={isLoaded ? href : "#"}
                 onClick={!isLoaded ? (e) => e.preventDefault() : () => setMobileOpen(false)}
                 className="flex items-center gap-2 text-sm font-medium px-3 py-2 rounded-lg bg-[#EDF5F0] text-[#2D7A5F]"
               >
                 <LayoutDashboard size={15} /> {label}
-              </Link>
+              </NextLink>
             ) : (
               <div className="flex gap-2">
                 <SignInButton mode="modal">
