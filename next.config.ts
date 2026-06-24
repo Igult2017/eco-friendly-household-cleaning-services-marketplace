@@ -16,6 +16,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "*.cloudflare.com" },
       { protocol: "https", hostname: "img.clerk.com" },
       { protocol: "https", hostname: "images.clerk.dev" },
+      { protocol: "https", hostname: "images.unsplash.com" }, // blog cover images from Unsplash
     ],
   },
   // Proxy the self-hosted Umami tracker through our own HTTPS origin so the
