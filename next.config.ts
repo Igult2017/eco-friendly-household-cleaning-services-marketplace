@@ -53,6 +53,8 @@ export default withSentryConfig(withNextIntl(nextConfig), {
   widenClientFileUpload: true,
   tunnelRoute: "/monitoring",
   disableLogger: true,
-  reactComponentAnnotation: { enabled: true },
+  // Disabled: it injects data-sentry-* attributes on every rendered element (HTML bloat + build
+  // overhead) and was emitting a deprecation warning. Not needed for error capture.
+  reactComponentAnnotation: { enabled: false },
   sourcemaps: { disable: !process.env.SENTRY_AUTH_TOKEN },
 })

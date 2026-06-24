@@ -33,6 +33,7 @@ export async function ServiceGrid({ glass = false }: { glass?: boolean }) {
         <Link
           key={s.slug}
           href={`/book?service=${s.slug}`}
+          prefetch={false}
           className={itemClass}
         >
           <div className={iconClass}>{s.icon}</div>

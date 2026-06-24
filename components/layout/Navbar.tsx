@@ -35,7 +35,7 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#E5EDE9]">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-        <Link href="/" className="flex-shrink-0">
+        <Link href="/" prefetch={false} className="flex-shrink-0">
           <Image src="/logo.png" alt="DORIXÉ" width={140} height={44} priority />
         </Link>
 
@@ -45,6 +45,7 @@ export function Navbar() {
             <Link
               key={navHref}
               href={navHref}
+              prefetch={false}
               className="text-sm text-[#6B7280] hover:text-[#2B3441] transition-colors font-medium"
             >
               {t(key)}
@@ -60,6 +61,7 @@ export function Navbar() {
               {role === "admin" && <AdminCleanerSwitch />}
               <NextLink
                 href={isLoaded ? href : "#"}
+                prefetch={false}
                 onClick={!isLoaded ? (e) => e.preventDefault() : undefined}
                 className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg bg-[#EDF5F0] text-[#2D7A5F] hover:bg-[#D4EDE2] transition-colors"
               >
@@ -99,6 +101,7 @@ export function Navbar() {
             <Link
               key={navHref}
               href={navHref}
+              prefetch={false}
               className="text-sm text-[#6B7280] hover:text-[#2B3441] py-2 transition-colors"
               onClick={() => setMobileOpen(false)}
             >
@@ -109,6 +112,7 @@ export function Navbar() {
             {isSignedIn ? (
               <NextLink
                 href={isLoaded ? href : "#"}
+                prefetch={false}
                 onClick={!isLoaded ? (e) => e.preventDefault() : () => setMobileOpen(false)}
                 className="flex items-center gap-2 text-sm font-medium px-3 py-2 rounded-lg bg-[#EDF5F0] text-[#2D7A5F]"
               >

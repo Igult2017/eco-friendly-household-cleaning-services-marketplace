@@ -58,7 +58,7 @@ export async function FeaturedProviders() {
             </h2>
             <p className="text-[#6B7280] text-sm">{t("subtitle")}</p>
           </div>
-          <Link href="/browse" className="hidden md:block">
+          <Link href="/browse" prefetch={false} className="hidden md:block">
             <Button variant="outline" className="border-[#2D7A5F] text-[#2D7A5F] hover:bg-[#2D7A5F] hover:text-white">
               {t("viewAll")}
             </Button>
@@ -106,10 +106,10 @@ export async function FeaturedProviders() {
                   €{p.price}<span className="text-xs font-normal text-[#6B7280]">{t("perHour")}</span>
                 </span>
                 <div className="flex gap-2">
-                  <Link href={`/providers/${p.id}`}>
+                  <Link href={`/providers/${p.id}`} prefetch={false}>
                     <Button variant="outline" size="sm" className="text-xs h-8 px-3">{t("view")}</Button>
                   </Link>
-                  <Link href={`/book?provider=${p.id}`}>
+                  <Link href={`/book?provider=${p.id}`} prefetch={false}>
                     <Button size="sm" className="text-xs h-8 px-3 bg-[#2D7A5F] hover:bg-[#235f49] text-white">
                       {t("book")}
                     </Button>

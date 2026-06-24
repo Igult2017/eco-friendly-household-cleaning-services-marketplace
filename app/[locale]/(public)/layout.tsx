@@ -1,4 +1,3 @@
-import { GoogleOneTap } from "@clerk/nextjs"
 import Script from "next/script"
 import { setRequestLocale } from "next-intl/server"
 import { Navbar } from "@/components/layout/Navbar"
@@ -21,7 +20,6 @@ export default async function PublicLayout({
 
   return (
     <div className="flex flex-col min-h-screen">
-      <GoogleOneTap />
       <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />

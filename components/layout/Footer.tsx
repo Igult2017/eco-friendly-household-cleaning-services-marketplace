@@ -62,11 +62,11 @@ export async function Footer() {
                 {links.map(({ key: linkKey, href }) => (
                   <li key={href}>
                     {AUTH_HREFS.has(href) ? (
-                      <NextLink href={href} className="text-sm hover:text-white transition-colors">
+                      <NextLink href={href} prefetch={false} className="text-sm hover:text-white transition-colors">
                         {t(`link_${linkKey}`)}
                       </NextLink>
                     ) : (
-                      <Link href={href} className="text-sm hover:text-white transition-colors">
+                      <Link href={href} prefetch={false} className="text-sm hover:text-white transition-colors">
                         {t(`link_${linkKey}`)}
                       </Link>
                     )}
