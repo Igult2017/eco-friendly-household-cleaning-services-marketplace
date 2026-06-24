@@ -117,7 +117,21 @@ const clerkHandler = clerkMiddleware(async (auth, req) => {
 
   if (!role) return NextResponse.redirect(new URL("/onboarding", base))
 
-  // Admin-only gate: non-admins cannot access /admin/* routes
+  // Admin-only gate. A stale dorix_role cookie (or a session token that doesn't carry metadata)
+  // can hold an old role even after the role was changed in Clerk, so re-verify against Clerk
+  // before denying an /admin route — otherwise a real admin gets locked out.
+  if (isAdminRoute(req) && role !== "admin") {
+    try {
+      const client = await clerkClient()
+      const clerkUser = await client.users.getUser(userId)
+      if ((clerkUser.publicMetadata as { role?: string })?.role === "admin") {
+        role = "admin"
+        shouldRefreshCookie = true
+      }
+    } catch {
+      // Clerk API unreachable — fall through to the redirect below
+    }
+  }
   if (isAdminRoute(req) && role !== "admin") return NextResponse.redirect(new URL("/", base))
 
   // Admin bypasses all further role-based route restrictions (can view provider/customer UIs)
