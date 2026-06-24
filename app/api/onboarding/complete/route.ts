@@ -46,6 +46,21 @@ export async function POST(req: NextRequest) {
     const [pre] = await db.select({ id: users.id }).from(users).where(eq(users.id, userId))
     const isNewUser = !pre
 
+    // Reconcile an account that exists under a DIFFERENT Clerk id for the same verified email
+    // (e.g. the dev→prod Clerk instance switch gave returning users new ids, or a user deleted +
+    // recreated their Clerk account). The old Clerk id is dead, so free the email by parking the
+    // stale row — non-destructive, and it lets the insert below succeed instead of 500-ing on the
+    // users_email_idx unique constraint.
+    if (isNewUser && email) {
+      const [byEmail] = await db.select({ id: users.id }).from(users).where(eq(users.email, email))
+      if (byEmail && byEmail.id !== userId) {
+        await db
+          .update(users)
+          .set({ email: `migrated.${byEmail.id}@dorixe.invalid`, isActive: false, updatedAt: new Date() })
+          .where(eq(users.id, byEmail.id))
+      }
+    }
+
     await db
       .insert(users)
       .values({
