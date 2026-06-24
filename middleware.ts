@@ -41,6 +41,7 @@ const isPublicRoute = createRouteMatcher([
   "/unsubscribe(.*)", // email unsubscribe confirmation — clicked from emails while logged out
   "/api/email/(.*)", // one-click unsubscribe endpoint (RFC 8058) — must be public
   "/api/geo/(.*)",
+  "/api/files/(.*)", // private-bucket file proxy → signs + redirects; must be reachable without auth
   "/api/jobs/public(.*)",
   "/api/blog/(.*)",
   "/_a/(.*)", // Umami analytics proxy (script + event collection) — must be public
