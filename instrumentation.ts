@@ -2,6 +2,10 @@ export async function register() {
   // Only run on the Node.js runtime — never on Edge or in the browser
   if (process.env.NEXT_RUNTIME !== "nodejs") return
 
+  // Under cluster mode (cluster-server.cjs) only the first worker runs boot migrations;
+  // the rest are told to skip so we don't fire N concurrent migrate() calls on startup.
+  if (process.env.SKIP_BOOT_MIGRATE === "1") return
+
   const { migrate } = await import("drizzle-orm/postgres-js/migrator")
   const { drizzle } = await import("drizzle-orm/postgres-js")
   const { default: postgres } = await import("postgres")

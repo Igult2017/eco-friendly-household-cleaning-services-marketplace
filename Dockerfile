@@ -77,8 +77,11 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # Migration files — needed by instrumentation.ts on first boot
 COPY --from=builder --chown=nextjs:nodejs /app/drizzle/migrations ./drizzle/migrations
 
+# Multi-core entrypoint — forks one worker per CPU core (see cluster-server.cjs)
+COPY --from=builder --chown=nextjs:nodejs /app/cluster-server.cjs ./cluster-server.cjs
+
 USER nextjs
 
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+CMD ["node", "cluster-server.cjs"]
