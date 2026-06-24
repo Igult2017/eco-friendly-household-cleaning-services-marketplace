@@ -30,6 +30,7 @@ export default async function EditBlogPostPage({ params }: { params: Promise<{ i
           excerpt: post.excerpt ?? undefined,
           content: post.content,
           coverImageUrl: post.coverImageUrl ?? undefined,
+          authorName: post.authorName ?? undefined,
           category: post.category ?? undefined,
           tags: (post.tags as string[]) ?? [],
           allowComments: post.allowComments,

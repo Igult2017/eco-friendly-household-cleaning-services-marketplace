@@ -20,7 +20,7 @@ export async function GET(req: Request) {
       where: () => where!,
       with: { author: { columns: { firstName: true, lastName: true, avatarUrl: true } } },
       columns: {
-        id: true, slug: true, title: true, excerpt: true, coverImageUrl: true,
+        id: true, slug: true, title: true, excerpt: true, coverImageUrl: true, authorName: true,
         category: true, tags: true, readTimeMinutes: true, publishedAt: true, allowSharing: true,
       },
       orderBy: [desc(blogPosts.publishedAt)],

@@ -11,6 +11,7 @@ const updateSchema = z.object({
   excerpt: z.string().max(500).optional(),
   content: z.string().optional(),
   coverImageUrl: z.string().url().optional().or(z.literal("")),
+  authorName: z.string().max(160).optional().or(z.literal("")),
   category: z.string().max(100).optional(),
   tags: z.array(z.string().max(50)).max(10).optional(),
   allowComments: z.boolean().optional(),
@@ -51,7 +52,12 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       if (!data.readTimeMinutes) data.readTimeMinutes = Math.max(1, Math.ceil(wordCount / 200))
     }
 
-    await db.update(blogPosts).set({ ...data, coverImageUrl: data.coverImageUrl || null, updatedAt: new Date() }).where(eq(blogPosts.id, id))
+    await db.update(blogPosts).set({
+      ...data,
+      coverImageUrl: data.coverImageUrl || null,
+      ...(data.authorName !== undefined ? { authorName: data.authorName || null } : {}),
+      updatedAt: new Date(),
+    }).where(eq(blogPosts.id, id))
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error("[admin/blog/[id] PUT]", err)

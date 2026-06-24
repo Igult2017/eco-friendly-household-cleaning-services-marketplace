@@ -16,6 +16,7 @@ type PostData = {
   excerpt?: string
   content?: string
   coverImageUrl?: string
+  authorName?: string
   category?: string
   tags?: string[]
   allowComments?: boolean
@@ -33,6 +34,7 @@ export function BlogPostForm({ initial }: { initial?: PostData }) {
   const [excerpt, setExcerpt] = useState(initial?.excerpt ?? "")
   const [content, setContent] = useState(initial?.content ?? "")
   const [coverImageUrl, setCoverImageUrl] = useState(initial?.coverImageUrl ?? "")
+  const [authorName, setAuthorName] = useState(initial?.authorName ?? "")
   const [category, setCategory] = useState(initial?.category ?? "")
   const [tags, setTags] = useState((initial?.tags ?? []).join(", "))
   const [allowComments, setAllowComments] = useState(initial?.allowComments ?? true)
@@ -92,6 +94,7 @@ export function BlogPostForm({ initial }: { initial?: PostData }) {
     const body = {
       title, slug, excerpt, content,
       coverImageUrl: coverImageUrl || undefined,
+      authorName: authorName || undefined,
       category: category || undefined,
       tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
       allowComments, allowSharing,
@@ -174,6 +177,15 @@ export function BlogPostForm({ initial }: { initial?: PostData }) {
             className="mt-2 h-36 w-full max-w-md rounded-lg object-cover border border-gray-200"
           />
         )}
+      </div>
+
+      <div className="space-y-1.5">
+        <Label>Author name</Label>
+        <Input
+          value={authorName}
+          onChange={(e) => setAuthorName(e.target.value)}
+          placeholder="e.g. Jane Doe — leave blank to use your account name"
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

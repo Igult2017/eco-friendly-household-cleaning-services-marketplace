@@ -8,6 +8,7 @@ type Post = {
   title: string
   excerpt: string | null
   coverImageUrl: string | null
+  authorName: string | null
   category: string | null
   readTimeMinutes: number | null
   publishedAt: Date | string | null
@@ -21,7 +22,10 @@ function formatDate(d: Date | string | null) {
 
 export async function BlogPostCard({ post }: { post: Post }) {
   const t = await getTranslations("compBlogBlogPostCard")
-  const authorName = [post.author?.firstName, post.author?.lastName].filter(Boolean).join(" ") || t("authorFallback")
+  const authorName =
+    post.authorName?.trim() ||
+    [post.author?.firstName, post.author?.lastName].filter(Boolean).join(" ") ||
+    t("authorFallback")
   return (
     <Link href={`/blog/${post.slug}`} className="group block bg-white rounded-2xl border border-[#E5EBF0] overflow-hidden hover:shadow-md transition-shadow">
       {post.coverImageUrl ? (

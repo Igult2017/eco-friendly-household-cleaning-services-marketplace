@@ -11,6 +11,7 @@ const blogSchema = z.object({
   excerpt: z.string().max(500).optional(),
   content: z.string(),
   coverImageUrl: z.string().url().optional().or(z.literal("")),
+  authorName: z.string().max(160).optional().or(z.literal("")),
   category: z.string().max(100).optional(),
   tags: z.array(z.string().max(50)).max(10).default([]),
   allowComments: z.boolean().default(true),
@@ -67,6 +68,7 @@ export async function POST(req: Request) {
     const [post] = await db.insert(blogPosts).values({
       ...data,
       coverImageUrl: data.coverImageUrl || null,
+      authorName: data.authorName || null,
       authorId: adminId,
       readTimeMinutes: readTime,
     }).returning({ id: blogPosts.id, slug: blogPosts.slug })

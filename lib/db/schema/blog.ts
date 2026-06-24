@@ -16,6 +16,7 @@ export const blogPosts = pgTable(
     content: text("content").notNull().default(""),   // HTML output from Tiptap
     coverImageUrl: text("cover_image_url"),
     authorId: text("author_id").notNull().references(() => users.id),
+    authorName: varchar("author_name", { length: 160 }), // optional display name; falls back to the author's account name
     status: blogPostStatusEnum("status").notNull().default("draft"),
     publishedAt: timestamp("published_at", { withTimezone: true }),
     allowComments: boolean("allow_comments").notNull().default(true),

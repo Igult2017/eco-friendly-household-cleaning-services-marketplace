@@ -43,7 +43,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   if (!post) notFound()
 
   const authorName =
-    [post.author?.firstName, post.author?.lastName].filter(Boolean).join(" ") || "DORIXÉ Team"
+    post.authorName?.trim() ||
+    [post.author?.firstName, post.author?.lastName].filter(Boolean).join(" ") ||
+    "DORIXÉ Team"
   const postUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/blog/${post.slug}`
 
   return (
