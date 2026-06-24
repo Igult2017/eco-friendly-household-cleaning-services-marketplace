@@ -69,6 +69,23 @@ export function BlogPostForm({ initial }: { initial?: PostData }) {
     }
   }
 
+  // Paste an image straight from the clipboard (a screenshot or a copied photo) → upload it.
+  // If the clipboard holds text (e.g. a URL) instead, let the normal paste happen.
+  function onCoverPaste(e: React.ClipboardEvent<HTMLInputElement>) {
+    const items = e.clipboardData?.items
+    if (!items) return
+    for (const item of Array.from(items)) {
+      if (item.type.startsWith("image/")) {
+        const file = item.getAsFile()
+        if (file) {
+          e.preventDefault()
+          uploadCover(file)
+          return
+        }
+      }
+    }
+  }
+
   async function save(publish?: boolean) {
     setSaving(true)
     setError("")
@@ -128,7 +145,8 @@ export function BlogPostForm({ initial }: { initial?: PostData }) {
           <Input
             value={coverImageUrl}
             onChange={(e) => setCoverImageUrl(e.target.value)}
-            placeholder="Paste a direct image URL (https://…) — or upload →"
+            onPaste={onCoverPaste}
+            placeholder="Paste an image (Ctrl+V) or a URL — or click Upload →"
             className="flex-1"
           />
           <input
