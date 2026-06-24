@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { getTranslations } from "next-intl/server"
+import { getTranslations, setRequestLocale } from "next-intl/server"
 import {
   Leaf,
   Euro,
@@ -16,16 +16,19 @@ import {
   Zap,
 } from "lucide-react"
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("affiliate")
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: "affiliate" })
   return {
     title: t("metaTitle"),
     description: t("metaDescription"),
   }
 }
 
-export default async function AffiliatePage() {
-  const t = await getTranslations("affiliate")
+export default async function AffiliatePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  setRequestLocale(locale)
+  const t = await getTranslations({ locale, namespace: "affiliate" })
 
   const STATS = [
     { value: "5%", label: t("statLifetimeCommission"), icon: Euro },

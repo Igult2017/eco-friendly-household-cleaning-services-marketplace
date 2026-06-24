@@ -1,20 +1,23 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { getTranslations } from "next-intl/server"
+import { getTranslations, setRequestLocale } from "next-intl/server"
 import { CheckCircle2, XCircle, ArrowRight, Euro, ShieldCheck, Leaf, Zap } from "lucide-react"
 import { JsonLd } from "@/components/seo/JsonLd"
 import { faqSchema } from "@/lib/seo/schemas"
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("pricing")
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: "pricing" })
   return {
     title: t("metaTitle"),
     description: t("metaDescription"),
   }
 }
 
-export default async function PricingPage() {
-  const t = await getTranslations("pricing")
+export default async function PricingPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  setRequestLocale(locale)
+  const t = await getTranslations({ locale, namespace: "pricing" })
 
   const CUSTOMER_FEATURES = [
     t("customerFeature1"),

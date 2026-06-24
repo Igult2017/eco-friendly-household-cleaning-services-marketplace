@@ -1,17 +1,20 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { getTranslations } from "next-intl/server"
+import { getTranslations, setRequestLocale } from "next-intl/server"
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("howItWorksPage")
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: "howItWorksPage" })
   return {
     title: t("metaTitle"),
     description: t("metaDescription"),
   }
 }
 
-export default async function HowItWorksPage() {
-  const t = await getTranslations("howItWorksPage")
+export default async function HowItWorksPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  setRequestLocale(locale)
+  const t = await getTranslations({ locale, namespace: "howItWorksPage" })
 
   const STEPS_CUSTOMER = [
     {
