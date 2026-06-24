@@ -1,13 +1,13 @@
-import { auth } from "@clerk/nextjs/server"
+import { auth, clerkClient } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { pusherServer } from "@/lib/pusher/server"
 import { db } from "@/lib/db"
-import { users, providers } from "@/lib/db/schema"
+import { providers } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 
 export async function POST(req: Request) {
   try {
-    const { userId } = await auth()
+    const { userId, sessionClaims } = await auth()
     if (!userId) return new NextResponse("Unauthorized", { status: 401 })
 
     const body = await req.text()
@@ -16,14 +16,21 @@ export async function POST(req: Request) {
     const channelName = params.get("channel_name") ?? ""
 
     // Validate the user has permission for the requested channel
-    const [user] = await db.select({ role: users.role }).from(users).where(eq(users.id, userId))
-
     let allowed = false
 
     if (channelName === `private-customer-${userId}`) {
       allowed = true
-    } else if (channelName === "private-admin" && user?.role === "admin") {
-      allowed = true
+    } else if (channelName === "private-admin") {
+      // Admin is a Clerk publicMetadata role, not the DB role.
+      let role = (sessionClaims?.metadata as { role?: string } | undefined)?.role
+      if (!role) {
+        try {
+          const clerk = await clerkClient()
+          const u = await clerk.users.getUser(userId)
+          role = (u.publicMetadata as { role?: string })?.role
+        } catch { /* deny on Clerk error */ }
+      }
+      if (role === "admin") allowed = true
     } else if (channelName.startsWith("private-provider-")) {
       // Provider can only auth their own channel
       const providerId = channelName.replace("private-provider-", "")

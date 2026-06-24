@@ -1,7 +1,7 @@
-import { auth } from "@clerk/nextjs/server"
+import { auth, clerkClient } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { blogPosts, users } from "@/lib/db/schema"
+import { blogPosts } from "@/lib/db/schema"
 import { eq, desc } from "drizzle-orm"
 import { z } from "zod"
 
@@ -19,11 +19,20 @@ const blogSchema = z.object({
 })
 
 async function requireAdmin() {
-  const { userId } = await auth()
+  const { userId, sessionClaims } = await auth()
   if (!userId) return null
-  const [user] = await db.select({ role: users.role }).from(users).where(eq(users.id, userId))
-  if (user?.role !== "admin") return null
-  return userId
+  // Admin is a Clerk publicMetadata role — NOT the DB role (which is the onboarding role).
+  let role = (sessionClaims?.metadata as { role?: string } | undefined)?.role
+  if (!role) {
+    try {
+      const clerk = await clerkClient()
+      const u = await clerk.users.getUser(userId)
+      role = (u.publicMetadata as { role?: string })?.role
+    } catch {
+      return null
+    }
+  }
+  return role === "admin" ? userId : null
 }
 
 export async function GET() {
