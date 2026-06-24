@@ -31,6 +31,7 @@ export async function BlogPostCard({ post }: { post: Post }) {
             alt={post.title}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-300"
+            unoptimized={post.coverImageUrl.includes("/api/files")}
           />
         </div>
       ) : (

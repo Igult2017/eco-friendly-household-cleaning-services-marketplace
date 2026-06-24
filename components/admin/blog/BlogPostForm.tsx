@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { BlogEditor } from "@/components/blog/BlogEditor"
 import { Input } from "@/components/ui/input"
@@ -39,10 +39,34 @@ export function BlogPostForm({ initial }: { initial?: PostData }) {
   const [allowSharing, setAllowSharing] = useState(initial?.allowSharing ?? true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
+  const [coverUploading, setCoverUploading] = useState(false)
+  const coverInputRef = useRef<HTMLInputElement>(null)
 
   function onTitleChange(v: string) {
     setTitle(v)
     if (!initial?.slug) setSlug(slugify(v))
+  }
+
+  // Upload a cover image to our own storage (same presigned flow as in-article images),
+  // so admins can either paste a URL or upload a file.
+  async function uploadCover(file: File) {
+    setCoverUploading(true)
+    setError("")
+    try {
+      const presignRes = await fetch("/api/upload/presigned", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contentType: file.type, contentLength: file.size, folder: "blog-covers" }),
+      })
+      if (!presignRes.ok) throw new Error()
+      const { uploadUrl, publicUrl } = await presignRes.json()
+      await fetch(uploadUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } })
+      setCoverImageUrl(publicUrl)
+    } catch {
+      setError("Cover image upload failed")
+    } finally {
+      setCoverUploading(false)
+    }
   }
 
   async function save(publish?: boolean) {
@@ -99,8 +123,39 @@ export function BlogPostForm({ initial }: { initial?: PostData }) {
       </div>
 
       <div className="space-y-1.5">
-        <Label>Cover image URL</Label>
-        <Input value={coverImageUrl} onChange={(e) => setCoverImageUrl(e.target.value)} placeholder="https://…" />
+        <Label>Cover image</Label>
+        <div className="flex gap-2">
+          <Input
+            value={coverImageUrl}
+            onChange={(e) => setCoverImageUrl(e.target.value)}
+            placeholder="Paste a direct image URL (https://…) — or upload →"
+            className="flex-1"
+          />
+          <input
+            ref={coverInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadCover(f); e.target.value = "" }}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => coverInputRef.current?.click()}
+            disabled={coverUploading}
+            className="shrink-0"
+          >
+            {coverUploading ? "Uploading…" : "Upload"}
+          </Button>
+        </div>
+        {coverImageUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={coverImageUrl}
+            alt="Cover preview"
+            className="mt-2 h-36 w-full max-w-md rounded-lg object-cover border border-gray-200"
+          />
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
