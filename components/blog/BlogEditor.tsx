@@ -23,7 +23,8 @@ export function BlogEditor({ value, onChange, placeholder }: BlogEditorProps) {
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      // StarterKit v3 bundles Link; disable it so our custom Link below isn't a duplicate.
+      StarterKit.configure({ link: false }),
       ImageExt.configure({ allowBase64: false, HTMLAttributes: { class: "rounded-lg max-w-full my-4" } }),
       Youtube.configure({ controls: true, nocookie: true, HTMLAttributes: { class: "w-full aspect-video rounded-lg my-4" } }),
       Link.configure({ openOnClick: false, HTMLAttributes: { class: "text-[#2D7A5F] underline" } }),
