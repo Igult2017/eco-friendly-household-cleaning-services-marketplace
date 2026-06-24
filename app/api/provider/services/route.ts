@@ -19,8 +19,12 @@ export async function GET() {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
+    // Categories are global — always return them so the dropdown is never mysteriously empty,
+    // even before the user has a cleaner profile.
+    const categories = await db.select({ id: serviceCategories.id, name: serviceCategories.name }).from(serviceCategories).where(eq(serviceCategories.isActive, true))
+
     const [provider] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, userId))
-    if (!provider) return NextResponse.json({ error: "Provider not found" }, { status: 404 })
+    if (!provider) return NextResponse.json({ services: [], categories, hasProfile: false })
 
     const services = await db
       .select({
@@ -38,9 +42,7 @@ export async function GET() {
       .leftJoin(serviceCategories, eq(providerServices.categoryId, serviceCategories.id))
       .where(eq(providerServices.providerId, provider.id))
 
-    const categories = await db.select({ id: serviceCategories.id, name: serviceCategories.name }).from(serviceCategories).where(eq(serviceCategories.isActive, true))
-
-    return NextResponse.json({ services, categories })
+    return NextResponse.json({ services, categories, hasProfile: true })
   } catch (err) {
     console.error("[provider/services GET]", err)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

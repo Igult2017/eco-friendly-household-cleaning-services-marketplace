@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Plus, Trash2, Loader2 } from "lucide-react"
 import { AddonsManager } from "@/components/provider/AddonsManager"
@@ -36,12 +37,13 @@ export default function ProviderServicesPage() {
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState(EMPTY_FORM)
   const [error, setError] = useState<string | null>(null)
+  const [hasProfile, setHasProfile] = useState(true)
 
   const reload = () => {
     setLoading(true)
     fetch("/api/provider/services")
       .then((r) => r.json())
-      .then((d) => { setServices(d.services ?? []); setCategories(d.categories ?? []); setLoading(false) })
+      .then((d) => { setServices(d.services ?? []); setCategories(d.categories ?? []); setHasProfile(d.hasProfile !== false); setLoading(false) })
   }
 
   useEffect(() => { reload() }, [])
@@ -75,6 +77,7 @@ export default function ProviderServicesPage() {
           <h1 className="font-serif text-3xl font-bold text-[#2B3441]">{t("pageTitle")}</h1>
           <p className="text-sm text-[#6B7280] mt-1">{t("pageSubtitle")}</p>
         </div>
+        {hasProfile && (
         <button
           onClick={() => setShowForm((v) => !v)}
           className="flex items-center gap-1.5 rounded-xl bg-[#2D7A5F] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#256349] transition-colors"
@@ -82,9 +85,20 @@ export default function ProviderServicesPage() {
           <Plus className="h-4 w-4" />
           {t("addService")}
         </button>
+        )}
       </div>
 
-      {showForm && (
+      {!loading && !hasProfile && (
+        <div className="rounded-xl bg-white shadow-sm border border-[#2D7A5F]/20 p-8 text-center space-y-3">
+          <h2 className="font-serif text-xl font-bold text-[#2B3441]">Set up your cleaner profile</h2>
+          <p className="text-sm text-[#6B7280] max-w-sm mx-auto">You don&apos;t have a cleaner profile yet. Create one to start adding the services clients can book.</p>
+          <Link href="/become-a-cleaner" className="inline-flex items-center justify-center rounded-xl bg-[#2D7A5F] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#256349] transition-colors">
+            Set up cleaner profile
+          </Link>
+        </div>
+      )}
+
+      {hasProfile && showForm && (
         <div className="rounded-xl bg-white shadow-sm p-6 space-y-4 border border-[#2D7A5F]/20">
           <h2 className="font-semibold text-[#2B3441]">{t("newService")}</h2>
           <div className="grid grid-cols-2 gap-4">
@@ -157,6 +171,7 @@ export default function ProviderServicesPage() {
         </div>
       )}
 
+      {hasProfile && (
       <div className="rounded-xl bg-white shadow-sm overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center py-12"><Loader2 className="h-5 w-5 animate-spin text-[#2D7A5F]" /></div>
@@ -187,8 +202,9 @@ export default function ProviderServicesPage() {
           </div>
         )}
       </div>
+      )}
 
-      <AddonsManager />
+      {hasProfile && <AddonsManager />}
     </div>
   )
 }
