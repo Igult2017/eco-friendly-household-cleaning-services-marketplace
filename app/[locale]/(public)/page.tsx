@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server"
+import { getTranslations, setRequestLocale } from "next-intl/server"
 import { HeroSection } from "@/components/home/HeroSection"
 import { TrustTicker } from "@/components/home/TrustTicker"
 import { HowItWorks } from "@/components/home/HowItWorks"
@@ -10,15 +10,21 @@ import { JobPostSection } from "@/components/home/JobPostSection"
 import { Testimonials } from "@/components/home/Testimonials"
 import { CtaBand } from "@/components/home/CtaBand"
 
-export async function generateMetadata() {
-  const t = await getTranslations("homePage")
+// ISR: prerendered static per locale, refreshed hourly (featured providers etc.).
+export const revalidate = 3600
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: "homePage" })
   return {
     title: t("metaTitle"),
     description: t("metaDescription"),
   }
 }
 
-export default function HomePage() {
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  setRequestLocale(locale)
   return (
     <>
       <HeroSection />

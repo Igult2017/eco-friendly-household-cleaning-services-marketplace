@@ -1,5 +1,26 @@
 import { clerkMiddleware, createRouteMatcher, clerkClient } from "@clerk/nextjs/server"
 import { NextResponse, type NextRequest, type NextFetchEvent } from "next/server"
+import createIntlMiddleware from "next-intl/middleware"
+import { routing } from "@/i18n/routing"
+import { locales } from "@/i18n/config"
+
+const intlMiddleware = createIntlMiddleware(routing)
+
+// PUBLIC marketing pages now live under /[locale]; next-intl handles their locale routing
+// (/, /de, /fr…) and serves the prerendered static variants. Authenticated routes are NOT
+// localized, so they never reach intlMiddleware.
+const isLocalizedRoute = createRouteMatcher([
+  "/",
+  "/about(.*)", "/affiliate(.*)", "/become-a-cleaner(.*)", "/blog(.*)", "/browse(.*)",
+  "/browse-jobs(.*)", "/how-it-works(.*)", "/legal(.*)", "/pricing(.*)", "/providers(.*)",
+  "/services(.*)", "/sustainability(.*)", "/unsubscribe(.*)",
+])
+
+// Any path whose first segment is a supported locale (/de/about, /fr…) is a localized public page.
+function firstSegmentIsLocale(pathname: string): boolean {
+  const seg = pathname.split("/")[1]
+  return (locales as readonly string[]).includes(seg)
+}
 
 const isPublicRoute = createRouteMatcher([
   "/",
@@ -69,6 +90,11 @@ function publicBase(req: NextRequest): string {
 }
 
 const clerkHandler = clerkMiddleware(async (auth, req) => {
+  // Localized public marketing pages → next-intl (locale routing + static serving).
+  if (isLocalizedRoute(req) || firstSegmentIsLocale(req.nextUrl.pathname)) {
+    return intlMiddleware(req)
+  }
+  // Other public routes (sign-in, webhooks, robots, analytics proxy…) pass straight through.
   if (isPublicRoute(req)) return NextResponse.next()
 
   const base = publicBase(req)

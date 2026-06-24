@@ -1,16 +1,12 @@
 import type { Metadata } from "next"
 import { Playfair_Display, Inter } from "next/font/google"
 import { ClerkProvider } from "@clerk/nextjs"
-import { NextIntlClientProvider } from "next-intl"
-import { getLocale } from "next-intl/server"
 import { QueryProvider } from "@/components/providers/QueryProvider"
 import { Toaster } from "@/components/ui/sonner"
-import { CookieBanner } from "@/components/gdpr/CookieBanner"
-import { LocaleDetector } from "@/components/i18n/LocaleDetector"
-import { RoleSwitchToast } from "@/components/layout/RoleSwitchToast"
 import { JsonLd } from "@/components/seo/JsonLd"
 import { organizationSchema, websiteSchema } from "@/lib/seo/schemas"
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/seo/site"
+import { defaultLocale } from "@/i18n/config"
 import { cn } from "@/lib/utils"
 import "./globals.css"
 
@@ -72,27 +68,27 @@ export const metadata: Metadata = {
   category: "Home services",
 }
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+// Root layout is intentionally STATIC: it does not read the request locale (cookies/headers),
+// so public pages under /[locale] can be prerendered. The locale-aware intl provider + per-locale
+// shell (CookieBanner, language switcher, role toasts) live in each subtree's layout instead:
+//   - public:        app/[locale]/layout.tsx   (locale from the URL → static)
+//   - authenticated: app/(customer|provider|admin|auth)/layout.tsx (locale from cookie → dynamic)
+// `lang` is the default here and corrected per-locale client-side on localized pages.
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
-  const locale = await getLocale()
 
   const html = (
     <html
-      lang={locale}
+      lang={defaultLocale}
       className={cn("h-full", playfair.variable, inter.variable)}
       suppressHydrationWarning
     >
       <body className="min-h-screen antialiased">
         <JsonLd data={[organizationSchema(), websiteSchema()]} />
-        <NextIntlClientProvider>
-          <QueryProvider>
-            {children}
-          </QueryProvider>
-          <Toaster richColors position="top-right" />
-          <CookieBanner />
-          <LocaleDetector />
-          <RoleSwitchToast />
-        </NextIntlClientProvider>
+        <QueryProvider>
+          {children}
+        </QueryProvider>
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   )

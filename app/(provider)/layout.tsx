@@ -8,6 +8,9 @@ import { NotificationBell } from "@/components/notifications/NotificationBell"
 import { RoleSwitcher } from "@/components/layout/RoleSwitcher"
 import { LayoutDashboard } from "lucide-react"
 import { getTranslations } from "next-intl/server"
+import { NextIntlClientProvider } from "next-intl"
+import { CookieBanner } from "@/components/gdpr/CookieBanner"
+import { RoleSwitchToast } from "@/components/layout/RoleSwitchToast"
 
 export default async function ProviderLayout({ children }: { children: React.ReactNode }) {
   const t = await getTranslations("providerLayout")
@@ -33,6 +36,7 @@ export default async function ProviderLayout({ children }: { children: React.Rea
   const showSwitcher = isDual && primaryRole !== "admin"
 
   return (
+    <NextIntlClientProvider>
     <div className="min-h-screen bg-[#F4FAF6]">
       <header className="sticky top-0 z-30 h-14 bg-white/90 backdrop-blur border-b border-gray-200">
         <div className="max-w-7xl mx-auto h-full px-4 flex items-center justify-between gap-4">
@@ -63,5 +67,8 @@ export default async function ProviderLayout({ children }: { children: React.Rea
       </header>
       <main className="max-w-7xl mx-auto px-4 py-8">{children}</main>
     </div>
+    <CookieBanner />
+    <RoleSwitchToast />
+    </NextIntlClientProvider>
   )
 }

@@ -5,8 +5,11 @@ import Link from "next/link"
 import Image from "next/image"
 import { UserButton } from "@clerk/nextjs"
 import { getTranslations } from "next-intl/server"
+import { NextIntlClientProvider } from "next-intl"
 import { NotificationBell } from "@/components/notifications/NotificationBell"
 import { RoleSwitcher } from "@/components/layout/RoleSwitcher"
+import { CookieBanner } from "@/components/gdpr/CookieBanner"
+import { RoleSwitchToast } from "@/components/layout/RoleSwitchToast"
 
 export default async function CustomerLayout({ children }: { children: React.ReactNode }) {
   const t = await getTranslations("customerLayout")
@@ -32,6 +35,7 @@ export default async function CustomerLayout({ children }: { children: React.Rea
   const showSwitcher = isDual || primaryRole === "admin"
 
   return (
+    <NextIntlClientProvider>
     <div className="min-h-screen bg-[#F4FAF6]">
       <header className="sticky top-0 z-30 h-14 bg-white/90 backdrop-blur border-b border-gray-200">
         <div className="max-w-7xl mx-auto h-full px-4 flex items-center justify-between gap-4">
@@ -54,5 +58,8 @@ export default async function CustomerLayout({ children }: { children: React.Rea
       </header>
       <main className="max-w-7xl mx-auto px-4 py-8">{children}</main>
     </div>
+    <CookieBanner />
+    <RoleSwitchToast />
+    </NextIntlClientProvider>
   )
 }

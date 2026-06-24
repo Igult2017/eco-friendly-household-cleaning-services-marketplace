@@ -1,6 +1,8 @@
 import { currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
+import { NextIntlClientProvider } from "next-intl"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
+import { CookieBanner } from "@/components/gdpr/CookieBanner"
 import { ShieldCheck } from "lucide-react"
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -13,6 +15,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const initials = [user.firstName?.[0], user.lastName?.[0]].filter(Boolean).join("").toUpperCase() || "A"
 
   return (
+    <NextIntlClientProvider>
     <div className="min-h-screen bg-[#F4FAF6]">
       <AdminSidebar />
       <div className="pl-60">
@@ -29,5 +32,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <main className="p-8">{children}</main>
       </div>
     </div>
+    <CookieBanner />
+    </NextIntlClientProvider>
   )
 }

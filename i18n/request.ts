@@ -2,21 +2,24 @@ import { cookies, headers } from "next/headers"
 import { getRequestConfig } from "next-intl/server"
 import { defaultLocale, isLocale, localeFromAcceptLanguage, type Locale } from "./config"
 
-// Resolve the active locale server-side, with no URL prefix:
-//   1. explicit `locale` cookie (set by the switcher / IP detector), else
-//   2. the browser's Accept-Language header, else
-//   3. the default (English).
-// This runs on the server for every request, so there is no language flash.
-export default getRequestConfig(async () => {
-  const cookieStore = await cookies()
-  const cookieLocale = cookieStore.get("locale")?.value
+// Resolve the active locale server-side. Two paths:
+//   1. PUBLIC routes under /[locale] → `requestLocale` is the URL segment. Using it (and NOT
+//      reading cookies/headers) is what lets these pages render statically per locale.
+//   2. Authenticated routes (no locale prefix) → `requestLocale` is undefined, so fall back to
+//      the `locale` cookie, then the browser's Accept-Language, then the default (English).
+export default getRequestConfig(async ({ requestLocale }) => {
+  const requested = await requestLocale
+  let locale: Locale | undefined = isLocale(requested) ? requested : undefined
 
-  let locale: Locale
-  if (isLocale(cookieLocale)) {
-    locale = cookieLocale
-  } else {
-    const hdrs = await headers()
-    locale = localeFromAcceptLanguage(hdrs.get("accept-language")) ?? defaultLocale
+  if (!locale) {
+    const cookieStore = await cookies()
+    const cookieLocale = cookieStore.get("locale")?.value
+    if (isLocale(cookieLocale)) {
+      locale = cookieLocale
+    } else {
+      const hdrs = await headers()
+      locale = localeFromAcceptLanguage(hdrs.get("accept-language")) ?? defaultLocale
+    }
   }
 
   return {

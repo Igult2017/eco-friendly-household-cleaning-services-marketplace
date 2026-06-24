@@ -1,21 +1,23 @@
 import { GoogleOneTap } from "@clerk/nextjs"
 import Script from "next/script"
-import { headers } from "next/headers"
+import { setRequestLocale } from "next-intl/server"
 import { Navbar } from "@/components/layout/Navbar"
 import { Footer } from "@/components/layout/Footer"
 
 const UMAMI_WEBSITE_ID = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID
+// Use the configured app origin instead of reading request headers, so public pages stay static.
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? "https://xn--dorix-fsa.com").replace(/\/$/, "")
 
-export default async function PublicLayout({ children }: { children: React.ReactNode }) {
-  // Umami is proxied through our own HTTPS origin at /_a (see next.config rewrites),
-  // so both the tracker script and event collection are same-origin — no mixed content.
-  let hostUrl: string | null = null
-  if (UMAMI_WEBSITE_ID) {
-    const h = await headers()
-    const host = h.get("x-forwarded-host") ?? h.get("host")
-    const proto = h.get("x-forwarded-proto") ?? "https"
-    if (host) hostUrl = `${proto}://${host}/_a`
-  }
+export default async function PublicLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode
+  params: Promise<{ locale: string }>
+}) {
+  const { locale } = await params
+  setRequestLocale(locale)
+  const hostUrl = UMAMI_WEBSITE_ID ? `${APP_URL}/_a` : null
 
   return (
     <div className="flex flex-col min-h-screen">
