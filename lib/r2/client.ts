@@ -2,9 +2,13 @@ import { S3Client } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 import { PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3"
 
+// S3-compatible storage client. Defaults to Cloudflare R2's endpoint, but S3_ENDPOINT +
+// S3_REGION let it point at any S3-compatible provider (e.g. Backblaze B2:
+// S3_ENDPOINT=https://s3.<region>.backblazeb2.com, S3_REGION=<region>). Credentials/bucket/
+// public-URL reuse the existing R2_* env vars regardless of provider.
 export const r2 = new S3Client({
-  region: "auto",
-  endpoint: `https://${process.env.R2_ACCOUNT_ID!}.r2.cloudflarestorage.com`,
+  region: process.env.S3_REGION ?? "auto",
+  endpoint: process.env.S3_ENDPOINT ?? `https://${process.env.R2_ACCOUNT_ID!}.r2.cloudflarestorage.com`,
   credentials: {
     accessKeyId: process.env.R2_ACCESS_KEY_ID!,
     secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
