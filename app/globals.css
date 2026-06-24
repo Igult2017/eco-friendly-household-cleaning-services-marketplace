@@ -221,6 +221,26 @@ h4, h5, h6 {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* Vertical "live feed" marquee — content is duplicated; -50% → 0 scrolls it top-to-bottom
+   seamlessly within a fixed-height, overflow-hidden viewport. Pauses on hover. */
+@keyframes marquee-y {
+  from { transform: translateY(-50%); }
+  to   { transform: translateY(0); }
+}
+
+.animate-marquee-y {
+  animation: marquee-y 32s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-y:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee-y { animation: none; }
+}
+
 .animate-fade-in {
   animation: fade-in 0.4s ease-out both;
 }
