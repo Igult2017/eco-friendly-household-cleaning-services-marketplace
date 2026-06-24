@@ -177,7 +177,7 @@ export const recurringBookingCron = inngest.createFunction(
                 confirm: true,
                 off_session: true,
                 metadata: { bookingId: newBooking.id, type: "recurring" },
-              })
+              }, { idempotencyKey: `recurring-pi-${newBooking.id}` })
 
               const bookingStatus = pi.status === "requires_capture" ? "payment_authorized" : "pending_payment"
               await db.update(bookings)

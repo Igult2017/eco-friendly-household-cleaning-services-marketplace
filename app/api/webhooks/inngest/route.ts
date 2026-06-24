@@ -10,6 +10,7 @@ import { onJobPosted, onJobExpired } from "@/lib/inngest/functions/jobs"
 import { onDisputeOpened } from "@/lib/inngest/functions/disputes"
 import { onRecurringScheduleCreated, recurringBookingCron } from "@/lib/inngest/functions/recurring"
 import { onUserWelcome, sendCampaign } from "@/lib/inngest/functions/marketing"
+import { captureSweeper } from "@/lib/inngest/functions/sweeper"
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -26,5 +27,6 @@ export const { GET, POST, PUT } = serve({
     recurringBookingCron,
     onUserWelcome,
     sendCampaign,
+    captureSweeper,
   ],
 })

@@ -51,6 +51,7 @@ export async function POST(req: NextRequest) {
     // recreated their Clerk account). The old Clerk id is dead, so free the email by parking the
     // stale row — non-destructive, and it lets the insert below succeed instead of 500-ing on the
     // users_email_idx unique constraint.
+    let reonboarded = false
     if (isNewUser && email) {
       const [byEmail] = await db.select({ id: users.id }).from(users).where(eq(users.email, email))
       if (byEmail && byEmail.id !== userId) {
@@ -58,6 +59,10 @@ export async function POST(req: NextRequest) {
           .update(users)
           .set({ email: `migrated.${byEmail.id}@dorixe.invalid`, isActive: false, updatedAt: new Date() })
           .where(eq(users.id, byEmail.id))
+        // The old (dead) account may have an approved provider listing — suspend it so it can't
+        // stay publicly bookable pointing at an unreachable user. The new account re-onboards fresh.
+        await db.update(providers).set({ isSuspended: true }).where(eq(providers.userId, byEmail.id))
+        reonboarded = true
       }
     }
 
@@ -138,8 +143,9 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // First email a client receives: the AI welcome (explains products they may like).
-    if (isNewUser) {
+    // First email a client receives: the AI welcome. Skip for re-onboarded (migrated) users —
+    // they already received it under their old account, so this avoids a duplicate.
+    if (isNewUser && !reonboarded) {
       try {
         await inngest.send({ name: "user/welcome", data: { userId } })
       } catch (e) {

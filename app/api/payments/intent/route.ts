@@ -38,7 +38,7 @@ export async function POST(req: Request) {
 
     const [[provider], [service]] = await Promise.all([
       db
-        .select({ id: providers.id, stripeAccountId: providers.stripeAccountId, isApproved: providers.isApproved, isSuspended: providers.isSuspended })
+        .select({ id: providers.id, stripeAccountId: providers.stripeAccountId, stripeAccountStatus: providers.stripeAccountStatus, isApproved: providers.isApproved, isSuspended: providers.isSuspended })
         .from(providers)
         .where(eq(providers.id, providerId)),
       db
@@ -49,6 +49,11 @@ export async function POST(req: Request) {
 
     if (!provider?.isApproved || provider.isSuspended) return NextResponse.json({ error: "Provider not available" }, { status: 422 })
     if (!provider.stripeAccountId) return NextResponse.json({ error: "Provider payment not set up" }, { status: 422 })
+    // Don't route a destination charge to a Connect account that can't receive funds yet
+    // (onboarding incomplete / charges disabled). account.updated keeps this in sync.
+    if (provider.stripeAccountStatus && provider.stripeAccountStatus !== "active") {
+      return NextResponse.json({ error: "Provider payment account not ready" }, { status: 422 })
+    }
     if (!service) return NextResponse.json({ error: "Service not found" }, { status: 404 })
 
     // Bug 5: when booking from an accepted bid, validate the bid and use its amount as subtotal
