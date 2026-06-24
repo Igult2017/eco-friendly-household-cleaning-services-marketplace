@@ -5,9 +5,10 @@ import { NextIntlClientProvider } from "next-intl"
 import { db } from "@/lib/db"
 import { users } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
+import { SignOutButton } from "@clerk/nextjs"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
 import { CookieBanner } from "@/components/gdpr/CookieBanner"
-import { ShieldCheck } from "lucide-react"
+import { ShieldCheck, LogOut } from "lucide-react"
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const { userId, sessionClaims } = await auth()
@@ -51,6 +52,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <div className="h-7 w-7 rounded-full bg-[#2D7A5F] flex items-center justify-center text-white text-[11px] font-bold">
               {initials}
             </div>
+            <SignOutButton redirectUrl="/">
+              <button
+                aria-label="Sign out"
+                className="ml-1 flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-[#6B7280] hover:bg-gray-100 hover:text-[#2B3441] transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="hidden sm:inline">Sign out</span>
+              </button>
+            </SignOutButton>
           </div>
         </header>
         <main className="p-8">{children}</main>
