@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { localeAlternates } from "@/lib/seo/alternates"
+import { getReferralPct } from "@/lib/platform/settings"
 import {
   Leaf,
   Euro,
@@ -31,9 +32,10 @@ export default async function AffiliatePage({ params }: { params: Promise<{ loca
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations({ locale, namespace: "affiliate" })
+  const pct = await getReferralPct()
 
   const STATS = [
-    { value: "5%", label: t("statLifetimeCommission"), icon: Euro },
+    { value: `${pct}%`, label: t("statLifetimeCommission"), icon: Euro },
     { value: "€0", label: t("statCostToJoin"), icon: Gift },
     { value: "∞", label: t("statEarningPotential"), icon: Infinity },
     { value: "30d", label: t("statCookieWindow"), icon: TrendingUp },
@@ -344,6 +346,7 @@ export default async function AffiliatePage({ params }: { params: Promise<{ loca
           </h2>
           <p className="text-gray-500 leading-relaxed mb-10 max-w-2xl mx-auto">
             {t.rich("commissionBody", {
+              pct,
               strong: (chunks) => <strong>{chunks}</strong>,
             })}
           </p>
@@ -355,8 +358,8 @@ export default async function AffiliatePage({ params }: { params: Promise<{ loca
                 <span className="font-medium text-[#2B3441]">€120</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">{t("exampleCommission")}</span>
-                <span className="font-medium text-[#2D7A5F]">€6.00</span>
+                <span className="text-gray-500">{t("exampleCommission", { pct })}</span>
+                <span className="font-medium text-[#2D7A5F]">€{(120 * pct / 100).toFixed(2)}</span>
               </div>
               <div className="border-t border-gray-200 pt-3 flex justify-between">
                 <span className="text-gray-500">{t("exampleBookingsPerMonth")}</span>
@@ -364,7 +367,7 @@ export default async function AffiliatePage({ params }: { params: Promise<{ loca
               </div>
               <div className="flex justify-between">
                 <span className="font-semibold text-[#2B3441]">{t("exampleMonthlyEarnings")}</span>
-                <span className="font-bold text-[#2D7A5F]">{t("exampleMonthlyValue")}</span>
+                <span className="font-bold text-[#2D7A5F]">{t("exampleMonthlyValue", { amount: Math.round(120 * pct / 100 * 4) })}</span>
               </div>
             </div>
           </div>

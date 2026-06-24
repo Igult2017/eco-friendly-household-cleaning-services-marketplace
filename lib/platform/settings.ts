@@ -19,3 +19,19 @@ export async function getCommissionPct(): Promise<number> {
   }
   return PLATFORM_FEE_PERCENT
 }
+
+// The admin-configurable affiliate/referral commission % (what a referrer earns per booking),
+// read from platform_settings. Separate from the platform commission above. Defaults to 5.
+export async function getReferralPct(): Promise<number> {
+  try {
+    const [row] = await db
+      .select({ value: platformSettings.value })
+      .from(platformSettings)
+      .where(eq(platformSettings.key, "referral_pct"))
+    const n = row ? parseInt(row.value, 10) : NaN
+    if (!Number.isNaN(n) && n >= 1 && n <= 20) return n
+  } catch {
+    // table missing / DB error — fall through to the default
+  }
+  return 5
+}
