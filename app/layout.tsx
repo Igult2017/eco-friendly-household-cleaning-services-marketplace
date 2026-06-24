@@ -74,8 +74,22 @@ export const metadata: Metadata = {
 //   - public:        app/[locale]/layout.tsx   (locale from the URL → static)
 //   - authenticated: app/(customer|provider|admin|auth)/layout.tsx (locale from cookie → dynamic)
 // `lang` is the default here and corrected per-locale client-side on localized pages.
+// Warm the connection to Clerk's Frontend API early so the sign-in widget's JS + auth calls
+// start sooner (saves the DNS/TLS handshake on the first Clerk request). The publishable key
+// encodes the FAPI host as base64 (pk_<env>_<base64(host)+'$'>).
+function clerkFapiOrigin(pk?: string): string | null {
+  if (!pk) return null
+  try {
+    const host = Buffer.from(pk.split("_")[2] ?? "", "base64").toString("utf8").replace(/\$+$/, "")
+    return /^[a-z0-9.-]+$/i.test(host) ? `https://${host}` : null
+  } catch {
+    return null
+  }
+}
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+  const fapiOrigin = clerkFapiOrigin(publishableKey)
 
   const html = (
     <html
@@ -84,6 +98,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <body className="min-h-screen antialiased">
+        {fapiOrigin && (
+          <>
+            <link rel="preconnect" href={fapiOrigin} crossOrigin="anonymous" />
+            <link rel="dns-prefetch" href={fapiOrigin} />
+          </>
+        )}
         <JsonLd data={[organizationSchema(), websiteSchema()]} />
         <QueryProvider>
           {children}
