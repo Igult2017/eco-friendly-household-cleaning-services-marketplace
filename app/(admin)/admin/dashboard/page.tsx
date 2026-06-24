@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic"
 import { KpiCard } from "@/components/admin/KpiCard"
 import { StatusBadge } from "@/components/admin/StatusBadge"
 import { db } from "@/lib/db"
+import { redis } from "@/lib/redis/client"
 import { bookings, disputes, payments, providers, users } from "@/lib/db/schema"
 import { eq, count, sum, sql, and, desc, gte } from "drizzle-orm"
 import {
@@ -15,7 +16,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 
-async function getStats() {
+async function computeStats() {
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
 
   const [
@@ -84,6 +85,16 @@ async function getStats() {
     repeatCustomerRate,
     topProviders: topProviders.map(p => ({ businessName: p.businessName ?? "—", totalEarnings: Number(p.totalEarnings ?? 0) })),
   }
+}
+
+// Cache the 12 aggregate queries for 60s — the overview tolerates slight staleness, and recomputing
+// them on every admin page load was a big part of the panel's slowness.
+async function getStats() {
+  const cached = await redis.get<Awaited<ReturnType<typeof computeStats>>>("admin:dashboard:stats")
+  if (cached) return cached
+  const result = await computeStats()
+  await redis.setex("admin:dashboard:stats", 60, JSON.stringify(result))
+  return result
 }
 
 export default async function AdminDashboardPage() {
