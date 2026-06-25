@@ -4,11 +4,18 @@ import { db } from "@/lib/db"
 import { users } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { stripe } from "@/lib/stripe/client"
+import { createRateLimiter, safeLimit } from "@/lib/redis/client"
+
+// L2: throttle SetupIntent / Stripe customer creation (resource-abuse prevention).
+const setupIntentRatelimit = createRateLimiter({ tokens: 10, windowSeconds: 600, prefix: "ratelimit:setup-intent" })
 
 export async function POST() {
   try {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+    const { success } = await safeLimit(setupIntentRatelimit, userId)
+    if (!success) return NextResponse.json({ error: "Too many attempts. Please wait." }, { status: 429 })
 
     const [user] = await db
       .select({

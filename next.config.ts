@@ -4,8 +4,27 @@ import type { NextConfig } from "next"
 
 const withNextIntl = createNextIntlPlugin()
 
+// Content-Security-Policy. Deployed Report-Only first so it can't white-screen the Clerk / Stripe /
+// Pusher widgets — watch the browser console for "Refused to…" violations, tune the allow-list, then
+// rename the header to "Content-Security-Policy" to enforce. (ZAP M1 / H1 backstop)
+const CSP_REPORT_ONLY = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://clerk.xn--dorix-fsa.com https://*.clerk.accounts.dev https://js.stripe.com https://challenges.cloudflare.com",
+  "connect-src 'self' https://clerk.xn--dorix-fsa.com https://*.clerk.accounts.dev https://api.stripe.com https://*.pusher.com wss://*.pusher.com https://*.ingest.sentry.io",
+  "img-src 'self' data: blob: https://img.clerk.com https://images.unsplash.com https://*.stripe.com",
+  "style-src 'self' 'unsafe-inline'",
+  "font-src 'self' data:",
+  "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://challenges.cloudflare.com https://clerk.xn--dorix-fsa.com",
+  "worker-src 'self' blob:",
+  "frame-ancestors 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "object-src 'none'",
+].join("; ")
+
 const nextConfig: NextConfig = {
   output: "standalone", // enables minimal self-contained build for Docker
+  poweredByHeader: false, // don't advertise "X-Powered-By: Next.js" (ZAP L5)
   // Type-checking + linting run as a separate `tsc --noEmit` gate before every
   // deploy. Skipping them inside `next build` avoids the memory-heavy in-build
   // TypeScript pass OOM-killing the resource-limited VPS build container.
@@ -43,6 +62,7 @@ const nextConfig: NextConfig = {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=(self)",
           },
+          { key: "Content-Security-Policy-Report-Only", value: CSP_REPORT_ONLY },
         ],
       },
     ]

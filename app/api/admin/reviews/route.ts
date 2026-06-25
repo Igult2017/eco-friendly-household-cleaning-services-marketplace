@@ -1,15 +1,13 @@
-import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
+import { requireAdmin } from "@/lib/auth/requireAdmin"
 import { db } from "@/lib/db"
 import { reviews, users, providers } from "@/lib/db/schema"
 import { eq, desc } from "drizzle-orm"
 
 export async function GET() {
   try {
-    const { sessionClaims } = await auth()
-    if ((sessionClaims?.metadata as { role?: string } | undefined)?.role !== "admin") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
-    }
+    const admin = await requireAdmin()
+    if (admin instanceof NextResponse) return admin
 
     const rows = await db
       .select({

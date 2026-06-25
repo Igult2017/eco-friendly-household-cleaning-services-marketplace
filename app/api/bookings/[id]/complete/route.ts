@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { bookings, payments, providers } from "@/lib/db/schema"
-import { eq, and } from "drizzle-orm"
+import { eq, and, inArray } from "drizzle-orm"
 import { inngest } from "@/lib/inngest/client"
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -25,13 +25,18 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     if (!provider) return NextResponse.json({ error: "Not a provider or account suspended" }, { status: 403 })
 
     const [booking] = await db
-      .select({ id: bookings.id, status: bookings.status, customerId: bookings.customerId, providerId: bookings.providerId })
+      .select({ id: bookings.id, status: bookings.status, customerId: bookings.customerId, providerId: bookings.providerId, scheduledAt: bookings.scheduledAt })
       .from(bookings)
       .where(and(eq(bookings.id, bookingId), eq(bookings.providerId, provider.id)))
 
     if (!booking) return NextResponse.json({ error: "Booking not found" }, { status: 404 })
     if (!["payment_authorized", "confirmed", "in_progress"].includes(booking.status)) {
       return NextResponse.json({ error: "Booking cannot be completed in its current state" }, { status: 422 })
+    }
+    // H4: don't allow capturing the customer's card before the appointment time unless the job was
+    // explicitly started (in_progress) — blocks "book now, complete + capture immediately" fraud.
+    if (booking.status !== "in_progress" && booking.scheduledAt && new Date(booking.scheduledAt) > new Date()) {
+      return NextResponse.json({ error: "Booking cannot be completed before its scheduled time" }, { status: 422 })
     }
 
     const body = await req.json().catch(() => ({} as { photoUrls?: unknown }))
@@ -42,11 +47,21 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       (u): u is string => typeof u === "string" && u.startsWith(R2_BASE),
     )
 
-    // Bug 2: set to pending_capture, not completed — Inngest sets completed after capture succeeds
-    await db
+    // Bug 2: set to pending_capture, not completed — Inngest sets completed after capture succeeds.
+    // H4: atomic conditional transition — only one concurrent /complete can flip the state, so the
+    // booking/completed event (→ capture) can't be fired twice by a double-submit.
+    const updated = await db
       .update(bookings)
       .set({ status: "pending_capture", completionPhotoUrls: photoUrls, actualEndAt: new Date() })
-      .where(eq(bookings.id, bookingId))
+      .where(and(
+        eq(bookings.id, bookingId),
+        eq(bookings.providerId, provider.id),
+        inArray(bookings.status, ["payment_authorized", "confirmed", "in_progress"]),
+      ))
+      .returning({ id: bookings.id })
+    if (updated.length === 0) {
+      return NextResponse.json({ error: "Booking cannot be completed in its current state" }, { status: 422 })
+    }
 
     const [payment] = await db
       .select({ stripePaymentIntentId: payments.stripePaymentIntentId })

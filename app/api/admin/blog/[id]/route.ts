@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { blogPosts } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { z } from "zod"
+import { sanitizeBlogHtml } from "@/lib/security/sanitize"
 
 const updateSchema = z.object({
   title: z.string().min(3).max(300).optional(),
@@ -56,6 +57,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       ...data,
       coverImageUrl: data.coverImageUrl || null,
       ...(data.authorName !== undefined ? { authorName: data.authorName || null } : {}),
+      ...(data.content !== undefined ? { content: sanitizeBlogHtml(data.content) } : {}),
       updatedAt: new Date(),
     }).where(eq(blogPosts.id, id))
     return NextResponse.json({ success: true })

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { isIP } from "node:net"
 
 export const runtime = "nodejs"
 
@@ -17,12 +18,15 @@ type GeoResult = {
 // The visitor's real IP, from the proxy's forwarded headers. Without this we'd
 // geolocate the server, not the visitor.
 function clientIp(req: Request): string | null {
-  const xff = req.headers.get("x-forwarded-for")
-  if (xff) {
-    const ip = xff.split(",")[0].trim()
-    if (ip && !ip.startsWith("0.") && ip !== "127.0.0.1" && ip !== "::1") return ip
+  // L3: validate the value is a real IP before it reaches the outbound geo URL (XFF is spoofable —
+  // an attacker could otherwise inject path/query chars). isIP rejects anything that isn't IPv4/IPv6.
+  const valid = (s: string | null | undefined): string | null => {
+    const v = (s ?? "").trim()
+    return v && isIP(v) !== 0 && !v.startsWith("0.") && v !== "127.0.0.1" && v !== "::1" ? v : null
   }
-  return req.headers.get("cf-connecting-ip") ?? req.headers.get("x-real-ip") ?? null
+  const xff = req.headers.get("x-forwarded-for")
+  const first = xff ? valid(xff.split(",")[0]) : null
+  return first ?? valid(req.headers.get("cf-connecting-ip")) ?? valid(req.headers.get("x-real-ip"))
 }
 
 // Primary: ipapi.co (HTTPS, no key for low volume).

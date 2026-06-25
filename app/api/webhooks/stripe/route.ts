@@ -23,11 +23,13 @@ export async function POST(req: Request) {
     return new Response("Invalid webhook signature", { status: 400 })
   }
 
-  // Idempotency guard — redis.set NX returns "OK" when the key is newly set (first delivery)
-  // and null when the key already existed (duplicate). Skip if already processed.
+  // Idempotency guard (M1). Distinguish a genuine duplicate from Redis being unavailable: only a
+  // CONFIRMED duplicate is skipped. If Redis is down we still PROCESS the event (handlers are
+  // DB-idempotent) rather than silently dropping payment_failed / dispute / account.updated events
+  // with a 200 that makes Stripe stop retrying.
   const idempotencyKey = `stripe:processed:${event.id}`
-  const wasSet = await redis.set(idempotencyKey, "1", { nx: true, ex: 86400 })
-  if (wasSet === null) return new Response("Already processed", { status: 200 })
+  const acquired = await redis.acquireOnce(idempotencyKey, 86400)
+  if (acquired === "duplicate") return new Response("Already processed", { status: 200 })
 
   try {
     switch (event.type) {

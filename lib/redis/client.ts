@@ -60,6 +60,19 @@ export const redis = {
     if (!raw) throw new Error("Redis unavailable (REDIS_URL not set)")
     return raw.incr(key)
   },
+  // Idempotency acquire that DISTINGUISHES a genuine duplicate from Redis being unavailable, so
+  // callers (e.g. the Stripe webhook) can fail-OPEN (process the event) on "unavailable" instead of
+  // silently dropping it. (M1)
+  async acquireOnce(key: string, ttlSeconds: number): Promise<"acquired" | "duplicate" | "unavailable"> {
+    if (!raw) return "unavailable"
+    try {
+      const res = await raw.set(key, "1", "EX", ttlSeconds, "NX")
+      return res === "OK" ? "acquired" : "duplicate"
+    } catch (e) {
+      console.warn("[redis] acquireOnce failed:", (e as Error)?.message ?? e)
+      return "unavailable"
+    }
+  },
 }
 
 export interface RateLimiter {

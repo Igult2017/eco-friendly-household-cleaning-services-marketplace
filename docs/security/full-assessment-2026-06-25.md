@@ -131,3 +131,36 @@
 
 ## Outstanding — active & authenticated DAST
 This assessment is static + passive. To finish coverage: stand up a **local/staging** instance and run ZAP `full-scan` (active) plus an **authenticated** scan as customer/provider/admin to dynamically confirm the access-control findings and probe for anything missed. Never run active scans against production.
+
+---
+
+## Remediation status — applied 2026-06-25
+
+**Fixed in code (tsc-clean):**
+- **H1** — blog HTML sanitised on save + render (`sanitize-html` allow-list) + CSP added (Report-Only) + `X-Powered-By` removed.
+- **H2** — file proxy now authenticates + authorises private folders (uploader / admin / booking-or-dispute party); public asset folders stay open.
+- **H3** — provider job feed projected to board-safe fields + coarse locality (street/GPS/customerId no longer leaked pre-bid).
+- **H4** — capture requires the appointment time (or in_progress) + atomic conditional transition (no double-fire).
+- **H5** — Clerk webhook no longer accepts `role:"admin"` from the payload.
+- **H6** — `npm audit fix`: High CVEs 5 → 0 (12 moderate remain inside `arcjet` deps; need a breaking bump — tracked).
+- **M1** — Stripe webhook idempotency is tri-state; on Redis-unavailable it processes (DB-idempotent) instead of dropping the event.
+- **M2** — unsubscribe HMAC: no hardcoded fallback secret, full (untruncated) MAC.
+- **M4** — comment creation rate-limited (anti-spam).
+- **M5** — promo-code validation rate-limited (anti-enumeration).
+- **M6** — `profilePhotoUrl` restricted to our own storage (no arbitrary external URL).
+- **M7** — Pusher `private-booking-{id}` channel now authorised (customer/provider party) — booking chat works + is access-controlled.
+- **M8** — the 6 admin routes (errors, errors/[id]/resolve, promo-codes GET/POST + [id], reviews GET + [id]) now use the shared `requireAdmin()` (Clerk role + fallback) — no admin lockout.
+- **L2** — SetupIntent rate-limited. **L3** — geo IP validated with `net.isIP`. **L4** — before-photos + recurring UPDATEs scoped to owner. **L5** — addons gated on approved/active provider. **L9** — `X-Powered-By` off, locale cookie `Secure`+`SameSite`. **L10** — CSP (Report-Only).
+
+**Deliberately deferred / accepted (with rationale):**
+- **M3 (bid price binding)** — needs `bidId` threaded request → PaymentIntent metadata → `lib/bookings/create.ts` + a client change; risky to rush on the money path. Impact is **customer self-underpayment on a bid they legitimately won** (no platform loss, no cross-user impact). Recommended as a focused follow-up: carry `bidId`, validate it matches the service/job, set `bids.bookingId` to make bids single-use.
+- **L1 (stripe connect/identity role)** — left as-is: the existing `providers`-row scoping is the correct gate; an explicit `role==='provider'` check would wrongly block **dual-role** providers (whose role is `customer`).
+- **L6** (job view-count inflation), **L7** (recurring price tracks current basePrice — note: the discount is already clamped 0–50 in the schema), **L8** (refunds exclude the carbon offset — a product decision, favours platform) — low-impact; documented for a later pass.
+
+**Infrastructure findings (require action on the server — I can't change the VPS/Coolify):**
+- **INFRA-1 (Medium):** the **Coolify management API is exposed on `:8000` over plain HTTP** to the public internet. The bearer token would be interceptable. **Action:** firewall port 8000 to an IP allow-list (or put Coolify behind HTTPS + restrict access).
+- **INFRA-2 (Low):** SSH (22) is open — ensure key-only auth + fail2ban.
+- **Good:** Postgres/Redis/pgbouncer/app-direct are NOT externally reachable; TLS is 1.2/1.3-only with a valid cert.
+- **A09 (Low):** Sentry captures errors, but there's no dedicated **security** audit log/alerting (admin actions, repeated auth failures). Consider an audit-log table + alerts.
+
+**Still outstanding (needs a staging environment):** active + authenticated DAST. The code audit covered these classes statically; dynamic confirmation should run against staging, never prod.

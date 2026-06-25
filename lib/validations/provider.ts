@@ -10,7 +10,20 @@ export const providerProfileSchema = z.object({
   ecoLevel: z.enum(["basic", "certified", "premium", "zero_impact"]).default("basic"),
   latitude: z.number().min(-90).max(90).optional(),
   longitude: z.number().min(-180).max(180).optional(),
-  profilePhotoUrl: z.string().url().optional(),
+  // M6: only accept an uploaded file (our own storage / file proxy), not an arbitrary external URL
+  // (which would leak viewers' IP+UA to an attacker host and allow hotlinking). Enforced server-side;
+  // on the client R2_PUBLIC_URL is undefined so the check is skipped (server is authoritative).
+  profilePhotoUrl: z
+    .string()
+    .url()
+    .refine(
+      (u) => {
+        const base = process.env.R2_PUBLIC_URL
+        return !base || u.startsWith(base) || u.startsWith("/api/files/")
+      },
+      { message: "Profile photo must be an uploaded image" },
+    )
+    .optional(),
   // Cleaner-set loyalty discount applied to their recurring bookings (0–50%).
   recurringDiscountPct: z.number().int().min(0).max(50).optional(),
 })

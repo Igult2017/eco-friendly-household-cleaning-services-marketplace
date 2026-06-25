@@ -43,7 +43,7 @@ export async function PATCH(
         nextBookingAt: status === "cancelled" ? null : undefined,
         updatedAt: new Date(),
       })
-      .where(eq(recurringSchedules.id, scheduleId))
+      .where(and(eq(recurringSchedules.id, scheduleId), eq(recurringSchedules.customerId, userId))) // L4: scope to owner
 
     return NextResponse.json({ success: true })
   } catch (err) {

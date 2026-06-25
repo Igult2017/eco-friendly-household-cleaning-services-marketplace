@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
+import { requireAdmin } from "@/lib/auth/requireAdmin"
 import { db } from "@/lib/db"
 import { reviews } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
@@ -13,10 +13,8 @@ const patchSchema = z.object({
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { sessionClaims } = await auth()
-    if ((sessionClaims?.metadata as { role?: string } | undefined)?.role !== "admin") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
-    }
+    const admin = await requireAdmin()
+    if (admin instanceof NextResponse) return admin
 
     const { id } = await params
     const body = await req.json().catch(() => ({}))

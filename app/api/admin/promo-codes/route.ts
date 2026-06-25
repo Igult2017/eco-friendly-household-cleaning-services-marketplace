@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
+import { requireAdmin } from "@/lib/auth/requireAdmin"
 import { z } from "zod"
 import { db } from "@/lib/db"
 import { promoCodes } from "@/lib/db/schema"
@@ -17,10 +17,8 @@ const createSchema = z.object({
 
 export async function GET() {
   try {
-    const { sessionClaims } = await auth()
-    if ((sessionClaims?.metadata as { role?: string } | undefined)?.role !== "admin") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
-    }
+    const admin = await requireAdmin()
+    if (admin instanceof NextResponse) return admin
 
     const rows = await db.select().from(promoCodes).orderBy(desc(promoCodes.createdAt))
     return NextResponse.json({ promoCodes: rows })
@@ -32,11 +30,9 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const { userId, sessionClaims } = await auth()
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    if ((sessionClaims?.metadata as { role?: string } | undefined)?.role !== "admin") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
-    }
+    const admin = await requireAdmin()
+    if (admin instanceof NextResponse) return admin
+    const userId = admin.adminId
 
     const parsed = createSchema.safeParse(await req.json().catch(() => ({})))
     if (!parsed.success) {

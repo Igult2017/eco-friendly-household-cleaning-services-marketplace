@@ -143,10 +143,26 @@ export async function GET(req: Request) {
       const nearbyIds = nearbyRows.map((r: { id: string }) => r.id)
 
       // Step 2: fetch full job data with relations for the nearby IDs
-      const jobs = await db.query.jobPosts.findMany({
+      const rawJobs = await db.query.jobPosts.findMany({
         where: (jp: any, { inArray: inArrayFn }: any) => inArrayFn(jp.id, nearbyIds),
+        // H3: project only board-safe fields. customerId, exact serviceLatitude/Longitude,
+        // categoryId and acceptedBidId are deliberately NOT selected.
+        columns: {
+          id: true, title: true, description: true, status: true,
+          budgetMin: true, budgetMax: true, desiredDate: true, desiredTimeRange: true,
+          radiusKm: true, ecoRequirements: true, viewCount: true, expiresAt: true, createdAt: true,
+          serviceAddress: true, // reduced to coarse locality below
+        },
         with: { category: { columns: { name: true, slug: true } }, bids: { columns: { id: true, status: true, providerId: true } } },
       })
+      // H3: strip the street line + keep only city/postal/country until a bid is accepted, so
+      // providers can't scrape exact home addresses + GPS of every nearby customer (GDPR).
+      const jobs = rawJobs.map((j: any) => ({
+        ...j,
+        serviceAddress: j.serviceAddress
+          ? { city: j.serviceAddress.city ?? null, postalCode: j.serviceAddress.postalCode ?? null, country: j.serviceAddress.country ?? null }
+          : null,
+      }))
 
       // Increment view count — each provider load counts as an impression
       try {

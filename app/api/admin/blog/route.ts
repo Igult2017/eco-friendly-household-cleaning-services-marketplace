@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { blogPosts } from "@/lib/db/schema"
 import { eq, desc } from "drizzle-orm"
 import { z } from "zod"
+import { sanitizeBlogHtml } from "@/lib/security/sanitize"
 
 const blogSchema = z.object({
   title: z.string().min(3).max(300),
@@ -67,6 +68,7 @@ export async function POST(req: Request) {
 
     const [post] = await db.insert(blogPosts).values({
       ...data,
+      content: sanitizeBlogHtml(data.content), // strip XSS at rest (H1)
       coverImageUrl: data.coverImageUrl || null,
       authorName: data.authorName || null,
       authorId: adminId,

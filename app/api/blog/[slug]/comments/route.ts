@@ -4,8 +4,12 @@ import { db } from "@/lib/db"
 import { blogPosts, blogComments, users } from "@/lib/db/schema"
 import { eq, desc, and } from "drizzle-orm"
 import { z } from "zod"
+import { createRateLimiter, safeLimit } from "@/lib/redis/client"
 
 export const dynamic = "force-dynamic"
+
+// M4: throttle comment creation (anti-spam). Comments still auto-approve + show immediately.
+const commentRatelimit = createRateLimiter({ tokens: 5, windowSeconds: 3600, prefix: "ratelimit:comment" })
 
 export async function GET(_req: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
@@ -34,6 +38,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ slug: s
   try {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: "Sign in to comment" }, { status: 401 })
+
+    const { success } = await safeLimit(commentRatelimit, userId)
+    if (!success) return NextResponse.json({ error: "Too many comments. Please wait before posting again." }, { status: 429 })
 
     const { slug } = await params
     const body = await req.json().catch(() => ({}))

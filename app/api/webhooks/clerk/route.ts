@@ -9,7 +9,11 @@ const VALID_ROLES: UserRole[] = ["customer", "provider", "admin"]
 
 function resolveRole(publicMetadata: unknown): UserRole {
   const raw = (publicMetadata as { role?: string } | undefined)?.role
-  return VALID_ROLES.includes(raw as UserRole) ? (raw as UserRole) : "customer"
+  // H5: NEVER accept "admin" from a webhook payload. Admin is granted only via an authenticated
+  // admin action; a forged/replayed event (leaked signing secret) must not be able to provision a
+  // DB admin. Only the self-service onboarding roles are honoured here.
+  if (raw === "customer" || raw === "provider") return raw
+  return "customer"
 }
 
 export async function POST(req: NextRequest) {

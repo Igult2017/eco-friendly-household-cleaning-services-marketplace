@@ -9,5 +9,7 @@ export const routing = defineRouting({
   locales,
   defaultLocale,
   localePrefix: "as-needed",
-  localeCookie: { name: "locale" },
+  // L9 (ZAP): mark the locale cookie Secure in prod + SameSite=Lax. It's non-sensitive (language
+  // only) and resolved server-side, so this is safe and silences the cookie-flag findings.
+  localeCookie: { name: "locale", sameSite: "lax", secure: process.env.NODE_ENV === "production" },
 })

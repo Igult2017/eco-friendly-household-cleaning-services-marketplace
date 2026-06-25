@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
+import { requireAdmin } from "@/lib/auth/requireAdmin"
 import { db } from "@/lib/db"
 import { errorLogs } from "@/lib/db/schema"
 import { desc, isNull, isNotNull, eq, and, count, gte } from "drizzle-orm"
@@ -10,10 +10,8 @@ const VALID_FILTERS = ["unresolved", "resolved", "all"] as const
 
 export async function GET(req: Request) {
   try {
-    const { sessionClaims } = await auth()
-    if ((sessionClaims?.metadata as any)?.role !== "admin") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
-    }
+    const admin = await requireAdmin()
+    if (admin instanceof NextResponse) return admin
 
     const { searchParams } = new URL(req.url)
     const filter = searchParams.get("filter") ?? "unresolved"

@@ -4,16 +4,23 @@ import { z } from "zod"
 import { db } from "@/lib/db"
 import { promoCodes, promoCodeUsages } from "@/lib/db/schema"
 import { eq, and, ilike } from "drizzle-orm"
+import { createRateLimiter, safeLimit } from "@/lib/redis/client"
 
 const bodySchema = z.object({
   code: z.string(),
   orderAmountCents: z.number().int().positive(),
 })
 
+// M5: rate-limit validation so promo codes can't be brute-force enumerated/harvested.
+const promoValidateRatelimit = createRateLimiter({ tokens: 10, windowSeconds: 60, prefix: "ratelimit:promo-validate" })
+
 export async function POST(req: Request) {
   try {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+    const { success } = await safeLimit(promoValidateRatelimit, userId)
+    if (!success) return NextResponse.json({ error: "Too many attempts. Please wait a moment." }, { status: 429 })
 
     const parsed = bodySchema.safeParse(await req.json().catch(() => ({})))
     if (!parsed.success) {

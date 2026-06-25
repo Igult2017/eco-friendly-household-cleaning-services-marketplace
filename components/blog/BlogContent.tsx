@@ -1,5 +1,7 @@
-// Renders admin-authored HTML from Tiptap — admin-only content, low XSS risk.
-// Images, headings, YouTube iframes, bold, italic, lists all render correctly.
+import { sanitizeBlogHtml } from "@/lib/security/sanitize"
+
+// Renders admin-authored HTML from TipTap. The HTML is sanitised (allow-listed tags/attrs only;
+// <script>, event handlers and javascript: URLs stripped) to prevent stored XSS — H1 fix.
 export function BlogContent({ html }: { html: string }) {
   return (
     <div
@@ -12,7 +14,7 @@ export function BlogContent({ html }: { html: string }) {
         prose-blockquote:border-[#2D7A5F] prose-blockquote:text-[#6B7280]
         prose-code:bg-gray-100 prose-code:px-1.5 prose-code:rounded prose-code:text-sm
         [&_iframe]:w-full [&_iframe]:aspect-video [&_iframe]:rounded-xl [&_iframe]:my-4"
-      dangerouslySetInnerHTML={{ __html: html }}
+      dangerouslySetInnerHTML={{ __html: sanitizeBlogHtml(html) }}
     />
   )
 }

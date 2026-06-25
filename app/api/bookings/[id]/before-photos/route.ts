@@ -62,7 +62,7 @@ export async function POST(req: Request, { params }: Params) {
     await db
       .update(bookings)
       .set({ beforePhotoUrls: validUrls })
-      .where(eq(bookings.id, bookingId))
+      .where(and(eq(bookings.id, bookingId), eq(bookings.providerId, provider.id))) // L4: scope UPDATE to owner
 
     return NextResponse.json({ success: true })
   } catch (err) {

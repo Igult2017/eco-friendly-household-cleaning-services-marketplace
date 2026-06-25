@@ -1,15 +1,14 @@
-import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
+import { requireAdmin } from "@/lib/auth/requireAdmin"
 import { db } from "@/lib/db"
 import { errorLogs } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { userId, sessionClaims } = await auth()
-    if ((sessionClaims?.metadata as any)?.role !== "admin") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
-    }
+    const admin = await requireAdmin()
+    if (admin instanceof NextResponse) return admin
+    const userId = admin.adminId
 
     const { id } = await params
 

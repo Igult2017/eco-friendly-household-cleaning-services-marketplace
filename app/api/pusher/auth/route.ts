@@ -2,7 +2,7 @@ import { auth, clerkClient } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { pusherServer } from "@/lib/pusher/server"
 import { db } from "@/lib/db"
-import { providers } from "@/lib/db/schema"
+import { providers, bookings } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 
 export async function POST(req: Request) {
@@ -36,6 +36,15 @@ export async function POST(req: Request) {
       const providerId = channelName.replace("private-provider-", "")
       const [prov] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, userId))
       allowed = prov?.id === providerId
+    } else if (channelName.startsWith("private-booking-")) {
+      // M7: booking chat — only the booking's customer or its provider may subscribe.
+      const bookingId = channelName.replace("private-booking-", "")
+      const [b] = await db
+        .select({ customerId: bookings.customerId, providerUserId: providers.userId })
+        .from(bookings)
+        .leftJoin(providers, eq(bookings.providerId, providers.id))
+        .where(eq(bookings.id, bookingId))
+      allowed = !!b && (b.customerId === userId || b.providerUserId === userId)
     }
 
     if (!allowed) return new NextResponse("Forbidden", { status: 403 })
