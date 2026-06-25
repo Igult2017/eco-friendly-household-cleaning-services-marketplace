@@ -240,5 +240,8 @@ export default async function middleware(req: NextRequest, event: NextFetchEvent
 export const config = {
   matcher: [
     "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|manifest.webmanifest|llms.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|txt|xml|webmanifest)$).*)",
+    // Always run middleware for API routes — even file-extension paths like /api/files/x.jpg — so
+    // the Clerk auth() context is available in the handler (the proxy authorizes private files).
+    "/api/(.*)",
   ],
 }
