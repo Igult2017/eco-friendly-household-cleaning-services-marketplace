@@ -1,10 +1,27 @@
-import { currentUser } from "@clerk/nextjs/server"
+import { auth, currentUser } from "@clerk/nextjs/server"
+import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { OnboardingForm } from "./OnboardingForm"
 
+const VALID_ROLES = ["customer", "provider", "admin"]
+
 export default async function OnboardingPage() {
-  const user = await currentUser()
-  const role = user?.publicMetadata?.role as string | undefined
+  const [user, { userId, sessionClaims }] = await Promise.all([currentUser(), auth()])
+
+  // Resolve the role from EVERY available source before deciding to show the chooser. The prod
+  // session token doesn't carry the role claim, so a momentary publicMetadata read miss (Clerk API
+  // slow/erroring on the single VPS) must not wrongly show onboarding to a user who already has a
+  // role. Order: live publicMetadata → JWT claim → dorix_role cookie.
+  let role =
+    (user?.publicMetadata?.role as string | undefined) ??
+    (sessionClaims?.metadata as { role?: string } | undefined)?.role
+  if (!role && userId) {
+    const ck = (await cookies()).get("dorix_role")?.value
+    if (ck) {
+      const [cookieUserId, cookieRole] = ck.split(":")
+      if (cookieUserId === userId && VALID_ROLES.includes(cookieRole)) role = cookieRole
+    }
+  }
 
   if (role === "provider") redirect("/provider/dashboard")
   if (role === "customer") redirect("/dashboard")
