@@ -4,15 +4,15 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth, clerkClient } from "@clerk/nextjs/server"
 import { generatePresignedDownloadUrl } from "@/lib/r2/client"
 import { db } from "@/lib/db"
-import { bookings, providers, disputes } from "@/lib/db/schema"
+import { bookings, providers, disputes, blogPosts } from "@/lib/db/schema"
 import { and, or, eq, sql } from "drizzle-orm"
 
 // File proxy for a PRIVATE S3/B2 bucket. Stored file URLs point at /api/files/<key>; this signs a
 // short-lived GET URL and 302-redirects, so the actual bytes are served by B2 (egress stays off the
 // VPS) while the bucket stays private. Keys are `{folder}/{userId}/{nanoid}.{ext}`.
 //
-// H2 fix: keys are NOT bearer capabilities. Public-asset folders (profile photos, blog images shown
-// on logged-out pages) stay open; private folders require authentication AND authorization — the
+// H2: keys are NOT bearer capabilities. Public-asset folders (profile photos, blog images shown on
+// logged-out pages) stay open; private folders require authentication AND authorization — the
 // uploader, an admin, or a party to the booking/dispute that references the file.
 const PUBLIC_FOLDERS = new Set(["avatars", "blog-images", "blog-covers", "hero"])
 
@@ -28,6 +28,19 @@ async function isAdmin(userId: string, sessionClaims: unknown): Promise<boolean>
     }
   }
   return role === "admin"
+}
+
+// A PUBLISHED blog post's cover image is public, even if it was uploaded into a folder we otherwise
+// treat as private (legacy covers landed in "completions/" before "blog-covers" was an allowed folder).
+async function isPublishedBlogCover(objectKey: string): Promise<boolean> {
+  const base = (process.env.R2_PUBLIC_URL ?? "").replace(/\/$/, "")
+  const url = `${base}/${objectKey}`
+  const [post] = await db
+    .select({ id: blogPosts.id })
+    .from(blogPosts)
+    .where(and(eq(blogPosts.coverImageUrl, url), eq(blogPosts.status, "published")))
+    .limit(1)
+  return !!post
 }
 
 // Is `userId` a customer/provider party to a booking (completion/before photos) or dispute (evidence)
@@ -74,9 +87,11 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ key
   if (!objectKey) return NextResponse.json({ error: "Not found" }, { status: 404 })
 
   const folder = key?.[0] ?? ""
-  const isPublic = PUBLIC_FOLDERS.has(folder)
+  let isPublicAsset = PUBLIC_FOLDERS.has(folder)
+  // Legacy/edge: a published blog cover is public wherever it was stored.
+  if (!isPublicAsset && (await isPublishedBlogCover(objectKey))) isPublicAsset = true
 
-  if (!isPublic) {
+  if (!isPublicAsset) {
     const { userId, sessionClaims } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     const ownerId = key?.[1] ?? ""
@@ -93,7 +108,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ key
       status: 302,
       headers: {
         Location: signed,
-        "Cache-Control": isPublic ? "public, max-age=600" : "private, max-age=60",
+        "Cache-Control": isPublicAsset ? "public, max-age=600" : "private, max-age=60",
       },
     })
   } catch {
