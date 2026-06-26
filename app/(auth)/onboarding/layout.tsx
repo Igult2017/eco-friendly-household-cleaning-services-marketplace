@@ -16,7 +16,7 @@ export default async function OnboardingLayout({ children }: { children: React.R
           {t("back")}
         </Link>
         <Link href="/">
-          <Image src="/logo.png" alt="DORIXÉ" width={110} height={40} priority />
+          <Image src="/logo.png" alt="DORIXÉ" width={110} height={29} priority />
         </Link>
       </header>
       <main className="flex-1 flex items-start justify-center py-12 px-4">
