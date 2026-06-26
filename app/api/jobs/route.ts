@@ -129,18 +129,39 @@ export async function GET(req: Request) {
       const providerLng = provider.longitude
       const radiusMeters = (provider.serviceRadiusKm ?? 25) * 1000
 
-      // Step 1: get nearby job IDs ordered by distance via PostGIS (service_location added in migration 0001)
-      // Fraud prevention: dual-role users cannot bid on jobs they posted as customers.
-      const nearbyRows = await db
-        .select({ id: jobPosts.id })
-        .from(jobPosts)
-        .where(and(
-          inArray(jobPosts.status, ["open", "bidding"]),
-          sql`customer_id != ${userId}`,
-          sql`service_location IS NOT NULL AND ST_DWithin(service_location::geography, ST_MakePoint(${providerLng}, ${providerLat})::geography, ${radiusMeters})`,
-        ))
-        .orderBy(sql`ST_Distance(service_location::geography, ST_MakePoint(${providerLng}, ${providerLat})::geography)`)
-        .limit(30)
+      // Step 1: get nearby job IDs. PostGIS path (fast, indexed) with a pure-SQL Haversine
+      // bounding-box fallback for servers where PostGIS isn't installed — WITHOUT this the entire
+      // provider job feed 500s and cleaners see no jobs to bid on. Mirrors lib/db/queries/geo.ts.
+      // Fraud prevention (both paths): users cannot bid on jobs they posted as customers.
+      let nearbyRows: { id: string }[]
+      try {
+        nearbyRows = await db
+          .select({ id: jobPosts.id })
+          .from(jobPosts)
+          .where(and(
+            inArray(jobPosts.status, ["open", "bidding"]),
+            sql`customer_id != ${userId}`,
+            sql`service_location IS NOT NULL AND ST_DWithin(service_location::geography, ST_MakePoint(${providerLng}, ${providerLat})::geography, ${radiusMeters})`,
+          ))
+          .orderBy(sql`ST_Distance(service_location::geography, ST_MakePoint(${providerLng}, ${providerLat})::geography)`)
+          .limit(30)
+      } catch {
+        // PostGIS not available — fall back to a lat/lng bounding box on the plain columns.
+        const radiusKmVal = provider.serviceRadiusKm ?? 25
+        const latDelta = radiusKmVal / 111.32
+        const lngDelta = radiusKmVal / (111.32 * Math.cos((providerLat * Math.PI) / 180))
+        nearbyRows = await db
+          .select({ id: jobPosts.id })
+          .from(jobPosts)
+          .where(and(
+            inArray(jobPosts.status, ["open", "bidding"]),
+            sql`customer_id != ${userId}`,
+            sql`service_latitude BETWEEN ${providerLat - latDelta} AND ${providerLat + latDelta}`,
+            sql`service_longitude BETWEEN ${providerLng - lngDelta} AND ${providerLng + lngDelta}`,
+          ))
+          .orderBy(desc(jobPosts.createdAt))
+          .limit(30)
+      }
 
       if (nearbyRows.length === 0) return NextResponse.json({ jobs: [] })
 
