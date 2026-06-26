@@ -5,6 +5,7 @@ import { reviews, bookings, providers } from "@/lib/db/schema"
 import type { NewReview } from "@/lib/db/schema/reviews"
 import { eq, and, avg, count } from "drizzle-orm"
 import { z } from "zod"
+import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
 
 const reviewSchema = z.object({
   bookingId: z.string().uuid(),
@@ -21,6 +22,9 @@ export async function POST(req: Request) {
   try {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+    const { success: rlOk } = await safeLimit(bookingActionRatelimit, userId)
+    if (!rlOk) return NextResponse.json({ error: "Too many requests. Please slow down." }, { status: 429 })
 
     const body = await req.json().catch(() => ({}))
     const parsed = reviewSchema.safeParse(body)

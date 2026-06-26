@@ -242,6 +242,22 @@ END $$;
 -- open/bidding posts' expiry far into the future so they don't lapse under the old 72h rule.
 UPDATE job_posts SET expires_at = NOW() + INTERVAL '100 years'
   WHERE status IN ('open','bidding') AND expires_at < NOW() + INTERVAL '90 years';
+
+-- Prevent OVERLAPPING bookings for the same cleaner at the DB level. The unique index only blocks
+-- identical start times; this exclusion constraint also closes the concurrent-overlap race the
+-- app-level check can't. Needs btree_gist (for '=' on provider_id within a gist exclusion); both
+-- statements are exception-safe so a deploy never fails if the extension/constraint can't be added.
+DO $$ BEGIN CREATE EXTENSION IF NOT EXISTS btree_gist; EXCEPTION WHEN OTHERS THEN RAISE NOTICE '[ensure] btree_gist unavailable: %', SQLERRM; END $$;
+DO $$ BEGIN
+  ALTER TABLE bookings ADD CONSTRAINT bookings_no_overlap
+    EXCLUDE USING gist (
+      provider_id WITH =,
+      tstzrange(scheduled_at, COALESCE(scheduled_end_at, scheduled_at + INTERVAL '2 hours')) WITH &&
+    ) WHERE (status IN ('payment_authorized','confirmed','in_progress','pending_capture'));
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+  WHEN OTHERS THEN RAISE NOTICE '[ensure] bookings_no_overlap not added: %', SQLERRM;
+END $$;
 `
 
 function isValidUrl(url) {

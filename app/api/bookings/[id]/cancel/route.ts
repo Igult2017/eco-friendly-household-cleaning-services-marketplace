@@ -5,11 +5,15 @@ import { bookings, payments, providers } from "@/lib/db/schema"
 import { stripe } from "@/lib/stripe/client"
 import { calculateRefundAmount, calculateRefundPercent } from "@/lib/utils/refunds"
 import { eq, and } from "drizzle-orm"
+import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+    const { success: rlOk } = await safeLimit(bookingActionRatelimit, userId)
+    if (!rlOk) return NextResponse.json({ error: "Too many requests. Please slow down." }, { status: 429 })
 
     const { id: bookingId } = await params
     const { reason } = await req.json().catch(() => ({} as { reason?: string }))

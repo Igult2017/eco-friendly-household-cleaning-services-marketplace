@@ -178,7 +178,9 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     // A concurrent same-slot booking that slipped past the overlap check loses the unique-index
     // race; release the loser's payment hold and surface a clean conflict instead of a 500.
     const pgErr = err as { code?: string; message?: string }
-    if (pgErr?.code === "23505" || pgErr?.message?.includes("duplicate")) {
+    // 23505 = unique-index race (identical start time); 23P01 = exclusion-constraint race
+    // (overlapping window). Either way the slot is taken — release the hold + return 409.
+    if (pgErr?.code === "23505" || pgErr?.code === "23P01" || /duplicate|exclusion|conflicting/i.test(pgErr?.message ?? "")) {
       await cancel(409, "That time slot was just taken. Please choose a different time.")
     }
     throw err

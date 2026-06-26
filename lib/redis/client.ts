@@ -100,6 +100,9 @@ export const geoSearchRatelimit = createRateLimiter({ tokens: 30, windowSeconds:
 export const uploadRatelimit    = createRateLimiter({ tokens: 20, windowSeconds: 3600, prefix: "ratelimit:upload" })
 export const jobRatelimit       = createRateLimiter({ tokens: 5,  windowSeconds: 600,  prefix: "ratelimit:job" })
 export const bidRatelimit       = createRateLimiter({ tokens: 10, windowSeconds: 300,  prefix: "ratelimit:bid" })
+// Shared limiter for sensitive booking mutations (complete/cancel/reschedule/dispute/review):
+// 20 actions/min per user — generous for real use, blunts abuse of the Stripe + notification paths.
+export const bookingActionRatelimit = createRateLimiter({ tokens: 20, windowSeconds: 60, prefix: "ratelimit:booking-action" })
 
 /**
  * Run a rate-limit check that NEVER throws. If Redis is unreachable, fail OPEN
