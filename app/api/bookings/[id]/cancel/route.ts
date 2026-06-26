@@ -6,6 +6,7 @@ import { stripe } from "@/lib/stripe/client"
 import { calculateRefundAmount, calculateRefundPercent } from "@/lib/utils/refunds"
 import { eq, and } from "drizzle-orm"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
+import { isUuid } from "@/lib/utils/uuid"
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -16,6 +17,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     if (!rlOk) return NextResponse.json({ error: "Too many requests. Please slow down." }, { status: 429 })
 
     const { id: bookingId } = await params
+    if (!isUuid(bookingId)) return NextResponse.json({ error: "Invalid booking id" }, { status: 400 })
     const { reason } = await req.json().catch(() => ({} as { reason?: string }))
 
     const [booking] = await db

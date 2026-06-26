@@ -5,6 +5,7 @@ import { db } from "@/lib/db"
 import { bookings, notifications, providerAvailability, providers } from "@/lib/db/schema"
 import { eq, and, inArray, gte, lte, ne } from "drizzle-orm"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
+import { isUuid } from "@/lib/utils/uuid"
 
 const rescheduleSchema = z.object({
   newScheduledAt: z.string().datetime(),
@@ -20,6 +21,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     if (!rlOk) return NextResponse.json({ error: "Too many requests. Please slow down." }, { status: 429 })
 
     const { id: bookingId } = await params
+    if (!isUuid(bookingId)) return NextResponse.json({ error: "Invalid booking id" }, { status: 400 })
 
     const [booking] = await db
       .select({
@@ -36,6 +38,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     if (!["payment_authorized", "confirmed"].includes(booking.status)) {
       return NextResponse.json({ error: "Booking cannot be rescheduled in its current status" }, { status: 422 })
+    }
+
+    // Prevent dodging the cancellation-fee window via endless free reschedules: can't reschedule
+    // within 12 hours of the current appointment (cancel instead).
+    const hoursUntilCurrent = (new Date(booking.scheduledAt).getTime() - Date.now()) / 3_600_000
+    if (hoursUntilCurrent < 12) {
+      return NextResponse.json({ error: "Bookings can't be rescheduled within 12 hours of the appointment — please cancel instead." }, { status: 422 })
     }
 
     const body = await req.json().catch(() => ({}))

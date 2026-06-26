@@ -16,8 +16,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     const { id: reviewId } = await params
 
-    const [provider] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, userId))
-    if (!provider) return NextResponse.json({ error: "Not a provider" }, { status: 403 })
+    const [provider] = await db.select({ id: providers.id }).from(providers).where(and(eq(providers.userId, userId), eq(providers.isSuspended, false)))
+    if (!provider) return NextResponse.json({ error: "Not a provider or account suspended" }, { status: 403 })
 
     const [review] = await db.select({ id: reviews.id, providerId: reviews.providerId }).from(reviews).where(eq(reviews.id, reviewId))
     if (!review || review.providerId !== provider.id) return NextResponse.json({ error: "Not authorized" }, { status: 403 })

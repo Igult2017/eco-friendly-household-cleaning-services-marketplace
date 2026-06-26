@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { providers, bookings, customerReviews } from "@/lib/db/schema"
-import { eq } from "drizzle-orm"
+import { eq, and } from "drizzle-orm"
 import { z } from "zod"
 
 const schema = z.object({
@@ -17,8 +17,8 @@ export async function POST(req: Request) {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-    const [provider] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, userId))
-    if (!provider) return NextResponse.json({ error: "Not a provider" }, { status: 403 })
+    const [provider] = await db.select({ id: providers.id }).from(providers).where(and(eq(providers.userId, userId), eq(providers.isSuspended, false)))
+    if (!provider) return NextResponse.json({ error: "Not a provider or account suspended" }, { status: 403 })
 
     const parsed = schema.safeParse(await req.json().catch(() => ({})))
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })

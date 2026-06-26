@@ -5,6 +5,7 @@ import { bookings, payments, providers } from "@/lib/db/schema"
 import { eq, and, inArray } from "drizzle-orm"
 import { inngest } from "@/lib/inngest/client"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
+import { isUuid } from "@/lib/utils/uuid"
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -15,6 +16,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     if (!rlOk) return NextResponse.json({ error: "Too many requests. Please slow down." }, { status: 429 })
 
     const { id: bookingId } = await params
+    if (!isUuid(bookingId)) return NextResponse.json({ error: "Invalid booking id" }, { status: 400 })
 
     // Bug 7: fail loudly if R2 is not configured — silent filtering would drop all photos
     const R2_BASE = process.env.R2_PUBLIC_URL

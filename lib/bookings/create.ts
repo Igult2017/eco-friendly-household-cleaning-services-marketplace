@@ -9,7 +9,15 @@ import { eq, and, sql, inArray, lte, gte } from "drizzle-orm"
 import type { CreateBookingInput } from "@/lib/validations/booking"
 
 async function generateBookingNumber(): Promise<string> {
-  const seq = await redis.incr("booking:seq")
+  let seq: number
+  try {
+    seq = await redis.incr("booking:seq")
+  } catch {
+    // Redis outage — fall back to a DB sequence (created in the ensure-script, started high to avoid
+    // colliding with the Redis-issued range) so booking creation doesn't 500 while Redis is down.
+    const rows = await db.execute(sql`SELECT nextval('booking_seq') AS seq`)
+    seq = Number((rows as unknown as Array<{ seq: string | number }>)[0]?.seq ?? Date.now())
+  }
   return `BK-${new Date().getFullYear()}-${String(seq).padStart(6, "0")}`
 }
 

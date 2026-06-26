@@ -258,6 +258,10 @@ EXCEPTION
   WHEN duplicate_object THEN NULL;
   WHEN OTHERS THEN RAISE NOTICE '[ensure] bookings_no_overlap not added: %', SQLERRM;
 END $$;
+
+-- Booking-number fallback sequence (used by createBooking when Redis is unavailable). Started high
+-- so its range can't collide with the existing Redis-issued booking numbers.
+CREATE SEQUENCE IF NOT EXISTS booking_seq START WITH 500000;
 `
 
 function isValidUrl(url) {
