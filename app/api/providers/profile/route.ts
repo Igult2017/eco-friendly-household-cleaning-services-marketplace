@@ -70,17 +70,17 @@ export async function PATCH(req: Request) {
     if (data.profilePhotoUrl !== undefined) updateFields.profilePhotoUrl = data.profilePhotoUrl
     if ("carbonOffsetEnabled" in body) updateFields.carbonOffsetEnabled = Boolean(body.carbonOffsetEnabled)
 
-    // Auto-geocode when address fields change
-    if (data.city || data.postalCode || data.country) {
-      const [existing] = await db
-        .select({ city: providers.city, postalCode: providers.postalCode, country: providers.country })
-        .from(providers)
-        .where(eq(providers.userId, userId))
+    // Single existence check — also feeds address fallback for geocoding + the upsert branch below.
+    const [existing] = await db
+      .select({ id: providers.id, city: providers.city, postalCode: providers.postalCode, country: providers.country })
+      .from(providers)
+      .where(eq(providers.userId, userId))
 
+    // Auto-geocode when address fields are present
+    if (data.city || data.postalCode || data.country) {
       const city = data.city ?? existing?.city ?? ""
       const postalCode = data.postalCode ?? existing?.postalCode ?? ""
       const country = data.country ?? existing?.country ?? "DE"
-
       if (city && postalCode) {
         const coords = await geocode(city, postalCode, country)
         if (coords) {
@@ -94,9 +94,47 @@ export async function PATCH(req: Request) {
     if (data.latitude !== undefined) updateFields.latitude = data.latitude
     if (data.longitude !== undefined) updateFields.longitude = data.longitude
 
-    await db.update(providers).set(updateFields).where(eq(providers.userId, userId))
+    if (existing) {
+      await db.update(providers).set(updateFields).where(eq(providers.userId, userId))
+      return NextResponse.json({ success: true })
+    }
 
-    return NextResponse.json({ success: true })
+    // No provider row yet — create one. This is the path an admin or dual-role user hits when
+    // setting up their cleaner account from the profile page for the first time. Previously the
+    // UPDATE matched 0 rows and silently "saved" nothing. Gate creation to cleaner-eligible users.
+    const [dbUser] = await db
+      .select({ role: users.role, dualRoleEnabled: users.dualRoleEnabled })
+      .from(users)
+      .where(eq(users.id, userId))
+    const eligible = !!dbUser && (dbUser.role === "admin" || dbUser.role === "provider" || dbUser.dualRoleEnabled === true)
+    if (!eligible) return NextResponse.json({ error: "Not eligible to set up a cleaner profile" }, { status: 403 })
+    if (!data.businessName || !data.country) {
+      return NextResponse.json({ error: "Business name and country are required to create your cleaner profile" }, { status: 400 })
+    }
+
+    const insertData: NewProvider = {
+      userId,
+      slug: toSlug(data.businessName, nanoid(6)),
+      businessName: data.businessName,
+      bio: data.bio ?? null,
+      city: data.city ?? null,
+      postalCode: data.postalCode ?? null,
+      country: data.country,
+      serviceRadiusKm: data.serviceRadiusKm ?? 25,
+      ecoLevel: data.ecoLevel ?? "basic",
+      recurringDiscountPct: data.recurringDiscountPct ?? 0,
+      carbonOffsetEnabled: Boolean(body.carbonOffsetEnabled),
+      profilePhotoUrl: data.profilePhotoUrl ?? null,
+      latitude: (updateFields.latitude as number | undefined) ?? null,
+      longitude: (updateFields.longitude as number | undefined) ?? null,
+      // An admin setting up their OWN cleaner account is trusted → approve immediately so they
+      // can operate/test as a cleaner. Everyone else stays unapproved (normal approval path).
+      isApproved: dbUser.role === "admin",
+      isSuspended: false,
+    }
+    await db.insert(providers).values(insertData)
+
+    return NextResponse.json({ success: true, created: true }, { status: 201 })
   } catch (err) {
     console.error("[providers/profile PATCH]", err)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
