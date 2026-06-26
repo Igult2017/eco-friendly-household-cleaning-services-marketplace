@@ -1029,7 +1029,18 @@
     "messageLabel": "Messaggio al cliente",
     "messagePlaceholder": "Perché dovrebbero scegliere te? Il tuo approccio, le tue credenziali ecologiche...",
     "submitting": "Invio in corso...",
-    "submitBid": "Invia offerta"
+    "submitBid": "Invia offerta",
+    "noLocationTitle": "Aggiungi la tua zona di servizio",
+    "noLocationBody": "Indica la tua città e il CAP nel tuo profilo così possiamo abbinarti a lavori di pulizia vicino a te.",
+    "noLocationCta": "Aggiorna profilo",
+    "notActiveTitle": "Completa il tuo profilo da addetto alle pulizie",
+    "notActiveBody": "Il tuo profilo non è ancora attivo. Compila i tuoi dati e servizi per iniziare a ricevere richieste di lavoro.",
+    "notActiveCta": "Completa profilo",
+    "noneNearbyTitle": "Ancora nessun lavoro nella tua zona",
+    "noneNearbyBody": "Ci sono lavori aperti, ma al momento nessuno nel tuo raggio di servizio. Puoi ampliare il raggio di servizio nel tuo profilo.",
+    "noneNearbyCta": "Modifica raggio di servizio",
+    "onlyOwnTitle": "Ancora nessun lavoro per cui fare offerte",
+    "onlyOwnBody": "Gli unici lavori aperti al momento sono quelli che hai pubblicato tu — non puoi fare offerte sui tuoi lavori. I nuovi lavori di altri clienti appariranno qui."
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifiche",

@@ -1029,7 +1029,18 @@
     "messageLabel": "Message to client",
     "messagePlaceholder": "Why should they choose you? Your approach, eco credentials...",
     "submitting": "Submitting...",
-    "submitBid": "Submit Bid"
+    "submitBid": "Submit Bid",
+    "noLocationTitle": "Add your service area",
+    "noLocationBody": "Set your city and postcode in your profile so we can match you with cleaning jobs near you.",
+    "noLocationCta": "Update profile",
+    "notActiveTitle": "Complete your cleaner profile",
+    "notActiveBody": "Your cleaner profile isn't active yet. Fill in your details and services to start receiving job requests.",
+    "notActiveCta": "Complete profile",
+    "noneNearbyTitle": "No jobs in your area yet",
+    "noneNearbyBody": "There are open jobs, but none within your service radius right now. You can widen your service radius in your profile.",
+    "noneNearbyCta": "Adjust service radius",
+    "onlyOwnTitle": "No jobs to bid on yet",
+    "onlyOwnBody": "The only open jobs right now are ones you posted — you can't bid on your own jobs. New jobs from other clients will appear here."
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifications",

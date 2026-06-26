@@ -1029,7 +1029,18 @@
     "messageLabel": "Message au client",
     "messagePlaceholder": "Pourquoi devraient-ils vous choisir ? Votre approche, vos références écologiques...",
     "submitting": "Envoi en cours...",
-    "submitBid": "Envoyer l'offre"
+    "submitBid": "Envoyer l'offre",
+    "noLocationTitle": "Ajoutez votre zone d'intervention",
+    "noLocationBody": "Indiquez votre ville et votre code postal dans votre profil afin que nous puissions vous proposer des missions de ménage près de chez vous.",
+    "noLocationCta": "Mettre à jour le profil",
+    "notActiveTitle": "Complétez votre profil de nettoyeur",
+    "notActiveBody": "Votre profil de nettoyeur n'est pas encore actif. Complétez vos informations et vos services pour commencer à recevoir des demandes.",
+    "notActiveCta": "Compléter le profil",
+    "noneNearbyTitle": "Pas encore de missions dans votre secteur",
+    "noneNearbyBody": "Des missions sont ouvertes, mais aucune dans votre rayon d'intervention pour le moment. Vous pouvez élargir votre rayon d'intervention dans votre profil.",
+    "noneNearbyCta": "Ajuster le rayon d'intervention",
+    "onlyOwnTitle": "Pas encore de missions à proposer",
+    "onlyOwnBody": "Les seules missions ouvertes actuellement sont celles que vous avez publiées — vous ne pouvez pas enchérir sur vos propres missions. Les nouvelles missions d'autres clients apparaîtront ici."
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifications",

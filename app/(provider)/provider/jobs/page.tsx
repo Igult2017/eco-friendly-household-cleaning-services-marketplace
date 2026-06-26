@@ -11,6 +11,7 @@ import { formatCurrency } from "@/lib/utils/formatCurrency"
 import { formatDate } from "@/lib/utils/formatDate"
 import { Loader2, MapPin, Clock, Euro, CheckCircle2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import Link from "next/link"
 
 interface JobPost {
   id: string
@@ -31,6 +32,7 @@ interface JobPost {
 export default function ProviderJobsPage() {
   const t = useTranslations("providerProviderJobsPage")
   const [jobs, setJobs] = useState<JobPost[]>([])
+  const [reason, setReason] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [bidding, setBidding] = useState<string | null>(null)
   const [submitted, setSubmitted] = useState<Set<string>>(new Set())
@@ -41,7 +43,7 @@ export default function ProviderJobsPage() {
   useEffect(() => {
     fetch("/api/jobs?forProvider=true")
       .then((r) => r.json())
-      .then((d) => setJobs(d.jobs ?? []))
+      .then((d) => { setJobs(d.jobs ?? []); setReason(d.reason ?? null) })
       .finally(() => setLoading(false))
   }, [])
 
@@ -90,6 +92,19 @@ export default function ProviderJobsPage() {
     } finally { setSubmitting(false) }
   }
 
+  // Reason-specific empty state so a cleaner always learns WHY there are no jobs (and what to do),
+  // instead of a blank board. "only_own"/"none_posted" stay the friendly default — own jobs are
+  // hidden by design and need no prompt.
+  function emptyContent() {
+    switch (reason) {
+      case "no_location": return { title: t("noLocationTitle"), body: t("noLocationBody"), ctaLabel: t("noLocationCta") as string | null, href: "/provider/profile" as string | null }
+      case "not_active": return { title: t("notActiveTitle"), body: t("notActiveBody"), ctaLabel: t("notActiveCta") as string | null, href: "/provider/profile" as string | null }
+      case "none_nearby": return { title: t("noneNearbyTitle"), body: t("noneNearbyBody"), ctaLabel: t("noneNearbyCta") as string | null, href: "/provider/profile" as string | null }
+      case "only_own": return { title: t("onlyOwnTitle"), body: t("onlyOwnBody"), ctaLabel: null as string | null, href: null as string | null }
+      default: return { title: t("emptyTitle"), body: t("emptyDescription"), ctaLabel: null as string | null, href: null as string | null }
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#F4FAF6] flex items-center justify-center">
@@ -106,13 +121,21 @@ export default function ProviderJobsPage() {
           <p className="text-[#6B7280] text-sm mt-1">{t("pageSubtitle")}</p>
         </div>
 
-        {jobs.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-2xl border border-[#E5EBF0]">
-            <Clock size={48} className="mx-auto text-[#9CA3AF] mb-4" />
-            <h2 className="font-serif text-xl font-bold text-[#2B3441] mb-2">{t("emptyTitle")}</h2>
-            <p className="text-[#6B7280]">{t("emptyDescription")}</p>
-          </div>
-        ) : (
+        {jobs.length === 0 ? (() => {
+          const e = emptyContent()
+          return (
+            <div className="text-center py-16 px-6 bg-white rounded-2xl border border-[#E5EBF0]">
+              <Clock size={48} className="mx-auto text-[#9CA3AF] mb-4" />
+              <h2 className="font-serif text-xl font-bold text-[#2B3441] mb-2">{e.title}</h2>
+              <p className="text-[#6B7280] max-w-md mx-auto">{e.body}</p>
+              {e.href && e.ctaLabel && (
+                <Link href={e.href} className="inline-flex items-center justify-center mt-6 h-10 px-5 rounded-lg bg-[#2D7A5F] hover:bg-[#235f49] text-white text-sm font-medium transition-all">
+                  {e.ctaLabel}
+                </Link>
+              )}
+            </div>
+          )
+        })() : (
           <div className="space-y-4">
             {jobs.map((job) => {
               const alreadyBid = submitted.has(job.id)

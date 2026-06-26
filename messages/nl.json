@@ -1029,7 +1029,18 @@
     "messageLabel": "Bericht aan de klant",
     "messagePlaceholder": "Waarom zouden ze voor jou moeten kiezen? Jouw aanpak, je eco-referenties...",
     "submitting": "Bezig met indienen...",
-    "submitBid": "Bod indienen"
+    "submitBid": "Bod indienen",
+    "noLocationTitle": "Voeg je servicegebied toe",
+    "noLocationBody": "Vul je stad en postcode in je profiel in, zodat we je kunnen koppelen aan schoonmaakklussen bij jou in de buurt.",
+    "noLocationCta": "Profiel bijwerken",
+    "notActiveTitle": "Maak je schoonmaakprofiel compleet",
+    "notActiveBody": "Je schoonmaakprofiel is nog niet actief. Vul je gegevens en diensten in om klusaanvragen te ontvangen.",
+    "notActiveCta": "Profiel voltooien",
+    "noneNearbyTitle": "Nog geen klussen in jouw buurt",
+    "noneNearbyBody": "Er zijn openstaande klussen, maar momenteel geen binnen je servicestraal. Je kunt je servicestraal in je profiel vergroten.",
+    "noneNearbyCta": "Servicestraal aanpassen",
+    "onlyOwnTitle": "Nog geen klussen om op te bieden",
+    "onlyOwnBody": "De enige openstaande klussen op dit moment zijn die jij hebt geplaatst — je kunt niet bieden op je eigen klussen. Nieuwe klussen van andere klanten verschijnen hier."
   },
   "providerProviderNotificationsPage": {
     "heading": "Meldingen",

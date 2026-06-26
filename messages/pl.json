@@ -1029,7 +1029,18 @@
     "messageLabel": "Wiadomość do klienta",
     "messagePlaceholder": "Dlaczego mieliby wybrać właśnie Ciebie? Twoje podejście, referencje ekologiczne...",
     "submitting": "Wysyłanie...",
-    "submitBid": "Wyślij ofertę"
+    "submitBid": "Wyślij ofertę",
+    "noLocationTitle": "Dodaj swój obszar usług",
+    "noLocationBody": "Podaj swoje miasto i kod pocztowy w profilu, abyśmy mogli dopasować Cię do zleceń sprzątania w pobliżu.",
+    "noLocationCta": "Zaktualizuj profil",
+    "notActiveTitle": "Uzupełnij profil osoby sprzątającej",
+    "notActiveBody": "Twój profil nie jest jeszcze aktywny. Uzupełnij swoje dane i usługi, aby zacząć otrzymywać zlecenia.",
+    "notActiveCta": "Uzupełnij profil",
+    "noneNearbyTitle": "Brak zleceń w Twojej okolicy",
+    "noneNearbyBody": "Są otwarte zlecenia, ale obecnie żadne w Twoim promieniu usług. Możesz zwiększyć promień usług w swoim profilu.",
+    "noneNearbyCta": "Dostosuj promień usług",
+    "onlyOwnTitle": "Brak zleceń do licytacji",
+    "onlyOwnBody": "Jedyne otwarte zlecenia w tej chwili to te, które sam opublikowałeś — nie możesz licytować własnych zleceń. Nowe zlecenia od innych klientów pojawią się tutaj."
   },
   "providerProviderNotificationsPage": {
     "heading": "Powiadomienia",

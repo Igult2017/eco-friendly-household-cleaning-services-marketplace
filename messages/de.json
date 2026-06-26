@@ -1029,7 +1029,18 @@
     "messageLabel": "Nachricht an den Kunden",
     "messagePlaceholder": "Warum sollten sie sich für Sie entscheiden? Ihr Vorgehen, Ihre Öko-Referenzen...",
     "submitting": "Wird gesendet...",
-    "submitBid": "Angebot abgeben"
+    "submitBid": "Angebot abgeben",
+    "noLocationTitle": "Servicegebiet hinzufügen",
+    "noLocationBody": "Geben Sie Ihre Stadt und Postleitzahl in Ihrem Profil an, damit wir Sie mit Reinigungsaufträgen in Ihrer Nähe zusammenbringen können.",
+    "noLocationCta": "Profil aktualisieren",
+    "notActiveTitle": "Reinigungsprofil vervollständigen",
+    "notActiveBody": "Ihr Reinigungsprofil ist noch nicht aktiv. Füllen Sie Ihre Angaben und Leistungen aus, um Aufträge zu erhalten.",
+    "notActiveCta": "Profil vervollständigen",
+    "noneNearbyTitle": "Noch keine Aufträge in Ihrer Nähe",
+    "noneNearbyBody": "Es gibt offene Aufträge, aber derzeit keine in Ihrem Servicegebiet. Sie können Ihren Serviceradius in Ihrem Profil erweitern.",
+    "noneNearbyCta": "Serviceradius anpassen",
+    "onlyOwnTitle": "Noch keine Aufträge zum Bieten",
+    "onlyOwnBody": "Die einzigen offenen Aufträge stammen von Ihnen – auf eigene Aufträge können Sie nicht bieten. Neue Aufträge anderer Kunden erscheinen hier."
   },
   "providerProviderNotificationsPage": {
     "heading": "Benachrichtigungen",

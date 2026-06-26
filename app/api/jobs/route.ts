@@ -125,9 +125,13 @@ export async function GET(req: Request) {
         .from(providers)
         .where(eq(providers.userId, userId))
 
-      if (!provider || !provider.isApproved || provider.latitude == null || provider.longitude == null) {
-        console.warn("[jobs feed] empty (provider gate):", { userId, hasProvider: !!provider, isApproved: provider?.isApproved ?? null, hasLat: provider?.latitude != null, hasLng: provider?.longitude != null })
-        return NextResponse.json({ jobs: [] })
+      if (!provider || !provider.isApproved) {
+        console.warn("[jobs feed] empty (not active):", { userId, hasProvider: !!provider, isApproved: provider?.isApproved ?? null })
+        return NextResponse.json({ jobs: [], reason: "not_active" })
+      }
+      if (provider.latitude == null || provider.longitude == null) {
+        console.warn("[jobs feed] empty (no location):", { userId })
+        return NextResponse.json({ jobs: [], reason: "no_location" })
       }
 
       // Bug 8: use PostGIS ST_DWithin to push the geo filter into SQL — eliminates the 200-row in-memory cap
@@ -172,8 +176,9 @@ export async function GET(req: Request) {
       }
 
       if (nearbyRows.length === 0) {
-        // Diagnostic: distinguish "no open jobs at all" vs "all open jobs are this user's own"
-        // vs "open jobs exist but are out of this provider's radius".
+        // Distinguish "no jobs posted at all" vs "the only open jobs are this cleaner's own" (hidden
+        // by design) vs "jobs exist but are outside this cleaner's service radius" — so the UI can
+        // show a specific, actionable message instead of a blank empty state.
         const [diag] = await db
           .select({
             totalOpen: sql<number>`count(*)`,
@@ -181,8 +186,13 @@ export async function GET(req: Request) {
           })
           .from(jobPosts)
           .where(and(inArray(jobPosts.status, ["open", "bidding"]), sql`expires_at > NOW()`))
-        console.warn("[jobs feed] empty (no nearby):", { userId, providerLat, providerLng, radiusKm: provider.serviceRadiusKm ?? 25, totalOpenJobs: Number(diag?.totalOpen ?? 0), ownOpenJobs: Number(diag?.ownOpen ?? 0) })
-        return NextResponse.json({ jobs: [] })
+        const totalOpen = Number(diag?.totalOpen ?? 0)
+        const ownOpen = Number(diag?.ownOpen ?? 0)
+        const othersOpen = totalOpen - ownOpen
+        // others exist but none nearby → out of radius; else only own jobs → hidden; else none posted
+        const reason = othersOpen > 0 ? "none_nearby" : ownOpen > 0 ? "only_own" : "none_posted"
+        console.warn("[jobs feed] empty (no nearby):", { userId, providerLat, providerLng, radiusKm: provider.serviceRadiusKm ?? 25, totalOpen, ownOpen, reason })
+        return NextResponse.json({ jobs: [], reason })
       }
 
       const nearbyIds = nearbyRows.map((r: { id: string }) => r.id)
