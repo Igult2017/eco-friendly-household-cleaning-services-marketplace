@@ -58,7 +58,10 @@ export async function POST(req: Request) {
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
     const data = parsed.data
-    const expiresAt = new Date(Date.now() + 72 * 60 * 60 * 1000)
+    // Job posts do NOT auto-expire — they stay on the board until the customer accepts a cleaner
+    // (status → assigned) or cancels. expires_at is NOT NULL and is read by the bid/feed paths, so
+    // we set it ~100 years out, i.e. effectively "never".
+    const expiresAt = new Date(Date.now() + 100 * 365 * 24 * 60 * 60 * 1000)
 
     const insertData: NewJobPost = {
       customerId: userId,

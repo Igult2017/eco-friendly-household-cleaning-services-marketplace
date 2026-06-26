@@ -237,6 +237,11 @@ BEGIN
   END IF;
 EXCEPTION WHEN OTHERS THEN RAISE NOTICE '[ensure] job_posts geo reconcile failed: %', SQLERRM;
 END $$;
+
+-- Job posts no longer auto-expire (they stay on the board until assigned/cancelled). Push existing
+-- open/bidding posts' expiry far into the future so they don't lapse under the old 72h rule.
+UPDATE job_posts SET expires_at = NOW() + INTERVAL '100 years'
+  WHERE status IN ('open','bidding') AND expires_at < NOW() + INTERVAL '90 years';
 `
 
 function isValidUrl(url) {

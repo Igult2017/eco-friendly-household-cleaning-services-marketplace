@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useUser } from "@clerk/nextjs"
 import { useTranslations } from "next-intl"
-import { MapPin, Calendar, Leaf, Users, Clock } from "lucide-react"
+import { MapPin, Calendar, Leaf, Users } from "lucide-react"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
 
 type Job = {
@@ -33,14 +33,6 @@ function timeAgo(dateStr: string, t: TFn) {
   if (h < 1) return t("justNow")
   if (h < 24) return t("hoursAgo", { count: h })
   return t("daysAgo", { count: Math.floor(h / 24) })
-}
-
-function expiresIn(dateStr: string, t: TFn) {
-  const diff = new Date(dateStr).getTime() - Date.now()
-  if (diff <= 0) return t("expired")
-  const h = Math.floor(diff / 3_600_000)
-  if (h < 24) return t("hoursLeft", { count: h })
-  return t("daysLeft", { count: Math.floor(h / 24) })
 }
 
 function StatusBadge({ status, t }: { status: string; t: TFn }) {
@@ -178,10 +170,6 @@ export default function BrowseJobsPage() {
                   <span className="flex items-center gap-1.5">
                     <Users size={12} className="text-[#2D7A5F]" />
                     {t("bidCount", { count: job.bidCount })}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <Clock size={12} className={job.expiresAt && new Date(job.expiresAt).getTime() - Date.now() < 3_600_000 * 6 ? "text-red-500" : "text-[#2D7A5F]"} />
-                    {expiresIn(job.expiresAt, t)}
                   </span>
                 </div>
 

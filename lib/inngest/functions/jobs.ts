@@ -76,8 +76,13 @@ export const onJobPosted = inngest.createFunction(
 
     // INN-005: update DB in one step, send event in a separate step so both are checkpointed
     const shouldExpire = await step.run("expire-job", async () => {
-      const [current] = await db.select({ status: jobPosts.status }).from(jobPosts).where(eq(jobPosts.id, jobPostId))
+      const [current] = await db.select({ status: jobPosts.status, expiresAt: jobPosts.expiresAt }).from(jobPosts).where(eq(jobPosts.id, jobPostId))
       if (!current || !["open", "bidding"].includes(current.status)) return false
+      // Jobs no longer auto-expire on a timer — only if the (far-future by default) expires_at has
+      // actually passed. So an open post stays on the board until the customer accepts a cleaner or
+      // cancels it; with the default expiry this never fires (also covers posts whose 72h timer was
+      // already scheduled before this change, since the step re-runs with this logic on resume).
+      if (new Date(current.expiresAt) > new Date()) return false
       await db.update(jobPosts).set({ status: "expired" }).where(eq(jobPosts.id, jobPostId))
       return true
     })
