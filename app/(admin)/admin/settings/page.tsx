@@ -96,7 +96,7 @@ export default function AdminSettingsPage() {
           <div className="flex items-center gap-3">
             <input
               type="number"
-              min={1}
+              min={0}
               max={50}
               value={cfg.commission_pct ?? "15"}
               onChange={e => set("commission_pct", e.target.value)}
@@ -123,7 +123,7 @@ export default function AdminSettingsPage() {
           <div className="flex items-center gap-3">
             <input
               type="number"
-              min={1}
+              min={0}
               max={20}
               value={cfg.referral_pct ?? "5"}
               onChange={e => set("referral_pct", e.target.value)}

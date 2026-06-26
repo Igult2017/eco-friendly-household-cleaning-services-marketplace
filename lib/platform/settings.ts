@@ -33,8 +33,11 @@ export async function getReferralPct(): Promise<number> {
       .select({ value: platformSettings.value })
       .from(platformSettings)
       .where(eq(platformSettings.key, "referral_pct"))
-    const n = row ? parseInt(row.value, 10) : NaN
-    if (!Number.isNaN(n) && n >= 1 && n <= 20) return n
+    if (row) {
+      const n = parseInt(row.value, 10)
+      if (!Number.isNaN(n) && n >= 0 && n <= 20) return n
+      console.warn(`[settings] referral_pct "${row.value}" is invalid/out-of-range — using default 5%`)
+    }
   } catch {
     // table missing / DB error — fall through to the default
   }
