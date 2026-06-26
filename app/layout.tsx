@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
   },
-  icons: { icon: "/logo.png", apple: "/logo.png" },
+  // Favicon: the file-based app/icon.svg ("DX" mark) is auto-wired by Next. No /logo.png override.
   category: "Home services",
 }
 
