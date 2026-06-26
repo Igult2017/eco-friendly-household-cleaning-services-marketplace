@@ -67,6 +67,7 @@ export async function PATCH(req: Request) {
     if (data.country !== undefined) updateFields.country = data.country
     if (data.serviceRadiusKm !== undefined) updateFields.serviceRadiusKm = data.serviceRadiusKm
     if (data.recurringDiscountPct !== undefined) updateFields.recurringDiscountPct = data.recurringDiscountPct
+    if (data.timezone !== undefined) updateFields.timezone = data.timezone
     if (data.ecoLevel !== undefined) updateFields.ecoLevel = data.ecoLevel
     if (data.profilePhotoUrl !== undefined) updateFields.profilePhotoUrl = data.profilePhotoUrl
     if ("carbonOffsetEnabled" in body) updateFields.carbonOffsetEnabled = Boolean(body.carbonOffsetEnabled)
@@ -169,6 +170,7 @@ export async function PATCH(req: Request) {
       profilePhotoUrl: data.profilePhotoUrl ?? null,
       latitude: (updateFields.latitude as number | undefined) ?? null,
       longitude: (updateFields.longitude as number | undefined) ?? null,
+      timezone: data.timezone ?? null,
       // Completing the cleaner profile auto-approves the account (same rule as onboarding).
       isApproved: true,
       isSuspended: false,

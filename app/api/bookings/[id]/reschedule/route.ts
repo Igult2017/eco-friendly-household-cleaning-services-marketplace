@@ -6,6 +6,7 @@ import { bookings, notifications, providerAvailability, providers } from "@/lib/
 import { eq, and, inArray, gte, lte, ne } from "drizzle-orm"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
 import { isUuid } from "@/lib/utils/uuid"
+import { zonedDayAndTime } from "@/lib/utils/tz"
 
 const rescheduleSchema = z.object({
   newScheduledAt: z.string().datetime(),
@@ -61,8 +62,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       return NextResponse.json({ error: "New scheduled time must be in the future" }, { status: 422 })
     }
 
-    // Check provider availability for the day of week
-    const dayOfWeek = newStart.getDay()
+    // Evaluate availability in the provider's OWN timezone — the platform spans EU + US, so the
+    // booking's UTC instant must be projected to the cleaner's local day-of-week + time of day.
+    const [prov] = await db.select({ timezone: providers.timezone }).from(providers).where(eq(providers.id, booking.providerId))
+    const providerTz = prov?.timezone || "Europe/Berlin"
+    const { dayOfWeek, hhmm: reqTime } = zonedDayAndTime(newStart, providerTz)
+
     const [availability] = await db
       .select({ id: providerAvailability.id, startTime: providerAvailability.startTime, endTime: providerAvailability.endTime })
       .from(providerAvailability)
@@ -78,10 +83,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       return NextResponse.json({ error: "Provider is not available on that day" }, { status: 409 })
     }
 
-    // Verify the requested time falls within the provider's working hours
-    const reqH = newStart.getUTCHours()
-    const reqM = newStart.getUTCMinutes()
-    const reqTime = String(reqH).padStart(2, "0") + ":" + String(reqM).padStart(2, "0")
+    // Verify the requested time falls within the provider's working hours (same timezone as above)
     if (reqTime < availability.startTime || reqTime >= availability.endTime) {
       return NextResponse.json(
         { error: "Requested time is outside the provider's working hours" },
@@ -134,7 +136,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     // BUG-015: pin the market timezone so a near-midnight slot doesn't render the
     // wrong calendar day/time on a UTC server.
     const formattedDate = newStart.toLocaleDateString("en-GB", {
-      timeZone: "Europe/Berlin",
+      timeZone: providerTz,
       weekday: "long",
       year: "numeric",
       month: "long",

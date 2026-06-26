@@ -71,7 +71,8 @@ export default function ProviderProfilePage() {
       const res = await fetch("/api/providers/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(profile),
+        // Capture the cleaner's real timezone (EU or US) so availability + booking times are correct.
+        body: JSON.stringify({ ...profile, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone }),
       })
       if (!res.ok) {
         const d = await res.json().catch(() => ({}))
