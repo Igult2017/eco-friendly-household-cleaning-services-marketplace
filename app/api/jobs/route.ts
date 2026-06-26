@@ -121,11 +121,14 @@ export async function GET(req: Request) {
 
     if (forProvider) {
       const [provider] = await db
-        .select({ id: providers.id, latitude: providers.latitude, longitude: providers.longitude, serviceRadiusKm: providers.serviceRadiusKm })
+        .select({ id: providers.id, latitude: providers.latitude, longitude: providers.longitude, serviceRadiusKm: providers.serviceRadiusKm, isApproved: providers.isApproved })
         .from(providers)
-        .where(and(eq(providers.userId, userId), eq(providers.isApproved, true)))
+        .where(eq(providers.userId, userId))
 
-      if (!provider?.latitude || !provider?.longitude) return NextResponse.json({ jobs: [] })
+      if (!provider || !provider.isApproved || provider.latitude == null || provider.longitude == null) {
+        console.warn("[jobs feed] empty (provider gate):", { userId, hasProvider: !!provider, isApproved: provider?.isApproved ?? null, hasLat: provider?.latitude != null, hasLng: provider?.longitude != null })
+        return NextResponse.json({ jobs: [] })
+      }
 
       // Bug 8: use PostGIS ST_DWithin to push the geo filter into SQL — eliminates the 200-row in-memory cap
       const providerLat = provider.latitude
@@ -168,7 +171,19 @@ export async function GET(req: Request) {
           .limit(30)
       }
 
-      if (nearbyRows.length === 0) return NextResponse.json({ jobs: [] })
+      if (nearbyRows.length === 0) {
+        // Diagnostic: distinguish "no open jobs at all" vs "all open jobs are this user's own"
+        // vs "open jobs exist but are out of this provider's radius".
+        const [diag] = await db
+          .select({
+            totalOpen: sql<number>`count(*)`,
+            ownOpen: sql<number>`count(*) filter (where customer_id = ${userId})`,
+          })
+          .from(jobPosts)
+          .where(and(inArray(jobPosts.status, ["open", "bidding"]), sql`expires_at > NOW()`))
+        console.warn("[jobs feed] empty (no nearby):", { userId, providerLat, providerLng, radiusKm: provider.serviceRadiusKm ?? 25, totalOpenJobs: Number(diag?.totalOpen ?? 0), ownOpenJobs: Number(diag?.ownOpen ?? 0) })
+        return NextResponse.json({ jobs: [] })
+      }
 
       const nearbyIds = nearbyRows.map((r: { id: string }) => r.id)
 
