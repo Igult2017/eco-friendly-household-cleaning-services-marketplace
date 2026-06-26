@@ -1654,5 +1654,12 @@
   "roleBadge": {
     "cleaner": "Schoonmaker",
     "lookingForCleaner": "Op zoek naar een schoonmaker"
+  },
+  "approvalNotice": {
+    "pendingTitle": "Je schoonmaakaccount is nog niet actief",
+    "pendingBody": "Goedkeuring gaat automatisch — vul gewoon je schoonmaakprofiel in (bedrijfsnaam, een korte bio van minstens 20 tekens, stad en postcode) en je wordt direct goedgekeurd.",
+    "pendingCta": "Mijn profiel invullen",
+    "suspendedTitle": "Account geschorst",
+    "suspendedBody": "Je schoonmaakaccount is geschorst door een beheerder. Neem contact op met de klantenservice."
   }
 }

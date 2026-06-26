@@ -73,7 +73,16 @@ export async function PATCH(req: Request) {
 
     // Single existence check — also feeds address fallback for geocoding + the upsert branch below.
     const [existing] = await db
-      .select({ id: providers.id, city: providers.city, postalCode: providers.postalCode, country: providers.country })
+      .select({
+        id: providers.id,
+        businessName: providers.businessName,
+        bio: providers.bio,
+        city: providers.city,
+        postalCode: providers.postalCode,
+        country: providers.country,
+        isApproved: providers.isApproved,
+        isSuspended: providers.isSuspended,
+      })
       .from(providers)
       .where(eq(providers.userId, userId))
 
@@ -96,7 +105,33 @@ export async function PATCH(req: Request) {
     if (data.longitude !== undefined) updateFields.longitude = data.longitude
 
     if (existing) {
+      // Approval is automatic: if a previously-unapproved, non-suspended cleaner now has a complete
+      // profile, flip them to approved and send the congratulations notification + email.
+      const merged = {
+        businessName: (data.businessName ?? existing.businessName ?? "").trim(),
+        bio: (data.bio ?? existing.bio ?? "").trim(),
+        city: (data.city ?? existing.city ?? "").trim(),
+        postalCode: (data.postalCode ?? existing.postalCode ?? "").trim(),
+      }
+      const complete =
+        merged.businessName.length >= 2 && merged.bio.length >= 20 && merged.city.length >= 2 && merged.postalCode.length >= 3
+      const newlyApproved = complete && !existing.isSuspended && !existing.isApproved
+      if (newlyApproved) updateFields.isApproved = true
+
       await db.update(providers).set(updateFields).where(eq(providers.userId, userId))
+
+      if (newlyApproved) {
+        try {
+          await db.insert(notifications).values({
+            userId,
+            type: "provider_approved",
+            title: "You're approved — welcome to DORIXÉ!",
+            body: "Your cleaner account is active. You can now browse jobs and place bids.",
+            link: "/provider/dashboard",
+          })
+        } catch (e) { console.warn("[providers/profile] approval notification failed:", e) }
+        try { await sendProviderApprovedEmail(userId) } catch (e) { console.warn("[providers/profile] approval email failed:", e) }
+      }
       return NextResponse.json({ success: true })
     }
 

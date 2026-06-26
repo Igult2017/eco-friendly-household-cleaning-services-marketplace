@@ -1654,5 +1654,12 @@
   "roleBadge": {
     "cleaner": "Profissional de limpeza",
     "lookingForCleaner": "À procura de um profissional de limpeza"
+  },
+  "approvalNotice": {
+    "pendingTitle": "A sua conta de profissional de limpeza ainda não está ativa",
+    "pendingBody": "A aprovação é automática — basta preencher o seu perfil (nome do negócio, uma breve bio de pelo menos 20 caracteres, cidade e código postal) e será aprovado de imediato.",
+    "pendingCta": "Completar o meu perfil",
+    "suspendedTitle": "Conta suspensa",
+    "suspendedBody": "A sua conta de profissional de limpeza foi suspensa por um administrador. Contacte o suporte para resolver."
   }
 }

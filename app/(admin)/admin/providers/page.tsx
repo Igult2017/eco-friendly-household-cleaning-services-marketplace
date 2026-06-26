@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { StatusBadge } from "@/components/admin/StatusBadge"
-import { CheckCircle, XCircle, PauseCircle, PlayCircle, Loader2, Check, X } from "lucide-react"
+import { PauseCircle, PlayCircle, Loader2, Check, X } from "lucide-react"
 
 type ProviderRow = {
   id: string
@@ -93,8 +93,8 @@ export default function AdminProvidersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-serif text-3xl font-bold text-[#2B3441]">Providers</h1>
-        <p className="mt-1 text-sm text-[#6B7280]">Approve, reject, or suspend service providers</p>
+        <h1 className="font-serif text-3xl font-bold text-[#2B3441]">Cleaners</h1>
+        <p className="mt-1 text-sm text-[#6B7280]">Approval is automatic once a cleaner completes their profile — you can suspend (ban) or reinstate accounts.</p>
       </div>
 
       <div className="flex gap-1 p-1 bg-white rounded-xl shadow-sm w-fit">
@@ -155,22 +155,11 @@ export default function AdminProvidersPage() {
                         <Loader2 className="h-4 w-4 animate-spin text-[#6B7280]" />
                       ) : (
                         <>
-                          {!p.isApproved && !p.isSuspended && (
-                            <>
-                              <button onClick={() => handle(p.id, "approve")} title="Approve" className="p-1.5 rounded-lg hover:bg-green-50 text-green-600 transition-colors">
-                                <CheckCircle className="h-4 w-4" />
-                              </button>
-                              <button onClick={() => handle(p.id, "reject")} title="Reject" className="p-1.5 rounded-lg hover:bg-red-50 text-red-500 transition-colors">
-                                <XCircle className="h-4 w-4" />
-                              </button>
-                            </>
-                          )}
-                          {p.isApproved && !p.isSuspended && (
-                            <button onClick={() => handle(p.id, "suspend")} title="Suspend" className="p-1.5 rounded-lg hover:bg-amber-50 text-amber-600 transition-colors">
+                          {!p.isSuspended ? (
+                            <button onClick={() => handle(p.id, "suspend")} title="Suspend / ban" className="p-1.5 rounded-lg hover:bg-amber-50 text-amber-600 transition-colors">
                               <PauseCircle className="h-4 w-4" />
                             </button>
-                          )}
-                          {p.isSuspended && (
+                          ) : (
                             <button onClick={() => handle(p.id, "unsuspend")} title="Reinstate" className="p-1.5 rounded-lg hover:bg-green-50 text-green-600 transition-colors">
                               <PlayCircle className="h-4 w-4" />
                             </button>

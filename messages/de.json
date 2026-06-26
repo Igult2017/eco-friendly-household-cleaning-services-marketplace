@@ -1654,5 +1654,12 @@
   "roleBadge": {
     "cleaner": "Reinigungskraft",
     "lookingForCleaner": "Auf der Suche nach einer Reinigungskraft"
+  },
+  "approvalNotice": {
+    "pendingTitle": "Ihr Reinigungskonto ist noch nicht aktiv",
+    "pendingBody": "Die Freigabe erfolgt automatisch — vervollständigen Sie einfach Ihr Reinigungsprofil (Firmenname, eine kurze Bio mit mindestens 20 Zeichen, Stadt und Postleitzahl) und Sie werden sofort freigeschaltet.",
+    "pendingCta": "Profil vervollständigen",
+    "suspendedTitle": "Konto gesperrt",
+    "suspendedBody": "Ihr Reinigungskonto wurde von einem Administrator gesperrt. Bitte wenden Sie sich an den Support."
   }
 }

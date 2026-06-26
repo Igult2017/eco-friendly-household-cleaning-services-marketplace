@@ -1654,5 +1654,12 @@
   "roleBadge": {
     "cleaner": "Sprzątacz",
     "lookingForCleaner": "Szukam sprzątacza"
+  },
+  "approvalNotice": {
+    "pendingTitle": "Twoje konto sprzątacza nie jest jeszcze aktywne",
+    "pendingBody": "Zatwierdzenie jest automatyczne — po prostu uzupełnij swój profil (nazwa firmy, krótki opis co najmniej 20 znaków, miasto i kod pocztowy), a zostaniesz od razu zatwierdzony.",
+    "pendingCta": "Uzupełnij profil",
+    "suspendedTitle": "Konto zawieszone",
+    "suspendedBody": "Twoje konto sprzątacza zostało zawieszone przez administratora. Skontaktuj się z pomocą techniczną."
   }
 }

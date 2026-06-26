@@ -1654,5 +1654,12 @@
   "roleBadge": {
     "cleaner": "Cleaner",
     "lookingForCleaner": "Looking for a cleaner"
+  },
+  "approvalNotice": {
+    "pendingTitle": "Your cleaner account isn't active yet",
+    "pendingBody": "Approval is automatic — just complete your cleaner profile (business name, a short bio of at least 20 characters, city and postcode) and you'll be approved right away.",
+    "pendingCta": "Complete my profile",
+    "suspendedTitle": "Account suspended",
+    "suspendedBody": "Your cleaner account has been suspended by an administrator. Please contact support to resolve this."
   }
 }

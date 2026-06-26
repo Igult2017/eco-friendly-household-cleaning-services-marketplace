@@ -1654,5 +1654,12 @@
   "roleBadge": {
     "cleaner": "Addetto alle pulizie",
     "lookingForCleaner": "In cerca di un addetto alle pulizie"
+  },
+  "approvalNotice": {
+    "pendingTitle": "Il tuo account addetto non è ancora attivo",
+    "pendingBody": "L'approvazione è automatica: completa il tuo profilo (nome dell'attività, una breve bio di almeno 20 caratteri, città e CAP) e sarai approvato subito.",
+    "pendingCta": "Completa il mio profilo",
+    "suspendedTitle": "Account sospeso",
+    "suspendedBody": "Il tuo account addetto è stato sospeso da un amministratore. Contatta l'assistenza per risolvere."
   }
 }

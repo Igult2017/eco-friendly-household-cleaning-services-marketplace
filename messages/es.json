@@ -1654,5 +1654,12 @@
   "roleBadge": {
     "cleaner": "Limpiador",
     "lookingForCleaner": "Buscando un limpiador"
+  },
+  "approvalNotice": {
+    "pendingTitle": "Tu cuenta de limpiador aún no está activa",
+    "pendingBody": "La aprobación es automática: solo completa tu perfil de limpiador (nombre del negocio, una breve biografía de al menos 20 caracteres, ciudad y código postal) y serás aprobado de inmediato.",
+    "pendingCta": "Completar mi perfil",
+    "suspendedTitle": "Cuenta suspendida",
+    "suspendedBody": "Un administrador ha suspendido tu cuenta de limpiador. Ponte en contacto con soporte para resolverlo."
   }
 }

@@ -16,6 +16,7 @@ import { ProviderDashboardNearbyJobs }   from "@/components/provider/ProviderDas
 import { ProviderDashboardRating }       from "@/components/provider/ProviderDashboardRating"
 import { ProviderDashboardDisputes }     from "@/components/provider/ProviderDashboardDisputes"
 import { ReferralCard }                  from "@/components/referral/ReferralCard"
+import { ProviderApprovalNotice }        from "@/components/provider/ProviderApprovalNotice"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
@@ -32,6 +33,7 @@ export default async function ProviderDashboardPage() {
       totalReviews: providers.totalReviews,
       totalJobsCompleted: providers.totalJobsCompleted,
       isApproved: providers.isApproved,
+      isSuspended: providers.isSuspended,
       ecoLevel: providers.ecoLevel,
       latitude: providers.latitude,
       longitude: providers.longitude,
@@ -164,6 +166,8 @@ export default async function ProviderDashboardPage() {
     <div className="min-h-screen bg-[#F4FAF6]">
       <div className="max-w-5xl mx-auto space-y-8">
 
+        <ProviderApprovalNotice isApproved={provider.isApproved} isSuspended={provider.isSuspended} />
+
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -171,11 +175,6 @@ export default async function ProviderDashboardPage() {
             <p className="text-[#6B7280] text-sm mt-1">{t("cleanerDashboard")}</p>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
-            {!provider.isApproved && (
-              <div className="flex items-center gap-2 bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-2 text-sm text-yellow-700">
-                <AlertCircle size={15} /> {t("pendingAdminApproval")}
-              </div>
-            )}
             {activeDisputes > 0 && (
               <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-2 text-sm text-red-700">
                 <AlertCircle size={15} /> {t("activeDisputes", { count: activeDisputes })}

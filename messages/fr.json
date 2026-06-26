@@ -1654,5 +1654,12 @@
   "roleBadge": {
     "cleaner": "Intervenant",
     "lookingForCleaner": "À la recherche d’un intervenant"
+  },
+  "approvalNotice": {
+    "pendingTitle": "Votre compte intervenant n'est pas encore actif",
+    "pendingBody": "L'approbation est automatique — complétez simplement votre profil (nom de l'entreprise, une courte bio d'au moins 20 caractères, ville et code postal) et vous serez approuvé immédiatement.",
+    "pendingCta": "Compléter mon profil",
+    "suspendedTitle": "Compte suspendu",
+    "suspendedBody": "Votre compte intervenant a été suspendu par un administrateur. Veuillez contacter le support."
   }
 }
