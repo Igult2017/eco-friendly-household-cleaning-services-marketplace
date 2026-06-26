@@ -5,6 +5,7 @@ import { eq, and, lte, isNotNull } from "drizzle-orm"
 import { redis } from "@/lib/redis/client"
 import { calculateBookingAmounts, stripe } from "@/lib/stripe/client"
 import { getCommissionPct } from "@/lib/platform/settings"
+import { getCurrencyForCountry } from "@/lib/utils/locale"
 
 async function generateBookingNumber(): Promise<string> {
   const seq = await redis.incr("booking:seq")
@@ -101,7 +102,7 @@ export const recurringBookingCron = inngest.createFunction(
           .where(eq(providerServices.id, schedule.serviceId))
 
         const [providerRow] = await db
-          .select({ stripeAccountId: providers.stripeAccountId, recurringDiscountPct: providers.recurringDiscountPct, isApproved: providers.isApproved, isSuspended: providers.isSuspended })
+          .select({ stripeAccountId: providers.stripeAccountId, country: providers.country, recurringDiscountPct: providers.recurringDiscountPct, isApproved: providers.isApproved, isSuspended: providers.isSuspended })
           .from(providers)
           .where(eq(providers.id, schedule.providerId))
 
@@ -128,6 +129,8 @@ export const recurringBookingCron = inngest.createFunction(
         const subtotal = Math.max(0, baseSubtotal - recurringDiscountCents)
         const commissionPct = await getCommissionPct()
         const amounts = calculateBookingAmounts(subtotal, commissionPct)
+        // Charge recurring bookings in the cleaner's own currency (US → USD, else EUR).
+        const chargeCurrency = getCurrencyForCountry(providerRow.country).toLowerCase()
         const bookingNumber = await generateBookingNumber()
 
         const [newBooking] = await db
@@ -168,7 +171,7 @@ export const recurringBookingCron = inngest.createFunction(
             try {
               const pi = await stripe.paymentIntents.create({
                 amount: amounts.totalCharged,
-                currency: "eur",
+                currency: chargeCurrency,
                 customer: customerRow.stripeCustomerId,
                 payment_method: schedule.stripePaymentMethodId,
                 capture_method: "manual",
@@ -191,7 +194,7 @@ export const recurringBookingCron = inngest.createFunction(
                 stripeCustomerId: customerRow.stripeCustomerId,
                 status: pi.status === "requires_capture" ? "authorized" : "pending",
                 amount: amounts.totalCharged,
-                currency: "eur",
+                currency: chargeCurrency,
               })
             } catch (err: unknown) {
               // FIN-006: an off-session charge can fail (declined/expired/insufficient funds).
@@ -207,7 +210,7 @@ export const recurringBookingCron = inngest.createFunction(
           }
         }
 
-        const notifBody = scheduledAt.toLocaleString("en-GB", { dateStyle: "long", timeStyle: "short" })
+        const notifBody = scheduledAt.toLocaleString("en-GB", { dateStyle: "long", timeStyle: "short", timeZone: schedule.timezone })
         await db.insert(notifications).values(
           paymentFailed
             ? {

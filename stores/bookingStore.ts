@@ -33,6 +33,7 @@ interface BidFlowData {
   scheduledAt: string | null
   durationMinutes: number
   bidAmountCents: number
+  providerCountry?: string | null
 }
 
 interface BookingStore extends BookingDraft {
@@ -84,6 +85,7 @@ export const useBookingStore = create<BookingStore>()(
       setBidFlow: (data) =>
         set({
           selectedProviderId: data.providerId,
+          providerCountry: data.providerCountry ?? null,
           categoryId: data.categorySlug,
           categoryName: data.categoryName,
           address: data.serviceAddress,

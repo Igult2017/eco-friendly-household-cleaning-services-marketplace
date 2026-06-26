@@ -22,7 +22,7 @@ export const onBookingCreated = inngest.createFunction(
 
     const [customer, provider] = await step.run("fetch-parties", async () => {
       const [c] = await db.select({ email: users.email, firstName: users.firstName }).from(users).where(eq(users.id, customerId))
-      const [p] = await db.select({ businessName: providers.businessName, userId: providers.userId }).from(providers).where(eq(providers.id, providerId))
+      const [p] = await db.select({ businessName: providers.businessName, userId: providers.userId, timezone: providers.timezone }).from(providers).where(eq(providers.id, providerId))
       return [c, p]
     })
 
@@ -32,7 +32,7 @@ export const onBookingCreated = inngest.createFunction(
         userId: provider.userId,
         type: "booking_confirmed",
         title: "New Booking!",
-        body: `You have a new booking for ${booking.service?.name ?? "a service"} on ${new Date(booking.scheduledAt).toLocaleDateString("en-GB", { timeZone: "Europe/Berlin" })}`,
+        body: `You have a new booking for ${booking.service?.name ?? "a service"} on ${new Date(booking.scheduledAt).toLocaleDateString("en-GB", { timeZone: provider?.timezone || "Europe/Berlin" })}`,
         link: `/bookings/${bookingId}`,
       })
     })
@@ -47,7 +47,7 @@ export const onBookingCreated = inngest.createFunction(
           <h2>Your booking is confirmed!</h2>
           <p>Booking number: <strong>${booking.bookingNumber}</strong></p>
           <p>Service: ${booking.service?.name}</p>
-          <p>Scheduled: ${new Date(booking.scheduledAt).toLocaleString("en-GB", { timeZone: "Europe/Berlin" })}</p>
+          <p>Scheduled: ${new Date(booking.scheduledAt).toLocaleString("en-GB", { timeZone: provider?.timezone || "Europe/Berlin" })}</p>
           <p>Your card has been pre-authorised. You will only be charged once the cleaning is completed.</p>
           <p>Thank you for choosing DORIXÉ 🌿</p>
         `,

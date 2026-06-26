@@ -92,7 +92,7 @@ export const processProviderPayout = inngest.createFunction(
     const providerBookingRows = await step.run("fetch-bookings", async () => {
       // Bug 3: also filter payoutId IS NULL here in case new payments were added since weeklyPayoutRun
       return db
-        .select({ id: bookings.id, providerPayout: bookings.providerPayout, refundedAmount: payments.refundedAmount, paymentId: payments.id })
+        .select({ id: bookings.id, providerPayout: bookings.providerPayout, refundedAmount: payments.refundedAmount, paymentId: payments.id, currency: payments.currency })
         .from(bookings)
         .innerJoin(payments, eq(bookings.id, payments.bookingId))
         .where(and(
@@ -107,8 +107,10 @@ export const processProviderPayout = inngest.createFunction(
 
     if (providerBookingRows.length === 0) return { skipped: true, reason: "no_bookings" }
 
-    const rows = providerBookingRows as { id: string; providerPayout: number; refundedAmount: number; paymentId: string }[]
+    const rows = providerBookingRows as { id: string; providerPayout: number; refundedAmount: number; paymentId: string; currency: string }[]
     const totalPayout = rows.reduce((sum: number, b) => sum + Math.max(0, b.providerPayout - (b.refundedAmount ?? 0)), 0)
+    // Ledger currency = the currency these bookings were actually captured in (the cleaner's own).
+    const payoutCurrency = rows[0]?.currency ?? "eur"
     const bookingIdList = rows.map((b: { id: string }) => b.id)
     const paymentIdList = rows.map((b: { paymentId: string }) => b.paymentId)
 
@@ -122,7 +124,7 @@ export const processProviderPayout = inngest.createFunction(
           stripeTransferId: null, // ledger entry; funds moved via destination charge, not a transfer
           status: "paid",
           amount: totalPayout,
-          currency: "eur",
+          currency: payoutCurrency,
           periodStart,
           periodEnd,
           bookingIds: bookingIdList,

@@ -101,7 +101,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
 
     // Bug 10: link to provider bookings list, not the customer job post
     const [provider] = await db
-      .select({ userId: providers.userId })
+      .select({ userId: providers.userId, country: providers.country })
       .from(providers)
       .where(eq(providers.id, bid.providerId))
     if (provider) {
@@ -143,6 +143,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
         scheduledAt,
         durationMinutes: bid.estimatedDurationMinutes ?? 120,
         bidAmountCents: bid.amount,
+        providerCountry: provider?.country ?? null,
       },
     })
   } catch (err) {
