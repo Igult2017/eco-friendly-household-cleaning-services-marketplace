@@ -24,7 +24,7 @@ export function CountryTable({ countries }: Props) {
             return (
               <li key={code} className="flex items-center gap-3 px-6 py-3">
                 <span className="text-lg leading-none">{flagEmoji(code)}</span>
-                <span className="flex-1 text-sm text-[#2B3441] truncate">{countryName(code)}</span>
+                <span className="flex-1 text-sm text-[#2B3441] truncate">{code && code.length === 2 ? countryName(code) : "Unknown"}</span>
                 <div className="flex items-center gap-3 shrink-0">
                   <div className="w-24 h-1.5 rounded-full bg-gray-100 overflow-hidden">
                     <div className="h-full rounded-full bg-[#4CB87A]" style={{ width: `${pct}%` }} />
