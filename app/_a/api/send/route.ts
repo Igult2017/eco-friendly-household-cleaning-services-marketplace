@@ -1,4 +1,5 @@
 import { getClientIp } from "@/lib/utils/ip"
+import { countryForIp } from "@/lib/analytics/geoip"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
@@ -20,10 +21,14 @@ export async function POST(req: Request) {
     "content-type": req.headers.get("content-type") ?? "application/json",
     "user-agent": req.headers.get("user-agent") ?? "",
   }
-  // Umami reads the visitor IP from these to look up the country/region/city.
+  // Umami reads the visitor IP from these to look up the region/city.
   if (ip) {
     headers["x-forwarded-for"] = ip
     headers["x-real-ip"] = ip
+    // Resolve the country ourselves (cached) and hand it to Umami via the header it honours, so
+    // country stats don't depend on the Umami container shipping a GeoIP database.
+    const cc = await countryForIp(ip)
+    if (cc) headers["cf-ipcountry"] = cc
   }
   const lang = req.headers.get("accept-language")
   if (lang) headers["accept-language"] = lang

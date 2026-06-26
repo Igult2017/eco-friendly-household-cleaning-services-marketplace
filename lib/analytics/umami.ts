@@ -136,11 +136,23 @@ const SOCIAL_MAP: Record<string, string> = {
   "t.me": "Telegram",
 }
 
+// Sign-in/sign-up redirects (OAuth + Clerk) and self/internal hosts are NOT real referrers — they're
+// just how a visitor authenticated. Drop them so the panel shows genuine external traffic sources.
+function isNoiseReferrer(domain: string): boolean {
+  if (!domain) return false
+  const ownHost = (process.env.NEXT_PUBLIC_APP_URL ?? "").replace(/^https?:\/\//, "").split("/")[0].toLowerCase()
+  if (ownHost && domain === ownHost) return true
+  if (/^\d{1,3}(\.\d{1,3}){3}$/.test(domain)) return true        // bare IP = server self-referral
+  if (domain === "localhost" || domain === "0.0.0.0") return true
+  return /accounts\.google\.|\.clerk\.accounts\.dev$|^clerk\.|\.clerk\.com$|accounts\.youtube\.|appleid\.apple\.com|login\.(live|microsoftonline)\.com/i.test(domain)
+}
+
 /** Roll raw referrer URLs into social platform names + an "Other / Direct" bucket. */
 export function classifyReferrers(metrics: UmamiMetric[]) {
   const map = new Map<string, number>()
   for (const { x: raw, y } of metrics) {
     const domain = (raw ?? "").replace(/^https?:\/\//, "").split("/")[0].toLowerCase()
+    if (isNoiseReferrer(domain)) continue
     const label = SOCIAL_MAP[domain] ?? (domain ? `Other (${domain.slice(0, 30)})` : "Direct")
     map.set(label, (map.get(label) ?? 0) + y)
   }
