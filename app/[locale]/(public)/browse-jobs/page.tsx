@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import { useUser } from "@clerk/nextjs"
 import { useTranslations } from "next-intl"
 import { MapPin, Calendar, Leaf, Users, Clock } from "lucide-react"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
@@ -62,6 +63,11 @@ function StatusBadge({ status, t }: { status: string; t: TFn }) {
 
 export default function BrowseJobsPage() {
   const t = useTranslations("browseJobs")
+  const { isSignedIn } = useUser()
+  // Signed-in users go straight to the provider bid area (the provider layout routes by role);
+  // only signed-out users are sent through sign-in. Routing a signed-in user through /sign-in
+  // bounced them to the homepage, so the bid button appeared "broken".
+  const bidHref = isSignedIn === false ? "/sign-in?redirect_url=/provider/jobs" : "/provider/jobs"
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -189,7 +195,7 @@ export default function BrowseJobsPage() {
                     <>
                       <p className="text-xs text-[#9CA3AF]">{t("signInAsProvider")}</p>
                       <Link
-                        href={`/sign-in?redirect_url=/provider/jobs`}
+                        href={bidHref}
                         className="inline-flex items-center gap-1.5 rounded-xl bg-[#2D7A5F] hover:bg-[#256349] text-white text-sm font-semibold px-4 py-2 transition-colors"
                       >
                         {t("bidOnThisJob")}
