@@ -186,6 +186,57 @@ CREATE UNIQUE INDEX IF NOT EXISTS email_sends_campaign_user_idx ON email_sends(c
 CREATE UNIQUE INDEX IF NOT EXISTS email_sends_welcome_user_idx  ON email_sends(user_id) WHERE type = 'welcome';
 CREATE INDEX        IF NOT EXISTS email_sends_user_idx          ON email_sends(user_id);
 CREATE INDEX        IF NOT EXISTS email_sends_type_idx          ON email_sends(type);
+
+-- ── job_posts reconciliation ──────────────────────────────────────────────
+-- Posting a job 500'd on prod: migration 0010 (view_count) and/or migration
+-- 0001 (PostGIS service_location column + sync_job_location BEFORE-INSERT
+-- trigger) were recorded "applied" in the journal but never actually ran
+-- (journal/DB drift), so every INSERT into job_posts failed. Idempotent fix:
+
+-- 1) view_count column (migration 0010)
+ALTER TABLE job_posts ADD COLUMN IF NOT EXISTS view_count integer NOT NULL DEFAULT 0;
+
+-- 2) PostGIS geo columns + sync triggers (migration 0001). When PostGIS is
+--    available, (re)create the column/index/trigger correctly. When it is NOT
+--    installed, DROP the sync triggers so a trigger referencing a missing column
+--    or ST_* function can never break an INSERT (geo falls back to lat/lng math).
+DO $$ BEGIN CREATE EXTENSION IF NOT EXISTS postgis; EXCEPTION WHEN OTHERS THEN RAISE NOTICE '[ensure] postgis unavailable: %', SQLERRM; END $$;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'postgis') THEN
+    ALTER TABLE job_posts ADD COLUMN IF NOT EXISTS service_location geography(Point, 4326);
+    CREATE INDEX IF NOT EXISTS job_posts_location_gist ON job_posts USING GIST(service_location);
+    ALTER TABLE providers ADD COLUMN IF NOT EXISTS location geography(Point, 4326);
+    CREATE INDEX IF NOT EXISTS providers_location_gist ON providers USING GIST(location);
+
+    CREATE OR REPLACE FUNCTION sync_job_location() RETURNS TRIGGER AS $fn$
+    BEGIN
+      IF NEW.service_latitude IS NOT NULL AND NEW.service_longitude IS NOT NULL THEN
+        NEW.service_location = ST_SetSRID(ST_MakePoint(NEW.service_longitude, NEW.service_latitude), 4326)::geography;
+      END IF;
+      RETURN NEW;
+    END;
+    $fn$ LANGUAGE plpgsql;
+    DROP TRIGGER IF EXISTS job_location_sync ON job_posts;
+    CREATE TRIGGER job_location_sync BEFORE INSERT OR UPDATE ON job_posts FOR EACH ROW EXECUTE FUNCTION sync_job_location();
+
+    CREATE OR REPLACE FUNCTION sync_provider_location() RETURNS TRIGGER AS $fn$
+    BEGIN
+      IF NEW.latitude IS NOT NULL AND NEW.longitude IS NOT NULL THEN
+        NEW.location = ST_SetSRID(ST_MakePoint(NEW.longitude, NEW.latitude), 4326)::geography;
+      END IF;
+      RETURN NEW;
+    END;
+    $fn$ LANGUAGE plpgsql;
+    DROP TRIGGER IF EXISTS provider_location_sync ON providers;
+    CREATE TRIGGER provider_location_sync BEFORE INSERT OR UPDATE ON providers FOR EACH ROW EXECUTE FUNCTION sync_provider_location();
+  ELSE
+    DROP TRIGGER IF EXISTS job_location_sync ON job_posts;
+    DROP TRIGGER IF EXISTS provider_location_sync ON providers;
+  END IF;
+EXCEPTION WHEN OTHERS THEN RAISE NOTICE '[ensure] job_posts geo reconcile failed: %', SQLERRM;
+END $$;
 `
 
 function isValidUrl(url) {
@@ -206,7 +257,7 @@ async function main() {
   const sql = postgres(url, { max: 1, prepare: false })
   try {
     await sql.unsafe(DDL)
-    console.log("[ensure-referrals] referral + customer_reviews + service_categories + platform_settings ensured ✓")
+    console.log("[ensure-referrals] referral + customer_reviews + service_categories + platform_settings + job_posts(view_count/geo) ensured ✓")
   } finally {
     await sql.end({ timeout: 5 })
   }

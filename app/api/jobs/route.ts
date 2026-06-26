@@ -96,8 +96,12 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ jobPostId: newJob.id }, { status: 201 })
   } catch (err) {
+    // Surface the underlying Postgres cause (Drizzle wraps it as err.cause) so
+    // schema-drift failures (missing column, broken trigger) are diagnosable.
+    const cause = (err as { cause?: { message?: string; code?: string; detail?: string; column?: string; constraint?: string; table?: string } })?.cause
     console.error("[jobs POST] Unhandled error:", {
       message: err instanceof Error ? err.message : String(err),
+      cause: cause ? { message: cause.message, code: cause.code, detail: cause.detail, column: cause.column, constraint: cause.constraint, table: cause.table } : undefined,
       stack: err instanceof Error ? err.stack : undefined,
     })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
