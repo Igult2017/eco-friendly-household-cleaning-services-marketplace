@@ -62,6 +62,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     let newPaymentStatus: "cancelled" | "refunded" | "partially_refunded" | "captured" = "cancelled"
     let capturedFee = 0
+    let feeCommission = 0
     if (payment) {
       // Idempotency keys: a retry after a partial failure must NOT charge / release twice (BUG-004).
       if (payment.status === "authorized") {
@@ -69,7 +70,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
           // Late cancel: capture only the fee (Stripe releases the rest of the hold, incl. the carbon
           // offset). Split like a normal job — platform keeps its commission, the cleaner is
           // compensated for the slot they reserved.
-          const feeCommission = Math.round(feeAmount * (booking.platformFeePercent ?? 0) / 100)
+          feeCommission = Math.round(feeAmount * (booking.platformFeePercent ?? 0) / 100)
           await stripe.paymentIntents.capture(payment.stripePaymentIntentId, {
             amount_to_capture: feeAmount,
             application_fee_amount: feeCommission,
@@ -109,6 +110,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
           cancellationReason: reason ?? null,
           cancelledAt: new Date(),
           cancelledBy: userId,
+          // When a late-cancel fee was captured, restate the money fields to what actually moved so
+          // earnings/ledger reads don't report the original (never-collected) full payout.
+          ...(capturedFee > 0 ? { totalAmount: feeAmount, platformFeeAmount: feeCommission, providerPayout: feeAmount - feeCommission } : {}),
         })
         .where(eq(bookings.id, bookingId))
 

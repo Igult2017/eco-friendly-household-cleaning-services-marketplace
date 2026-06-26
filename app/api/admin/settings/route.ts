@@ -5,7 +5,7 @@ import { platformSettings } from "@/lib/db/schema"
 import { z } from "zod"
 
 const updateSchema = z.object({
-  commission_pct:        z.number().int().min(1).max(50).optional(),
+  commission_pct:        z.number().int().min(0).max(50).optional(),
   referral_pct:          z.number().int().min(1).max(20).optional(),
   payout_schedule:       z.enum(["weekly", "biweekly", "monthly"]).optional(),
   max_service_radius_km: z.number().int().min(10).max(500).optional(),

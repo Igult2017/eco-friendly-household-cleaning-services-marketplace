@@ -60,7 +60,7 @@ export const bookings = pgTable(
     ecoOptionsSelected: jsonb("eco_options").$type<string[]>().default([]),
     platformFeePercent: integer("platform_fee_pct").notNull().default(15),
     subtotalAmount: integer("subtotal_amount").notNull(),   // provider's quoted price (cents)
-    platformFeeAmount: integer("platform_fee_amount").notNull(), // 15% added on top
+    platformFeeAmount: integer("platform_fee_amount").notNull(), // commission, DEDUCTED from the provider payout (cents)
     totalAmount: integer("total_amount").notNull(),         // customer is charged this
     providerPayout: integer("provider_payout").notNull(),   // provider receives this
     carbonOffsetAmount: integer("carbon_offset_amount").notNull().default(0),

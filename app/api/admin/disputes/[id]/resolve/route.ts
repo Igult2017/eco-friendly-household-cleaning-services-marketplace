@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { disputes, bookings, payments, notifications, providers } from "@/lib/db/schema"
+import { disputes, bookings, payments, notifications, providers, carbonOffsetContributions } from "@/lib/db/schema"
 import { stripe } from "@/lib/stripe/client"
 import { eq } from "drizzle-orm"
 import { z } from "zod"
@@ -35,13 +35,16 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     }
 
     const [booking] = await db
-      .select({ id: bookings.id, totalAmount: bookings.totalAmount, customerId: bookings.customerId, providerId: bookings.providerId })
+      .select({ id: bookings.id, totalAmount: bookings.totalAmount, carbonOffsetAmount: bookings.carbonOffsetAmount, customerId: bookings.customerId, providerId: bookings.providerId })
       .from(bookings)
       .where(eq(bookings.id, dispute.bookingId))
 
     if (!booking) return NextResponse.json({ error: "Booking not found" }, { status: 404 })
 
-    const refundAmount = Math.round((booking.totalAmount ?? 0) * (refundPercent / 100))
+    // Refund base = what the customer actually paid (service + carbon offset). totalAmount excludes
+    // the offset, so refunding on totalAmount alone short-changed the customer by the offset amount.
+    const refundBase = (booking.totalAmount ?? 0) + (booking.carbonOffsetAmount ?? 0)
+    const refundAmount = Math.round(refundBase * (refundPercent / 100))
 
     if (refundPercent > 0) {
       const [payment] = await db
@@ -88,6 +91,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       refundPercent > 0    ? "cancelled" :
                              "completed"
     await db.update(bookings).set({ status: newBookingStatus }).where(eq(bookings.id, dispute.bookingId))
+
+    // Customer won a full refund → the carbon offset they paid is returned, so remove the
+    // contribution row (keeps the Green-Fund ledger accurate, mirroring the cancellation flow).
+    if (outcome === "resolved_customer" && refundPercent === 100) {
+      await db.delete(carbonOffsetContributions).where(eq(carbonOffsetContributions.bookingId, dispute.bookingId))
+    }
 
     // Notify both parties. The provider notification must address the cleaner's Clerk user id — NOT
     // the providers-table PK (booking.providerId) — which previously caused an FK violation 500

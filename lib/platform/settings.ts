@@ -12,8 +12,13 @@ export async function getCommissionPct(): Promise<number> {
       .select({ value: platformSettings.value })
       .from(platformSettings)
       .where(eq(platformSettings.key, "commission_pct"))
-    const n = row ? parseInt(row.value, 10) : NaN
-    if (!Number.isNaN(n) && n >= 1 && n <= 50) return n
+    if (row) {
+      const n = parseInt(row.value, 10)
+      if (!Number.isNaN(n) && n >= 0 && n <= 50) return n
+      // Row exists but is unparseable/out-of-range — fail LOUD so a typo'd setting (which would
+      // silently apply the env default to every cleaner's payout) is diagnosable.
+      console.warn(`[settings] commission_pct "${row.value}" is invalid/out-of-range — using default ${PLATFORM_FEE_PERCENT}%`)
+    }
   } catch {
     // table missing / DB error — fall through to the env default
   }

@@ -4,8 +4,7 @@ import { bookings, payments, users, notifications, referrals, referralCommission
 import { stripe } from "@/lib/stripe/client"
 import { resend, FROM } from "@/lib/resend/client"
 import { eq, and, sql } from "drizzle-orm"
-
-const REFERRAL_COMMISSION_PCT = 0.05 // 5%
+import { getReferralPct } from "@/lib/platform/settings"
 
 export const onBookingCompleted = inngest.createFunction(
   { id: "booking-completed", retries: 3, triggers: [{ event: "booking/completed" }] },
@@ -99,7 +98,9 @@ export const onBookingCompleted = inngest.createFunction(
       const ref = referral ?? activeReferral
       if (!ref) return { skipped: "no_referral" }
 
-      const commissionCents = Math.round(booking.subtotalAmount * REFERRAL_COMMISSION_PCT)
+      // Use the admin-configured referral rate (was hardcoded 5%, ignoring the admin setting).
+      const referralPct = await getReferralPct()
+      const commissionCents = Math.round(booking.subtotalAmount * referralPct / 100)
 
       // Activate on first booking if still pending
       if (referral) {
