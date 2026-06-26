@@ -62,7 +62,7 @@ export function HeroPostcodeSearch({
   return (
     <div className="mb-8 max-w-md">
       <div className="flex gap-2">
-        <label className="flex-1 flex items-center gap-2 bg-white border border-[#E5EDE9] rounded-xl px-4 py-3 shadow-sm focus-within:border-[#2D7A5F] transition-colors">
+        <label className="flex-1 min-w-0 flex items-center gap-2 bg-white border border-[#E5EDE9] rounded-xl px-4 py-3 shadow-sm focus-within:border-[#2D7A5F] transition-colors">
           <MapPin className="w-4 h-4 text-[#6B7280] flex-shrink-0" />
           <input
             type="text"
