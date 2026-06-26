@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { users } from "@/lib/db/schema"
 import { eq, and, ne } from "drizzle-orm"
+import { eraseUserData } from "@/lib/admin/eraseUser"
 
 const VALID_ROLES = ["admin", "customer", "provider"] as const
 type Role = (typeof VALID_ROLES)[number]
@@ -95,14 +96,11 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
       console.warn(`[admin/users DELETE] Clerk delete failed for ${id} (continuing):`, clerkErr instanceof Error ? clerkErr.message : clerkErr)
     }
 
-    // Soft-delete (not a hard delete): the user is referenced by other tables (bookings, payments,
-    // notifications, reviews, referrals…) that must be kept for financial/audit history. A hard
-    // delete threw a foreign-key violation — the "Internal server error". Auth is revoked via the
-    // Clerk delete above; the row is hidden from the admin list by the deletedAt filter.
-    await db
-      .update(users)
-      .set({ deletedAt: new Date(), isActive: false, updatedAt: new Date() })
-      .where(eq(users.id, id))
+    // GDPR erasure: wipe all personal/identifying data across the DB while keeping the now-anonymized
+    // financial + audit records (EU tax/accounting law requires retaining transaction history). This
+    // also sets deletedAt + isActive=false, so the row drops out of the admin list. Auth was revoked
+    // above via the Clerk delete, so the user permanently loses access.
+    await eraseUserData(id)
 
     return NextResponse.json({ success: true, self: isSelf })
   } catch (err) {
