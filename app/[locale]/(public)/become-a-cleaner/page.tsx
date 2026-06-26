@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server"
+import { currentUser } from "@clerk/nextjs/server"
 import { getTranslations } from "next-intl/server"
 import { Leaf, Euro, Clock, ShieldCheck, Star, Users } from "lucide-react"
 import { AddCleanerRoleForm } from "@/components/layout/AddCleanerRoleForm"
@@ -20,8 +20,11 @@ export default async function BecomeACleanerPage() {
     { icon: Leaf,        title: t("perkEcoTitle"),        body: t("perkEcoBody") },
     { icon: Users,       title: t("perkDualTitle"),       body: t("perkDualBody") },
   ]
-  const { sessionClaims } = await auth()
-  const meta     = sessionClaims?.metadata as { role?: string; dualRole?: boolean } | undefined
+  // Read LIVE Clerk metadata (not the JWT). The session token lags ~60s behind publicMetadata, so
+  // right after a user enables their second role the JWT still says dualRole=false (and role can be
+  // absent) — which made this page keep showing the "enable" form as if nothing happened.
+  const user     = await currentUser()
+  const meta     = user?.publicMetadata as { role?: string; dualRole?: boolean } | undefined
   const role     = meta?.role
   const isDual   = meta?.dualRole === true
   const isProvider = role === "provider"

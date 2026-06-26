@@ -1407,7 +1407,9 @@
     "customerAccount": "Account cliente",
     "toastTitleCustomer": "Passato all'account cliente",
     "toastDescCustomer": "Ora navighi come cliente. Pubblica lavori e gestisci le prenotazioni.",
-    "warningCustomer": "Vedrai la dashboard cliente, dove pubblichi lavori e prenoti addetti alle pulizie, non lo spazio di lavoro dell'addetto."
+    "warningCustomer": "Vedrai la dashboard cliente, dove pubblichi lavori e prenoti addetti alle pulizie, non lo spazio di lavoro dell'addetto.",
+    "cantDoCleaner": "Puoi sfogliare i lavori, fare offerte e gestire le tue prenotazioni di pulizia. Qui non puoi prenotare addetti né pubblicare lavori — torna al tuo account cliente per farlo.",
+    "cantDoCustomer": "Puoi prenotare addetti e pubblicare lavori. Qui non puoi fare offerte né gestire le pulizie — torna al tuo account addetto per farlo."
   },
   "compLocationLocationDetectButton": {
     "detecting": "Rilevamento posizione…",

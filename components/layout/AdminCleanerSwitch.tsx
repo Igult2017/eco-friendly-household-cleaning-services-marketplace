@@ -13,6 +13,9 @@ export function AdminCleanerSwitch() {
 
   async function handleSwitch() {
     if (loading) return
+    if (!window.confirm(
+      "Switch to your Cleaner account?\n\nYou'll use the cleaner side of DORIXÉ — browse jobs, place bids and manage your cleaning bookings. You can't post jobs or book cleaners while in this account; switch back for that."
+    )) return
     setLoading(true)
     try {
       const res = await fetch("/api/users/switch-role", {

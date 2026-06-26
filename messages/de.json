@@ -1407,7 +1407,9 @@
     "customerAccount": "Kundenkonto",
     "toastTitleCustomer": "Zu Kundenkonto gewechselt",
     "toastDescCustomer": "Sie surfen jetzt als Kunde. Erstellen Sie Aufträge und verwalten Sie Buchungen.",
-    "warningCustomer": "Sie sehen das Kunden-Dashboard, wo Sie Aufträge erstellen und Reinigungskräfte buchen – nicht den Arbeitsbereich für Reinigungskräfte."
+    "warningCustomer": "Sie sehen das Kunden-Dashboard, wo Sie Aufträge erstellen und Reinigungskräfte buchen – nicht den Arbeitsbereich für Reinigungskräfte.",
+    "cantDoCleaner": "Sie können Aufträge durchsuchen, Gebote abgeben und Ihre Reinigungsbuchungen verwalten. Hier können Sie keine Reinigungskräfte buchen oder Aufträge erstellen — wechseln Sie dazu zurück zu Ihrem Kundenkonto.",
+    "cantDoCustomer": "Sie können Reinigungskräfte buchen und Aufträge erstellen. Hier können Sie keine Gebote abgeben oder Reinigungsarbeit verwalten — wechseln Sie dazu zurück zu Ihrem Reinigungskonto."
   },
   "compLocationLocationDetectButton": {
     "detecting": "Standort wird ermittelt…",

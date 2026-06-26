@@ -1407,7 +1407,9 @@
     "customerAccount": "Klantaccount",
     "toastTitleCustomer": "Overgeschakeld naar klantaccount",
     "toastDescCustomer": "Je browst nu als klant. Plaats klussen en beheer boekingen.",
-    "warningCustomer": "Je ziet het klantdashboard, waar je klussen plaatst en schoonmakers boekt — niet de werkruimte voor schoonmakers."
+    "warningCustomer": "Je ziet het klantdashboard, waar je klussen plaatst en schoonmakers boekt — niet de werkruimte voor schoonmakers.",
+    "cantDoCleaner": "Je kunt klussen bekijken, bieden en je schoonmaakboekingen beheren. Je kunt hier geen schoonmakers boeken of klussen plaatsen — schakel daarvoor terug naar je klantaccount.",
+    "cantDoCustomer": "Je kunt schoonmakers boeken en klussen plaatsen. Je kunt hier niet bieden of schoonmaakwerk beheren — schakel daarvoor terug naar je schoonmaakaccount."
   },
   "compLocationLocationDetectButton": {
     "detecting": "Locatie wordt bepaald…",

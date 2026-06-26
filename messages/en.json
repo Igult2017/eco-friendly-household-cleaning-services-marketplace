@@ -1407,7 +1407,9 @@
     "customerAccount": "Client Account",
     "toastTitleCustomer": "Switched to Client Account",
     "toastDescCustomer": "You are now browsing as a client. Post jobs and manage bookings.",
-    "warningCustomer": "You will see the client dashboard, where you post jobs and book cleaners — not the cleaner workspace."
+    "warningCustomer": "You will see the client dashboard, where you post jobs and book cleaners — not the cleaner workspace.",
+    "cantDoCleaner": "You can browse jobs, place bids and manage your cleaning bookings. You can’t book cleaners or post jobs here — switch back to your Client account for that.",
+    "cantDoCustomer": "You can book cleaners and post jobs. You can’t place bids or manage cleaning work here — switch back to your Cleaner account for that."
   },
   "compLocationLocationDetectButton": {
     "detecting": "Detecting location…",

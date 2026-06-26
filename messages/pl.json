@@ -1407,7 +1407,9 @@
     "customerAccount": "Konto klienta",
     "toastTitleCustomer": "Przełączono na konto klienta",
     "toastDescCustomer": "Przeglądasz teraz jako klient. Dodawaj zlecenia i zarządzaj rezerwacjami.",
-    "warningCustomer": "Zobaczysz panel klienta, w którym dodajesz zlecenia i rezerwujesz sprzątaczy — a nie obszar roboczy sprzątacza."
+    "warningCustomer": "Zobaczysz panel klienta, w którym dodajesz zlecenia i rezerwujesz sprzątaczy — a nie obszar roboczy sprzątacza.",
+    "cantDoCleaner": "Możesz przeglądać zlecenia, składać oferty i zarządzać swoimi rezerwacjami. Tutaj nie możesz rezerwować sprzątaczy ani publikować zleceń — przełącz się na konto klienta, aby to zrobić.",
+    "cantDoCustomer": "Możesz rezerwować sprzątaczy i publikować zlecenia. Tutaj nie możesz składać ofert ani zarządzać pracą — przełącz się na konto sprzątacza, aby to zrobić."
   },
   "compLocationLocationDetectButton": {
     "detecting": "Wykrywanie lokalizacji…",

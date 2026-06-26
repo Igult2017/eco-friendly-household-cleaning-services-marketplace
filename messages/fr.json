@@ -1407,7 +1407,9 @@
     "customerAccount": "Compte client",
     "toastTitleCustomer": "Basculé vers le compte client",
     "toastDescCustomer": "Vous naviguez maintenant en tant que client. Publiez des demandes et gérez vos réservations.",
-    "warningCustomer": "Vous verrez le tableau de bord client, où vous publiez des demandes et réservez des agents d'entretien — pas l'espace de travail des agents."
+    "warningCustomer": "Vous verrez le tableau de bord client, où vous publiez des demandes et réservez des agents d'entretien — pas l'espace de travail des agents.",
+    "cantDoCleaner": "Vous pouvez parcourir les missions, soumissionner et gérer vos prestations. Vous ne pouvez pas réserver d’intervenants ni publier d’offres ici — revenez à votre compte client pour cela.",
+    "cantDoCustomer": "Vous pouvez réserver des intervenants et publier des offres. Vous ne pouvez pas soumissionner ni gérer de prestations ici — revenez à votre compte intervenant pour cela."
   },
   "compLocationLocationDetectButton": {
     "detecting": "Localisation en cours…",

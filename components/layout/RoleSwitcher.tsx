@@ -152,6 +152,13 @@ export function RoleSwitcher({ currentRole, targetRole }: Props) {
                   </div>
                 </div>
 
+                {/* What you can / can't do in the account you're switching to */}
+                <div className="rounded-xl bg-[#F8FAF9] border border-[#E5EDE9] p-3">
+                  <p className="text-xs text-[#6B7280] leading-relaxed">
+                    {targetRole === "provider" ? t("cantDoCleaner") : t("cantDoCustomer")}
+                  </p>
+                </div>
+
                 {/* Fraud warning */}
                 <div className={`flex items-start gap-2.5 rounded-xl p-3 border ${target.accentBg} ${target.accentBorder}`}>
                   <AlertTriangle size={14} className={`${target.accentIcon} mt-0.5 shrink-0`} />

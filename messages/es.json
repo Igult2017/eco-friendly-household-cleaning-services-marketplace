@@ -1407,7 +1407,9 @@
     "customerAccount": "Cuenta de cliente",
     "toastTitleCustomer": "Cambiado a cuenta de cliente",
     "toastDescCustomer": "Ahora navegas como cliente. Publica trabajos y gestiona tus reservas.",
-    "warningCustomer": "Verás el panel de cliente, donde publicas trabajos y reservas limpiadores, no el espacio de trabajo del limpiador."
+    "warningCustomer": "Verás el panel de cliente, donde publicas trabajos y reservas limpiadores, no el espacio de trabajo del limpiador.",
+    "cantDoCleaner": "Puedes explorar trabajos, hacer ofertas y gestionar tus reservas de limpieza. Aquí no puedes reservar limpiadores ni publicar trabajos — vuelve a tu cuenta de cliente para eso.",
+    "cantDoCustomer": "Puedes reservar limpiadores y publicar trabajos. Aquí no puedes hacer ofertas ni gestionar el trabajo de limpieza — vuelve a tu cuenta de limpiador para eso."
   },
   "compLocationLocationDetectButton": {
     "detecting": "Detectando ubicación…",
