@@ -1648,5 +1648,9 @@
     "invalid": "Introduce un nombre y un precio de al menos 0,50 €.",
     "addFailed": "No se pudo añadir. Inténtalo de nuevo.",
     "remove": "Eliminar extra"
+  },
+  "roleBadge": {
+    "cleaner": "Limpiador",
+    "lookingForCleaner": "Buscando un limpiador"
   }
 }

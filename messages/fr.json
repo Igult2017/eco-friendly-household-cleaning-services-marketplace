@@ -1648,5 +1648,9 @@
     "invalid": "Saisissez un nom et un prix d'au moins 0,50 €.",
     "addFailed": "Échec de l'ajout. Réessayez.",
     "remove": "Supprimer l'option"
+  },
+  "roleBadge": {
+    "cleaner": "Intervenant",
+    "lookingForCleaner": "À la recherche d’un intervenant"
   }
 }

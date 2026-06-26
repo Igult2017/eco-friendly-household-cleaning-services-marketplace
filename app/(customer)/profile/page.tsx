@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
 import { Loader2, Save, User } from "lucide-react"
+import { RoleBadge } from "@/components/layout/RoleBadge"
 
 type Profile = {
   firstName: string
@@ -70,6 +71,7 @@ export default function CustomerProfilePage() {
       <div>
         <h1 className="font-serif text-3xl font-bold text-[#2B3441]">{t("title")}</h1>
         <p className="text-sm text-[#6B7280] mt-1">{t("subtitle")}</p>
+        <div className="mt-3"><RoleBadge variant="client" /></div>
       </div>
 
       <div className="rounded-xl bg-white shadow-sm p-6 space-y-5">

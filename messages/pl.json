@@ -1648,5 +1648,9 @@
     "invalid": "Podaj nazwę i cenę co najmniej 0,50 €.",
     "addFailed": "Nie udało się dodać. Spróbuj ponownie.",
     "remove": "Usuń dodatek"
+  },
+  "roleBadge": {
+    "cleaner": "Sprzątacz",
+    "lookingForCleaner": "Szukam sprzątacza"
   }
 }

@@ -1648,5 +1648,9 @@
     "invalid": "Introduza um nome e um preço de pelo menos 0,50 €.",
     "addFailed": "Não foi possível adicionar. Tente novamente.",
     "remove": "Remover extra"
+  },
+  "roleBadge": {
+    "cleaner": "Profissional de limpeza",
+    "lookingForCleaner": "À procura de um profissional de limpeza"
   }
 }

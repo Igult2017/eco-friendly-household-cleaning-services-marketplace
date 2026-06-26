@@ -1648,5 +1648,9 @@
     "invalid": "Voer een naam en een prijs van minimaal € 0,50 in.",
     "addFailed": "Toevoegen mislukt. Probeer opnieuw.",
     "remove": "Extra verwijderen"
+  },
+  "roleBadge": {
+    "cleaner": "Schoonmaker",
+    "lookingForCleaner": "Op zoek naar een schoonmaker"
   }
 }

@@ -1648,5 +1648,9 @@
     "invalid": "Enter a name and a price of at least €0.50.",
     "addFailed": "Could not add. Try again.",
     "remove": "Remove add-on"
+  },
+  "roleBadge": {
+    "cleaner": "Cleaner",
+    "lookingForCleaner": "Looking for a cleaner"
   }
 }

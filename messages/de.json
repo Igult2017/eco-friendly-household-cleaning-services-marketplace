@@ -1648,5 +1648,9 @@
     "invalid": "Geben Sie einen Namen und einen Preis von mindestens 0,50 € ein.",
     "addFailed": "Konnte nicht hinzugefügt werden. Erneut versuchen.",
     "remove": "Zusatzleistung entfernen"
+  },
+  "roleBadge": {
+    "cleaner": "Reinigungskraft",
+    "lookingForCleaner": "Auf der Suche nach einer Reinigungskraft"
   }
 }

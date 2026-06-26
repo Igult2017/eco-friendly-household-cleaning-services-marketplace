@@ -6,6 +6,7 @@ import { Loader2, Save, AlertTriangle } from "lucide-react"
 import { LocationDetectButton } from "@/components/location/LocationDetectButton"
 import { PricingSummaryCard } from "@/components/provider/PricingSummaryCard"
 import { usePostalValidation } from "@/hooks/usePostalValidation"
+import { RoleBadge } from "@/components/layout/RoleBadge"
 import type { GeoResult } from "@/lib/nominatim"
 
 type Profile = {
@@ -83,6 +84,7 @@ export default function ProviderProfilePage() {
       <div>
         <h1 className="font-serif text-3xl font-bold text-[#2B3441]">{t("heading")}</h1>
         <p className="text-sm text-[#6B7280] mt-1">{t("subheading")}</p>
+        <div className="mt-3"><RoleBadge variant="cleaner" /></div>
       </div>
 
       <div className="rounded-xl bg-white shadow-sm p-6 space-y-5">
