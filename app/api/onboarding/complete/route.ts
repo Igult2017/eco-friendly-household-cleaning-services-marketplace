@@ -7,15 +7,10 @@ import { eq } from "drizzle-orm"
 import { onboardingSchema } from "@/lib/validations/onboarding"
 import { nanoid } from "nanoid"
 import { inngest } from "@/lib/inngest/client"
+import { sendProviderApprovedEmail } from "@/lib/resend/providerApproved"
 
 const ROLE_COOKIE = "dorix_role"
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7
-
-// Cleaner auto-approval launch. A cleaner who completes the full onboarding form is approved
-// immediately — but ONLY if their account signed up on/after this cutoff. Accounts created
-// before it keep going through manual admin approval, so existing/current users are unaffected.
-// (Signup time comes from Clerk, so it can't be forged by the user.)
-const AUTO_APPROVE_SIGNUPS_AFTER = Date.parse("2026-06-26T03:00:00Z")
 
 function toSlug(name: string, suffix: string): string {
   return (
@@ -116,22 +111,18 @@ export async function POST(req: NextRequest) {
         // Re-onboarding an existing provider never changes their approval status.
         await db.update(providers).set(providerFields).where(eq(providers.userId, userId))
       } else {
-        // Reaching here means the full provider onboarding form passed validation (all required
-        // fields present). Auto-approve future signups; pre-cutoff/current accounts stay false
-        // and continue through manual admin approval.
-        const autoApprove =
-          typeof clerkUser.createdAt === "number" && clerkUser.createdAt >= AUTO_APPROVE_SIGNUPS_AFTER
-
+        // Reaching here means the full provider onboarding form passed validation, so the cleaner
+        // is auto-approved. Every approval also gets an in-app notification + congratulations email.
         const insertData: NewProvider = {
           userId,
           slug: toSlug(data.businessName, nanoid(6)),
           ...providerFields,
-          isApproved: autoApprove,
+          isApproved: true,
           isSuspended: false,
         }
         await db.insert(providers).values(insertData)
 
-        if (autoApprove) {
+        try {
           await db.insert(notifications).values({
             userId,
             type: "provider_approved",
@@ -139,7 +130,8 @@ export async function POST(req: NextRequest) {
             body: "Your cleaner account is active. You can now browse jobs and place bids.",
             link: "/provider/dashboard",
           })
-        }
+        } catch (e) { console.warn("[onboarding/complete] approval notification failed:", e) }
+        try { await sendProviderApprovedEmail(userId) } catch (e) { console.warn("[onboarding/complete] approval email failed:", e) }
       }
     }
 

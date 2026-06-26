@@ -4,10 +4,11 @@ import { safeLimit, createRateLimiter } from "@/lib/redis/client"
 
 const enableDualRoleRatelimit = createRateLimiter({ tokens: 5, windowSeconds: 600, prefix: "ratelimit:enable-dual-role" })
 import { db } from "@/lib/db"
-import { users, providers } from "@/lib/db/schema"
+import { users, providers, notifications } from "@/lib/db/schema"
 import type { NewProvider } from "@/lib/db/schema/providers"
 import { eq } from "drizzle-orm"
 import { nanoid } from "nanoid"
+import { sendProviderApprovedEmail } from "@/lib/resend/providerApproved"
 import { z } from "zod"
 
 const enableSchema = z.object({
@@ -87,14 +88,14 @@ export async function POST(req: NextRequest) {
         country: data.country,
         serviceRadiusKm: data.serviceRadiusKm,
         ecoLevel: data.ecoLevel,
-        isApproved: false,
+        // Completing this form auto-approves the cleaner (same rule as onboarding).
+        isApproved: true,
         isSuspended: false,
       }
       await db.insert(providers).values(insertData)
     } else {
       // BUG-014: a profile already exists (e.g. a prior failed attempt) — apply the
-      // submitted details instead of silently keeping the stale row. Preserve slug,
-      // approval and suspension state.
+      // submitted details instead of silently keeping the stale row, and approve it.
       await db
         .update(providers)
         .set({
@@ -105,10 +106,23 @@ export async function POST(req: NextRequest) {
           country: data.country,
           serviceRadiusKm: data.serviceRadiusKm,
           ecoLevel: data.ecoLevel,
+          isApproved: true,
           updatedAt: new Date(),
         })
         .where(eq(providers.id, existing.id))
     }
+
+    // Auto-approved on form completion — in-app notification + congratulations email (best-effort).
+    try {
+      await db.insert(notifications).values({
+        userId,
+        type: "provider_approved",
+        title: "You're approved — welcome to DORIXÉ!",
+        body: "Your cleaner account is active. You can now browse jobs and place bids.",
+        link: "/provider/dashboard",
+      })
+    } catch (e) { console.warn("[enable-dual-role] approval notification failed:", e) }
+    try { await sendProviderApprovedEmail(userId) } catch (e) { console.warn("[enable-dual-role] approval email failed:", e) }
 
     const clerk = await clerkClient()
     await clerk.users.updateUser(userId, {

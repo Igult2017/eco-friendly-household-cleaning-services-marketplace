@@ -4,6 +4,7 @@ import { providers, notifications } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { z } from "zod"
 import { requireAdmin } from "@/lib/auth/requireAdmin"
+import { sendProviderApprovedEmail } from "@/lib/resend/providerApproved"
 
 const approveSchema = z.object({
   action: z.enum(["approve", "reject", "suspend", "unsuspend"]),
@@ -64,6 +65,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       body: notifBody,
       link: action === "approve" ? "/provider/dashboard" : "/provider/profile",
     })
+
+    // Congratulations email on approval (best-effort — never block the admin action).
+    if (action === "approve") {
+      try { await sendProviderApprovedEmail(provider.userId) } catch (e) { console.warn("[admin/providers approve] email failed:", e) }
+    }
 
     return NextResponse.json({ success: true, action })
   } catch (err) {

@@ -1,11 +1,12 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { providers, users } from "@/lib/db/schema"
+import { providers, users, notifications } from "@/lib/db/schema"
 import type { NewProvider } from "@/lib/db/schema/providers"
 import { eq } from "drizzle-orm"
 import { providerProfileSchema } from "@/lib/validations/provider"
 import { nanoid } from "nanoid"
+import { sendProviderApprovedEmail } from "@/lib/resend/providerApproved"
 
 function toSlug(name: string, suffix: string): string {
   return (
@@ -133,12 +134,22 @@ export async function PATCH(req: Request) {
       profilePhotoUrl: data.profilePhotoUrl ?? null,
       latitude: (updateFields.latitude as number | undefined) ?? null,
       longitude: (updateFields.longitude as number | undefined) ?? null,
-      // An admin setting up their OWN cleaner account is trusted → approve immediately so they
-      // can operate/test as a cleaner. Everyone else stays unapproved (normal approval path).
-      isApproved: isAdmin,
+      // Completing the cleaner profile auto-approves the account (same rule as onboarding).
+      isApproved: true,
       isSuspended: false,
     }
     await db.insert(providers).values(insertData)
+
+    try {
+      await db.insert(notifications).values({
+        userId,
+        type: "provider_approved",
+        title: "You're approved — welcome to DORIXÉ!",
+        body: "Your cleaner account is active. You can now browse jobs and place bids.",
+        link: "/provider/dashboard",
+      })
+    } catch (e) { console.warn("[providers/profile] approval notification failed:", e) }
+    try { await sendProviderApprovedEmail(userId) } catch (e) { console.warn("[providers/profile] approval email failed:", e) }
 
     return NextResponse.json({ success: true, created: true }, { status: 201 })
   } catch (err) {
