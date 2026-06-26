@@ -155,7 +155,7 @@ export default function ProviderJobsPage() {
                       </div>
                     ) : (
                       <Button
-                        onClick={() => setBidding(isOpen ? null : job.id)}
+                        onClick={() => { setError(null); setBidding(isOpen ? null : job.id) }}
                         className={cn("h-9 text-sm transition-all", isOpen ? "bg-[#E5EBF0] text-[#2B3441] hover:bg-[#E5EBF0]" : "bg-[#2D7A5F] hover:bg-[#235f49] text-white")}
                       >
                         {isOpen ? t("cancel") : t("submitABid")}

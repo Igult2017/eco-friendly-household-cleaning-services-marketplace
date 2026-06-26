@@ -140,6 +140,7 @@ export async function GET(req: Request) {
           .from(jobPosts)
           .where(and(
             inArray(jobPosts.status, ["open", "bidding"]),
+            sql`expires_at > NOW()`,
             sql`customer_id != ${userId}`,
             sql`service_location IS NOT NULL AND ST_DWithin(service_location::geography, ST_MakePoint(${providerLng}, ${providerLat})::geography, ${radiusMeters})`,
           ))
@@ -155,6 +156,7 @@ export async function GET(req: Request) {
           .from(jobPosts)
           .where(and(
             inArray(jobPosts.status, ["open", "bidding"]),
+            sql`expires_at > NOW()`,
             sql`customer_id != ${userId}`,
             sql`service_latitude BETWEEN ${providerLat - latDelta} AND ${providerLat + latDelta}`,
             sql`service_longitude BETWEEN ${providerLng - lngDelta} AND ${providerLng + lngDelta}`,

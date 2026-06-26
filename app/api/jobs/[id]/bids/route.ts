@@ -55,7 +55,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     if (!job) return NextResponse.json({ error: "Job not found" }, { status: 404 })
     if (job.customerId === userId) return NextResponse.json({ error: "Cannot bid on your own job" }, { status: 403 })
     if (!["open", "bidding"].includes(job.status)) return NextResponse.json({ error: "Job is not accepting bids" }, { status: 422 })
-    if (new Date(job.expiresAt) < new Date()) return NextResponse.json({ error: "Job has expired" }, { status: 422 })
+    if (new Date(job.expiresAt) < new Date()) {
+      console.warn("[bids POST] rejected as expired", { jobPostId, expiresAt: job.expiresAt, now: new Date().toISOString() })
+      return NextResponse.json({ error: "Job has expired" }, { status: 422 })
+    }
 
     const [existing] = await db
       .select({ id: bids.id })
