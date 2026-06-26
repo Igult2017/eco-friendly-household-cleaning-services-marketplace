@@ -57,6 +57,7 @@ export async function POST(req: Request) {
     if (!service) return NextResponse.json({ error: "Service not found" }, { status: 404 })
 
     // Bug 5: when booking from an accepted bid, validate the bid and use its amount as subtotal
+    let acceptedBidId: string | null = null
     if (bidAmountCents !== undefined) {
       const [acceptedBid] = await db
         .select({ id: bids.id })
@@ -69,6 +70,7 @@ export async function POST(req: Request) {
           eq(jobPosts.customerId, userId),  // prevent using another customer's accepted bid
         ))
       if (!acceptedBid) return NextResponse.json({ error: "Accepted bid not found" }, { status: 422 })
+      acceptedBidId = acceptedBid.id
     }
 
     // Sum the selected add-ons server-side, validated against this provider's active add-ons.
@@ -145,6 +147,7 @@ export async function POST(req: Request) {
       commission_pct: String(commissionPct),
     }
     if (bidAmountCents !== undefined) metadata.bid_amount_cents = String(bidAmountCents)
+    if (acceptedBidId) metadata.bid_id = acceptedBidId
     if (promoCodeId) metadata.promo_code_id = promoCodeId
     if (resolvedDiscountCents > 0) metadata.promo_code_discount_cents = String(resolvedDiscountCents)
     if (addOnsTotal > 0) {

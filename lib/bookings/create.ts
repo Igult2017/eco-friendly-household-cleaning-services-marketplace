@@ -1,11 +1,11 @@
 import { db } from "@/lib/db"
-import { bookings, payments, providers, providerServices, carbonOffsetContributions, promoCodes, promoCodeUsages } from "@/lib/db/schema"
+import { bookings, payments, providers, providerServices, carbonOffsetContributions, promoCodes, promoCodeUsages, bids } from "@/lib/db/schema"
 import type { NewBooking } from "@/lib/db/schema/bookings"
 import { stripe, calculateBookingAmounts } from "@/lib/stripe/client"
 import { getCommissionPct } from "@/lib/platform/settings"
 import { inngest } from "@/lib/inngest/client"
 import { redis } from "@/lib/redis/client"
-import { eq, and, sql, inArray, lte, gte } from "drizzle-orm"
+import { eq, and, sql, inArray, lte, gte, isNull } from "drizzle-orm"
 import type { CreateBookingInput } from "@/lib/validations/booking"
 
 async function generateBookingNumber(): Promise<string> {
@@ -65,6 +65,7 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
 
   // Bug 5: use bid amount from PI metadata when present (bid-flow bookings)
   const bidAmountCents = intent.metadata.bid_amount_cents ? parseInt(intent.metadata.bid_amount_cents, 10) : null
+  const bidId = intent.metadata.bid_id ?? null
   // Add-ons were summed + validated server-side at PI creation; their total rides in metadata.
   const addOnsTotal = intent.metadata.addon_total_cents ? parseInt(intent.metadata.addon_total_cents, 10) : 0
   const subtotal = (bidAmountCents ?? service!.basePrice) + addOnsTotal
@@ -136,6 +137,18 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
       .values(insertData)
       .returning({ id: bookings.id, bookingNumber: bookings.bookingNumber })
 
+    // Consume the accepted bid — one booking per bid. A repeat/concurrent conversion finds no
+    // unlinked row and aborts (caught below → PI released → 409), so one accepted bid can't mint
+    // multiple paid bookings.
+    if (bidId) {
+      const [consumed] = await tx
+        .update(bids)
+        .set({ bookingId: newBooking.id })
+        .where(and(eq(bids.id, bidId), isNull(bids.bookingId)))
+        .returning({ id: bids.id })
+      if (!consumed) throw new BookingError(409, "This accepted bid has already been booked.")
+    }
+
     await tx.insert(payments).values({
       bookingId: newBooking.id,
       customerId: userId,
@@ -196,6 +209,11 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     // (overlapping window). Either way the slot is taken — release the hold + return 409.
     if (pgErr?.code === "23505" || pgErr?.code === "23P01" || /duplicate|exclusion|conflicting/i.test(pgErr?.message ?? "")) {
       await cancel(409, "That time slot was just taken. Please choose a different time.")
+    }
+    // Any other failure after the hold was placed (promo limit, bid already booked, …) → release the
+    // hold so the customer's money isn't stranded, then surface the error.
+    if (err instanceof BookingError) {
+      try { await stripe.paymentIntents.cancel(paymentIntentId) } catch {}
     }
     throw err
   }
