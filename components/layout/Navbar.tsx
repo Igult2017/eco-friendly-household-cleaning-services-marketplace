@@ -16,8 +16,8 @@ const NAV_LINKS = [
   { href: "/browse", key: "findCleaners" },
   { href: "/browse-jobs", key: "browseJobs" },
   { href: "/#how-it-works", key: "howItWorks" },
-  { href: "/blog", key: "blog" },
   { href: "/become-a-cleaner", key: "becomeACleaner" },
+  { href: "/blog", key: "blog" },
 ] as const
 
 function dashboardHref(role: string | undefined) {
