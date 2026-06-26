@@ -16,8 +16,8 @@ export async function ServiceGrid({ glass = false }: { glass?: boolean }) {
   // with a strong dark halo keeps them readable over the image. The default
   // (non-glass) solid white cards are used anywhere with a plain background.
   const itemClass = glass
-    ? "group flex flex-col p-1.5 cursor-pointer transition-all duration-200"
-    : "group bg-white rounded-2xl p-4 shadow-sm border border-[#E5EDE9] hover:border-[#2D7A5F] hover:shadow-md transition-all duration-200 cursor-pointer"
+    ? "group flex flex-col min-w-0 p-1.5 cursor-pointer transition-all duration-200"
+    : "group bg-white rounded-2xl min-w-0 p-4 shadow-sm border border-[#E5EDE9] hover:border-[#2D7A5F] hover:shadow-md transition-all duration-200 cursor-pointer"
   const iconClass = glass
     ? "text-2xl mb-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.45)] transition-transform duration-200 group-hover:scale-110"
     : "text-2xl mb-2.5"

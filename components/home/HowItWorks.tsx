@@ -22,7 +22,7 @@ export async function HowItWorks() {
             {t("subheading")}
           </p>
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {STEPS.map(({ number, Icon, title, desc }) => (
             <div key={number}>
               <div className="flex items-center gap-3 mb-4">

@@ -64,7 +64,7 @@ export async function FeaturedProviders() {
             </Button>
           </Link>
         </div>
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {PROVIDERS.map((p) => (
             <div key={p.id} className="bg-white rounded-2xl p-5 border border-[#E5EDE9] shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-start gap-3 mb-4">

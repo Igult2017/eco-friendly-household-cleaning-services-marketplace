@@ -35,9 +35,9 @@ export async function HeroSection() {
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 items-center">
           {/* Left */}
-          <div>
+          <div className="min-w-0">
             <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/25 text-white text-xs font-semibold px-3 py-1.5 rounded-full mb-6">
               🌿 {t("badge")}
             </div>
@@ -73,7 +73,7 @@ export async function HeroSection() {
           </div>
 
           {/* Right — service grid (frosted glass over the photo) */}
-          <div>
+          <div className="min-w-0">
             <p className="text-xs font-semibold text-white/80 uppercase tracking-widest mb-4 drop-shadow-sm">
               {t("ourServices")}
             </p>

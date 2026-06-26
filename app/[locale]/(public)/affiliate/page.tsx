@@ -246,7 +246,7 @@ export default async function AffiliatePage({ params }: { params: Promise<{ loca
       {/* Benefits grid */}
       <section className="bg-white border-y border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="grid lg:grid-cols-2 gap-16 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
             <div>
               <span className="mb-4 inline-flex items-center rounded-full border border-[#2D7A5F]/20 bg-[#F4FAF6] px-3 py-1 text-xs font-semibold text-[#2D7A5F]">{t("benefitsBadge")}</span>
               <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#2B3441] mb-6">

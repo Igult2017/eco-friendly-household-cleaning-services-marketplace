@@ -190,7 +190,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             <p className="text-white/60 text-lg">{t("howSubtitle")}</p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Customer side */}
             <div className="bg-white/5 rounded-2xl border border-white/10 p-8">
               <div className="w-10 h-10 rounded-xl bg-[#2D7A5F] flex items-center justify-center mb-4">

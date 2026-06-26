@@ -82,7 +82,7 @@ export default async function PricingPage({ params }: { params: Promise<{ locale
 
       {/* Two pricing cards */}
       <section className="max-w-5xl mx-auto px-4 py-16">
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
           {/* Customer card */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">

@@ -27,7 +27,7 @@ export async function Testimonials() {
           </h2>
           <p className="text-[#6B7280] text-sm">{t("subheading")}</p>
         </div>
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {REVIEWS.map((review) => (
             <div key={review.key} className="bg-white rounded-2xl p-6 border border-[#E5EDE9] shadow-sm">
               <div className="flex gap-0.5 mb-4">

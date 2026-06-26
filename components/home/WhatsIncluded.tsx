@@ -16,7 +16,7 @@ export async function WhatsIncluded() {
             {t("subheading")}
           </p>
         </div>
-        <div className="grid sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {ITEMS.map((item, i) => (
             <div
               key={i}

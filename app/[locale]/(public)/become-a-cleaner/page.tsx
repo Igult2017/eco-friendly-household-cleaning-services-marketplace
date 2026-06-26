@@ -42,7 +42,7 @@ export default async function BecomeACleanerPage() {
         </div>
       </section>
 
-      <section className="max-w-5xl mx-auto px-4 py-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <section className="max-w-5xl mx-auto px-4 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {PERKS.map(({ icon: Icon, title, body }) => (
           <div key={title} className="bg-white rounded-2xl border border-[#E5EBF0] shadow-sm p-6 space-y-2">
             <div className="w-9 h-9 rounded-xl bg-[#EDF5F0] flex items-center justify-center">

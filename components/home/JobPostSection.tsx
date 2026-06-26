@@ -23,9 +23,9 @@ export async function JobPostSection() {
   return (
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-2 gap-14 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-center">
           {/* Left */}
-          <div>
+          <div className="min-w-0">
             <div className="inline-flex items-center gap-2 bg-[#D1F0E0] text-[#2D7A5F] text-xs font-semibold px-3 py-1.5 rounded-full mb-5">
               {t("badge")}
             </div>
@@ -57,7 +57,7 @@ export async function JobPostSection() {
           </div>
 
           {/* Right — live feed (bids + jobs) auto-scrolling within a fixed viewport */}
-          <div>
+          <div className="min-w-0">
             <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-widest mb-4">
               {t("liveBidsLabel")}
             </p>
