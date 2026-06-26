@@ -29,6 +29,7 @@ export default function ProviderProfilePage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [error, setError] = useState("")
   const [locationValid, setLocationValid] = useState(true)
   const postal = usePostalValidation()
 
@@ -65,14 +66,25 @@ export default function ProviderProfilePage() {
 
   const save = async () => {
     setSaving(true)
-    await fetch("/api/providers/profile", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(profile),
-    })
-    setSaving(false)
-    setSaved(true)
-    setTimeout(() => setSaved(false), 3000)
+    setError("")
+    try {
+      const res = await fetch("/api/providers/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(profile),
+      })
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}))
+        setError(typeof d?.error === "string" ? d.error : "Couldn't save your profile. Please try again.")
+        return
+      }
+      setSaved(true)
+      setTimeout(() => setSaved(false), 3000)
+    } catch {
+      setError("Couldn't save your profile. Please try again.")
+    } finally {
+      setSaving(false)
+    }
   }
 
   if (loading) {
@@ -179,6 +191,7 @@ export default function ProviderProfilePage() {
           <p className="text-xs text-[#6B7280] mt-1">{t("recurringDiscountHint")}</p>
         </div>
 
+        {error && <p className="text-sm text-red-500">{error}</p>}
         <button onClick={save} disabled={saving || !locationValid}
           className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#2D7A5F] py-3 text-sm font-semibold text-white disabled:opacity-50 hover:bg-[#256349] transition-colors"
         >

@@ -47,7 +47,7 @@ export async function GET() {
 
 export async function PATCH(req: Request) {
   try {
-    const { userId } = await auth()
+    const { userId, sessionClaims } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
     const body = await req.json().catch(() => ({}))
@@ -102,11 +102,17 @@ export async function PATCH(req: Request) {
     // No provider row yet — create one. This is the path an admin or dual-role user hits when
     // setting up their cleaner account from the profile page for the first time. Previously the
     // UPDATE matched 0 rows and silently "saved" nothing. Gate creation to cleaner-eligible users.
+    // Eligibility + admin status come from CLERK metadata (the source of truth the layouts use).
+    // An admin's DB users.role is frequently still "customer" — their admin status lives only in
+    // Clerk publicMetadata — so gating on the DB role wrongly 403'd admins creating their cleaner
+    // profile. dualRoleEnabled (DB) is kept as an extra fallback.
+    const meta = (sessionClaims?.metadata ?? {}) as { role?: string; dualRole?: boolean }
     const [dbUser] = await db
-      .select({ role: users.role, dualRoleEnabled: users.dualRoleEnabled })
+      .select({ dualRoleEnabled: users.dualRoleEnabled })
       .from(users)
       .where(eq(users.id, userId))
-    const eligible = !!dbUser && (dbUser.role === "admin" || dbUser.role === "provider" || dbUser.dualRoleEnabled === true)
+    const isAdmin = meta.role === "admin"
+    const eligible = isAdmin || meta.role === "provider" || meta.dualRole === true || dbUser?.dualRoleEnabled === true
     if (!eligible) return NextResponse.json({ error: "Not eligible to set up a cleaner profile" }, { status: 403 })
     if (!data.businessName || !data.country) {
       return NextResponse.json({ error: "Business name and country are required to create your cleaner profile" }, { status: 400 })
@@ -129,7 +135,7 @@ export async function PATCH(req: Request) {
       longitude: (updateFields.longitude as number | undefined) ?? null,
       // An admin setting up their OWN cleaner account is trusted → approve immediately so they
       // can operate/test as a cleaner. Everyone else stays unapproved (normal approval path).
-      isApproved: dbUser.role === "admin",
+      isApproved: isAdmin,
       isSuspended: false,
     }
     await db.insert(providers).values(insertData)
