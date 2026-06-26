@@ -87,15 +87,22 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
     }
 
     const client = await clerkClient()
-    await client.users.deleteUser(id)
     try {
-      await db.delete(users).where(eq(users.id, id))
-    } catch (dbErr) {
-      // BUG-008b: user removed from Clerk but the DB delete failed (likely FK references) —
-      // log the id so the orphaned row can be cleaned up manually.
-      console.error(`[admin/users DELETE] user ${id} deleted from Clerk but DB delete failed — orphaned row:`, dbErr)
-      throw dbErr
+      await client.users.deleteUser(id)
+    } catch (clerkErr) {
+      // The user may no longer exist in Clerk (already removed / DB-only row). Don't fail the
+      // whole delete over it — proceed to soft-delete the DB record below.
+      console.warn(`[admin/users DELETE] Clerk delete failed for ${id} (continuing):`, clerkErr instanceof Error ? clerkErr.message : clerkErr)
     }
+
+    // Soft-delete (not a hard delete): the user is referenced by other tables (bookings, payments,
+    // notifications, reviews, referrals…) that must be kept for financial/audit history. A hard
+    // delete threw a foreign-key violation — the "Internal server error". Auth is revoked via the
+    // Clerk delete above; the row is hidden from the admin list by the deletedAt filter.
+    await db
+      .update(users)
+      .set({ deletedAt: new Date(), isActive: false, updatedAt: new Date() })
+      .where(eq(users.id, id))
 
     return NextResponse.json({ success: true, self: isSelf })
   } catch (err) {

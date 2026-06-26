@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { users } from "@/lib/db/schema"
-import { desc } from "drizzle-orm"
+import { desc, isNull } from "drizzle-orm"
 import { UserRoleManager } from "@/components/admin/UserRoleManager"
 import { SyncUsersButton } from "@/components/admin/SyncUsersButton"
 import { syncClerkUsers } from "@/lib/clerk/sync"
@@ -33,6 +33,7 @@ export default async function AdminUsersPage() {
       isActive: users.isActive,
     })
     .from(users)
+    .where(isNull(users.deletedAt))
     .orderBy(desc(users.createdAt))
     .limit(500)
 
