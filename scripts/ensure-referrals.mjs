@@ -262,6 +262,10 @@ END $$;
 -- Booking-number fallback sequence (used by createBooking when Redis is unavailable). Started high
 -- so its range can't collide with the existing Redis-issued booking numbers.
 CREATE SEQUENCE IF NOT EXISTS booking_seq START WITH 500000;
+
+-- Self-bid fraud prevention: record the poster's IP on each job so the feed + bid API can hide and
+-- block the poster's own jobs even from a second account on the same connection.
+ALTER TABLE job_posts ADD COLUMN IF NOT EXISTS posted_ip varchar(64);
 `
 
 function isValidUrl(url) {

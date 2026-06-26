@@ -6,6 +6,7 @@ import type { NewJobPost } from "@/lib/db/schema/jobs"
 import { inngest } from "@/lib/inngest/client"
 import { jobRatelimit } from "@/lib/redis/client"
 import { eq, desc, and, inArray, sql } from "drizzle-orm"
+import { getClientIp } from "@/lib/utils/ip"
 import { z } from "zod"
 
 const createJobSchema = z.object({
@@ -84,6 +85,7 @@ export async function POST(req: Request) {
       ecoRequirements: data.ecoRequirements,
       expiresAt,
       status: "open",
+      postedIp: getClientIp(req),
     }
 
     const [newJob] = await db.insert(jobPosts).values(insertData).returning({ id: jobPosts.id })
@@ -139,6 +141,11 @@ export async function GET(req: Request) {
       const providerLng = provider.longitude
       const radiusMeters = (provider.serviceRadiusKm ?? 25) * 1000
 
+      // Self-bid prevention (defence in depth): also hide jobs posted from this same IP, so a customer
+      // can't see — let alone bid on — their own job via a second account on the same connection.
+      const currentIp = getClientIp(req)
+      const ipFilter = currentIp ? sql`(posted_ip IS NULL OR posted_ip <> ${currentIp})` : sql`TRUE`
+
       // Step 1: get nearby job IDs. PostGIS path (fast, indexed) with a pure-SQL Haversine
       // bounding-box fallback for servers where PostGIS isn't installed — WITHOUT this the entire
       // provider job feed 500s and cleaners see no jobs to bid on. Mirrors lib/db/queries/geo.ts.
@@ -152,6 +159,7 @@ export async function GET(req: Request) {
             inArray(jobPosts.status, ["open", "bidding"]),
             sql`expires_at > NOW()`,
             sql`customer_id != ${userId}`,
+            ipFilter,
             sql`service_location IS NOT NULL AND ST_DWithin(service_location::geography, ST_MakePoint(${providerLng}, ${providerLat})::geography, ${radiusMeters})`,
           ))
           .orderBy(sql`ST_Distance(service_location::geography, ST_MakePoint(${providerLng}, ${providerLat})::geography)`)
@@ -168,6 +176,7 @@ export async function GET(req: Request) {
             inArray(jobPosts.status, ["open", "bidding"]),
             sql`expires_at > NOW()`,
             sql`customer_id != ${userId}`,
+            ipFilter,
             sql`service_latitude BETWEEN ${providerLat - latDelta} AND ${providerLat + latDelta}`,
             sql`service_longitude BETWEEN ${providerLng - lngDelta} AND ${providerLng + lngDelta}`,
           ))
@@ -179,10 +188,15 @@ export async function GET(req: Request) {
         // Distinguish "no jobs posted at all" vs "the only open jobs are this cleaner's own" (hidden
         // by design) vs "jobs exist but are outside this cleaner's service radius" — so the UI can
         // show a specific, actionable message instead of a blank empty state.
+        // Count a same-IP job as "own" too, so the empty-state reason is "only_own" (hidden by
+        // design) rather than a misleading "none_nearby".
+        const ownFilter = currentIp
+          ? sql`customer_id = ${userId} OR posted_ip = ${currentIp}`
+          : sql`customer_id = ${userId}`
         const [diag] = await db
           .select({
             totalOpen: sql<number>`count(*)`,
-            ownOpen: sql<number>`count(*) filter (where customer_id = ${userId})`,
+            ownOpen: sql<number>`count(*) filter (where ${ownFilter})`,
           })
           .from(jobPosts)
           .where(and(inArray(jobPosts.status, ["open", "bidding"]), sql`expires_at > NOW()`))

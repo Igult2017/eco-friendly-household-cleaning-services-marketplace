@@ -6,6 +6,7 @@ import type { NewBid } from "@/lib/db/schema/bids"
 import { pusherServer } from "@/lib/pusher/server"
 import { bidRatelimit } from "@/lib/redis/client"
 import { eq, and } from "drizzle-orm"
+import { getClientIp } from "@/lib/utils/ip"
 import { z } from "zod"
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -48,12 +49,17 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     if (!provider) return NextResponse.json({ error: "Not an approved provider" }, { status: 403 })
 
     const [job] = await db
-      .select({ id: jobPosts.id, status: jobPosts.status, customerId: jobPosts.customerId, expiresAt: jobPosts.expiresAt })
+      .select({ id: jobPosts.id, status: jobPosts.status, customerId: jobPosts.customerId, expiresAt: jobPosts.expiresAt, postedIp: jobPosts.postedIp })
       .from(jobPosts)
       .where(eq(jobPosts.id, jobPostId))
 
     if (!job) return NextResponse.json({ error: "Job not found" }, { status: 404 })
     if (job.customerId === userId) return NextResponse.json({ error: "Cannot bid on your own job" }, { status: 403 })
+    // Self-bid prevention: also block a second account bidding from the same IP the job was posted from.
+    const bidderIp = getClientIp(req)
+    if (bidderIp && job.postedIp && job.postedIp === bidderIp) {
+      return NextResponse.json({ error: "Cannot bid on your own job" }, { status: 403 })
+    }
     if (!["open", "bidding"].includes(job.status)) return NextResponse.json({ error: "Job is not accepting bids" }, { status: 422 })
     if (new Date(job.expiresAt) < new Date()) {
       console.warn("[bids POST] rejected as expired", { jobPostId, expiresAt: job.expiresAt, now: new Date().toISOString() })
