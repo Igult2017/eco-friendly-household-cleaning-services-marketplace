@@ -1,6 +1,6 @@
 import { inngest } from "../client"
 import { db } from "@/lib/db"
-import { disputes, bookings, users, notifications } from "@/lib/db/schema"
+import { disputes, bookings, users, notifications, providers } from "@/lib/db/schema"
 import { resend, FROM } from "@/lib/resend/client"
 import { pusherServer } from "@/lib/pusher/server"
 import { eq } from "drizzle-orm"
@@ -24,7 +24,17 @@ export const onDisputeOpened = inngest.createFunction(
 
     // Notify both parties
     await step.run("notify-parties", async () => {
-      const notifyUserId = openedBy === booking.customerId ? booking.providerId : booking.customerId
+      // Notify the OTHER party. booking.providerId is the providers PK, not a Clerk user id — so when
+      // the customer opened the dispute we must resolve the provider's userId before inserting
+      // (notifications.userId is a FK to users.id; using the PK throws 23503 and the step fails).
+      let notifyUserId: string | null
+      if (openedBy === booking.customerId) {
+        const [prov] = await db.select({ userId: providers.userId }).from(providers).where(eq(providers.id, booking.providerId))
+        notifyUserId = prov?.userId ?? null
+      } else {
+        notifyUserId = booking.customerId
+      }
+      if (!notifyUserId) return
       await db.insert(notifications).values({
         userId: notifyUserId,
         type: "dispute_opened",

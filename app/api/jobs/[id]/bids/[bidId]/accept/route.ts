@@ -43,6 +43,17 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
 
     if (!bid) return NextResponse.json({ error: "Bid not found or not pending" }, { status: 404 })
 
+    // Re-validate the bidder is still an active cleaner — they may have been suspended/unapproved
+    // since bidding. Accepting otherwise locks the job to "assigned", rejects every other bid, and
+    // dead-ends (payment-intent creation refuses a suspended/unapproved provider).
+    const [bidder] = await db
+      .select({ isApproved: providers.isApproved, isSuspended: providers.isSuspended })
+      .from(providers)
+      .where(eq(providers.id, bid.providerId))
+    if (!bidder || !bidder.isApproved || bidder.isSuspended) {
+      return NextResponse.json({ error: "This cleaner is no longer available. Please choose another bid." }, { status: 422 })
+    }
+
     // TOCTOU: row-lock the job row inside a transaction before mutating state.
     // BUG-011: don't call tx.rollback() for the race-loser — it throws and the outer
     // catch turns it into a 500. Flag it and return a 409 below. Returning early from

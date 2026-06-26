@@ -26,7 +26,9 @@ export async function GET() {
     const safe = jobs.map((j) => ({
       id: j.id,
       title: j.title,
-      description: j.description,
+      // Public (unauthenticated) board: only a short teaser — the full free-text description (which
+      // can contain access notes / personal details) is shown to authenticated providers, not the world.
+      description: j.description ? j.description.slice(0, 100) + (j.description.length > 100 ? "…" : "") : null,
       status: j.status,
       budgetMin: j.budgetMin,
       budgetMax: j.budgetMax,

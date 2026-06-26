@@ -73,6 +73,12 @@ export const redis = {
       return "unavailable"
     }
   },
+  // Release a key — used to roll back an idempotency marker when a handler failed, so the retry
+  // re-processes instead of being skipped as a duplicate.
+  async del(key: string): Promise<void> {
+    if (!raw) return
+    try { await raw.del(key) } catch (e) { console.warn("[redis] del failed:", (e as Error)?.message ?? e) }
+  },
 }
 
 export interface RateLimiter {

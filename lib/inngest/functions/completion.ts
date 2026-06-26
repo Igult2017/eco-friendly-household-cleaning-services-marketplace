@@ -15,12 +15,18 @@ export const onBookingCompleted = inngest.createFunction(
     // Split capture and DB write into separate steps so a DB failure on retry
     // doesn't re-hit Stripe — the idempotency key ensures Stripe deduplicates.
     const captureResult = await step.run("stripe-capture", async () => {
+      // Don't capture a card on a booking that was disputed/cancelled after /complete fired — the
+      // dispute-open route allows opening a dispute while status is pending_capture. Re-check first.
+      const [bk] = await db.select({ status: bookings.status }).from(bookings).where(eq(bookings.id, bookingId))
+      if (!bk || bk.status !== "pending_capture") return null
       return stripe.paymentIntents.capture(
         paymentIntentId,
         {},
         { idempotencyKey: `capture-${paymentIntentId}` },
       )
     })
+
+    if (!captureResult) return { skipped: "not_pending_capture" }
 
     await step.run("record-capture", async () => {
       await db

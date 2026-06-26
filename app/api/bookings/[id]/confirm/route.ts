@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { bookings, notifications, providers } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
+import { isUuid } from "@/lib/utils/uuid"
 
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -10,6 +11,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
     const { id: bookingId } = await params
+    if (!isUuid(bookingId)) return NextResponse.json({ error: "Invalid booking id" }, { status: 400 })
 
     const [provider] = await db
       .select({ id: providers.id })

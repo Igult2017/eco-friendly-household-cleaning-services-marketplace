@@ -152,6 +152,10 @@ export async function POST(req: Request) {
     return new Response("OK", { status: 200 })
   } catch (err) {
     console.error("[stripe-webhook]", err)
+    // The idempotency key was set BEFORE handling (to dedupe concurrent deliveries). A failed handler
+    // must release it so Stripe's retry re-processes — otherwise the retry is skipped as a "duplicate"
+    // and the event (dispute / payment_failed / account.updated) is silently lost.
+    await redis.del(idempotencyKey)
     return new Response("Internal error", { status: 500 })
   }
 }

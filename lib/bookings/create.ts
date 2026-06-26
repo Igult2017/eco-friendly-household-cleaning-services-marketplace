@@ -79,6 +79,12 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     ? parseInt(intent.metadata.commission_pct, 10)
     : await getCommissionPct()
   const amounts = calculateBookingAmounts(subtotalAfterDiscount, commissionPct)
+  // The PaymentIntent amount is the source of truth (the card is already held for it). If the
+  // recomputed total drifted (e.g. the provider changed basePrice after the PI was created), abort
+  // rather than store a split that doesn't match the money actually held/captured.
+  if (amounts.totalCharged + carbonOffsetCents !== intent.amount) {
+    await cancel(409, "The price changed since you started. Please review and try again.")
+  }
   const bookingNumber = await generateBookingNumber()
   const scheduledEnd = new Date(new Date(scheduledAt).getTime() + durationMinutes * 60_000)
 

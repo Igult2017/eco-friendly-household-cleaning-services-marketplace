@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { providers, providerServices, users, bids, jobPosts, promoCodes, providerAddons } from "@/lib/db/schema"
+import { providers, providerServices, users, bids, jobPosts, promoCodes, promoCodeUsages, providerAddons } from "@/lib/db/schema"
 import { stripe, calculateBookingAmounts } from "@/lib/stripe/client"
 import { getCommissionPct } from "@/lib/platform/settings"
 import { bookingRatelimit } from "@/lib/redis/client"
@@ -97,6 +97,13 @@ export async function POST(req: Request) {
       if (promo.expiresAt && promo.expiresAt < new Date()) return NextResponse.json({ error: "Promo code expired" }, { status: 422 })
       if (promo.maxUses !== null && promo.usedCount >= promo.maxUses) return NextResponse.json({ error: "Promo code usage limit reached" }, { status: 422 })
       if (subtotal < promo.minOrderCents) return NextResponse.json({ error: "Order total too low for this promo code" }, { status: 422 })
+      // One redemption per user — enforce on the AUTHORITATIVE path (the validate/display route checks
+      // this, but a client can call this endpoint directly and reuse a once-per-user code otherwise).
+      const [priorUse] = await db
+        .select({ id: promoCodeUsages.id })
+        .from(promoCodeUsages)
+        .where(and(eq(promoCodeUsages.promoCodeId, promoCodeId), eq(promoCodeUsages.userId, userId)))
+      if (priorUse) return NextResponse.json({ error: "You've already used this promo code" }, { status: 422 })
 
       // SECURITY (FIN-003): never trust a client-supplied discount. Always recompute the
       // discount from the promo code's own definition; the request's promoCodeDiscountCents
