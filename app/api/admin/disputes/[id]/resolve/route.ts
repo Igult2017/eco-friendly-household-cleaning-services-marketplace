@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { disputes, bookings, payments, notifications } from "@/lib/db/schema"
+import { disputes, bookings, payments, notifications, providers } from "@/lib/db/schema"
 import { stripe } from "@/lib/stripe/client"
 import { eq } from "drizzle-orm"
 import { z } from "zod"
@@ -89,10 +89,22 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
                              "completed"
     await db.update(bookings).set({ status: newBookingStatus }).where(eq(bookings.id, dispute.bookingId))
 
-    await db.insert(notifications).values([
-      { userId: booking.customerId, type: "dispute_resolved", title: "Your dispute has been resolved", body: resolution.slice(0, 120), link: `/bookings/${dispute.bookingId}` },
-      { userId: booking.providerId, type: "dispute_resolved", title: "A dispute on your booking has been resolved", body: resolution.slice(0, 120), link: `/provider/bookings` },
-    ])
+    // Notify both parties. The provider notification must address the cleaner's Clerk user id — NOT
+    // the providers-table PK (booking.providerId) — which previously caused an FK violation 500
+    // AFTER the refund had already committed.
+    await db.insert(notifications).values({
+      userId: booking.customerId, type: "dispute_resolved",
+      title: "Your dispute has been resolved", body: resolution.slice(0, 120),
+      link: `/bookings/${dispute.bookingId}`,
+    })
+    const [prov] = await db.select({ userId: providers.userId }).from(providers).where(eq(providers.id, booking.providerId))
+    if (prov?.userId) {
+      await db.insert(notifications).values({
+        userId: prov.userId, type: "dispute_resolved",
+        title: "A dispute on your booking has been resolved", body: resolution.slice(0, 120),
+        link: "/provider/bookings",
+      })
+    }
 
     return NextResponse.json({ success: true, refundAmount, outcome })
   } catch (err) {

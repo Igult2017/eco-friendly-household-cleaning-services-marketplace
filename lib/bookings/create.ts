@@ -5,7 +5,7 @@ import { stripe, calculateBookingAmounts } from "@/lib/stripe/client"
 import { getCommissionPct } from "@/lib/platform/settings"
 import { inngest } from "@/lib/inngest/client"
 import { redis } from "@/lib/redis/client"
-import { eq, and, sql } from "drizzle-orm"
+import { eq, and, sql, inArray, lte, gte } from "drizzle-orm"
 import type { CreateBookingInput } from "@/lib/validations/booking"
 
 async function generateBookingNumber(): Promise<string> {
@@ -46,7 +46,7 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
   const [[service], [provider]] = await Promise.all([
     db.select({ basePrice: providerServices.basePrice })
       .from(providerServices)
-      .where(and(eq(providerServices.id, serviceId), eq(providerServices.isActive, true))),
+      .where(and(eq(providerServices.id, serviceId), eq(providerServices.providerId, providerId), eq(providerServices.isActive, true))),
     db.select({ id: providers.id, isApproved: providers.isApproved, isSuspended: providers.isSuspended })
       .from(providers)
       .where(eq(providers.id, providerId)),
@@ -74,6 +74,22 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
   const bookingNumber = await generateBookingNumber()
   const scheduledEnd = new Date(new Date(scheduledAt).getTime() + durationMinutes * 60_000)
 
+  // Double-booking guard: reject if this provider already has an active booking overlapping the
+  // requested window. The unique index only blocks identical start times, so overlapping durations
+  // would otherwise slip through — and this also covers the bid-flow + direct API calls that bypass
+  // the wizard's client-side availability check.
+  const overlap = await db
+    .select({ id: bookings.id })
+    .from(bookings)
+    .where(and(
+      eq(bookings.providerId, providerId),
+      inArray(bookings.status, ["payment_authorized", "confirmed", "in_progress", "pending_capture"]),
+      lte(bookings.scheduledAt, scheduledEnd),
+      gte(bookings.scheduledEndAt, new Date(scheduledAt)),
+    ))
+    .limit(1)
+  if (overlap.length > 0) await cancel(409, "This cleaner is already booked at that time. Please choose another slot.")
+
   const insertData: NewBooking = {
     bookingNumber,
     customerId: userId,
@@ -98,7 +114,9 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     discountAmount: discountCents,
   }
 
-  const result = await db.transaction(async (tx) => {
+  let result: { id: string; bookingNumber: string }
+  try {
+  result = await db.transaction(async (tx) => {
     const [newBooking] = await tx
       .insert(bookings)
       .values(insertData)
@@ -156,6 +174,15 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
 
     return newBooking
   })
+  } catch (err) {
+    // A concurrent same-slot booking that slipped past the overlap check loses the unique-index
+    // race; release the loser's payment hold and surface a clean conflict instead of a 500.
+    const pgErr = err as { code?: string; message?: string }
+    if (pgErr?.code === "23505" || pgErr?.message?.includes("duplicate")) {
+      await cancel(409, "That time slot was just taken. Please choose a different time.")
+    }
+    throw err
+  }
 
   try {
     await inngest.send({ name: "booking/created", data: { bookingId: result.id, customerId: userId, providerId } })

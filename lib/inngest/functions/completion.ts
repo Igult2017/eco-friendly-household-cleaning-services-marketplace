@@ -30,7 +30,10 @@ export const onBookingCompleted = inngest.createFunction(
     })
 
     await step.run("update-booking", async () => {
-      await db.update(bookings).set({ status: "completed" }).where(eq(bookings.id, bookingId))
+      // Only flip to completed if still pending_capture — never clobber a status a chargeback
+      // webhook moved to `disputed` (or an admin moved to cancelled/refunded) while capture was
+      // in flight.
+      await db.update(bookings).set({ status: "completed" }).where(and(eq(bookings.id, bookingId), eq(bookings.status, "pending_capture")))
     })
 
     await step.run("notify-customer", async () => {
