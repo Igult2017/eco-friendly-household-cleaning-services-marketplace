@@ -9,6 +9,7 @@ import { useEffect, useState } from "react"
 import { loadStripe } from "@stripe/stripe-js"
 import { Elements } from "@stripe/react-stripe-js"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
+import { getCurrencyForCountry } from "@/lib/utils/locale"
 import { Loader2, CheckCircle2, Leaf, Tag, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -30,6 +31,8 @@ export default function BookStep5Page() {
   const t = useTranslations("customerBookConfirmPage")
   const router = useRouter()
   const store = useBookingStore()
+  // Render every amount in the selected cleaner's currency (EU vs US) — matches what's charged.
+  const currency = getCurrencyForCountry(store.providerCountry ?? "DE")
 
   const [step, setStep] = useState<"summary" | "payment">("summary")
   const [loading, setLoading] = useState(false)
@@ -268,7 +271,7 @@ export default function BookStep5Page() {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between text-[#6B7280]">
                 <span>{CATEGORY_SERVICE_KEYS[store.categoryId ?? ""] ? t(CATEGORY_SERVICE_KEYS[store.categoryId ?? ""]) : t("defaultCleaningService")}</span>
-                <span>{formatCurrency(amounts.subtotalCents)}</span>
+                <span>{formatCurrency(amounts.subtotalCents, currency)}</span>
               </div>
 
               {/* Promo code input */}
@@ -283,7 +286,7 @@ export default function BookStep5Page() {
                         <span className="text-xs text-[#2D7A5F]">{t("promoApplied")}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-[#2D7A5F] font-semibold">-{formatCurrency(promoDiscountCents)}</span>
+                        <span className="text-[#2D7A5F] font-semibold">-{formatCurrency(promoDiscountCents, currency)}</span>
                         <button onClick={removePromoCode} className="text-[#9CA3AF] hover:text-[#6B7280]" aria-label={t("removePromoAria")}>
                           <X size={14} />
                         </button>
@@ -332,13 +335,13 @@ export default function BookStep5Page() {
                     <p className="text-xs text-[#9CA3AF]">{t("carbonOffsetDescription")}</p>
                   </div>
                 </div>
-                <span className="text-[#6B7280] font-medium">{addCarbonOffset ? formatCurrency(CARBON_OFFSET_CENTS) : "—"}</span>
+                <span className="text-[#6B7280] font-medium">{addCarbonOffset ? formatCurrency(CARBON_OFFSET_CENTS, currency) : "—"}</span>
               </label>
 
               <div className="border-t border-[#E5EBF0] my-2" />
               <div className="flex justify-between font-bold text-[#2B3441] text-base">
                 <span>{t("totalChargedToday")}</span>
-                <span className="text-[#2D7A5F]">{formatCurrency(totalWithOffset ?? amounts.totalCharged)}</span>
+                <span className="text-[#2D7A5F]">{formatCurrency(totalWithOffset ?? amounts.totalCharged, currency)}</span>
               </div>
               <p className="text-xs text-[#9CA3AF]">{t("preAuthNote")}</p>
             </div>

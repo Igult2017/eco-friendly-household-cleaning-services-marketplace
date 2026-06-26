@@ -158,7 +158,7 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
       amount: amounts.totalCharged,
       capturedAmount: 0,
       refundedAmount: 0,
-      currency: "eur",
+      currency: intent.metadata.currency ?? "eur",
       idempotencyKey: paymentIntentId,
     })
 

@@ -6,6 +6,7 @@ import { stripe, calculateBookingAmounts } from "@/lib/stripe/client"
 import { getCommissionPct } from "@/lib/platform/settings"
 import { bookingRatelimit } from "@/lib/redis/client"
 import { paymentIntentSchema } from "@/lib/validations/booking"
+import { getCurrencyForCountry } from "@/lib/utils/locale"
 import { and, eq, inArray } from "drizzle-orm"
 import { createHash } from "node:crypto"
 
@@ -38,7 +39,7 @@ export async function POST(req: Request) {
 
     const [[provider], [service]] = await Promise.all([
       db
-        .select({ id: providers.id, stripeAccountId: providers.stripeAccountId, stripeAccountStatus: providers.stripeAccountStatus, isApproved: providers.isApproved, isSuspended: providers.isSuspended })
+        .select({ id: providers.id, country: providers.country, stripeAccountId: providers.stripeAccountId, stripeAccountStatus: providers.stripeAccountStatus, isApproved: providers.isApproved, isSuspended: providers.isSuspended })
         .from(providers)
         .where(eq(providers.id, providerId)),
       db
@@ -123,6 +124,9 @@ export async function POST(req: Request) {
     const commissionPct = await getCommissionPct()
     const amounts = calculateBookingAmounts(subtotalAfterDiscount, commissionPct)
     const totalWithOffset = amounts.totalCharged + carbonOffsetCents
+    // Charge in the cleaner's own currency (US → USD, otherwise EUR), so the charge matches the
+    // price the customer sees. Stripe wants a lowercase code.
+    const chargeCurrency = getCurrencyForCountry(provider.country).toLowerCase()
 
     let stripeCustomerId: string | undefined
     const existing = await stripe.customers.search({ query: `metadata['clerk_id']:'${userId}'`, limit: 1 })
@@ -145,6 +149,7 @@ export async function POST(req: Request) {
       // FIN-010: pin the commission rate used for THIS PI so booking creation stores the
       // same split even if an admin changes the commission between PI creation and confirm.
       commission_pct: String(commissionPct),
+      currency: chargeCurrency,
     }
     if (bidAmountCents !== undefined) metadata.bid_amount_cents = String(bidAmountCents)
     if (acceptedBidId) metadata.bid_id = acceptedBidId
@@ -165,7 +170,7 @@ export async function POST(req: Request) {
     const intent = await stripe.paymentIntents.create(
       {
         amount: totalWithOffset,
-        currency: "eur",
+        currency: chargeCurrency,
         capture_method: "manual",
         customer: stripeCustomerId,
         // Carbon offset stays with DORIXÉ (added to platform fee), not paid to provider
@@ -183,6 +188,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       clientSecret: intent.client_secret,
       paymentIntentId: intent.id,
+      currency: chargeCurrency,
       amounts: { ...amounts, carbonOffsetCents, totalCharged: totalWithOffset, commissionPct },
     })
   } catch (err) {

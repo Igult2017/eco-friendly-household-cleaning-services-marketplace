@@ -4,7 +4,7 @@ import { Star, MapPin, Leaf } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { formatCurrencyShort, priceUnitSuffix } from "@/lib/utils/formatCurrency"
+import { formatCurrencyShortForCountry, priceUnitSuffix } from "@/lib/utils/formatCurrency"
 import type { GeoProvider } from "@/lib/db/queries/geo"
 import Image from "next/image"
 
@@ -72,7 +72,7 @@ export function ProviderCard({ provider, onSelect, selected }: Props) {
             {provider.serviceBasePrice != null && (
               <p className="flex-shrink-0 text-right leading-none">
                 <span className="block text-[10px] font-medium text-[#9CA3AF]">{t("from")}</span>
-                <span className="text-lg font-bold text-[#2D7A5F]">{formatCurrencyShort(provider.serviceBasePrice)}</span>
+                <span className="text-lg font-bold text-[#2D7A5F]">{formatCurrencyShortForCountry(provider.serviceBasePrice, provider.country)}</span>
                 <span className="text-[11px] font-medium text-[#6B7280]">{priceUnitSuffix[provider.priceUnit ?? "per_job"] ?? ""}</span>
               </p>
             )}

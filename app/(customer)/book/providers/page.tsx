@@ -95,7 +95,8 @@ export default function BookStep2Page() {
     if (latRef.current && lngRef.current) {
       setAddress(address, latRef.current, lngRef.current)
     }
-    setProvider(id)
+    const picked = providers.find((p) => p.id === id)
+    setProvider(id, picked?.country ?? null)
   }
 
   function handleNext() {

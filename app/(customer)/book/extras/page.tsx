@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { useTranslations } from "next-intl"
-import { formatCurrency } from "@/lib/utils/formatCurrency"
+import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
 
 type Addon = { id: string; name: string; priceCents: number }
 
@@ -23,7 +23,7 @@ const ECO_EXTRAS = [
 export default function BookStep4Page() {
   const t = useTranslations("customerBookExtrasPage")
   const router = useRouter()
-  const { selectedProviderId, scheduledAt, setExtras, specialInstructions, ecoOptions, addOnIds } = useBookingStore()
+  const { selectedProviderId, scheduledAt, setExtras, specialInstructions, ecoOptions, addOnIds, providerCountry } = useBookingStore()
 
   const [instructions, setInstructions] = useState(specialInstructions)
   const [selected, setSelected] = useState<string[]>(ecoOptions)
@@ -123,7 +123,7 @@ export default function BookStep4Page() {
                     </div>
                     <span className="text-sm font-medium text-[#2B3441]">{a.name}</span>
                   </div>
-                  <span className="text-sm font-semibold text-[#2D7A5F]">+{formatCurrency(a.priceCents)}</span>
+                  <span className="text-sm font-semibold text-[#2D7A5F]">+{formatCurrencyForCountry(a.priceCents, providerCountry ?? "DE")}</span>
                 </button>
               ))}
             </div>

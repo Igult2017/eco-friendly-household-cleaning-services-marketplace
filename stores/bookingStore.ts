@@ -11,6 +11,7 @@ interface BookingDraft {
   latitude: number | null
   longitude: number | null
   selectedProviderId: string | null
+  providerCountry: string | null  // selected cleaner's country → currency + locale (EU vs US)
   scheduledAt: string | null   // ISO 8601 string — survives sessionStorage round-trip
   durationMinutes: number
   specialInstructions: string
@@ -37,7 +38,7 @@ interface BidFlowData {
 interface BookingStore extends BookingDraft {
   setCategory: (id: string, name: string) => void
   setAddress: (address: Address, lat: number, lng: number) => void
-  setProvider: (providerId: string) => void
+  setProvider: (providerId: string, country?: string | null) => void
   setSchedule: (date: Date, durationMinutes: number) => void
   setExtras: (instructions: string, ecoOptions: string[], addOnIds: string[]) => void
   setCarbonOffset: (cents: number) => void
@@ -54,6 +55,7 @@ const initialState: BookingDraft = {
   latitude: null,
   longitude: null,
   selectedProviderId: null,
+  providerCountry: null,
   scheduledAt: null,
   durationMinutes: 120,
   specialInstructions: "",
@@ -71,7 +73,7 @@ export const useBookingStore = create<BookingStore>()(
       ...initialState,
       setCategory: (id, name) => set({ categoryId: id, categoryName: name, step: 2 }),
       setAddress: (address, latitude, longitude) => set({ address, latitude, longitude }),
-      setProvider: (selectedProviderId) => set({ selectedProviderId, step: 3 }),
+      setProvider: (selectedProviderId, providerCountry = null) => set({ selectedProviderId, providerCountry, step: 3 }),
       setSchedule: (date, durationMinutes) =>
         set({ scheduledAt: date.toISOString(), durationMinutes, step: 4 }),
       setExtras: (specialInstructions, ecoOptions, addOnIds) =>
