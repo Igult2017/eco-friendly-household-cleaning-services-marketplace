@@ -269,6 +269,13 @@ ALTER TABLE job_posts ADD COLUMN IF NOT EXISTS posted_ip varchar(64);
 
 -- Per-provider IANA timezone (platform spans EU + US) — for availability checks + booking-time display.
 ALTER TABLE providers ADD COLUMN IF NOT EXISTS timezone varchar(64);
+
+-- Services can belong to multiple categories (findable under each) + free-text custom labels.
+ALTER TABLE provider_services ADD COLUMN IF NOT EXISTS category_ids jsonb DEFAULT '[]'::jsonb;
+ALTER TABLE provider_services ADD COLUMN IF NOT EXISTS custom_categories jsonb DEFAULT '[]'::jsonb;
+-- Backfill the array from the existing single category so pre-existing services are findable via it.
+UPDATE provider_services SET category_ids = jsonb_build_array(category_id::text)
+  WHERE (category_ids IS NULL OR category_ids = '[]'::jsonb) AND category_id IS NOT NULL;
 `
 
 function isValidUrl(url) {

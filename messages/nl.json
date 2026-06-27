@@ -1123,7 +1123,10 @@
     "durationMinutes": "{minutes} min",
     "errorRequiredFields": "Vul alle verplichte velden in.",
     "errorMinPrice": "De minimumprijs is € 1,00",
-    "errorAddFailed": "Dienst toevoegen mislukt."
+    "errorAddFailed": "Dienst toevoegen mislukt.",
+    "categoriesHint": "Kies alles wat van toepassing is — klanten vinden je onder elke. Voeg hieronder je eigen toe als die er niet bij staat.",
+    "customCategoryPlaceholder": "Voeg je eigen categorie toe",
+    "addCustomButton": "Toevoegen"
   },
   "providerReviewsPage": {
     "title": "Beoordelingen",

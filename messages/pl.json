@@ -1123,7 +1123,10 @@
     "durationMinutes": "{minutes} min",
     "errorRequiredFields": "Wypełnij wszystkie wymagane pola.",
     "errorMinPrice": "Minimalna cena to 1,00 €",
-    "errorAddFailed": "Nie udało się dodać usługi."
+    "errorAddFailed": "Nie udało się dodać usługi.",
+    "categoriesHint": "Wybierz wszystkie pasujące — klienci znajdą Cię w każdej z nich. Dodaj własną poniżej, jeśli jej nie ma na liście.",
+    "customCategoryPlaceholder": "Dodaj własną kategorię",
+    "addCustomButton": "Dodaj"
   },
   "providerReviewsPage": {
     "title": "Opinie",

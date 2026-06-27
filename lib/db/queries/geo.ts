@@ -64,13 +64,13 @@ async function findProvidersHaversine(params: {
           POWER(SIN(RADIANS((p.longitude - ${longitude}) / 2)), 2)
         )) AS "distanceMeters"
       FROM providers p
-      ${categoryId
-        ? sql`JOIN provider_services ps ON ps.provider_id = p.id AND ps.category_id = ${categoryId} AND ps.is_active = true`
-        : sql``}
       WHERE p.is_approved = true AND p.is_suspended = false
         AND p.latitude IS NOT NULL AND p.longitude IS NOT NULL
         AND p.latitude  BETWEEN ${latitude  - latDelta} AND ${latitude  + latDelta}
         AND p.longitude BETWEEN ${longitude - lngDelta} AND ${longitude + lngDelta}
+        ${categoryId
+          ? sql`AND EXISTS (SELECT 1 FROM provider_services ps WHERE ps.provider_id = p.id AND ps.is_active = true AND (ps.category_id = ${categoryId} OR ps.category_ids @> jsonb_build_array(${categoryId}::text)))`
+          : sql``}
     )
     SELECT * FROM distances
     WHERE "distanceMeters" <= ${radiusM}
@@ -103,11 +103,11 @@ export async function findProvidersNearLocation(params: {
         ST_Distance(p.location, ST_SetSRID(ST_MakePoint(${longitude}, ${latitude}), 4326)::geography)
           AS "distanceMeters"
       FROM providers p
-      ${categoryId
-        ? sql`JOIN provider_services ps ON ps.provider_id = p.id AND ps.category_id = ${categoryId} AND ps.is_active = true`
-        : sql``}
       WHERE p.is_approved = true AND p.is_suspended = false AND p.location IS NOT NULL
         AND ST_DWithin(p.location, ST_SetSRID(ST_MakePoint(${longitude}, ${latitude}), 4326)::geography, ${radiusKm * 1000})
+        ${categoryId
+          ? sql`AND EXISTS (SELECT 1 FROM provider_services ps WHERE ps.provider_id = p.id AND ps.is_active = true AND (ps.category_id = ${categoryId} OR ps.category_ids @> jsonb_build_array(${categoryId}::text)))`
+          : sql``}
       ORDER BY "distanceMeters" ASC, p.average_rating DESC NULLS LAST
       LIMIT ${limit}
     `)

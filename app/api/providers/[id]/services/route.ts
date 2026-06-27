@@ -16,7 +16,13 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
     if (!provider) return NextResponse.json({ error: "Provider not found" }, { status: 404 })
 
-    const conditions = [eq(providerServices.providerId, id), eq(providerServices.isActive, true)]
+    // Resolve the requested category slug → id so we can match a service's FULL category set
+    // (primary + extras), not just its primary category.
+    let wantedCategoryId: string | null = null
+    if (categorySlug) {
+      const [cat] = await db.select({ id: serviceCategories.id }).from(serviceCategories).where(eq(serviceCategories.slug, categorySlug))
+      wantedCategoryId = cat?.id ?? null
+    }
 
     const services = await db
       .select({
@@ -25,14 +31,18 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         basePrice: providerServices.basePrice,
         priceUnit: providerServices.priceUnit,
         minDurationMinutes: providerServices.minDurationMinutes,
+        categoryId: providerServices.categoryId,
+        categoryIds: providerServices.categoryIds,
         categorySlug: serviceCategories.slug,
         categoryName: serviceCategories.name,
       })
       .from(providerServices)
-      .innerJoin(serviceCategories, eq(providerServices.categoryId, serviceCategories.id))
-      .where(and(...conditions))
+      .leftJoin(serviceCategories, eq(providerServices.categoryId, serviceCategories.id))
+      .where(and(eq(providerServices.providerId, id), eq(providerServices.isActive, true)))
 
-    const filtered = categorySlug ? services.filter((s) => s.categorySlug === categorySlug) : services
+    const filtered = wantedCategoryId
+      ? services.filter((s) => s.categoryId === wantedCategoryId || (Array.isArray(s.categoryIds) && s.categoryIds.includes(wantedCategoryId!)))
+      : services
 
     return NextResponse.json({ services: filtered })
   } catch (err) {

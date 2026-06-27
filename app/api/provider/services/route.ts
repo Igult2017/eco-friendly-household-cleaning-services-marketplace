@@ -6,7 +6,10 @@ import { eq, and } from "drizzle-orm"
 import { z } from "zod"
 
 const serviceSchema = z.object({
-  categoryId: z.string().uuid(),
+  // At least one built-in category (so clients can find this service); the first is the primary.
+  categoryIds: z.array(z.string().uuid()).min(1).max(8),
+  // Optional free-text labels not in the built-in list (shown on the profile, not searchable).
+  customCategories: z.array(z.string().trim().min(1).max(60)).max(8).default([]),
   name: z.string().min(2).max(200),
   description: z.string().max(1000).optional(),
   basePrice: z.number().int().min(100),
@@ -31,6 +34,8 @@ export async function GET() {
         id: providerServices.id,
         categoryId: providerServices.categoryId,
         categoryName: serviceCategories.name,
+        categoryIds: providerServices.categoryIds,
+        customCategories: providerServices.customCategories,
         name: providerServices.name,
         description: providerServices.description,
         basePrice: providerServices.basePrice,
@@ -61,10 +66,19 @@ export async function POST(req: Request) {
     const parsed = serviceSchema.safeParse(body)
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
+    const d = parsed.data
+    // De-dupe custom labels that exactly match a chosen built-in category name would require the
+    // names here; we keep them as-is (display-only) and rely on categoryIds for search.
     const [service] = await db.insert(providerServices).values({
       providerId: provider.id,
-      ...parsed.data,
-      description: parsed.data.description ?? null,
+      categoryId: d.categoryIds[0],          // primary — keeps joins/search working
+      categoryIds: d.categoryIds,
+      customCategories: d.customCategories,
+      name: d.name,
+      description: d.description ?? null,
+      basePrice: d.basePrice,
+      priceUnit: d.priceUnit,
+      minDurationMinutes: d.minDurationMinutes,
       ecoProductsUsed: [],
     }).returning({ id: providerServices.id })
 

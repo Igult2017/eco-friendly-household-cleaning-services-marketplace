@@ -10,6 +10,8 @@ type Service = {
   id: string
   categoryId: string
   categoryName: string | null
+  categoryIds: string[] | null
+  customCategories: string[] | null
   name: string
   description: string | null
   basePrice: number
@@ -26,7 +28,7 @@ const PRICE_UNITS = [
   { value: "per_job", labelKey: "priceUnitPerJob" },
 ]
 
-const EMPTY_FORM = { categoryId: "", name: "", description: "", basePrice: "", priceUnit: "per_hour", minDurationMinutes: "60" }
+const EMPTY_FORM = { name: "", description: "", basePrice: "", priceUnit: "per_hour", minDurationMinutes: "60" }
 
 export default function ProviderServicesPage() {
   const t = useTranslations("providerProviderProfileServicesPage")
@@ -36,6 +38,9 @@ export default function ProviderServicesPage() {
   const [adding, setAdding] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState(EMPTY_FORM)
+  const [catIds, setCatIds] = useState<string[]>([])          // selected built-in categories
+  const [customCats, setCustomCats] = useState<string[]>([])  // free-text custom categories
+  const [customInput, setCustomInput] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [hasProfile, setHasProfile] = useState(true)
 
@@ -49,7 +54,7 @@ export default function ProviderServicesPage() {
   useEffect(() => { reload() }, [])
 
   const addService = async () => {
-    if (!form.categoryId || !form.name || !form.basePrice) { setError(t("errorRequiredFields")); return }
+    if (catIds.length === 0 || !form.name || !form.basePrice) { setError(t("errorRequiredFields")); return }
     const price = Math.round(Number(form.basePrice) * 100)
     if (price < 100) { setError(t("errorMinPrice")); return }
     setAdding(true)
@@ -57,10 +62,10 @@ export default function ProviderServicesPage() {
     const res = await fetch("/api/provider/services", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, basePrice: price, minDurationMinutes: Number(form.minDurationMinutes) }),
+      body: JSON.stringify({ ...form, categoryIds: catIds, customCategories: customCats, basePrice: price, minDurationMinutes: Number(form.minDurationMinutes) }),
     })
     if (!res.ok) { const d = await res.json(); setError(d.error?.formErrors?.[0] ?? t("errorAddFailed")) }
-    else { setForm(EMPTY_FORM); setShowForm(false) }
+    else { resetForm(); setShowForm(false) }
     setAdding(false)
     reload()
   }
@@ -68,6 +73,20 @@ export default function ProviderServicesPage() {
   const remove = async (serviceId: string) => {
     await fetch("/api/provider/services", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ serviceId }) })
     reload()
+  }
+
+  const addCustom = () => {
+    const v = customInput.trim()
+    if (!v) return
+    setCustomCats((cs) => cs.some((c) => c.toLowerCase() === v.toLowerCase()) ? cs : [...cs, v])
+    setCustomInput("")
+  }
+  const resetForm = () => { setForm(EMPTY_FORM); setCatIds([]); setCustomCats([]); setCustomInput("") }
+  const catName = (id: string) => categories.find((c) => c.id === id)?.name ?? null
+  const serviceCategoryLabels = (s: Service): string[] => {
+    const ids = s.categoryIds && s.categoryIds.length ? s.categoryIds : [s.categoryId]
+    const built = ids.map(catName).filter(Boolean) as string[]
+    return [...built, ...(s.customCategories ?? [])]
   }
 
   return (
@@ -104,14 +123,45 @@ export default function ProviderServicesPage() {
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2">
               <label className="block text-xs font-semibold text-[#2B3441] mb-1.5">{t("categoryLabel")}</label>
-              <select
-                value={form.categoryId}
-                onChange={(e) => setForm((f) => ({ ...f, categoryId: e.target.value }))}
-                className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none"
-              >
-                <option value="">{t("selectCategory")}</option>
-                {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
+              <p className="text-xs text-[#6B7280] mb-2">{t("categoriesHint")}</p>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((c) => {
+                  const on = catIds.includes(c.id)
+                  return (
+                    <button
+                      type="button"
+                      key={c.id}
+                      onClick={() => setCatIds((ids) => on ? ids.filter((x) => x !== c.id) : [...ids, c.id])}
+                      aria-pressed={on}
+                      className={`rounded-full px-3 py-1.5 text-xs font-medium border transition-colors ${on ? "bg-[#2D7A5F] text-white border-[#2D7A5F]" : "bg-white text-[#2B3441] border-gray-200 hover:border-[#2D7A5F]"}`}
+                    >
+                      {c.name}
+                    </button>
+                  )
+                })}
+              </div>
+              {customCats.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {customCats.map((label) => (
+                    <span key={label} className="inline-flex items-center gap-1 rounded-full bg-[#D1F0E0] text-[#2D7A5F] px-3 py-1.5 text-xs font-medium">
+                      {label}
+                      <button type="button" aria-label={`Remove ${label}`} onClick={() => setCustomCats((cs) => cs.filter((x) => x !== label))} className="text-[#2D7A5F]/70 hover:text-[#2D7A5F] leading-none">×</button>
+                    </span>
+                  ))}
+                </div>
+              )}
+              <div className="flex gap-2 mt-2">
+                <input
+                  type="text"
+                  value={customInput}
+                  onChange={(e) => setCustomInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustom() } }}
+                  placeholder={t("customCategoryPlaceholder")}
+                  maxLength={60}
+                  className="flex-1 rounded-xl border border-gray-200 px-3 py-2 text-sm focus:border-[#2D7A5F] focus:outline-none"
+                />
+                <button type="button" onClick={addCustom} className="rounded-xl border border-[#2D7A5F] text-[#2D7A5F] px-4 py-2 text-sm font-medium hover:bg-[#F4FAF6] transition-colors">{t("addCustomButton")}</button>
+              </div>
             </div>
             <div className="col-span-2">
               <label className="block text-xs font-semibold text-[#2B3441] mb-1.5">{t("serviceNameLabel")}</label>
@@ -162,7 +212,7 @@ export default function ProviderServicesPage() {
           </div>
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3">
-            <button onClick={() => { setShowForm(false); setError(null) }} className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-[#6B7280] hover:bg-gray-50">{t("cancel")}</button>
+            <button onClick={() => { setShowForm(false); setError(null); resetForm() }} className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-[#6B7280] hover:bg-gray-50">{t("cancel")}</button>
             <button onClick={addService} disabled={adding} className="flex-1 rounded-xl bg-[#2D7A5F] py-2.5 text-sm font-semibold text-white disabled:opacity-50 hover:bg-[#256349] transition-colors flex items-center justify-center gap-2">
               {adding && <Loader2 className="h-4 w-4 animate-spin" />}
               {adding ? t("adding") : t("addService")}
@@ -184,9 +234,11 @@ export default function ProviderServicesPage() {
             {services.map((s) => (
               <div key={s.id} className="flex items-center gap-4 px-6 py-4">
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
+                  <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                     <p className="font-semibold text-sm text-[#2B3441] truncate">{s.name}</p>
-                    <span className="text-xs bg-gray-100 text-gray-600 rounded-full px-2 py-0.5">{s.categoryName}</span>
+                    {serviceCategoryLabels(s).map((label) => (
+                      <span key={label} className="text-xs bg-gray-100 text-gray-600 rounded-full px-2 py-0.5">{label}</span>
+                    ))}
                   </div>
                   {s.description && <p className="text-xs text-[#6B7280] truncate">{s.description}</p>}
                   <p className="text-xs text-[#6B7280] mt-1">{t("durationMinutes", { minutes: s.minDurationMinutes })} · {(() => { const u = PRICE_UNITS.find((u) => u.value === s.priceUnit); return u ? t(u.labelKey) : "" })()}</p>

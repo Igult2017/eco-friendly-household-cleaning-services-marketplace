@@ -38,7 +38,11 @@ export const providerServices = pgTable(
       .references(() => providers.id, { onDelete: "cascade" }),
     categoryId: uuid("category_id")
       .notNull()
-      .references(() => serviceCategories.id),
+      .references(() => serviceCategories.id), // primary category (= categoryIds[0]); kept for joins/search
+    // A service can belong to MULTIPLE built-in categories (findable under each) plus free-text
+    // custom labels (shown on the profile; not client-searchable).
+    categoryIds: jsonb("category_ids").$type<string[]>().default([]),
+    customCategories: jsonb("custom_categories").$type<string[]>().default([]),
     name: varchar("name", { length: 200 }).notNull(),
     description: text("description"),
     basePrice: integer("base_price").notNull(), // euro cents

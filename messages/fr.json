@@ -1123,7 +1123,10 @@
     "durationMinutes": "{minutes} min",
     "errorRequiredFields": "Veuillez remplir tous les champs obligatoires.",
     "errorMinPrice": "Le prix minimum est de 1,00 €",
-    "errorAddFailed": "Échec de l'ajout de la prestation."
+    "errorAddFailed": "Échec de l'ajout de la prestation.",
+    "categoriesHint": "Sélectionnez toutes celles qui s'appliquent — les clients vous trouveront dans chacune. Ajoutez la vôtre ci-dessous si elle n'est pas dans la liste.",
+    "customCategoryPlaceholder": "Ajouter votre propre catégorie",
+    "addCustomButton": "Ajouter"
   },
   "providerReviewsPage": {
     "title": "Avis",

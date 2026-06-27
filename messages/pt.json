@@ -1123,7 +1123,10 @@
     "durationMinutes": "{minutes} min",
     "errorRequiredFields": "Preencha todos os campos obrigatórios.",
     "errorMinPrice": "O preço mínimo é 1,00 €",
-    "errorAddFailed": "Não foi possível adicionar o serviço."
+    "errorAddFailed": "Não foi possível adicionar o serviço.",
+    "categoriesHint": "Selecione todas as aplicáveis — os clientes encontram-no em cada uma. Adicione a sua abaixo se não estiver na lista.",
+    "customCategoryPlaceholder": "Adicione a sua própria categoria",
+    "addCustomButton": "Adicionar"
   },
   "providerReviewsPage": {
     "title": "Avaliações",
