@@ -45,6 +45,7 @@ const isPublicRoute = createRouteMatcher([
   "/api/jobs/public(.*)",
   "/api/blog/(.*)",
   "/_a/(.*)", // Umami analytics proxy (script + event collection) — must be public
+  "/monitoring(.*)", // Sentry tunnel — client error events POST here; must be reachable without auth
   // SEO infra — crawlers must reach these without auth
   "/robots.txt",
   "/sitemap.xml",
