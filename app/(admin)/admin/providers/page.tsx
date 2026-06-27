@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { StatusBadge } from "@/components/admin/StatusBadge"
-import { PauseCircle, PlayCircle, Loader2, Check, X, Trash2 } from "lucide-react"
+import { DeleteCleanerDialog } from "@/components/admin/DeleteCleanerDialog"
+import { PauseCircle, PlayCircle, Loader2, Check, X } from "lucide-react"
 
 type ProviderRow = {
   id: string
@@ -88,19 +89,6 @@ export default function AdminProvidersPage() {
     reload()
   }
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!window.confirm(`Permanently delete "${name}" and its account? This removes the cleaner from the platform and cannot be undone.`)) return
-    setActioning(id)
-    const res = await fetch(`/api/admin/providers/${id}`, { method: "DELETE" })
-    setActioning(null)
-    if (!res.ok) {
-      const d = await res.json().catch(() => ({}))
-      alert(d.error || "Could not delete this cleaner.")
-      return
-    }
-    reload()
-  }
-
   const tabs: TabType[] = ["pending", "approved", "suspended"]
 
   return (
@@ -177,9 +165,7 @@ export default function AdminProvidersPage() {
                               <PlayCircle className="h-4 w-4" />
                             </button>
                           )}
-                          <button onClick={() => handleDelete(p.id, p.businessName)} title="Delete permanently" className="p-1.5 rounded-lg hover:bg-red-50 text-red-600 transition-colors">
-                            <Trash2 className="h-4 w-4" />
-                          </button>
+                          <DeleteCleanerDialog id={p.id} name={p.businessName} onDeleted={reload} />
                         </>
                       )}
                     </div>
