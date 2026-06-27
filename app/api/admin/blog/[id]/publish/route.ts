@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { blogPosts } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
+import { logError } from "@/lib/utils/logError"
 
 async function requireAdmin() {
   const { userId, sessionClaims } = await auth()
@@ -40,6 +41,7 @@ export async function PATCH(_req: Request, { params }: { params: Promise<{ id: s
     return NextResponse.json({ published: nowPublished })
   } catch (err) {
     console.error("[admin/blog/[id]/publish PATCH]", err)
+    void logError({ message: "[admin/blog/[id]/publish PATCH]", error: err, route: "/api/admin/blog/[id]/publish", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

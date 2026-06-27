@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { bookings, providers } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
 import { isUuid } from "@/lib/utils/uuid"
+import { logError } from "@/lib/utils/logError"
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -69,6 +70,7 @@ export async function POST(req: Request, { params }: Params) {
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error("[bookings/[id]/before-photos POST]", err)
+    void logError({ message: "[bookings/[id]/before-photos POST]", error: err, route: "/api/bookings/[id]/before-photos", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -104,6 +106,7 @@ export async function GET(_req: Request, { params }: Params) {
     return NextResponse.json({ beforePhotoUrls: booking.beforePhotoUrls ?? [] })
   } catch (err) {
     console.error("[bookings/[id]/before-photos GET]", err)
+    void logError({ message: "[bookings/[id]/before-photos GET]", error: err, route: "/api/bookings/[id]/before-photos", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

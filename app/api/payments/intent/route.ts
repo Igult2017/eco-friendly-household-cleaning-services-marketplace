@@ -9,6 +9,7 @@ import { paymentIntentSchema } from "@/lib/validations/booking"
 import { getCurrencyForCountry } from "@/lib/utils/locale"
 import { and, eq, inArray } from "drizzle-orm"
 import { createHash } from "node:crypto"
+import { logError } from "@/lib/utils/logError"
 
 export async function POST(req: Request) {
   try {
@@ -193,6 +194,7 @@ export async function POST(req: Request) {
     })
   } catch (err) {
     console.error("[payments/intent POST]", err)
+    void logError({ message: "[payments/intent POST]", error: err, route: "/api/payments/intent", severity: "critical" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

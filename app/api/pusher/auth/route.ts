@@ -4,6 +4,7 @@ import { pusherServer } from "@/lib/pusher/server"
 import { db } from "@/lib/db"
 import { providers, bookings } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
+import { logError } from "@/lib/utils/logError"
 
 export async function POST(req: Request) {
   try {
@@ -53,6 +54,7 @@ export async function POST(req: Request) {
     return NextResponse.json(authResponse)
   } catch (err) {
     console.error("[pusher/auth POST]", err)
+    void logError({ message: "[pusher/auth POST]", error: err, route: "/api/pusher/auth", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

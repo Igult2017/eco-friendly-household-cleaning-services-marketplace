@@ -5,6 +5,7 @@ import { stripe } from "@/lib/stripe/client"
 import { eq } from "drizzle-orm"
 import { z } from "zod"
 import { requireAdmin } from "@/lib/auth/requireAdmin"
+import { logError } from "@/lib/utils/logError"
 
 const resolveSchema = z.object({
   outcome: z.enum(["resolved_customer", "resolved_provider"]),
@@ -118,6 +119,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ success: true, refundAmount, outcome })
   } catch (err) {
     console.error("[admin/disputes/[id]/resolve POST]", err)
+    void logError({ message: "[admin/disputes/[id]/resolve POST]", error: err, route: "/api/admin/disputes/[id]/resolve", severity: "critical" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

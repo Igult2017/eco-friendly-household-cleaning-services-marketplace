@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { disputes, bookings, users } from "@/lib/db/schema"
 import { eq, desc, sql } from "drizzle-orm"
 import { requireAdmin } from "@/lib/auth/requireAdmin"
+import { logError } from "@/lib/utils/logError"
 
 export async function GET(req: Request) {
   try {
@@ -38,6 +39,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ disputes: rows })
   } catch (err) {
     console.error("[admin/disputes GET]", err)
+    void logError({ message: "[admin/disputes GET]", error: err, route: "/api/admin/disputes", severity: "critical" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

@@ -6,6 +6,7 @@ import type { NewReview } from "@/lib/db/schema/reviews"
 import { eq, and, avg, count } from "drizzle-orm"
 import { z } from "zod"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
+import { logError } from "@/lib/utils/logError"
 
 const reviewSchema = z.object({
   bookingId: z.string().uuid(),
@@ -76,6 +77,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ reviewId: newReview.id }, { status: 201 })
   } catch (err) {
     console.error("[reviews POST]", err)
+    void logError({ message: "[reviews POST]", error: err, route: "/api/reviews", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

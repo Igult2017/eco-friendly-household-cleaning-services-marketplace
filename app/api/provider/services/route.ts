@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { providers, providerServices, serviceCategories } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
 import { z } from "zod"
+import { logError } from "@/lib/utils/logError"
 
 const serviceSchema = z.object({
   // At least one built-in category (so clients can find this service); the first is the primary.
@@ -50,6 +51,7 @@ export async function GET() {
     return NextResponse.json({ services, categories, hasProfile: true })
   } catch (err) {
     console.error("[provider/services GET]", err)
+    void logError({ message: "[provider/services GET]", error: err, route: "/api/provider/services", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -90,6 +92,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ serviceId: service.id }, { status: 201 })
   } catch (err) {
     console.error("[provider/services POST]", err)
+    void logError({ message: "[provider/services POST]", error: err, route: "/api/provider/services", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -118,6 +121,7 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error("[provider/services DELETE]", err)
+    void logError({ message: "[provider/services DELETE]", error: err, route: "/api/provider/services", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

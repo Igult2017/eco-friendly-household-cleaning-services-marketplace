@@ -7,6 +7,7 @@ import { inngest } from "@/lib/inngest/client"
 import { eq, and } from "drizzle-orm"
 import { z } from "zod"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
+import { logError } from "@/lib/utils/logError"
 
 const openDisputeSchema = z.object({
   bookingId: z.string().uuid(),
@@ -85,6 +86,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ disputeId: newDispute.id }, { status: 201 })
   } catch (err) {
     console.error("[disputes POST]", err)
+    void logError({ message: "[disputes POST]", error: err, route: "/api/disputes", severity: "critical" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

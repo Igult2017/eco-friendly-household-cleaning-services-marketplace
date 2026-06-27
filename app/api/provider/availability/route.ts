@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { providers, providerAvailability, providerBlackoutDates } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
 import { z } from "zod"
+import { logError } from "@/lib/utils/logError"
 
 const availabilitySchema = z.object({
   dayOfWeek: z.number().int().min(0).max(6),
@@ -33,6 +34,7 @@ export async function GET() {
     return NextResponse.json({ availability, blackouts })
   } catch (err) {
     console.error("[provider/availability GET]", err)
+    void logError({ message: "[provider/availability GET]", error: err, route: "/api/provider/availability", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -84,6 +86,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unknown type" }, { status: 400 })
   } catch (err) {
     console.error("[provider/availability POST]", err)
+    void logError({ message: "[provider/availability POST]", error: err, route: "/api/provider/availability", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

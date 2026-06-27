@@ -9,6 +9,7 @@ import { eq, count } from "drizzle-orm"
 import { requireAdmin } from "@/lib/auth/requireAdmin"
 import { isUuid } from "@/lib/utils/uuid"
 import { eraseUserData } from "@/lib/admin/eraseUser"
+import { logError } from "@/lib/utils/logError"
 
 /**
  * Hard-delete a cleaner profile + its account. Built for removing test / clutter profiles from
@@ -86,6 +87,7 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
     return NextResponse.json({ success: true, deleted: provider.businessName })
   } catch (err) {
     console.error("[admin/providers/[id] DELETE]", err)
+    void logError({ message: "[admin/providers/[id] DELETE]", error: err, route: "/api/admin/providers/[id]", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

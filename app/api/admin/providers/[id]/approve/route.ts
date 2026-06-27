@@ -4,6 +4,7 @@ import { providers, notifications } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { z } from "zod"
 import { requireAdmin } from "@/lib/auth/requireAdmin"
+import { logError } from "@/lib/utils/logError"
 
 // Approval is automatic (a completed cleaner profile is approved). Admins do NOT approve/reject —
 // they can only suspend (ban) or reinstate a cleaner account.
@@ -46,6 +47,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ success: true, action })
   } catch (err) {
     console.error("[admin/providers/[id]/approve POST]", err)
+    void logError({ message: "[admin/providers/[id]/approve POST]", error: err, route: "/api/admin/providers/[id]/approve", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

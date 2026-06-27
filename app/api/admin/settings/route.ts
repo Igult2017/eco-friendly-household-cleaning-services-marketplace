@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { platformSettings } from "@/lib/db/schema"
 import { z } from "zod"
+import { logError } from "@/lib/utils/logError"
 
 const updateSchema = z.object({
   commission_pct:        z.number().int().min(0).max(50).optional(),
@@ -40,6 +41,7 @@ export async function GET() {
     return NextResponse.json(config)
   } catch (err) {
     console.error("[admin/settings GET]", err)
+    void logError({ message: "[admin/settings GET]", error: err, route: "/api/admin/settings", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -64,6 +66,7 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error("[admin/settings PATCH]", err)
+    void logError({ message: "[admin/settings PATCH]", error: err, route: "/api/admin/settings", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

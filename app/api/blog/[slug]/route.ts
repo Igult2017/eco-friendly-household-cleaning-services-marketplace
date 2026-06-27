@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { blogPosts } from "@/lib/db/schema"
 import { and, eq } from "drizzle-orm"
+import { logError } from "@/lib/utils/logError"
 
 export const dynamic = "force-dynamic"
 
@@ -19,6 +20,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ slug: s
     return NextResponse.json({ post })
   } catch (err) {
     console.error("[blog/[slug] GET]", err)
+    void logError({ message: "[blog/[slug] GET]", error: err, route: "/api/blog/[slug]", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

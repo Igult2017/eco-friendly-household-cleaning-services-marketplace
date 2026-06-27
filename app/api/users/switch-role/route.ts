@@ -1,6 +1,7 @@
 import { auth, currentUser } from "@clerk/nextjs/server"
 import { NextRequest, NextResponse } from "next/server"
 import { safeLimit, createRateLimiter } from "@/lib/redis/client"
+import { logError } from "@/lib/utils/logError"
 
 const switchRatelimit = createRateLimiter({ tokens: 10, windowSeconds: 60, prefix: "ratelimit:switch-role" })
 
@@ -47,6 +48,7 @@ export async function POST(req: NextRequest) {
     return res
   } catch (err) {
     console.error("[switch-role POST]", err)
+    void logError({ message: "[switch-role POST]", error: err, route: "/api/users/switch-role", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

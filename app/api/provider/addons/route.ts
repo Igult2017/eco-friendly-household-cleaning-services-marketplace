@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { providers, providerAddons } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
 import { z } from "zod"
+import { logError } from "@/lib/utils/logError"
 
 const addonSchema = z.object({
   name: z.string().min(2).max(120),
@@ -30,6 +31,7 @@ export async function GET() {
     return NextResponse.json({ addons })
   } catch (err) {
     console.error("[provider/addons GET]", err)
+    void logError({ message: "[provider/addons GET]", error: err, route: "/api/provider/addons", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -52,6 +54,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ id: addon.id }, { status: 201 })
   } catch (err) {
     console.error("[provider/addons POST]", err)
+    void logError({ message: "[provider/addons POST]", error: err, route: "/api/provider/addons", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -77,6 +80,7 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error("[provider/addons DELETE]", err)
+    void logError({ message: "[provider/addons DELETE]", error: err, route: "/api/provider/addons", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

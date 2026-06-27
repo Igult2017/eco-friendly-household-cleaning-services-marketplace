@@ -5,6 +5,7 @@ import { blogPosts } from "@/lib/db/schema"
 import { eq, desc } from "drizzle-orm"
 import { z } from "zod"
 import { sanitizeBlogHtml } from "@/lib/security/sanitize"
+import { logError } from "@/lib/utils/logError"
 
 const blogSchema = z.object({
   title: z.string().min(3).max(300),
@@ -49,6 +50,7 @@ export async function GET() {
     return NextResponse.json({ posts })
   } catch (err) {
     console.error("[admin/blog GET]", err)
+    void logError({ message: "[admin/blog GET]", error: err, route: "/api/admin/blog", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -78,6 +80,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ post }, { status: 201 })
   } catch (err) {
     console.error("[admin/blog POST]", err)
+    void logError({ message: "[admin/blog POST]", error: err, route: "/api/admin/blog", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

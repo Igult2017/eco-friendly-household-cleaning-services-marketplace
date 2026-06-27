@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { providers, ecoCertifications } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { z } from "zod"
+import { logError } from "@/lib/utils/logError"
 
 const certSchema = z.object({
   name: z.string().min(2).max(200),
@@ -25,6 +26,7 @@ export async function GET() {
     return NextResponse.json({ certifications: certs })
   } catch (err) {
     console.error("[provider/certifications GET]", err)
+    void logError({ message: "[provider/certifications GET]", error: err, route: "/api/provider/certifications", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -59,6 +61,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ certificationId: cert.id }, { status: 201 })
   } catch (err) {
     console.error("[provider/certifications POST]", err)
+    void logError({ message: "[provider/certifications POST]", error: err, route: "/api/provider/certifications", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

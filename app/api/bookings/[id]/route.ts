@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { bookings } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
+import { logError } from "@/lib/utils/logError"
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -24,6 +25,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ booking })
   } catch (err) {
     console.error("[bookings/[id] GET]", err)
+    void logError({ message: "[bookings/[id] GET]", error: err, route: "/api/bookings/[id]", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

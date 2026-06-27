@@ -8,6 +8,7 @@ import { jobRatelimit } from "@/lib/redis/client"
 import { eq, desc, and, inArray, sql } from "drizzle-orm"
 import { getClientIp } from "@/lib/utils/ip"
 import { z } from "zod"
+import { logError } from "@/lib/utils/logError"
 
 const createJobSchema = z.object({
   title: z.string().min(5).max(200),
@@ -109,6 +110,7 @@ export async function POST(req: Request) {
       cause: cause ? { message: cause.message, code: cause.code, detail: cause.detail, column: cause.column, constraint: cause.constraint, table: cause.table } : undefined,
       stack: err instanceof Error ? err.stack : undefined,
     })
+    void logError({ message: "[jobs POST]", error: err, route: "/api/jobs", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -277,6 +279,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ jobs })
   } catch (err) {
     console.error("[jobs GET]", err)
+    void logError({ message: "[jobs GET]", error: err, route: "/api/jobs", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

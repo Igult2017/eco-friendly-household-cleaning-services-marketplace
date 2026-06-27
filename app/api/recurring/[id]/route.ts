@@ -4,6 +4,7 @@ import { z } from "zod"
 import { db } from "@/lib/db"
 import { recurringSchedules } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
+import { logError } from "@/lib/utils/logError"
 
 const patchSchema = z.object({
   status: z.enum(["paused", "cancelled"]),
@@ -48,6 +49,7 @@ export async function PATCH(
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error("[recurring/[id] PATCH]", err)
+    void logError({ message: "[recurring/[id] PATCH]", error: err, route: "/api/recurring/[id]", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

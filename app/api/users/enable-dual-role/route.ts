@@ -10,6 +10,7 @@ import { eq } from "drizzle-orm"
 import { nanoid } from "nanoid"
 import { sendProviderApprovedEmail } from "@/lib/resend/providerApproved"
 import { z } from "zod"
+import { logError } from "@/lib/utils/logError"
 
 const enableSchema = z.object({
   businessName: z.string().min(2).max(100),
@@ -139,6 +140,7 @@ export async function POST(req: NextRequest) {
     return res
   } catch (err) {
     console.error("[enable-dual-role POST]", err)
+    void logError({ message: "[enable-dual-role POST]", error: err, route: "/api/users/enable-dual-role", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

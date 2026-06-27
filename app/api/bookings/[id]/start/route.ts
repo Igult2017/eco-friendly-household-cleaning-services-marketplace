@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { bookings, notifications, providers } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
 import { isUuid } from "@/lib/utils/uuid"
+import { logError } from "@/lib/utils/logError"
 
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -55,6 +56,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error("[bookings/[id]/start POST]", err)
+    void logError({ message: "[bookings/[id]/start POST]", error: err, route: "/api/bookings/[id]/start", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

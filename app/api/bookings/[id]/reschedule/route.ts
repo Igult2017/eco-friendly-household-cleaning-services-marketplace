@@ -7,6 +7,7 @@ import { eq, and, inArray, gte, lte, ne } from "drizzle-orm"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
 import { isUuid } from "@/lib/utils/uuid"
 import { zonedDayAndTime } from "@/lib/utils/tz"
+import { logError } from "@/lib/utils/logError"
 
 const rescheduleSchema = z.object({
   newScheduledAt: z.string().datetime(),
@@ -169,6 +170,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ success: true, scheduledAt: newScheduledAt })
   } catch (err) {
     console.error("[bookings/[id]/reschedule POST]", err)
+    void logError({ message: "[bookings/[id]/reschedule POST]", error: err, route: "/api/bookings/[id]/reschedule", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

@@ -5,6 +5,7 @@ import { blogPosts } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { z } from "zod"
 import { sanitizeBlogHtml } from "@/lib/security/sanitize"
+import { logError } from "@/lib/utils/logError"
 
 const updateSchema = z.object({
   title: z.string().min(3).max(300).optional(),
@@ -63,6 +64,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error("[admin/blog/[id] PUT]", err)
+    void logError({ message: "[admin/blog/[id] PUT]", error: err, route: "/api/admin/blog/[id]", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -77,6 +79,7 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error("[admin/blog/[id] DELETE]", err)
+    void logError({ message: "[admin/blog/[id] DELETE]", error: err, route: "/api/admin/blog/[id]", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { payments, bookings, providerServices, providers } from "@/lib/db/schema"
 import { eq, desc } from "drizzle-orm"
+import { logError } from "@/lib/utils/logError"
 
 export async function GET() {
   try {
@@ -37,6 +38,7 @@ export async function GET() {
     return NextResponse.json({ payments: rows })
   } catch (err) {
     console.error("[customer/payments GET]", err)
+    void logError({ message: "[customer/payments GET]", error: err, route: "/api/customer/payments", severity: "critical" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

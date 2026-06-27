@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { reviews } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { z } from "zod"
+import { logError } from "@/lib/utils/logError"
 
 const patchSchema = z.object({
   isPublic: z.boolean().optional(),
@@ -40,6 +41,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error("[admin/reviews/[id] PATCH]", err)
+    void logError({ message: "[admin/reviews/[id] PATCH]", error: err, route: "/api/admin/reviews/[id]", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

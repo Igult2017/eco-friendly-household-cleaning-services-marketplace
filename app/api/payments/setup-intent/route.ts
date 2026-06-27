@@ -5,6 +5,7 @@ import { users } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { stripe } from "@/lib/stripe/client"
 import { createRateLimiter, safeLimit } from "@/lib/redis/client"
+import { logError } from "@/lib/utils/logError"
 
 // L2: throttle SetupIntent / Stripe customer creation (resource-abuse prevention).
 const setupIntentRatelimit = createRateLimiter({ tokens: 10, windowSeconds: 600, prefix: "ratelimit:setup-intent" })
@@ -51,6 +52,7 @@ export async function POST() {
     return NextResponse.json({ clientSecret: setupIntent.client_secret, stripeCustomerId })
   } catch (err) {
     console.error("[payments/setup-intent POST]", err)
+    void logError({ message: "[payments/setup-intent POST]", error: err, route: "/api/payments/setup-intent", severity: "critical" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

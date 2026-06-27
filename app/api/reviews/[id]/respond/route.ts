@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { reviews, providers } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
 import { z } from "zod"
+import { logError } from "@/lib/utils/logError"
 
 const respondSchema = z.object({
   response: z.string().min(10).max(1000),
@@ -34,6 +35,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error("[reviews/[id]/respond POST]", err)
+    void logError({ message: "[reviews/[id]/respond POST]", error: err, route: "/api/reviews/[id]/respond", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

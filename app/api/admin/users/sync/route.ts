@@ -1,6 +1,7 @@
 import { auth, clerkClient } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { syncClerkUsers } from "@/lib/clerk/sync"
+import { logError } from "@/lib/utils/logError"
 
 async function requireAdmin(): Promise<string | null> {
   const { userId, sessionClaims } = await auth()
@@ -27,6 +28,7 @@ export async function POST() {
     return NextResponse.json({ success: true, ...result })
   } catch (err) {
     console.error("[admin/users/sync POST]", err)
+    void logError({ message: "[admin/users/sync POST]", error: err, route: "/api/admin/users/sync", severity: "error" })
     return NextResponse.json({ error: "Sync failed" }, { status: 500 })
   }
 }

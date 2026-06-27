@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { providers, users } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { createConnectAccount, createAccountLink } from "@/lib/stripe/connect"
+import { logError } from "@/lib/utils/logError"
 
 export async function POST(req: Request) {
   try {
@@ -56,6 +57,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ url: link.url })
   } catch (err) {
     console.error("[stripe/connect/account POST]", err)
+    void logError({ message: "[stripe/connect/account POST]", error: err, route: "/api/stripe/connect/account", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

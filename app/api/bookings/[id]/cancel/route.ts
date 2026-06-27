@@ -7,6 +7,7 @@ import { calculateRefundPercent } from "@/lib/utils/refunds"
 import { eq, and, sql } from "drizzle-orm"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
 import { isUuid } from "@/lib/utils/uuid"
+import { logError } from "@/lib/utils/logError"
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -129,6 +130,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ success: true, refundPercent, feeCharged: capturedFee, refundedAmount: fullHold - capturedFee })
   } catch (err) {
     console.error("[bookings/[id]/cancel POST]", err)
+    void logError({ message: "[bookings/[id]/cancel POST]", error: err, route: "/api/bookings/[id]/cancel", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

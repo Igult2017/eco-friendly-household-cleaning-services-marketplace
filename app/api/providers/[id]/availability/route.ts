@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { providers, providerAvailability, providerBlackoutDates, bookings } from "@/lib/db/schema"
 import { eq, and, gte, lte, inArray } from "drizzle-orm"
+import { logError } from "@/lib/utils/logError"
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -77,6 +78,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     })
   } catch (err) {
     console.error("[providers/[id]/availability GET]", err)
+    void logError({ message: "[providers/[id]/availability GET]", error: err, route: "/api/providers/[id]/availability", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

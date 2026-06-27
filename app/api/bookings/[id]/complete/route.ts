@@ -6,6 +6,7 @@ import { eq, and, inArray } from "drizzle-orm"
 import { inngest } from "@/lib/inngest/client"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
 import { isUuid } from "@/lib/utils/uuid"
+import { logError } from "@/lib/utils/logError"
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -93,6 +94,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error("[bookings/[id]/complete POST]", err)
+    void logError({ message: "[bookings/[id]/complete POST]", error: err, route: "/api/bookings/[id]/complete", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

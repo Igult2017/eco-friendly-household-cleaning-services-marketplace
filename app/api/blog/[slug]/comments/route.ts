@@ -5,6 +5,7 @@ import { blogPosts, blogComments, users } from "@/lib/db/schema"
 import { eq, desc, and } from "drizzle-orm"
 import { z } from "zod"
 import { createRateLimiter, safeLimit } from "@/lib/redis/client"
+import { logError } from "@/lib/utils/logError"
 
 export const dynamic = "force-dynamic"
 
@@ -30,6 +31,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ slug: s
     return NextResponse.json({ comments })
   } catch (err) {
     console.error("[blog/[slug]/comments GET]", err)
+    void logError({ message: "[blog/[slug]/comments GET]", error: err, route: "/api/blog/[slug]/comments", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -60,6 +62,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ slug: s
     return NextResponse.json({ comment }, { status: 201 })
   } catch (err) {
     console.error("[blog/[slug]/comments POST]", err)
+    void logError({ message: "[blog/[slug]/comments POST]", error: err, route: "/api/blog/[slug]/comments", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

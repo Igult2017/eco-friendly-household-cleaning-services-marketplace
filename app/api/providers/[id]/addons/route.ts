@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { providerAddons, providers } from "@/lib/db/schema"
 import { and, eq } from "drizzle-orm"
+import { logError } from "@/lib/utils/logError"
 
 // Public: a provider's active add-ons, for the booking "extras" step.
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -20,6 +21,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ addons })
   } catch (err) {
     console.error("[providers/[id]/addons GET]", err)
+    void logError({ message: "[providers/[id]/addons GET]", error: err, route: "/api/providers/[id]/addons", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

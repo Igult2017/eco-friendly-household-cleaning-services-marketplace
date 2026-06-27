@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { bookings, providers, providerServices, users } from "@/lib/db/schema"
 import { eq, and, desc } from "drizzle-orm"
+import { logError } from "@/lib/utils/logError"
 
 const VALID_STATUSES = ["payment_authorized", "confirmed", "in_progress", "completed", "cancelled", "disputed"]
 
@@ -49,6 +50,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ bookings: rows })
   } catch (err) {
     console.error("[provider/bookings GET]", err)
+    void logError({ message: "[provider/bookings GET]", error: err, route: "/api/provider/bookings", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

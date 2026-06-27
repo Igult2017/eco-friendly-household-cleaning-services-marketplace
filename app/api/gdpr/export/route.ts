@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { users, bookings, reviews, disputes, notifications, providers, providerServices, ecoCertifications } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
+import { logError } from "@/lib/utils/logError"
 
 export async function GET() {
   try {
@@ -66,6 +67,7 @@ export async function GET() {
     })
   } catch (err) {
     console.error("[gdpr/export GET]", err)
+    void logError({ message: "[gdpr/export GET]", error: err, route: "/api/gdpr/export", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

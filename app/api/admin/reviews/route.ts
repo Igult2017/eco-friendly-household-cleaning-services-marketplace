@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/auth/requireAdmin"
 import { db } from "@/lib/db"
 import { reviews, users, providers } from "@/lib/db/schema"
 import { eq, desc } from "drizzle-orm"
+import { logError } from "@/lib/utils/logError"
 
 export async function GET() {
   try {
@@ -32,6 +33,7 @@ export async function GET() {
     return NextResponse.json({ reviews: rows })
   } catch (err) {
     console.error("[admin/reviews GET]", err)
+    void logError({ message: "[admin/reviews GET]", error: err, route: "/api/admin/reviews", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

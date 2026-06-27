@@ -7,6 +7,7 @@ const referralRatelimit = createRateLimiter({ tokens: 10, windowSeconds: 60, pre
 import { referralCodes, referrals, referralCredits } from "@/lib/db/schema"
 import { eq, count, sql } from "drizzle-orm"
 import { customAlphabet } from "nanoid"
+import { logError } from "@/lib/utils/logError"
 
 // Strict alphanumeric — no `-` or `_` from nanoid's default alphabet.
 // The middleware regex [A-Z0-9]{6,20} must match every generated code.
@@ -84,6 +85,7 @@ export async function GET() {
     })
   } catch (err) {
     console.error("[/api/referrals GET]", err)
+    void logError({ message: "[/api/referrals GET]", error: err, route: "/api/referrals", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

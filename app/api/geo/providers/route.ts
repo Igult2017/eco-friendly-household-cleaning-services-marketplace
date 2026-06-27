@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { redis, geoSearchRatelimit } from "@/lib/redis/client"
 import { findProvidersNearLocation } from "@/lib/db/queries/geo"
 import { headers } from "next/headers"
+import { logError } from "@/lib/utils/logError"
 
 export const runtime = "nodejs"
 
@@ -41,6 +42,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ providers, cached: false })
   } catch (err) {
     console.error("[geo/providers GET]", err)
+    void logError({ message: "[geo/providers GET]", error: err, route: "/api/geo/providers", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

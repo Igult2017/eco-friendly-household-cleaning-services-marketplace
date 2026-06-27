@@ -5,6 +5,7 @@ import { db } from "@/lib/db"
 import { payments, providers, notifications, bookings, disputes, users } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import type Stripe from "stripe"
+import { logError } from "@/lib/utils/logError"
 
 export async function POST(req: Request) {
   const headersList = await headers()
@@ -152,6 +153,7 @@ export async function POST(req: Request) {
     return new Response("OK", { status: 200 })
   } catch (err) {
     console.error("[stripe-webhook]", err)
+    void logError({ message: "[stripe-webhook]", error: err, route: "/api/webhooks/stripe", severity: "critical" })
     // The idempotency key was set BEFORE handling (to dedupe concurrent deliveries). A failed handler
     // must release it so Stripe's retry re-processes — otherwise the retry is skipped as a "duplicate"
     // and the event (dispute / payment_failed / account.updated) is silently lost.

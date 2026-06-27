@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { providers, users } from "@/lib/db/schema"
 import { eq, and, desc } from "drizzle-orm"
 import { requireAdmin } from "@/lib/auth/requireAdmin"
+import { logError } from "@/lib/utils/logError"
 
 export async function GET(req: Request) {
   try {
@@ -58,6 +59,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ providers: rows, page, limit, hasMore: rows.length === limit })
   } catch (err) {
     console.error("[admin/providers GET]", err)
+    void logError({ message: "[admin/providers GET]", error: err, route: "/api/admin/providers", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

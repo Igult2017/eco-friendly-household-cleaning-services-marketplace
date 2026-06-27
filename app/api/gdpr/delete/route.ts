@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { users } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
+import { logError } from "@/lib/utils/logError"
 
 export async function POST() {
   try {
@@ -26,6 +27,7 @@ export async function POST() {
     return NextResponse.json({ success: true, message: "Account scheduled for deletion. You will be signed out." })
   } catch (err) {
     console.error("[gdpr/delete POST]", err)
+    void logError({ message: "[gdpr/delete POST]", error: err, route: "/api/gdpr/delete", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

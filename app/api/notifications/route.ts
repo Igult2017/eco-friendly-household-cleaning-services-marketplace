@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { notifications } from "@/lib/db/schema"
 import { eq, and, desc } from "drizzle-orm"
+import { logError } from "@/lib/utils/logError"
 
 export async function GET() {
   try {
@@ -19,6 +20,7 @@ export async function GET() {
     return NextResponse.json({ notifications: rows })
   } catch (err) {
     console.error("[notifications GET]", err)
+    void logError({ message: "[notifications GET]", error: err, route: "/api/notifications", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -40,6 +42,7 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error("[notifications PATCH]", err)
+    void logError({ message: "[notifications PATCH]", error: err, route: "/api/notifications", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

@@ -6,6 +6,7 @@ import { bookingRatelimit } from "@/lib/redis/client"
 import { createBookingSchema } from "@/lib/validations/booking"
 import { desc, eq } from "drizzle-orm"
 import { createBooking, BookingError } from "@/lib/bookings/create"
+import { logError } from "@/lib/utils/logError"
 
 export async function POST(req: Request) {
   try {
@@ -43,6 +44,7 @@ export async function POST(req: Request) {
     }
   } catch (err) {
     console.error("[bookings POST]", err)
+    void logError({ message: "[bookings POST]", error: err, route: "/api/bookings", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -65,6 +67,7 @@ export async function GET(_req: Request) {
     return NextResponse.json({ bookings: customerBookings })
   } catch (err) {
     console.error("[bookings GET]", err)
+    void logError({ message: "[bookings GET]", error: err, route: "/api/bookings", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

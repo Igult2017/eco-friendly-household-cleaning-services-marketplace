@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { bids, jobPosts, providers, notifications, serviceCategories } from "@/lib/db/schema"
 import { eq, and, ne } from "drizzle-orm"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
+import { logError } from "@/lib/utils/logError"
 
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string; bidId: string }> }) {
   try {
@@ -148,6 +149,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
     })
   } catch (err) {
     console.error("[jobs/[id]/bids/[bidId]/accept POST]", err)
+    void logError({ message: "[jobs/[id]/bids/[bidId]/accept POST]", error: err, route: "/api/jobs/[id]/bids/[bidId]/accept", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

@@ -4,6 +4,7 @@ import { z } from "zod"
 import { db } from "@/lib/db"
 import { promoCodes } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
+import { logError } from "@/lib/utils/logError"
 
 const patchSchema = z.object({
   isActive: z.boolean(),
@@ -38,6 +39,7 @@ export async function PATCH(
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error("[admin/promo-codes/[id] PATCH]", err)
+    void logError({ message: "[admin/promo-codes/[id] PATCH]", error: err, route: "/api/admin/promo-codes/[id]", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -63,6 +65,7 @@ export async function DELETE(
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error("[admin/promo-codes/[id] DELETE]", err)
+    void logError({ message: "[admin/promo-codes/[id] DELETE]", error: err, route: "/api/admin/promo-codes/[id]", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

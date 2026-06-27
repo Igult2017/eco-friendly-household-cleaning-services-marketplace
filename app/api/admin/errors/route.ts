@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/auth/requireAdmin"
 import { db } from "@/lib/db"
 import { errorLogs } from "@/lib/db/schema"
 import { desc, isNull, isNotNull, eq, and, count, gte } from "drizzle-orm"
+import { logError } from "@/lib/utils/logError"
 
 const PAGE_SIZE = 50
 const VALID_SEVERITIES = ["info", "warning", "error", "critical"] as const
@@ -50,6 +51,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ errors: rows, total, last24h, critical, page, hasMore: rows.length === PAGE_SIZE })
   } catch (err) {
     console.error("[admin/errors GET]", err)
+    void logError({ message: "[admin/errors GET]", error: err, route: "/api/admin/errors", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

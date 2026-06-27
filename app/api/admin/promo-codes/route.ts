@@ -4,6 +4,7 @@ import { z } from "zod"
 import { db } from "@/lib/db"
 import { promoCodes } from "@/lib/db/schema"
 import { desc } from "drizzle-orm"
+import { logError } from "@/lib/utils/logError"
 
 const createSchema = z.object({
   code: z.string().min(3).max(50).toUpperCase(),
@@ -24,6 +25,7 @@ export async function GET() {
     return NextResponse.json({ promoCodes: rows })
   } catch (err) {
     console.error("[admin/promo-codes GET]", err)
+    void logError({ message: "[admin/promo-codes GET]", error: err, route: "/api/admin/promo-codes", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -70,6 +72,7 @@ export async function POST(req: Request) {
     }
   } catch (err) {
     console.error("[admin/promo-codes POST]", err)
+    void logError({ message: "[admin/promo-codes POST]", error: err, route: "/api/admin/promo-codes", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

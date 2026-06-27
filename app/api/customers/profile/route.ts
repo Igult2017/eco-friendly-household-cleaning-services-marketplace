@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { users } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { z } from "zod"
+import { logError } from "@/lib/utils/logError"
 
 const updateSchema = z.object({
   firstName: z.string().min(1).max(100).optional(),
@@ -33,6 +34,7 @@ export async function GET() {
     return NextResponse.json({ user: user ?? null })
   } catch (err) {
     console.error("[customers/profile GET]", err)
+    void logError({ message: "[customers/profile GET]", error: err, route: "/api/customers/profile", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -61,6 +63,7 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error("[customers/profile PATCH]", err)
+    void logError({ message: "[customers/profile PATCH]", error: err, route: "/api/customers/profile", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

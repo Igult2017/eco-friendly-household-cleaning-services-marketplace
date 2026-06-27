@@ -4,6 +4,7 @@ import { stripe } from "@/lib/stripe/client"
 import { db } from "@/lib/db"
 import { providers, providerIdentityVerifications } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
+import { logError } from "@/lib/utils/logError"
 
 export async function POST(req: Request) {
   try {
@@ -49,6 +50,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ url: session.url })
   } catch (err) {
     console.error("[stripe/identity/session POST]", err)
+    void logError({ message: "[stripe/identity/session POST]", error: err, route: "/api/stripe/identity/session", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

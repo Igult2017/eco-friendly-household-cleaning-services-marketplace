@@ -7,6 +7,7 @@ import { eq } from "drizzle-orm"
 import { providerProfileSchema } from "@/lib/validations/provider"
 import { nanoid } from "nanoid"
 import { sendProviderApprovedEmail } from "@/lib/resend/providerApproved"
+import { logError } from "@/lib/utils/logError"
 
 function toSlug(name: string, suffix: string): string {
   return (
@@ -42,6 +43,7 @@ export async function GET() {
     return NextResponse.json({ provider: provider ?? null })
   } catch (err) {
     console.error("[providers/profile GET]", err)
+    void logError({ message: "[providers/profile GET]", error: err, route: "/api/providers/profile", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -191,6 +193,7 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ success: true, created: true }, { status: 201 })
   } catch (err) {
     console.error("[providers/profile PATCH]", err)
+    void logError({ message: "[providers/profile PATCH]", error: err, route: "/api/providers/profile", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -267,6 +270,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true, providerId: newProvider.id }, { status: 201 })
   } catch (err) {
     console.error("[providers/profile POST]", err)
+    void logError({ message: "[providers/profile POST]", error: err, route: "/api/providers/profile", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

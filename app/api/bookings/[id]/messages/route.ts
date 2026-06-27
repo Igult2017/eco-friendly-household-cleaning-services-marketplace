@@ -5,6 +5,7 @@ import { db } from "@/lib/db"
 import { notifications, messages } from "@/lib/db/schema"
 import { eq, asc, and, ne } from "drizzle-orm"
 import { pusherServer } from "@/lib/pusher/server"
+import { logError } from "@/lib/utils/logError"
 
 type RouteContext = { params: Promise<{ id: string }> }
 
@@ -60,6 +61,7 @@ export async function GET(_req: Request, { params }: RouteContext) {
     return NextResponse.json({ messages: thread })
   } catch (err) {
     console.error("[bookings/[id]/messages GET]", err)
+    void logError({ message: "[bookings/[id]/messages GET]", error: err, route: "/api/bookings/[id]/messages", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -116,11 +118,13 @@ export async function POST(req: Request, { params }: RouteContext) {
       })
     } catch (err) {
       console.error("[pusher] Failed to trigger new-message event:", err)
+      void logError({ message: "[pusher] Failed to trigger new-message event:", error: err, route: "/api/bookings/[id]/messages", severity: "error" })
     }
 
     return NextResponse.json({ message: newMessage }, { status: 201 })
   } catch (err) {
     console.error("[bookings/[id]/messages POST]", err)
+    void logError({ message: "[bookings/[id]/messages POST]", error: err, route: "/api/bookings/[id]/messages", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

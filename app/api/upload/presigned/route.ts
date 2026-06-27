@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { generatePresignedUploadUrl } from "@/lib/r2/client"
 import { uploadRatelimit } from "@/lib/redis/client"
 import { nanoid } from "nanoid"
+import { logError } from "@/lib/utils/logError"
 
 const ALLOWED_FOLDERS = ["completions", "certifications", "avatars", "disputes", "blog-images", "blog-covers"] as const
 type AllowedFolder = typeof ALLOWED_FOLDERS[number]
@@ -46,6 +47,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ uploadUrl, publicUrl, key })
   } catch (err) {
     console.error("[upload/presigned POST]", err)
+    void logError({ message: "[upload/presigned POST]", error: err, route: "/api/upload/presigned", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

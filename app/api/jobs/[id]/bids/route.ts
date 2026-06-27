@@ -8,6 +8,7 @@ import { bidRatelimit } from "@/lib/redis/client"
 import { eq, and } from "drizzle-orm"
 import { getClientIp } from "@/lib/utils/ip"
 import { z } from "zod"
+import { logError } from "@/lib/utils/logError"
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -111,6 +112,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ bidId: newBid.id }, { status: 201 })
   } catch (err) {
     console.error("[jobs/[id]/bids POST]", err)
+    void logError({ message: "[jobs/[id]/bids POST]", error: err, route: "/api/jobs/[id]/bids", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -155,6 +157,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ bids: jobBids })
   } catch (err) {
     console.error("[jobs/[id]/bids GET]", err)
+    void logError({ message: "[jobs/[id]/bids GET]", error: err, route: "/api/jobs/[id]/bids", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

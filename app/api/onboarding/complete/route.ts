@@ -8,6 +8,7 @@ import { onboardingSchema } from "@/lib/validations/onboarding"
 import { nanoid } from "nanoid"
 import { inngest } from "@/lib/inngest/client"
 import { sendProviderApprovedEmail } from "@/lib/resend/providerApproved"
+import { logError } from "@/lib/utils/logError"
 
 const ROLE_COOKIE = "dorix_role"
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -181,6 +182,7 @@ export async function POST(req: NextRequest) {
     return res
   } catch (err) {
     console.error("[onboarding/complete POST]", err)
+    void logError({ message: "[onboarding/complete POST]", error: err, route: "/api/onboarding/complete", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

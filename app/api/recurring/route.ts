@@ -6,6 +6,7 @@ import { recurringSchedules, providers, providerServices, users } from "@/lib/db
 import { eq, and } from "drizzle-orm"
 import { inngest } from "@/lib/inngest/client"
 import { stripe } from "@/lib/stripe/client"
+import { logError } from "@/lib/utils/logError"
 
 const createSchema = z.object({
   providerId: z.string().uuid(),
@@ -91,6 +92,7 @@ export async function GET() {
     return NextResponse.json({ schedules })
   } catch (err) {
     console.error("[recurring GET]", err)
+    void logError({ message: "[recurring GET]", error: err, route: "/api/recurring", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -209,6 +211,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ scheduleId: result.id }, { status: 201 })
   } catch (err) {
     console.error("[recurring POST]", err)
+    void logError({ message: "[recurring POST]", error: err, route: "/api/recurring", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

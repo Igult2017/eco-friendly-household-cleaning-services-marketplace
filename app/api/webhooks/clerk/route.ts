@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { users } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import type { UserRole } from "@/types"
+import { logError } from "@/lib/utils/logError"
 
 const VALID_ROLES: UserRole[] = ["customer", "provider", "admin"]
 
@@ -104,6 +105,7 @@ export async function POST(req: NextRequest) {
     return new Response("OK", { status: 200 })
   } catch (err) {
     console.error("[clerk-webhook]", err)
+    void logError({ message: "[clerk-webhook]", error: err, route: "/api/webhooks/clerk", severity: "critical" })
     return new Response("Internal error", { status: 500 })
   }
 }

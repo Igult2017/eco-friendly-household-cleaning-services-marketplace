@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { users } from "@/lib/db/schema"
 import { eq, and, ne } from "drizzle-orm"
 import { eraseUserData } from "@/lib/admin/eraseUser"
+import { logError } from "@/lib/utils/logError"
 
 const VALID_ROLES = ["admin", "customer", "provider"] as const
 type Role = (typeof VALID_ROLES)[number]
@@ -62,6 +63,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     return NextResponse.json({ success: true, role })
   } catch (err) {
     console.error("[admin/users/[id] PATCH]", err)
+    void logError({ message: "[admin/users/[id] PATCH]", error: err, route: "/api/admin/users/[id]", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
@@ -105,6 +107,7 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
     return NextResponse.json({ success: true, self: isSelf })
   } catch (err) {
     console.error("[admin/users/[id] DELETE]", err)
+    void logError({ message: "[admin/users/[id] DELETE]", error: err, route: "/api/admin/users/[id]", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

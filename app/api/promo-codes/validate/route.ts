@@ -5,6 +5,7 @@ import { db } from "@/lib/db"
 import { promoCodes, promoCodeUsages } from "@/lib/db/schema"
 import { eq, and, ilike } from "drizzle-orm"
 import { createRateLimiter, safeLimit } from "@/lib/redis/client"
+import { logError } from "@/lib/utils/logError"
 
 const bodySchema = z.object({
   code: z.string(),
@@ -79,6 +80,7 @@ export async function POST(req: Request) {
     })
   } catch (err) {
     console.error("[promo-codes/validate POST]", err)
+    void logError({ message: "[promo-codes/validate POST]", error: err, route: "/api/promo-codes/validate", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
