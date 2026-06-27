@@ -1,7 +1,16 @@
-export async function register() {
-  // Only run on the Node.js runtime — never on Edge or in the browser
-  if (process.env.NEXT_RUNTIME !== "nodejs") return
+import * as Sentry from "@sentry/nextjs"
 
+export async function register() {
+  // Initialize Sentry for the active server runtime. These modules call Sentry.init (a no-op until
+  // SENTRY_DSN is set). The build plugin can't auto-wire this because register() also runs migrations.
+  if (process.env.NEXT_RUNTIME === "nodejs") {
+    await import("./sentry.server.config")
+  } else if (process.env.NEXT_RUNTIME === "edge") {
+    await import("./sentry.edge.config")
+  }
+
+  // Boot migrations — Node.js runtime only, never Edge or the browser.
+  if (process.env.NEXT_RUNTIME !== "nodejs") return
   // Under cluster mode (cluster-server.cjs) only the first worker runs boot migrations;
   // the rest are told to skip so we don't fire N concurrent migrate() calls on startup.
   if (process.env.SKIP_BOOT_MIGRATE === "1") return
@@ -33,3 +42,7 @@ export async function register() {
     await client.end()
   }
 }
+
+// Capture errors thrown in nested React Server Components, route handlers, and server actions
+// (Next 15/16 forwards them here). No-op until a DSN is configured.
+export const onRequestError = Sentry.captureRequestError
