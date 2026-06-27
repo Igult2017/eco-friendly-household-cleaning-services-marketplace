@@ -5,7 +5,7 @@ import { uploadRatelimit } from "@/lib/redis/client"
 import { nanoid } from "nanoid"
 import { logError } from "@/lib/utils/logError"
 
-const ALLOWED_FOLDERS = ["completions", "certifications", "avatars", "disputes", "blog-images", "blog-covers"] as const
+const ALLOWED_FOLDERS = ["completions", "certifications", "avatars", "disputes", "blog-images", "blog-covers", "store-images"] as const
 type AllowedFolder = typeof ALLOWED_FOLDERS[number]
 
 const ALLOWED_CONTENT_TYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf"]

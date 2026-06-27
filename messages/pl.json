@@ -10,7 +10,8 @@
     "startBooking": "Zarezerwuj teraz",
     "cleanerDashboard": "Panel sprzątacza",
     "adminPanel": "Panel administratora",
-    "myDashboard": "Mój panel"
+    "myDashboard": "Mój panel",
+    "ecoStore": "Eko-sklep"
   },
   "homeHero": {
     "badge": "Marketplace nr 1 w Europie dla ekologicznego sprzątania",
@@ -1675,5 +1676,22 @@
     "pendingCta": "Uzupełnij profil",
     "suspendedTitle": "Konto zawieszone",
     "suspendedBody": "Twoje konto sprzątacza zostało zawieszone przez administratora. Skontaktuj się z pomocą techniczną."
+  },
+  "ecoStore": {
+    "metaTitle": "Eko-sklep — DORIXÉ",
+    "metaDescription": "Ekologiczne produkty do sprzątania, akcesoria i zestawy startowe dla firm, polecane przez DORIXÉ.",
+    "title": "Eko-sklep",
+    "subtitle": "Narzędzia, akcesoria i zestawy startowe, które polecamy do bardziej ekologicznego sprzątania.",
+    "disclosure": "Niektóre linki są linkami afiliacyjnymi — możemy otrzymać prowizję, jeśli dokonasz zakupu przez nie, bez dodatkowych kosztów dla Ciebie.",
+    "starterPacksTitle": "Zestawy startowe",
+    "starterPacksSubtitle": "Wszystko, czego potrzebujesz, aby rozpocząć działalność sprzątającą.",
+    "productsTitle": "Polecane produkty",
+    "productsSubtitle": "Sprawdzone ekologiczne akcesoria i sprzęt.",
+    "starterPackBadge": "Zestaw startowy",
+    "viewProduct": "Zobacz",
+    "getStarted": "Zacznij",
+    "allCategories": "Wszystkie",
+    "emptyTitle": "Jeszcze nic tu nie ma",
+    "emptyBody": "Przygotowujemy nasze pierwsze rekomendacje — zajrzyj wkrótce."
   }
 }

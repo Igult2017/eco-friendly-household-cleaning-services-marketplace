@@ -10,7 +10,8 @@
     "startBooking": "Jetzt buchen",
     "cleanerDashboard": "Reinigungs-Dashboard",
     "adminPanel": "Admin-Bereich",
-    "myDashboard": "Mein Dashboard"
+    "myDashboard": "Mein Dashboard",
+    "ecoStore": "Öko-Shop"
   },
   "homeHero": {
     "badge": "Europas Marktplatz Nr. 1 für umweltfreundliche Reinigung",
@@ -1675,5 +1676,22 @@
     "pendingCta": "Profil vervollständigen",
     "suspendedTitle": "Konto gesperrt",
     "suspendedBody": "Ihr Reinigungskonto wurde von einem Administrator gesperrt. Bitte wenden Sie sich an den Support."
+  },
+  "ecoStore": {
+    "metaTitle": "Öko-Shop — DORIXÉ",
+    "metaDescription": "Umweltfreundliche Reinigungsprodukte, Zubehör und Starter-Sets für Unternehmen, empfohlen von DORIXÉ.",
+    "title": "Öko-Shop",
+    "subtitle": "Werkzeuge, Zubehör und Starter-Sets, die wir für eine grünere Reinigung empfehlen.",
+    "disclosure": "Einige Links sind Affiliate-Links — wir erhalten ggf. eine Provision, wenn Sie darüber kaufen, ohne Mehrkosten für Sie.",
+    "starterPacksTitle": "Starter-Sets",
+    "starterPacksSubtitle": "Alles, was Sie für den Start Ihres Reinigungsunternehmens brauchen.",
+    "productsTitle": "Empfohlene Produkte",
+    "productsSubtitle": "Bewährtes umweltfreundliches Zubehör und Ausrüstung.",
+    "starterPackBadge": "Starter-Set",
+    "viewProduct": "Ansehen",
+    "getStarted": "Loslegen",
+    "allCategories": "Alle",
+    "emptyTitle": "Noch nichts vorhanden",
+    "emptyBody": "Wir stellen gerade unsere ersten Empfehlungen zusammen — schauen Sie bald wieder vorbei."
   }
 }

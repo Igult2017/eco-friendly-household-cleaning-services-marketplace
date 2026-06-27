@@ -10,7 +10,8 @@
     "startBooking": "Prenota ora",
     "cleanerDashboard": "Dashboard addetto",
     "adminPanel": "Pannello di amministrazione",
-    "myDashboard": "La mia dashboard"
+    "myDashboard": "La mia dashboard",
+    "ecoStore": "Eco-store"
   },
   "homeHero": {
     "badge": "Il marketplace di pulizie ecologiche n. 1 in Europa",
@@ -1675,5 +1676,22 @@
     "pendingCta": "Completa il mio profilo",
     "suspendedTitle": "Account sospeso",
     "suspendedBody": "Il tuo account addetto è stato sospeso da un amministratore. Contatta l'assistenza per risolvere."
+  },
+  "ecoStore": {
+    "metaTitle": "Eco-store — DORIXÉ",
+    "metaDescription": "Prodotti per la pulizia ecologici, forniture e kit di avvio per attività, consigliati da DORIXÉ.",
+    "title": "Eco-store",
+    "subtitle": "Strumenti, forniture e kit di avvio che consigliamo per una pulizia più green.",
+    "disclosure": "Alcuni link sono link di affiliazione — potremmo guadagnare una commissione se acquisti tramite essi, senza costi aggiuntivi per te.",
+    "starterPacksTitle": "Kit di avvio",
+    "starterPacksSubtitle": "Tutto ciò che serve per avviare la tua attività di pulizie.",
+    "productsTitle": "Prodotti consigliati",
+    "productsSubtitle": "Forniture e attrezzature ecologiche affidabili.",
+    "starterPackBadge": "Kit di avvio",
+    "viewProduct": "Vedi",
+    "getStarted": "Inizia",
+    "allCategories": "Tutti",
+    "emptyTitle": "Ancora niente qui",
+    "emptyBody": "Stiamo selezionando i nostri primi consigli — torna presto."
   }
 }

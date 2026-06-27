@@ -12,7 +12,7 @@ const intlMiddleware = createIntlMiddleware(routing)
 const isLocalizedRoute = createRouteMatcher([
   "/",
   "/about(.*)", "/affiliate(.*)", "/become-a-cleaner(.*)", "/blog(.*)", "/browse(.*)",
-  "/browse-jobs(.*)", "/how-it-works(.*)", "/legal(.*)", "/pricing(.*)", "/providers(.*)",
+  "/browse-jobs(.*)", "/eco-store(.*)", "/how-it-works(.*)", "/legal(.*)", "/pricing(.*)", "/providers(.*)",
   "/services(.*)", "/sustainability(.*)", "/unsubscribe(.*)",
 ])
 
@@ -30,6 +30,7 @@ const isPublicRoute = createRouteMatcher([
   "/sustainability(.*)",
   "/pricing(.*)",
   "/blog(.*)",
+  "/eco-store(.*)",
   "/legal(.*)",
   "/sign-in(.*)",
   "/sign-up(.*)",
@@ -44,6 +45,7 @@ const isPublicRoute = createRouteMatcher([
   "/api/files/(.*)", // private-bucket file proxy → signs + redirects; must be reachable without auth
   "/api/jobs/public(.*)",
   "/api/blog/(.*)",
+  "/api/store/go/(.*)", // affiliate outbound-click redirect — public (clicked while logged out)
   "/_a/(.*)", // Umami analytics proxy (script + event collection) — must be public
   "/monitoring(.*)", // Sentry tunnel — client error events POST here; must be reachable without auth
   // SEO infra — crawlers must reach these without auth

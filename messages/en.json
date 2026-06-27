@@ -10,7 +10,8 @@
     "startBooking": "Start booking",
     "cleanerDashboard": "Dashboard",
     "adminPanel": "Admin panel",
-    "myDashboard": "My dashboard"
+    "myDashboard": "My dashboard",
+    "ecoStore": "Eco-store"
   },
   "homeHero": {
     "badge": "Europe's #1 eco-friendly cleaning marketplace",
@@ -1675,5 +1676,22 @@
     "pendingCta": "Complete my profile",
     "suspendedTitle": "Account suspended",
     "suspendedBody": "Your cleaner account has been suspended by an administrator. Please contact support to resolve this."
+  },
+  "ecoStore": {
+    "metaTitle": "Eco-store — DORIXÉ",
+    "metaDescription": "Eco-friendly cleaning products, supplies and business starter kits, recommended by DORIXÉ.",
+    "title": "Eco-store",
+    "subtitle": "Tools, supplies and starter kits we recommend for a greener clean.",
+    "disclosure": "Some links are affiliate links — we may earn a commission when you buy through them, at no extra cost to you.",
+    "starterPacksTitle": "Starter packs",
+    "starterPacksSubtitle": "Everything you need to launch your cleaning business.",
+    "productsTitle": "Recommended products",
+    "productsSubtitle": "Trusted eco-friendly supplies and equipment.",
+    "starterPackBadge": "Starter pack",
+    "viewProduct": "View",
+    "getStarted": "Get started",
+    "allCategories": "All",
+    "emptyTitle": "Nothing here yet",
+    "emptyBody": "We're curating our first recommendations — check back soon."
   }
 }

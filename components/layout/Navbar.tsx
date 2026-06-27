@@ -15,6 +15,7 @@ import { DashboardLinkIcon } from "@/components/layout/DashboardLinkIcon"
 const NAV_LINKS = [
   { href: "/browse", key: "findCleaners" },
   { href: "/browse-jobs", key: "browseJobs" },
+  { href: "/eco-store", key: "ecoStore" },
   { href: "/#how-it-works", key: "howItWorks" },
   { href: "/become-a-cleaner", key: "becomeACleaner" },
   { href: "/blog", key: "blog" },
@@ -43,7 +44,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-7">
+        <div className="hidden md:flex items-center gap-6">
           {NAV_LINKS.map(({ href: navHref, key }) => (
             <Link
               key={navHref}

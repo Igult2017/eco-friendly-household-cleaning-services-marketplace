@@ -276,6 +276,35 @@ ALTER TABLE provider_services ADD COLUMN IF NOT EXISTS custom_categories jsonb D
 -- Backfill the array from the existing single category so pre-existing services are findable via it.
 UPDATE provider_services SET category_ids = jsonb_build_array(category_id::text)
   WHERE (category_ids IS NULL OR category_ids = '[]'::jsonb) AND category_id IS NOT NULL;
+
+-- Eco-store: admin-curated affiliate products + business starter packs (outbound purchase links).
+DO $$ BEGIN CREATE TYPE store_product_type AS ENUM ('product','starter_pack'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN CREATE TYPE store_product_status AS ENUM ('draft','published'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+CREATE TABLE IF NOT EXISTS store_products (
+  id            UUID                 PRIMARY KEY DEFAULT gen_random_uuid(),
+  type          store_product_type   NOT NULL DEFAULT 'product',
+  slug          VARCHAR(200)         NOT NULL,
+  title         VARCHAR(300)         NOT NULL,
+  description   TEXT,
+  brand         VARCHAR(160),
+  image_url     TEXT,
+  affiliate_url TEXT                 NOT NULL,
+  price_cents   INTEGER,
+  currency      VARCHAR(3),
+  benefits      JSONB                NOT NULL DEFAULT '[]'::jsonb,
+  category      VARCHAR(100),
+  tags          JSONB                NOT NULL DEFAULT '[]'::jsonb,
+  featured      BOOLEAN              NOT NULL DEFAULT false,
+  status        store_product_status NOT NULL DEFAULT 'draft',
+  clicks        INTEGER              NOT NULL DEFAULT 0,
+  sort_order    INTEGER              NOT NULL DEFAULT 0,
+  created_at    TIMESTAMPTZ          NOT NULL DEFAULT NOW(),
+  updated_at    TIMESTAMPTZ          NOT NULL DEFAULT NOW()
+);
+CREATE UNIQUE INDEX IF NOT EXISTS store_products_slug_idx     ON store_products(slug);
+CREATE INDEX        IF NOT EXISTS store_products_status_idx   ON store_products(status);
+CREATE INDEX        IF NOT EXISTS store_products_type_idx     ON store_products(type);
+CREATE INDEX        IF NOT EXISTS store_products_featured_idx ON store_products(featured);
 `
 
 function isValidUrl(url) {

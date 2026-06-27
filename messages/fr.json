@@ -10,7 +10,8 @@
     "startBooking": "Réserver",
     "cleanerDashboard": "Tableau de bord agent",
     "adminPanel": "Panneau d'administration",
-    "myDashboard": "Mon tableau de bord"
+    "myDashboard": "Mon tableau de bord",
+    "ecoStore": "Éco-boutique"
   },
   "homeHero": {
     "badge": "La marketplace de ménage écologique n°1 en Europe",
@@ -1675,5 +1676,22 @@
     "pendingCta": "Compléter mon profil",
     "suspendedTitle": "Compte suspendu",
     "suspendedBody": "Votre compte intervenant a été suspendu par un administrateur. Veuillez contacter le support."
+  },
+  "ecoStore": {
+    "metaTitle": "Éco-boutique — DORIXÉ",
+    "metaDescription": "Produits de nettoyage écologiques, fournitures et kits de démarrage d'entreprise, recommandés par DORIXÉ.",
+    "title": "Éco-boutique",
+    "subtitle": "Outils, fournitures et kits de démarrage que nous recommandons pour un nettoyage plus vert.",
+    "disclosure": "Certains liens sont des liens d'affiliation — nous pouvons percevoir une commission si vous achetez via ces liens, sans coût supplémentaire pour vous.",
+    "starterPacksTitle": "Kits de démarrage",
+    "starterPacksSubtitle": "Tout ce qu'il faut pour lancer votre entreprise de nettoyage.",
+    "productsTitle": "Produits recommandés",
+    "productsSubtitle": "Fournitures et équipements écologiques de confiance.",
+    "starterPackBadge": "Kit de démarrage",
+    "viewProduct": "Voir",
+    "getStarted": "Commencer",
+    "allCategories": "Tous",
+    "emptyTitle": "Rien pour l'instant",
+    "emptyBody": "Nous préparons nos premières recommandations — revenez bientôt."
   }
 }

@@ -21,6 +21,7 @@ import {
   ExternalLink,
   Banknote,
   Mail,
+  ShoppingBag,
   Settings,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -42,6 +43,7 @@ const nav = [
   { label: "Referrals",   href: "/admin/referrals",   icon: Gift },
   { label: "Marketing", href: "/admin/marketing", icon: Mail },
   { label: "Blog",     href: "/admin/content/blog", icon: Newspaper },
+  { label: "Eco-store", href: "/admin/content/store", icon: ShoppingBag },
   { label: "Settings", href: "/admin/settings",    icon: Settings },
 ]
 

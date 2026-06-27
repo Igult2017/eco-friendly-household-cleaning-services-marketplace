@@ -10,7 +10,8 @@
     "startBooking": "Nu boeken",
     "cleanerDashboard": "Schoonmaker-dashboard",
     "adminPanel": "Beheerderspaneel",
-    "myDashboard": "Mijn dashboard"
+    "myDashboard": "Mijn dashboard",
+    "ecoStore": "Eco-winkel"
   },
   "homeHero": {
     "badge": "Europa's nr. 1 marktplaats voor milieuvriendelijk schoonmaken",
@@ -1675,5 +1676,22 @@
     "pendingCta": "Mijn profiel invullen",
     "suspendedTitle": "Account geschorst",
     "suspendedBody": "Je schoonmaakaccount is geschorst door een beheerder. Neem contact op met de klantenservice."
+  },
+  "ecoStore": {
+    "metaTitle": "Eco-winkel — DORIXÉ",
+    "metaDescription": "Milieuvriendelijke schoonmaakproducten, benodigdheden en starterspakketten voor ondernemers, aanbevolen door DORIXÉ.",
+    "title": "Eco-winkel",
+    "subtitle": "Gereedschap, benodigdheden en starterspakketten die wij aanraden voor groener schoonmaken.",
+    "disclosure": "Sommige links zijn affiliate-links — we kunnen een commissie verdienen als je via deze links koopt, zonder extra kosten voor jou.",
+    "starterPacksTitle": "Starterspakketten",
+    "starterPacksSubtitle": "Alles wat je nodig hebt om je schoonmaakbedrijf te starten.",
+    "productsTitle": "Aanbevolen producten",
+    "productsSubtitle": "Betrouwbare milieuvriendelijke benodigdheden en apparatuur.",
+    "starterPackBadge": "Starterspakket",
+    "viewProduct": "Bekijken",
+    "getStarted": "Aan de slag",
+    "allCategories": "Alle",
+    "emptyTitle": "Nog niets hier",
+    "emptyBody": "We stellen onze eerste aanbevelingen samen — kom snel terug."
   }
 }

@@ -14,7 +14,7 @@ import { and, or, eq, sql } from "drizzle-orm"
 // H2: keys are NOT bearer capabilities. Public-asset folders (profile photos, blog images shown on
 // logged-out pages) stay open; private folders require authentication AND authorization — the
 // uploader, an admin, or a party to the booking/dispute that references the file.
-const PUBLIC_FOLDERS = new Set(["avatars", "blog-images", "blog-covers", "hero"])
+const PUBLIC_FOLDERS = new Set(["avatars", "blog-images", "blog-covers", "hero", "store-images"])
 
 async function isAdmin(userId: string, sessionClaims: unknown): Promise<boolean> {
   let role = (sessionClaims as { metadata?: { role?: string } } | null)?.metadata?.role
