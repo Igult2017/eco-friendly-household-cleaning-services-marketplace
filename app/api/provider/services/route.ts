@@ -67,8 +67,13 @@ export async function POST(req: Request) {
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
     const d = parsed.data
-    // De-dupe custom labels that exactly match a chosen built-in category name would require the
-    // names here; we keep them as-is (display-only) and rely on categoryIds for search.
+    // Validate every chosen built-in category actually exists. The primary also has an FK, but this
+    // returns a clean 400 instead of a 500 on a crafted request, and keeps the extra ids honest.
+    const validCats = await db.select({ id: serviceCategories.id }).from(serviceCategories).where(eq(serviceCategories.isActive, true))
+    const validIds = new Set(validCats.map((c) => c.id))
+    if (!d.categoryIds.every((id) => validIds.has(id))) {
+      return NextResponse.json({ error: "One or more selected categories are invalid" }, { status: 400 })
+    }
     const [service] = await db.insert(providerServices).values({
       providerId: provider.id,
       categoryId: d.categoryIds[0],          // primary — keeps joins/search working
