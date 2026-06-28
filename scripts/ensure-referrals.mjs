@@ -25,6 +25,8 @@ CREATE TABLE IF NOT EXISTS referral_codes (
 );
 CREATE UNIQUE INDEX IF NOT EXISTS referral_codes_user_idx ON referral_codes(user_id);
 CREATE UNIQUE INDEX IF NOT EXISTS referral_codes_code_idx ON referral_codes(code);
+-- Case-insensitive uniqueness so vanity codes can't collide only by case (e.g. "Jane" vs "jane").
+CREATE UNIQUE INDEX IF NOT EXISTS referral_codes_code_lower_idx ON referral_codes(LOWER(code));
 
 CREATE TABLE IF NOT EXISTS referrals (
   id                            UUID            PRIMARY KEY DEFAULT gen_random_uuid(),

@@ -3,12 +3,13 @@ import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { users, providers, referralCodes, referrals, notifications } from "@/lib/db/schema"
 import type { NewProvider } from "@/lib/db/schema/providers"
-import { eq } from "drizzle-orm"
+import { eq, sql } from "drizzle-orm"
 import { onboardingSchema } from "@/lib/validations/onboarding"
 import { nanoid, customAlphabet } from "nanoid"
 import { inngest } from "@/lib/inngest/client"
 import { sendProviderApprovedEmail } from "@/lib/resend/providerApproved"
 import { logError } from "@/lib/utils/logError"
+import { normalizeRefCode } from "@/lib/referrals/code"
 
 const ROLE_COOKIE = "dorix_role"
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -136,10 +137,15 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Standalone affiliate: give them a referral code immediately so their link works from the dashboard.
+    // Standalone affiliate: give them a NAME-BASED referral code immediately (personalized, not generic)
+    // so their link works the moment they land on the dashboard. Falls back to random if the name is too
+    // short, and suffixes a few digits if the name-based code is already taken.
     if (data.role === "affiliate") {
       try {
-        const code = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8)()
+        const base = normalizeRefCode(`${data.firstName}-${data.lastName}`)
+        let code = base.length >= 3 ? base : customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 8)()
+        const [taken] = await db.select({ id: referralCodes.userId }).from(referralCodes).where(sql`lower(code) = ${code}`).limit(1)
+        if (taken) code = `${base.slice(0, 18)}-${customAlphabet("0123456789", 4)()}`
         await db.insert(referralCodes).values({ userId, code }).onConflictDoNothing()
       } catch (e) { console.warn("[onboarding/complete] affiliate code creation failed:", e) }
     }
@@ -151,7 +157,7 @@ export async function POST(req: NextRequest) {
         const [refCodeRow] = await db
           .select({ userId: referralCodes.userId })
           .from(referralCodes)
-          .where(eq(referralCodes.code, refCode))
+          .where(sql`lower(${referralCodes.code}) = ${refCode.toLowerCase()}`)
           .limit(1)
 
         if (refCodeRow && refCodeRow.userId !== userId) {

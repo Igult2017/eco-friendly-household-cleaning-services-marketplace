@@ -207,7 +207,7 @@ function clerkErrorFallback(req: NextRequest): NextResponse {
 export default async function middleware(req: NextRequest, event: NextFetchEvent) {
   // Capture ?ref=CODE and store in a 30-day cookie so the referral survives sign-up
   const refCode = req.nextUrl.searchParams.get("ref")
-  if (refCode && /^[A-Z0-9]{6,20}$/i.test(refCode) && !req.cookies.get("dorix_ref")) {
+  if (refCode && /^[A-Za-z0-9-]{3,24}$/.test(refCode) && !req.cookies.get("dorix_ref")) {
     let base: NextResponse
     if (!process.env.CLERK_SECRET_KEY) {
       base = NextResponse.next()
@@ -220,7 +220,7 @@ export default async function middleware(req: NextRequest, event: NextFetchEvent
         base = clerkErrorFallback(req)
       }
     }
-    base.cookies.set("dorix_ref", refCode.toUpperCase(), {
+    base.cookies.set("dorix_ref", refCode, {
       httpOnly: true,
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",

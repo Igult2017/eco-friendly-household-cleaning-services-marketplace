@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { Link2, Users, CheckCircle2, Clock, Euro, Copy, Check, TrendingUp } from "lucide-react"
 import { ReferralLinkBuilder } from "./ReferralLinkBuilder"
+import { CustomizeReferralCode } from "./CustomizeReferralCode"
 
 type Data = {
   code: string | null
@@ -35,6 +36,11 @@ export function AffiliateDashboard() {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {}
+  }
+
+  function handleCodeSaved(code: string) {
+    const o = typeof window !== "undefined" ? window.location.origin : ""
+    setData((d) => (d ? { ...d, code, referralUrl: `${o}/?ref=${code}` } : d))
   }
 
   if (loading) return <p className="text-sm text-[#6B7280]">Loading your dashboard…</p>
@@ -72,6 +78,9 @@ export function AffiliateDashboard() {
           </button>
         </div>
       </div>
+
+      {/* Customize handle */}
+      {data?.code && <CustomizeReferralCode currentCode={data.code} onSaved={handleCodeSaved} />}
 
       {/* Promote any page */}
       {data?.code && <ReferralLinkBuilder code={data.code} origin={origin} />}
