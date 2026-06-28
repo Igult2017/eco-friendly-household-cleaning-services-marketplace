@@ -11,6 +11,7 @@ import { nanoid } from "nanoid"
 import { sendProviderApprovedEmail } from "@/lib/resend/providerApproved"
 import { z } from "zod"
 import { logError } from "@/lib/utils/logError"
+import { ensureUserRow } from "@/lib/clerk/ensureUser"
 
 const enableSchema = z.object({
   businessName: z.string().min(2).max(100),
@@ -33,6 +34,12 @@ export async function POST(req: NextRequest) {
 
     const { success: rlOk } = await safeLimit(enableDualRoleRatelimit, userId)
     if (!rlOk) return NextResponse.json({ error: "Too many requests" }, { status: 429 })
+
+    // Ensure the local users row exists first — admin/Clerk-provisioned accounts may have none yet,
+    // which otherwise breaks both the providers insert (FK) and the users.update calls below.
+    if (!(await ensureUserRow(userId))) {
+      return NextResponse.json({ error: "Could not link your account. Please reload and try again." }, { status: 500 })
+    }
 
     // Always fetch live Clerk data — JWT (60s TTL) may have stale role/dualRole,
     // and we need the live publicMetadata as the base when writing back to avoid

@@ -8,6 +8,7 @@ import { providerProfileSchema } from "@/lib/validations/provider"
 import { nanoid } from "nanoid"
 import { sendProviderApprovedEmail } from "@/lib/resend/providerApproved"
 import { logError } from "@/lib/utils/logError"
+import { ensureUserRow } from "@/lib/clerk/ensureUser"
 
 function toSlug(name: string, suffix: string): string {
   return (
@@ -155,6 +156,12 @@ export async function PATCH(req: Request) {
     if (!eligible) return NextResponse.json({ error: "Not eligible to set up a cleaner profile" }, { status: 403 })
     if (!data.businessName || !data.country) {
       return NextResponse.json({ error: "Business name and country are required to create your cleaner profile" }, { status: 400 })
+    }
+
+    // Backstop the missing-users-row FK gap: an admin (or any account) provisioned directly in Clerk
+    // may have no local `users` row yet, which makes the providers insert violate providers_user_id_fkey.
+    if (!(await ensureUserRow(userId))) {
+      return NextResponse.json({ error: "Could not link your account to the database. Please reload and try again." }, { status: 500 })
     }
 
     const insertData: NewProvider = {
