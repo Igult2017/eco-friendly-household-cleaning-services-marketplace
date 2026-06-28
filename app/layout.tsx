@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     "eco-friendly cleaning service",
     "green cleaning service",
     "house cleaning near me",
-    "non-toxic cleaning",
+    "eco home cleaning",
     "sustainable cleaning",
     "deep cleaning service",
     "end of tenancy cleaning",

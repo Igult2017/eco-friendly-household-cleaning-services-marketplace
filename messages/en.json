@@ -15,15 +15,15 @@
     "affiliateDashboard": "Affiliate"
   },
   "homeHero": {
-    "badge": "The world's #1 eco-friendly cleaning marketplace",
+    "badge": "Your eco-friendly cleaning marketplace",
     "headlineLine1": "Clean Home,",
     "headlineLine2": "Green Future.",
-    "subheadline": "Book trusted cleaners who use eco-friendly products. Better for your family, better for the planet.",
+    "subheadline": "Book trusted cleaners who use eco-friendly products. Gentler on your home and the environment.",
     "postcodePlaceholder": "Enter your postcode",
     "findCleaners": "Find cleaners",
-    "trustVetted": "Vetted & Background-checked",
-    "trustEcoCertified": "Eco-certified products",
-    "trustInsured": "Fully Insured",
+    "trustVetted": "Verified & identity-verified",
+    "trustEcoCertified": "Eco-friendly products",
+    "trustInsured": "Secure escrow payments",
     "trustInstantConfirmation": "Instant Confirmation",
     "ourServices": "Our services",
     "orPrefix": "Or",
@@ -34,12 +34,12 @@
     "viewCleaners": "View cleaners"
   },
   "homeTrustTicker": {
-    "backgroundCheckedProviders": "BACKGROUND-CHECKED CLEANERS",
-    "ecoVerifiedProducts": "ECO-VERIFIED PRODUCTS",
+    "backgroundCheckedProviders": "IDENTITY-VERIFIED CLEANERS",
+    "ecoVerifiedProducts": "ECO-FRIENDLY PRODUCTS",
     "cashlessStripePayments": "CASHLESS STRIPE PAYMENTS",
     "fiveStarCustomerSupport": "5-STAR CLIENT SUPPORT",
     "gdprCompliant": "GDPR COMPLIANT",
-    "euInsuredProviders": "EU INSURED CLEANERS",
+    "euInsuredProviders": "SECURE ESCROW PAYMENTS",
     "refundPolicy48h": "48H REFUND POLICY",
     "realTimeNotifications": "REAL-TIME NOTIFICATIONS"
   },
@@ -66,7 +66,7 @@
   },
   "homeFeaturedProviders": {
     "heading": "Top-rated professionals",
-    "subtitle": "Verified, eco-certified cleaners near you",
+    "subtitle": "Verified, eco-friendly cleaners near you",
     "viewAll": "View all →",
     "reviewsCount": "({count, plural, one {# review} other {# reviews}})",
     "perHour": "/hr",
@@ -79,8 +79,8 @@
     "stat_ecoScore": "Average eco-score",
     "stat_co2Saved": "CO₂ saved this year",
     "stat_plantBased": "Use plant-based products",
-    "stat_jobsDone": "Eco-certified jobs done",
-    "footer": "DORIXÉ offsets 100% of service-related transport emissions · Verified by EcoAudit EU"
+    "stat_jobsDone": "Eco-friendly jobs done",
+    "footer": "DORIXÉ offsets 100% of service-related transport emissions"
   },
   "homeJobPost": {
     "badge": "NEW · Bidding marketplace",
@@ -99,13 +99,13 @@
     "bid3Message": "Specialised in end-of-tenancy. Bringing all eco supplies, GDPR-compliant photos."
   },
   "homeTestimonials": {
-    "heading": "Loved by thousands worldwide",
+    "heading": "Loved by households going green",
     "subheading": "Real reviews from verified DORIXÉ clients",
     "review1Text": "My flat has never been this clean. The cleaner used plant-based products that smelled amazing and didn't irritate my allergies. Booking was instant — I had confirmation in under 2 minutes.",
     "review1Name": "Emma T.",
     "review1City": "Amsterdam",
     "review1Service": "Regular Cleaning",
-    "review2Text": "Used DORIXÉ for our office monthly clean. The eco-certified team is professional, punctual, and the booking dashboard is a dream. Our whole company switched.",
+    "review2Text": "Used DORIXÉ for our office monthly clean. The eco-friendly team is professional, punctual, and the booking dashboard is a dream. Our whole company switched.",
     "review2Name": "Marco B.",
     "review2City": "Berlin",
     "review2Service": "Office Cleaning",
@@ -115,7 +115,7 @@
     "review3Service": "Deep Cleaning"
   },
   "homeCta": {
-    "badge": "Join 10,000+ households worldwide",
+    "badge": "Join households switching to eco-friendly cleaning",
     "heading": "Ready for a fresh, green home?",
     "description": "Book your first eco-friendly clean today, or post a job and let verified professionals bid for your business.",
     "findCleaner": "Find a cleaner",
@@ -145,11 +145,11 @@
   },
   "homePage": {
     "metaTitle": "DORIXÉ — Clean Home. Green Future.",
-    "metaDescription": "Book trusted, eco-friendly cleaners near you. Vetted cleaners, transparent pricing, and a green future for every home."
+    "metaDescription": "Book trusted, eco-friendly cleaners near you. Verified cleaners, transparent pricing, and a green future for every home."
   },
   "browse": {
     "metaTitle": "Browse Eco Cleaners — DORIXÉ",
-    "metaDescription": "Find trusted, eco-certified cleaners near you.",
+    "metaDescription": "Find trusted, eco-friendly cleaners near you.",
     "cityLabel": "City",
     "cityPlaceholder": "Amsterdam",
     "ecoLevelLabel": "Eco Level",
@@ -166,7 +166,7 @@
     "clearButton": "Clear",
     "heading": "Find Eco Cleaners",
     "resultsFiltered": "{count, plural, one {# cleaner matches your filters} other {# cleaners match your filters}}",
-    "resultsAvailable": "{count, plural, one {# vetted cleaner available} other {# vetted cleaners available}}",
+    "resultsAvailable": "{count, plural, one {# verified cleaner available} other {# verified cleaners available}}",
     "emptyState": "No cleaners found. Check back soon!",
     "verifiedBadge": "✓ Verified",
     "jobsCount": "{count, plural, one {# job} other {# jobs}}",

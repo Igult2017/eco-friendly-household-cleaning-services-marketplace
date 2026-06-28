@@ -1,11 +1,11 @@
 # DORIXÉ
 
-> DORIXÉ is an eco-friendly household cleaning marketplace connecting customers with vetted, insured cleaning professionals who use sustainable, non-toxic products. Operating across Europe (EUR pricing) and expanding to the US.
+> DORIXÉ is an eco-friendly household cleaning marketplace connecting customers with identity-verified, eco-conscious cleaning professionals who use eco-friendly products. Operating in the EU and US and positioned globally.
 
 ## What DORIXÉ offers
 - Book trusted **eco-friendly cleaners** by postcode — regular cleaning, deep cleaning, move-in/move-out, office cleaning, laundry, and window cleaning.
-- **Cleaner-set hourly rates** shown transparently (e.g. €X/hr). The platform adds a small commission on top; cleaners keep 100% of their quoted rate.
-- **Vetted & insured** providers with eco certifications and an eco score.
+- **Cleaner-set hourly rates** shown transparently (e.g. €X/hr). The customer pays the cleaner's quoted rate; the platform deducts a small commission from the cleaner's payout — no fee added on top.
+- **Identity-verified** providers with an eco score.
 - **Secure payment**: cards are pre-authorised at booking and only charged when the job is marked complete. Tiered, fair cancellation refunds.
 - **No long-term contract** — book a one-off clean or a recurring (weekly/biweekly/monthly) schedule, cancel anytime.
 - Two-way reviews (customers and cleaners rate each other) and real-time booking updates.
@@ -13,7 +13,7 @@
 - An **Eco-store**: a curated list of recommended eco-friendly cleaning products and business starter packs, with links to trusted brands (affiliate links).
 
 ## Why eco
-DORIXÉ providers use plant-based, non-toxic cleaning products — better for families, pets, and the planet. Tagline: "Clean Home. Green Future."
+DORIXÉ providers use eco-friendly cleaning products — gentler on your home, pets, and the environment. Tagline: "Clean Home. Green Future."
 
 ## Key pages
 - Find cleaners: /browse
@@ -26,4 +26,4 @@ DORIXÉ providers use plant-based, non-toxic cleaning products — better for fa
 - Blog (eco-cleaning guides & tips): /blog
 
 ## Who it's for
-Households and offices in Europe and the US looking for reliable, environmentally responsible cleaning with transparent pricing and no lock-in contracts.
+Households and offices looking for reliable, environmentally responsible cleaning with transparent pricing and no lock-in contracts.

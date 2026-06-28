@@ -15,15 +15,15 @@
     "affiliateDashboard": "Affiliate"
   },
   "homeHero": {
-    "badge": "Der weltweite Marktplatz Nr. 1 für umweltfreundliche Reinigung",
+    "badge": "Ihr Marktplatz für umweltfreundliche Reinigung",
     "headlineLine1": "Sauberes Zuhause,",
     "headlineLine2": "grüne Zukunft.",
-    "subheadline": "Buchen Sie vertrauenswürdige Reinigungsprofis, die umweltfreundliche Produkte verwenden. Besser für Ihre Familie, besser für den Planeten.",
+    "subheadline": "Buchen Sie vertrauenswürdige Reinigungsprofis, die umweltfreundliche Produkte verwenden. Schonender für Ihr Zuhause und die Umwelt.",
     "postcodePlaceholder": "Postleitzahl eingeben",
     "findCleaners": "Reinigungskräfte finden",
-    "trustVetted": "Geprüft & mit Hintergrundcheck",
-    "trustEcoCertified": "Öko-zertifizierte Produkte",
-    "trustInsured": "Vollständig versichert",
+    "trustVetted": "Verifiziert & identitätsgeprüft",
+    "trustEcoCertified": "Umweltfreundliche Produkte",
+    "trustInsured": "Sichere Treuhandzahlungen",
     "trustInstantConfirmation": "Sofortige Bestätigung",
     "ourServices": "Unsere Leistungen",
     "orPrefix": "Oder",
@@ -34,12 +34,12 @@
     "viewCleaners": "Reinigungskräfte ansehen"
   },
   "homeTrustTicker": {
-    "backgroundCheckedProviders": "GEPRÜFTE ANBIETER",
-    "ecoVerifiedProducts": "ÖKO-ZERTIFIZIERTE PRODUKTE",
+    "backgroundCheckedProviders": "IDENTITÄTSGEPRÜFTE ANBIETER",
+    "ecoVerifiedProducts": "UMWELTFREUNDLICHE PRODUKTE",
     "cashlessStripePayments": "BARGELDLOSE STRIPE-ZAHLUNGEN",
     "fiveStarCustomerSupport": "5-STERNE-KUNDENSUPPORT",
     "gdprCompliant": "DSGVO-KONFORM",
-    "euInsuredProviders": "EU-VERSICHERTE ANBIETER",
+    "euInsuredProviders": "SICHERE TREUHANDZAHLUNGEN",
     "refundPolicy48h": "48H-RÜCKERSTATTUNG",
     "realTimeNotifications": "ECHTZEIT-BENACHRICHTIGUNGEN"
   },
@@ -54,7 +54,7 @@
   },
   "homeHowItWorks": {
     "heading": "So funktioniert Dorixé",
-    "subheading": "Dorixé verbindet Sie mit geprüften, selbstständigen Reinigungskräften – online gebucht und auf Ihr Zuhause abgestimmt. Einmalig oder regelmäßig: So bleibt Ihr Zuhause sauber, frisch und stressfrei.",
+    "subheading": "Dorixé verbindet Sie mit verifizierten, selbstständigen Reinigungskräften – online gebucht und auf Ihr Zuhause abgestimmt. Einmalig oder regelmäßig: So bleibt Ihr Zuhause sauber, frisch und stressfrei.",
     "step1Title": "Sagen Sie uns, was Sie brauchen",
     "step1Desc": "Wählen Sie Ihren Standort, die Reinigungsleistung und Ihre Wünsche.",
     "step2Title": "Transparenter Preis vorab",
@@ -62,11 +62,11 @@
     "step3Title": "Sicher online buchen",
     "step3Desc": "Datum und Uhrzeit wählen und sicher über unsere Plattform bezahlen.",
     "step4Title": "Genießen Sie ein sauberes Zuhause",
-    "step4Desc": "Eine geprüfte, selbstständige Reinigungskraft kümmert sich um den Rest."
+    "step4Desc": "Eine verifizierte, selbstständige Reinigungskraft kümmert sich um den Rest."
   },
   "homeFeaturedProviders": {
     "heading": "Spitzenbewertete Fachkräfte",
-    "subtitle": "Geprüfte, öko-zertifizierte Reinigungskräfte in deiner Nähe",
+    "subtitle": "Verifizierte, umweltfreundliche Reinigungskräfte in deiner Nähe",
     "viewAll": "Alle ansehen →",
     "reviewsCount": "({count, plural, one {# Bewertung} other {# Bewertungen}})",
     "perHour": "/Std.",
@@ -79,14 +79,14 @@
     "stat_ecoScore": "Durchschnittlicher Öko-Score",
     "stat_co2Saved": "CO₂ in diesem Jahr eingespart",
     "stat_plantBased": "Verwenden pflanzliche Produkte",
-    "stat_jobsDone": "Öko-zertifizierte Aufträge erledigt",
-    "footer": "DORIXÉ gleicht 100 % der servicebedingten Transportemissionen aus · Geprüft von EcoAudit EU"
+    "stat_jobsDone": "Umweltfreundliche Aufträge erledigt",
+    "footer": "DORIXÉ gleicht 100 % der servicebedingten Transportemissionen aus"
   },
   "homeJobPost": {
     "badge": "NEU · Gebots-Marktplatz",
     "headingLine1": "Etwas Bestimmtes gesucht?",
     "headingLine2": "Auftrag einstellen, Angebote erhalten.",
-    "description": "Beschreiben Sie Ihre Reinigungsaufgabe, legen Sie Ihr Budget fest und lassen Sie geprüfte Öko-Reinigungskräfte um Ihre Buchung wetteifern – wie Upwork, nur für blitzsaubere Zuhause.",
+    "description": "Beschreiben Sie Ihre Reinigungsaufgabe, legen Sie Ihr Budget fest und lassen Sie verifizierte Öko-Reinigungskräfte um Ihre Buchung wetteifern – wie Upwork, nur für blitzsaubere Zuhause.",
     "feature1": "Auftrag kostenlos einstellen",
     "feature2": "Angebote innerhalb weniger Stunden erhalten",
     "feature3": "Nach Öko-Score, Bewertung & Preis vergleichen",
@@ -99,7 +99,7 @@
     "bid3Message": "Spezialisiert auf Endreinigung bei Auszug. Bringe alle Öko-Materialien mit, DSGVO-konforme Fotos."
   },
   "homeTestimonials": {
-    "heading": "Geliebt von Tausenden weltweit",
+    "heading": "Beliebt bei Haushalten, die grüner werden",
     "subheading": "Echte Bewertungen von verifizierten DORIXÉ-Kunden",
     "review1Text": "Meine Wohnung war noch nie so sauber. Die Reinigungskraft hat pflanzenbasierte Produkte verwendet, die herrlich gerochen und meine Allergien nicht gereizt haben. Die Buchung war sofort erledigt — ich hatte in unter 2 Minuten eine Bestätigung.",
     "review1Name": "Emma T.",

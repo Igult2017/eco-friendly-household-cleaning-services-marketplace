@@ -4,7 +4,7 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://xn--dorix-
 export const SITE_NAME = "DORIXÉ"
 export const SITE_TAGLINE = "Clean Home. Green Future."
 export const SITE_DESCRIPTION =
-  "Book trusted, eco-friendly cleaners near you. Vetted and insured cleaners, transparent per-hour pricing, and a greener home — across Europe and the US."
+  "Book trusted, eco-friendly cleaners near you. Identity-verified cleaners, transparent per-hour pricing, and a greener home."
 
 // The locales DORIXÉ serves (used for og:locale alternates and hreflang once
 // URL-based i18n is enabled). en is the default served at the bare URL today.
