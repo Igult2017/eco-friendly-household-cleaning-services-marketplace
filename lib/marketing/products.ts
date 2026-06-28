@@ -2,12 +2,12 @@
 // services and tone — not generic filler. Keep this current as the offering evolves.
 
 export const BRAND_CONTEXT = `
-DORIXÉ is a premium eco-friendly home cleaning marketplace in Europe (EU/EUR).
+DORIXÉ is a premium eco-friendly home cleaning marketplace serving the EU, the US, and beyond.
 Tagline: "Clean Home. Green Future."
 Tone: clean, premium, trustworthy, warm, eco-conscious — never spammy or pushy.
 
 What clients can do:
-- Book vetted, background-checked, eco-certified cleaners by the hour or per job.
+- Book identity-verified, eco-friendly cleaners by the hour or per job.
 - Choose recurring cleaning (weekly/bi-weekly/monthly) with a loyalty discount.
 - Post a job and receive bids from nearby cleaners.
 - Add an optional carbon-offset contribution at checkout.

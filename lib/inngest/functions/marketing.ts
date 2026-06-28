@@ -12,7 +12,7 @@ function staticWelcome(firstName: string | null): EmailDraft {
   const name = firstName?.trim() || "there"
   return {
     subject: "Welcome to DORIXÉ 🌿",
-    html: `<p>Hi ${name},</p><p>Welcome to <strong>DORIXÉ</strong> — eco-friendly home cleaning across Europe. Book vetted, background-checked cleaners by the hour or job, set up recurring cleans with a loyalty discount, or post a job and get bids.</p><p>Popular right now: Regular Cleaning, Deep Cleaning, and Move-in / Move-out.</p><p>Welcome aboard,<br/>The DORIXÉ team</p>`,
+    html: `<p>Hi ${name},</p><p>Welcome to <strong>DORIXÉ</strong> — eco-friendly home cleaning. Book identity-verified cleaners by the hour or job, set up recurring cleans with a loyalty discount, or post a job and get bids.</p><p>Popular right now: Regular Cleaning, Deep Cleaning, and Move-in / Move-out.</p><p>Welcome aboard,<br/>The DORIXÉ team</p>`,
   }
 }
 
