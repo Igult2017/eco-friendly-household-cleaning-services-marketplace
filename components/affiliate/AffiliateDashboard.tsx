@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Link2, Users, CheckCircle2, Clock, Euro, Copy, Check, TrendingUp } from "lucide-react"
+import { ReferralLinkBuilder } from "./ReferralLinkBuilder"
 
 type Data = {
   code: string | null
@@ -45,6 +46,7 @@ export function AffiliateDashboard() {
     { label: "Pending", value: stats?.pending ?? 0, icon: Clock },
     { label: "Lifetime earned", value: eur(data?.credit.lifetimeEarnedCents ?? 0), icon: TrendingUp },
   ]
+  const origin = (data?.referralUrl ? new URL(data.referralUrl).origin : "") || (typeof window !== "undefined" ? window.location.origin : "")
 
   return (
     <div className="space-y-8">
@@ -70,6 +72,9 @@ export function AffiliateDashboard() {
           </button>
         </div>
       </div>
+
+      {/* Promote any page */}
+      {data?.code && <ReferralLinkBuilder code={data.code} origin={origin} />}
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
