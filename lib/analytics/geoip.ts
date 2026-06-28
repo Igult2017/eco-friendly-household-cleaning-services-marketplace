@@ -14,17 +14,27 @@ export async function countryForIp(ip: string | null): Promise<string | null> {
   } catch { /* fall through to lookup */ }
 
   let cc: string | null = null
+  // Primary: ipapi.co over HTTPS. The previous HTTP-only ip-api.com call was unreliable server-side
+  // on the VPS (outbound :80 / datacenter-IP blocking), so countryForIp returned null and the
+  // /_a proxy never sent cf-ipcountry — leaving Umami (which has no GeoIP DB here) with "Unknown".
+  // HTTPS ipapi.co is the provider /api/geo/country already resolves with successfully in prod.
   try {
-    // ip-api.com: HTTP, no key, returns ISO country code (same provider as /api/geo/country).
-    const res = await fetch(`http://ip-api.com/json/${ip}?fields=status,countryCode`, {
-      signal: AbortSignal.timeout(2500),
-      cache: "no-store",
-    })
+    const res = await fetch(`https://ipapi.co/${ip}/country/`, { signal: AbortSignal.timeout(2500), cache: "no-store" })
     if (res.ok) {
-      const d = await res.json()
-      if (d?.status === "success" && typeof d?.countryCode === "string") cc = d.countryCode
+      const text = (await res.text()).trim().toUpperCase()
+      if (/^[A-Z]{2}$/.test(text)) cc = text
     }
-  } catch { /* leave null */ }
+  } catch { /* try fallback */ }
+  // Fallback: ip-api.com over HTTP.
+  if (!cc) {
+    try {
+      const res = await fetch(`http://ip-api.com/json/${ip}?fields=status,countryCode`, { signal: AbortSignal.timeout(2500), cache: "no-store" })
+      if (res.ok) {
+        const d = await res.json()
+        if (d?.status === "success" && typeof d?.countryCode === "string") cc = d.countryCode.toUpperCase()
+      }
+    } catch { /* leave null */ }
+  }
 
   // Cache a hit for 7 days; a miss for 1 hour so transient failures retry soon.
   try { await redis.setex(key, cc ? 7 * 86400 : 3600, cc ?? "??") } catch {}
