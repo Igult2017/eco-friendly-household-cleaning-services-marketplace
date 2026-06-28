@@ -63,7 +63,7 @@ export default async function AdminCustomersPage() {
       )}
 
       <div className="rounded-xl bg-white shadow-sm overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-100">
+        <div className="overflow-x-auto -mx-px"><table className="min-w-full divide-y divide-gray-100">
           <thead className="bg-gray-50">
             <tr>
               {["Name", "Email", "Bookings", "GDPR consent", "Status", "Joined"].map((h) => (
@@ -102,7 +102,7 @@ export default async function AdminCustomersPage() {
               </tr>
             )}
           </tbody>
-        </table>
+        </table></div>
       </div>
     </div>
   )

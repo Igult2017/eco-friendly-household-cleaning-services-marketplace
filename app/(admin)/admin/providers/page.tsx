@@ -120,7 +120,7 @@ export default function AdminProvidersPage() {
         ) : providers.length === 0 ? (
           <p className="text-center py-20 text-sm text-[#6B7280]">No {tab} providers</p>
         ) : (
-          <table className="min-w-full divide-y divide-gray-100">
+          <div className="overflow-x-auto -mx-px"><table className="min-w-full divide-y divide-gray-100">
             <thead className="bg-gray-50">
               <tr>
                 {["Provider", "Location", "Criteria", "Verification", "Joined", "Actions"].map((h) => (
@@ -173,7 +173,7 @@ export default function AdminProvidersPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         )}
       </div>
     </div>

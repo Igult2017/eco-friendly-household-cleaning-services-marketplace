@@ -5,10 +5,8 @@ import { NextIntlClientProvider } from "next-intl"
 import { db } from "@/lib/db"
 import { users } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
-import { SignOutButton } from "@clerk/nextjs"
-import { AdminSidebar } from "@/components/admin/AdminSidebar"
+import { AdminShell } from "@/components/admin/AdminShell"
 import { CookieBanner } from "@/components/gdpr/CookieBanner"
-import { ShieldCheck, LogOut } from "lucide-react"
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const { userId, sessionClaims } = await auth()
@@ -41,32 +39,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <NextIntlClientProvider>
-    <div className="min-h-screen bg-[#F4FAF6]">
-      <AdminSidebar />
-      <div className="pl-60">
-        <header className="sticky top-0 z-30 h-16 bg-white/80 backdrop-blur border-b border-gray-200 flex items-center px-8 gap-4">
-          <div className="flex-1" />
-          <div className="flex items-center gap-2.5">
-            <ShieldCheck className="h-4 w-4 text-[#2D7A5F]" />
-            <span className="text-sm font-medium text-[#2B3441]">{displayName}</span>
-            <div className="h-7 w-7 rounded-full bg-[#2D7A5F] flex items-center justify-center text-white text-[11px] font-bold">
-              {initials}
-            </div>
-            <SignOutButton redirectUrl="/">
-              <button
-                aria-label="Sign out"
-                className="ml-1 flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-[#6B7280] hover:bg-gray-100 hover:text-[#2B3441] transition-colors"
-              >
-                <LogOut className="h-4 w-4" />
-                <span className="hidden sm:inline">Sign out</span>
-              </button>
-            </SignOutButton>
-          </div>
-        </header>
-        <main className="p-8">{children}</main>
-      </div>
-    </div>
-    <CookieBanner />
+      <AdminShell displayName={displayName} initials={initials}>
+        {children}
+      </AdminShell>
+      <CookieBanner />
     </NextIntlClientProvider>
   )
 }

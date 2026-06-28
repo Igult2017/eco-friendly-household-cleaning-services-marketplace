@@ -18,7 +18,7 @@ export function PagesTable({ pages }: Props) {
       {pages.length === 0 ? (
         <p className="px-6 py-8 text-center text-sm text-[#6B7280]">No page data yet</p>
       ) : (
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto -mx-px"><table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-50">
               <th className="text-left px-6 py-2 text-xs font-semibold uppercase tracking-wide text-[#6B7280]">Page</th>
@@ -45,7 +45,7 @@ export function PagesTable({ pages }: Props) {
               )
             })}
           </tbody>
-        </table>
+        </table></div>
       )}
     </div>
   )

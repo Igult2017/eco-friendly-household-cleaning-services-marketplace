@@ -72,7 +72,7 @@ export default function AdminBookingsPage() {
         ) : bookings.length === 0 ? (
           <p className="text-center py-20 text-sm text-[#6B7280]">No bookings found</p>
         ) : (
-          <table className="min-w-full divide-y divide-gray-100">
+          <div className="overflow-x-auto -mx-px"><table className="min-w-full divide-y divide-gray-100">
             <thead className="bg-gray-50">
               <tr>
                 {["Booking #", "Customer", "Provider", "Scheduled", "Subtotal", "Fee", "Total", "Status"].map((h) => (
@@ -101,7 +101,7 @@ export default function AdminBookingsPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         )}
       </div>
 

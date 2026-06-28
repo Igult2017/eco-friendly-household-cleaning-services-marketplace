@@ -129,7 +129,7 @@ export default async function AdminReferralsPage() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="min-w-full">
+          <div className="overflow-x-auto -mx-px"><table className="min-w-full">
             <thead>
               <tr className="bg-[#FAFAFA] border-b border-gray-100">
                 {["Referrer", "Code", "Status", "Commission Earned", "Activated", "Joined"].map((h) => (
@@ -194,7 +194,7 @@ export default async function AdminReferralsPage() {
                 </tr>
               )}
             </tbody>
-          </table>
+          </table></div>
         </div>
       </div>
     </div>

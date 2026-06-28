@@ -60,7 +60,7 @@ export function PromoCodeTable({ codes }: Props) {
   return (
     <div className="rounded-xl bg-white shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-100">
+        <div className="overflow-x-auto -mx-px"><table className="min-w-full divide-y divide-gray-100">
           <thead className="bg-gray-50">
             <tr>
               {headers.map((h) => (
@@ -143,7 +143,7 @@ export function PromoCodeTable({ codes }: Props) {
               )
             })}
           </tbody>
-        </table>
+        </table></div>
       </div>
     </div>
   )

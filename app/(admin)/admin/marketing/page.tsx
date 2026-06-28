@@ -63,7 +63,7 @@ export default async function AdminMarketingPage() {
         {campaigns.length === 0 ? (
           <p className="px-6 py-10 text-center text-sm text-[#9CA3AF]">No campaigns yet. Compose one above.</p>
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto -mx-px"><table className="w-full text-sm">
             <thead className="bg-gray-50 text-[#6B7280] text-xs uppercase tracking-wide">
               <tr><th className="text-left px-6 py-3">Name</th><th className="text-left px-4 py-3">Type</th><th className="text-left px-4 py-3">Status</th><th className="text-right px-4 py-3">Sent</th><th className="text-right px-6 py-3">Failed</th></tr>
             </thead>
@@ -78,7 +78,7 @@ export default async function AdminMarketingPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         )}
       </div>
     </div>

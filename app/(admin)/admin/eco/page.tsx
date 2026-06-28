@@ -186,7 +186,7 @@ export default async function AdminEcoPage() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="min-w-full">
+          <div className="overflow-x-auto -mx-px"><table className="min-w-full">
             <thead>
               <tr className="bg-[#FAFAFA] border-b border-gray-100">
                 {["Provider", "Eco Level", "Certificate", "Issuing Body", "Status", "Expires"].map((h) => (
@@ -282,7 +282,7 @@ export default async function AdminEcoPage() {
                 </tr>
               )}
             </tbody>
-          </table>
+          </table></div>
         </div>
       </div>
     </div>

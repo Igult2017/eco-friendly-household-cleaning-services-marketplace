@@ -75,7 +75,7 @@ export function AdminStoreList({ initialProducts }: { initialProducts: StoreProd
       {error && (
         <p role="alert" className="m-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>
       )}
-      <table className="w-full text-sm">
+      <div className="overflow-x-auto -mx-px"><table className="w-full text-sm">
         <thead>
           <tr className="border-b border-[#E5EBF0] bg-[#F8FAFB]">
             <th className="text-left px-5 py-3 font-semibold text-[#2B3441]">Product</th>
@@ -180,7 +180,7 @@ export function AdminStoreList({ initialProducts }: { initialProducts: StoreProd
             )
           })}
         </tbody>
-      </table>
+      </table></div>
     </div>
   )
 }

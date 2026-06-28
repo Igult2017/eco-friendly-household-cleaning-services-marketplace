@@ -56,7 +56,7 @@ export default async function AdminPaymentsPage() {
             <h2 className="font-semibold text-[#2B3441]">Payment Ledger</h2>
           </div>
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-100">
+            <div className="overflow-x-auto -mx-px"><table className="min-w-full divide-y divide-gray-100">
               <thead className="bg-gray-50">
                 <tr>
                   {["Customer", "Intent ID", "Amount", "Captured", "Refunded", "Status", "Date"].map((h) => (
@@ -77,7 +77,7 @@ export default async function AdminPaymentsPage() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
           </div>
         </div>
 

@@ -157,7 +157,7 @@ export default async function AdminErrorsPage({ searchParams }: { searchParams: 
           </div>
         ) : (
           <>
-            <table className="w-full text-sm">
+            <div className="overflow-x-auto -mx-px"><table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-100 text-xs text-[#6B7280] uppercase tracking-wide">
                   <th className="text-left px-6 py-3 w-12">Sev</th>
@@ -206,7 +206,7 @@ export default async function AdminErrorsPage({ searchParams }: { searchParams: 
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
             <div className="flex items-center justify-between px-6 py-3 border-t border-gray-100">
               <p className="text-xs text-[#6B7280]">Page {page} · {rows.length} rows</p>
               <div className="flex gap-2">

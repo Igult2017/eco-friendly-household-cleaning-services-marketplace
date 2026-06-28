@@ -131,7 +131,7 @@ export default async function AdminPayoutsPage() {
             <span className="text-xs text-[#6B7280] bg-gray-100 rounded-full px-3 py-1">{rows.length} shown</span>
           </div>
           <div className="overflow-x-auto">
-            <table className="min-w-full">
+            <div className="overflow-x-auto -mx-px"><table className="min-w-full">
               <thead>
                 <tr className="bg-[#FAFAFA] border-b border-gray-100">
                   {["Provider", "Period", "Amount", "Status", "Settlement", "Processed"].map(h => (
@@ -162,7 +162,7 @@ export default async function AdminPayoutsPage() {
                   </tr>
                 )}
               </tbody>
-            </table>
+            </table></div>
           </div>
         </div>
 

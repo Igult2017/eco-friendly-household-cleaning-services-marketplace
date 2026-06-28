@@ -50,7 +50,7 @@ export default async function AdminUsersPage() {
       </div>
 
       <div className="rounded-xl bg-white shadow-sm overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-100">
+        <div className="overflow-x-auto -mx-px"><table className="min-w-full divide-y divide-gray-100">
           <thead className="bg-gray-50">
             <tr>
               {["Name", "Email", "Role", "Status", "Joined", "Actions"].map((h) => (
@@ -87,7 +87,7 @@ export default async function AdminUsersPage() {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
       </div>
     </div>
   )
