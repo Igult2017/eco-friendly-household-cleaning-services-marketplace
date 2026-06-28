@@ -15,7 +15,7 @@
     "affiliateDashboard": "Affilié"
   },
   "homeHero": {
-    "badge": "La marketplace de ménage écologique n°1 en Europe",
+    "badge": "La marketplace de ménage écologique n°1 au monde",
     "headlineLine1": "Maison propre,",
     "headlineLine2": "avenir vert.",
     "subheadline": "Réservez des professionnels du ménage de confiance qui utilisent des produits écologiques. Mieux pour votre famille, mieux pour la planète.",
@@ -99,7 +99,7 @@
     "bid3Message": "Spécialisée dans l'état des lieux de sortie. J'apporte tout le matériel éco, photos conformes au RGPD."
   },
   "homeTestimonials": {
-    "heading": "Adoré par des milliers de personnes en Europe",
+    "heading": "Adoré par des milliers de personnes dans le monde",
     "subheading": "De vrais avis de clients DORIXÉ vérifiés",
     "review1Text": "Mon appartement n'a jamais été aussi propre. L'agent d'entretien a utilisé des produits d'origine végétale qui sentaient merveilleusement bon et n'ont pas irrité mes allergies. La réservation a été instantanée — j'ai reçu la confirmation en moins de 2 minutes.",
     "review1Name": "Emma T.",
@@ -115,7 +115,7 @@
     "review3Service": "Nettoyage en profondeur"
   },
   "homeCta": {
-    "badge": "Rejoignez plus de 10 000 foyers à travers l'Europe",
+    "badge": "Rejoignez plus de 10 000 foyers à travers le monde",
     "heading": "Prêt pour une maison fraîche et écologique ?",
     "description": "Réservez dès aujourd'hui votre premier nettoyage écologique, ou publiez une annonce et laissez des professionnels vérifiés faire leurs offres.",
     "findCleaner": "Trouver un agent d'entretien",
@@ -123,7 +123,7 @@
   },
   "footer": {
     "taglineLine1": "Maison propre. Avenir vert.",
-    "taglineLine2": "Des professionnels du ménage écologique de confiance partout en Europe.",
+    "taglineLine2": "Des professionnels du ménage écologique de confiance partout dans le monde.",
     "section_product": "Produit",
     "section_company": "Entreprise",
     "section_legal": "Mentions légales",
@@ -180,7 +180,7 @@
   },
   "browseJobs": {
     "heroTitle": "Missions de ménage disponibles",
-    "heroSubtitle": "Parcourez les missions publiées par des clients partout en Europe. Créez un compte prestataire pour soumettre votre offre.",
+    "heroSubtitle": "Parcourez les missions publiées par des clients partout dans le monde. Créez un compte prestataire pour soumettre votre offre.",
     "becomeProvider": "Devenir prestataire — proposer une offre",
     "signInToBid": "Se connecter pour proposer",
     "openJobsCount": "{count, plural, one {# mission ouverte} other {# missions ouvertes}}",
@@ -300,7 +300,7 @@
   "about": {
     "tagline": "Maison propre. Avenir vert.",
     "heroTitleLine1": "Nous construisons la plateforme",
-    "heroTitleLine2": "de ménage la plus verte d'Europe",
+    "heroTitleLine2": "de ménage la plus verte au monde",
     "heroSubtitle": "DORIXÉ met en relation les foyers soucieux de l'environnement avec des nettoyeurs vérifiés et certifiés, aussi attentifs à la planète qu'à un intérieur impeccable.",
     "statEcoCertified": "Prestataires éco-certifiés",
     "statPlatformFee": "Frais clients ajoutés",
@@ -332,8 +332,8 @@
     "valueQualityBody": "Chaque réservation terminée débloque un avis vérifié. Les notes sont réelles — seuls les clients ayant réservé et payé peuvent laisser un avis. Qualité constante exigée, sinon les prestataires sont retirés.",
     "valueFairTitle": "Équitable pour les prestataires",
     "valueFairBody": "Les agents fixent leurs propres tarifs et conservent la grande majorité de chaque réservation. Nous prenons seulement une petite commission pour faire fonctionner la plateforme – sans abonnement, sans coûts cachés. Ceux qui font le travail sont payés équitablement.",
-    "valueEuropeTitle": "Conçu pour l'Europe",
-    "valueEuropeBody": "DORIXÉ est conçu pour le marché de l'UE — conforme au RGPD dès le premier jour, paiements en EUR, formats d'adresse européens et un parcours d'intégration des prestataires conforme aux réglementations locales.",
+    "valueEuropeTitle": "Conçu pour chaque marché",
+    "valueEuropeBody": "DORIXÉ est conçu pour l'UE et les États-Unis — conforme au RGPD en Europe, paiements dans votre devise locale, formats d'adresse locaux et un parcours d'intégration des prestataires conforme aux réglementations locales.",
     "howHeading": "Comment fonctionne DORIXÉ",
     "howSubtitle": "Deux façons d'utiliser la plateforme — pour les foyers et pour les nettoyeurs.",
     "forHouseholdsTitle": "Pour les foyers",
@@ -349,7 +349,7 @@
     "providerPoint4": "Fixez votre propre tarif — paiements hebdomadaires sur compte bancaire",
     "becomeProviderArrow": "Devenir prestataire →",
     "ctaHeading": "Prêt pour une maison plus propre et plus verte ?",
-    "ctaBody": "Rejoignez des milliers de foyers à travers l'Europe qui sont passés au ménage éco-certifié.",
+    "ctaBody": "Rejoignez des milliers de foyers à travers le monde qui sont passés au ménage éco-certifié.",
     "findCleaner": "Trouver un nettoyeur",
     "howItWorks": "Comment ça marche"
   },

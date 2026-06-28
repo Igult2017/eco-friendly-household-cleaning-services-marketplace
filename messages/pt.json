@@ -15,7 +15,7 @@
     "affiliateDashboard": "Afiliado"
   },
   "homeHero": {
-    "badge": "O marketplace de limpeza ecológica n.º 1 da Europa",
+    "badge": "O marketplace de limpeza ecológica n.º 1 do mundo",
     "headlineLine1": "Casa limpa,",
     "headlineLine2": "futuro verde.",
     "subheadline": "Reserve profissionais de limpeza de confiança que usam produtos ecológicos. Melhor para a sua família, melhor para o planeta.",
@@ -99,7 +99,7 @@
     "bid3Message": "Especializada em limpeza de fim de arrendamento. Levo todos os materiais ecológicos, fotos em conformidade com o RGPD."
   },
   "homeTestimonials": {
-    "heading": "Adorado por milhares de pessoas em toda a Europa",
+    "heading": "Adorado por milhares de pessoas em todo o mundo",
     "subheading": "Avaliações reais de clientes verificados da DORIXÉ",
     "review1Text": "O meu apartamento nunca esteve tão limpo. A pessoa da limpeza usou produtos de origem vegetal que cheiravam maravilhosamente e não irritaram as minhas alergias. A reserva foi instantânea — recebi a confirmação em menos de 2 minutos.",
     "review1Name": "Emma T.",
@@ -115,7 +115,7 @@
     "review3Service": "Limpeza profunda"
   },
   "homeCta": {
-    "badge": "Junte-se a mais de 10.000 lares em toda a Europa",
+    "badge": "Junte-se a mais de 10.000 lares em todo o mundo",
     "heading": "Pronto para um lar fresco e ecológico?",
     "description": "Marque hoje a sua primeira limpeza ecológica, ou publique um trabalho e deixe profissionais verificados licitarem pelo seu serviço.",
     "findCleaner": "Encontrar um profissional de limpeza",
@@ -123,7 +123,7 @@
   },
   "footer": {
     "taglineLine1": "Casa limpa. Futuro verde.",
-    "taglineLine2": "Profissionais de limpeza ecológica de confiança em toda a Europa.",
+    "taglineLine2": "Profissionais de limpeza ecológica de confiança em todo o mundo.",
     "section_product": "Produto",
     "section_company": "Empresa",
     "section_legal": "Jurídico",
@@ -180,7 +180,7 @@
   },
   "browseJobs": {
     "heroTitle": "Trabalhos de limpeza disponíveis",
-    "heroSubtitle": "Explore trabalhos publicados por clientes de toda a Europa. Crie uma conta de prestador para enviar a sua proposta.",
+    "heroSubtitle": "Explore trabalhos publicados por clientes de todo o mundo. Crie uma conta de prestador para enviar a sua proposta.",
     "becomeProvider": "Torne-se prestador — faça propostas",
     "signInToBid": "Inicie sessão para propor",
     "openJobsCount": "{count, plural, one {# trabalho disponível} other {# trabalhos disponíveis}}",
@@ -300,7 +300,7 @@
   "about": {
     "tagline": "Casa limpa. Futuro verde.",
     "heroTitleLine1": "Estamos a construir o marketplace",
-    "heroTitleLine2": "de limpeza mais ecológico da Europa",
+    "heroTitleLine2": "de limpeza mais ecológico do mundo",
     "heroSubtitle": "A DORIXÉ liga lares com consciência ecológica a profissionais de limpeza verificados e certificados, que se preocupam tanto com o planeta como com uma casa impecável.",
     "statEcoCertified": "Prestadores com certificação ecológica",
     "statPlatformFee": "Taxas adicionadas ao cliente",
@@ -332,8 +332,8 @@
     "valueQualityBody": "Cada reserva concluída desbloqueia uma avaliação verificada. As classificações são reais — apenas os clientes que reservaram e pagaram podem deixar feedback. Qualidade consistente, caso contrário os prestadores são removidos.",
     "valueFairTitle": "Justo para os prestadores",
     "valueFairBody": "Os profissionais definem as suas próprias tarifas e ficam com a grande maioria de cada reserva. Cobramos apenas uma pequena comissão para manter a plataforma – sem subscrições nem custos ocultos. Quem faz o trabalho é pago de forma justa.",
-    "valueEuropeTitle": "Feito para a Europa",
-    "valueEuropeBody": "A DORIXÉ foi concebida para o mercado da UE — conforme o RGPD desde o primeiro dia, pagamentos em EUR, formatos de morada europeus e um processo de adesão de prestadores que cumpre a regulamentação local.",
+    "valueEuropeTitle": "Feito para cada mercado",
+    "valueEuropeBody": "A DORIXÉ foi concebida para a UE e os EUA — conforme o RGPD na Europa, pagamentos na sua moeda local, formatos de morada locais e um processo de adesão de prestadores que cumpre a regulamentação local.",
     "howHeading": "Como funciona a DORIXÉ",
     "howSubtitle": "Duas formas de usar a plataforma — para lares e para profissionais de limpeza.",
     "forHouseholdsTitle": "Para lares",
@@ -349,7 +349,7 @@
     "providerPoint4": "Defina a sua própria tarifa — pagamentos semanais para o banco",
     "becomeProviderArrow": "Tornar-se prestador →",
     "ctaHeading": "Pronto para uma casa mais limpa e mais verde?",
-    "ctaBody": "Junte-se a milhares de lares em toda a Europa que mudaram para a limpeza com certificação ecológica.",
+    "ctaBody": "Junte-se a milhares de lares em todo o mundo que mudaram para a limpeza com certificação ecológica.",
     "findCleaner": "Encontrar um profissional",
     "howItWorks": "Como funciona"
   },

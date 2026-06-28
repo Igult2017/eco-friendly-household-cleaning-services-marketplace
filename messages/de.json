@@ -15,7 +15,7 @@
     "affiliateDashboard": "Affiliate"
   },
   "homeHero": {
-    "badge": "Europas Marktplatz Nr. 1 für umweltfreundliche Reinigung",
+    "badge": "Der weltweite Marktplatz Nr. 1 für umweltfreundliche Reinigung",
     "headlineLine1": "Sauberes Zuhause,",
     "headlineLine2": "grüne Zukunft.",
     "subheadline": "Buchen Sie vertrauenswürdige Reinigungsprofis, die umweltfreundliche Produkte verwenden. Besser für Ihre Familie, besser für den Planeten.",
@@ -99,7 +99,7 @@
     "bid3Message": "Spezialisiert auf Endreinigung bei Auszug. Bringe alle Öko-Materialien mit, DSGVO-konforme Fotos."
   },
   "homeTestimonials": {
-    "heading": "Geliebt von Tausenden in ganz Europa",
+    "heading": "Geliebt von Tausenden weltweit",
     "subheading": "Echte Bewertungen von verifizierten DORIXÉ-Kunden",
     "review1Text": "Meine Wohnung war noch nie so sauber. Die Reinigungskraft hat pflanzenbasierte Produkte verwendet, die herrlich gerochen und meine Allergien nicht gereizt haben. Die Buchung war sofort erledigt — ich hatte in unter 2 Minuten eine Bestätigung.",
     "review1Name": "Emma T.",
@@ -115,7 +115,7 @@
     "review3Service": "Grundreinigung"
   },
   "homeCta": {
-    "badge": "Schließen Sie sich über 10.000 Haushalten in ganz Europa an",
+    "badge": "Schließen Sie sich über 10.000 Haushalten weltweit an",
     "heading": "Bereit für ein frisches, grünes Zuhause?",
     "description": "Buchen Sie noch heute Ihre erste umweltfreundliche Reinigung oder geben Sie einen Auftrag auf und lassen Sie geprüfte Profis um Ihren Auftrag bieten.",
     "findCleaner": "Reinigungskraft finden",
@@ -123,7 +123,7 @@
   },
   "footer": {
     "taglineLine1": "Sauberes Zuhause. Grüne Zukunft.",
-    "taglineLine2": "Vertrauenswürdige Öko-Reinigungskräfte in ganz Europa.",
+    "taglineLine2": "Vertrauenswürdige Öko-Reinigungskräfte weltweit.",
     "section_product": "Produkt",
     "section_company": "Unternehmen",
     "section_legal": "Rechtliches",
@@ -180,7 +180,7 @@
   },
   "browseJobs": {
     "heroTitle": "Offene Reinigungsaufträge",
-    "heroSubtitle": "Durchstöbere Aufträge, die Kund:innen in ganz Europa eingestellt haben. Erstelle ein Anbieterkonto, um dein Angebot abzugeben.",
+    "heroSubtitle": "Durchstöbere Aufträge, die Kund:innen weltweit eingestellt haben. Erstelle ein Anbieterkonto, um dein Angebot abzugeben.",
     "becomeProvider": "Anbieter werden — auf Aufträge bieten",
     "signInToBid": "Anmelden zum Bieten",
     "openJobsCount": "{count, plural, one {# offener Auftrag} other {# offene Aufträge}}",
@@ -300,7 +300,7 @@
   "about": {
     "tagline": "Sauberes Zuhause. Grüne Zukunft.",
     "heroTitleLine1": "Wir bauen den grünsten",
-    "heroTitleLine2": "Reinigungsmarktplatz Europas",
+    "heroTitleLine2": "Reinigungsmarktplatz der Welt",
     "heroSubtitle": "DORIXÉ verbindet umweltbewusste Haushalte mit geprüften, zertifizierten Reinigungskräften, denen der Planet genauso am Herzen liegt wie ein makellos sauberes Zuhause.",
     "statEcoCertified": "Öko-zertifizierte Anbieter",
     "statPlatformFee": "Zusätzliche Kundengebühren",
@@ -332,8 +332,8 @@
     "valueQualityBody": "Jede abgeschlossene Buchung schaltet eine verifizierte Bewertung frei. Die Bewertungen sind echt — nur Kunden, die gebucht und bezahlt haben, können Feedback hinterlassen. Gleichbleibende Qualität, sonst werden Anbieter entfernt.",
     "valueFairTitle": "Fair für Anbieter",
     "valueFairBody": "Reinigungskräfte legen ihre Sätze selbst fest und behalten den Großteil jeder Buchung. Wir nehmen nur eine kleine Provision für den Betrieb der Plattform – kein Abo, keine versteckten Kosten. Wer die Arbeit macht, wird fair bezahlt.",
-    "valueEuropeTitle": "Für Europa gemacht",
-    "valueEuropeBody": "DORIXÉ ist für den EU-Markt konzipiert — DSGVO-konform von Tag eins, Zahlungen in EUR, europäische Adressformate und ein Anbieter-Onboarding, das lokale Vorschriften erfüllt.",
+    "valueEuropeTitle": "Für jeden Markt gemacht",
+    "valueEuropeBody": "DORIXÉ ist für die EU und die USA konzipiert — DSGVO-konform in Europa, Zahlungen in Ihrer lokalen Währung, lokale Adressformate und ein Anbieter-Onboarding, das lokale Vorschriften erfüllt.",
     "howHeading": "So funktioniert DORIXÉ",
     "howSubtitle": "Zwei Wege, die Plattform zu nutzen — für Haushalte und für Reinigungskräfte.",
     "forHouseholdsTitle": "Für Haushalte",
@@ -349,7 +349,7 @@
     "providerPoint4": "Eigenen Satz festlegen – wöchentliche Auszahlungen aufs Bankkonto",
     "becomeProviderArrow": "Anbieter werden →",
     "ctaHeading": "Bereit für ein saubereres, grüneres Zuhause?",
-    "ctaBody": "Schließen Sie sich Tausenden von Haushalten in ganz Europa an, die auf öko-zertifizierte Reinigung umgestiegen sind.",
+    "ctaBody": "Schließen Sie sich Tausenden von Haushalten weltweit an, die auf öko-zertifizierte Reinigung umgestiegen sind.",
     "findCleaner": "Reinigungskraft finden",
     "howItWorks": "So funktioniert's"
   },

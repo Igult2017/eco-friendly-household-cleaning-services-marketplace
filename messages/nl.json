@@ -15,7 +15,7 @@
     "affiliateDashboard": "Affiliate"
   },
   "homeHero": {
-    "badge": "Europa's nr. 1 marktplaats voor milieuvriendelijk schoonmaken",
+    "badge": "'s werelds nr. 1 marktplaats voor milieuvriendelijk schoonmaken",
     "headlineLine1": "Schoon huis,",
     "headlineLine2": "groene toekomst.",
     "subheadline": "Boek betrouwbare schoonmaakprofessionals die milieuvriendelijke producten gebruiken. Beter voor je gezin, beter voor de planeet.",
@@ -99,7 +99,7 @@
     "bid3Message": "Gespecialiseerd in eindschoonmaak bij verhuizing. Ik neem alle eco-benodigdheden mee, AVG-conforme foto's."
   },
   "homeTestimonials": {
-    "heading": "Geliefd bij duizenden in heel Europa",
+    "heading": "Geliefd bij duizenden wereldwijd",
     "subheading": "Echte beoordelingen van geverifieerde DORIXÉ-klanten",
     "review1Text": "Mijn appartement is nog nooit zo schoon geweest. De schoonmaker gebruikte plantaardige producten die heerlijk roken en mijn allergieën niet irriteerden. Het boeken ging direct — ik had binnen 2 minuten een bevestiging.",
     "review1Name": "Emma T.",
@@ -115,7 +115,7 @@
     "review3Service": "Grondige schoonmaak"
   },
   "homeCta": {
-    "badge": "Sluit je aan bij meer dan 10.000 huishoudens in heel Europa",
+    "badge": "Sluit je aan bij meer dan 10.000 huishoudens wereldwijd",
     "heading": "Klaar voor een fris, groen huis?",
     "description": "Boek vandaag nog je eerste milieuvriendelijke schoonmaak, of plaats een opdracht en laat geverifieerde professionals erop bieden.",
     "findCleaner": "Vind een schoonmaker",
@@ -123,7 +123,7 @@
   },
   "footer": {
     "taglineLine1": "Schoon huis. Groene toekomst.",
-    "taglineLine2": "Betrouwbare milieuvriendelijke schoonmakers in heel Europa.",
+    "taglineLine2": "Betrouwbare milieuvriendelijke schoonmakers wereldwijd.",
     "section_product": "Product",
     "section_company": "Bedrijf",
     "section_legal": "Juridisch",
@@ -180,7 +180,7 @@
   },
   "browseJobs": {
     "heroTitle": "Open schoonmaakklussen",
-    "heroSubtitle": "Bekijk klussen die door klanten in heel Europa zijn geplaatst. Maak een aanbiederaccount aan om je bod uit te brengen.",
+    "heroSubtitle": "Bekijk klussen die door klanten wereldwijd zijn geplaatst. Maak een aanbiederaccount aan om je bod uit te brengen.",
     "becomeProvider": "Word aanbieder — bied op klussen",
     "signInToBid": "Aanmelden om te bieden",
     "openJobsCount": "{count, plural, one {# open klus} other {# open klussen}}",
@@ -300,7 +300,7 @@
   "about": {
     "tagline": "Schoon huis. Groene toekomst.",
     "heroTitleLine1": "Wij bouwen het groenste",
-    "heroTitleLine2": "schoonmaakplatform van Europa",
+    "heroTitleLine2": "schoonmaakplatform ter wereld",
     "heroSubtitle": "DORIXÉ verbindt milieubewuste huishoudens met gecontroleerde, gecertificeerde schoonmakers die net zoveel om de planeet geven als om een vlekkeloos huis.",
     "statEcoCertified": "Eco-gecertificeerde aanbieders",
     "statPlatformFee": "Extra klantkosten",
@@ -332,8 +332,8 @@
     "valueQualityBody": "Elke voltooide boeking ontgrendelt een geverifieerde beoordeling. Beoordelingen zijn echt — alleen klanten die hebben geboekt en betaald, kunnen feedback achterlaten. Consistente kwaliteit, anders worden aanbieders verwijderd.",
     "valueFairTitle": "Eerlijk voor aanbieders",
     "valueFairBody": "Schoonmakers bepalen hun eigen tarieven en houden het grootste deel van elke boeking. Wij nemen alleen een kleine commissie om het platform te runnen – geen abonnement, geen verborgen kosten. Wie het werk doet, wordt eerlijk betaald.",
-    "valueEuropeTitle": "Gebouwd voor Europa",
-    "valueEuropeBody": "DORIXÉ is ontworpen voor de EU-markt — vanaf dag één AVG-conform, betalingen in EUR, Europese adresindelingen en een aanbieder-onboarding die voldoet aan lokale regelgeving.",
+    "valueEuropeTitle": "Gebouwd voor elke markt",
+    "valueEuropeBody": "DORIXÉ is gebouwd voor de EU en de VS — AVG-conform in Europa, betalingen in je lokale valuta, lokale adresindelingen en een aanbieder-onboarding die voldoet aan lokale regelgeving.",
     "howHeading": "Hoe DORIXÉ werkt",
     "howSubtitle": "Twee manieren om het platform te gebruiken — voor huishoudens en voor schoonmakers.",
     "forHouseholdsTitle": "Voor huishoudens",
@@ -349,7 +349,7 @@
     "providerPoint4": "Bepaal je eigen tarief — wekelijkse uitbetalingen op je rekening",
     "becomeProviderArrow": "Word aanbieder →",
     "ctaHeading": "Klaar voor een schoner, groener huis?",
-    "ctaBody": "Sluit u aan bij duizenden huishoudens in heel Europa die zijn overgestapt op eco-gecertificeerd schoonmaken.",
+    "ctaBody": "Sluit u aan bij duizenden huishoudens wereldwijd die zijn overgestapt op eco-gecertificeerd schoonmaken.",
     "findCleaner": "Vind een schoonmaker",
     "howItWorks": "Hoe het werkt"
   },

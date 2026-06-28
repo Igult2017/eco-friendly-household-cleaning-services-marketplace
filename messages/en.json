@@ -15,7 +15,7 @@
     "affiliateDashboard": "Affiliate"
   },
   "homeHero": {
-    "badge": "Europe's #1 eco-friendly cleaning marketplace",
+    "badge": "The world's #1 eco-friendly cleaning marketplace",
     "headlineLine1": "Clean Home,",
     "headlineLine2": "Green Future.",
     "subheadline": "Book trusted cleaners who use eco-friendly products. Better for your family, better for the planet.",
@@ -99,7 +99,7 @@
     "bid3Message": "Specialised in end-of-tenancy. Bringing all eco supplies, GDPR-compliant photos."
   },
   "homeTestimonials": {
-    "heading": "Loved by thousands across Europe",
+    "heading": "Loved by thousands worldwide",
     "subheading": "Real reviews from verified DORIXÉ clients",
     "review1Text": "My flat has never been this clean. The cleaner used plant-based products that smelled amazing and didn't irritate my allergies. Booking was instant — I had confirmation in under 2 minutes.",
     "review1Name": "Emma T.",
@@ -115,7 +115,7 @@
     "review3Service": "Deep Cleaning"
   },
   "homeCta": {
-    "badge": "Join 10,000+ households across Europe",
+    "badge": "Join 10,000+ households worldwide",
     "heading": "Ready for a fresh, green home?",
     "description": "Book your first eco-friendly clean today, or post a job and let verified professionals bid for your business.",
     "findCleaner": "Find a cleaner",
@@ -123,7 +123,7 @@
   },
   "footer": {
     "taglineLine1": "Clean home. Green future.",
-    "taglineLine2": "Trusted eco-friendly cleaners across Europe.",
+    "taglineLine2": "Trusted eco-friendly cleaners worldwide.",
     "section_product": "Product",
     "section_company": "Company",
     "section_legal": "Legal",
@@ -180,7 +180,7 @@
   },
   "browseJobs": {
     "heroTitle": "Open Cleaning Jobs",
-    "heroSubtitle": "Browse jobs posted by clients across Europe. Create a cleaner account to submit your bid.",
+    "heroSubtitle": "Browse jobs posted by clients worldwide. Create a cleaner account to submit your bid.",
     "becomeProvider": "Become a cleaner — bid on jobs",
     "signInToBid": "Sign in to bid",
     "openJobsCount": "{count, plural, one {# open job} other {# open jobs}}",
@@ -300,7 +300,7 @@
   "about": {
     "tagline": "Clean home. Green future.",
     "heroTitleLine1": "We're building the greenest",
-    "heroTitleLine2": "cleaning marketplace in Europe",
+    "heroTitleLine2": "cleaning marketplace in the world",
     "heroSubtitle": "DORIXÉ connects eco-conscious households with vetted, certified cleaners who care as much about the planet as they do about a spotless home.",
     "statEcoCertified": "Eco-certified cleaners",
     "statPlatformFee": "Added client fees",
@@ -332,8 +332,8 @@
     "valueQualityBody": "Every completed booking unlocks a verified review. Ratings are real — only clients who booked and paid can leave feedback. Consistent quality or cleaners are removed.",
     "valueFairTitle": "Fair for cleaners",
     "valueFairBody": "Cleaners set their own rates and keep the large majority of every booking. We take only a small commission to run the platform — no subscriptions, no hidden costs. The people doing the work are paid fairly.",
-    "valueEuropeTitle": "Built for Europe",
-    "valueEuropeBody": "DORIXÉ is designed for the EU market — GDPR-compliant from day one, payments in EUR, European address formats, and cleaner onboarding that meets local regulations.",
+    "valueEuropeTitle": "Built for every market",
+    "valueEuropeBody": "DORIXÉ is built for the EU and US — GDPR-compliant in Europe, payments in your local currency, local address formats, and cleaner onboarding that meets local regulations.",
     "howHeading": "How DORIXÉ works",
     "howSubtitle": "Two ways to use the platform — for households and for cleaners.",
     "forHouseholdsTitle": "For households",
@@ -349,7 +349,7 @@
     "providerPoint4": "Set your own rate — weekly bank payouts",
     "becomeProviderArrow": "Become a cleaner →",
     "ctaHeading": "Ready for a cleaner, greener home?",
-    "ctaBody": "Join thousands of households across Europe who've switched to eco-certified cleaning.",
+    "ctaBody": "Join thousands of households worldwide who've switched to eco-certified cleaning.",
     "findCleaner": "Find a cleaner",
     "howItWorks": "How it works"
   },
