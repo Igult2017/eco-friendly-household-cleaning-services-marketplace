@@ -1,6 +1,90 @@
 {
   "version": 1,
   "skills": {
+    "ai-inventory": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "ai-governance-legal/skills/ai-inventory/SKILL.md",
+      "computedHash": "15f9f467944e175682410b95db377529304f9e2da61bf534df92be6d25ef430d"
+    },
+    "ai-tool-handoff": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "corporate-legal/skills/ai-tool-handoff/SKILL.md",
+      "computedHash": "ca391bc9894b08cfe5664f84851bb12ac7f044483f0ff3d0f78497a1ab432791"
+    },
+    "aia-generation": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "ai-governance-legal/skills/aia-generation/SKILL.md",
+      "computedHash": "9209fb757c480170ffd0c07b7f33755ea071ff835cbf076a25889acd4824317e"
+    },
+    "amendment-history": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "commercial-legal/skills/amendment-history/SKILL.md",
+      "computedHash": "54a1199c8a5e27038ecca2bb53d2b52c5c5c925193c6abaab70c31df0e0d9120"
+    },
+    "auto-updater": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "legal-builder-hub/skills/auto-updater/SKILL.md",
+      "computedHash": "62531c268f52f9d3f57051a9ce1f894fddfe433bb583d186d3d86a8651ef8130"
+    },
+    "bar-prep-questions": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "law-student/skills/bar-prep-questions/SKILL.md",
+      "computedHash": "46d54fd65246bd08897cbb4ef8be41bf830d8334dd57c8b8a48c547ee80aff5f"
+    },
+    "board-minutes": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "corporate-legal/skills/board-minutes/SKILL.md",
+      "computedHash": "2133738afa1e5112ca0f704ade47f3e8fd63bea06c2efaf9d9ebe3194035f583"
+    },
+    "brief-section-drafter": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "litigation-legal/skills/brief-section-drafter/SKILL.md",
+      "computedHash": "80974b73fe676fd47cb7551711eb06e590cc6b582de0e1067aeb12f7092658e8"
+    },
+    "build-guide": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "legal-clinic/skills/build-guide/SKILL.md",
+      "computedHash": "29e5d5064f4b3e231417826df5832c2c21c78ddd5a64348ed61bdcec56692aa3"
+    },
+    "case-brief": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "law-student/skills/case-brief/SKILL.md",
+      "computedHash": "523de0a9d661fffd117fd8ffb4c5fd237db116be34d8f5f5f9ff1a1fcc14620e"
+    },
+    "cease-desist": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "ip-legal/skills/cease-desist/SKILL.md",
+      "computedHash": "e9004bbe292255dba7263aa617b71a155ea2c5862049e8f9dab21d5a7c8e095c"
+    },
+    "chronology": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "litigation-legal/skills/chronology/SKILL.md",
+      "computedHash": "33c8df379974e3f1b71f90e8589bc75e7eb5c4aaab98f04575f320e10868d650"
+    },
+    "claim-chart": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "litigation-legal/skills/claim-chart/SKILL.md",
+      "computedHash": "099bc11e54382b88414b10009cd35e730629e9670d2c211b8c26b2d411ddfa6c"
+    },
+    "clearance": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "ip-legal/skills/clearance/SKILL.md",
+      "computedHash": "3321956fceb687bb225cae879b434932ab0b1d77241270c99d1542fc8ad9f39a"
+    },
     "clerk": {
       "source": "clerk/skills",
       "sourceType": "github",
@@ -126,6 +210,636 @@
       "sourceType": "github",
       "skillPath": "skills/features/clerk-webhooks/SKILL.md",
       "computedHash": "4764eeeef1e80ce9757759ef119a3a5e77322383e8a37975d7c8ea718c259ec9"
+    },
+    "client-comms-log": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "legal-clinic/skills/client-comms-log/SKILL.md",
+      "computedHash": "082ef78c1c717fc9027208e0088b2c7561b906c82e3cf4fcbc3957a1124e52af"
+    },
+    "client-intake": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "legal-clinic/skills/client-intake/SKILL.md",
+      "computedHash": "97b8ea94686903ee85b9aff480b8ce7ae8ab9aa44302303b31a0fac7f6dfeb7c"
+    },
+    "client-letter": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "legal-clinic/skills/client-letter/SKILL.md",
+      "computedHash": "23243af3db4445df6235ac0511479fab288a05d91dabbd179c285b41275aa1ad"
+    },
+    "closing-checklist": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "corporate-legal/skills/closing-checklist/SKILL.md",
+      "computedHash": "b43d28b0fdd8bde4a549cf061bac9aa0eb7bb95d2a22634748a3f8ee3ec700ed"
+    },
+    "cocounsel-legal:deep-research": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "external_plugins/cocounsel-legal/skills/deep-research/SKILL.md",
+      "computedHash": "da23fc59f30909cb173dcb64f158e69de4ef893812bbe1821ed1577b7f2235de"
+    },
+    "cold-call-prep": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "law-student/skills/cold-call-prep/SKILL.md",
+      "computedHash": "1e2009e48d8dc1c922e9e824e057ffd9c2d8a156201a4eb6a7aa2b1d5fa48cb3"
+    },
+    "cold-start-interview": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "commercial-legal/skills/cold-start-interview/SKILL.md",
+      "computedHash": "b753282e9a902463b31855a3448128f54c765d8993297abec99f74519d64c6e7"
+    },
+    "comments": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "regulatory-legal/skills/comments/SKILL.md",
+      "computedHash": "244a8ab8d77ed6ac8713343cd9cc63d664459fcb96d31483de7905fd1d2a86cf"
+    },
+    "customize": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "commercial-legal/skills/customize/SKILL.md",
+      "computedHash": "b62b1288d3eb46b0d1bfdbab3497930f84c5a0423eac9e9c1cc869af010dfcd2"
+    },
+    "deadlines": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "legal-clinic/skills/deadlines/SKILL.md",
+      "computedHash": "81420ba75cc75dcf3e86d458dbc376bbbd785ef2b5ca796060c577c385764834"
+    },
+    "deal-team-summary": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "corporate-legal/skills/deal-team-summary/SKILL.md",
+      "computedHash": "fd809aa18e957079432f8485ac85710ddf1f2fa189977f55c7437bd7db667a15"
+    },
+    "demand-draft": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "litigation-legal/skills/demand-draft/SKILL.md",
+      "computedHash": "5a451b571e56eeff18f68da1568236bf1eb8cc4d4eb6be21c46c03c16db2fa00"
+    },
+    "demand-intake": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "litigation-legal/skills/demand-intake/SKILL.md",
+      "computedHash": "8a0daa51f9ef9bcfd62196b0f8b360ba0a3eff6b0e39743b0307fd9e147bbd9a"
+    },
+    "demand-received": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "litigation-legal/skills/demand-received/SKILL.md",
+      "computedHash": "323936ef06d971223bda47d3980e87d5682d4e6a837462a06caa7048a6f37789"
+    },
+    "deposition-prep": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "litigation-legal/skills/deposition-prep/SKILL.md",
+      "computedHash": "019c8e38395b24b1387b6fb157e7deac775c43e3dc3851b9b4d483afe54bca51"
+    },
+    "diligence-issue-extraction": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "corporate-legal/skills/diligence-issue-extraction/SKILL.md",
+      "computedHash": "88294b076dac0c62d8e508af046988cdfc1981e0d51e977abaa6c9c05bb4e445"
+    },
+    "disable": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "legal-builder-hub/skills/disable/SKILL.md",
+      "computedHash": "ad372d1d8a1570db86416d88e6650379667446ff994d51f4d816148356b078e1"
+    },
+    "dpa-review": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "privacy-legal/skills/dpa-review/SKILL.md",
+      "computedHash": "905cc904056778eafce33fad1fb8ce3204b72fbe2f4dc95ee1283c61214e220a"
+    },
+    "draft": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "legal-clinic/skills/draft/SKILL.md",
+      "computedHash": "f6f23bf61868c1df371f42b1a3b8d7fc97ccd4787f6fe4752a378591bd8ab664"
+    },
+    "dsar-response": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "privacy-legal/skills/dsar-response/SKILL.md",
+      "computedHash": "ec9f220a6a7cdda181357eb1070ce9e1ca5dd18b2823b564c17ed57dfd9e35d0"
+    },
+    "entity-compliance": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "corporate-legal/skills/entity-compliance/SKILL.md",
+      "computedHash": "42286967ffaad5334474cbf619ffa359e07d63fb133f3499f4ccb07e99f2a1c8"
+    },
+    "escalation-flagger": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "commercial-legal/skills/escalation-flagger/SKILL.md",
+      "computedHash": "2c2dc636be3d11d487e6946218ce97a1cfd1b515bcf89b49b33c0f750e49cf4b"
+    },
+    "exam-forecast": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "law-student/skills/exam-forecast/SKILL.md",
+      "computedHash": "94b04172b3d718684f231b338753bb2b8f4297d006eeec4b2b3034afc2e3d464"
+    },
+    "expansion-kickoff": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "employment-legal/skills/expansion-kickoff/SKILL.md",
+      "computedHash": "d3966075f3723e2e62ca0d7b836b2665a7d6871c859503d5bdfb8bab18666c79"
+    },
+    "expansion-update": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "employment-legal/skills/expansion-update/SKILL.md",
+      "computedHash": "d5ea5d1f357a1020fb24a297f145720570c4eb3b4d1b73cfc5692cda369b8e5d"
+    },
+    "feature-risk-assessment": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "product-legal/skills/feature-risk-assessment/SKILL.md",
+      "computedHash": "baac9955d31d7a9ea9ba738875f1c26f673500939ac18bc909d15abba55d3ec5"
+    },
+    "flashcards": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "law-student/skills/flashcards/SKILL.md",
+      "computedHash": "b059f54b487eedfff6afadad7107dc840f1ac04051788815d81a14eb09c2083f"
+    },
+    "form-generation": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "legal-clinic/skills/form-generation/SKILL.md",
+      "computedHash": "05a0e228dd2d05600c0699654bdf6e24e7b9aebcc17ec15a4cd96caaeb46bed3"
+    },
+    "fto-triage": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "ip-legal/skills/fto-triage/SKILL.md",
+      "computedHash": "1d91e39eb13a83eb366cdc19c9b5a080264140880c15720fda8350e7aef0d965"
+    },
+    "gap-surfacer": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "regulatory-legal/skills/gap-surfacer/SKILL.md",
+      "computedHash": "894f874697fb0774148f0ba019a566acc63096c4993de657a4ac353d7abce196"
+    },
+    "gaps": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "regulatory-legal/skills/gaps/SKILL.md",
+      "computedHash": "e72521bbc6a29e9851c0ef8bba908a2451e9a6e47286588da75f27e4abf66715"
+    },
+    "handbook-updates": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "employment-legal/skills/handbook-updates/SKILL.md",
+      "computedHash": "8fc26a177859d2ce623367dedd77c01ced8c9a20f1e97af444d5eb81e988d338"
+    },
+    "hiring-review": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "employment-legal/skills/hiring-review/SKILL.md",
+      "computedHash": "08eeb6b3fe77f15c1771ce7a72620ab82fe518027a9287558cb063fcb6806e06"
+    },
+    "infringement-triage": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "ip-legal/skills/infringement-triage/SKILL.md",
+      "computedHash": "1dbc71b687bf9c91840ba87421e49e315e2a82c4f14fa3f09c7598cad2beeac5"
+    },
+    "integration-management": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "corporate-legal/skills/integration-management/SKILL.md",
+      "computedHash": "9f8601b7e87a659f0ad6ceb0a0fa9aa6315b64a1bcad761594b33d29f6311371"
+    },
+    "internal-investigation": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "employment-legal/skills/internal-investigation/SKILL.md",
+      "computedHash": "1aff75df7baa9404421d97be9bace022cdcb89590a294a563130c99eaac5f741"
+    },
+    "international-expansion": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "employment-legal/skills/international-expansion/SKILL.md",
+      "computedHash": "7a3906dbdfca2dbf2ca9f953bb2f2489da8caaed63e6201791c9f93140090fd1"
+    },
+    "invention-intake": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "ip-legal/skills/invention-intake/SKILL.md",
+      "computedHash": "a657c2889301c5f5ea7dc1dcdafbad39f885174753498f9b25436c609684697a"
+    },
+    "investigation-add": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "employment-legal/skills/investigation-add/SKILL.md",
+      "computedHash": "b8ed33abf3ecf3ef0b919cf5e2e3086dc59266ee8f932297e23c2dd4549a5544"
+    },
+    "investigation-memo": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "employment-legal/skills/investigation-memo/SKILL.md",
+      "computedHash": "cbce77288b38f1a735a1b75cc82e84e98082fa48ff1b970cdf91fdd56bf65772"
+    },
+    "investigation-open": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "employment-legal/skills/investigation-open/SKILL.md",
+      "computedHash": "47302187a399dd3e851d33278f1b12a17e8f2f5249c5974af409bd61984c8f77"
+    },
+    "investigation-query": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "employment-legal/skills/investigation-query/SKILL.md",
+      "computedHash": "59cf916631046ada933ba68499b96f58417c4b079ac89accaf34a7eae9d411ef"
+    },
+    "investigation-summary": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "employment-legal/skills/investigation-summary/SKILL.md",
+      "computedHash": "c9b46021409b99e4b806b021600cbe83656e2466f5807a40071ffaf722816912"
+    },
+    "ip-clause-review": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "ip-legal/skills/ip-clause-review/SKILL.md",
+      "computedHash": "30732a69792f18b0f6b9f6abe8c92c288a22a71f54b4498bc317f041120340ff"
+    },
+    "irac-practice": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "law-student/skills/irac-practice/SKILL.md",
+      "computedHash": "fdd01aac9adad1dae108a81cc8f10e4e548fe7c8121bc634ed8d6eedfcdeb372"
+    },
+    "is-this-a-problem": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "product-legal/skills/is-this-a-problem/SKILL.md",
+      "computedHash": "02c8b817b2da069bd39a095cf474a2109608b41b591edfdf95d90e8b98aa1b58"
+    },
+    "launch-review": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "product-legal/skills/launch-review/SKILL.md",
+      "computedHash": "50f503ccbc209a0b5a60743cadd9f20aa60e895f01f133406d6d941c6e252446"
+    },
+    "leave-tracker": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "employment-legal/skills/leave-tracker/SKILL.md",
+      "computedHash": "08529c2f4d118c70ebc1b9a47c9a12ebb1d98aa9205389b85c5855e1f268f74b"
+    },
+    "legal-hold": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "litigation-legal/skills/legal-hold/SKILL.md",
+      "computedHash": "663bcb8eaa9a805b43113aadecbdb1403767d9dbdd514d9618a2dc81c976e8ea"
+    },
+    "legal-risk-assessment": {
+      "source": "anthropics/knowledge-work-plugins",
+      "sourceType": "github",
+      "skillPath": "legal/skills/legal-risk-assessment/SKILL.md",
+      "computedHash": "7305866282d5f10d4ca7acd1d8569b767f9f64a017016cb4da72c38e2d4ff2cc"
+    },
+    "legal-writing": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "law-student/skills/legal-writing/SKILL.md",
+      "computedHash": "e90a58c594cad90dd8ba719988c966d2c097eea99ef8d4f7834aa176ddaef297"
+    },
+    "log-leave": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "employment-legal/skills/log-leave/SKILL.md",
+      "computedHash": "79a22df44422ba78aae324603b32dfbd430bd5f3965b25edd7fa2f23fa7535a2"
+    },
+    "marketing-claims-review": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "product-legal/skills/marketing-claims-review/SKILL.md",
+      "computedHash": "b84edb84558260242aa71e35fb10bd74100634a661ebdb1e2ca28ea35558e872"
+    },
+    "material-contract-schedule": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "corporate-legal/skills/material-contract-schedule/SKILL.md",
+      "computedHash": "9a13e16299859d6a897a0a5a14daa4f67dd59c10f3bf562eb7e9a1f616e5a11a"
+    },
+    "matter-briefing": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "litigation-legal/skills/matter-briefing/SKILL.md",
+      "computedHash": "51c3680a4749247475b35918ef2a30028c6e906c5a52d4383094ac2d3fd678af"
+    },
+    "matter-close": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "litigation-legal/skills/matter-close/SKILL.md",
+      "computedHash": "64d9ccaf37071d9573b13e7d1caa2fc04a20d2559f959400e1946f407e495149"
+    },
+    "matter-intake": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "litigation-legal/skills/matter-intake/SKILL.md",
+      "computedHash": "0c41b82f9176b1d0a862deafc5f05c85fa79c1ea0f2431488262744423bfaa36"
+    },
+    "matter-update": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "litigation-legal/skills/matter-update/SKILL.md",
+      "computedHash": "21ba94661e5621a46159f8d69ffed8be0a670a4b3a11b06901b2a47ded61ec7d"
+    },
+    "matter-workspace": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "commercial-legal/skills/matter-workspace/SKILL.md",
+      "computedHash": "f89abe93a3246c867d37bc493af779ccd6e8dfda7b6d68970c96566a3d24f372"
+    },
+    "memo": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "legal-clinic/skills/memo/SKILL.md",
+      "computedHash": "a12abb6c79130e8ab24ddef6d8023f139b4682c05fb0e1f9269df70efe5101e1"
+    },
+    "nda-review": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "commercial-legal/skills/nda-review/SKILL.md",
+      "computedHash": "815226c6c2b7f74a395edcee2c658b947bc45b5a7fde18b35a6087f8cb8cca43"
+    },
+    "oc-status": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "litigation-legal/skills/oc-status/SKILL.md",
+      "computedHash": "7f64bee6fbddc51279055c3dbcb99d32aafa03fe779df2b0dba0c68abcdf9dcb"
+    },
+    "oss-review": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "ip-legal/skills/oss-review/SKILL.md",
+      "computedHash": "6201a508f3d69348ee5e88916c2b6441025d64c47614a505fe55fac78fe00ce9"
+    },
+    "outline-builder": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "law-student/skills/outline-builder/SKILL.md",
+      "computedHash": "78705f584a5fc94624dc3c7c85d4e809d789f263992404a7c698631a6f8a2143"
+    },
+    "pia-generation": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "privacy-legal/skills/pia-generation/SKILL.md",
+      "computedHash": "db32812a60707bc92485fa10b54ad68a6cbcbdf308a5dc3c1421b2abee631ef7"
+    },
+    "plain-language-letters": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "legal-clinic/skills/plain-language-letters/SKILL.md",
+      "computedHash": "13854bd3d9ede353c074e82f573f4a02d32067c1b9cc72bfb519eded4bb0b00f"
+    },
+    "policy-diff": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "regulatory-legal/skills/policy-diff/SKILL.md",
+      "computedHash": "a096472b6d036f835c1d314308ef8eebd14f39cb46797bbc1b02beda1eab618d"
+    },
+    "policy-drafting": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "employment-legal/skills/policy-drafting/SKILL.md",
+      "computedHash": "72f1d6faabb5a074445c3a65fd70f92c1673c9df984c56379a1d45cd09c6876b"
+    },
+    "policy-monitor": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "privacy-legal/skills/policy-monitor/SKILL.md",
+      "computedHash": "32db791f54003fef8d9e8469849bfbbe0847d0539fe31cd1b075c700c66b5213"
+    },
+    "policy-redraft": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "regulatory-legal/skills/policy-redraft/SKILL.md",
+      "computedHash": "6cde7f729fa8a7b6b181bd991e3949a076c5d176b3c631fccb49f2775c653932"
+    },
+    "policy-starter": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "ai-governance-legal/skills/policy-starter/SKILL.md",
+      "computedHash": "c6b94d0fcb2b1e36445b95b594b9acabadbfee35c88041ab530c9b5639e8daa3"
+    },
+    "portfolio": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "ip-legal/skills/portfolio/SKILL.md",
+      "computedHash": "af607317b08de7e43dd9c8b4a549695305a32d9972cb28a665096cc42f4ced3d"
+    },
+    "portfolio-status": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "litigation-legal/skills/portfolio-status/SKILL.md",
+      "computedHash": "02fc8758fc78163e7f318e9e2797d19ecc17d52ba4cc6371fc61cda7b16c41bc"
+    },
+    "privilege-log-review": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "litigation-legal/skills/privilege-log-review/SKILL.md",
+      "computedHash": "51e18770a7152062d90d04d8802e2530d4f845ebe9d30001f16dec3e6570bc3c"
+    },
+    "ramp": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "legal-clinic/skills/ramp/SKILL.md",
+      "computedHash": "be37414c80d6e7099b739ea5214863afdce5b78b8e8d2a612dc30001c9433d13"
+    },
+    "reg-feed-watcher": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "regulatory-legal/skills/reg-feed-watcher/SKILL.md",
+      "computedHash": "4573283c4b573658871dcc174611f3ef421a3b0f8752ceeb02f40d660b58f653"
+    },
+    "reg-gap-analysis": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "privacy-legal/skills/reg-gap-analysis/SKILL.md",
+      "computedHash": "c1f6e29dbcef579ddaebec629dc8ea2a096206225fd77ec0e1308b9d8a039e6a"
+    },
+    "registry-browser": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "legal-builder-hub/skills/registry-browser/SKILL.md",
+      "computedHash": "c85974299c1ccdb0d177f01234840f13adeab3814eee8b00389b80def6e50ed2"
+    },
+    "related-skills-surfacer": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "legal-builder-hub/skills/related-skills-surfacer/SKILL.md",
+      "computedHash": "fbdb3f6e55a0ab69cdcf8a84e47b9fa2b5f0b706b3bb63cba18cc156699d1541"
+    },
+    "renewal-tracker": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "commercial-legal/skills/renewal-tracker/SKILL.md",
+      "computedHash": "f9c4879a969f5857b2adfac1e9751a514954c9e78cf4d0ae2ed2658ca532b3f2"
+    },
+    "research-start": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "legal-clinic/skills/research-start/SKILL.md",
+      "computedHash": "614ecbea537a41124906c13881726c5c01a872d2c1149c64d6930de95d4a7a55"
+    },
+    "review": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "commercial-legal/skills/review/SKILL.md",
+      "computedHash": "99213cbae11cea1ed0bc7c9ad2095d4dfe17a5af5772304589a5bb4cc868479a"
+    },
+    "review-proposals": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "commercial-legal/skills/review-proposals/SKILL.md",
+      "computedHash": "638a2438fc4c0cd6989ec23bca156435555a3b2275fbd492fc3169c56b04dbbf"
+    },
+    "saas-msa-review": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "commercial-legal/skills/saas-msa-review/SKILL.md",
+      "computedHash": "7e3a982558def41b954a49df61b279bdc0662ee01b6e61f98d3ae456656aec89"
+    },
+    "semester-handoff": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "legal-clinic/skills/semester-handoff/SKILL.md",
+      "computedHash": "c19f31ac128bb6a05cd2696b9e52637453fb5086c418d79aebb6c8774cc4371b"
+    },
+    "session": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "law-student/skills/session/SKILL.md",
+      "computedHash": "dd20a2890696d4d296e9265dac74b3aaf2ffa80bea723ac4f9bbca9059ec627a"
+    },
+    "skill-installer": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "legal-builder-hub/skills/skill-installer/SKILL.md",
+      "computedHash": "1cec74622cb7b81c3457ea01b1dbbc376244b92b0393871f14f959234b932979"
+    },
+    "skill-manager": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "legal-builder-hub/skills/skill-manager/SKILL.md",
+      "computedHash": "2d1ad8ac48fca80f8c269192a280ac1c4744369cf6e270ce063e4b87804079ec"
+    },
+    "skills-qa": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "legal-builder-hub/skills/skills-qa/SKILL.md",
+      "computedHash": "d17523f2d7bfc9f0110bf51a8ecf854ddda0438e6700ad749e69f30a721ab6e6"
+    },
+    "socratic-drill": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "law-student/skills/socratic-drill/SKILL.md",
+      "computedHash": "04afb30786c42afe824dab778debf69d38db5c8b7eb3668e43013a141a04395a"
+    },
+    "stakeholder-summary": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "commercial-legal/skills/stakeholder-summary/SKILL.md",
+      "computedHash": "399eb0e0b83d34cc2de9fd387a97d20b5261b5aa24d917c900499d6eae714e29"
+    },
+    "status": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "legal-clinic/skills/status/SKILL.md",
+      "computedHash": "e04b233443aabbcf727f23c746b1bbdf0e2033d48615fec9befcdbfa4dc7e32a"
+    },
+    "study-plan": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "law-student/skills/study-plan/SKILL.md",
+      "computedHash": "077fbf7f3cc8da91654d717e6d0bd0d9700019c935008bfdd24e6881c0a4397e"
+    },
+    "subpoena-triage": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "litigation-legal/skills/subpoena-triage/SKILL.md",
+      "computedHash": "109a25be96bdaf1d81da7cfc43f82fbb4efc30e802afd3954fbf3ffe49e03306"
+    },
+    "supervisor-review-queue": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "legal-clinic/skills/supervisor-review-queue/SKILL.md",
+      "computedHash": "ac3aed46c3bc3b6355d9c13d166a2fb76138b4ff0302a9bc700ab59d57b79f84"
+    },
+    "tabular-review": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "corporate-legal/skills/tabular-review/SKILL.md",
+      "computedHash": "0b378827a8458f3d5975feb30c853cc4bc23a38034f7c2610a4594bda355e557"
+    },
+    "takedown": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "ip-legal/skills/takedown/SKILL.md",
+      "computedHash": "81743538145c3ba5ce0306b622677e0f6f2660f99d69bd743ab38ad73b5ffe3b"
+    },
+    "termination-review": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "employment-legal/skills/termination-review/SKILL.md",
+      "computedHash": "7b31a5018b269f40b882e10b5c6d649f22c81bec483fcaadcfa94b3bbb675aee"
+    },
+    "uninstall": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "legal-builder-hub/skills/uninstall/SKILL.md",
+      "computedHash": "73134a6740185d1e4540d158f782397d6a237f2cf9aaab88e231c0dbc26cb5d1"
+    },
+    "use-case-triage": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "privacy-legal/skills/use-case-triage/SKILL.md",
+      "computedHash": "6b8874ffe7621b521baf9272d81bc15bc9b05ec38a71ae4f3ffad3936edefa48"
+    },
+    "vendor-agreement-review": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "commercial-legal/skills/vendor-agreement-review/SKILL.md",
+      "computedHash": "f562acfe340ae3737b2cde1983551cf566ecc7d5f1eaf86e6bc33b3c1645f65f"
+    },
+    "vendor-ai-review": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "ai-governance-legal/skills/vendor-ai-review/SKILL.md",
+      "computedHash": "3cbeb35901e0705f8d347d0d4d3d0f93a4fc347edaec57452fc6d68aff4c81ff"
+    },
+    "wage-hour-qa": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "employment-legal/skills/wage-hour-qa/SKILL.md",
+      "computedHash": "b91a3bca5c4906f504f0a27d55745e41ffb0ee1e886073c3be1cf1c9bfda3eb1"
+    },
+    "worker-classification": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "employment-legal/skills/worker-classification/SKILL.md",
+      "computedHash": "90a0346011ff1796e7e339fd6226cb377d9067168d80a75ce8bf28c60e04742f"
+    },
+    "written-consent": {
+      "source": "anthropics/claude-for-legal",
+      "sourceType": "github",
+      "skillPath": "corporate-legal/skills/written-consent/SKILL.md",
+      "computedHash": "6f68e2894451c269d1499de516e8bda7e270c82a590ee44ba18b0a946e374a86"
     }
   }
 }
