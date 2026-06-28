@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { LogoImage } from "@/components/layout/LogoImage"
 import { useState } from "react"
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs"
-import { Menu, X } from "lucide-react"
+import { Menu, X, Leaf } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { AdminCleanerSwitch } from "@/components/layout/AdminCleanerSwitch"
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher"
@@ -46,16 +46,25 @@ export function Navbar() {
 
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-6">
-          {NAV_LINKS.map(({ href: navHref, key }) => (
-            <Link
-              key={navHref}
-              href={navHref}
-              prefetch={false}
-              className="text-sm text-[#6B7280] hover:text-[#2B3441] transition-colors font-medium"
-            >
-              {t(key)}
-            </Link>
-          ))}
+          {NAV_LINKS.map(({ href: navHref, key }) => {
+            // Eco-store gets a distinct eco-green pill + leaf so it stands out from the plain nav links.
+            const isEco = key === "ecoStore"
+            return (
+              <Link
+                key={navHref}
+                href={navHref}
+                prefetch={false}
+                className={
+                  isEco
+                    ? "inline-flex items-center gap-1.5 text-sm font-semibold px-3 py-1.5 rounded-full bg-[#D1F0E0] text-[#2D7A5F] hover:bg-[#bfe9d3] transition-colors"
+                    : "text-sm text-[#6B7280] hover:text-[#2B3441] transition-colors font-medium"
+                }
+              >
+                {isEco && <Leaf className="w-3.5 h-3.5" />}
+                {t(key)}
+              </Link>
+            )
+          })}
         </div>
 
         {/* Auth */}
@@ -103,17 +112,25 @@ export function Navbar() {
       {/* Mobile menu */}
       {mobileOpen && (
         <div className="md:hidden bg-white border-b border-[#E5EDE9] px-4 py-4 flex flex-col gap-1">
-          {NAV_LINKS.map(({ href: navHref, key }) => (
-            <Link
-              key={navHref}
-              href={navHref}
-              prefetch={false}
-              className="text-sm text-[#6B7280] hover:text-[#2B3441] py-2 transition-colors"
-              onClick={() => setMobileOpen(false)}
-            >
-              {t(key)}
-            </Link>
-          ))}
+          {NAV_LINKS.map(({ href: navHref, key }) => {
+            const isEco = key === "ecoStore"
+            return (
+              <Link
+                key={navHref}
+                href={navHref}
+                prefetch={false}
+                className={
+                  isEco
+                    ? "flex items-center gap-2 text-sm font-semibold text-[#2D7A5F] bg-[#D1F0E0] rounded-lg px-3 py-2 transition-colors"
+                    : "text-sm text-[#6B7280] hover:text-[#2B3441] py-2 transition-colors"
+                }
+                onClick={() => setMobileOpen(false)}
+              >
+                {isEco && <Leaf className="w-4 h-4" />}
+                {t(key)}
+              </Link>
+            )
+          })}
           <div className="pt-2 border-t border-[#E5EDE9] mt-1">
             {isSignedIn ? (
               <NextLink
