@@ -12,15 +12,16 @@ export function CookieBanner() {
 
   useEffect(() => {
     if (!localStorage.getItem(KEY)) setVisible(true)
+    // Let a footer "Cookie settings" link re-open the banner so consent can be withdrawn/changed.
+    const open = () => setVisible(true)
+    window.addEventListener("dorix-open-cookie-settings", open)
+    return () => window.removeEventListener("dorix-open-cookie-settings", open)
   }, [])
 
-  const accept = () => {
-    localStorage.setItem(KEY, JSON.stringify({ analytics: true, marketing: false, ts: Date.now() }))
-    setVisible(false)
-  }
-
-  const decline = () => {
-    localStorage.setItem(KEY, JSON.stringify({ analytics: false, marketing: false, ts: Date.now() }))
+  // Persist the choice and notify listeners (the analytics loader) so tracking starts/stops at once.
+  const save = (analytics: boolean) => {
+    localStorage.setItem(KEY, JSON.stringify({ analytics, marketing: false, ts: Date.now() }))
+    window.dispatchEvent(new Event("dorix-consent-change"))
     setVisible(false)
   }
 
@@ -42,16 +43,17 @@ export function CookieBanner() {
             </Link>.
           </p>
         </div>
-        <div className="flex gap-2 shrink-0">
+        {/* Equal-weight Accept / Reject buttons (EU ePrivacy: rejecting must be as easy as accepting). */}
+        <div className="flex gap-2 shrink-0 w-full md:w-auto">
           <button
-            onClick={decline}
-            className="px-4 py-2 rounded-lg border border-white/20 text-white/70 text-sm hover:bg-white/10 transition-colors"
+            onClick={() => save(false)}
+            className="flex-1 md:flex-none px-5 py-2 rounded-lg border border-white/25 bg-white/10 text-white text-sm font-semibold hover:bg-white/20 transition-colors"
           >
             {t("decline")}
           </button>
           <button
-            onClick={accept}
-            className="px-5 py-2 rounded-lg bg-[#2D7A5F] text-white text-sm font-semibold hover:bg-[#4CB87A] transition-colors"
+            onClick={() => save(true)}
+            className="flex-1 md:flex-none px-5 py-2 rounded-lg bg-[#2D7A5F] text-white text-sm font-semibold hover:bg-[#4CB87A] transition-colors"
           >
             {t("accept")}
           </button>

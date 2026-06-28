@@ -279,6 +279,11 @@ ALTER TABLE provider_services ADD COLUMN IF NOT EXISTS custom_categories jsonb D
 UPDATE provider_services SET category_ids = jsonb_build_array(category_id::text)
   WHERE (category_ids IS NULL OR category_ids = '[]'::jsonb) AND category_id IS NOT NULL;
 
+-- Recurring auto-renewal consent: timestamp of the customer's affirmative authorization to auto-charge
+-- the saved card each cycle (US Click-to-Cancel / state auto-renewal laws + EU). The create API
+-- requires consent=true, so this is set whenever a schedule is created.
+ALTER TABLE recurring_schedules ADD COLUMN IF NOT EXISTS auto_renew_consent_at timestamptz;
+
 -- Eco-store: admin-curated affiliate products + business starter packs (outbound purchase links).
 DO $$ BEGIN CREATE TYPE store_product_type AS ENUM ('product','starter_pack'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN CREATE TYPE store_product_status AS ENUM ('draft','published'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;

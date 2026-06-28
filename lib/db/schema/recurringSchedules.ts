@@ -21,6 +21,9 @@ export const recurringSchedules = pgTable("recurring_schedules", {
   stripePaymentMethodId: varchar("stripe_payment_method_id", { length: 100 }),
   timezone: text("timezone").notNull().default("Europe/Amsterdam"),
   status: recurringStatusEnum("status").notNull().default("active"),
+  // Timestamp of the customer's affirmative consent to recurring auto-charge (US auto-renewal laws /
+  // Click-to-Cancel + EU). The create API requires explicit consent before a schedule can be created.
+  autoRenewConsentAt: timestamp("auto_renew_consent_at", { withTimezone: true }),
   nextBookingAt: timestamp("next_booking_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

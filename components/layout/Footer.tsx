@@ -2,6 +2,7 @@ import { Link } from "@/i18n/navigation"
 import NextLink from "next/link"
 import { Leaf } from "lucide-react"
 import { getTranslations } from "next-intl/server"
+import { CookieSettingsButton } from "@/components/gdpr/CookieSettingsButton"
 
 const SECTIONS = [
   {
@@ -78,7 +79,10 @@ export async function Footer() {
         </div>
         <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-white/40">
           <p>{t("copyright")}</p>
-          <p>{t("compliance")}</p>
+          <div className="flex items-center gap-4">
+            <CookieSettingsButton label={t("cookieSettings")} />
+            <p>{t("compliance")}</p>
+          </div>
         </div>
       </div>
     </footer>

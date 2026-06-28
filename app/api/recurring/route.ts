@@ -19,6 +19,10 @@ const createSchema = z.object({
   specialInstructions: z.string().max(1000).optional(),
   paymentMethodId: z.string().startsWith("pm_"),
   timezone: z.string().min(1).max(100).default("Europe/Amsterdam"),
+  // The customer MUST affirmatively authorize recurring auto-charge before a schedule is created
+  // (US Click-to-Cancel / state auto-renewal laws + EU). Anything other than true fails validation,
+  // so a future recurring-setup UI cannot create a schedule without showing + capturing consent.
+  autoRenewConsent: z.literal(true),
 })
 
 function nextOccurrenceUTC(dayOfWeek: number, preferredTime: string, timezone: string): Date {
@@ -195,6 +199,7 @@ export async function POST(req: NextRequest) {
         stripePaymentMethodId: paymentMethodId,
         timezone,
         status: "active",
+        autoRenewConsentAt: new Date(),
         nextBookingAt,
       })
       .returning({ id: recurringSchedules.id })
