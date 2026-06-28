@@ -7,6 +7,7 @@ import { safeLimit, createRateLimiter } from "@/lib/redis/client"
 import { validateRefCode } from "@/lib/referrals/code"
 import { SITE_URL } from "@/lib/seo/site"
 import { logError } from "@/lib/utils/logError"
+import { ensureUserRow } from "@/lib/clerk/ensureUser"
 
 const limiter = createRateLimiter({ tokens: 20, windowSeconds: 60, prefix: "ratelimit:refcode" })
 
@@ -52,6 +53,7 @@ export async function PATCH(req: Request) {
     const v = validateRefCode(typeof body.code === "string" ? body.code : "")
     if (!v.ok) return NextResponse.json({ error: v.error }, { status: 400 })
     if (!(await isAvailable(v.code, userId))) return NextResponse.json({ error: "That handle is already taken." }, { status: 409 })
+    if (!(await ensureUserRow(userId))) return NextResponse.json({ error: "Could not link your account. Please reload and try again." }, { status: 500 })
 
     await db
       .insert(referralCodes)

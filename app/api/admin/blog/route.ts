@@ -6,6 +6,7 @@ import { eq, desc } from "drizzle-orm"
 import { z } from "zod"
 import { sanitizeBlogHtml } from "@/lib/security/sanitize"
 import { logError } from "@/lib/utils/logError"
+import { ensureUserRow } from "@/lib/clerk/ensureUser"
 
 const blogSchema = z.object({
   title: z.string().min(3).max(300),
@@ -59,6 +60,7 @@ export async function POST(req: Request) {
   try {
     const adminId = await requireAdmin()
     if (!adminId) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    if (!(await ensureUserRow(adminId))) return NextResponse.json({ error: "Could not link your admin account. Please reload and try again." }, { status: 500 })
 
     const body = await req.json().catch(() => ({}))
     const parsed = blogSchema.safeParse(body)

@@ -5,6 +5,7 @@ import { db } from "@/lib/db"
 import { promoCodes } from "@/lib/db/schema"
 import { desc } from "drizzle-orm"
 import { logError } from "@/lib/utils/logError"
+import { ensureUserRow } from "@/lib/clerk/ensureUser"
 
 const createSchema = z.object({
   code: z.string().min(3).max(50).toUpperCase(),
@@ -35,6 +36,7 @@ export async function POST(req: Request) {
     const admin = await requireAdmin()
     if (admin instanceof NextResponse) return admin
     const userId = admin.adminId
+    if (!(await ensureUserRow(userId))) return NextResponse.json({ error: "Could not link your admin account. Please reload and try again." }, { status: 500 })
 
     const parsed = createSchema.safeParse(await req.json().catch(() => ({})))
     if (!parsed.success) {

@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm"
 import { z } from "zod"
 import { requireAdmin } from "@/lib/auth/requireAdmin"
 import { logError } from "@/lib/utils/logError"
+import { ensureUserRow } from "@/lib/clerk/ensureUser"
 
 const resolveSchema = z.object({
   outcome: z.enum(["resolved_customer", "resolved_provider"]),
@@ -18,6 +19,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const guard = await requireAdmin()
     if (guard instanceof NextResponse) return guard
     const { adminId: userId } = guard
+    // CRITICAL: guarantee the admin's users row exists BEFORE the Stripe refund, so the later
+    // UPDATE that sets disputes.assignedAdminId can't violate the FK after money has moved.
+    if (!(await ensureUserRow(userId))) return NextResponse.json({ error: "Could not link your admin account. Please reload and try again." }, { status: 500 })
 
     const { id: disputeId } = await params
     const body = await req.json().catch(() => ({}))

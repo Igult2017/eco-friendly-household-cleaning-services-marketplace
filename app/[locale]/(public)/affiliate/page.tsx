@@ -123,10 +123,14 @@ export default async function AffiliatePage({ params }: { params: Promise<{ loca
       const { referralCodes } = await import("@/lib/db/schema")
       const { eq } = await import("drizzle-orm")
       const { customAlphabet } = await import("nanoid")
+      const { ensureUserRow } = await import("@/lib/clerk/ensureUser")
 
       const genCode = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8)
       let [row] = await db.select().from(referralCodes).where(eq(referralCodes.userId, userId)).limit(1)
       if (!row) {
+        // Backstop the missing-users-row FK gap so the auto-create succeeds for admin/unsynced/
+        // pre-onboarding visitors instead of throwing referral_codes_user_id_fkey (swallowed below).
+        await ensureUserRow(userId)
         const code = genCode()
         const inserted = await db.insert(referralCodes).values({ userId, code }).onConflictDoNothing().returning()
         row = inserted[0] ?? (await db.select().from(referralCodes).where(eq(referralCodes.userId, userId)).limit(1))[0]

@@ -9,6 +9,7 @@ import { eq, count, sql } from "drizzle-orm"
 import { customAlphabet } from "nanoid"
 import { logError } from "@/lib/utils/logError"
 import { SITE_URL } from "@/lib/seo/site"
+import { ensureUserRow } from "@/lib/clerk/ensureUser"
 
 // Strict alphanumeric — no `-` or `_` from nanoid's default alphabet.
 // The middleware regex [A-Z0-9]{6,20} must match every generated code.
@@ -32,7 +33,10 @@ export async function GET() {
       .where(eq(referralCodes.userId, userId))
       .limit(1)
 
-    if (!codeRow) {
+    // Only auto-create the referral code once a local users row is guaranteed (admin/Clerk-provisioned/
+    // pre-onboarding accounts may have none yet) — otherwise the insert violates referral_codes_user_id_fkey.
+    // If ensureUserRow fails, leave codeRow undefined so the response returns code:null gracefully.
+    if (!codeRow && (await ensureUserRow(userId))) {
       const code = generateCode()
       ;[codeRow] = await db
         .insert(referralCodes)

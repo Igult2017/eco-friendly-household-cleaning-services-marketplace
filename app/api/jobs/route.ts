@@ -9,6 +9,7 @@ import { eq, desc, and, inArray, sql } from "drizzle-orm"
 import { getClientIp } from "@/lib/utils/ip"
 import { z } from "zod"
 import { logError } from "@/lib/utils/logError"
+import { ensureUserRow } from "@/lib/clerk/ensureUser"
 
 const createJobSchema = z.object({
   title: z.string().min(5).max(200),
@@ -54,6 +55,7 @@ export async function POST(req: Request) {
       role = dbUser?.role ?? "customer"
     }
     if (role !== "customer") return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    if (!(await ensureUserRow(userId))) return NextResponse.json({ error: "Could not link your account. Please reload and try again." }, { status: 500 })
 
     const body = await req.json().catch(() => ({}))
     const parsed = createJobSchema.safeParse(body)

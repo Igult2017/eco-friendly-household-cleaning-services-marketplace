@@ -6,6 +6,7 @@ import { eq, desc, and } from "drizzle-orm"
 import { z } from "zod"
 import { createRateLimiter, safeLimit } from "@/lib/redis/client"
 import { logError } from "@/lib/utils/logError"
+import { ensureUserRow } from "@/lib/clerk/ensureUser"
 
 export const dynamic = "force-dynamic"
 
@@ -54,6 +55,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ slug: s
 
     if (!post) return NextResponse.json({ error: "Not found" }, { status: 404 })
     if (!post.allowComments) return NextResponse.json({ error: "Comments are disabled" }, { status: 403 })
+    if (!(await ensureUserRow(userId))) return NextResponse.json({ error: "Could not link your account. Please reload and try again." }, { status: 500 })
 
     const [comment] = await db.insert(blogComments)
       .values({ postId: post.id, userId, body: parsed.data.body })

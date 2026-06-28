@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/auth/requireAdmin"
 import { db } from "@/lib/db"
 import { emailCampaigns } from "@/lib/db/schema"
 import { desc } from "drizzle-orm"
+import { ensureUserRow } from "@/lib/clerk/ensureUser"
 
 const audienceSchema = z.object({
   role: z.enum(["customer", "provider", "all"]).optional(),
@@ -36,6 +37,7 @@ export async function GET() {
 export async function POST(req: Request) {
   const guard = await requireAdmin()
   if (guard instanceof NextResponse) return guard
+  if (!(await ensureUserRow(guard.adminId))) return NextResponse.json({ error: "Could not link your admin account. Please reload and try again." }, { status: 500 })
   const parsed = createSchema.safeParse(await req.json().catch(() => ({})))
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
