@@ -10,6 +10,8 @@ import { Leaf } from "lucide-react"
 import { AffiliateDisclosure } from "@/components/store/AffiliateDisclosure"
 import { ProductCard } from "@/components/store/ProductCard"
 import { StarterPackCard } from "@/components/store/StarterPackCard"
+import { JsonLd } from "@/components/seo/JsonLd"
+import { storeItemListSchema, breadcrumbSchema } from "@/lib/seo/schemas"
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("ecoStore")
@@ -65,9 +67,19 @@ export default async function EcoStorePage({
 
   // Empty only when there's truly nothing published (ignore the active category filter).
   const nothingPublished = starterPacks.length === 0 && categories.length === 0
+  const allListings = [...starterPacks, ...products]
 
   return (
     <div className="min-h-screen bg-[#F4FAF6]">
+      <JsonLd
+        data={[
+          ...(allListings.length > 0 ? [storeItemListSchema(allListings)] : []),
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Eco-store", path: "/eco-store" },
+          ]),
+        ]}
+      />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Hero */}
         <div className="mb-8">

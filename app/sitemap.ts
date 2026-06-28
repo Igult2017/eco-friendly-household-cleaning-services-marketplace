@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next"
 import { db } from "@/lib/db"
-import { providers } from "@/lib/db/schema"
+import { providers, blogPosts } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { SITE_URL } from "@/lib/seo/site"
 
@@ -18,6 +18,7 @@ const STATIC_PATHS: { path: string; priority: number; changeFrequency: MetadataR
   { path: "/become-a-cleaner", priority: 0.8, changeFrequency: "monthly" },
   { path: "/affiliate", priority: 0.6, changeFrequency: "monthly" },
   { path: "/blog", priority: 0.6, changeFrequency: "weekly" },
+  { path: "/eco-store", priority: 0.7, changeFrequency: "weekly" },
   { path: "/legal/privacy", priority: 0.3, changeFrequency: "yearly" },
   { path: "/legal/terms", priority: 0.3, changeFrequency: "yearly" },
   { path: "/legal/cookie-policy", priority: 0.3, changeFrequency: "yearly" },
@@ -51,5 +52,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // DB unreachable (e.g. local build) — ship the static sitemap rather than fail.
   }
 
-  return [...staticEntries, ...providerEntries]
+  // Published blog posts — high-value, AI-citable long-form content.
+  let blogEntries: MetadataRoute.Sitemap = []
+  try {
+    const rows = await db
+      .select({ slug: blogPosts.slug, updatedAt: blogPosts.updatedAt })
+      .from(blogPosts)
+      .where(eq(blogPosts.status, "published"))
+      .limit(5000)
+    blogEntries = rows.map((b) => ({
+      url: `${SITE_URL}/blog/${b.slug}`,
+      lastModified: b.updatedAt ?? now,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    }))
+  } catch {
+    // DB unreachable — ship without blog entries rather than fail the sitemap.
+  }
+
+  return [...staticEntries, ...providerEntries, ...blogEntries]
 }

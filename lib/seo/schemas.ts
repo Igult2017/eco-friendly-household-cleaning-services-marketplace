@@ -131,3 +131,78 @@ export function providerSchema(p: {
 
   return schema
 }
+
+// A published blog post → a BlogPosting Article, so Google and AI answer engines can cite it
+// with a clear author, date, and section. Blog content is the most AI-citable asset we publish.
+export function articleSchema(p: {
+  slug: string
+  title: string
+  excerpt: string | null
+  coverImageUrl: string | null
+  authorName: string
+  publishedAt: Date | null
+  updatedAt: Date | null
+  category: string | null
+}): Json {
+  const url = absoluteUrl(`/blog/${p.slug}`)
+  const published = p.publishedAt ? new Date(p.publishedAt).toISOString() : undefined
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "@id": `${url}#article`,
+    headline: p.title,
+    ...(p.excerpt ? { description: p.excerpt } : {}),
+    image: p.coverImageUrl ?? absoluteUrl("/logo.png"),
+    url,
+    mainEntityOfPage: url,
+    ...(published ? { datePublished: published } : {}),
+    dateModified: p.updatedAt ? new Date(p.updatedAt).toISOString() : published,
+    author: { "@type": "Person", name: p.authorName },
+    publisher: { "@id": `${SITE_URL}/#organization` },
+    ...(p.category ? { articleSection: p.category } : {}),
+  }
+}
+
+// The eco-store listing → an ItemList of recommended Products (with the outbound affiliate Offer when
+// a price is set), so AI engines understand what DORIXÉ recommends and can surface the curated picks.
+export function storeItemListSchema(
+  items: {
+    id: string
+    title: string
+    description: string | null
+    brand: string | null
+    imageUrl: string | null
+    priceCents: number | null
+    currency: string | null
+  }[],
+): Json {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "DORIXÉ Eco-store — recommended cleaning products & business starter packs",
+    url: absoluteUrl("/eco-store"),
+    numberOfItems: items.length,
+    itemListElement: items.map((it, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "Product",
+        name: it.title,
+        ...(it.description ? { description: it.description } : {}),
+        ...(it.brand ? { brand: { "@type": "Brand", name: it.brand } } : {}),
+        ...(it.imageUrl ? { image: it.imageUrl } : {}),
+        ...(it.priceCents != null
+          ? {
+              offers: {
+                "@type": "Offer",
+                price: (it.priceCents / 100).toFixed(2),
+                priceCurrency: it.currency ?? "EUR",
+                availability: "https://schema.org/InStock",
+                url: absoluteUrl(`/api/store/go/${it.id}`),
+              },
+            }
+          : {}),
+      },
+    })),
+  }
+}

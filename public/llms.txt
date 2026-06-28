@@ -10,6 +10,7 @@
 - **No long-term contract** — book a one-off clean or a recurring (weekly/biweekly/monthly) schedule, cancel anytime.
 - Two-way reviews (customers and cleaners rate each other) and real-time booking updates.
 - A bidding marketplace: post a job and receive bids from local eco cleaners.
+- An **Eco-store**: a curated list of recommended eco-friendly cleaning products and business starter packs, with links to trusted brands (affiliate links).
 
 ## Why eco
 DORIXÉ providers use plant-based, non-toxic cleaning products — better for families, pets, and the planet. Tagline: "Clean Home. Green Future."
@@ -21,6 +22,8 @@ DORIXÉ providers use plant-based, non-toxic cleaning products — better for fa
 - Sustainability: /sustainability
 - Become a cleaner: /become-a-cleaner
 - Affiliate programme: /affiliate
+- Eco-store (recommended products & starter packs): /eco-store
+- Blog (eco-cleaning guides & tips): /blog
 
 ## Who it's for
 Households and offices in Europe and the US looking for reliable, environmentally responsible cleaning with transparent pricing and no lock-in contracts.

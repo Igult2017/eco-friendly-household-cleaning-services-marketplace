@@ -12,6 +12,8 @@ import { BlogContent } from "@/components/blog/BlogContent"
 import { ShareButtons } from "@/components/blog/ShareButtons"
 import { BlogComments } from "@/components/blog/BlogComments"
 import { Clock, Tag, ChevronLeft } from "lucide-react"
+import { JsonLd } from "@/components/seo/JsonLd"
+import { articleSchema, breadcrumbSchema } from "@/lib/seo/schemas"
 
 async function getPost(slug: string) {
   const post = await db.query.blogPosts.findFirst({
@@ -50,6 +52,25 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   return (
     <div className="min-h-screen bg-[#F4FAF6]">
+      <JsonLd
+        data={[
+          articleSchema({
+            slug: post.slug,
+            title: post.title,
+            excerpt: post.excerpt,
+            coverImageUrl: post.coverImageUrl,
+            authorName,
+            publishedAt: post.publishedAt,
+            updatedAt: post.updatedAt,
+            category: post.category,
+          }),
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Blog", path: "/blog" },
+            { name: post.title, path: `/blog/${post.slug}` },
+          ]),
+        ]}
+      />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
         <Link href="/blog" className="inline-flex items-center gap-1 text-sm text-[#6B7280] hover:text-[#2B3441] mb-8">
           <ChevronLeft size={14} /> Back to blog
