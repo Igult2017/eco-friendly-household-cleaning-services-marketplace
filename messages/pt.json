@@ -11,7 +11,8 @@
     "cleanerDashboard": "Painel do profissional",
     "adminPanel": "Painel de administração",
     "myDashboard": "O meu painel",
-    "ecoStore": "Eco-loja"
+    "ecoStore": "Eco-loja",
+    "affiliateDashboard": "Afiliado"
   },
   "homeHero": {
     "badge": "O marketplace de limpeza ecológica n.º 1 da Europa",
@@ -530,7 +531,10 @@
     "networkError": "Erro de rede. Verifique a sua ligação e tente novamente.",
     "submitLoading": "A configurar a sua conta...",
     "submitProvider": "Juntar-me como profissional →",
-    "submitCustomer": "Começar a reservar →"
+    "submitCustomer": "Começar a reservar →",
+    "affiliateCardTitle": "Promova e ganhe (Afiliado)",
+    "affiliateCardDesc": "Partilhe a DORIXÉ e ganhe comissão — sem conta de cliente ou de limpeza.",
+    "submitAffiliate": "Aderir ao programa de afiliados"
   },
   "authOnboardingProviderFields": {
     "businessInfo": "Informações do negócio",

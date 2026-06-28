@@ -11,7 +11,8 @@
     "cleanerDashboard": "Dashboard",
     "adminPanel": "Admin panel",
     "myDashboard": "My dashboard",
-    "ecoStore": "Eco-store"
+    "ecoStore": "Eco-store",
+    "affiliateDashboard": "Affiliate"
   },
   "homeHero": {
     "badge": "Europe's #1 eco-friendly cleaning marketplace",
@@ -530,7 +531,10 @@
     "networkError": "Network error. Please check your connection and try again.",
     "submitLoading": "Setting up your account...",
     "submitProvider": "Join as cleaner →",
-    "submitCustomer": "Start booking →"
+    "submitCustomer": "Start booking →",
+    "affiliateCardTitle": "Promote & earn (Affiliate)",
+    "affiliateCardDesc": "Share DORIXÉ and earn commission — no cleaning or booking account needed.",
+    "submitAffiliate": "Join the affiliate program"
   },
   "authOnboardingProviderFields": {
     "businessInfo": "Business info",

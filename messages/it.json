@@ -11,7 +11,8 @@
     "cleanerDashboard": "Dashboard addetto",
     "adminPanel": "Pannello di amministrazione",
     "myDashboard": "La mia dashboard",
-    "ecoStore": "Eco-store"
+    "ecoStore": "Eco-store",
+    "affiliateDashboard": "Affiliato"
   },
   "homeHero": {
     "badge": "Il marketplace di pulizie ecologiche n. 1 in Europa",
@@ -530,7 +531,10 @@
     "networkError": "Errore di rete. Controlla la connessione e riprova.",
     "submitLoading": "Configurazione del tuo account...",
     "submitProvider": "Unisciti come addetto alle pulizie →",
-    "submitCustomer": "Inizia a prenotare →"
+    "submitCustomer": "Inizia a prenotare →",
+    "affiliateCardTitle": "Promuovi e guadagna (Affiliato)",
+    "affiliateCardDesc": "Condividi DORIXÉ e guadagna una commissione — senza account cliente o addetto.",
+    "submitAffiliate": "Unisciti al programma di affiliazione"
   },
   "authOnboardingProviderFields": {
     "businessInfo": "Informazioni sull'attività",

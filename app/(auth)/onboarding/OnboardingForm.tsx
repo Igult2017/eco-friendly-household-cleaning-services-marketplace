@@ -2,28 +2,30 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { Home, Briefcase, AlertCircle } from "lucide-react"
+import { Home, Briefcase, Megaphone, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { ProviderFields } from "./ProviderFields"
 
-type Role = "customer" | "provider"
+type Role = "customer" | "provider" | "affiliate"
 
 const ROLE_CARDS = [
   { value: "customer" as Role, icon: Home, titleKey: "customerCardTitle", descKey: "customerCardDesc" },
   { value: "provider" as Role, icon: Briefcase, titleKey: "providerCardTitle", descKey: "providerCardDesc" },
+  { value: "affiliate" as Role, icon: Megaphone, titleKey: "affiliateCardTitle", descKey: "affiliateCardDesc" },
 ]
 
 interface Props {
   defaultFirstName?: string
   defaultLastName?: string
+  defaultRole?: Role
 }
 
-export function OnboardingForm({ defaultFirstName = "", defaultLastName = "" }: Props) {
+export function OnboardingForm({ defaultFirstName = "", defaultLastName = "", defaultRole }: Props) {
   const t = useTranslations("authOnboardingOnboardingForm")
-  const [role, setRole] = useState<Role | null>(null)
+  const [role, setRole] = useState<Role | null>(defaultRole ?? null)
   const [firstName, setFirstName] = useState(defaultFirstName)
   const [lastName, setLastName] = useState(defaultLastName)
   const [phone, setPhone] = useState("")
@@ -47,7 +49,7 @@ export function OnboardingForm({ defaultFirstName = "", defaultLastName = "" }: 
     && locationValid
 
   const isValid = !!role && firstName.trim().length > 0 && lastName.trim().length > 0 && gdpr
-    && (role === "customer" || providerValid)
+    && (role !== "provider" || providerValid)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -154,7 +156,7 @@ export function OnboardingForm({ defaultFirstName = "", defaultLastName = "" }: 
 
       <Button type="submit" disabled={!isValid || loading}
         className="w-full bg-[#2D7A5F] hover:bg-[#235f49] text-white h-12 text-base">
-        {loading ? t("submitLoading") : role === "provider" ? t("submitProvider") : t("submitCustomer")}
+        {loading ? t("submitLoading") : role === "provider" ? t("submitProvider") : role === "affiliate" ? t("submitAffiliate") : t("submitCustomer")}
       </Button>
     </form>
   )

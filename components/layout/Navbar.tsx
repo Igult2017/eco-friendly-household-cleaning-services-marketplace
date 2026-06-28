@@ -24,6 +24,7 @@ const NAV_LINKS = [
 function dashboardHref(role: string | undefined) {
   if (role === "provider") return "/provider/dashboard"
   if (role === "admin") return "/admin/dashboard"
+  if (role === "affiliate") return "/partner/dashboard"
   return "/dashboard"
 }
 
@@ -34,7 +35,7 @@ export function Navbar() {
   const t = useTranslations("nav")
   const role = (isLoaded ? user?.publicMetadata?.role : undefined) as string | undefined
   const href = dashboardHref(role)
-  const label = role === "provider" ? t("cleanerDashboard") : role === "admin" ? t("adminPanel") : t("myDashboard")
+  const label = role === "provider" ? t("cleanerDashboard") : role === "admin" ? t("adminPanel") : role === "affiliate" ? t("affiliateDashboard") : t("myDashboard")
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#E5EDE9]">

@@ -20,5 +20,8 @@ const providerSchema = base.extend({
   ecoLevel: z.enum(["basic", "certified", "premium", "zero_impact"]).default("basic"),
 })
 
-export const onboardingSchema = z.discriminatedUnion("role", [customerSchema, providerSchema])
+// Standalone affiliate/influencer — no customer or cleaner data required.
+const affiliateSchema = base.extend({ role: z.literal("affiliate") })
+
+export const onboardingSchema = z.discriminatedUnion("role", [customerSchema, providerSchema, affiliateSchema])
 export type OnboardingInput = z.infer<typeof onboardingSchema>

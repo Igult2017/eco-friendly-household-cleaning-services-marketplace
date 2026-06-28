@@ -11,7 +11,8 @@
     "cleanerDashboard": "Panel sprzątacza",
     "adminPanel": "Panel administratora",
     "myDashboard": "Mój panel",
-    "ecoStore": "Eko-sklep"
+    "ecoStore": "Eko-sklep",
+    "affiliateDashboard": "Partner"
   },
   "homeHero": {
     "badge": "Marketplace nr 1 w Europie dla ekologicznego sprzątania",
@@ -530,7 +531,10 @@
     "networkError": "Błąd sieci. Sprawdź połączenie i spróbuj ponownie.",
     "submitLoading": "Tworzenie Twojego konta...",
     "submitProvider": "Dołącz jako osoba sprzątająca →",
-    "submitCustomer": "Zacznij rezerwować →"
+    "submitCustomer": "Zacznij rezerwować →",
+    "affiliateCardTitle": "Promuj i zarabiaj (Partner)",
+    "affiliateCardDesc": "Polecaj DORIXÉ i zarabiaj prowizję — bez konta klienta ani sprzątacza.",
+    "submitAffiliate": "Dołącz do programu partnerskiego"
   },
   "authOnboardingProviderFields": {
     "businessInfo": "Informacje o firmie",

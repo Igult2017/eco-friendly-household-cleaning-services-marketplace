@@ -324,6 +324,10 @@ async function main() {
   }
   const sql = postgres(url, { max: 1, prepare: false })
   try {
+    // New enum value for the standalone affiliate role — must run on its own statement (can't be used
+    // in the same transaction as the value is added). IF NOT EXISTS makes it idempotent across deploys.
+    try { await sql.unsafe(`ALTER TYPE user_role ADD VALUE IF NOT EXISTS 'affiliate'`) }
+    catch (e) { console.warn("[ensure-referrals] affiliate enum add skipped:", e?.message ?? e) }
     await sql.unsafe(DDL)
     console.log("[ensure-referrals] referral + customer_reviews + service_categories + platform_settings + job_posts(view_count/geo) ensured ✓")
   } finally {

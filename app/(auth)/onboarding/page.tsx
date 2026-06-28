@@ -3,10 +3,10 @@ import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { OnboardingForm } from "./OnboardingForm"
 
-const VALID_ROLES = ["customer", "provider", "admin"]
+const VALID_ROLES = ["customer", "provider", "admin", "affiliate"]
 
-export default async function OnboardingPage() {
-  const [user, { userId, sessionClaims }] = await Promise.all([currentUser(), auth()])
+export default async function OnboardingPage({ searchParams }: { searchParams: Promise<{ intent?: string }> }) {
+  const [{ intent }, user, { userId, sessionClaims }] = await Promise.all([searchParams, currentUser(), auth()])
 
   // Resolve the role from EVERY available source before deciding to show the chooser. The prod
   // session token doesn't carry the role claim, so a momentary publicMetadata read miss (Clerk API
@@ -26,11 +26,13 @@ export default async function OnboardingPage() {
   if (role === "provider") redirect("/provider/dashboard")
   if (role === "customer") redirect("/dashboard")
   if (role === "admin") redirect("/admin/dashboard")
+  if (role === "affiliate") redirect("/partner/dashboard")
 
   return (
     <OnboardingForm
       defaultFirstName={user?.firstName ?? ""}
       defaultLastName={user?.lastName ?? ""}
+      defaultRole={intent === "affiliate" ? "affiliate" : undefined}
     />
   )
 }

@@ -11,7 +11,8 @@
     "cleanerDashboard": "Tableau de bord agent",
     "adminPanel": "Panneau d'administration",
     "myDashboard": "Mon tableau de bord",
-    "ecoStore": "Éco-boutique"
+    "ecoStore": "Éco-boutique",
+    "affiliateDashboard": "Affilié"
   },
   "homeHero": {
     "badge": "La marketplace de ménage écologique n°1 en Europe",
@@ -530,7 +531,10 @@
     "networkError": "Erreur réseau. Veuillez vérifier votre connexion et réessayer.",
     "submitLoading": "Configuration de votre compte...",
     "submitProvider": "Rejoindre en tant que professionnel →",
-    "submitCustomer": "Commencer à réserver →"
+    "submitCustomer": "Commencer à réserver →",
+    "affiliateCardTitle": "Promouvoir & gagner (Affilié)",
+    "affiliateCardDesc": "Partagez DORIXÉ et gagnez une commission — aucun compte client ou nettoyeur requis.",
+    "submitAffiliate": "Rejoindre le programme d'affiliation"
   },
   "authOnboardingProviderFields": {
     "businessInfo": "Infos sur l'entreprise",

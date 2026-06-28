@@ -9,7 +9,7 @@ import {
   index,
 } from "drizzle-orm/pg-core"
 
-export const userRoleEnum = pgEnum("user_role", ["customer", "provider", "admin"])
+export const userRoleEnum = pgEnum("user_role", ["customer", "provider", "admin", "affiliate"])
 
 export const users = pgTable(
   "users",

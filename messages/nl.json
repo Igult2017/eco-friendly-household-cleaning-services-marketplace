@@ -11,7 +11,8 @@
     "cleanerDashboard": "Schoonmaker-dashboard",
     "adminPanel": "Beheerderspaneel",
     "myDashboard": "Mijn dashboard",
-    "ecoStore": "Eco-winkel"
+    "ecoStore": "Eco-winkel",
+    "affiliateDashboard": "Affiliate"
   },
   "homeHero": {
     "badge": "Europa's nr. 1 marktplaats voor milieuvriendelijk schoonmaken",
@@ -530,7 +531,10 @@
     "networkError": "Netwerkfout. Controleer je verbinding en probeer het opnieuw.",
     "submitLoading": "Je account wordt aangemaakt...",
     "submitProvider": "Aanmelden als schoonmaker →",
-    "submitCustomer": "Begin met boeken →"
+    "submitCustomer": "Begin met boeken →",
+    "affiliateCardTitle": "Promoot & verdien (Affiliate)",
+    "affiliateCardDesc": "Deel DORIXÉ en verdien commissie — geen klant- of schoonmaakaccount nodig.",
+    "submitAffiliate": "Word affiliate"
   },
   "authOnboardingProviderFields": {
     "businessInfo": "Bedrijfsgegevens",

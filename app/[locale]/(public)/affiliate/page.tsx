@@ -111,7 +111,8 @@ export default async function AffiliatePage({ params }: { params: Promise<{ loca
 
   // Check auth server-side so we never redirect a signed-in user to /sign-up
   const { auth } = await import("@clerk/nextjs/server")
-  const { userId } = await auth()
+  const { userId, sessionClaims } = await auth()
+  const role = (sessionClaims?.metadata as { role?: string } | undefined)?.role
 
   // Auto-fetch (and auto-create) the referral link for signed-in users
   let referralUrl: string | null = null
@@ -135,9 +136,14 @@ export default async function AffiliatePage({ params }: { params: Promise<{ loca
     }
   }
 
-  const heroPrimary   = userId ? { href: "/dashboard", label: t("heroPrimaryDashboard") } : { href: "/sign-up", label: t("heroPrimaryGetLink") }
+  // Standalone influencers join without a customer/cleaner account: sign-up → onboarding with the
+  // affiliate role pre-selected. Signed-in affiliates go to their portal; everyone else to /dashboard.
+  const dashHref = role === "affiliate" ? "/partner/dashboard" : "/dashboard"
+  const joinHref = "/sign-up?redirect_url=" + encodeURIComponent("/onboarding?intent=affiliate")
+
+  const heroPrimary   = userId ? { href: dashHref, label: t("heroPrimaryDashboard") } : { href: joinHref, label: t("heroPrimaryGetLink") }
   const heroSecondary = userId ? null : { href: "/sign-in", label: t("heroSecondarySignIn") }
-  const ctaPrimary    = userId ? { href: "/dashboard", label: t("ctaPrimaryViewLink") }        : { href: "/sign-up", label: t("ctaPrimaryGetLink") }
+  const ctaPrimary    = userId ? { href: dashHref, label: t("ctaPrimaryViewLink") }        : { href: joinHref, label: t("ctaPrimaryGetLink") }
 
   return (
     <div className="bg-[#F4FAF6] min-h-screen">
@@ -256,7 +262,7 @@ export default async function AffiliatePage({ params }: { params: Promise<{ loca
                 {t("benefitsSubtitle")}
               </p>
               <Link
-                href={userId ? "/dashboard" : "/sign-up"}
+                href={userId ? dashHref : joinHref}
                 className="inline-flex items-center gap-2 bg-[#2D7A5F] hover:bg-[#245f4a] text-white rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5"
               >
                 {userId ? t("benefitsCtaDashboard") : t("benefitsCtaJoin")}

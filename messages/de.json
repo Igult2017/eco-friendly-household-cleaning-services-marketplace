@@ -11,7 +11,8 @@
     "cleanerDashboard": "Reinigungs-Dashboard",
     "adminPanel": "Admin-Bereich",
     "myDashboard": "Mein Dashboard",
-    "ecoStore": "Öko-Shop"
+    "ecoStore": "Öko-Shop",
+    "affiliateDashboard": "Affiliate"
   },
   "homeHero": {
     "badge": "Europas Marktplatz Nr. 1 für umweltfreundliche Reinigung",
@@ -530,7 +531,10 @@
     "networkError": "Netzwerkfehler. Bitte überprüfe deine Verbindung und versuche es erneut.",
     "submitLoading": "Dein Konto wird eingerichtet...",
     "submitProvider": "Als Reinigungskraft beitreten →",
-    "submitCustomer": "Jetzt buchen →"
+    "submitCustomer": "Jetzt buchen →",
+    "affiliateCardTitle": "Werben & verdienen (Affiliate)",
+    "affiliateCardDesc": "Empfiehl DORIXÉ und verdiene Provision — kein Reinigungs- oder Buchungskonto nötig.",
+    "submitAffiliate": "Dem Affiliate-Programm beitreten"
   },
   "authOnboardingProviderFields": {
     "businessInfo": "Unternehmensdaten",

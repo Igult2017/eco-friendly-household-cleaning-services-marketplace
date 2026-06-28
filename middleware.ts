@@ -69,9 +69,10 @@ const isCustomerOnlyRoute = createRouteMatcher([
 
 const isProviderRoute = createRouteMatcher(["/provider/(.*)"])
 const isAdminRoute = createRouteMatcher(["/admin/(.*)"])
+const isAffiliateRoute = createRouteMatcher(["/partner(.*)"])
 const isOnboardingRoute = createRouteMatcher(["/onboarding(.*)", "/api/onboarding/(.*)"])
 
-const VALID_ROLES = ["customer", "provider", "admin"]
+const VALID_ROLES = ["customer", "provider", "admin", "affiliate"]
 
 function setCookieOnResponse(res: NextResponse, userId: string, role: string): NextResponse {
   res.cookies.set("dorix_role", `${userId}:${role}`, {
@@ -181,6 +182,7 @@ const clerkHandler = clerkMiddleware(async (auth, req) => {
     }
   }
 
+  if (isAffiliateRoute(req) && effectiveRole !== "affiliate") return NextResponse.redirect(new URL("/", base))
   if (isProviderRoute(req) && effectiveRole !== "provider") return NextResponse.redirect(new URL("/", base))
   if (isCustomerOnlyRoute(req) && effectiveRole !== "customer") return NextResponse.redirect(new URL("/", base))
 

@@ -5,7 +5,7 @@ import { users, providers, referralCodes, referrals, notifications } from "@/lib
 import type { NewProvider } from "@/lib/db/schema/providers"
 import { eq } from "drizzle-orm"
 import { onboardingSchema } from "@/lib/validations/onboarding"
-import { nanoid } from "nanoid"
+import { nanoid, customAlphabet } from "nanoid"
 import { inngest } from "@/lib/inngest/client"
 import { sendProviderApprovedEmail } from "@/lib/resend/providerApproved"
 import { logError } from "@/lib/utils/logError"
@@ -136,6 +136,14 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Standalone affiliate: give them a referral code immediately so their link works from the dashboard.
+    if (data.role === "affiliate") {
+      try {
+        const code = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8)()
+        await db.insert(referralCodes).values({ userId, code }).onConflictDoNothing()
+      } catch (e) { console.warn("[onboarding/complete] affiliate code creation failed:", e) }
+    }
+
     // Record referral if a valid ref cookie was set before sign-up
     const refCode = req.cookies.get("dorix_ref")?.value
     if (refCode) {
@@ -169,7 +177,10 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const redirect = data.role === "provider" ? "/provider/dashboard" : "/dashboard"
+    const redirect =
+      data.role === "provider" ? "/provider/dashboard"
+      : data.role === "affiliate" ? "/partner/dashboard"
+      : "/dashboard"
     const res = NextResponse.json({ success: true, redirect })
     res.cookies.set(ROLE_COOKIE, `${userId}:${data.role}`, {
       httpOnly: true,
