@@ -46,7 +46,7 @@ export function AffiliateDashboard() {
     { label: "Pending", value: stats?.pending ?? 0, icon: Clock },
     { label: "Lifetime earned", value: eur(data?.credit.lifetimeEarnedCents ?? 0), icon: TrendingUp },
   ]
-  const origin = (data?.referralUrl ? new URL(data.referralUrl).origin : "") || (typeof window !== "undefined" ? window.location.origin : "")
+  const origin = typeof window !== "undefined" ? window.location.origin : ""
 
   return (
     <div className="space-y-8">

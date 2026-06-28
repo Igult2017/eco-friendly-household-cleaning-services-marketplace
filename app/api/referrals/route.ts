@@ -8,6 +8,7 @@ import { referralCodes, referrals, referralCredits } from "@/lib/db/schema"
 import { eq, count, sql } from "drizzle-orm"
 import { customAlphabet } from "nanoid"
 import { logError } from "@/lib/utils/logError"
+import { SITE_URL } from "@/lib/seo/site"
 
 // Strict alphanumeric — no `-` or `_` from nanoid's default alphabet.
 // The middleware regex [A-Z0-9]{6,20} must match every generated code.
@@ -67,7 +68,9 @@ export async function GET() {
       .where(eq(referralCredits.userId, userId))
       .limit(1)
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? ""
+    // Fall back to the canonical site URL so the referral link is ALWAYS absolute + shareable
+    // (e.g. https://dorixé.com/?ref=CODE) even when NEXT_PUBLIC_APP_URL isn't set in the env.
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || SITE_URL
 
     return NextResponse.json({
       code: codeRow?.code ?? null,

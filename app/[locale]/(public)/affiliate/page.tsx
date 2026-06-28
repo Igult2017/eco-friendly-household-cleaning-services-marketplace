@@ -3,6 +3,7 @@ import Link from "next/link"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { localeAlternates } from "@/lib/seo/alternates"
 import { getReferralPct } from "@/lib/platform/settings"
+import { SITE_URL } from "@/lib/seo/site"
 import {
   Leaf,
   Euro,
@@ -130,7 +131,7 @@ export default async function AffiliatePage({ params }: { params: Promise<{ loca
         const inserted = await db.insert(referralCodes).values({ userId, code }).onConflictDoNothing().returning()
         row = inserted[0] ?? (await db.select().from(referralCodes).where(eq(referralCodes.userId, userId)).limit(1))[0]
       }
-      if (row) referralUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/?ref=${row.code}`
+      if (row) referralUrl = `${process.env.NEXT_PUBLIC_APP_URL || SITE_URL}/?ref=${row.code}`
     } catch (err) {
       console.error("[affiliate] referral code error", err)
     }
