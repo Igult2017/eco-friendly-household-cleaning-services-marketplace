@@ -34,9 +34,9 @@ export const storeProducts = pgTable(
     priceCents: integer("price_cents"),
     currency: varchar("currency", { length: 3 }),
     // Starter-pack selling points, shown as a benefits list.
-    benefits: jsonb("benefits").$type<string[]>().default([]),
+    benefits: jsonb("benefits").$type<string[]>().notNull().default([]),
     category: varchar("category", { length: 100 }),
-    tags: jsonb("tags").$type<string[]>().default([]),
+    tags: jsonb("tags").$type<string[]>().notNull().default([]),
     featured: boolean("featured").notNull().default(false),
     status: storeProductStatusEnum("status").notNull().default("draft"),
     // Outbound-click counter (incremented by the /api/store/go redirect) for interest analytics.

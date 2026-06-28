@@ -5,6 +5,7 @@ import { db } from "@/lib/db"
 import { storeProducts } from "@/lib/db/schema"
 import { eq, and, desc, asc } from "drizzle-orm"
 import { getTranslations } from "next-intl/server"
+import { Link } from "@/i18n/navigation"
 import { Leaf } from "lucide-react"
 import { AffiliateDisclosure } from "@/components/store/AffiliateDisclosure"
 import { ProductCard } from "@/components/store/ProductCard"
@@ -119,7 +120,7 @@ export default async function EcoStorePage({
 
               {categories.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-8">
-                  <a
+                  <Link
                     href="/eco-store"
                     className={`text-sm px-3 py-1.5 rounded-full font-medium transition-colors ${
                       !category
@@ -128,9 +129,9 @@ export default async function EcoStorePage({
                     }`}
                   >
                     {t("allCategories")}
-                  </a>
+                  </Link>
                   {categories.map((cat) => (
-                    <a
+                    <Link
                       key={cat}
                       href={`/eco-store?category=${encodeURIComponent(cat)}`}
                       className={`text-sm px-3 py-1.5 rounded-full font-medium transition-colors ${
@@ -140,7 +141,7 @@ export default async function EcoStorePage({
                       }`}
                     >
                       {cat}
-                    </a>
+                    </Link>
                   ))}
                 </div>
               )}

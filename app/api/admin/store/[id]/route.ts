@@ -23,26 +23,34 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
     const data = parsed.data
 
-    await db
-      .update(storeProducts)
-      .set({
-        ...(data.type !== undefined ? { type: data.type } : {}),
-        ...(data.slug !== undefined ? { slug: data.slug } : {}),
-        ...(data.title !== undefined ? { title: data.title } : {}),
-        ...(data.description !== undefined ? { description: normalize(data.description) } : {}),
-        ...(data.brand !== undefined ? { brand: normalize(data.brand) } : {}),
-        ...(data.imageUrl !== undefined ? { imageUrl: normalize(data.imageUrl) } : {}),
-        ...(data.affiliateUrl !== undefined ? { affiliateUrl: data.affiliateUrl } : {}),
-        ...(data.priceCents !== undefined ? { priceCents: data.priceCents ?? null } : {}),
-        ...(data.currency !== undefined ? { currency: normalize(data.currency) } : {}),
-        ...(data.benefits !== undefined ? { benefits: data.benefits } : {}),
-        ...(data.category !== undefined ? { category: normalize(data.category) } : {}),
-        ...(data.tags !== undefined ? { tags: data.tags } : {}),
-        ...(data.featured !== undefined ? { featured: data.featured } : {}),
-        ...(data.status !== undefined ? { status: data.status } : {}),
-        updatedAt: new Date(),
-      })
-      .where(eq(storeProducts.id, id))
+    try {
+      await db
+        .update(storeProducts)
+        .set({
+          ...(data.type !== undefined ? { type: data.type } : {}),
+          ...(data.slug !== undefined ? { slug: data.slug } : {}),
+          ...(data.title !== undefined ? { title: data.title } : {}),
+          ...(data.description !== undefined ? { description: normalize(data.description) } : {}),
+          ...(data.brand !== undefined ? { brand: normalize(data.brand) } : {}),
+          ...(data.imageUrl !== undefined ? { imageUrl: normalize(data.imageUrl) } : {}),
+          ...(data.affiliateUrl !== undefined ? { affiliateUrl: data.affiliateUrl } : {}),
+          ...(data.priceCents !== undefined ? { priceCents: data.priceCents ?? null } : {}),
+          ...(data.currency !== undefined ? { currency: normalize(data.currency) } : {}),
+          ...(data.benefits !== undefined ? { benefits: data.benefits } : {}),
+          ...(data.category !== undefined ? { category: normalize(data.category) } : {}),
+          ...(data.tags !== undefined ? { tags: data.tags } : {}),
+          ...(data.featured !== undefined ? { featured: data.featured } : {}),
+          ...(data.status !== undefined ? { status: data.status } : {}),
+          updatedAt: new Date(),
+        })
+        .where(eq(storeProducts.id, id))
+    } catch (e) {
+      // Editing the slug to one already in use violates the unique index — return a clear 409, not a 500.
+      if ((e as { code?: string })?.code === "23505") {
+        return NextResponse.json({ error: "A product with that slug already exists." }, { status: 409 })
+      }
+      throw e
+    }
 
     return NextResponse.json({ success: true })
   } catch (err) {

@@ -5,6 +5,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 
+// Must match the presigned route's ALLOWED_CONTENT_TYPES (jpeg/png/webp) so the picker can't offer a
+// type the server will reject.
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"]
+
 /**
  * Image input: paste/type a URL, or upload a file via the same presigned flow as the blog cover.
  * POST /api/upload/presigned { contentType, contentLength, folder: "store-images" } → PUT → publicUrl.
@@ -22,6 +26,10 @@ export function ImageUploadField({
   const inputRef = useRef<HTMLInputElement>(null)
 
   async function upload(file: File) {
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      onError("Please use a JPEG, PNG or WebP image.")
+      return
+    }
     setUploading(true)
     onError("")
     try {
@@ -30,12 +38,17 @@ export function ImageUploadField({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ contentType: file.type, contentLength: file.size, folder: "store-images" }),
       })
-      if (!presignRes.ok) throw new Error()
+      if (!presignRes.ok) {
+        const d = await presignRes.json().catch(() => ({}))
+        throw new Error(typeof d.error === "string" ? d.error : "Upload not allowed")
+      }
       const { uploadUrl, publicUrl } = await presignRes.json()
-      await fetch(uploadUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } })
+      // fetch() does NOT throw on HTTP 4xx/5xx — check .ok so a failed PUT can't save a broken image URL.
+      const putRes = await fetch(uploadUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } })
+      if (!putRes.ok) throw new Error("Upload failed — please try again.")
       onChange(publicUrl)
-    } catch {
-      onError("Image upload failed")
+    } catch (e) {
+      onError(e instanceof Error && e.message ? e.message : "Image upload failed")
     } finally {
       setUploading(false)
     }
@@ -45,7 +58,7 @@ export function ImageUploadField({
     const items = e.clipboardData?.items
     if (!items) return
     for (const item of Array.from(items)) {
-      if (item.type.startsWith("image/")) {
+      if (ALLOWED_TYPES.includes(item.type)) {
         const file = item.getAsFile()
         if (file) {
           e.preventDefault()
@@ -70,7 +83,7 @@ export function ImageUploadField({
         <input
           ref={inputRef}
           type="file"
-          accept="image/*"
+          accept="image/jpeg,image/png,image/webp"
           className="hidden"
           onChange={(e) => { const f = e.target.files?.[0]; if (f) upload(f); e.target.value = "" }}
         />

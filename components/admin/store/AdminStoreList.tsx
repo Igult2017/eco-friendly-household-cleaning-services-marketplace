@@ -11,16 +11,22 @@ import { DeleteStoreProductDialog } from "./DeleteStoreProductDialog"
 export function AdminStoreList({ initialProducts }: { initialProducts: StoreProduct[] }) {
   const [products, setProducts] = useState(initialProducts)
   const [busy, setBusy] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   async function patch(id: string, body: Record<string, unknown>) {
     setBusy(id)
+    setError(null)
     try {
       const res = await fetch(`/api/admin/store/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       })
+      if (!res.ok) setError("Couldn't update the product. Please try again.")
       return res.ok
+    } catch {
+      setError("Network error. Please try again.")
+      return false
     } finally {
       setBusy(null)
     }
@@ -66,6 +72,9 @@ export function AdminStoreList({ initialProducts }: { initialProducts: StoreProd
 
   return (
     <div className="bg-white rounded-2xl border border-[#E5EBF0] overflow-x-auto">
+      {error && (
+        <p role="alert" className="m-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>
+      )}
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-[#E5EBF0] bg-[#F8FAFB]">

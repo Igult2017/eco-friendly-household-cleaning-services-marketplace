@@ -13,6 +13,8 @@ import type { StoreProduct } from "@/lib/db/schema"
 import { ImageUploadField } from "./ImageUploadField"
 import { BenefitsEditor } from "./BenefitsEditor"
 
+const CURRENCIES = ["EUR", "USD", "GBP", "CHF", "SEK", "NOK", "DKK", "PLN", "CAD", "AUD"]
+
 function slugify(t: string) {
   return t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 200)
 }
@@ -204,9 +206,12 @@ export function StoreProductForm({ initial }: { initial?: StoreProduct }) {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="none">—</SelectItem>
-              <SelectItem value="EUR">EUR</SelectItem>
-              <SelectItem value="USD">USD</SelectItem>
-              <SelectItem value="GBP">GBP</SelectItem>
+              {CURRENCIES.map((c) => (
+                <SelectItem key={c} value={c}>{c}</SelectItem>
+              ))}
+              {currency && !CURRENCIES.includes(currency) && (
+                <SelectItem value={currency}>{currency}</SelectItem>
+              )}
             </SelectContent>
           </Select>
         </div>

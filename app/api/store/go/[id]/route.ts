@@ -28,6 +28,15 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     // Only redirect for a real, published listing — never leak a draft's destination.
     if (!product || product.status !== "published") return NextResponse.redirect(ecoStoreUrl())
 
+    // Defence in depth: only ever 302 to an http(s) destination — never a javascript:/data: URL from a
+    // legacy/unvalidated row — so this public endpoint can't be abused beyond an affiliate redirect.
+    try {
+      const proto = new URL(product.affiliateUrl).protocol
+      if (proto !== "http:" && proto !== "https:") return NextResponse.redirect(ecoStoreUrl())
+    } catch {
+      return NextResponse.redirect(ecoStoreUrl())
+    }
+
     // Count the click; never let a failed counter block the redirect.
     try {
       await db.update(storeProducts).set({ clicks: sql`${storeProducts.clicks} + 1` }).where(eq(storeProducts.id, id))
