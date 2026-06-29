@@ -898,7 +898,13 @@
     "ecoOptionFragranceFree": "Senza profumo",
     "ecoOptionEnergySaving": "Metodi a basso consumo energetico",
     "posting": "Pubblicazione...",
-    "submitButton": "Pubblica richiesta e ricevi offerte"
+    "submitButton": "Pubblica richiesta e ricevi offerte",
+    "recurringLabel": "Servizio ricorrente (facoltativo)",
+    "recurringHint": "Scegli una frequenza se vuoi che la pulizia si ripeta.",
+    "recurring_none": "Solo una volta",
+    "recurring_weekly": "Settimanale",
+    "recurring_biweekly": "Ogni 2 settimane",
+    "recurring_monthly": "Mensile"
   },
   "customerProfilePage": {
     "title": "Il mio profilo",
@@ -919,7 +925,13 @@
     "savingButton": "Salvataggio in corso...",
     "saveButton": "Salva modifiche",
     "remindersTitle": "Promemoria e aggiornamenti delle prenotazioni",
-    "remindersDescription": "Inviami via e-mail promemoria e richieste di recensione per le mie prenotazioni."
+    "remindersDescription": "Inviami via e-mail promemoria e richieste di recensione per le mie prenotazioni.",
+    "recurringTitle": "Servizio ricorrente",
+    "recurringDescription": "Indica agli addetti se cerchi pulizie regolari e ricorrenti.",
+    "recurring_none": "Solo una volta",
+    "recurring_weekly": "Settimanale",
+    "recurring_biweekly": "Ogni 2 settimane",
+    "recurring_monthly": "Mensile"
   },
   "customerRecurringPage": {
     "title": "Prenotazioni ricorrenti",
@@ -1063,7 +1075,11 @@
     "noneNearbyBody": "Ci sono lavori aperti, ma al momento nessuno nel tuo raggio di servizio. Puoi ampliare il raggio di servizio nel tuo profilo.",
     "noneNearbyCta": "Modifica raggio di servizio",
     "onlyOwnTitle": "Ancora nessun lavoro per cui fare offerte",
-    "onlyOwnBody": "Gli unici lavori aperti al momento sono quelli che hai pubblicato tu — non puoi fare offerte sui tuoi lavori. I nuovi lavori di altri clienti appariranno qui."
+    "onlyOwnBody": "Gli unici lavori aperti al momento sono quelli che hai pubblicato tu — non puoi fare offerte sui tuoi lavori. I nuovi lavori di altri clienti appariranno qui.",
+    "recurringLabel": "Ricorrente",
+    "recurring_weekly": "Settimanale",
+    "recurring_biweekly": "Ogni 2 settimane",
+    "recurring_monthly": "Mensile"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifiche",

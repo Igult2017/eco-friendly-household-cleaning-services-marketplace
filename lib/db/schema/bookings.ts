@@ -80,6 +80,9 @@ export const bookings = pgTable(
     overdueEscalatedAt: timestamp("overdue_escalated_at", { withTimezone: true }),
     lastOverdueNudgeAt: timestamp("last_overdue_nudge_at", { withTimezone: true }),
     latePenaltyAmount: integer("late_penalty_amount").notNull().default(0),
+    // Recurring cadence the client asked for at booking (weekly|biweekly|monthly), null = one-time.
+    // Lets the cleaner see it's repeat work; the actual schedule is created separately via /recurring.
+    requestedFrequency: varchar("requested_frequency", { length: 12 }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },

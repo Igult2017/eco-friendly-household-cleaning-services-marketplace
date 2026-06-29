@@ -898,7 +898,13 @@
     "ecoOptionFragranceFree": "Sans parfum",
     "ecoOptionEnergySaving": "Méthodes économes en énergie",
     "posting": "Publication...",
-    "submitButton": "Publier l'annonce et recevoir des offres"
+    "submitButton": "Publier l'annonce et recevoir des offres",
+    "recurringLabel": "Service récurrent (optionnel)",
+    "recurringHint": "Choisissez une fréquence si ce ménage doit se répéter.",
+    "recurring_none": "Une seule fois",
+    "recurring_weekly": "Hebdomadaire",
+    "recurring_biweekly": "Toutes les 2 semaines",
+    "recurring_monthly": "Mensuel"
   },
   "customerProfilePage": {
     "title": "Mon profil",
@@ -919,7 +925,13 @@
     "savingButton": "Enregistrement...",
     "saveButton": "Enregistrer les modifications",
     "remindersTitle": "Rappels et mises à jour de réservation",
-    "remindersDescription": "M envoyer par e-mail les rappels et demandes d avis pour mes réservations."
+    "remindersDescription": "M envoyer par e-mail les rappels et demandes d avis pour mes réservations.",
+    "recurringTitle": "Service récurrent",
+    "recurringDescription": "Indiquez aux intervenants si vous recherchez un ménage régulier et récurrent.",
+    "recurring_none": "Une seule fois",
+    "recurring_weekly": "Hebdomadaire",
+    "recurring_biweekly": "Toutes les 2 semaines",
+    "recurring_monthly": "Mensuel"
   },
   "customerRecurringPage": {
     "title": "Réservations récurrentes",
@@ -1063,7 +1075,11 @@
     "noneNearbyBody": "Des missions sont ouvertes, mais aucune dans votre rayon d'intervention pour le moment. Vous pouvez élargir votre rayon d'intervention dans votre profil.",
     "noneNearbyCta": "Ajuster le rayon d'intervention",
     "onlyOwnTitle": "Pas encore de missions à proposer",
-    "onlyOwnBody": "Les seules missions ouvertes actuellement sont celles que vous avez publiées — vous ne pouvez pas enchérir sur vos propres missions. Les nouvelles missions d'autres clients apparaîtront ici."
+    "onlyOwnBody": "Les seules missions ouvertes actuellement sont celles que vous avez publiées — vous ne pouvez pas enchérir sur vos propres missions. Les nouvelles missions d'autres clients apparaîtront ici.",
+    "recurringLabel": "Récurrent",
+    "recurring_weekly": "Hebdomadaire",
+    "recurring_biweekly": "Toutes les 2 semaines",
+    "recurring_monthly": "Mensuel"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifications",

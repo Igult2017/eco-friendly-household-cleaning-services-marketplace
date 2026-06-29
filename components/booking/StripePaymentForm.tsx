@@ -20,6 +20,7 @@ interface Props {
     specialInstructions?: string
     ecoOptions: string[]
     carbonOffsetCents?: number
+    requestedFrequency?: string
   }
 }
 

@@ -898,7 +898,13 @@
     "ecoOptionFragranceFree": "Fragrance-free",
     "ecoOptionEnergySaving": "Energy-saving methods",
     "posting": "Posting...",
-    "submitButton": "Post Job & Get Bids"
+    "submitButton": "Post Job & Get Bids",
+    "recurringLabel": "Recurring service (optional)",
+    "recurringHint": "Pick a cadence if you need this cleaning to repeat.",
+    "recurring_none": "One-time only",
+    "recurring_weekly": "Weekly",
+    "recurring_biweekly": "Every 2 weeks",
+    "recurring_monthly": "Monthly"
   },
   "customerProfilePage": {
     "title": "My Profile",
@@ -919,7 +925,13 @@
     "savingButton": "Saving...",
     "saveButton": "Save changes",
     "remindersTitle": "Booking reminders & updates",
-    "remindersDescription": "Email me reminders and review requests for my bookings."
+    "remindersDescription": "Email me reminders and review requests for my bookings.",
+    "recurringTitle": "Recurring service",
+    "recurringDescription": "Tell cleaners if you are looking for regular, repeat cleaning.",
+    "recurring_none": "One-time only",
+    "recurring_weekly": "Weekly",
+    "recurring_biweekly": "Every 2 weeks",
+    "recurring_monthly": "Monthly"
   },
   "customerRecurringPage": {
     "title": "Recurring Bookings",
@@ -1063,7 +1075,11 @@
     "noneNearbyBody": "There are open jobs, but none within your service radius right now. You can widen your service radius in your profile.",
     "noneNearbyCta": "Adjust service radius",
     "onlyOwnTitle": "No jobs to bid on yet",
-    "onlyOwnBody": "The only open jobs right now are ones you posted — you can't bid on your own jobs. New jobs from other clients will appear here."
+    "onlyOwnBody": "The only open jobs right now are ones you posted — you can't bid on your own jobs. New jobs from other clients will appear here.",
+    "recurringLabel": "Recurring",
+    "recurring_weekly": "Weekly",
+    "recurring_biweekly": "Every 2 weeks",
+    "recurring_monthly": "Monthly"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifications",

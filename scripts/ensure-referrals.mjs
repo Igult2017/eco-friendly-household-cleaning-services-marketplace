@@ -68,6 +68,9 @@ CREATE UNIQUE INDEX IF NOT EXISTS referral_credits_user_idx ON referral_credits(
 ALTER TABLE users ADD COLUMN IF NOT EXISTS dual_role_enabled boolean NOT NULL DEFAULT false;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS locale varchar(5);
 ALTER TABLE users ADD COLUMN IF NOT EXISTS email_reminders boolean NOT NULL DEFAULT true;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS recurring_interest varchar(12);
+ALTER TABLE job_posts ADD COLUMN IF NOT EXISTS recurring_frequency varchar(12);
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS requested_frequency varchar(12);
 ALTER TABLE providers ADD COLUMN IF NOT EXISTS recurring_discount_pct integer NOT NULL DEFAULT 0;
 
 -- Optional per-post author display name (overrides the author's account name on the blog).

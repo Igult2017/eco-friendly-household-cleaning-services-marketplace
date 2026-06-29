@@ -898,7 +898,13 @@
     "ecoOptionFragranceFree": "Parfumvrij",
     "ecoOptionEnergySaving": "Energiebesparende methoden",
     "posting": "Bezig met plaatsen...",
-    "submitButton": "Klus plaatsen & biedingen ontvangen"
+    "submitButton": "Klus plaatsen & biedingen ontvangen",
+    "recurringLabel": "Terugkerende service (optioneel)",
+    "recurringHint": "Kies een frequentie als deze schoonmaak terugkerend moet zijn.",
+    "recurring_none": "Eenmalig",
+    "recurring_weekly": "Wekelijks",
+    "recurring_biweekly": "Om de 2 weken",
+    "recurring_monthly": "Maandelijks"
   },
   "customerProfilePage": {
     "title": "Mijn profiel",
@@ -919,7 +925,13 @@
     "savingButton": "Bezig met opslaan...",
     "saveButton": "Wijzigingen opslaan",
     "remindersTitle": "Boekingsherinneringen & updates",
-    "remindersDescription": "E-mail mij herinneringen en reviewverzoeken voor mijn boekingen."
+    "remindersDescription": "E-mail mij herinneringen en reviewverzoeken voor mijn boekingen.",
+    "recurringTitle": "Terugkerende service",
+    "recurringDescription": "Laat schoonmakers weten of je regelmatige, terugkerende schoonmaak zoekt.",
+    "recurring_none": "Eenmalig",
+    "recurring_weekly": "Wekelijks",
+    "recurring_biweekly": "Om de 2 weken",
+    "recurring_monthly": "Maandelijks"
   },
   "customerRecurringPage": {
     "title": "Terugkerende boekingen",
@@ -1063,7 +1075,11 @@
     "noneNearbyBody": "Er zijn openstaande klussen, maar momenteel geen binnen je servicestraal. Je kunt je servicestraal in je profiel vergroten.",
     "noneNearbyCta": "Servicestraal aanpassen",
     "onlyOwnTitle": "Nog geen klussen om op te bieden",
-    "onlyOwnBody": "De enige openstaande klussen op dit moment zijn die jij hebt geplaatst — je kunt niet bieden op je eigen klussen. Nieuwe klussen van andere klanten verschijnen hier."
+    "onlyOwnBody": "De enige openstaande klussen op dit moment zijn die jij hebt geplaatst — je kunt niet bieden op je eigen klussen. Nieuwe klussen van andere klanten verschijnen hier.",
+    "recurringLabel": "Terugkerend",
+    "recurring_weekly": "Wekelijks",
+    "recurring_biweekly": "Om de 2 weken",
+    "recurring_monthly": "Maandelijks"
   },
   "providerProviderNotificationsPage": {
     "heading": "Meldingen",

@@ -898,7 +898,13 @@
     "ecoOptionFragranceFree": "Duftstofffrei",
     "ecoOptionEnergySaving": "Energiesparende Methoden",
     "posting": "Wird veröffentlicht...",
-    "submitButton": "Auftrag veröffentlichen & Angebote erhalten"
+    "submitButton": "Auftrag veröffentlichen & Angebote erhalten",
+    "recurringLabel": "Wiederkehrender Service (optional)",
+    "recurringHint": "Wähle einen Rhythmus, wenn die Reinigung wiederkehren soll.",
+    "recurring_none": "Nur einmalig",
+    "recurring_weekly": "Wöchentlich",
+    "recurring_biweekly": "Alle 2 Wochen",
+    "recurring_monthly": "Monatlich"
   },
   "customerProfilePage": {
     "title": "Mein Profil",
@@ -919,7 +925,13 @@
     "savingButton": "Wird gespeichert...",
     "saveButton": "Änderungen speichern",
     "remindersTitle": "Buchungserinnerungen & Updates",
-    "remindersDescription": "Sende mir Erinnerungen und Bewertungsanfragen zu meinen Buchungen per E-Mail."
+    "remindersDescription": "Sende mir Erinnerungen und Bewertungsanfragen zu meinen Buchungen per E-Mail.",
+    "recurringTitle": "Wiederkehrender Service",
+    "recurringDescription": "Sag Reinigungskräften, ob du regelmäßige, wiederkehrende Reinigung suchst.",
+    "recurring_none": "Nur einmalig",
+    "recurring_weekly": "Wöchentlich",
+    "recurring_biweekly": "Alle 2 Wochen",
+    "recurring_monthly": "Monatlich"
   },
   "customerRecurringPage": {
     "title": "Wiederkehrende Buchungen",
@@ -1063,7 +1075,11 @@
     "noneNearbyBody": "Es gibt offene Aufträge, aber derzeit keine in Ihrem Servicegebiet. Sie können Ihren Serviceradius in Ihrem Profil erweitern.",
     "noneNearbyCta": "Serviceradius anpassen",
     "onlyOwnTitle": "Noch keine Aufträge zum Bieten",
-    "onlyOwnBody": "Die einzigen offenen Aufträge stammen von Ihnen – auf eigene Aufträge können Sie nicht bieten. Neue Aufträge anderer Kunden erscheinen hier."
+    "onlyOwnBody": "Die einzigen offenen Aufträge stammen von Ihnen – auf eigene Aufträge können Sie nicht bieten. Neue Aufträge anderer Kunden erscheinen hier.",
+    "recurringLabel": "Wiederkehrend",
+    "recurring_weekly": "Wöchentlich",
+    "recurring_biweekly": "Alle 2 Wochen",
+    "recurring_monthly": "Monatlich"
   },
   "providerProviderNotificationsPage": {
     "heading": "Benachrichtigungen",

@@ -95,6 +95,7 @@ export default function BookStep5Page() {
           specialInstructions: store.specialInstructions || undefined,
           ecoOptions: store.ecoOptions,
           carbonOffsetCents: store.carbonOffsetCents || undefined,
+          requestedFrequency: store.frequency !== "one_time" ? store.frequency : undefined,
         }),
       })
       const data = await res.json()
@@ -383,6 +384,7 @@ export default function BookStep5Page() {
                     specialInstructions: store.specialInstructions || undefined,
                     ecoOptions: store.ecoOptions,
                     carbonOffsetCents: addCarbonOffset ? CARBON_OFFSET_CENTS : undefined,
+                    requestedFrequency: store.frequency !== "one_time" ? store.frequency : undefined,
                   }}
                   onSuccess={(id, num) => setSuccess({ bookingId: id, bookingNumber: num })}
                 />

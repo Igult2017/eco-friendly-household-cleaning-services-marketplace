@@ -29,6 +29,7 @@ const createJobSchema = z.object({
   serviceLongitude: z.number().min(-180).max(180),
   radiusKm: z.number().int().min(1).max(100).default(25),
   ecoRequirements: z.array(z.string().max(100)).max(10).default([]),
+  recurringFrequency: z.enum(["weekly", "biweekly", "monthly"]).optional(),
 }).refine(
   (d) => !d.budgetMin || !d.budgetMax || d.budgetMax >= d.budgetMin,
   { message: "budgetMax must be >= budgetMin", path: ["budgetMax"] },
@@ -86,6 +87,7 @@ export async function POST(req: Request) {
       serviceLongitude: data.serviceLongitude,
       radiusKm: data.radiusKm,
       ecoRequirements: data.ecoRequirements,
+      recurringFrequency: data.recurringFrequency ?? null,
       expiresAt,
       status: "open",
       postedIp: getClientIp(req),
@@ -223,7 +225,7 @@ export async function GET(req: Request) {
         columns: {
           id: true, title: true, description: true, status: true,
           budgetMin: true, budgetMax: true, desiredDate: true, desiredTimeRange: true,
-          radiusKm: true, ecoRequirements: true, viewCount: true, expiresAt: true, createdAt: true,
+          radiusKm: true, ecoRequirements: true, recurringFrequency: true, viewCount: true, expiresAt: true, createdAt: true,
           serviceAddress: true, // reduced to coarse locality below
         },
         with: { category: { columns: { name: true, slug: true } }, bids: { columns: { id: true, status: true, providerId: true } } },

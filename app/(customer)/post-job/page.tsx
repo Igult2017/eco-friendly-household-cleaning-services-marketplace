@@ -42,6 +42,7 @@ export default function PostJobPage() {
     serviceLongitude: 0,
     radiusKm: 25,
     ecoRequirements: [] as string[],
+    recurringFrequency: "",
   })
 
   function set(field: string, value: any) {
@@ -114,6 +115,7 @@ export default function PostJobPage() {
           ...form,
           budgetMin: form.budgetMin ? parseInt(form.budgetMin) * 100 : undefined,
           budgetMax: form.budgetMax ? parseInt(form.budgetMax) * 100 : undefined,
+          recurringFrequency: form.recurringFrequency || undefined,
         }),
       })
       if (!res.ok) {
@@ -137,7 +139,7 @@ export default function PostJobPage() {
         <p className="text-[#6B7280] text-center mb-8 max-w-sm">{t("successDescription")}</p>
         <div className="flex gap-3">
           <Button onClick={() => router.push("/jobs")} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white">{t("viewMyJobs")}</Button>
-          <Button variant="outline" onClick={() => { setSuccess(false); setForm({ title: "", description: "", budgetMin: "", budgetMax: "", desiredDate: "", serviceAddress: { line1: "", city: "", postalCode: "", country: "DE" }, serviceLatitude: 0, serviceLongitude: 0, radiusKm: 25, ecoRequirements: [] }) }} className="border-[#E5EBF0]">{t("postAnother")}</Button>
+          <Button variant="outline" onClick={() => { setSuccess(false); setForm({ title: "", description: "", budgetMin: "", budgetMax: "", desiredDate: "", serviceAddress: { line1: "", city: "", postalCode: "", country: "DE" }, serviceLatitude: 0, serviceLongitude: 0, radiusKm: 25, ecoRequirements: [], recurringFrequency: "" }) }} className="border-[#E5EBF0]">{t("postAnother")}</Button>
         </div>
       </div>
     )
@@ -172,6 +174,17 @@ export default function PostJobPage() {
             <div>
               <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("desiredDateLabel")}</Label>
               <Input type="date" value={form.desiredDate} onChange={(e) => set("desiredDate", e.target.value)} min={new Date().toISOString().split("T")[0]} />
+            </div>
+            <div>
+              <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("recurringLabel")}</Label>
+              <select value={form.recurringFrequency} onChange={(e) => set("recurringFrequency", e.target.value)}
+                className="flex h-10 w-full rounded-md border border-[#E5EBF0] bg-white px-3 py-2 text-sm focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]">
+                <option value="">{t("recurring_none")}</option>
+                <option value="weekly">{t("recurring_weekly")}</option>
+                <option value="biweekly">{t("recurring_biweekly")}</option>
+                <option value="monthly">{t("recurring_monthly")}</option>
+              </select>
+              <p className="text-xs text-[#9CA3AF] mt-1">{t("recurringHint")}</p>
             </div>
           </div>
 

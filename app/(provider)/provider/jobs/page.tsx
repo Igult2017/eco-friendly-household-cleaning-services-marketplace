@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
 import { formatDate } from "@/lib/utils/formatDate"
-import { Loader2, MapPin, Clock, Euro, CheckCircle2 } from "lucide-react"
+import { Loader2, MapPin, Clock, Euro, CheckCircle2, Repeat } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 
@@ -23,6 +23,7 @@ interface JobPost {
   desiredDate: string | null
   serviceAddress: { line1: string; city: string; postalCode: string }
   ecoRequirements: string[]
+  recurringFrequency: string | null
   expiresAt: string
   createdAt: string
   category: { name: string } | null
@@ -162,6 +163,11 @@ export default function ProviderJobsPage() {
                     <div className="flex flex-wrap gap-3 text-xs text-[#9CA3AF] mb-4">
                       <span className="flex items-center gap-1"><MapPin size={12} />{job.serviceAddress.city}, {job.serviceAddress.postalCode}</span>
                       {job.desiredDate && <span className="flex items-center gap-1"><Clock size={12} />{formatDate(job.desiredDate)}</span>}
+                      {job.recurringFrequency && (
+                        <span className="flex items-center gap-1 bg-[#D1F0E0] text-[#2D7A5F] font-medium px-2 py-0.5 rounded-full">
+                          <Repeat size={12} />{t("recurringLabel")} · {t(`recurring_${job.recurringFrequency}`)}
+                        </span>
+                      )}
                     </div>
 
                     {job.ecoRequirements.length > 0 && (

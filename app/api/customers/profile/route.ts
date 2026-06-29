@@ -12,6 +12,7 @@ const updateSchema = z.object({
   phone: z.string().max(30).optional(),
   marketingConsent: z.boolean().optional(),
   emailReminders: z.boolean().optional(),
+  recurringInterest: z.enum(["none", "weekly", "biweekly", "monthly"]).optional(),
 })
 
 export async function GET() {
@@ -30,6 +31,7 @@ export async function GET() {
         avatarUrl: true,
         marketingConsent: true,
         emailReminders: true,
+        recurringInterest: true,
       },
     })
 
@@ -60,6 +62,7 @@ export async function PATCH(req: Request) {
     if (data.phone !== undefined) updateFields.phone = data.phone
     if (data.marketingConsent !== undefined) updateFields.marketingConsent = data.marketingConsent
     if (data.emailReminders !== undefined) updateFields.emailReminders = data.emailReminders
+    if (data.recurringInterest !== undefined) updateFields.recurringInterest = data.recurringInterest === "none" ? null : data.recurringInterest
 
     await db.update(users).set(updateFields).where(eq(users.id, userId))
 

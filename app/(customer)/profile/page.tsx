@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
-import { Loader2, Save, User } from "lucide-react"
+import { Loader2, Save, User, Repeat } from "lucide-react"
 import { RoleBadge } from "@/components/layout/RoleBadge"
 import { AccountDataSection } from "@/components/account/AccountDataSection"
 
@@ -13,12 +13,15 @@ type Profile = {
   phone: string
   marketingConsent: boolean
   emailReminders: boolean
+  recurringInterest: string
 }
+
+const RECURRING_OPTIONS = ["none", "weekly", "biweekly", "monthly"] as const
 
 export default function CustomerProfilePage() {
   const t = useTranslations("customerProfilePage")
   const [profile, setProfile] = useState<Profile>({
-    firstName: "", lastName: "", email: "", phone: "", marketingConsent: false, emailReminders: true,
+    firstName: "", lastName: "", email: "", phone: "", marketingConsent: false, emailReminders: true, recurringInterest: "none",
   })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -37,6 +40,7 @@ export default function CustomerProfilePage() {
             phone: d.user.phone ?? "",
             marketingConsent: d.user.marketingConsent ?? false,
             emailReminders: d.user.emailReminders ?? true,
+            recurringInterest: d.user.recurringInterest ?? "none",
           })
         }
         setLoading(false)
@@ -55,6 +59,7 @@ export default function CustomerProfilePage() {
         phone: profile.phone,
         marketingConsent: profile.marketingConsent,
         emailReminders: profile.emailReminders,
+        recurringInterest: profile.recurringInterest,
       }),
     })
     setSaving(false)
@@ -150,6 +155,23 @@ export default function CustomerProfilePage() {
             <p className="text-xs text-[#6B7280]">{t("remindersDescription")}</p>
           </div>
         </label>
+
+        <div className="rounded-xl border border-[#E5EBF0] bg-[#F4FAF6] p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <Repeat className="h-4 w-4 text-[#2D7A5F]" />
+            <p className="text-sm font-semibold text-[#2B3441]">{t("recurringTitle")}</p>
+          </div>
+          <p className="text-xs text-[#6B7280] mb-3">{t("recurringDescription")}</p>
+          <select
+            value={profile.recurringInterest}
+            onChange={(e) => setProfile((p) => ({ ...p, recurringInterest: e.target.value }))}
+            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]"
+          >
+            {RECURRING_OPTIONS.map((opt) => (
+              <option key={opt} value={opt}>{t(`recurring_${opt}`)}</option>
+            ))}
+          </select>
+        </div>
 
         {error && <p className="text-sm text-red-500">{error}</p>}
 

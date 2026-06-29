@@ -53,6 +53,9 @@ export const jobPosts = pgTable(
     // service_location geography(Point,4326) added via raw SQL migration
     radiusKm: integer("radius_km").notNull().default(25),
     ecoRequirements: jsonb("eco_requirements").$type<string[]>().default([]),
+    // Recurring cadence the client wants (weekly|biweekly|monthly), null = one-time. Shown to cleaners
+    // on the job board so they know it's repeat work before bidding.
+    recurringFrequency: varchar("recurring_frequency", { length: 12 }),
     acceptedBidId: uuid("accepted_bid_id"),
     // Poster's client IP — self-bid fraud prevention (hide/block the poster's own jobs even from a
     // second account on the same connection).

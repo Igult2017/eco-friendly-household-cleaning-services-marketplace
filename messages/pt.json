@@ -898,7 +898,13 @@
     "ecoOptionFragranceFree": "Sem fragrância",
     "ecoOptionEnergySaving": "Métodos com poupança de energia",
     "posting": "A publicar...",
-    "submitButton": "Publicar pedido e receber propostas"
+    "submitButton": "Publicar pedido e receber propostas",
+    "recurringLabel": "Serviço recorrente (opcional)",
+    "recurringHint": "Escolhe uma frequência se precisares que esta limpeza se repita.",
+    "recurring_none": "Apenas uma vez",
+    "recurring_weekly": "Semanal",
+    "recurring_biweekly": "A cada 2 semanas",
+    "recurring_monthly": "Mensal"
   },
   "customerProfilePage": {
     "title": "O meu perfil",
@@ -919,7 +925,13 @@
     "savingButton": "A guardar...",
     "saveButton": "Guardar alterações",
     "remindersTitle": "Lembretes e atualizações de reservas",
-    "remindersDescription": "Envia-me por e-mail lembretes e pedidos de avaliação das minhas reservas."
+    "remindersDescription": "Envia-me por e-mail lembretes e pedidos de avaliação das minhas reservas.",
+    "recurringTitle": "Serviço recorrente",
+    "recurringDescription": "Diz aos profissionais se procuras uma limpeza regular e recorrente.",
+    "recurring_none": "Apenas uma vez",
+    "recurring_weekly": "Semanal",
+    "recurring_biweekly": "A cada 2 semanas",
+    "recurring_monthly": "Mensal"
   },
   "customerRecurringPage": {
     "title": "Reservas recorrentes",
@@ -1063,7 +1075,11 @@
     "noneNearbyBody": "Existem trabalhos em aberto, mas nenhum dentro do seu raio de serviço neste momento. Pode aumentar o seu raio de serviço no seu perfil.",
     "noneNearbyCta": "Ajustar raio de serviço",
     "onlyOwnTitle": "Ainda não há trabalhos para licitar",
-    "onlyOwnBody": "Os únicos trabalhos em aberto neste momento são os que você publicou — não pode licitar nos seus próprios trabalhos. Novos trabalhos de outros clientes aparecerão aqui."
+    "onlyOwnBody": "Os únicos trabalhos em aberto neste momento são os que você publicou — não pode licitar nos seus próprios trabalhos. Novos trabalhos de outros clientes aparecerão aqui.",
+    "recurringLabel": "Recorrente",
+    "recurring_weekly": "Semanal",
+    "recurring_biweekly": "A cada 2 semanas",
+    "recurring_monthly": "Mensal"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notificações",

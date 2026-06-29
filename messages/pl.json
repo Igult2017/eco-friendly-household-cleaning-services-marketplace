@@ -898,7 +898,13 @@
     "ecoOptionFragranceFree": "Bez zapachu",
     "ecoOptionEnergySaving": "Metody energooszczędne",
     "posting": "Publikowanie...",
-    "submitButton": "Opublikuj zlecenie i otrzymaj oferty"
+    "submitButton": "Opublikuj zlecenie i otrzymaj oferty",
+    "recurringLabel": "Usługa cykliczna (opcjonalnie)",
+    "recurringHint": "Wybierz częstotliwość, jeśli sprzątanie ma się powtarzać.",
+    "recurring_none": "Tylko jednorazowo",
+    "recurring_weekly": "Co tydzień",
+    "recurring_biweekly": "Co 2 tygodnie",
+    "recurring_monthly": "Co miesiąc"
   },
   "customerProfilePage": {
     "title": "Mój profil",
@@ -919,7 +925,13 @@
     "savingButton": "Zapisywanie...",
     "saveButton": "Zapisz zmiany",
     "remindersTitle": "Przypomnienia i aktualizacje rezerwacji",
-    "remindersDescription": "Wysyłaj mi e-mailem przypomnienia i prośby o opinie dotyczące moich rezerwacji."
+    "remindersDescription": "Wysyłaj mi e-mailem przypomnienia i prośby o opinie dotyczące moich rezerwacji.",
+    "recurringTitle": "Usługa cykliczna",
+    "recurringDescription": "Poinformuj osoby sprzątające, czy szukasz regularnego, cyklicznego sprzątania.",
+    "recurring_none": "Tylko jednorazowo",
+    "recurring_weekly": "Co tydzień",
+    "recurring_biweekly": "Co 2 tygodnie",
+    "recurring_monthly": "Co miesiąc"
   },
   "customerRecurringPage": {
     "title": "Rezerwacje cykliczne",
@@ -1063,7 +1075,11 @@
     "noneNearbyBody": "Są otwarte zlecenia, ale obecnie żadne w Twoim promieniu usług. Możesz zwiększyć promień usług w swoim profilu.",
     "noneNearbyCta": "Dostosuj promień usług",
     "onlyOwnTitle": "Brak zleceń do licytacji",
-    "onlyOwnBody": "Jedyne otwarte zlecenia w tej chwili to te, które sam opublikowałeś — nie możesz licytować własnych zleceń. Nowe zlecenia od innych klientów pojawią się tutaj."
+    "onlyOwnBody": "Jedyne otwarte zlecenia w tej chwili to te, które sam opublikowałeś — nie możesz licytować własnych zleceń. Nowe zlecenia od innych klientów pojawią się tutaj.",
+    "recurringLabel": "Cykliczne",
+    "recurring_weekly": "Co tydzień",
+    "recurring_biweekly": "Co 2 tygodnie",
+    "recurring_monthly": "Co miesiąc"
   },
   "providerProviderNotificationsPage": {
     "heading": "Powiadomienia",

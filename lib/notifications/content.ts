@@ -226,6 +226,17 @@ const NOTIF: Record<string, Record<string, S>> = {
     pl: { title: "Nowa rezerwacja!", body: "Masz nową rezerwację na {service} w dniu {datetime}." },
     pt: { title: "Nova reserva!", body: "Tens uma nova reserva de {service} em {datetime}." },
   },
+  // Same as new_booking_provider but the client requested RECURRING work — flag it to the cleaner.
+  new_booking_provider_recurring: {
+    en: { title: "New recurring booking!", body: "You have a new recurring booking for {service} on {datetime}. The client wants regular repeat cleaning." },
+    de: { title: "Neue wiederkehrende Buchung!", body: "Du hast eine neue wiederkehrende Buchung für {service} am {datetime}. Der Kunde wünscht regelmäßige Reinigung." },
+    fr: { title: "Nouvelle réservation récurrente !", body: "Vous avez une nouvelle réservation récurrente pour {service} le {datetime}. Le client souhaite un ménage régulier." },
+    es: { title: "¡Nueva reserva recurrente!", body: "Tienes una nueva reserva recurrente de {service} el {datetime}. El cliente quiere una limpieza periódica." },
+    it: { title: "Nuova prenotazione ricorrente!", body: "Hai una nuova prenotazione ricorrente per {service} il {datetime}. Il cliente vuole pulizie regolari." },
+    nl: { title: "Nieuwe terugkerende boeking!", body: "Je hebt een nieuwe terugkerende boeking voor {service} op {datetime}. De klant wil regelmatige schoonmaak." },
+    pl: { title: "Nowa cykliczna rezerwacja!", body: "Masz nową cykliczną rezerwację na {service} w dniu {datetime}. Klient chce regularnego sprzątania." },
+    pt: { title: "Nova reserva recorrente!", body: "Tens uma nova reserva recorrente de {service} em {datetime}. O cliente quer limpeza regular." },
+  },
   // Cleaner marked the job done → ask the client to confirm so payment is released (dual-confirm).
   client_confirm_request: {
     en: { title: "Confirm your cleaning is done", body: "Your cleaner marked the job complete. Please confirm to release payment." },
@@ -309,6 +320,7 @@ const PARAMS: Record<string, string[]> = {
   booking_reminder_client: ["datetime"],
   booking_cancelled_party: ["datetime"],
   new_booking_provider: ["service", "datetime"],
+  new_booking_provider_recurring: ["service", "datetime"],
   client_confirm_request: [],
   booking_reminder_provider: ["datetime"],
   booking_overdue_cleaner: ["datetime"],

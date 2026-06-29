@@ -31,15 +31,17 @@ export const onBookingCreated = inngest.createFunction(
       if (!provider) return
       const svc = booking.service?.name ?? "a service"
       const dt = new Date(booking.scheduledAt).toLocaleString("en-GB", { timeZone: provider?.timezone || "Europe/Berlin" })
+      // If the client asked for recurring work, tell the cleaner so up front (own localized variant).
+      const recurring = !!(booking as { requestedFrequency?: string | null }).requestedFrequency
       await db.insert(notifications).values({
         userId: provider.userId,
         type: "booking_confirmed",
-        title: "New Booking!",
-        body: `You have a new booking for ${svc} on ${dt}`,
+        title: recurring ? "New recurring booking!" : "New Booking!",
+        body: recurring ? `You have a new recurring booking for ${svc} on ${dt}` : `You have a new booking for ${svc} on ${dt}`,
         link: `/bookings/${bookingId}`,
         // Base booking_confirmed copy is client-perspective — use the provider variant so the cleaner
         // sees "New booking!" in their language, not "your booking is confirmed".
-        metadata: { variant: "new_booking_provider", service: svc, datetime: dt },
+        metadata: { variant: recurring ? "new_booking_provider_recurring" : "new_booking_provider", service: svc, datetime: dt },
       })
     })
 

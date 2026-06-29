@@ -28,6 +28,9 @@ export const users = pgTable(
     // Opt-out for non-critical emails (booking reminders + review requests). Critical transactional
     // emails (booking/payment confirmations) are always sent; in-app notifications are unaffected.
     emailReminders: boolean("email_reminders").notNull().default(true),
+    // Stated interest in recurring cleaning (none|weekly|biweekly|monthly) — pre-fills the booking
+    // frequency + tells cleaners the client wants repeat work.
+    recurringInterest: varchar("recurring_interest", { length: 12 }),
     dualRoleEnabled: boolean("dual_role_enabled").notNull().default(false),
     locale: varchar("locale", { length: 5 }), // detected at onboarding (IP country -> language); used for localized emails
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
