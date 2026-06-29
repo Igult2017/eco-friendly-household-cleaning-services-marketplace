@@ -32,7 +32,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     if (!provider) return NextResponse.json({ error: "Not a provider or account suspended" }, { status: 403 })
 
     const [booking] = await db
-      .select({ id: bookings.id, status: bookings.status, customerId: bookings.customerId, providerId: bookings.providerId, scheduledAt: bookings.scheduledAt, clientConfirmedAt: bookings.clientConfirmedAt })
+      .select({ id: bookings.id, status: bookings.status, customerId: bookings.customerId, providerId: bookings.providerId, scheduledAt: bookings.scheduledAt, scheduledEndAt: bookings.scheduledEndAt, clientConfirmedAt: bookings.clientConfirmedAt, overdueSince: bookings.overdueSince, subtotalAmount: bookings.subtotalAmount, providerPayout: bookings.providerPayout })
       .from(bookings)
       .where(and(eq(bookings.id, bookingId), eq(bookings.providerId, provider.id)))
 
@@ -68,6 +68,18 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       .returning({ id: bookings.id })
     if (updated.length === 0) {
       return NextResponse.json({ error: "Booking cannot be completed in its current state" }, { status: 422 })
+    }
+
+    // If the cleaner is completing an OVERDUE job, lock in the 5%/day late penalty (capped at their
+    // payout). It's applied at capture — the client is refunded that much. 0 if completed on time.
+    if (booking.overdueSince) {
+      const end = booking.scheduledEndAt ? new Date(booking.scheduledEndAt).getTime() : new Date(booking.scheduledAt).getTime()
+      const daysLate = Math.ceil(Math.max(0, Date.now() - end) / 86_400_000)
+      if (daysLate > 0) {
+        const pct = Math.min(100, 5 * daysLate)
+        const penalty = Math.min(Math.round((booking.subtotalAmount * pct) / 100), booking.providerPayout)
+        if (penalty > 0) await db.update(bookings).set({ latePenaltyAmount: penalty }).where(eq(bookings.id, bookingId))
+      }
     }
 
     // Dual-confirm: the cleaner has marked the job done. Payment is released to them only once the

@@ -248,6 +248,28 @@ const NOTIF: Record<string, Record<string, S>> = {
     pl: { title: "Nadchodzące zlecenie sprzątania", body: "Masz zlecenie sprzątania w dniu {datetime}." },
     pt: { title: "Trabalho de limpeza a chegar", body: "Tens um trabalho de limpeza em {datetime}." },
   },
+  // Job is overdue — cleaner perspective (a 5%/day late fee applies until marked done).
+  booking_overdue_cleaner: {
+    en: { title: "Your job is overdue", body: "Your cleaning job on {datetime} is overdue. Please complete it as soon as possible — a 5%/day late fee applies until it is marked done." },
+    de: { title: "Dein Auftrag ist überfällig", body: "Dein Reinigungsauftrag am {datetime} ist überfällig. Bitte schließe ihn so schnell wie möglich ab — es fällt eine Gebühr von 5 % pro Tag an, bis er als erledigt markiert ist." },
+    fr: { title: "Votre mission est en retard", body: "Votre mission de nettoyage du {datetime} est en retard. Veuillez la terminer dès que possible — des frais de retard de 5 %/jour s'appliquent jusqu'à ce qu'elle soit marquée comme terminée." },
+    es: { title: "Tu trabajo está atrasado", body: "Tu trabajo de limpieza del {datetime} está atrasado. Complétalo lo antes posible — se aplica un recargo del 5 %/día hasta que se marque como completado." },
+    it: { title: "Il tuo lavoro è in ritardo", body: "Il tuo lavoro di pulizia del {datetime} è in ritardo. Completalo il prima possibile — si applica una penale del 5%/giorno finché non viene contrassegnato come completato." },
+    nl: { title: "Je klus is te laat", body: "Je schoonmaakklus op {datetime} is te laat. Rond hem zo snel mogelijk af — er geldt een boete van 5%/dag totdat hij als voltooid is gemarkeerd." },
+    pl: { title: "Twoje zlecenie jest zaległe", body: "Twoje zlecenie sprzątania z {datetime} jest zaległe. Wykonaj je jak najszybciej — naliczana jest opłata 5%/dzień, dopóki nie zostanie oznaczone jako wykonane." },
+    pt: { title: "O teu trabalho está em atraso", body: "O teu trabalho de limpeza de {datetime} está em atraso. Conclui-o o mais rápido possível — aplica-se uma taxa de 5%/dia até ser marcado como concluído." },
+  },
+  // Job is overdue — client perspective.
+  booking_overdue_client: {
+    en: { title: "Your cleaning is overdue", body: "Your cleaner hasn't completed the job scheduled for {datetime} yet. We're following up with them." },
+    de: { title: "Deine Reinigung ist überfällig", body: "Deine Reinigungskraft hat den für {datetime} geplanten Auftrag noch nicht abgeschlossen. Wir haken bei ihr nach." },
+    fr: { title: "Votre ménage est en retard", body: "Votre intervenant n'a pas encore terminé la mission prévue le {datetime}. Nous le relançons." },
+    es: { title: "Tu limpieza está atrasada", body: "Tu profesional aún no ha completado el trabajo programado para el {datetime}. Estamos haciéndole seguimiento." },
+    it: { title: "La tua pulizia è in ritardo", body: "Il tuo addetto non ha ancora completato il lavoro previsto per il {datetime}. Lo stiamo sollecitando." },
+    nl: { title: "Je schoonmaak is te laat", body: "Je schoonmaker heeft de klus van {datetime} nog niet afgerond. We nemen contact met hen op." },
+    pl: { title: "Twoje sprzątanie jest zaległe", body: "Twoja osoba sprzątająca nie ukończyła jeszcze zlecenia zaplanowanego na {datetime}. Kontaktujemy się z nią." },
+    pt: { title: "A tua limpeza está em atraso", body: "O teu profissional ainda não concluiu o trabalho agendado para {datetime}. Estamos a contactá-lo." },
+  },
 }
 
 // Placeholders each type's strings expect. A type localizes only if metadata supplies all of them.
@@ -267,6 +289,8 @@ const PARAMS: Record<string, string[]> = {
   new_booking_provider: ["service", "datetime"],
   client_confirm_request: [],
   booking_reminder_provider: ["datetime"],
+  booking_overdue_cleaner: ["datetime"],
+  booking_overdue_client: ["datetime"],
 }
 
 /**

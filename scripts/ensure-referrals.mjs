@@ -292,6 +292,13 @@ ALTER TABLE bookings ADD COLUMN IF NOT EXISTS provider_completed_at timestamptz;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS client_confirmed_at timestamptz;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS payment_released_by varchar(20);
 
+-- Overdue tracking: a job past its scheduled end that the cleaner hasn't marked done. The cleaner
+-- loses 5%/day (late_penalty_amount, capped at their payout) credited back to the client.
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS overdue_since timestamptz;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS overdue_escalated_at timestamptz;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS last_overdue_nudge_at timestamptz;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS late_penalty_amount integer NOT NULL DEFAULT 0;
+
 -- Eco-store: admin-curated affiliate products + business starter packs (outbound purchase links).
 DO $$ BEGIN CREATE TYPE store_product_type AS ENUM ('product','starter_pack'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN CREATE TYPE store_product_status AS ENUM ('draft','published'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;

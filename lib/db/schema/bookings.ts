@@ -75,6 +75,11 @@ export const bookings = pgTable(
     providerCompletedAt: timestamp("provider_completed_at", { withTimezone: true }),
     clientConfirmedAt: timestamp("client_confirmed_at", { withTimezone: true }),
     paymentReleasedBy: varchar("payment_released_by", { length: 20 }),
+    // Overdue tracking — cleaner loses 5%/day (late_penalty_amount) once past the scheduled end.
+    overdueSince: timestamp("overdue_since", { withTimezone: true }),
+    overdueEscalatedAt: timestamp("overdue_escalated_at", { withTimezone: true }),
+    lastOverdueNudgeAt: timestamp("last_overdue_nudge_at", { withTimezone: true }),
+    latePenaltyAmount: integer("late_penalty_amount").notNull().default(0),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },

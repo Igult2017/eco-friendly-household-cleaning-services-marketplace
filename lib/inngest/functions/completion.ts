@@ -14,6 +14,13 @@ export const onBookingCompleted = inngest.createFunction(
 
     // Split capture and DB write into separate steps so a DB failure on retry
     // doesn't re-hit Stripe — the idempotency key ensures Stripe deduplicates.
+    // Late penalty (5%/day) the cleaner accrued by completing an overdue job — computed at /complete.
+    // Applied here: client is charged that much less and the cleaner's transfer is reduced by it.
+    const penalty = await step.run("fetch-penalty", async () => {
+      const [bk] = await db.select({ p: bookings.latePenaltyAmount }).from(bookings).where(eq(bookings.id, bookingId))
+      return Number(bk?.p ?? 0)
+    })
+
     const captureResult = await step.run("stripe-capture", async () => {
       // Don't capture a card on a booking that was disputed/cancelled after /complete fired — the
       // dispute-open route allows opening a dispute while status is pending_capture. Re-check first.
@@ -21,9 +28,10 @@ export const onBookingCompleted = inngest.createFunction(
       const [bk] = await db.select({ status: bookings.status }).from(bookings).where(eq(bookings.id, bookingId))
       if (!bk || bk.status !== "pending_capture") return null
       const pi = await stripe.paymentIntents.retrieve(paymentIntentId)
-      // Normal path: the manual-capture hold is still alive → capture it.
+      // Normal path: the manual-capture hold is still alive → capture it (minus any late penalty).
       if (pi.status === "requires_capture") {
-        return stripe.paymentIntents.capture(paymentIntentId, {}, { idempotencyKey: `capture-${paymentIntentId}` })
+        const opts = penalty > 0 ? { amount_to_capture: pi.amount - penalty, application_fee_amount: pi.application_fee_amount ?? undefined } : {}
+        return stripe.paymentIntents.capture(paymentIntentId, opts, { idempotencyKey: `capture-${paymentIntentId}` })
       }
       // Already captured (an Inngest retry) → reuse it.
       if (pi.status === "succeeded") return pi
@@ -36,7 +44,7 @@ export const onBookingCompleted = inngest.createFunction(
         const destId = typeof dest === "string" ? dest : dest?.id
         if (!pmId || !custId || !destId) return null
         return stripe.paymentIntents.create({
-          amount: pi.amount,
+          amount: pi.amount - penalty,
           currency: pi.currency,
           customer: custId,
           payment_method: pmId,
@@ -70,6 +78,10 @@ export const onBookingCompleted = inngest.createFunction(
       // performed the flip, so it stays idempotent across Inngest retries.
       if (updated.length > 0) {
         await db.update(providers).set({ totalJobsCompleted: sql`total_jobs_completed + 1` }).where(eq(providers.id, providerId))
+        // Restate the money fields so earnings + receipts reflect the late penalty that was applied.
+        if (penalty > 0) {
+          await db.update(bookings).set({ totalAmount: sql`total_amount - ${penalty}`, providerPayout: sql`provider_payout - ${penalty}` }).where(eq(bookings.id, bookingId))
+        }
       }
     })
 

@@ -145,3 +145,21 @@ export function reminderTomorrowEmail(locale: string | null | undefined, v: { na
     <p style="${THX}">${t.thanks}</p>`
   return { subject: t.subject, html: shell(inner) }
 }
+
+// Cleaner "your job is overdue" email. {number}, {date}.
+const OVERDUE: Record<string, { subject: string; heading: string; body: string }> = {
+  en: { subject: "Your job is overdue — {number}", heading: "Your job is overdue", body: "Your cleaning job {number} scheduled for {date} is overdue. Please complete it as soon as possible — a late fee of 5% per day applies until it is marked done." },
+  de: { subject: "Dein Auftrag ist überfällig — {number}", heading: "Dein Auftrag ist überfällig", body: "Dein Reinigungsauftrag {number} für {date} ist überfällig. Bitte schließe ihn so schnell wie möglich ab — es fällt eine Gebühr von 5 % pro Tag an, bis er als erledigt markiert ist." },
+  fr: { subject: "Votre mission est en retard — {number}", heading: "Votre mission est en retard", body: "Votre mission de nettoyage {number} prévue le {date} est en retard. Veuillez la terminer dès que possible — des frais de retard de 5 %/jour s'appliquent jusqu'à ce qu'elle soit marquée comme terminée." },
+  es: { subject: "Tu trabajo está atrasado — {number}", heading: "Tu trabajo está atrasado", body: "Tu trabajo de limpieza {number} programado para el {date} está atrasado. Complétalo lo antes posible — se aplica un recargo del 5 %/día hasta que se marque como completado." },
+  it: { subject: "Il tuo lavoro è in ritardo — {number}", heading: "Il tuo lavoro è in ritardo", body: "Il tuo lavoro di pulizia {number} previsto per il {date} è in ritardo. Completalo il prima possibile — si applica una penale del 5%/giorno finché non viene contrassegnato come completato." },
+  nl: { subject: "Je klus is te laat — {number}", heading: "Je klus is te laat", body: "Je schoonmaakklus {number} gepland voor {date} is te laat. Rond hem zo snel mogelijk af — er geldt een boete van 5%/dag totdat hij als voltooid is gemarkeerd." },
+  pl: { subject: "Twoje zlecenie jest zaległe — {number}", heading: "Twoje zlecenie jest zaległe", body: "Twoje zlecenie sprzątania {number} zaplanowane na {date} jest zaległe. Wykonaj je jak najszybciej — naliczana jest opłata 5%/dzień, dopóki nie zostanie oznaczone jako wykonane." },
+  pt: { subject: "O teu trabalho está em atraso — {number}", heading: "O teu trabalho está em atraso", body: "O teu trabalho de limpeza {number} agendado para {date} está em atraso. Conclui-o o mais rápido possível — aplica-se uma taxa de 5%/dia até ser marcado como concluído." },
+}
+
+export function overdueEmail(locale: string | null | undefined, v: { number: string; date: string }) {
+  const t = OVERDUE[loc(locale)] ?? OVERDUE[defaultLocale]
+  const inner = `<h1 style="${H1S}">${t.heading}</h1><p style="${PS}">${sub(t.body, { number: esc(v.number), date: esc(v.date) })}</p>`
+  return { subject: sub(t.subject, { number: v.number }), html: shell(inner) }
+}
