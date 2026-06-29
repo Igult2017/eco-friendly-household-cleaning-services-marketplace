@@ -5,6 +5,7 @@ import { eq, and, inArray, lt } from "drizzle-orm"
 import { resend, FROM } from "@/lib/resend/client"
 import { overdueEmail } from "@/lib/resend/transactionalEmails"
 import { pusherServer } from "@/lib/pusher/server"
+import { attemptReassign } from "@/lib/bookings/reassign"
 
 const ACTIVE = ["payment_authorized", "confirmed", "in_progress"] as const
 const DAY = 86_400_000
@@ -76,18 +77,19 @@ export const bookingOverdueSweep = inngest.createFunction(
           }
         }
 
-        // Escalate to admin once, at 2+ days overdue (Part 3 reassignment will hook in here).
+        // At 2+ days overdue: try to AUTO-REASSIGN to another nearby cleaner, then tell admin the
+        // outcome. Reassign releases the old hold + creates a fresh booking (nothing was captured).
         const overdueSinceMs = first ? now : new Date(b.overdueSince!).getTime()
         if (!b.overdueEscalatedAt && now - overdueSinceMs >= 2 * DAY) {
           await db.update(bookings).set({ overdueEscalatedAt: new Date() }).where(eq(bookings.id, b.id))
-          try { await pusherServer.trigger("private-admin", "booking-overdue", { bookingId: b.id }) } catch { /* non-fatal */ }
+          const result = await attemptReassign(b.id).catch((e) => ({ ok: false, reason: (e as Error).message }))
+          try { await pusherServer.trigger("private-admin", "booking-overdue", { bookingId: b.id, reassigned: result.ok }) } catch { /* non-fatal */ }
           const adminEmail = process.env.ADMIN_EMAIL
           if (adminEmail) {
-            await resend.emails.send({
-              from: FROM, to: adminEmail,
-              subject: `Booking ${b.bookingNumber} is 2+ days overdue`,
-              html: `<p>Booking <strong>${b.bookingNumber}</strong> (cleaner: ${b.providerBusinessName ?? "—"}) is more than 2 days overdue and still not completed. Consider reassigning it to another nearby cleaner.</p>`,
-            })
+            const html = result.ok
+              ? `<p>Booking <strong>${b.bookingNumber}</strong> was 2+ days overdue and has been <strong>auto-reassigned</strong> to another nearby cleaner.</p>`
+              : `<p>Booking <strong>${b.bookingNumber}</strong> (cleaner: ${b.providerBusinessName ?? "—"}) is 2+ days overdue. Auto-reassign did not happen (${"reason" in result ? result.reason : "unknown"}). Please resolve it manually.</p>`
+            await resend.emails.send({ from: FROM, to: adminEmail, subject: `Booking ${b.bookingNumber} overdue — ${result.ok ? "reassigned" : "needs attention"}`, html })
           }
         }
       })

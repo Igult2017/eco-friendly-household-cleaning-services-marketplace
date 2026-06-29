@@ -270,6 +270,28 @@ const NOTIF: Record<string, Record<string, S>> = {
     pl: { title: "Twoje sprzątanie jest zaległe", body: "Twoja osoba sprzątająca nie ukończyła jeszcze zlecenia zaplanowanego na {datetime}. Kontaktujemy się z nią." },
     pt: { title: "A tua limpeza está em atraso", body: "O teu profissional ainda não concluiu o trabalho agendado para {datetime}. Estamos a contactá-lo." },
   },
+  // Overdue booking auto-reassigned to another cleaner — client perspective.
+  booking_reassigned_client: {
+    en: { title: "Booking reassigned", body: "Your overdue booking has been reassigned to another available cleaner. Check your new booking for the details." },
+    de: { title: "Buchung neu zugewiesen", body: "Deine überfällige Buchung wurde einer anderen verfügbaren Reinigungskraft zugewiesen. Details findest du in deiner neuen Buchung." },
+    fr: { title: "Réservation réattribuée", body: "Votre réservation en retard a été réattribuée à un autre intervenant disponible. Consultez votre nouvelle réservation pour les détails." },
+    es: { title: "Reserva reasignada", body: "Tu reserva atrasada se ha reasignado a otro profesional disponible. Consulta tu nueva reserva para ver los detalles." },
+    it: { title: "Prenotazione riassegnata", body: "La tua prenotazione in ritardo è stata riassegnata a un altro addetto disponibile. Controlla la nuova prenotazione per i dettagli." },
+    nl: { title: "Boeking opnieuw toegewezen", body: "Je te late boeking is opnieuw toegewezen aan een andere beschikbare schoonmaker. Bekijk je nieuwe boeking voor de details." },
+    pl: { title: "Rezerwacja przypisana ponownie", body: "Twoja zaległa rezerwacja została przypisana innej dostępnej osobie sprzątającej. Szczegóły znajdziesz w nowej rezerwacji." },
+    pt: { title: "Reserva reatribuída", body: "A tua reserva em atraso foi reatribuída a outro profissional disponível. Consulta a tua nova reserva para os detalhes." },
+  },
+  // Overdue booking removed from the original cleaner and reassigned — cleaner perspective.
+  booking_reassigned_away: {
+    en: { title: "Booking removed", body: "An overdue booking was removed from your schedule and reassigned to another cleaner." },
+    de: { title: "Buchung entfernt", body: "Eine überfällige Buchung wurde aus deinem Kalender entfernt und einer anderen Reinigungskraft zugewiesen." },
+    fr: { title: "Réservation retirée", body: "Une réservation en retard a été retirée de votre planning et réattribuée à un autre intervenant." },
+    es: { title: "Reserva eliminada", body: "Se eliminó de tu agenda una reserva atrasada y se reasignó a otro profesional." },
+    it: { title: "Prenotazione rimossa", body: "Una prenotazione in ritardo è stata rimossa dal tuo calendario e riassegnata a un altro addetto." },
+    nl: { title: "Boeking verwijderd", body: "Een te late boeking is uit je agenda verwijderd en aan een andere schoonmaker toegewezen." },
+    pl: { title: "Rezerwacja usunięta", body: "Zaległa rezerwacja została usunięta z Twojego harmonogramu i przypisana innej osobie sprzątającej." },
+    pt: { title: "Reserva removida", body: "Uma reserva em atraso foi removida do teu calendário e reatribuída a outro profissional." },
+  },
 }
 
 // Placeholders each type's strings expect. A type localizes only if metadata supplies all of them.
