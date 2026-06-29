@@ -142,7 +142,8 @@
     "link_legalNotice": "Impressum",
     "copyright": "© 2026 DORIXÉ. Alle Rechte vorbehalten.",
     "compliance": "Registriert in der EU · DSGVO-konform · Unterstützt von Stripe",
-    "cookieSettings": "Cookie-Einstellungen"
+    "cookieSettings": "Cookie-Einstellungen",
+    "link_contact": "Hilfe & Support"
   },
   "homePage": {
     "metaTitle": "DORIXÉ — Sauberes Zuhause. Grüne Zukunft.",
@@ -1798,5 +1799,18 @@
     "deleteNote": "Dies löscht dein Konto dauerhaft und meldet dich ab. Einige Daten können aufbewahrt werden, sofern gesetzlich vorgeschrieben.",
     "deleteConfirm": "Dein Konto löschen? Dies kann nicht rückgängig gemacht werden.",
     "deleteError": "Konto konnte nicht gelöscht werden. Bitte versuche es erneut."
+  },
+  "contactPage": {
+    "title": "Hilfe & Support",
+    "subtitle": "Hast du eine Frage oder ein Problem? Schreib uns — wir antworten per E-Mail.",
+    "nameLabel": "Dein Name",
+    "emailLabel": "Deine E-Mail",
+    "subjectLabel": "Betreff",
+    "messageLabel": "Nachricht",
+    "send": "Nachricht senden",
+    "sending": "Wird gesendet…",
+    "successTitle": "Nachricht gesendet",
+    "successBody": "Danke — wir melden uns per E-Mail.",
+    "error": "Deine Nachricht konnte nicht gesendet werden. Bitte versuche es erneut."
   }
 }

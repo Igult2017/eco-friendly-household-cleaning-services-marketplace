@@ -142,7 +142,8 @@
     "link_legalNotice": "Mentions légales",
     "copyright": "© 2026 DORIXÉ. Tous droits réservés.",
     "compliance": "Enregistré dans l'UE · Conforme au RGPD · Propulsé par Stripe",
-    "cookieSettings": "Paramètres des cookies"
+    "cookieSettings": "Paramètres des cookies",
+    "link_contact": "Aide et assistance"
   },
   "homePage": {
     "metaTitle": "DORIXÉ — Maison propre. Avenir vert.",
@@ -1798,5 +1799,18 @@
     "deleteNote": "Cela supprime définitivement votre compte et vous déconnecte. Certaines données peuvent être conservées lorsque la loi l exige.",
     "deleteConfirm": "Supprimer votre compte ? Cette action est irréversible.",
     "deleteError": "Impossible de supprimer votre compte. Veuillez réessayer."
+  },
+  "contactPage": {
+    "title": "Aide et assistance",
+    "subtitle": "Une question ou un problème ? Envoyez-nous un message, nous répondrons par e-mail.",
+    "nameLabel": "Votre nom",
+    "emailLabel": "Votre e-mail",
+    "subjectLabel": "Objet",
+    "messageLabel": "Message",
+    "send": "Envoyer le message",
+    "sending": "Envoi…",
+    "successTitle": "Message envoyé",
+    "successBody": "Merci — nous vous répondrons par e-mail.",
+    "error": "Impossible d envoyer votre message. Veuillez réessayer."
   }
 }

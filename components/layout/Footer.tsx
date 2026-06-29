@@ -22,6 +22,7 @@ const SECTIONS = [
       { key: "becomeACleaner", href: "/become-a-cleaner" },
       { key: "affiliateProgramme", href: "/affiliate" },
       { key: "blog", href: "/blog" },
+      { key: "contact", href: "/contact" },
     ],
   },
   {

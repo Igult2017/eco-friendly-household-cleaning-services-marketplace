@@ -142,7 +142,8 @@
     "link_legalNotice": "Juridische kennisgeving",
     "copyright": "© 2026 DORIXÉ. Alle rechten voorbehouden.",
     "compliance": "Geregistreerd in de EU · AVG-conform · Mogelijk gemaakt door Stripe",
-    "cookieSettings": "Cookie-instellingen"
+    "cookieSettings": "Cookie-instellingen",
+    "link_contact": "Hulp en ondersteuning"
   },
   "homePage": {
     "metaTitle": "DORIXÉ — Schoon huis. Groene toekomst.",
@@ -1798,5 +1799,18 @@
     "deleteNote": "Hiermee wordt je account permanent verwijderd en word je afgemeld. Sommige gegevens kunnen worden bewaard waar de wet dit vereist.",
     "deleteConfirm": "Je account verwijderen? Dit kan niet ongedaan worden gemaakt.",
     "deleteError": "Je account kon niet worden verwijderd. Probeer het opnieuw."
+  },
+  "contactPage": {
+    "title": "Hulp en ondersteuning",
+    "subtitle": "Een vraag of een probleem? Stuur ons een bericht, we reageren per e-mail.",
+    "nameLabel": "Je naam",
+    "emailLabel": "Je e-mail",
+    "subjectLabel": "Onderwerp",
+    "messageLabel": "Bericht",
+    "send": "Bericht verzenden",
+    "sending": "Verzenden…",
+    "successTitle": "Bericht verzonden",
+    "successBody": "Bedankt — we reageren per e-mail.",
+    "error": "Je bericht kon niet worden verzonden. Probeer het opnieuw."
   }
 }
