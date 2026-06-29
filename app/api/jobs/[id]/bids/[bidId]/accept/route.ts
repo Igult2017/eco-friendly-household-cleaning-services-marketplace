@@ -112,6 +112,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
         title: "Your bid was accepted!",
         body: `A customer accepted your bid of €${(bid.amount / 100).toFixed(2)}. A booking is being prepared.`,
         link: "/provider/bookings",
+        metadata: { amount: `€${(bid.amount / 100).toFixed(2)}` },
       })
     }
 

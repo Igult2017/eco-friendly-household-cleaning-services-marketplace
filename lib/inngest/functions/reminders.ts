@@ -74,7 +74,7 @@ export const bookingReminders = inngest.createFunction(
           title: "Booking tomorrow",
           body: `You have a cleaning job scheduled for tomorrow at ${scheduledTime.toLocaleString("en-GB")}.`,
           link: `/bookings/${bookingId}`,
-          metadata: { idempotencyKey },
+          metadata: { idempotencyKey, datetime: scheduledTime.toLocaleString("en-GB") },
         })
       })
     }

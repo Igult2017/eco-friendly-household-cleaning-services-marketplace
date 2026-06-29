@@ -41,6 +41,7 @@ export const onDisputeOpened = inngest.createFunction(
         title: "A dispute has been opened",
         body: `Reason: ${dispute.reason}. Please respond within 72 hours.`,
         link: `/bookings/${bookingId}`,
+        metadata: { reason: String(dispute.reason) },
       })
     })
 

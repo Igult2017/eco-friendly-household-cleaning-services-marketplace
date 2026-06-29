@@ -106,6 +106,7 @@ export async function POST(req: Request, { params }: RouteContext) {
       title: "New message",
       body: body.slice(0, 100),
       link: notifLink,
+      metadata: { message: body.slice(0, 100) },
     })
 
     // Trigger Pusher event — non-fatal if it fails

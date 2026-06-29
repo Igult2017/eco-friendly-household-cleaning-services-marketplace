@@ -119,6 +119,7 @@ export const recurringBookingCron = inngest.createFunction(
             title: "Recurring booking skipped",
             body: "Your recurring cleaner is temporarily unavailable, so this cycle was skipped. We'll try again next time.",
             link: `/dashboard`,
+            metadata: { variant: "recurring_skipped" },
           })
           return
         }
@@ -219,6 +220,7 @@ export const recurringBookingCron = inngest.createFunction(
                 title: "Recurring booking payment failed",
                 body: `We couldn't charge your saved card for the booking on ${notifBody}. Please update your payment method to keep your recurring schedule active.`,
                 link: `/dashboard`,
+                metadata: { variant: "recurring_payment_failed", datetime: notifBody },
               }
             : {
                 userId: schedule.customerId,
@@ -226,6 +228,7 @@ export const recurringBookingCron = inngest.createFunction(
                 title: "Recurring booking scheduled",
                 body: `Your recurring booking has been scheduled for ${notifBody}.`,
                 link: `/bookings/${newBooking.id}`,
+                metadata: { datetime: notifBody },
               }
         )
 

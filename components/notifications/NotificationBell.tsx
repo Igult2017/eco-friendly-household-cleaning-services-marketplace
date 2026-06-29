@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from "react"
 import { Bell } from "lucide-react"
 import Link from "next/link"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
+import { localizeNotification } from "@/lib/notifications/content"
 
 type Notification = {
   id: string
@@ -13,10 +14,12 @@ type Notification = {
   link: string | null
   isRead: boolean
   createdAt: string
+  metadata: Record<string, string> | null
 }
 
 export function NotificationBell() {
   const t = useTranslations("compNotificationsNotificationBell")
+  const locale = useLocale()
   const [open, setOpen] = useState(false)
   const [notifs, setNotifs] = useState<Notification[]>([])
   const ref = useRef<HTMLDivElement>(null)
@@ -73,6 +76,7 @@ export function NotificationBell() {
             ) : (
               notifs.map((n) => {
                 const Wrapper = n.link ? Link : "div" as any
+                const { title, body } = localizeNotification(n.type, locale, (n.metadata as Record<string, string> | null) ?? null, n.title, n.body)
                 return (
                   <Wrapper
                     key={n.id}
@@ -83,8 +87,8 @@ export function NotificationBell() {
                     <div className="flex items-start gap-3">
                       {!n.isRead && <span className="mt-1.5 h-2 w-2 rounded-full bg-[#2D7A5F] shrink-0" />}
                       <div className={!n.isRead ? "" : "ml-5"}>
-                        <p className="text-sm font-medium text-[#2B3441]">{n.title}</p>
-                        <p className="text-xs text-[#6B7280] mt-0.5 line-clamp-2">{n.body}</p>
+                        <p className="text-sm font-medium text-[#2B3441]">{title}</p>
+                        <p className="text-xs text-[#6B7280] mt-0.5 line-clamp-2">{body}</p>
                         <p className="text-[10px] text-[#6B7280] mt-1">{new Date(n.createdAt).toLocaleString("de-DE")}</p>
                       </div>
                     </div>

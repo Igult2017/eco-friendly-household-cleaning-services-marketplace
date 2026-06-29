@@ -8,7 +8,8 @@ import { eq, desc } from "drizzle-orm"
 import Link from "next/link"
 import { Bell, Briefcase, CheckCircle2, DollarSign, AlertTriangle, Info } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { getTranslations } from "next-intl/server"
+import { getTranslations, getLocale } from "next-intl/server"
+import { localizeNotification } from "@/lib/notifications/content"
 
 const TYPE_ICON: Record<string, React.ElementType> = {
   new_job_request:   Briefcase,
@@ -33,6 +34,7 @@ function timeAgo(d: Date | string, t: (key: string, values?: Record<string, stri
 
 export default async function ProviderNotificationsPage() {
   const t = await getTranslations("providerProviderNotificationsPage")
+  const locale = await getLocale()
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
 
@@ -71,6 +73,13 @@ export default async function ProviderNotificationsPage() {
         <div className="bg-white rounded-2xl border border-[#E5EBF0] overflow-hidden divide-y divide-[#F0F4F8]">
           {notifs.map((n) => {
             const Icon = TYPE_ICON[n.type] ?? Info
+            const { title, body } = localizeNotification(
+              n.type,
+              locale,
+              (n.metadata as Record<string, string> | null) ?? null,
+              n.title,
+              n.body,
+            )
             const inner = (
               <div className={cn("flex items-start gap-3 px-5 py-4", !n.isRead && "bg-[#F4FAF6]")}>
                 <div className="relative flex-shrink-0 mt-0.5">
@@ -82,8 +91,8 @@ export default async function ProviderNotificationsPage() {
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-[#2B3441]">{n.title}</p>
-                  <p className="text-xs text-[#6B7280] leading-snug mt-0.5">{n.body}</p>
+                  <p className="text-sm font-medium text-[#2B3441]">{title}</p>
+                  <p className="text-xs text-[#6B7280] leading-snug mt-0.5">{body}</p>
                 </div>
                 <span className="text-xs text-[#9CA3AF] flex-shrink-0">{timeAgo(n.createdAt, t)}</span>
               </div>

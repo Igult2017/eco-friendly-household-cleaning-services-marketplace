@@ -7,8 +7,9 @@ import { notifications } from "@/lib/db/schema"
 import { eq, desc } from "drizzle-orm"
 import type { Metadata } from "next"
 import Link from "next/link"
-import { getTranslations } from "next-intl/server"
+import { getTranslations, getLocale } from "next-intl/server"
 import { MarkAllReadButton } from "@/components/notifications/MarkAllReadButton"
+import { localizeNotification } from "@/lib/notifications/content"
 
 export const metadata: Metadata = { title: "Notifications — DORIXÉ" }
 
@@ -29,6 +30,7 @@ export default async function NotificationsPage() {
   if (!userId) redirect("/sign-in")
 
   const t = await getTranslations("customerNotificationsPage")
+  const locale = await getLocale()
 
   let rows: Row[] = []
   try {
@@ -65,17 +67,24 @@ export default async function NotificationsPage() {
               day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",
             })
             const rowClass = `flex items-start gap-4 px-5 py-4 transition-colors hover:bg-[#F4FAF6] ${!n.isRead ? "bg-[#F4FAF6]/50" : ""}`
+            const { title, body } = localizeNotification(
+              n.type,
+              locale,
+              (n.metadata as Record<string, string> | null) ?? null,
+              n.title,
+              n.body,
+            )
             const inner = (
               <>
                 <span className="mt-0.5 flex-shrink-0 text-xl">{TYPE_ICON[n.type] ?? "🔔"}</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <p className={`text-sm text-[#2B3441] ${!n.isRead ? "font-semibold" : "font-medium"}`}>
-                      {n.title}
+                      {title}
                     </p>
                     {!n.isRead && <span className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-[#2D7A5F]" />}
                   </div>
-                  <p className="mt-0.5 text-sm text-[#6B7280] leading-relaxed">{n.body}</p>
+                  <p className="mt-0.5 text-sm text-[#6B7280] leading-relaxed">{body}</p>
                   <p className="mt-1 text-xs text-[#9CA3AF]">{date}</p>
                 </div>
               </>

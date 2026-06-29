@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Bell } from "lucide-react"
-import { getTranslations } from "next-intl/server"
+import { getTranslations, getLocale } from "next-intl/server"
+import { localizeNotification } from "@/lib/notifications/content"
 
 const TYPE_ICON: Record<string, string> = {
   booking_confirmed:        "📅",
@@ -31,6 +32,7 @@ type Notif = {
   type: string
   title: string
   body: string
+  metadata: Record<string, string> | null
   isRead: boolean
   createdAt: Date
   link: string | null
@@ -38,6 +40,7 @@ type Notif = {
 
 export async function DashboardNotifications({ notifications }: { notifications: Notif[] }) {
   const t = await getTranslations("compCustomerDashboardNotifications")
+  const locale = await getLocale()
   const unread = notifications.filter(n => !n.isRead).length
 
   return (
@@ -62,15 +65,16 @@ export async function DashboardNotifications({ notifications }: { notifications:
       ) : (
         <div className="divide-y divide-gray-50">
           {notifications.slice(0, 5).map(n => {
+            const { title, body } = localizeNotification(n.type, locale, (n.metadata as Record<string, string> | null) ?? null, n.title, n.body)
             const rowClass = `flex items-start gap-3 px-5 py-3 transition-colors hover:bg-[#F4FAF6] ${!n.isRead ? "bg-[#F4FAF6]/60" : ""}`
             const inner = (
               <>
                 <span className="mt-0.5 flex-shrink-0 text-base">{TYPE_ICON[n.type] ?? "🔔"}</span>
                 <div className="flex-1 min-w-0">
                   <p className={`truncate text-sm text-[#2B3441] ${!n.isRead ? "font-semibold" : "font-medium"}`}>
-                    {n.title}
+                    {title}
                   </p>
-                  <p className="mt-0.5 truncate text-xs text-[#9CA3AF]">{n.body}</p>
+                  <p className="mt-0.5 truncate text-xs text-[#9CA3AF]">{body}</p>
                 </div>
                 {!n.isRead && <span className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-[#2D7A5F]" />}
               </>

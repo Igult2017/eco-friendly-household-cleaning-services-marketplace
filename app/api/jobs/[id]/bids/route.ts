@@ -98,6 +98,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       title: `New bid from ${provider.businessName}`,
       body: `€${(data.amount / 100).toFixed(2)} — ${data.message?.slice(0, 80) ?? "No message"}`,
       link: `/jobs/${jobPostId}`,
+      metadata: {
+        name: provider.businessName,
+        amount: `€${(data.amount / 100).toFixed(2)}`,
+        message: data.message?.slice(0, 80) ?? "No message",
+      },
     })
 
     try {

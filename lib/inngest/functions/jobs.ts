@@ -49,13 +49,17 @@ export const onJobPosted = inngest.createFunction(
       }
 
       // Batch-insert all notifications in one round-trip instead of N sequential inserts.
-      const notifValues = nearby.map((p) => ({
-        userId: p.userId,
-        type:   "new_job_request" as const,
-        title:  `New ${category} job in ${city}`,
-        body:   `A customer needs ${category} help in ${city}${budgetText}. They are ${formatDistance((p.distanceMeters ?? 0) / 1000, p.country || country)} from you — be one of the first to bid!`,
-        link:   "/provider/jobs",
-      }))
+      const notifValues = nearby.map((p) => {
+        const distance = formatDistance((p.distanceMeters ?? 0) / 1000, p.country || country)
+        return {
+          userId: p.userId,
+          type:   "new_job_request" as const,
+          title:  `New ${category} job in ${city}`,
+          body:   `A customer needs ${category} help in ${city}${budgetText}. They are ${distance} from you — be one of the first to bid!`,
+          link:   "/provider/jobs",
+          metadata: { category, city, distance },
+        }
+      })
 
       if (notifValues.length > 0) {
         await db.insert(notifications).values(notifValues)

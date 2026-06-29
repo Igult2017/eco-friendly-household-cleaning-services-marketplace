@@ -168,6 +168,29 @@ const NOTIF: Record<string, Record<string, S>> = {
     pl: { title: "Zaplanowano cykliczną rezerwację", body: "Twoja cykliczna rezerwacja została zaplanowana na {datetime}." },
     pt: { title: "Reserva recorrente agendada", body: "A sua reserva recorrente foi agendada para {datetime}." },
   },
+  // recurring_booking_created sub-variants — selected via metadata.variant. The DB enum can't grow
+  // without a migration, so these reuse the recurring_booking_created enum value but localize to the
+  // correct message for the actual event (payment failure / skipped cycle).
+  recurring_payment_failed: {
+    en: { title: "Recurring booking payment failed", body: "We couldn't charge your saved card for the booking on {datetime}. Please update your payment method to keep your recurring schedule active." },
+    de: { title: "Zahlung der wiederkehrenden Buchung fehlgeschlagen", body: "Wir konnten deine gespeicherte Karte für die Buchung am {datetime} nicht belasten. Bitte aktualisiere deine Zahlungsmethode, um deinen wiederkehrenden Plan aktiv zu halten." },
+    fr: { title: "Échec du paiement de la réservation récurrente", body: "Nous n'avons pas pu débiter votre carte enregistrée pour la réservation du {datetime}. Veuillez mettre à jour votre moyen de paiement pour maintenir votre programme récurrent actif." },
+    es: { title: "Error en el pago de la reserva recurrente", body: "No pudimos cobrar en tu tarjeta guardada la reserva del {datetime}. Actualiza tu método de pago para mantener activa tu programación recurrente." },
+    it: { title: "Pagamento della prenotazione ricorrente non riuscito", body: "Non siamo riusciti ad addebitare la tua carta salvata per la prenotazione del {datetime}. Aggiorna il tuo metodo di pagamento per mantenere attiva la tua pianificazione ricorrente." },
+    nl: { title: "Betaling van terugkerende boeking mislukt", body: "We konden je opgeslagen kaart niet belasten voor de boeking op {datetime}. Werk je betaalmethode bij om je terugkerende schema actief te houden." },
+    pl: { title: "Płatność za cykliczną rezerwację nie powiodła się", body: "Nie udało się obciążyć Twojej zapisanej karty za rezerwację w dniu {datetime}. Zaktualizuj metodę płatności, aby Twój harmonogram cykliczny pozostał aktywny." },
+    pt: { title: "Pagamento da reserva recorrente falhou", body: "Não conseguimos cobrar o seu cartão guardado para a reserva de {datetime}. Atualize o seu método de pagamento para manter o seu agendamento recorrente ativo." },
+  },
+  recurring_skipped: {
+    en: { title: "Recurring booking skipped", body: "Your recurring cleaner is temporarily unavailable, so this cycle was skipped. We'll try again next time." },
+    de: { title: "Wiederkehrende Buchung übersprungen", body: "Deine wiederkehrende Reinigungskraft ist vorübergehend nicht verfügbar, daher wurde dieser Zyklus übersprungen. Wir versuchen es beim nächsten Mal erneut." },
+    fr: { title: "Réservation récurrente ignorée", body: "Votre intervenant récurrent est temporairement indisponible, ce cycle a donc été ignoré. Nous réessaierons la prochaine fois." },
+    es: { title: "Reserva recurrente omitida", body: "Tu profesional de limpieza recurrente no está disponible temporalmente, así que se omitió este ciclo. Lo intentaremos de nuevo la próxima vez." },
+    it: { title: "Prenotazione ricorrente saltata", body: "Il tuo addetto alle pulizie ricorrente è temporaneamente non disponibile, quindi questo ciclo è stato saltato. Riproveremo la prossima volta." },
+    nl: { title: "Terugkerende boeking overgeslagen", body: "Je terugkerende schoonmaker is tijdelijk niet beschikbaar, dus deze cyclus is overgeslagen. We proberen het de volgende keer opnieuw." },
+    pl: { title: "Pominięto cykliczną rezerwację", body: "Twoja cykliczna osoba sprzątająca jest tymczasowo niedostępna, więc ten cykl został pominięty. Spróbujemy ponownie następnym razem." },
+    pt: { title: "Reserva recorrente ignorada", body: "O seu profissional de limpeza recorrente está temporariamente indisponível, pelo que este ciclo foi ignorado. Tentaremos novamente da próxima vez." },
+  },
 }
 
 // Placeholders each type's strings expect. A type localizes only if metadata supplies all of them.
@@ -180,6 +203,8 @@ const PARAMS: Record<string, string[]> = {
   dispute_resolved: ["resolution"],
   new_message: ["message"],
   recurring_booking_created: ["datetime"],
+  recurring_payment_failed: ["datetime"],
+  recurring_skipped: [],
 }
 
 /**
@@ -194,12 +219,17 @@ export function localizeNotification(
   fallbackTitle: string,
   fallbackBody: string,
 ): { title: string; body: string } {
-  const byType = NOTIF[type]
+  // A `variant` in metadata overrides the copy key, letting one DB enum value (e.g.
+  // recurring_booking_created) localize to the correct message for the actual event. Only honour
+  // a variant we actually have copy for; otherwise fall back to the type's own copy.
+  const variant = metadata?.variant
+  const key = variant && NOTIF[variant] ? variant : type
+  const byType = NOTIF[key]
   if (!byType) return { title: fallbackTitle, body: fallbackBody }
   const lc = isLocale(locale) ? locale : defaultLocale
   const s = byType[lc] ?? byType[defaultLocale]
   if (!s) return { title: fallbackTitle, body: fallbackBody }
-  const needed = PARAMS[type] ?? []
+  const needed = PARAMS[key] ?? []
   if (needed.some((p) => metadata?.[p] == null || metadata[p] === "")) {
     return { title: fallbackTitle, body: fallbackBody }
   }

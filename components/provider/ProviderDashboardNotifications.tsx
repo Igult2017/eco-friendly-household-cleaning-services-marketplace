@@ -1,7 +1,8 @@
 import Link from "next/link"
-import { getTranslations } from "next-intl/server"
+import { getTranslations, getLocale } from "next-intl/server"
 import { Bell, Briefcase, CheckCircle2, DollarSign, AlertTriangle, Info } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { localizeNotification } from "@/lib/notifications/content"
 
 const TYPE_ICON: Record<string, React.ElementType> = {
   new_job_request:  Briefcase,
@@ -23,10 +24,12 @@ type Notif = {
   link: string | null
   isRead: boolean
   createdAt: Date | string
+  metadata: Record<string, string> | null
 }
 
 export async function ProviderDashboardNotifications({ notifications }: { notifications: Notif[] }) {
   const t = await getTranslations("compProviderProviderDashboardNotifications")
+  const locale = await getLocale()
   const unread = notifications.filter((n) => !n.isRead).length
 
   if (notifications.length === 0) {
@@ -55,6 +58,7 @@ export async function ProviderDashboardNotifications({ notifications }: { notifi
       <div className="divide-y divide-[#F0F4F8]">
         {notifications.map((n) => {
           const Icon = TYPE_ICON[n.type] ?? Info
+          const { title, body } = localizeNotification(n.type, locale, (n.metadata as Record<string, string> | null) ?? null, n.title, n.body)
           const rowClass = cn(
             "flex items-start gap-3 px-5 py-3 transition-colors",
             !n.isRead ? "bg-[#F4FAF6]" : "bg-white hover:bg-gray-50"
@@ -70,8 +74,8 @@ export async function ProviderDashboardNotifications({ notifications }: { notifi
                 )}
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-medium text-[#2B3441]">{n.title}</p>
-                <p className="text-xs text-[#6B7280] leading-snug line-clamp-2">{n.body}</p>
+                <p className="text-sm font-medium text-[#2B3441]">{title}</p>
+                <p className="text-xs text-[#6B7280] leading-snug line-clamp-2">{body}</p>
               </div>
             </>
           )

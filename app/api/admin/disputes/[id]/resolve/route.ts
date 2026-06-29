@@ -110,6 +110,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       userId: booking.customerId, type: "dispute_resolved",
       title: "Your dispute has been resolved", body: resolution.slice(0, 120),
       link: `/bookings/${dispute.bookingId}`,
+      metadata: { resolution: resolution.slice(0, 120) },
     })
     const [prov] = await db.select({ userId: providers.userId }).from(providers).where(eq(providers.id, booking.providerId))
     if (prov?.userId) {
@@ -117,6 +118,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         userId: prov.userId, type: "dispute_resolved",
         title: "A dispute on your booking has been resolved", body: resolution.slice(0, 120),
         link: "/provider/bookings",
+        metadata: { resolution: resolution.slice(0, 120) },
       })
     }
 
