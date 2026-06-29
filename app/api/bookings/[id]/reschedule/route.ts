@@ -2,11 +2,11 @@ import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
-import { bookings, notifications, providerAvailability, providers } from "@/lib/db/schema"
+import { bookings, notifications, providers } from "@/lib/db/schema"
 import { eq, and, inArray, gte, lte, ne } from "drizzle-orm"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
 import { isUuid } from "@/lib/utils/uuid"
-import { zonedDayAndTime } from "@/lib/utils/tz"
+import { checkProviderAvailable } from "@/lib/bookings/availability"
 import { logError } from "@/lib/utils/logError"
 import { inngest } from "@/lib/inngest/client"
 
@@ -64,34 +64,14 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       return NextResponse.json({ error: "New scheduled time must be in the future" }, { status: 422 })
     }
 
-    // Evaluate availability in the provider's OWN timezone — the platform spans EU + US, so the
-    // booking's UTC instant must be projected to the cleaner's local day-of-week + time of day.
+    // Availability + blackout dates in the cleaner's own timezone (shared with booking creation so
+    // the rules can't diverge — the previous inline check ignored blackout dates).
+    const avail = await checkProviderAvailable(booking.providerId, newStart)
+    if (!avail.ok) {
+      return NextResponse.json({ error: avail.reason }, { status: 409 })
+    }
     const [prov] = await db.select({ timezone: providers.timezone }).from(providers).where(eq(providers.id, booking.providerId))
     const providerTz = prov?.timezone || "Europe/Berlin"
-    const { dayOfWeek, hhmm: reqTime } = zonedDayAndTime(newStart, providerTz)
-
-    const [availability] = await db
-      .select({ id: providerAvailability.id, startTime: providerAvailability.startTime, endTime: providerAvailability.endTime })
-      .from(providerAvailability)
-      .where(
-        and(
-          eq(providerAvailability.providerId, booking.providerId),
-          eq(providerAvailability.dayOfWeek, dayOfWeek),
-          eq(providerAvailability.isActive, true)
-        )
-      )
-
-    if (!availability) {
-      return NextResponse.json({ error: "Provider is not available on that day" }, { status: 409 })
-    }
-
-    // Verify the requested time falls within the provider's working hours (same timezone as above)
-    if (reqTime < availability.startTime || reqTime >= availability.endTime) {
-      return NextResponse.json(
-        { error: "Requested time is outside the provider's working hours" },
-        { status: 422 }
-      )
-    }
 
     // Check for conflicting bookings at the new time (exclude this booking)
     const activeStatuses = ["payment_authorized", "confirmed", "in_progress", "pending_capture"] as const

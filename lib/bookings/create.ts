@@ -7,6 +7,7 @@ import { inngest } from "@/lib/inngest/client"
 import { redis } from "@/lib/redis/client"
 import { eq, and, sql, inArray, lte, gte, isNull } from "drizzle-orm"
 import type { CreateBookingInput } from "@/lib/validations/booking"
+import { checkProviderAvailable } from "@/lib/bookings/availability"
 
 async function generateBookingNumber(): Promise<string> {
   let seq: number
@@ -62,6 +63,11 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
 
   if (!service) await cancel(404, "Service not found")
   if (!provider?.isApproved || provider.isSuspended) await cancel(422, "Provider not available")
+
+  // Enforce the cleaner's availability + blackout dates server-side. The wizard checks client-side,
+  // but the bid flow and direct API calls bypass it, so a booking could land on a blocked day/time.
+  const avail = await checkProviderAvailable(providerId, new Date(scheduledAt))
+  if (!avail.ok) await cancel(409, avail.reason ?? "The cleaner is not available at that time.")
 
   // Bug 5: use bid amount from PI metadata when present (bid-flow bookings)
   const bidAmountCents = intent.metadata.bid_amount_cents ? parseInt(intent.metadata.bid_amount_cents, 10) : null

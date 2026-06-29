@@ -5,7 +5,7 @@ import Link from "next/link"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useTranslations, useLocale } from "next-intl"
 
-type Ev = { id: string; date: string; label: string; time: string; status: string }
+type Ev = { id: string; y: number; m: number; d: number; label: string; time: string; status: string }
 
 const STATUS_CLS: Record<string, string> = {
   completed: "bg-green-100 text-green-700",
@@ -34,8 +34,7 @@ export function ProviderCalendar({ events }: { events: Ev[] }) {
 
   const byDay: Record<number, Ev[]> = {}
   for (const e of events) {
-    const d = new Date(e.date)
-    if (d.getFullYear() === cursor.y && d.getMonth() === cursor.m) (byDay[d.getDate()] ??= []).push(e)
+    if (e.y === cursor.y && e.m === cursor.m) (byDay[e.d] ??= []).push(e)
   }
 
   const cells: (number | null)[] = [
