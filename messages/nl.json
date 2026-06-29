@@ -206,7 +206,12 @@
     "bottomCtaTitle": "Klaar om te gaan verdienen?",
     "bottomCtaSubtitle": "Word aanbieder bij DORIXÉ. Bepaal je eigen prijzen, werk op je eigen tijden en word wekelijks uitbetaald.",
     "createProviderAccount": "Aanbiederaccount aanmaken",
-    "onlyCleanersBid": "Alleen schoonmakers kunnen bieden"
+    "onlyCleanersBid": "Alleen schoonmakers kunnen bieden",
+    "heroSubtitleCleaner": "Bekijk openstaande klussen en breng je biedingen uit.",
+    "heroSubtitleClient": "Bekijk klussen van andere klanten — of plaats zelf een klus en ontvang biedingen van schoonmakers.",
+    "viewJobsToBid": "Bekijk klussen om op te bieden",
+    "postAJob": "Klus plaatsen",
+    "becomeCleanerToBid": "Word schoonmaker om te bieden"
   },
   "providerProfile": {
     "idVerified": "Identiteit geverifieerd",

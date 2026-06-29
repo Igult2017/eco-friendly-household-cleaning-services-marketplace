@@ -82,21 +82,35 @@ export default function BrowseJobsPage() {
           {t("heroTitle")}
         </h1>
         <p className="text-white/60 text-lg max-w-xl mx-auto mb-8">
-          {t("heroSubtitle")}
+          {canBid ? t("heroSubtitleCleaner") : clientCannotBid ? t("heroSubtitleClient") : t("heroSubtitle")}
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link
-            href="/sign-up"
-            className="inline-flex items-center justify-center rounded-xl bg-[#2D7A5F] hover:bg-[#256349] text-white font-semibold px-6 py-3 transition-colors"
-          >
-            {t("becomeProvider")}
-          </Link>
-          <Link
-            href="/sign-in"
-            className="inline-flex items-center justify-center rounded-xl border border-white/20 text-white hover:bg-white/10 font-medium px-6 py-3 transition-colors"
-          >
-            {t("signInToBid")}
-          </Link>
+          {canBid ? (
+            // Already a cleaner → straight to the bid feed (never show "become a cleaner").
+            <Link href="/provider/jobs" className="inline-flex items-center justify-center rounded-xl bg-[#2D7A5F] hover:bg-[#256349] text-white font-semibold px-6 py-3 transition-colors">
+              {t("viewJobsToBid")}
+            </Link>
+          ) : clientCannotBid ? (
+            // Signed-in client → post a job, or become a cleaner to bid (clients can't bid).
+            <>
+              <Link href="/post-job" className="inline-flex items-center justify-center rounded-xl bg-[#2D7A5F] hover:bg-[#256349] text-white font-semibold px-6 py-3 transition-colors">
+                {t("postAJob")}
+              </Link>
+              <Link href="/become-a-cleaner" className="inline-flex items-center justify-center rounded-xl border border-white/20 text-white hover:bg-white/10 font-medium px-6 py-3 transition-colors">
+                {t("becomeCleanerToBid")}
+              </Link>
+            </>
+          ) : (
+            // Signed out → sign up as a cleaner or sign in to bid.
+            <>
+              <Link href="/sign-up" className="inline-flex items-center justify-center rounded-xl bg-[#2D7A5F] hover:bg-[#256349] text-white font-semibold px-6 py-3 transition-colors">
+                {t("becomeProvider")}
+              </Link>
+              <Link href="/sign-in" className="inline-flex items-center justify-center rounded-xl border border-white/20 text-white hover:bg-white/10 font-medium px-6 py-3 transition-colors">
+                {t("signInToBid")}
+              </Link>
+            </>
+          )}
         </div>
       </div>
 
@@ -204,19 +218,21 @@ export default function BrowseJobsPage() {
           </div>
         )}
 
-        {/* Bottom CTA */}
-        <div className="mt-12 rounded-2xl bg-[#2B3441] p-8 text-center">
-          <h2 className="font-serif text-2xl font-bold text-white mb-2">{t("bottomCtaTitle")}</h2>
-          <p className="text-white/60 text-sm mb-6 max-w-md mx-auto">
-            {t("bottomCtaSubtitle")}
-          </p>
-          <Link
-            href="/sign-up"
-            className="inline-flex items-center justify-center rounded-xl bg-[#2D7A5F] hover:bg-[#256349] text-white font-semibold px-8 py-3 transition-colors"
-          >
-            {t("createProviderAccount")}
-          </Link>
-        </div>
+        {/* Bottom CTA — only for non-cleaners (signed-out or clients); a cleaner already has an account. */}
+        {!canBid && (
+          <div className="mt-12 rounded-2xl bg-[#2B3441] p-8 text-center">
+            <h2 className="font-serif text-2xl font-bold text-white mb-2">{t("bottomCtaTitle")}</h2>
+            <p className="text-white/60 text-sm mb-6 max-w-md mx-auto">
+              {t("bottomCtaSubtitle")}
+            </p>
+            <Link
+              href="/sign-up"
+              className="inline-flex items-center justify-center rounded-xl bg-[#2D7A5F] hover:bg-[#256349] text-white font-semibold px-8 py-3 transition-colors"
+            >
+              {t("createProviderAccount")}
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -206,7 +206,12 @@
     "bottomCtaTitle": "Pronto a iniziare a guadagnare?",
     "bottomCtaSubtitle": "Unisciti a DORIXÉ come fornitore. Stabilisci i tuoi prezzi, lavora con i tuoi orari e vieni pagato ogni settimana.",
     "createProviderAccount": "Crea un account fornitore",
-    "onlyCleanersBid": "Solo gli addetti possono fare un'offerta"
+    "onlyCleanersBid": "Solo gli addetti possono fare un'offerta",
+    "heroSubtitleCleaner": "Sfoglia i lavori aperti e invia le tue offerte.",
+    "heroSubtitleClient": "Sfoglia i lavori di altri clienti — o pubblica il tuo e ricevi offerte dagli addetti.",
+    "viewJobsToBid": "Vedi i lavori per fare offerte",
+    "postAJob": "Pubblica un lavoro",
+    "becomeCleanerToBid": "Diventa un addetto per fare offerte"
   },
   "providerProfile": {
     "idVerified": "Identità verificata",

@@ -94,17 +94,21 @@ body {
   line-height: 1.6;
 }
 
-h1, h2, h3 {
-  font-family: var(--font-serif);
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--color-dorix-dark);
-}
+/* In @layer base so Tailwind text-* utilities override these. An UNLAYERED element rule beats layered
+   utilities in Tailwind v4, which made `text-white` headings invisible on dark backgrounds (e.g. heroes). */
+@layer base {
+  h1, h2, h3 {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-dorix-dark);
+  }
 
-h4, h5, h6 {
-  font-family: var(--font-sans);
-  font-weight: 600;
-  color: var(--color-dorix-dark);
+  h4, h5, h6 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    color: var(--color-dorix-dark);
+  }
 }
 
 /* ── Scrollbar ───────────────────────────────────────────────── */

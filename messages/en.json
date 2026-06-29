@@ -206,7 +206,12 @@
     "bottomCtaTitle": "Ready to start earning?",
     "bottomCtaSubtitle": "Join DORIXÉ as a cleaner. Set your own prices, work your own hours, and get paid weekly.",
     "createProviderAccount": "Create a cleaner account",
-    "onlyCleanersBid": "Only cleaners can bid on jobs"
+    "onlyCleanersBid": "Only cleaners can bid on jobs",
+    "heroSubtitleCleaner": "Browse open jobs and submit your bids.",
+    "heroSubtitleClient": "Browse jobs from other clients — or post your own and get bids from cleaners.",
+    "viewJobsToBid": "View jobs to bid on",
+    "postAJob": "Post a job",
+    "becomeCleanerToBid": "Become a cleaner to bid"
   },
   "providerProfile": {
     "idVerified": "ID Verified",
