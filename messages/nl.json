@@ -948,8 +948,8 @@
     "profile": "Profiel",
     "adminPanel": "Beheerderspaneel",
     "pricing": "Tarieven",
-    "calendar": "Calendar",
-    "messages": "Messages"
+    "calendar": "Agenda",
+    "messages": "Berichten"
   },
   "providerProviderBookingsPage": {
     "title": "Mijn boekingen",
@@ -1017,10 +1017,10 @@
     "statusPaid": "Betaald",
     "statusPending": "In behandeling",
     "processedPending": "In behandeling",
-    "periodPrevious": "Previous earnings ({month})",
-    "periodCurrent": "Current earnings ({month})",
-    "periodEstimated": "Estimated earnings ({month})",
-    "periodEstimatedSub": "Based on bookings already scheduled"
+    "periodPrevious": "Eerdere inkomsten ({month})",
+    "periodCurrent": "Huidige inkomsten ({month})",
+    "periodEstimated": "Geschatte inkomsten ({month})",
+    "periodEstimatedSub": "Op basis van reeds geplande boekingen"
   },
   "providerProviderJobsPage": {
     "genericError": "Er is iets misgegaan. Probeer het opnieuw.",
@@ -1707,57 +1707,57 @@
   },
   "providerMobileNav": {
     "home": "Home",
-    "requests": "Requests",
+    "requests": "Aanvragen",
     "chat": "Chat",
-    "calendar": "Calendar",
-    "more": "More"
+    "calendar": "Agenda",
+    "more": "Meer"
   },
   "compProviderReliabilityCard": {
-    "title": "Your current status",
-    "viewStatistics": "View your statistics",
-    "tier_new": "Building reputation",
-    "tier_reliable": "Reliable",
-    "tier_high": "High reliability",
-    "tier_top": "Top rated"
+    "title": "Je huidige status",
+    "viewStatistics": "Bekijk je statistieken",
+    "tier_new": "Reputatie opbouwen",
+    "tier_reliable": "Betrouwbaar",
+    "tier_high": "Zeer betrouwbaar",
+    "tier_top": "Topbeoordeling"
   },
   "providerStatisticsPage": {
-    "heading": "Your statistics",
-    "subheading": "Your performance and reliability at a glance.",
-    "yourStatus": "Your current status",
-    "reliabilityExplainer": "Your reliability score combines your average rating with how reliably you complete the jobs you accept.",
-    "tier_new": "Building reputation",
-    "tier_reliable": "Reliable",
-    "tier_high": "High reliability",
-    "tier_top": "Top rated",
-    "jobsCompleted": "Jobs completed",
-    "avgRating": "Average rating",
-    "completionRate": "Completion rate",
-    "ownCancellations": "Your cancellations",
-    "bidWinRate": "Bid win rate",
-    "repeatClients": "Repeat clients",
-    "totalReviews": "Reviews",
-    "totalEarned": "Total earned"
+    "heading": "Je statistieken",
+    "subheading": "Je prestaties en betrouwbaarheid in één oogopslag.",
+    "yourStatus": "Je huidige status",
+    "reliabilityExplainer": "Je betrouwbaarheidsscore combineert je gemiddelde beoordeling met hoe betrouwbaar je de klussen afrondt die je aanneemt.",
+    "tier_new": "Reputatie opbouwen",
+    "tier_reliable": "Betrouwbaar",
+    "tier_high": "Zeer betrouwbaar",
+    "tier_top": "Topbeoordeling",
+    "jobsCompleted": "Voltooide klussen",
+    "avgRating": "Gemiddelde beoordeling",
+    "completionRate": "Voltooiingspercentage",
+    "ownCancellations": "Je annuleringen",
+    "bidWinRate": "Slagingspercentage offertes",
+    "repeatClients": "Vaste klanten",
+    "totalReviews": "Beoordelingen",
+    "totalEarned": "Totaal verdiend"
   },
   "providerCalendarPage": {
-    "heading": "Calendar",
-    "subheading": "All your bookings in one place.",
-    "booking": "Booking",
-    "prevMonth": "Previous month",
-    "nextMonth": "Next month",
-    "today": "Today",
-    "mon": "Mon",
-    "tue": "Tue",
-    "wed": "Wed",
-    "thu": "Thu",
-    "fri": "Fri",
-    "sat": "Sat",
-    "sun": "Sun"
+    "heading": "Agenda",
+    "subheading": "Al je boekingen op één plek.",
+    "booking": "Boeking",
+    "prevMonth": "Vorige maand",
+    "nextMonth": "Volgende maand",
+    "today": "Vandaag",
+    "mon": "ma",
+    "tue": "di",
+    "wed": "wo",
+    "thu": "do",
+    "fri": "vr",
+    "sat": "za",
+    "sun": "zo"
   },
   "providerMessagesPage": {
-    "heading": "Messages",
-    "subheading": "Your conversations with clients.",
-    "emptyTitle": "No messages yet",
-    "emptyDescription": "When a client messages you about a booking, it'll show up here.",
-    "client": "Client"
+    "heading": "Berichten",
+    "subheading": "Je gesprekken met klanten.",
+    "emptyTitle": "Nog geen berichten",
+    "emptyDescription": "Wanneer een klant je over een boeking bericht, verschijnt het hier.",
+    "client": "Klant"
   }
 }

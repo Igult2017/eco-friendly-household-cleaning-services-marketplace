@@ -948,8 +948,8 @@
     "profile": "Profilo",
     "adminPanel": "Pannello di amministrazione",
     "pricing": "Tariffe",
-    "calendar": "Calendar",
-    "messages": "Messages"
+    "calendar": "Calendario",
+    "messages": "Messaggi"
   },
   "providerProviderBookingsPage": {
     "title": "Le mie prenotazioni",
@@ -1017,10 +1017,10 @@
     "statusPaid": "Pagato",
     "statusPending": "In sospeso",
     "processedPending": "In sospeso",
-    "periodPrevious": "Previous earnings ({month})",
-    "periodCurrent": "Current earnings ({month})",
-    "periodEstimated": "Estimated earnings ({month})",
-    "periodEstimatedSub": "Based on bookings already scheduled"
+    "periodPrevious": "Guadagni precedenti ({month})",
+    "periodCurrent": "Guadagni attuali ({month})",
+    "periodEstimated": "Guadagni stimati ({month})",
+    "periodEstimatedSub": "In base alle prenotazioni già programmate"
   },
   "providerProviderJobsPage": {
     "genericError": "Qualcosa è andato storto. Riprova.",
@@ -1707,57 +1707,57 @@
   },
   "providerMobileNav": {
     "home": "Home",
-    "requests": "Requests",
+    "requests": "Richieste",
     "chat": "Chat",
-    "calendar": "Calendar",
-    "more": "More"
+    "calendar": "Calendario",
+    "more": "Altro"
   },
   "compProviderReliabilityCard": {
-    "title": "Your current status",
-    "viewStatistics": "View your statistics",
-    "tier_new": "Building reputation",
-    "tier_reliable": "Reliable",
-    "tier_high": "High reliability",
-    "tier_top": "Top rated"
+    "title": "Il tuo stato attuale",
+    "viewStatistics": "Vedi le tue statistiche",
+    "tier_new": "Reputazione in crescita",
+    "tier_reliable": "Affidabile",
+    "tier_high": "Alta affidabilità",
+    "tier_top": "Tra i migliori"
   },
   "providerStatisticsPage": {
-    "heading": "Your statistics",
-    "subheading": "Your performance and reliability at a glance.",
-    "yourStatus": "Your current status",
-    "reliabilityExplainer": "Your reliability score combines your average rating with how reliably you complete the jobs you accept.",
-    "tier_new": "Building reputation",
-    "tier_reliable": "Reliable",
-    "tier_high": "High reliability",
-    "tier_top": "Top rated",
-    "jobsCompleted": "Jobs completed",
-    "avgRating": "Average rating",
-    "completionRate": "Completion rate",
-    "ownCancellations": "Your cancellations",
-    "bidWinRate": "Bid win rate",
-    "repeatClients": "Repeat clients",
-    "totalReviews": "Reviews",
-    "totalEarned": "Total earned"
+    "heading": "Le tue statistiche",
+    "subheading": "Le tue prestazioni e la tua affidabilità in sintesi.",
+    "yourStatus": "Il tuo stato attuale",
+    "reliabilityExplainer": "Il tuo punteggio di affidabilità combina la valutazione media con la costanza con cui porti a termine i lavori che accetti.",
+    "tier_new": "Reputazione in crescita",
+    "tier_reliable": "Affidabile",
+    "tier_high": "Alta affidabilità",
+    "tier_top": "Tra i migliori",
+    "jobsCompleted": "Lavori completati",
+    "avgRating": "Valutazione media",
+    "completionRate": "Tasso di completamento",
+    "ownCancellations": "Le tue cancellazioni",
+    "bidWinRate": "Tasso di offerte vinte",
+    "repeatClients": "Clienti abituali",
+    "totalReviews": "Recensioni",
+    "totalEarned": "Totale guadagnato"
   },
   "providerCalendarPage": {
-    "heading": "Calendar",
-    "subheading": "All your bookings in one place.",
-    "booking": "Booking",
-    "prevMonth": "Previous month",
-    "nextMonth": "Next month",
-    "today": "Today",
-    "mon": "Mon",
-    "tue": "Tue",
-    "wed": "Wed",
-    "thu": "Thu",
-    "fri": "Fri",
-    "sat": "Sat",
-    "sun": "Sun"
+    "heading": "Calendario",
+    "subheading": "Tutte le tue prenotazioni in un unico posto.",
+    "booking": "Prenotazione",
+    "prevMonth": "Mese precedente",
+    "nextMonth": "Mese successivo",
+    "today": "Oggi",
+    "mon": "Lun",
+    "tue": "Mar",
+    "wed": "Mer",
+    "thu": "Gio",
+    "fri": "Ven",
+    "sat": "Sab",
+    "sun": "Dom"
   },
   "providerMessagesPage": {
-    "heading": "Messages",
-    "subheading": "Your conversations with clients.",
-    "emptyTitle": "No messages yet",
-    "emptyDescription": "When a client messages you about a booking, it'll show up here.",
-    "client": "Client"
+    "heading": "Messaggi",
+    "subheading": "Le tue conversazioni con i clienti.",
+    "emptyTitle": "Ancora nessun messaggio",
+    "emptyDescription": "Quando un cliente ti scrive per una prenotazione, comparirà qui.",
+    "client": "Cliente"
   }
 }

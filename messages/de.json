@@ -948,8 +948,8 @@
     "profile": "Profil",
     "adminPanel": "Admin-Bereich",
     "pricing": "Preise",
-    "calendar": "Calendar",
-    "messages": "Messages"
+    "calendar": "Kalender",
+    "messages": "Nachrichten"
   },
   "providerProviderBookingsPage": {
     "title": "Meine Buchungen",
@@ -1017,10 +1017,10 @@
     "statusPaid": "Bezahlt",
     "statusPending": "Ausstehend",
     "processedPending": "Ausstehend",
-    "periodPrevious": "Previous earnings ({month})",
-    "periodCurrent": "Current earnings ({month})",
-    "periodEstimated": "Estimated earnings ({month})",
-    "periodEstimatedSub": "Based on bookings already scheduled"
+    "periodPrevious": "Frühere Einnahmen ({month})",
+    "periodCurrent": "Aktuelle Einnahmen ({month})",
+    "periodEstimated": "Geschätzte Einnahmen ({month})",
+    "periodEstimatedSub": "Basierend auf bereits geplanten Buchungen"
   },
   "providerProviderJobsPage": {
     "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
@@ -1706,58 +1706,58 @@
     "emptyBody": "Wir stellen gerade unsere ersten Empfehlungen zusammen — schauen Sie bald wieder vorbei."
   },
   "providerMobileNav": {
-    "home": "Home",
-    "requests": "Requests",
+    "home": "Start",
+    "requests": "Anfragen",
     "chat": "Chat",
-    "calendar": "Calendar",
-    "more": "More"
+    "calendar": "Kalender",
+    "more": "Mehr"
   },
   "compProviderReliabilityCard": {
-    "title": "Your current status",
-    "viewStatistics": "View your statistics",
-    "tier_new": "Building reputation",
-    "tier_reliable": "Reliable",
-    "tier_high": "High reliability",
-    "tier_top": "Top rated"
+    "title": "Dein aktueller Status",
+    "viewStatistics": "Statistiken ansehen",
+    "tier_new": "Ruf wird aufgebaut",
+    "tier_reliable": "Zuverlässig",
+    "tier_high": "Sehr zuverlässig",
+    "tier_top": "Top bewertet"
   },
   "providerStatisticsPage": {
-    "heading": "Your statistics",
-    "subheading": "Your performance and reliability at a glance.",
-    "yourStatus": "Your current status",
-    "reliabilityExplainer": "Your reliability score combines your average rating with how reliably you complete the jobs you accept.",
-    "tier_new": "Building reputation",
-    "tier_reliable": "Reliable",
-    "tier_high": "High reliability",
-    "tier_top": "Top rated",
-    "jobsCompleted": "Jobs completed",
-    "avgRating": "Average rating",
-    "completionRate": "Completion rate",
-    "ownCancellations": "Your cancellations",
-    "bidWinRate": "Bid win rate",
-    "repeatClients": "Repeat clients",
-    "totalReviews": "Reviews",
-    "totalEarned": "Total earned"
+    "heading": "Deine Statistiken",
+    "subheading": "Deine Leistung und Zuverlässigkeit auf einen Blick.",
+    "yourStatus": "Dein aktueller Status",
+    "reliabilityExplainer": "Dein Zuverlässigkeitswert kombiniert deine Durchschnittsbewertung mit der Verlässlichkeit, mit der du angenommene Aufträge abschließt.",
+    "tier_new": "Ruf wird aufgebaut",
+    "tier_reliable": "Zuverlässig",
+    "tier_high": "Sehr zuverlässig",
+    "tier_top": "Top bewertet",
+    "jobsCompleted": "Erledigte Aufträge",
+    "avgRating": "Durchschnittsbewertung",
+    "completionRate": "Abschlussquote",
+    "ownCancellations": "Deine Stornierungen",
+    "bidWinRate": "Erfolgsquote bei Angeboten",
+    "repeatClients": "Stammkund:innen",
+    "totalReviews": "Bewertungen",
+    "totalEarned": "Gesamtverdienst"
   },
   "providerCalendarPage": {
-    "heading": "Calendar",
-    "subheading": "All your bookings in one place.",
-    "booking": "Booking",
-    "prevMonth": "Previous month",
-    "nextMonth": "Next month",
-    "today": "Today",
-    "mon": "Mon",
-    "tue": "Tue",
-    "wed": "Wed",
-    "thu": "Thu",
-    "fri": "Fri",
-    "sat": "Sat",
-    "sun": "Sun"
+    "heading": "Kalender",
+    "subheading": "Alle deine Buchungen an einem Ort.",
+    "booking": "Buchung",
+    "prevMonth": "Vorheriger Monat",
+    "nextMonth": "Nächster Monat",
+    "today": "Heute",
+    "mon": "Mo",
+    "tue": "Di",
+    "wed": "Mi",
+    "thu": "Do",
+    "fri": "Fr",
+    "sat": "Sa",
+    "sun": "So"
   },
   "providerMessagesPage": {
-    "heading": "Messages",
-    "subheading": "Your conversations with clients.",
-    "emptyTitle": "No messages yet",
-    "emptyDescription": "When a client messages you about a booking, it'll show up here.",
-    "client": "Client"
+    "heading": "Nachrichten",
+    "subheading": "Deine Gespräche mit Kund:innen.",
+    "emptyTitle": "Noch keine Nachrichten",
+    "emptyDescription": "Wenn dir ein:e Kund:in zu einer Buchung schreibt, erscheint es hier.",
+    "client": "Kunde"
   }
 }

@@ -948,8 +948,8 @@
     "profile": "Profil",
     "adminPanel": "Panel administratora",
     "pricing": "Cennik",
-    "calendar": "Calendar",
-    "messages": "Messages"
+    "calendar": "Kalendarz",
+    "messages": "Wiadomości"
   },
   "providerProviderBookingsPage": {
     "title": "Moje rezerwacje",
@@ -1017,10 +1017,10 @@
     "statusPaid": "Opłacono",
     "statusPending": "Oczekująca",
     "processedPending": "Oczekująca",
-    "periodPrevious": "Previous earnings ({month})",
-    "periodCurrent": "Current earnings ({month})",
-    "periodEstimated": "Estimated earnings ({month})",
-    "periodEstimatedSub": "Based on bookings already scheduled"
+    "periodPrevious": "Wcześniejsze zarobki ({month})",
+    "periodCurrent": "Bieżące zarobki ({month})",
+    "periodEstimated": "Szacowane zarobki ({month})",
+    "periodEstimatedSub": "Na podstawie już zaplanowanych rezerwacji"
   },
   "providerProviderJobsPage": {
     "genericError": "Coś poszło nie tak. Spróbuj ponownie.",
@@ -1706,58 +1706,58 @@
     "emptyBody": "Przygotowujemy nasze pierwsze rekomendacje — zajrzyj wkrótce."
   },
   "providerMobileNav": {
-    "home": "Home",
-    "requests": "Requests",
-    "chat": "Chat",
-    "calendar": "Calendar",
-    "more": "More"
+    "home": "Start",
+    "requests": "Zapytania",
+    "chat": "Czat",
+    "calendar": "Kalendarz",
+    "more": "Więcej"
   },
   "compProviderReliabilityCard": {
-    "title": "Your current status",
-    "viewStatistics": "View your statistics",
-    "tier_new": "Building reputation",
-    "tier_reliable": "Reliable",
-    "tier_high": "High reliability",
-    "tier_top": "Top rated"
+    "title": "Twój aktualny status",
+    "viewStatistics": "Zobacz swoje statystyki",
+    "tier_new": "Budowanie reputacji",
+    "tier_reliable": "Solidny",
+    "tier_high": "Wysoka solidność",
+    "tier_top": "Najwyżej oceniany"
   },
   "providerStatisticsPage": {
-    "heading": "Your statistics",
-    "subheading": "Your performance and reliability at a glance.",
-    "yourStatus": "Your current status",
-    "reliabilityExplainer": "Your reliability score combines your average rating with how reliably you complete the jobs you accept.",
-    "tier_new": "Building reputation",
-    "tier_reliable": "Reliable",
-    "tier_high": "High reliability",
-    "tier_top": "Top rated",
-    "jobsCompleted": "Jobs completed",
-    "avgRating": "Average rating",
-    "completionRate": "Completion rate",
-    "ownCancellations": "Your cancellations",
-    "bidWinRate": "Bid win rate",
-    "repeatClients": "Repeat clients",
-    "totalReviews": "Reviews",
-    "totalEarned": "Total earned"
+    "heading": "Twoje statystyki",
+    "subheading": "Twoje wyniki i solidność w skrócie.",
+    "yourStatus": "Twój aktualny status",
+    "reliabilityExplainer": "Twój wskaźnik solidności łączy średnią ocenę z tym, jak rzetelnie kończysz zlecenia, które przyjmujesz.",
+    "tier_new": "Budowanie reputacji",
+    "tier_reliable": "Solidny",
+    "tier_high": "Wysoka solidność",
+    "tier_top": "Najwyżej oceniany",
+    "jobsCompleted": "Ukończone zlecenia",
+    "avgRating": "Średnia ocena",
+    "completionRate": "Wskaźnik ukończenia",
+    "ownCancellations": "Twoje anulacje",
+    "bidWinRate": "Skuteczność ofert",
+    "repeatClients": "Stali klienci",
+    "totalReviews": "Opinie",
+    "totalEarned": "Łączny zarobek"
   },
   "providerCalendarPage": {
-    "heading": "Calendar",
-    "subheading": "All your bookings in one place.",
-    "booking": "Booking",
-    "prevMonth": "Previous month",
-    "nextMonth": "Next month",
-    "today": "Today",
-    "mon": "Mon",
-    "tue": "Tue",
-    "wed": "Wed",
-    "thu": "Thu",
-    "fri": "Fri",
-    "sat": "Sat",
-    "sun": "Sun"
+    "heading": "Kalendarz",
+    "subheading": "Wszystkie Twoje rezerwacje w jednym miejscu.",
+    "booking": "Rezerwacja",
+    "prevMonth": "Poprzedni miesiąc",
+    "nextMonth": "Następny miesiąc",
+    "today": "Dziś",
+    "mon": "Pon",
+    "tue": "Wt",
+    "wed": "Śr",
+    "thu": "Czw",
+    "fri": "Pt",
+    "sat": "Sob",
+    "sun": "Niedz"
   },
   "providerMessagesPage": {
-    "heading": "Messages",
-    "subheading": "Your conversations with clients.",
-    "emptyTitle": "No messages yet",
-    "emptyDescription": "When a client messages you about a booking, it'll show up here.",
-    "client": "Client"
+    "heading": "Wiadomości",
+    "subheading": "Twoje rozmowy z klientami.",
+    "emptyTitle": "Brak wiadomości",
+    "emptyDescription": "Gdy klient napisze do Ciebie w sprawie rezerwacji, pojawi się to tutaj.",
+    "client": "Klient"
   }
 }
