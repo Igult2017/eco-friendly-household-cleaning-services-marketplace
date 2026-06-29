@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl"
 import { Loader2, Save, AlertTriangle } from "lucide-react"
 import { LocationDetectButton } from "@/components/location/LocationDetectButton"
 import { PricingSummaryCard } from "@/components/provider/PricingSummaryCard"
+import { AccountDataSection } from "@/components/account/AccountDataSection"
 import { usePostalValidation } from "@/hooks/usePostalValidation"
 import { RoleBadge } from "@/components/layout/RoleBadge"
 import type { GeoResult } from "@/lib/nominatim"
@@ -202,6 +203,8 @@ export default function ProviderProfilePage() {
       </div>
 
       <PricingSummaryCard />
+
+      <AccountDataSection />
     </div>
   )
 }

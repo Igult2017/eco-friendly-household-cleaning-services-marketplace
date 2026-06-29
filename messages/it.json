@@ -915,7 +915,9 @@
     "saveError": "Salvataggio non riuscito. Riprova.",
     "savedButton": "Salvato!",
     "savingButton": "Salvataggio in corso...",
-    "saveButton": "Salva modifiche"
+    "saveButton": "Salva modifiche",
+    "remindersTitle": "Promemoria e aggiornamenti delle prenotazioni",
+    "remindersDescription": "Inviami via e-mail promemoria e richieste di recensione per le mie prenotazioni."
   },
   "customerRecurringPage": {
     "title": "Prenotazioni ricorrenti",
@@ -1787,5 +1789,14 @@
     "remove": "Rimuovi",
     "expires": "Scade {date}",
     "error": "Impossibile salvare la carta. Riprova."
+  },
+  "accountData": {
+    "title": "I tuoi dati",
+    "subtitle": "Scarica una copia dei tuoi dati o elimina il tuo account.",
+    "exportButton": "Esporta i miei dati",
+    "deleteButton": "Elimina il mio account",
+    "deleteNote": "Questo elimina definitivamente il tuo account e ti disconnette. Alcuni dati possono essere conservati ove richiesto dalla legge.",
+    "deleteConfirm": "Eliminare il tuo account? L operazione è irreversibile.",
+    "deleteError": "Impossibile eliminare il tuo account. Riprova."
   }
 }

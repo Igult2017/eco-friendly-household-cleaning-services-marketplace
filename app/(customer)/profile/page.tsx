@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
 import { Loader2, Save, User } from "lucide-react"
 import { RoleBadge } from "@/components/layout/RoleBadge"
+import { AccountDataSection } from "@/components/account/AccountDataSection"
 
 type Profile = {
   firstName: string
@@ -11,12 +12,13 @@ type Profile = {
   email: string
   phone: string
   marketingConsent: boolean
+  emailReminders: boolean
 }
 
 export default function CustomerProfilePage() {
   const t = useTranslations("customerProfilePage")
   const [profile, setProfile] = useState<Profile>({
-    firstName: "", lastName: "", email: "", phone: "", marketingConsent: false,
+    firstName: "", lastName: "", email: "", phone: "", marketingConsent: false, emailReminders: true,
   })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -34,6 +36,7 @@ export default function CustomerProfilePage() {
             email: d.user.email ?? "",
             phone: d.user.phone ?? "",
             marketingConsent: d.user.marketingConsent ?? false,
+            emailReminders: d.user.emailReminders ?? true,
           })
         }
         setLoading(false)
@@ -51,6 +54,7 @@ export default function CustomerProfilePage() {
         lastName: profile.lastName,
         phone: profile.phone,
         marketingConsent: profile.marketingConsent,
+        emailReminders: profile.emailReminders,
       }),
     })
     setSaving(false)
@@ -135,6 +139,18 @@ export default function CustomerProfilePage() {
           </div>
         </label>
 
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input
+            type="checkbox" checked={profile.emailReminders}
+            onChange={(e) => setProfile((p) => ({ ...p, emailReminders: e.target.checked }))}
+            className="h-4 w-4 accent-[#2D7A5F]"
+          />
+          <div>
+            <p className="text-sm font-medium text-[#2B3441]">{t("remindersTitle")}</p>
+            <p className="text-xs text-[#6B7280]">{t("remindersDescription")}</p>
+          </div>
+        </label>
+
         {error && <p className="text-sm text-red-500">{error}</p>}
 
         <button onClick={save} disabled={saving}
@@ -144,6 +160,8 @@ export default function CustomerProfilePage() {
           {saved ? t("savedButton") : saving ? t("savingButton") : t("saveButton")}
         </button>
       </div>
+
+      <AccountDataSection />
     </div>
   )
 }

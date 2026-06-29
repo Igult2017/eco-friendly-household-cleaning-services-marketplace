@@ -915,7 +915,9 @@
     "saveError": "Falha ao guardar. Tente novamente.",
     "savedButton": "Guardado!",
     "savingButton": "A guardar...",
-    "saveButton": "Guardar alterações"
+    "saveButton": "Guardar alterações",
+    "remindersTitle": "Lembretes e atualizações de reservas",
+    "remindersDescription": "Envia-me por e-mail lembretes e pedidos de avaliação das minhas reservas."
   },
   "customerRecurringPage": {
     "title": "Reservas recorrentes",
@@ -1787,5 +1789,14 @@
     "remove": "Remover",
     "expires": "Expira {date}",
     "error": "Não foi possível guardar o cartão. Tente novamente."
+  },
+  "accountData": {
+    "title": "Os teus dados",
+    "subtitle": "Descarrega uma cópia dos teus dados ou elimina a tua conta.",
+    "exportButton": "Exportar os meus dados",
+    "deleteButton": "Eliminar a minha conta",
+    "deleteNote": "Isto elimina permanentemente a tua conta e termina a sessão. Alguns dados podem ser mantidos quando a lei o exigir.",
+    "deleteConfirm": "Eliminar a tua conta? Esta ação não pode ser anulada.",
+    "deleteError": "Não foi possível eliminar a tua conta. Tenta novamente."
   }
 }

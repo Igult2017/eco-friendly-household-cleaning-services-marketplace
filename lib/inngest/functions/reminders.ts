@@ -90,9 +90,9 @@ export const bookingReminders = inngest.createFunction(
       await step.sleepUntil("until-day-before", dayBefore)
       await step.run("remind-day-before", async () => {
         if (!(await stillValid())) return
-        const [c] = await db.select({ email: users.email, firstName: users.firstName, locale: users.locale }).from(users).where(eq(users.id, customerId))
-        // Client: email + in-app
-        if (c?.email) {
+        const [c] = await db.select({ email: users.email, firstName: users.firstName, locale: users.locale, emailReminders: users.emailReminders }).from(users).where(eq(users.id, customerId))
+        // Client: email (only if they haven't opted out) + in-app (always)
+        if (c?.email && c.emailReminders) {
           const { subject, html } = reminderTomorrowEmail(c.locale, { name: c.firstName, time: fmtTz(c.locale ?? "en-GB"), address: addr || undefined })
           await resend.emails.send({ from: FROM, to: c.email, subject, html })
         }

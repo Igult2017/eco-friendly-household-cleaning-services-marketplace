@@ -915,7 +915,9 @@
     "saveError": "Échec de l'enregistrement. Veuillez réessayer.",
     "savedButton": "Enregistré !",
     "savingButton": "Enregistrement...",
-    "saveButton": "Enregistrer les modifications"
+    "saveButton": "Enregistrer les modifications",
+    "remindersTitle": "Rappels et mises à jour de réservation",
+    "remindersDescription": "M envoyer par e-mail les rappels et demandes d avis pour mes réservations."
   },
   "customerRecurringPage": {
     "title": "Réservations récurrentes",
@@ -1787,5 +1789,14 @@
     "remove": "Supprimer",
     "expires": "Expire {date}",
     "error": "Impossible d enregistrer la carte. Veuillez réessayer."
+  },
+  "accountData": {
+    "title": "Vos données",
+    "subtitle": "Téléchargez une copie de vos données ou supprimez votre compte.",
+    "exportButton": "Exporter mes données",
+    "deleteButton": "Supprimer mon compte",
+    "deleteNote": "Cela supprime définitivement votre compte et vous déconnecte. Certaines données peuvent être conservées lorsque la loi l exige.",
+    "deleteConfirm": "Supprimer votre compte ? Cette action est irréversible.",
+    "deleteError": "Impossible de supprimer votre compte. Veuillez réessayer."
   }
 }

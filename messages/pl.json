@@ -915,7 +915,9 @@
     "saveError": "Nie udało się zapisać. Spróbuj ponownie.",
     "savedButton": "Zapisano!",
     "savingButton": "Zapisywanie...",
-    "saveButton": "Zapisz zmiany"
+    "saveButton": "Zapisz zmiany",
+    "remindersTitle": "Przypomnienia i aktualizacje rezerwacji",
+    "remindersDescription": "Wysyłaj mi e-mailem przypomnienia i prośby o opinie dotyczące moich rezerwacji."
   },
   "customerRecurringPage": {
     "title": "Rezerwacje cykliczne",
@@ -1787,5 +1789,14 @@
     "remove": "Usuń",
     "expires": "Wygasa {date}",
     "error": "Nie udało się zapisać karty. Spróbuj ponownie."
+  },
+  "accountData": {
+    "title": "Twoje dane",
+    "subtitle": "Pobierz kopię swoich danych lub usuń konto.",
+    "exportButton": "Eksportuj moje dane",
+    "deleteButton": "Usuń moje konto",
+    "deleteNote": "To trwale usuwa Twoje konto i wylogowuje Cię. Niektóre dane mogą zostać zachowane, jeśli wymaga tego prawo.",
+    "deleteConfirm": "Usunąć Twoje konto? Tej operacji nie można cofnąć.",
+    "deleteError": "Nie udało się usunąć konta. Spróbuj ponownie."
   }
 }

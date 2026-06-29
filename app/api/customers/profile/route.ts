@@ -11,6 +11,7 @@ const updateSchema = z.object({
   lastName: z.string().min(1).max(100).optional(),
   phone: z.string().max(30).optional(),
   marketingConsent: z.boolean().optional(),
+  emailReminders: z.boolean().optional(),
 })
 
 export async function GET() {
@@ -28,6 +29,7 @@ export async function GET() {
         phone: true,
         avatarUrl: true,
         marketingConsent: true,
+        emailReminders: true,
       },
     })
 
@@ -57,6 +59,7 @@ export async function PATCH(req: Request) {
     if (data.lastName !== undefined) updateFields.lastName = data.lastName
     if (data.phone !== undefined) updateFields.phone = data.phone
     if (data.marketingConsent !== undefined) updateFields.marketingConsent = data.marketingConsent
+    if (data.emailReminders !== undefined) updateFields.emailReminders = data.emailReminders
 
     await db.update(users).set(updateFields).where(eq(users.id, userId))
 

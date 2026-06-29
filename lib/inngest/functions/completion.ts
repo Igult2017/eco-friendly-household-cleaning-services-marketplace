@@ -84,12 +84,12 @@ export const onBookingCompleted = inngest.createFunction(
     })
 
     const customer = await step.run("fetch-customer", async () => {
-      const [c] = await db.select({ email: users.email, firstName: users.firstName, locale: users.locale }).from(users).where(eq(users.id, customerId))
+      const [c] = await db.select({ email: users.email, firstName: users.firstName, locale: users.locale, emailReminders: users.emailReminders }).from(users).where(eq(users.id, customerId))
       return c
     })
 
     await step.run("email-customer-review", async () => {
-      if (!customer?.email) return
+      if (!customer?.email || !customer.emailReminders) return
       const { subject, html } = reviewRequestEmail(customer.locale, {
         name: customer.firstName,
         reviewUrl: `${process.env.NEXT_PUBLIC_APP_URL}/bookings/${bookingId}/review`,
@@ -184,11 +184,11 @@ export const onBookingCompleted = inngest.createFunction(
       if (existing.length > 0) return { skipped: "already_reviewed" }
 
       const [freshUser] = await db
-        .select({ email: users.email, deletedAt: users.deletedAt, locale: users.locale })
+        .select({ email: users.email, deletedAt: users.deletedAt, locale: users.locale, emailReminders: users.emailReminders })
         .from(users)
         .where(eq(users.id, customerId))
 
-      if (!freshUser || freshUser.deletedAt || !freshUser.email) return { skipped: "account_deleted" }
+      if (!freshUser || freshUser.deletedAt || !freshUser.email || !freshUser.emailReminders) return { skipped: "opted_out_or_deleted" }
 
       const { subject, html } = reviewReminderEmail(freshUser.locale, {
         reviewUrl: `${process.env.NEXT_PUBLIC_APP_URL}/bookings/${bookingId}/review`,

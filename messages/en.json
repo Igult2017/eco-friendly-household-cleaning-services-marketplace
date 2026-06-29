@@ -915,7 +915,9 @@
     "saveError": "Failed to save. Please try again.",
     "savedButton": "Saved!",
     "savingButton": "Saving...",
-    "saveButton": "Save changes"
+    "saveButton": "Save changes",
+    "remindersTitle": "Booking reminders & updates",
+    "remindersDescription": "Email me reminders and review requests for my bookings."
   },
   "customerRecurringPage": {
     "title": "Recurring Bookings",
@@ -1787,5 +1789,14 @@
     "remove": "Remove",
     "expires": "Expires {date}",
     "error": "Could not save the card. Please try again."
+  },
+  "accountData": {
+    "title": "Your data",
+    "subtitle": "Download a copy of your data, or delete your account.",
+    "exportButton": "Export my data",
+    "deleteButton": "Delete my account",
+    "deleteNote": "This permanently deletes your account and signs you out. Some records may be kept where the law requires.",
+    "deleteConfirm": "Delete your account? This cannot be undone.",
+    "deleteError": "Could not delete your account. Please try again."
   }
 }

@@ -915,7 +915,9 @@
     "saveError": "Speichern fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "savedButton": "Gespeichert!",
     "savingButton": "Wird gespeichert...",
-    "saveButton": "Änderungen speichern"
+    "saveButton": "Änderungen speichern",
+    "remindersTitle": "Buchungserinnerungen & Updates",
+    "remindersDescription": "Sende mir Erinnerungen und Bewertungsanfragen zu meinen Buchungen per E-Mail."
   },
   "customerRecurringPage": {
     "title": "Wiederkehrende Buchungen",
@@ -1787,5 +1789,14 @@
     "remove": "Entfernen",
     "expires": "Gültig bis {date}",
     "error": "Karte konnte nicht gespeichert werden. Bitte versuche es erneut."
+  },
+  "accountData": {
+    "title": "Deine Daten",
+    "subtitle": "Lade eine Kopie deiner Daten herunter oder lösche dein Konto.",
+    "exportButton": "Meine Daten exportieren",
+    "deleteButton": "Mein Konto löschen",
+    "deleteNote": "Dies löscht dein Konto dauerhaft und meldet dich ab. Einige Daten können aufbewahrt werden, sofern gesetzlich vorgeschrieben.",
+    "deleteConfirm": "Dein Konto löschen? Dies kann nicht rückgängig gemacht werden.",
+    "deleteError": "Konto konnte nicht gelöscht werden. Bitte versuche es erneut."
   }
 }

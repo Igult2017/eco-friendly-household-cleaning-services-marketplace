@@ -915,7 +915,9 @@
     "saveError": "Opslaan mislukt. Probeer het opnieuw.",
     "savedButton": "Opgeslagen!",
     "savingButton": "Bezig met opslaan...",
-    "saveButton": "Wijzigingen opslaan"
+    "saveButton": "Wijzigingen opslaan",
+    "remindersTitle": "Boekingsherinneringen & updates",
+    "remindersDescription": "E-mail mij herinneringen en reviewverzoeken voor mijn boekingen."
   },
   "customerRecurringPage": {
     "title": "Terugkerende boekingen",
@@ -1787,5 +1789,14 @@
     "remove": "Verwijderen",
     "expires": "Verloopt {date}",
     "error": "Kaart kon niet worden opgeslagen. Probeer het opnieuw."
+  },
+  "accountData": {
+    "title": "Je gegevens",
+    "subtitle": "Download een kopie van je gegevens of verwijder je account.",
+    "exportButton": "Mijn gegevens exporteren",
+    "deleteButton": "Mijn account verwijderen",
+    "deleteNote": "Hiermee wordt je account permanent verwijderd en word je afgemeld. Sommige gegevens kunnen worden bewaard waar de wet dit vereist.",
+    "deleteConfirm": "Je account verwijderen? Dit kan niet ongedaan worden gemaakt.",
+    "deleteError": "Je account kon niet worden verwijderd. Probeer het opnieuw."
   }
 }
