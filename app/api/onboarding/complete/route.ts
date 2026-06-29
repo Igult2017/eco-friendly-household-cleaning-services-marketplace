@@ -10,6 +10,7 @@ import { inngest } from "@/lib/inngest/client"
 import { sendProviderApprovedEmail } from "@/lib/resend/providerApproved"
 import { logError } from "@/lib/utils/logError"
 import { normalizeRefCode } from "@/lib/referrals/code"
+import { isLocale, localeFromAcceptLanguage } from "@/i18n/config"
 
 const ROLE_COOKIE = "dorix_role"
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -37,6 +38,11 @@ export async function POST(req: NextRequest) {
     if (phone && !/^\+?[0-9]{7,15}$/.test(phone)) {
       return NextResponse.json({ error: "Invalid phone number format" }, { status: 400 })
     }
+
+    // Capture the user's language so welcome + approval emails go out in it: the locale cookie the
+    // LocaleDetector set from the visitor's IP country, else the browser's Accept-Language, else English.
+    const cookieLocale = req.cookies.get("locale")?.value
+    const userLocale = isLocale(cookieLocale) ? cookieLocale : (localeFromAcceptLanguage(req.headers.get("accept-language")) ?? "en")
 
     const clerk = await clerkClient()
     const clerkUser = await clerk.users.getUser(userId)
@@ -80,6 +86,7 @@ export async function POST(req: NextRequest) {
         role: data.role,
         gdprConsentAt: new Date(),
         avatarUrl: clerkUser.imageUrl,
+        locale: userLocale,
       })
       .onConflictDoUpdate({
         target: users.id,
@@ -89,6 +96,7 @@ export async function POST(req: NextRequest) {
           phone: phone || null,
           role: data.role,
           gdprConsentAt: new Date(),
+          locale: userLocale,
           updatedAt: new Date(),
         },
       })

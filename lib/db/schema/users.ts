@@ -26,6 +26,7 @@ export const users = pgTable(
     gdprConsentAt: timestamp("gdpr_consent_at", { withTimezone: true }),
     marketingConsent: boolean("marketing_consent").notNull().default(false),
     dualRoleEnabled: boolean("dual_role_enabled").notNull().default(false),
+    locale: varchar("locale", { length: 5 }), // detected at onboarding (IP country -> language); used for localized emails
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

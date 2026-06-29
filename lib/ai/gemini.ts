@@ -55,13 +55,19 @@ const TYPE_GUIDANCE: Record<CampaignType, string> = {
   custom: "Follow the admin brief precisely.",
 }
 
+const LANG_NAME: Record<string, string> = { de: "German", fr: "French", es: "Spanish", it: "Italian", nl: "Dutch", pl: "Polish", pt: "Portuguese", en: "English" }
+
 export async function generateMarketingEmail(params: {
   type: CampaignType
   brief?: string
   recipient?: RecipientProfile
+  locale?: string
 }): Promise<EmailDraft> {
-  const { type, brief, recipient } = params
+  const { type, brief, recipient, locale } = params
   const name = recipient?.firstName?.trim() || "there"
+  const langRule = locale && locale !== "en" && LANG_NAME[locale]
+    ? `\n- Write the ENTIRE email (subject + body) in ${LANG_NAME[locale]} — natural, native-quality.`
+    : ""
   const prompt = `${BRAND_CONTEXT}
 
 You are an expert email marketer for DORIXÉ. Write ONE unique, high-deliverability marketing email.
@@ -72,7 +78,7 @@ ${brief ? `Admin brief: ${brief}` : ""}
 Recipient first name: ${name}
 ${recipient ? `Recipient context: role=${recipient.role ?? "customer"}, signed up ${recipient.signedUpDaysAgo ?? "?"} days ago, ${recipient.bookingCount ?? 0} bookings.` : ""}
 
-Rules:
+Rules:${langRule}
 - Personalize naturally (greet "${name}"). Reference REAL DORIXÉ services only.
 - VARY the wording, structure, and phrasing so no two emails look the same (avoids spam filtering).
 - Subject under 60 chars, compelling, NO spam triggers (no ALL CAPS, no "!!!", no "FREE MONEY", no excessive emojis).

@@ -7,21 +7,14 @@ import { sendMarketingEmail } from "@/lib/marketing/send"
 import { resolveAudience } from "@/lib/marketing/audience"
 import type { AudienceFilter, CampaignType, EmailDraft } from "@/lib/marketing/types"
 
-// Static fallback so signups always get a welcome even if Gemini is unavailable.
-function staticWelcome(firstName: string | null): EmailDraft {
-  const name = firstName?.trim() || "there"
-  return {
-    subject: "Welcome to DORIXÉ 🌿",
-    html: `<p>Hi ${name},</p><p>Welcome to <strong>DORIXÉ</strong> — eco-friendly home cleaning. Book identity-verified cleaners by the hour or job, set up recurring cleans with a loyalty discount, or post a job and get bids.</p><p>Popular right now: Regular Cleaning, Deep Cleaning, and Move-in / Move-out.</p><p>Welcome aboard,<br/>The DORIXÉ team</p>`,
-  }
-}
+import { welcomeEmail } from "@/lib/resend/emailContent"
 
 // Welcome email — fired on signup. Transactional (sent to every new user), deduped per user.
 export const onUserWelcome = inngest.createFunction(
   { id: "user-welcome-email", retries: 2, triggers: [{ event: "user/welcome" }] },
   async ({ event, step }: { event: { data: { userId: string } }; step: any }) => {
     const { userId } = event.data
-    const [u] = await db.select({ email: users.email, firstName: users.firstName, role: users.role, createdAt: users.createdAt }).from(users).where(eq(users.id, userId))
+    const [u] = await db.select({ email: users.email, firstName: users.firstName, role: users.role, createdAt: users.createdAt, locale: users.locale }).from(users).where(eq(users.id, userId))
     if (!u?.email) return { skipped: "no_user" }
 
     const [already] = await db.select({ id: emailSends.id }).from(emailSends).where(and(eq(emailSends.userId, userId), eq(emailSends.type, "welcome"))).limit(1)
@@ -29,9 +22,9 @@ export const onUserWelcome = inngest.createFunction(
 
     const draft: EmailDraft = await step.run("generate", async () => {
       try {
-        return await generateMarketingEmail({ type: "welcome", recipient: { firstName: u.firstName, role: u.role, signedUpDaysAgo: 0, bookingCount: 0 } })
+        return await generateMarketingEmail({ type: "welcome", locale: u.locale ?? undefined, recipient: { firstName: u.firstName, role: u.role, signedUpDaysAgo: 0, bookingCount: 0 } })
       } catch {
-        return staticWelcome(u.firstName)
+        return welcomeEmail(u.locale, u.firstName)
       }
     })
 
