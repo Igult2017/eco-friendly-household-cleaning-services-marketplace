@@ -173,6 +173,9 @@ export async function POST(req: Request) {
         amount: totalWithOffset,
         currency: chargeCurrency,
         capture_method: "manual",
+        // Save the card so payment can still be taken off-session if the 7-day auth hold lapses while
+        // we wait for both parties to confirm completion (dual-confirm can take longer than the hold).
+        setup_future_usage: "off_session",
         customer: stripeCustomerId,
         // Carbon offset stays with DORIXÉ (added to platform fee), not paid to provider
         application_fee_amount: amounts.platformFee + carbonOffsetCents,

@@ -755,7 +755,10 @@
     "openDispute": "Open Dispute",
     "reschedule": "Reschedule",
     "cancelBooking": "Cancel Booking",
-    "messageCleaner": "Message your cleaner"
+    "messageCleaner": "Message your cleaner",
+    "confirmCompletion": "Confirm completion",
+    "confirmInfo": "Payment is released to your cleaner only after you both mark the job complete.",
+    "statusAwaitingConfirmation": "Awaiting your confirmation"
   },
   "customerBookingsIdReschedulePage": {
     "backToBooking": "Back to booking",

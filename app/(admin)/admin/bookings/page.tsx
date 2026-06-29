@@ -19,7 +19,7 @@ type BookingRow = {
   providerBusinessName: string | null
 }
 
-const STATUS_FILTERS = ["all", "confirmed", "in_progress", "completed", "cancelled", "disputed", "refunded"]
+const STATUS_FILTERS = ["all", "confirmed", "in_progress", "pending_capture", "completed", "cancelled", "disputed", "refunded"]
 const PAGE_LIMIT = 20
 
 export default function AdminBookingsPage() {
@@ -27,6 +27,7 @@ export default function AdminBookingsPage() {
   const [page, setPage] = useState(1)
   const [bookings, setBookings] = useState<BookingRow[]>([])
   const [loading, setLoading] = useState(true)
+  const [releasing, setReleasing] = useState<string | null>(null)
 
   const reload = useCallback(() => {
     setLoading(true)
@@ -39,6 +40,18 @@ export default function AdminBookingsPage() {
   }, [status, page])
 
   useEffect(() => { reload() }, [reload])
+
+  // Manual release for the dual-confirm flow: pay the cleaner when the client is unavailable to
+  // confirm but the cleaner has proof. The API rejects bookings the cleaner hasn't marked done.
+  async function releasePayment(id: string) {
+    if (!confirm("Release payment to the cleaner for this booking? Use only when the cleaner has proof the job was completed.")) return
+    setReleasing(id)
+    try {
+      const r = await fetch(`/api/admin/bookings/${id}/release`, { method: "POST" })
+      if (!r.ok) { const d = await r.json().catch(() => ({})); alert(d.error ?? "Release failed") }
+      reload()
+    } finally { setReleasing(null) }
+  }
 
   return (
     <div className="space-y-6">
@@ -75,7 +88,7 @@ export default function AdminBookingsPage() {
           <div className="overflow-x-auto -mx-px"><table className="min-w-full divide-y divide-gray-100">
             <thead className="bg-gray-50">
               <tr>
-                {["Booking #", "Customer", "Provider", "Scheduled", "Subtotal", "Fee", "Total", "Status"].map((h) => (
+                {["Booking #", "Customer", "Provider", "Scheduled", "Subtotal", "Fee", "Total", "Status", "Actions"].map((h) => (
                   <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-[#6B7280]">{h}</th>
                 ))}
               </tr>
@@ -98,6 +111,19 @@ export default function AdminBookingsPage() {
                   <td className="px-4 py-3 text-sm text-[#6B7280]">€{((b.platformFeeAmount ?? 0) / 100).toFixed(2)}</td>
                   <td className="px-4 py-3 text-sm font-bold text-[#2B3441]">€{((b.totalAmount ?? 0) / 100).toFixed(2)}</td>
                   <td className="px-4 py-3"><StatusBadge status={b.status} /></td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    {b.status === "pending_capture" ? (
+                      <button
+                        onClick={() => releasePayment(b.id)}
+                        disabled={releasing === b.id}
+                        className="inline-flex items-center gap-1 rounded-lg bg-[#2D7A5F] hover:bg-[#235f49] px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50"
+                      >
+                        {releasing === b.id ? <Loader2 className="h-3 w-3 animate-spin" /> : null} Release payment
+                      </button>
+                    ) : (
+                      <span className="text-xs text-[#9CA3AF]">—</span>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

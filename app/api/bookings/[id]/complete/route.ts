@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { bookings, payments, providers } from "@/lib/db/schema"
+import { bookings, payments, providers, notifications } from "@/lib/db/schema"
 import { eq, and, inArray } from "drizzle-orm"
 import { inngest } from "@/lib/inngest/client"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
@@ -32,7 +32,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     if (!provider) return NextResponse.json({ error: "Not a provider or account suspended" }, { status: 403 })
 
     const [booking] = await db
-      .select({ id: bookings.id, status: bookings.status, customerId: bookings.customerId, providerId: bookings.providerId, scheduledAt: bookings.scheduledAt })
+      .select({ id: bookings.id, status: bookings.status, customerId: bookings.customerId, providerId: bookings.providerId, scheduledAt: bookings.scheduledAt, clientConfirmedAt: bookings.clientConfirmedAt })
       .from(bookings)
       .where(and(eq(bookings.id, bookingId), eq(bookings.providerId, provider.id)))
 
@@ -59,7 +59,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     // booking/completed event (→ capture) can't be fired twice by a double-submit.
     const updated = await db
       .update(bookings)
-      .set({ status: "pending_capture", completionPhotoUrls: photoUrls, actualEndAt: new Date() })
+      .set({ status: "pending_capture", completionPhotoUrls: photoUrls, actualEndAt: new Date(), providerCompletedAt: new Date() })
       .where(and(
         eq(bookings.id, bookingId),
         eq(bookings.providerId, provider.id),
@@ -70,25 +70,28 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       return NextResponse.json({ error: "Booking cannot be completed in its current state" }, { status: 422 })
     }
 
-    const [payment] = await db
-      .select({ stripePaymentIntentId: payments.stripePaymentIntentId })
-      .from(payments)
-      .where(eq(payments.bookingId, bookingId))
-
-    if (!payment) return NextResponse.json({ error: "Payment record not found" }, { status: 500 })
-
-    try {
-      await inngest.send({
-        name: "booking/completed",
-        data: {
-          bookingId,
-          paymentIntentId: payment.stripePaymentIntentId,
-          providerId: provider.id,
-          customerId: booking.customerId,
-        },
-      })
-    } catch (inngestErr) {
-      console.warn("[bookings/complete POST] Inngest send failed:", inngestErr instanceof Error ? inngestErr.message : inngestErr)
+    // Dual-confirm: the cleaner has marked the job done. Payment is released to them only once the
+    // CLIENT also confirms (or an admin releases it). Capture now ONLY if the client already confirmed.
+    if (booking.clientConfirmedAt) {
+      const [payment] = await db.select({ stripePaymentIntentId: payments.stripePaymentIntentId }).from(payments).where(eq(payments.bookingId, bookingId))
+      if (payment) {
+        try {
+          await inngest.send({ name: "booking/completed", data: { bookingId, paymentIntentId: payment.stripePaymentIntentId, providerId: provider.id, customerId: booking.customerId } })
+        } catch (e) { console.warn("[bookings/complete POST] capture send failed:", e) }
+      }
+    } else {
+      // Ask the client to confirm + start the admin-nudge timer. No money moves yet.
+      try {
+        await db.insert(notifications).values({
+          userId: booking.customerId,
+          type: "booking_confirmed",
+          title: "Confirm your cleaning is done",
+          body: "Your cleaner marked the job complete. Please confirm to release payment.",
+          link: `/bookings/${bookingId}`,
+          metadata: { variant: "client_confirm_request" },
+        })
+        await inngest.send({ name: "booking/awaiting-confirmation", data: { bookingId } })
+      } catch (e) { console.warn("[bookings/complete POST] notify/await send failed:", e) }
     }
 
     return NextResponse.json({ success: true })

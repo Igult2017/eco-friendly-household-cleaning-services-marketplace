@@ -11,6 +11,7 @@ import { onDisputeOpened } from "@/lib/inngest/functions/disputes"
 import { onRecurringScheduleCreated, recurringBookingCron } from "@/lib/inngest/functions/recurring"
 import { onUserWelcome, sendCampaign } from "@/lib/inngest/functions/marketing"
 import { captureSweeper } from "@/lib/inngest/functions/sweeper"
+import { onAwaitingConfirmation } from "@/lib/inngest/functions/awaitingConfirmation"
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -28,5 +29,6 @@ export const { GET, POST, PUT } = serve({
     onUserWelcome,
     sendCampaign,
     captureSweeper,
+    onAwaitingConfirmation,
   ],
 })

@@ -755,7 +755,10 @@
     "openDispute": "Ouvrir un litige",
     "reschedule": "Reprogrammer",
     "cancelBooking": "Annuler la réservation",
-    "messageCleaner": "Contacter votre intervenant"
+    "messageCleaner": "Contacter votre intervenant",
+    "confirmCompletion": "Confirmer l achèvement",
+    "confirmInfo": "Le paiement n est versé à votre intervenant qu une fois que vous avez tous les deux marqué la mission comme terminée.",
+    "statusAwaitingConfirmation": "En attente de votre confirmation"
   },
   "customerBookingsIdReschedulePage": {
     "backToBooking": "Retour à la réservation",

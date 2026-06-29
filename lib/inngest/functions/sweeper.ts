@@ -26,6 +26,9 @@ export const captureSweeper = inngest.createFunction(
         .innerJoin(payments, eq(payments.bookingId, bookings.id))
         .where(and(
           eq(bookings.status, "pending_capture"),
+          // Only sweep bookings the CLIENT has confirmed (or an admin released — that also sets this).
+          // Never auto-capture one still awaiting the client's confirmation, or we'd bypass dual-confirm.
+          isNotNull(bookings.clientConfirmedAt),
           isNotNull(bookings.actualEndAt),
           lte(bookings.actualEndAt, cutoff),
         ))

@@ -226,6 +226,17 @@ const NOTIF: Record<string, Record<string, S>> = {
     pl: { title: "Nowa rezerwacja!", body: "Masz nową rezerwację na {service} w dniu {datetime}." },
     pt: { title: "Nova reserva!", body: "Tens uma nova reserva de {service} em {datetime}." },
   },
+  // Cleaner marked the job done → ask the client to confirm so payment is released (dual-confirm).
+  client_confirm_request: {
+    en: { title: "Confirm your cleaning is done", body: "Your cleaner marked the job complete. Please confirm to release payment." },
+    de: { title: "Bestätige, dass deine Reinigung erledigt ist", body: "Deine Reinigungskraft hat den Auftrag als erledigt markiert. Bitte bestätige, um die Zahlung freizugeben." },
+    fr: { title: "Confirmez que votre ménage est terminé", body: "Votre intervenant a marqué la mission comme terminée. Veuillez confirmer pour libérer le paiement." },
+    es: { title: "Confirma que tu limpieza está hecha", body: "Tu profesional marcó el trabajo como completado. Confirma para liberar el pago." },
+    it: { title: "Conferma che la pulizia è stata completata", body: "Il tuo addetto ha contrassegnato il lavoro come completato. Conferma per rilasciare il pagamento." },
+    nl: { title: "Bevestig dat je schoonmaak klaar is", body: "Je schoonmaker heeft de klus als voltooid gemarkeerd. Bevestig om de betaling vrij te geven." },
+    pl: { title: "Potwierdź, że sprzątanie zostało wykonane", body: "Twoja osoba sprzątająca oznaczyła zlecenie jako wykonane. Potwierdź, aby zwolnić płatność." },
+    pt: { title: "Confirme que a sua limpeza está concluída", body: "O seu profissional marcou o trabalho como concluído. Confirme para libertar o pagamento." },
+  },
 }
 
 // Placeholders each type's strings expect. A type localizes only if metadata supplies all of them.
@@ -243,6 +254,7 @@ const PARAMS: Record<string, string[]> = {
   booking_reminder_client: ["datetime"],
   booking_cancelled_party: ["datetime"],
   new_booking_provider: ["service", "datetime"],
+  client_confirm_request: [],
 }
 
 /**

@@ -285,6 +285,12 @@ UPDATE provider_services SET category_ids = jsonb_build_array(category_id::text)
 -- requires consent=true, so this is set whenever a schedule is created.
 ALTER TABLE recurring_schedules ADD COLUMN IF NOT EXISTS auto_renew_consent_at timestamptz;
 
+-- Dual completion confirmation: payment releases to the cleaner only when BOTH the cleaner and the
+-- client mark the job done (or an admin releases it manually with the cleaner's proof). Track each.
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS provider_completed_at timestamptz;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS client_confirmed_at timestamptz;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS payment_released_by varchar(20);
+
 -- Eco-store: admin-curated affiliate products + business starter packs (outbound purchase links).
 DO $$ BEGIN CREATE TYPE store_product_type AS ENUM ('product','starter_pack'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN CREATE TYPE store_product_status AS ENUM ('draft','published'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;

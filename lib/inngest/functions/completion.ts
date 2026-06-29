@@ -17,22 +17,48 @@ export const onBookingCompleted = inngest.createFunction(
     const captureResult = await step.run("stripe-capture", async () => {
       // Don't capture a card on a booking that was disputed/cancelled after /complete fired — the
       // dispute-open route allows opening a dispute while status is pending_capture. Re-check first.
+      // (This event only fires once BOTH parties confirmed or an admin released — see complete/confirm.)
       const [bk] = await db.select({ status: bookings.status }).from(bookings).where(eq(bookings.id, bookingId))
       if (!bk || bk.status !== "pending_capture") return null
-      return stripe.paymentIntents.capture(
-        paymentIntentId,
-        {},
-        { idempotencyKey: `capture-${paymentIntentId}` },
-      )
+      const pi = await stripe.paymentIntents.retrieve(paymentIntentId)
+      // Normal path: the manual-capture hold is still alive → capture it.
+      if (pi.status === "requires_capture") {
+        return stripe.paymentIntents.capture(paymentIntentId, {}, { idempotencyKey: `capture-${paymentIntentId}` })
+      }
+      // Already captured (an Inngest retry) → reuse it.
+      if (pi.status === "succeeded") return pi
+      // The ~7-day hold lapsed while we waited for confirmation → charge the SAVED card off-session
+      // (setup_future_usage saved it at booking). Same destination + fee, so the split is identical.
+      if (pi.status === "canceled") {
+        const pmId = typeof pi.payment_method === "string" ? pi.payment_method : pi.payment_method?.id
+        const custId = typeof pi.customer === "string" ? pi.customer : pi.customer?.id
+        const dest = pi.transfer_data?.destination
+        const destId = typeof dest === "string" ? dest : dest?.id
+        if (!pmId || !custId || !destId) return null
+        return stripe.paymentIntents.create({
+          amount: pi.amount,
+          currency: pi.currency,
+          customer: custId,
+          payment_method: pmId,
+          confirm: true,
+          off_session: true,
+          application_fee_amount: pi.application_fee_amount ?? undefined,
+          transfer_data: { destination: destId },
+          metadata: pi.metadata,
+        }, { idempotencyKey: `offsession-capture-${bookingId}` })
+      }
+      return null
     })
 
     if (!captureResult) return { skipped: "not_pending_capture" }
 
     await step.run("record-capture", async () => {
+      // Match by bookingId (the off-session fallback creates a NEW PaymentIntent id) and store
+      // whichever PI actually collected the money.
       await db
         .update(payments)
-        .set({ status: "captured", capturedAmount: captureResult.amount_received, capturedAt: new Date() })
-        .where(eq(payments.stripePaymentIntentId, paymentIntentId))
+        .set({ status: "captured", capturedAmount: captureResult.amount_received ?? captureResult.amount, capturedAt: new Date(), stripePaymentIntentId: captureResult.id })
+        .where(eq(payments.bookingId, bookingId))
     })
 
     await step.run("update-booking", async () => {

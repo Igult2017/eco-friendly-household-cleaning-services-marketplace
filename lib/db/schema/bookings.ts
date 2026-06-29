@@ -71,6 +71,10 @@ export const bookings = pgTable(
     cancellationReason: text("cancellation_reason"),
     cancelledAt: timestamp("cancelled_at", { withTimezone: true }),
     cancelledBy: text("cancelled_by"),
+    // Dual completion confirmation — payment releases only when BOTH are set (or an admin releases).
+    providerCompletedAt: timestamp("provider_completed_at", { withTimezone: true }),
+    clientConfirmedAt: timestamp("client_confirmed_at", { withTimezone: true }),
+    paymentReleasedBy: varchar("payment_released_by", { length: 20 }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },

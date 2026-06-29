@@ -755,7 +755,10 @@
     "openDispute": "Reklamation eröffnen",
     "reschedule": "Verschieben",
     "cancelBooking": "Buchung stornieren",
-    "messageCleaner": "Reinigungskraft kontaktieren"
+    "messageCleaner": "Reinigungskraft kontaktieren",
+    "confirmCompletion": "Abschluss bestätigen",
+    "confirmInfo": "Die Zahlung wird erst an deine Reinigungskraft freigegeben, wenn ihr beide den Auftrag als erledigt markiert.",
+    "statusAwaitingConfirmation": "Wartet auf deine Bestätigung"
   },
   "customerBookingsIdReschedulePage": {
     "backToBooking": "Zurück zur Buchung",

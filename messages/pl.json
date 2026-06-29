@@ -755,7 +755,10 @@
     "openDispute": "Otwórz reklamację",
     "reschedule": "Zmień termin",
     "cancelBooking": "Anuluj rezerwację",
-    "messageCleaner": "Napisz do osoby sprzątającej"
+    "messageCleaner": "Napisz do osoby sprzątającej",
+    "confirmCompletion": "Potwierdź zakończenie",
+    "confirmInfo": "Płatność zostaje zwolniona dla osoby sprzątającej dopiero po tym, jak oboje oznaczycie zlecenie jako wykonane.",
+    "statusAwaitingConfirmation": "Oczekuje na Twoje potwierdzenie"
   },
   "customerBookingsIdReschedulePage": {
     "backToBooking": "Powrót do rezerwacji",

@@ -755,7 +755,10 @@
     "openDispute": "Geschil openen",
     "reschedule": "Opnieuw plannen",
     "cancelBooking": "Boeking annuleren",
-    "messageCleaner": "Bericht je schoonmaker"
+    "messageCleaner": "Bericht je schoonmaker",
+    "confirmCompletion": "Voltooiing bevestigen",
+    "confirmInfo": "De betaling wordt pas aan je schoonmaker vrijgegeven nadat jullie allebei de klus als voltooid hebben gemarkeerd.",
+    "statusAwaitingConfirmation": "Wacht op je bevestiging"
   },
   "customerBookingsIdReschedulePage": {
     "backToBooking": "Terug naar boeking",

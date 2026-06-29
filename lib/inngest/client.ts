@@ -20,6 +20,9 @@ export type DorixEvents = {
   "booking/rescheduled": {
     data: { bookingId: string; customerId: string; providerId: string }
   }
+  "booking/awaiting-confirmation": {
+    data: { bookingId: string }
+  }
   "dispute/opened": {
     data: { disputeId: string; bookingId: string; openedBy: string }
   }

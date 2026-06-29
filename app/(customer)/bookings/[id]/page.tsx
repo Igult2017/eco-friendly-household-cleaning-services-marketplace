@@ -8,6 +8,7 @@ import Link from "next/link"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
 import { formatDate } from "@/lib/utils/formatDate"
 import { CalendarDays, MapPin, Leaf, Star, MessageSquare, MessageSquareWarning, XCircle, CheckCircle2, Clock, AlertCircle, CalendarClock } from "lucide-react"
+import { ConfirmCompletionButton } from "@/components/customer/ConfirmCompletionButton"
 
 export const dynamic = "force-dynamic"
 
@@ -16,6 +17,7 @@ const STATUS_CONFIG: Record<string, { labelKey: string; color: string; icon: Rea
   payment_authorized: { labelKey: "statusConfirmed",         color: "bg-blue-100 text-blue-700",      icon: CalendarDays },
   confirmed:          { labelKey: "statusConfirmed",         color: "bg-blue-100 text-blue-700",      icon: CalendarDays },
   in_progress:        { labelKey: "statusInProgress",        color: "bg-[#D1F0E0] text-[#2D7A5F]",   icon: Clock },
+  pending_capture:    { labelKey: "statusAwaitingConfirmation", color: "bg-amber-100 text-amber-700", icon: Clock },
   completed:          { labelKey: "statusCompleted",         color: "bg-green-100 text-green-700",    icon: CheckCircle2 },
   cancelled:          { labelKey: "statusCancelled",         color: "bg-red-100 text-red-700",        icon: XCircle },
   disputed:           { labelKey: "statusDisputed",          color: "bg-orange-100 text-orange-700",  icon: AlertCircle },
@@ -48,6 +50,8 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
       createdAt: bookings.createdAt,
       customerId: bookings.customerId,
       providerId: bookings.providerId,
+      providerCompletedAt: bookings.providerCompletedAt,
+      clientConfirmedAt: bookings.clientConfirmedAt,
       providerBusinessName: providers.businessName,
       providerSlug: providers.slug,
       providerCity: providers.city,
@@ -72,6 +76,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
   const canReschedule = ["payment_authorized", "confirmed"].includes(booking.status)
   const canDispute = booking.status === "completed"
   const canReview = booking.status === "completed"
+  const canConfirm = booking.status === "pending_capture" && !!booking.providerCompletedAt && !booking.clientConfirmedAt
 
   const addr = booking.serviceAddress as { line1: string; line2?: string; city: string; postalCode: string; country: string }
 
@@ -165,6 +170,16 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
           )}
         </div>
       </div>
+
+      {/* Dual-confirm: a persistent reminder of how payment is released, plus the confirm action. */}
+      {["payment_authorized", "confirmed", "in_progress", "pending_capture"].includes(booking.status) && (
+        <p className="text-xs text-[#6B7280] bg-white rounded-xl px-4 py-3 border border-[#E5EBF0]">{t("confirmInfo")}</p>
+      )}
+      {canConfirm && (
+        <div className="rounded-2xl border border-[#2D7A5F]/30 bg-[#F4FAF6] p-5">
+          <ConfirmCompletionButton bookingId={booking.id} />
+        </div>
+      )}
 
       {/* Contact the cleaner — the client previously had NO way to open the chat from the booking. */}
       {["payment_authorized", "confirmed", "in_progress", "pending_capture", "completed", "disputed"].includes(booking.status) && (

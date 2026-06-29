@@ -755,7 +755,10 @@
     "openDispute": "Abrir una disputa",
     "reschedule": "Reprogramar",
     "cancelBooking": "Cancelar reserva",
-    "messageCleaner": "Mensaje a tu profesional"
+    "messageCleaner": "Mensaje a tu profesional",
+    "confirmCompletion": "Confirmar finalización",
+    "confirmInfo": "El pago se libera a tu profesional solo después de que ambos marquéis el trabajo como completado.",
+    "statusAwaitingConfirmation": "Esperando tu confirmación"
   },
   "customerBookingsIdReschedulePage": {
     "backToBooking": "Volver a la reserva",

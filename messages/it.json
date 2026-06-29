@@ -755,7 +755,10 @@
     "openDispute": "Apri una contestazione",
     "reschedule": "Riprogramma",
     "cancelBooking": "Annulla prenotazione",
-    "messageCleaner": "Contatta l addetto"
+    "messageCleaner": "Contatta l addetto",
+    "confirmCompletion": "Conferma completamento",
+    "confirmInfo": "Il pagamento viene rilasciato al tuo addetto solo dopo che entrambi avete contrassegnato il lavoro come completato.",
+    "statusAwaitingConfirmation": "In attesa della tua conferma"
   },
   "customerBookingsIdReschedulePage": {
     "backToBooking": "Torna alla prenotazione",
