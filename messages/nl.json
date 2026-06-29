@@ -1812,5 +1812,21 @@
     "successTitle": "Bericht verzonden",
     "successBody": "Bedankt — we reageren per e-mail.",
     "error": "Je bericht kon niet worden verzonden. Probeer het opnieuw."
+  },
+  "customerReceiptPage": {
+    "title": "Betalingsbewijs",
+    "receiptNo": "Bonnr.",
+    "date": "Datum",
+    "billedTo": "Gefactureerd aan",
+    "cleaner": "Schoonmaker",
+    "service": "Dienst",
+    "subtotal": "Subtotaal",
+    "discount": "Korting",
+    "carbonOffset": "CO₂-compensatie",
+    "total": "Totaal betaald",
+    "status": "Betaalstatus",
+    "notInvoice": "Dit is een betalingsbewijs, geen btw-factuur.",
+    "print": "Afdrukken / opslaan als PDF",
+    "receiptLink": "Bon"
   }
 }

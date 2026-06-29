@@ -1812,5 +1812,21 @@
     "successTitle": "Messaggio inviato",
     "successBody": "Grazie — ti risponderemo via e-mail.",
     "error": "Impossibile inviare il messaggio. Riprova."
+  },
+  "customerReceiptPage": {
+    "title": "Ricevuta di pagamento",
+    "receiptNo": "Ricevuta n.",
+    "date": "Data",
+    "billedTo": "Intestato a",
+    "cleaner": "Addetto",
+    "service": "Servizio",
+    "subtotal": "Subtotale",
+    "discount": "Sconto",
+    "carbonOffset": "Compensazione CO₂",
+    "total": "Totale pagato",
+    "status": "Stato del pagamento",
+    "notInvoice": "Questa è una ricevuta di pagamento, non una fattura con IVA.",
+    "print": "Stampa / Salva come PDF",
+    "receiptLink": "Ricevuta"
   }
 }

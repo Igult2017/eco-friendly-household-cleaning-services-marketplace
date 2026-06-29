@@ -7,7 +7,7 @@ import { getTranslations } from "next-intl/server"
 import Link from "next/link"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
 import { formatDate } from "@/lib/utils/formatDate"
-import { CalendarDays, MapPin, Leaf, Star, MessageSquare, MessageSquareWarning, XCircle, CheckCircle2, Clock, AlertCircle, CalendarClock } from "lucide-react"
+import { CalendarDays, MapPin, Leaf, Star, MessageSquare, MessageSquareWarning, XCircle, CheckCircle2, Clock, AlertCircle, CalendarClock, FileText } from "lucide-react"
 import { ConfirmCompletionButton } from "@/components/customer/ConfirmCompletionButton"
 
 export const dynamic = "force-dynamic"
@@ -29,6 +29,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
   if (!userId) redirect("/sign-in")
 
   const t = await getTranslations("customerBookingsIdPage")
+  const tr = await getTranslations("customerReceiptPage")
   const { id } = await params
 
   const [booking] = await db
@@ -170,6 +171,12 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
           )}
         </div>
       </div>
+
+      {booking.status === "completed" && (
+        <Link href={`/bookings/${booking.id}/receipt`} className="inline-flex items-center gap-2 text-sm font-medium text-[#2D7A5F] hover:underline">
+          <FileText size={15} /> {tr("receiptLink")}
+        </Link>
+      )}
 
       {/* Dual-confirm: a persistent reminder of how payment is released, plus the confirm action. */}
       {["payment_authorized", "confirmed", "in_progress", "pending_capture"].includes(booking.status) && (

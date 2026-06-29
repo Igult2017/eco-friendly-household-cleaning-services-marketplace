@@ -1812,5 +1812,21 @@
     "successTitle": "Nachricht gesendet",
     "successBody": "Danke — wir melden uns per E-Mail.",
     "error": "Deine Nachricht konnte nicht gesendet werden. Bitte versuche es erneut."
+  },
+  "customerReceiptPage": {
+    "title": "Zahlungsbeleg",
+    "receiptNo": "Beleg-Nr.",
+    "date": "Datum",
+    "billedTo": "Rechnungsempfänger",
+    "cleaner": "Reinigungskraft",
+    "service": "Leistung",
+    "subtotal": "Zwischensumme",
+    "discount": "Rabatt",
+    "carbonOffset": "CO₂-Ausgleich",
+    "total": "Gesamt bezahlt",
+    "status": "Zahlungsstatus",
+    "notInvoice": "Dies ist ein Zahlungsbeleg, keine Mehrwertsteuerrechnung.",
+    "print": "Drucken / als PDF speichern",
+    "receiptLink": "Beleg"
   }
 }

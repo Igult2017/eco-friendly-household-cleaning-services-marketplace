@@ -1812,5 +1812,21 @@
     "successTitle": "Message envoyé",
     "successBody": "Merci — nous vous répondrons par e-mail.",
     "error": "Impossible d envoyer votre message. Veuillez réessayer."
+  },
+  "customerReceiptPage": {
+    "title": "Reçu de paiement",
+    "receiptNo": "Reçu n°",
+    "date": "Date",
+    "billedTo": "Facturé à",
+    "cleaner": "Intervenant",
+    "service": "Prestation",
+    "subtotal": "Sous-total",
+    "discount": "Remise",
+    "carbonOffset": "Compensation carbone",
+    "total": "Total payé",
+    "status": "Statut du paiement",
+    "notInvoice": "Ceci est un reçu de paiement, pas une facture TVA.",
+    "print": "Imprimer / Enregistrer en PDF",
+    "receiptLink": "Reçu"
   }
 }

@@ -1812,5 +1812,21 @@
     "successTitle": "Wiadomość wysłana",
     "successBody": "Dziękujemy — odpowiemy e-mailem.",
     "error": "Nie udało się wysłać wiadomości. Spróbuj ponownie."
+  },
+  "customerReceiptPage": {
+    "title": "Potwierdzenie płatności",
+    "receiptNo": "Nr potwierdzenia",
+    "date": "Data",
+    "billedTo": "Nabywca",
+    "cleaner": "Osoba sprzątająca",
+    "service": "Usługa",
+    "subtotal": "Suma częściowa",
+    "discount": "Rabat",
+    "carbonOffset": "Kompensacja CO₂",
+    "total": "Łącznie zapłacono",
+    "status": "Status płatności",
+    "notInvoice": "To jest potwierdzenie płatności, a nie faktura VAT.",
+    "print": "Drukuj / Zapisz jako PDF",
+    "receiptLink": "Potwierdzenie"
   }
 }

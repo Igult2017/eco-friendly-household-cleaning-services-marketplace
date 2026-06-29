@@ -1812,5 +1812,21 @@
     "successTitle": "Message sent",
     "successBody": "Thanks — we will get back to you by email.",
     "error": "Could not send your message. Please try again."
+  },
+  "customerReceiptPage": {
+    "title": "Payment receipt",
+    "receiptNo": "Receipt no.",
+    "date": "Date",
+    "billedTo": "Billed to",
+    "cleaner": "Cleaner",
+    "service": "Service",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "carbonOffset": "Carbon offset",
+    "total": "Total paid",
+    "status": "Payment status",
+    "notInvoice": "This is a payment receipt, not a VAT invoice.",
+    "print": "Print / Save as PDF",
+    "receiptLink": "Receipt"
   }
 }

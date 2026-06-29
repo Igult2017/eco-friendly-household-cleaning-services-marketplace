@@ -1812,5 +1812,21 @@
     "successTitle": "Mensaje enviado",
     "successBody": "Gracias, te responderemos por correo.",
     "error": "No se pudo enviar tu mensaje. Inténtalo de nuevo."
+  },
+  "customerReceiptPage": {
+    "title": "Recibo de pago",
+    "receiptNo": "Recibo n.º",
+    "date": "Fecha",
+    "billedTo": "Facturado a",
+    "cleaner": "Profesional",
+    "service": "Servicio",
+    "subtotal": "Subtotal",
+    "discount": "Descuento",
+    "carbonOffset": "Compensación de carbono",
+    "total": "Total pagado",
+    "status": "Estado del pago",
+    "notInvoice": "Este es un recibo de pago, no una factura con IVA.",
+    "print": "Imprimir / Guardar como PDF",
+    "receiptLink": "Recibo"
   }
 }
