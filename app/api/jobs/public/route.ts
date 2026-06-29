@@ -3,23 +3,29 @@ import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { jobPosts, providers } from "@/lib/db/schema"
 import { desc, eq } from "drizzle-orm"
+import { getClientIp } from "@/lib/utils/ip"
 
 export const dynamic = "force-dynamic"
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const { userId } = await auth()
+    const currentIp = getClientIp(req)
     const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
 
     const jobs = await db.query.jobPosts.findMany({
-      where: (jp, { inArray: inArr, and, gte: gteFn, ne }) => {
-        const base = and(
+      where: (jp, { inArray: inArr, and, gte, ne, or, isNull }) => {
+        const conds = [
           inArr(jp.status, ["open", "bidding", "assigned", "expired"]),
-          gteFn(jp.createdAt, cutoff),
-        )
-        // Never show a signed-in user their OWN posted jobs — they can't bid on them (and it's the same
-        // user id across a dual cleaner/client account), so no bid button can ever appear on own work.
-        return userId ? and(base, ne(jp.customerId, userId)) : base
+          gte(jp.createdAt, cutoff),
+        ]
+        // Never show a user their OWN posted jobs — they can't bid on them, so no bid button can ever
+        // appear on own work (same user id across a dual cleaner/client account).
+        if (userId) conds.push(ne(jp.customerId, userId))
+        // Fraud prevention: also hide jobs posted from this same IP, so a second account on the same
+        // connection can't see — let alone bid on — a job the user posted from another account.
+        if (currentIp) conds.push(or(isNull(jp.postedIp), ne(jp.postedIp, currentIp))!)
+        return and(...conds)
       },
       with: {
         category: { columns: { name: true, slug: true } },
