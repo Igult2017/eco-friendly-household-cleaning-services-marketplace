@@ -205,7 +205,8 @@
     "bidOnThisJob": "Licytuj to zlecenie →",
     "bottomCtaTitle": "Gotowy, by zacząć zarabiać?",
     "bottomCtaSubtitle": "Dołącz do DORIXÉ jako wykonawca. Ustalaj własne ceny, pracuj w swoich godzinach i otrzymuj wypłaty co tydzień.",
-    "createProviderAccount": "Załóż konto wykonawcy"
+    "createProviderAccount": "Załóż konto wykonawcy",
+    "onlyCleanersBid": "Tylko osoby sprzątające mogą składać oferty"
   },
   "providerProfile": {
     "idVerified": "Tożsamość zweryfikowana",

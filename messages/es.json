@@ -205,7 +205,8 @@
     "bidOnThisJob": "Ofertar por este trabajo →",
     "bottomCtaTitle": "¿Listo para empezar a ganar?",
     "bottomCtaSubtitle": "Únete a DORIXÉ como proveedor. Pon tus propios precios, trabaja a tu ritmo y cobra cada semana.",
-    "createProviderAccount": "Crear una cuenta de proveedor"
+    "createProviderAccount": "Crear una cuenta de proveedor",
+    "onlyCleanersBid": "Solo los profesionales pueden pujar"
   },
   "providerProfile": {
     "idVerified": "Identidad verificada",

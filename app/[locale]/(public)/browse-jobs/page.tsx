@@ -61,13 +61,18 @@ export default function BrowseJobsPage() {
   // bounced them to the homepage, so the bid button appeared "broken".
   const bidHref = isSignedIn === false ? "/sign-in?redirect_url=/provider/jobs" : "/provider/jobs"
   const [jobs, setJobs] = useState<Job[]>([])
+  const [canBid, setCanBid] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetch("/api/jobs/public")
       .then((r) => r.json())
-      .then((d) => { setJobs(d.jobs ?? []); setLoading(false) })
+      .then((d) => { setJobs(d.jobs ?? []); setCanBid(!!d.canBid); setLoading(false) })
   }, [])
+
+  // A signed-in CLIENT (no provider profile) can't bid — hide the button entirely for them. Signed-out
+  // visitors still see "Sign in to bid" (they may be a cleaner). Own jobs are already filtered out API-side.
+  const clientCannotBid = isSignedIn === true && !canBid
 
   return (
     <div className="min-h-screen bg-[#F4FAF6]">
@@ -179,6 +184,8 @@ export default function BrowseJobsPage() {
                     <p className="text-xs text-[#9CA3AF]">
                       {job.status === "assigned" ? t("providerSelected") : t("jobExpired")}
                     </p>
+                  ) : clientCannotBid ? (
+                    <p className="text-xs text-[#9CA3AF]">{t("onlyCleanersBid")}</p>
                   ) : (
                     <>
                       <p className="text-xs text-[#9CA3AF]">{t("signInAsProvider")}</p>

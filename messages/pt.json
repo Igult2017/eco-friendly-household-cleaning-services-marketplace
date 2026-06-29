@@ -205,7 +205,8 @@
     "bidOnThisJob": "Fazer proposta para este trabalho →",
     "bottomCtaTitle": "Pronto para começar a ganhar?",
     "bottomCtaSubtitle": "Junte-se à DORIXÉ como prestador. Defina os seus próprios preços, trabalhe ao seu ritmo e receba semanalmente.",
-    "createProviderAccount": "Criar uma conta de prestador"
+    "createProviderAccount": "Criar uma conta de prestador",
+    "onlyCleanersBid": "Apenas os profissionais podem licitar"
   },
   "providerProfile": {
     "idVerified": "Identidade verificada",

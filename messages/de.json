@@ -205,7 +205,8 @@
     "bidOnThisJob": "Auf diesen Auftrag bieten →",
     "bottomCtaTitle": "Bereit, Geld zu verdienen?",
     "bottomCtaSubtitle": "Werde Anbieter bei DORIXÉ. Lege deine eigenen Preise fest, arbeite zu deinen Zeiten und werde wöchentlich bezahlt.",
-    "createProviderAccount": "Anbieterkonto erstellen"
+    "createProviderAccount": "Anbieterkonto erstellen",
+    "onlyCleanersBid": "Nur Reinigungskräfte können auf Aufträge bieten"
   },
   "providerProfile": {
     "idVerified": "Identität verifiziert",

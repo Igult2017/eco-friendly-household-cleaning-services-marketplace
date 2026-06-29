@@ -205,7 +205,8 @@
     "bidOnThisJob": "Proposer une offre →",
     "bottomCtaTitle": "Prêt à commencer à gagner ?",
     "bottomCtaSubtitle": "Rejoignez DORIXÉ en tant que prestataire. Fixez vos propres tarifs, travaillez à vos horaires et soyez payé chaque semaine.",
-    "createProviderAccount": "Créer un compte prestataire"
+    "createProviderAccount": "Créer un compte prestataire",
+    "onlyCleanersBid": "Seuls les intervenants peuvent soumissionner"
   },
   "providerProfile": {
     "idVerified": "Identité vérifiée",
