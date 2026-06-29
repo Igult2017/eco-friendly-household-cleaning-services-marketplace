@@ -237,6 +237,17 @@ const NOTIF: Record<string, Record<string, S>> = {
     pl: { title: "Potwierdź, że sprzątanie zostało wykonane", body: "Twoja osoba sprzątająca oznaczyła zlecenie jako wykonane. Potwierdź, aby zwolnić płatność." },
     pt: { title: "Confirme que a sua limpeza está concluída", body: "O seu profissional marcou o trabalho como concluído. Confirme para libertar o pagamento." },
   },
+  // Time-agnostic CLEANER reminder ({datetime} carries day-before vs same-day). Provider perspective.
+  booking_reminder_provider: {
+    en: { title: "Upcoming cleaning job", body: "You have a cleaning job at {datetime}." },
+    de: { title: "Bevorstehender Reinigungsauftrag", body: "Du hast einen Reinigungsauftrag am {datetime}." },
+    fr: { title: "Mission de nettoyage à venir", body: "Vous avez une mission de nettoyage le {datetime}." },
+    es: { title: "Trabajo de limpieza próximo", body: "Tienes un trabajo de limpieza el {datetime}." },
+    it: { title: "Lavoro di pulizia in arrivo", body: "Hai un lavoro di pulizia il {datetime}." },
+    nl: { title: "Aankomende schoonmaakklus", body: "Je hebt een schoonmaakklus op {datetime}." },
+    pl: { title: "Nadchodzące zlecenie sprzątania", body: "Masz zlecenie sprzątania w dniu {datetime}." },
+    pt: { title: "Trabalho de limpeza a chegar", body: "Tens um trabalho de limpeza em {datetime}." },
+  },
 }
 
 // Placeholders each type's strings expect. A type localizes only if metadata supplies all of them.
@@ -255,6 +266,7 @@ const PARAMS: Record<string, string[]> = {
   booking_cancelled_party: ["datetime"],
   new_booking_provider: ["service", "datetime"],
   client_confirm_request: [],
+  booking_reminder_provider: ["datetime"],
 }
 
 /**

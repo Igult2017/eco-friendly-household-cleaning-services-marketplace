@@ -7,6 +7,23 @@ const WEEKDAY_TO_NUM: Record<string, number> = {
  * The platform spans Europe + USA, so a booking's UTC time must be projected into the cleaner's
  * OWN timezone before comparing against their availability (day-of-week + working hours).
  */
+/**
+ * Inverse of zonedDayAndTime: given a local wall-clock date (YYYY-MM-DD) + time (HH:MM) and an IANA
+ * timezone, return the UTC instant. Used so a booking's time is interpreted in the CLEANER's timezone
+ * (where the job happens), not the client's browser timezone — the platform spans EU + US.
+ */
+export function zonedTimeToUtc(dateStr: string, timeStr: string, timeZone: string): Date {
+  const [h, m] = timeStr.split(":").map(Number)
+  const guess = new Date(`${dateStr}T${timeStr}:00Z`)
+  if (isNaN(guess.getTime())) return new Date(`${dateStr}T${timeStr}:00`)
+  // What wall-clock does this UTC instant read in the target tz? Shift by the difference so it reads
+  // exactly the requested local time there.
+  const tzTime = guess.toLocaleString("sv-SE", { timeZone }).split(" ")[1] ?? "00:00:00"
+  const [tzH, tzM] = tzTime.split(":").map(Number)
+  const driftMin = (h * 60 + m) - (tzH * 60 + tzM)
+  return new Date(guess.getTime() + driftMin * 60_000)
+}
+
 export function zonedDayAndTime(date: Date, timeZone: string): { dayOfWeek: number; hhmm: string } {
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone,

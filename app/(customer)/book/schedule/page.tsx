@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Loader2, Clock } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useTranslations } from "next-intl"
+import { zonedTimeToUtc } from "@/lib/utils/tz"
 
 const DURATION_OPTIONS = [
   { value: 60, hours: 1 },
@@ -53,7 +54,7 @@ export default function BookStep3Page() {
   const [selectedDate, setSelectedDate] = useState<string | null>(restoreDate(scheduledAt))
   const [selectedTime, setSelectedTime] = useState<string | null>(restoreTime(scheduledAt))
   const [selectedDuration, setSelectedDuration] = useState(durationMinutes)
-  const [availability, setAvailability] = useState<{ available: boolean; workingHours?: { start: string; end: string } } | null>(null)
+  const [availability, setAvailability] = useState<{ available: boolean; timezone?: string; workingHours?: { start: string; end: string } } | null>(null)
   const [loadingAvail, setLoadingAvail] = useState(false)
 
   useEffect(() => {
@@ -77,7 +78,10 @@ export default function BookStep3Page() {
 
   function handleNext() {
     if (!selectedDate || !selectedTime) return
-    const dt = new Date(`${selectedDate}T${selectedTime}:00`)
+    // Interpret the picked time in the CLEANER's timezone (slots are shown in their working hours),
+    // not the client's browser timezone — otherwise a cross-tz client books the wrong instant.
+    const tz = availability?.timezone
+    const dt = tz ? zonedTimeToUtc(selectedDate, selectedTime, tz) : new Date(`${selectedDate}T${selectedTime}:00`)
     setSchedule(dt, selectedDuration)
     router.push("/book/extras")
   }

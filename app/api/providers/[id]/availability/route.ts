@@ -21,7 +21,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     }
 
     const [provider] = await db
-      .select({ id: providers.id })
+      .select({ id: providers.id, timezone: providers.timezone })
       .from(providers)
       .where(and(eq(providers.id, id), eq(providers.isApproved, true), eq(providers.isSuspended, false)))
 
@@ -67,6 +67,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
     return NextResponse.json({
       available: true,
+      // The cleaner's timezone — the client picks slots in this frame, so the booking time must be
+      // built in it (not the client's browser tz).
+      timezone: provider.timezone ?? "Europe/Berlin",
       workingHours: {
         start: availability.startTime,
         end: availability.endTime,

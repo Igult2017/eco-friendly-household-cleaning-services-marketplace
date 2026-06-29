@@ -5,18 +5,21 @@ import { useRouter } from "next/navigation"
 import { Loader2, CheckCircle2 } from "lucide-react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
+import { zonedTimeToUtc } from "@/lib/utils/tz"
 
 interface RescheduleFormProps {
   bookingId: string
   currentScheduledAt: string
+  providerTimezone?: string
+  defaultDurationHours?: number
 }
 
-export function RescheduleForm({ bookingId, currentScheduledAt }: RescheduleFormProps) {
+export function RescheduleForm({ bookingId, currentScheduledAt, providerTimezone, defaultDurationHours = 2 }: RescheduleFormProps) {
   const t = useTranslations("compBookingRescheduleForm")
   const router = useRouter()
   const [newDate, setNewDate] = useState("")
   const [newTime, setNewTime] = useState("")
-  const [durationHours, setDurationHours] = useState(2)
+  const [durationHours, setDurationHours] = useState(defaultDurationHours)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -31,10 +34,11 @@ export function RescheduleForm({ bookingId, currentScheduledAt }: RescheduleForm
     setError(null)
     setSubmitting(true)
 
-    const newScheduledAt = new Date(`${newDate}T${newTime}:00`).toISOString()
-    const end = new Date(`${newDate}T${newTime}:00`)
-    end.setHours(end.getHours() + durationHours)
-    const newScheduledEndAt = end.toISOString()
+    // Build the new time in the cleaner's timezone (matches how availability is validated server-side),
+    // and end = start + the (defaulted-from-original) duration.
+    const start = providerTimezone ? zonedTimeToUtc(newDate, newTime, providerTimezone) : new Date(`${newDate}T${newTime}:00`)
+    const newScheduledAt = start.toISOString()
+    const newScheduledEndAt = new Date(start.getTime() + durationHours * 3_600_000).toISOString()
 
     try {
       const res = await fetch(`/api/bookings/${bookingId}/reschedule`, {

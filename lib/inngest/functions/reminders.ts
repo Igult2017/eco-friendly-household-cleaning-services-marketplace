@@ -104,7 +104,7 @@ export const bookingReminders = inngest.createFunction(
         // Cleaner: in-app (localized via base booking_reminder copy)
         if (provider) {
           await insertReminder({
-            userId: provider.userId, bookingId, tag: "day_before",
+            userId: provider.userId, bookingId, tag: "day_before", variant: "booking_reminder_provider",
             datetime: fmtTz("en-GB"), link: `/bookings/${bookingId}`,
             title: "Booking tomorrow", body: `You have a cleaning job scheduled for tomorrow at ${fmtTz("en-GB")}.`,
           })
@@ -126,7 +126,8 @@ export const bookingReminders = inngest.createFunction(
         // Cleaner same-day in-app (English fallback copy; no localized 2h variant)
         if (provider) {
           await insertReminder({
-            userId: provider.userId, bookingId, tag: "2h", link: `/bookings/${bookingId}`,
+            userId: provider.userId, bookingId, tag: "2h", variant: "booking_reminder_provider",
+            datetime: fmtTz("en-GB"), link: `/bookings/${bookingId}`,
             title: "Booking in 2 hours", body: `Reminder: your cleaning job starts at ${fmtTz("en-GB")}.`,
           })
         }

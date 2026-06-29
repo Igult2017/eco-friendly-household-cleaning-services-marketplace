@@ -24,7 +24,9 @@ export default async function ReschedulePage({ params }: { params: Promise<{ id:
       bookingNumber: bookings.bookingNumber,
       status: bookings.status,
       scheduledAt: bookings.scheduledAt,
+      scheduledEndAt: bookings.scheduledEndAt,
       providerBusinessName: providers.businessName,
+      providerTimezone: providers.timezone,
       serviceName: providerServices.name,
     })
     .from(bookings)
@@ -36,6 +38,11 @@ export default async function ReschedulePage({ params }: { params: Promise<{ id:
 
   const canReschedule = ["payment_authorized", "confirmed"].includes(booking.status)
   if (!canReschedule) redirect(`/bookings/${id}`)
+
+  // Default the reschedule duration to the ORIGINAL booking's length (was always 2h, silently
+  // shrinking/extending the job window).
+  const durMs = booking.scheduledEndAt ? new Date(booking.scheduledEndAt).getTime() - new Date(booking.scheduledAt).getTime() : 0
+  const originalDurationHours = durMs > 0 ? Math.max(1, Math.min(6, Math.round(durMs / 3_600_000))) : 2
 
   return (
     <div className="min-h-screen bg-[#F4FAF6] py-10 px-4">
@@ -62,6 +69,8 @@ export default async function ReschedulePage({ params }: { params: Promise<{ id:
           <RescheduleForm
             bookingId={id}
             currentScheduledAt={booking.scheduledAt.toISOString()}
+            providerTimezone={booking.providerTimezone ?? undefined}
+            defaultDurationHours={originalDurationHours}
           />
         </div>
       </div>
