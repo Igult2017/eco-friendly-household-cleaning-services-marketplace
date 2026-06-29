@@ -1,6 +1,22 @@
 import { db } from "../index"
-import { providerServices } from "../schema"
+import { providerServices, serviceCategories } from "../schema"
 import { sql, and, eq, inArray } from "drizzle-orm"
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+// categoryId may arrive as a UUID (a real category id) OR a slug (the homepage service grid links to
+// /book?service=<slug>, which flows through as categoryId). Resolve it to a UUID. A value that is
+// neither a UUID nor a known slug drops the filter rather than crashing the query — Postgres rejects a
+// non-uuid value compared against the uuid category_id column ("invalid input syntax for type uuid").
+async function resolveCategoryId(raw?: string): Promise<string | undefined> {
+  if (!raw) return undefined
+  if (UUID_RE.test(raw)) return raw
+  const [cat] = await db
+    .select({ id: serviceCategories.id })
+    .from(serviceCategories)
+    .where(eq(serviceCategories.slug, raw))
+  return cat?.id
+}
 
 export interface GeoProvider {
   id: string; userId: string; slug: string; businessName: string; bio: string | null
@@ -89,7 +105,8 @@ export async function findProvidersNearLocation(params: {
   latitude: number; longitude: number; radiusKm: number
   categoryId?: string; limit?: number
 }): Promise<GeoProvider[]> {
-  const { latitude, longitude, radiusKm, categoryId, limit = 20 } = params
+  const { latitude, longitude, radiusKm, limit = 20 } = params
+  const categoryId = await resolveCategoryId(params.categoryId)
   let providersList: GeoProvider[]
   try {
     const result = await db.execute(sql`
