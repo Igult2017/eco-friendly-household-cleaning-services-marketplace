@@ -835,7 +835,8 @@
     "navPayments": "Payments",
     "navNotifications": "Notifications",
     "navProfile": "Profile",
-    "navMessages": "Messages"
+    "navMessages": "Messages",
+    "navBookings": "Bookings"
   },
   "customerNotificationsPage": {
     "heading": "Notifications",
@@ -1351,7 +1352,8 @@
     "statusCompleted": "Completed",
     "statusCancelled": "Cancelled",
     "statusDisputed": "Disputed",
-    "statusRefunded": "Refunded"
+    "statusRefunded": "Refunded",
+    "viewAll": "View all"
   },
   "compCustomerDashboardJobs": {
     "jobPosts": "Job Posts",

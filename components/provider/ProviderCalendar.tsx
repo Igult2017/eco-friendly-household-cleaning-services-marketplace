@@ -19,7 +19,7 @@ const STATUS_CLS: Record<string, string> = {
 
 const WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
 
-export function ProviderCalendar({ events }: { events: Ev[] }) {
+export function ProviderCalendar({ events, linkBase = "/provider/bookings", perEvent = false }: { events: Ev[]; linkBase?: string; perEvent?: boolean }) {
   const t = useTranslations("providerCalendarPage")
   const locale = useLocale()
   const [cursor, setCursor] = useState(() => {
@@ -74,7 +74,7 @@ export function ProviderCalendar({ events }: { events: Ev[] }) {
                 <span className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs ${isToday(day) ? "bg-[#2D7A5F] text-white font-bold" : "text-[#6B7280]"}`}>{day}</span>
                 <div className="mt-1 space-y-1">
                   {(byDay[day] ?? []).map((e) => (
-                    <Link key={e.id} href="/provider/bookings" title={`${e.time} · ${e.label}`} className={`block truncate rounded px-1.5 py-0.5 text-[10px] font-medium ${STATUS_CLS[e.status] ?? "bg-gray-100 text-gray-600"}`}>
+                    <Link key={e.id} href={perEvent ? `${linkBase}/${e.id}` : linkBase} title={`${e.time} · ${e.label}`} className={`block truncate rounded px-1.5 py-0.5 text-[10px] font-medium ${STATUS_CLS[e.status] ?? "bg-gray-100 text-gray-600"}`}>
                       {e.time} {e.label}
                     </Link>
                   ))}

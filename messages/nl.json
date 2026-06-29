@@ -835,7 +835,8 @@
     "navPayments": "Betalingen",
     "navNotifications": "Meldingen",
     "navProfile": "Profiel",
-    "navMessages": "Berichten"
+    "navMessages": "Berichten",
+    "navBookings": "Boekingen"
   },
   "customerNotificationsPage": {
     "heading": "Meldingen",
@@ -1351,7 +1352,8 @@
     "statusCompleted": "Voltooid",
     "statusCancelled": "Geannuleerd",
     "statusDisputed": "Betwist",
-    "statusRefunded": "Terugbetaald"
+    "statusRefunded": "Terugbetaald",
+    "viewAll": "Alles bekijken"
   },
   "compCustomerDashboardJobs": {
     "jobPosts": "Klussen",

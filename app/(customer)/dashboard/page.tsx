@@ -114,7 +114,7 @@ export default async function CustomerDashboardPage() {
         <DashboardActions pendingBookings={pendingPayment} jobsWithBids={jobsWithBids} />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <DashboardBookings upcoming={upcoming} past={past} reviewedBookingIds={reviewedBookingIds} />
+          <DashboardBookings upcoming={upcoming} past={past} reviewedBookingIds={reviewedBookingIds} viewAllHref="/bookings" />
           <DashboardJobs jobs={recentJobs} />
         </div>
 

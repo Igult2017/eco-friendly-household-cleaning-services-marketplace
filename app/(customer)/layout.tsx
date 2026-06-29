@@ -10,6 +10,7 @@ import { NotificationBell } from "@/components/notifications/NotificationBell"
 import { RoleSwitcher } from "@/components/layout/RoleSwitcher"
 import { CookieBanner } from "@/components/gdpr/CookieBanner"
 import { RoleSwitchToast } from "@/components/layout/RoleSwitchToast"
+import { CustomerMobileNav } from "@/components/customer/CustomerMobileNav"
 
 export default async function CustomerLayout({ children }: { children: React.ReactNode }) {
   const t = await getTranslations("customerLayout")
@@ -40,9 +41,10 @@ export default async function CustomerLayout({ children }: { children: React.Rea
       <header className="sticky top-0 z-30 h-14 bg-white/90 backdrop-blur border-b border-gray-200">
         <div className="max-w-7xl mx-auto h-full px-4 flex items-center justify-between gap-4">
           <Link href="/"><Image src="/logo.png" alt="DORIXÉ" width={100} height={26} priority /></Link>
-          <nav className="hidden md:flex items-center gap-5 text-sm font-medium text-[#6B7280]">
+          <nav className="hidden md:flex items-center gap-4 text-sm font-medium text-[#6B7280]">
             <Link href="/dashboard" className="hover:text-[#2D7A5F] transition-colors">{t("navDashboard")}</Link>
             <Link href="/book" className="hover:text-[#2D7A5F] transition-colors">{t("navBook")}</Link>
+            <Link href="/bookings" className="hover:text-[#2D7A5F] transition-colors">{t("navBookings")}</Link>
             <Link href="/post-job" className="hover:text-[#2D7A5F] transition-colors">{t("navPostJob")}</Link>
             <Link href="/jobs" className="hover:text-[#2D7A5F] transition-colors">{t("navMyJobs")}</Link>
             <Link href="/messages" className="hover:text-[#2D7A5F] transition-colors">{t("navMessages")}</Link>
@@ -57,7 +59,8 @@ export default async function CustomerLayout({ children }: { children: React.Rea
           </div>
         </div>
       </header>
-      <main className="max-w-7xl mx-auto px-4 py-8">{children}</main>
+      <main className="max-w-7xl mx-auto px-4 py-8 pb-24 md:pb-8">{children}</main>
+      <CustomerMobileNav />
     </div>
     <CookieBanner />
     <RoleSwitchToast />

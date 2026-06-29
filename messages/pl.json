@@ -835,7 +835,8 @@
     "navPayments": "Płatności",
     "navNotifications": "Powiadomienia",
     "navProfile": "Profil",
-    "navMessages": "Wiadomości"
+    "navMessages": "Wiadomości",
+    "navBookings": "Rezerwacje"
   },
   "customerNotificationsPage": {
     "heading": "Powiadomienia",
@@ -1351,7 +1352,8 @@
     "statusCompleted": "Zakończona",
     "statusCancelled": "Anulowana",
     "statusDisputed": "Sporna",
-    "statusRefunded": "Zwrócona"
+    "statusRefunded": "Zwrócona",
+    "viewAll": "Zobacz wszystkie"
   },
   "compCustomerDashboardJobs": {
     "jobPosts": "Ogłoszenia zleceń",

@@ -19,10 +19,14 @@ export async function DashboardBookings({
   upcoming,
   past,
   reviewedBookingIds = [],
+  limit = 6,
+  viewAllHref,
 }: {
   upcoming: Booking[]
   past: Booking[]
   reviewedBookingIds?: string[]
+  limit?: number
+  viewAllHref?: string
 }) {
   const t = await getTranslations("compCustomerDashboardBookings")
 
@@ -37,7 +41,7 @@ export async function DashboardBookings({
     refunded:           { label: t("statusRefunded"), color: "bg-gray-100 text-gray-600" },
   }
 
-  const rows = [...upcoming, ...past].slice(0, 6)
+  const rows = [...upcoming, ...past].slice(0, limit)
 
   return (
     <div className="overflow-hidden rounded-2xl border border-[#E5EBF0] bg-white shadow-sm">
@@ -84,6 +88,12 @@ export async function DashboardBookings({
               </Link>
             )
           })}
+        </div>
+      )}
+
+      {viewAllHref && upcoming.length + past.length > rows.length && (
+        <div className="border-t border-[#F4FAF6] px-5 py-3 text-center">
+          <Link href={viewAllHref} className="text-xs font-semibold text-[#2D7A5F] hover:underline">{t("viewAll")}</Link>
         </div>
       )}
 
