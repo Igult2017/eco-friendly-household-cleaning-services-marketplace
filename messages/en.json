@@ -754,7 +754,8 @@
     "leaveReview": "Leave a Review",
     "openDispute": "Open Dispute",
     "reschedule": "Reschedule",
-    "cancelBooking": "Cancel Booking"
+    "cancelBooking": "Cancel Booking",
+    "messageCleaner": "Message your cleaner"
   },
   "customerBookingsIdReschedulePage": {
     "backToBooking": "Back to booking",
@@ -833,7 +834,8 @@
     "navMyJobs": "My jobs",
     "navPayments": "Payments",
     "navNotifications": "Notifications",
-    "navProfile": "Profile"
+    "navProfile": "Profile",
+    "navMessages": "Messages"
   },
   "customerNotificationsPage": {
     "heading": "Notifications",
@@ -1759,5 +1761,12 @@
     "emptyTitle": "No messages yet",
     "emptyDescription": "When a client messages you about a booking, it'll show up here.",
     "client": "Client"
+  },
+  "customerMessagesPage": {
+    "heading": "Messages",
+    "subheading": "Your conversations with cleaners.",
+    "emptyTitle": "No messages yet",
+    "emptyDescription": "When you message a cleaner about a booking, it will show up here.",
+    "cleaner": "Cleaner"
   }
 }

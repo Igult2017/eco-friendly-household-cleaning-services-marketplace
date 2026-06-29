@@ -7,7 +7,7 @@ import { getTranslations } from "next-intl/server"
 import Link from "next/link"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
 import { formatDate } from "@/lib/utils/formatDate"
-import { CalendarDays, MapPin, Leaf, Star, MessageSquareWarning, XCircle, CheckCircle2, Clock, AlertCircle, CalendarClock } from "lucide-react"
+import { CalendarDays, MapPin, Leaf, Star, MessageSquare, MessageSquareWarning, XCircle, CheckCircle2, Clock, AlertCircle, CalendarClock } from "lucide-react"
 
 export const dynamic = "force-dynamic"
 
@@ -165,6 +165,16 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
           )}
         </div>
       </div>
+
+      {/* Contact the cleaner — the client previously had NO way to open the chat from the booking. */}
+      {["payment_authorized", "confirmed", "in_progress", "pending_capture", "completed", "disputed"].includes(booking.status) && (
+        <Link
+          href={`/bookings/${booking.id}/messages`}
+          className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#2D7A5F]/30 text-[#2D7A5F] hover:bg-[#F4FAF6] text-sm font-semibold px-4 py-3 transition-colors w-full sm:w-auto"
+        >
+          <MessageSquare size={15} /> {t("messageCleaner")}
+        </Link>
+      )}
 
       {/* Actions */}
       {(canCancel || canReschedule || canDispute || canReview) && (

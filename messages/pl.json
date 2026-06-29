@@ -754,7 +754,8 @@
     "leaveReview": "Wystaw opinię",
     "openDispute": "Otwórz reklamację",
     "reschedule": "Zmień termin",
-    "cancelBooking": "Anuluj rezerwację"
+    "cancelBooking": "Anuluj rezerwację",
+    "messageCleaner": "Napisz do osoby sprzątającej"
   },
   "customerBookingsIdReschedulePage": {
     "backToBooking": "Powrót do rezerwacji",
@@ -833,7 +834,8 @@
     "navMyJobs": "Moje zlecenia",
     "navPayments": "Płatności",
     "navNotifications": "Powiadomienia",
-    "navProfile": "Profil"
+    "navProfile": "Profil",
+    "navMessages": "Wiadomości"
   },
   "customerNotificationsPage": {
     "heading": "Powiadomienia",
@@ -1759,5 +1761,12 @@
     "emptyTitle": "Brak wiadomości",
     "emptyDescription": "Gdy klient napisze do Ciebie w sprawie rezerwacji, pojawi się to tutaj.",
     "client": "Klient"
+  },
+  "customerMessagesPage": {
+    "heading": "Wiadomości",
+    "subheading": "Twoje rozmowy z osobami sprzątającymi.",
+    "emptyTitle": "Brak wiadomości",
+    "emptyDescription": "Gdy napiszesz do osoby sprzątającej w sprawie rezerwacji, pojawi się to tutaj.",
+    "cleaner": "Osoba sprzątająca"
   }
 }

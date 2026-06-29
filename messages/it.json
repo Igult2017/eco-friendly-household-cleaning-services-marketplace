@@ -754,7 +754,8 @@
     "leaveReview": "Lascia una recensione",
     "openDispute": "Apri una contestazione",
     "reschedule": "Riprogramma",
-    "cancelBooking": "Annulla prenotazione"
+    "cancelBooking": "Annulla prenotazione",
+    "messageCleaner": "Contatta l addetto"
   },
   "customerBookingsIdReschedulePage": {
     "backToBooking": "Torna alla prenotazione",
@@ -833,7 +834,8 @@
     "navMyJobs": "I miei lavori",
     "navPayments": "Pagamenti",
     "navNotifications": "Notifiche",
-    "navProfile": "Profilo"
+    "navProfile": "Profilo",
+    "navMessages": "Messaggi"
   },
   "customerNotificationsPage": {
     "heading": "Notifiche",
@@ -1759,5 +1761,12 @@
     "emptyTitle": "Ancora nessun messaggio",
     "emptyDescription": "Quando un cliente ti scrive per una prenotazione, comparirà qui.",
     "client": "Cliente"
+  },
+  "customerMessagesPage": {
+    "heading": "Messaggi",
+    "subheading": "Le tue conversazioni con gli addetti alle pulizie.",
+    "emptyTitle": "Ancora nessun messaggio",
+    "emptyDescription": "Quando scrivi a un addetto per una prenotazione, comparirà qui.",
+    "cleaner": "Addetto"
   }
 }

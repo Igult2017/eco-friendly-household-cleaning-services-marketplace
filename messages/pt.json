@@ -754,7 +754,8 @@
     "leaveReview": "Deixar uma avaliação",
     "openDispute": "Abrir uma disputa",
     "reschedule": "Reagendar",
-    "cancelBooking": "Cancelar reserva"
+    "cancelBooking": "Cancelar reserva",
+    "messageCleaner": "Contactar o seu profissional"
   },
   "customerBookingsIdReschedulePage": {
     "backToBooking": "Voltar à reserva",
@@ -833,7 +834,8 @@
     "navMyJobs": "Os meus trabalhos",
     "navPayments": "Pagamentos",
     "navNotifications": "Notificações",
-    "navProfile": "Perfil"
+    "navProfile": "Perfil",
+    "navMessages": "Mensagens"
   },
   "customerNotificationsPage": {
     "heading": "Notificações",
@@ -1759,5 +1761,12 @@
     "emptyTitle": "Ainda não há mensagens",
     "emptyDescription": "Quando um cliente te escrever sobre uma reserva, aparecerá aqui.",
     "client": "Cliente"
+  },
+  "customerMessagesPage": {
+    "heading": "Mensagens",
+    "subheading": "As tuas conversas com profissionais de limpeza.",
+    "emptyTitle": "Ainda não há mensagens",
+    "emptyDescription": "Quando enviares mensagem a um profissional sobre uma reserva, aparecerá aqui.",
+    "cleaner": "Profissional"
   }
 }

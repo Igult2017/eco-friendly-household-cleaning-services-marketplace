@@ -754,7 +754,8 @@
     "leaveReview": "Laisser un avis",
     "openDispute": "Ouvrir un litige",
     "reschedule": "Reprogrammer",
-    "cancelBooking": "Annuler la réservation"
+    "cancelBooking": "Annuler la réservation",
+    "messageCleaner": "Contacter votre intervenant"
   },
   "customerBookingsIdReschedulePage": {
     "backToBooking": "Retour à la réservation",
@@ -833,7 +834,8 @@
     "navMyJobs": "Mes demandes",
     "navPayments": "Paiements",
     "navNotifications": "Notifications",
-    "navProfile": "Profil"
+    "navProfile": "Profil",
+    "navMessages": "Messages"
   },
   "customerNotificationsPage": {
     "heading": "Notifications",
@@ -1759,5 +1761,12 @@
     "emptyTitle": "Aucun message pour le moment",
     "emptyDescription": "Lorsqu'un client vous écrira au sujet d'une réservation, cela apparaîtra ici.",
     "client": "Client"
+  },
+  "customerMessagesPage": {
+    "heading": "Messages",
+    "subheading": "Vos conversations avec les intervenants.",
+    "emptyTitle": "Aucun message pour le moment",
+    "emptyDescription": "Lorsque vous écrivez à un intervenant au sujet d une réservation, cela apparaîtra ici.",
+    "cleaner": "Intervenant"
   }
 }

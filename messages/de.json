@@ -754,7 +754,8 @@
     "leaveReview": "Bewertung abgeben",
     "openDispute": "Reklamation eröffnen",
     "reschedule": "Verschieben",
-    "cancelBooking": "Buchung stornieren"
+    "cancelBooking": "Buchung stornieren",
+    "messageCleaner": "Reinigungskraft kontaktieren"
   },
   "customerBookingsIdReschedulePage": {
     "backToBooking": "Zurück zur Buchung",
@@ -833,7 +834,8 @@
     "navMyJobs": "Meine Aufträge",
     "navPayments": "Zahlungen",
     "navNotifications": "Benachrichtigungen",
-    "navProfile": "Profil"
+    "navProfile": "Profil",
+    "navMessages": "Nachrichten"
   },
   "customerNotificationsPage": {
     "heading": "Benachrichtigungen",
@@ -1759,5 +1761,12 @@
     "emptyTitle": "Noch keine Nachrichten",
     "emptyDescription": "Wenn dir ein:e Kund:in zu einer Buchung schreibt, erscheint es hier.",
     "client": "Kunde"
+  },
+  "customerMessagesPage": {
+    "heading": "Nachrichten",
+    "subheading": "Deine Gespräche mit Reinigungskräften.",
+    "emptyTitle": "Noch keine Nachrichten",
+    "emptyDescription": "Wenn du einer Reinigungskraft zu einer Buchung schreibst, erscheint es hier.",
+    "cleaner": "Reinigungskraft"
   }
 }

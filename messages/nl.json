@@ -754,7 +754,8 @@
     "leaveReview": "Beoordeling achterlaten",
     "openDispute": "Geschil openen",
     "reschedule": "Opnieuw plannen",
-    "cancelBooking": "Boeking annuleren"
+    "cancelBooking": "Boeking annuleren",
+    "messageCleaner": "Bericht je schoonmaker"
   },
   "customerBookingsIdReschedulePage": {
     "backToBooking": "Terug naar boeking",
@@ -833,7 +834,8 @@
     "navMyJobs": "Mijn klussen",
     "navPayments": "Betalingen",
     "navNotifications": "Meldingen",
-    "navProfile": "Profiel"
+    "navProfile": "Profiel",
+    "navMessages": "Berichten"
   },
   "customerNotificationsPage": {
     "heading": "Meldingen",
@@ -1759,5 +1761,12 @@
     "emptyTitle": "Nog geen berichten",
     "emptyDescription": "Wanneer een klant je over een boeking bericht, verschijnt het hier.",
     "client": "Klant"
+  },
+  "customerMessagesPage": {
+    "heading": "Berichten",
+    "subheading": "Je gesprekken met schoonmakers.",
+    "emptyTitle": "Nog geen berichten",
+    "emptyDescription": "Wanneer je een schoonmaker over een boeking bericht, verschijnt het hier.",
+    "cleaner": "Schoonmaker"
   }
 }

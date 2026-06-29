@@ -58,6 +58,14 @@ export async function GET(_req: Request, { params }: RouteContext) {
         )
     }
 
+    // Clear the new_message notifications for this thread so the bell badge updates (previously only
+    // the messages were marked read, leaving the notification — and the count — permanently unread).
+    const viewerNotifLink = access.isCustomer ? `/bookings/${bookingId}/messages` : `/provider/bookings/${bookingId}/messages`
+    await db
+      .update(notifications)
+      .set({ isRead: true })
+      .where(and(eq(notifications.userId, userId), eq(notifications.type, "new_message"), eq(notifications.isRead, false), eq(notifications.link, viewerNotifLink)))
+
     return NextResponse.json({ messages: thread })
   } catch (err) {
     console.error("[bookings/[id]/messages GET]", err)
