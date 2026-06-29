@@ -975,7 +975,8 @@
     "customerLabel": "Klient: {name}",
     "yourPayout": "Twoja wypłata",
     "scheduledAt": "{date} o {time}",
-    "markAsComplete": "Oznacz jako zakończone"
+    "markAsComplete": "Oznacz jako zakończone",
+    "receiptLink": "Potwierdzenie"
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Nie udało się oznaczyć jako ukończone",
@@ -1828,5 +1829,18 @@
     "notInvoice": "To jest potwierdzenie płatności, a nie faktura VAT.",
     "print": "Drukuj / Zapisz jako PDF",
     "receiptLink": "Potwierdzenie"
+  },
+  "providerReceiptPage": {
+    "title": "Potwierdzenie zarobków",
+    "receiptNo": "Nr potwierdzenia",
+    "date": "Data",
+    "client": "Klient",
+    "service": "Usługa",
+    "grossEarnings": "Cena usługi",
+    "commission": "Prowizja platformy",
+    "netPayout": "Twoja wypłata",
+    "status": "Status",
+    "notInvoice": "To jest zestawienie zarobków, a nie faktura VAT.",
+    "print": "Drukuj / Zapisz jako PDF"
   }
 }

@@ -975,7 +975,8 @@
     "customerLabel": "Client : {name}",
     "yourPayout": "votre rémunération",
     "scheduledAt": "{date} à {time}",
-    "markAsComplete": "Marquer comme terminée"
+    "markAsComplete": "Marquer comme terminée",
+    "receiptLink": "Reçu"
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Échec du marquage comme terminé",
@@ -1828,5 +1829,18 @@
     "notInvoice": "Ceci est un reçu de paiement, pas une facture TVA.",
     "print": "Imprimer / Enregistrer en PDF",
     "receiptLink": "Reçu"
+  },
+  "providerReceiptPage": {
+    "title": "Reçu de gains",
+    "receiptNo": "Reçu n°",
+    "date": "Date",
+    "client": "Client",
+    "service": "Prestation",
+    "grossEarnings": "Prix de la prestation",
+    "commission": "Commission de la plateforme",
+    "netPayout": "Votre versement",
+    "status": "Statut",
+    "notInvoice": "Ceci est un relevé de gains, pas une facture TVA.",
+    "print": "Imprimer / Enregistrer en PDF"
   }
 }

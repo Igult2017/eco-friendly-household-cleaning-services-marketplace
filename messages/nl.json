@@ -975,7 +975,8 @@
     "customerLabel": "Klant: {name}",
     "yourPayout": "jouw uitbetaling",
     "scheduledAt": "{date} om {time}",
-    "markAsComplete": "Markeren als voltooid"
+    "markAsComplete": "Markeren als voltooid",
+    "receiptLink": "Bon"
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Markeren als voltooid mislukt",
@@ -1828,5 +1829,18 @@
     "notInvoice": "Dit is een betalingsbewijs, geen btw-factuur.",
     "print": "Afdrukken / opslaan als PDF",
     "receiptLink": "Bon"
+  },
+  "providerReceiptPage": {
+    "title": "Verdienstenbon",
+    "receiptNo": "Bonnr.",
+    "date": "Datum",
+    "client": "Klant",
+    "service": "Dienst",
+    "grossEarnings": "Serviceprijs",
+    "commission": "Platformcommissie",
+    "netPayout": "Jouw uitbetaling",
+    "status": "Status",
+    "notInvoice": "Dit is een verdienstenoverzicht, geen btw-factuur.",
+    "print": "Afdrukken / opslaan als PDF"
   }
 }

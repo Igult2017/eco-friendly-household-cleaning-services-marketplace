@@ -975,7 +975,8 @@
     "customerLabel": "Client: {name}",
     "yourPayout": "your payout",
     "scheduledAt": "{date} at {time}",
-    "markAsComplete": "Mark as Complete"
+    "markAsComplete": "Mark as Complete",
+    "receiptLink": "Receipt"
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Failed to mark as complete",
@@ -1828,5 +1829,18 @@
     "notInvoice": "This is a payment receipt, not a VAT invoice.",
     "print": "Print / Save as PDF",
     "receiptLink": "Receipt"
+  },
+  "providerReceiptPage": {
+    "title": "Earnings receipt",
+    "receiptNo": "Receipt no.",
+    "date": "Date",
+    "client": "Client",
+    "service": "Service",
+    "grossEarnings": "Service price",
+    "commission": "Platform commission",
+    "netPayout": "Your payout",
+    "status": "Status",
+    "notInvoice": "This is an earnings statement, not a VAT invoice.",
+    "print": "Print / Save as PDF"
   }
 }

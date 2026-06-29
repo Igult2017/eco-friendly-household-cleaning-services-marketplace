@@ -975,7 +975,8 @@
     "customerLabel": "Kunde: {name}",
     "yourPayout": "deine Auszahlung",
     "scheduledAt": "{date} um {time}",
-    "markAsComplete": "Als abgeschlossen markieren"
+    "markAsComplete": "Als abgeschlossen markieren",
+    "receiptLink": "Beleg"
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Als abgeschlossen markieren fehlgeschlagen",
@@ -1828,5 +1829,18 @@
     "notInvoice": "Dies ist ein Zahlungsbeleg, keine Mehrwertsteuerrechnung.",
     "print": "Drucken / als PDF speichern",
     "receiptLink": "Beleg"
+  },
+  "providerReceiptPage": {
+    "title": "Verdienstbeleg",
+    "receiptNo": "Beleg-Nr.",
+    "date": "Datum",
+    "client": "Kunde",
+    "service": "Leistung",
+    "grossEarnings": "Leistungspreis",
+    "commission": "Plattformprovision",
+    "netPayout": "Deine Auszahlung",
+    "status": "Status",
+    "notInvoice": "Dies ist eine Verdienstaufstellung, keine Mehrwertsteuerrechnung.",
+    "print": "Drucken / als PDF speichern"
   }
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Loader2, CalendarClock, MapPin } from "lucide-react"
+import { Loader2, CalendarClock, MapPin, FileText } from "lucide-react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
@@ -128,6 +128,16 @@ export default function ProviderBookingsPage() {
                       className="inline-flex items-center gap-1.5 rounded-xl bg-[#2D7A5F] px-4 py-2 text-sm font-semibold text-white hover:bg-[#256349] transition-colors"
                     >
                       {t("markAsComplete")}
+                    </Link>
+                  </div>
+                )}
+                {b.status === "completed" && (
+                  <div className="mt-3 pt-3 border-t border-[#E5EBF0]">
+                    <Link
+                      href={`/provider/bookings/${b.id}/receipt`}
+                      className="inline-flex items-center gap-1.5 text-sm font-medium text-[#2D7A5F] hover:underline"
+                    >
+                      <FileText className="h-4 w-4" /> {t("receiptLink")}
                     </Link>
                   </div>
                 )}

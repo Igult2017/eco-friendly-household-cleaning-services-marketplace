@@ -975,7 +975,8 @@
     "customerLabel": "Cliente: {name}",
     "yourPayout": "il tuo compenso",
     "scheduledAt": "{date} alle {time}",
-    "markAsComplete": "Segna come completata"
+    "markAsComplete": "Segna come completata",
+    "receiptLink": "Ricevuta"
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Impossibile contrassegnare come completato",
@@ -1828,5 +1829,18 @@
     "notInvoice": "Questa è una ricevuta di pagamento, non una fattura con IVA.",
     "print": "Stampa / Salva come PDF",
     "receiptLink": "Ricevuta"
+  },
+  "providerReceiptPage": {
+    "title": "Ricevuta dei guadagni",
+    "receiptNo": "Ricevuta n.",
+    "date": "Data",
+    "client": "Cliente",
+    "service": "Servizio",
+    "grossEarnings": "Prezzo del servizio",
+    "commission": "Commissione della piattaforma",
+    "netPayout": "Il tuo pagamento",
+    "status": "Stato",
+    "notInvoice": "Questo è un riepilogo dei guadagni, non una fattura con IVA.",
+    "print": "Stampa / Salva come PDF"
   }
 }

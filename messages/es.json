@@ -975,7 +975,8 @@
     "customerLabel": "Cliente: {name}",
     "yourPayout": "tu pago",
     "scheduledAt": "{date} a las {time}",
-    "markAsComplete": "Marcar como completada"
+    "markAsComplete": "Marcar como completada",
+    "receiptLink": "Recibo"
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "No se pudo marcar como completado",
@@ -1828,5 +1829,18 @@
     "notInvoice": "Este es un recibo de pago, no una factura con IVA.",
     "print": "Imprimir / Guardar como PDF",
     "receiptLink": "Recibo"
+  },
+  "providerReceiptPage": {
+    "title": "Recibo de ganancias",
+    "receiptNo": "Recibo n.º",
+    "date": "Fecha",
+    "client": "Cliente",
+    "service": "Servicio",
+    "grossEarnings": "Precio del servicio",
+    "commission": "Comisión de la plataforma",
+    "netPayout": "Tu pago",
+    "status": "Estado",
+    "notInvoice": "Este es un resumen de ganancias, no una factura con IVA.",
+    "print": "Imprimir / Guardar como PDF"
   }
 }

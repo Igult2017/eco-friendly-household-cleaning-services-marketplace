@@ -975,7 +975,8 @@
     "customerLabel": "Cliente: {name}",
     "yourPayout": "o seu pagamento",
     "scheduledAt": "{date} às {time}",
-    "markAsComplete": "Marcar como concluída"
+    "markAsComplete": "Marcar como concluída",
+    "receiptLink": "Recibo"
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Falha ao marcar como concluído",
@@ -1828,5 +1829,18 @@
     "notInvoice": "Este é um recibo de pagamento, não uma fatura com IVA.",
     "print": "Imprimir / Guardar como PDF",
     "receiptLink": "Recibo"
+  },
+  "providerReceiptPage": {
+    "title": "Recibo de ganhos",
+    "receiptNo": "Recibo n.º",
+    "date": "Data",
+    "client": "Cliente",
+    "service": "Serviço",
+    "grossEarnings": "Preço do serviço",
+    "commission": "Comissão da plataforma",
+    "netPayout": "O teu pagamento",
+    "status": "Estado",
+    "notInvoice": "Este é um resumo de ganhos, não uma fatura com IVA.",
+    "print": "Imprimir / Guardar como PDF"
   }
 }
