@@ -8,6 +8,7 @@ import { providers, payouts, bookings, payments } from "@/lib/db/schema"
 import { eq, and, sum, count, desc, gte, lt, inArray } from "drizzle-orm"
 import { PayoutConnect } from "@/components/provider/PayoutConnect"
 import { getConnectAccountStatus } from "@/lib/stripe/connect"
+import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
 
 async function getEarningsData(providerId: string) {
   const now = new Date()
@@ -16,9 +17,9 @@ async function getEarningsData(providerId: string) {
   const startNext = new Date(now.getFullYear(), now.getMonth() + 1, 1)
   const startAfterNext = new Date(now.getFullYear(), now.getMonth() + 2, 1)
 
-  const [totalEarned, pendingPayout, completedJobs, recentPayouts, prevMonth, thisMonth, estNext] = await Promise.all([
-    db.select({ total: sum(payouts.amount) }).from(payouts).where(and(eq(payouts.providerId, providerId), eq(payouts.status, "paid"))),
+  const [grossEarned, paidOut, completedJobs, recentPayouts, prevMonth, thisMonth, estNext] = await Promise.all([
     db.select({ total: sum(bookings.providerPayout) }).from(bookings).where(and(eq(bookings.providerId, providerId), eq(bookings.status, "completed"))),
+    db.select({ total: sum(payouts.amount) }).from(payouts).where(and(eq(payouts.providerId, providerId), eq(payouts.status, "paid"))),
     db.select({ count: count() }).from(bookings).where(and(eq(bookings.providerId, providerId), eq(bookings.status, "completed"))),
     db.select({ id: payouts.id, amount: payouts.amount, status: payouts.status, periodStart: payouts.periodStart, periodEnd: payouts.periodEnd, processedAt: payouts.processedAt }).from(payouts).where(eq(payouts.providerId, providerId)).orderBy(desc(payouts.processedAt)).limit(10),
     db.select({ total: sum(bookings.providerPayout) }).from(bookings).where(and(eq(bookings.providerId, providerId), eq(bookings.status, "completed"), gte(bookings.scheduledAt, startPrev), lt(bookings.scheduledAt, startThis))),
@@ -26,9 +27,13 @@ async function getEarningsData(providerId: string) {
     db.select({ total: sum(bookings.providerPayout) }).from(bookings).where(and(eq(bookings.providerId, providerId), inArray(bookings.status, ["payment_authorized", "confirmed", "in_progress", "pending_capture"]), gte(bookings.scheduledAt, startNext), lt(bookings.scheduledAt, startAfterNext))),
   ])
 
+  const gross = Number(grossEarned[0]?.total ?? 0)
+  const paid = Number(paidOut[0]?.total ?? 0)
   return {
-    totalEarned: Number(totalEarned[0]?.total ?? 0),
-    pendingPayout: Number(pendingPayout[0]?.total ?? 0),
+    // Total the cleaner has earned from completed jobs; pending = earned minus what's already been
+    // paid out. Matches the dashboard's Total earned / Awaiting payout exactly.
+    totalEarned: gross,
+    pendingPayout: Math.max(0, gross - paid),
     completedJobs: Number(completedJobs[0]?.count ?? 0),
     recentPayouts,
     prevMonthEarned: Number(prevMonth[0]?.total ?? 0),
@@ -41,7 +46,7 @@ export default async function EarningsPage({ searchParams }: { searchParams: Pro
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
 
-  const [provider] = await db.select({ id: providers.id, stripeAccountId: providers.stripeAccountId, stripeAccountStatus: providers.stripeAccountStatus }).from(providers).where(eq(providers.userId, userId))
+  const [provider] = await db.select({ id: providers.id, stripeAccountId: providers.stripeAccountId, stripeAccountStatus: providers.stripeAccountStatus, country: providers.country }).from(providers).where(eq(providers.userId, userId))
   if (!provider) redirect("/provider/profile")
 
   // Returning from Stripe Connect onboarding — refresh status live so it flips to "active"
@@ -61,6 +66,7 @@ export default async function EarningsPage({ searchParams }: { searchParams: Pro
   }
 
   const data = await getEarningsData(provider.id)
+  const country = provider.country ?? "DE"
 
   const t = await getTranslations("providerProviderEarningsPage")
   const locale = await getLocale()
@@ -75,8 +81,8 @@ export default async function EarningsPage({ searchParams }: { searchParams: Pro
   ]
 
   const kpis = [
-    { label: t("kpiTotalEarned"), value: `€${(data.totalEarned / 100).toFixed(2)}`, sub: t("kpiAllTime") },
-    { label: t("kpiPendingPayout"), value: `€${(data.pendingPayout / 100).toFixed(2)}`, sub: t("kpiNextMonday") },
+    { label: t("kpiTotalEarned"), value: formatCurrencyForCountry(data.totalEarned, country), sub: t("kpiAllTime") },
+    { label: t("kpiPendingPayout"), value: formatCurrencyForCountry(data.pendingPayout, country), sub: t("kpiNextMonday") },
     { label: t("kpiJobsCompleted"), value: data.completedJobs, sub: t("kpiAllTime") },
   ]
 
@@ -95,7 +101,7 @@ export default async function EarningsPage({ searchParams }: { searchParams: Pro
         {periods.map((p) => (
           <div key={p.label} className={`rounded-xl p-6 shadow-sm ${p.accent ? "bg-[#2D7A5F] text-white" : "bg-white"}`}>
             <p className={`text-xs font-medium ${p.accent ? "text-white/80" : "text-[#6B7280]"}`}>{p.label}</p>
-            <p className={`text-3xl font-bold mt-1 ${p.accent ? "text-white" : "text-[#2B3441]"}`}>€{(p.value / 100).toFixed(2)}</p>
+            <p className={`text-3xl font-bold mt-1 ${p.accent ? "text-white" : "text-[#2B3441]"}`}>{formatCurrencyForCountry(p.value, country)}</p>
             {p.sub && <p className={`text-xs mt-0.5 ${p.accent ? "text-white/70" : "text-[#9CA3AF]"}`}>{p.sub}</p>}
           </div>
         ))}
@@ -130,16 +136,16 @@ export default async function EarningsPage({ searchParams }: { searchParams: Pro
               {data.recentPayouts.map((p) => (
                 <tr key={p.id} className="hover:bg-gray-50/50">
                   <td className="px-6 py-4 text-sm text-[#6B7280]">
-                    {p.periodStart ? `${new Date(p.periodStart).toLocaleDateString("de-DE")} – ${p.periodEnd ? new Date(p.periodEnd).toLocaleDateString("de-DE") : ""}` : "—"}
+                    {p.periodStart ? `${new Date(p.periodStart).toLocaleDateString(locale)} – ${p.periodEnd ? new Date(p.periodEnd).toLocaleDateString(locale) : ""}` : "—"}
                   </td>
-                  <td className="px-6 py-4 text-sm font-bold text-[#2B3441]">€{((p.amount ?? 0) / 100).toFixed(2)}</td>
+                  <td className="px-6 py-4 text-sm font-bold text-[#2B3441]">{formatCurrencyForCountry(p.amount ?? 0, country)}</td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${p.status === "paid" ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"}`}>
                       {p.status === "paid" ? t("statusPaid") : t("statusPending")}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-[#6B7280]">
-                    {p.processedAt ? new Date(p.processedAt).toLocaleDateString("de-DE") : t("processedPending")}
+                    {p.processedAt ? new Date(p.processedAt).toLocaleDateString(locale) : t("processedPending")}
                   </td>
                 </tr>
               ))}

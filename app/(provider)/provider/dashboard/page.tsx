@@ -20,6 +20,7 @@ import { ProviderApprovalNotice }        from "@/components/provider/ProviderApp
 import { PayoutConnect }                  from "@/components/provider/PayoutConnect"
 import { ReliabilityCard }                from "@/components/provider/ReliabilityCard"
 import { computeReliability }             from "@/lib/provider/reliability"
+import { formatCurrencyShortForCountry }  from "@/lib/utils/formatCurrency"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
@@ -166,8 +167,16 @@ export default async function ProviderDashboardPage() {
     .from(bookings)
     .where(and(eq(bookings.providerId, pid), eq(bookings.status, "cancelled"), eq(bookings.cancelledBy, uid)))
     .catch(() => [{ c: 0 }])
+  // Count completed bookings live (the providers.totalJobsCompleted counter is unreliable for
+  // historical rows) so the dashboard agrees with /provider/statistics.
+  const [completedRow] = await db
+    .select({ c: sql<number>`COUNT(*)` })
+    .from(bookings)
+    .where(and(eq(bookings.providerId, pid), eq(bookings.status, "completed")))
+    .catch(() => [{ c: 0 }])
+  const completedCount = Number(completedRow?.c ?? 0)
   const reliability = computeReliability({
-    completed: provider.totalJobsCompleted ?? 0,
+    completed: completedCount,
     cancelledByProvider: Number(cancelRow?.c ?? 0),
     averageRating: provider.averageRating ? Number(provider.averageRating) : null,
     totalReviews: provider.totalReviews ?? 0,
@@ -212,8 +221,8 @@ export default async function ProviderDashboardPage() {
         {/* KPI row */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: t("totalEarned"),    value: totalEarnings > 0 ? `€${(totalEarnings / 100).toFixed(0)}` : "€0", icon: TrendingUp },
-            { label: t("jobsCompleted"),  value: provider.totalJobsCompleted, icon: CheckCircle2 },
+            { label: t("totalEarned"),    value: formatCurrencyShortForCountry(totalEarnings, provider.country ?? "DE"), icon: TrendingUp },
+            { label: t("jobsCompleted"),  value: completedCount, icon: CheckCircle2 },
             { label: t("avgRating"),      value: provider.averageRating ? `${Number(provider.averageRating).toFixed(1)} ⭐` : "—", icon: Star },
             { label: t("upcoming"),       value: upcomingBookings.length, icon: CalendarDays },
           ].map((stat) => (
@@ -247,6 +256,7 @@ export default async function ProviderDashboardPage() {
             totalEarnings={totalEarnings}
             pendingPayout={pendingPayout}
             recentPayouts={recentPayouts as any}
+            country={provider.country ?? "DE"}
           />
           <ProviderDashboardNotifications notifications={recentNotifs as any} />
           <div className="lg:col-span-2">

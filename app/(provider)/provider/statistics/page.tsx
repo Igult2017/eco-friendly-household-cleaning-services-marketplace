@@ -5,8 +5,9 @@ import { redirect } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { db } from "@/lib/db"
 import { providers, bookings, bids } from "@/lib/db/schema"
-import { eq, and, count, sum } from "drizzle-orm"
+import { eq, and, count, sum, inArray } from "drizzle-orm"
 import { computeReliability, TIER_CLASS } from "@/lib/provider/reliability"
+import { formatCurrencyShortForCountry } from "@/lib/utils/formatCurrency"
 import { ShieldCheck, CheckCircle2, Star, Repeat, TrendingUp, XCircle, Gavel, MessageSquare } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -16,24 +17,26 @@ export default async function ProviderStatisticsPage() {
   const t = await getTranslations("providerStatisticsPage")
 
   const [provider] = await db
-    .select({ id: providers.id, averageRating: providers.averageRating, totalReviews: providers.totalReviews })
+    .select({ id: providers.id, averageRating: providers.averageRating, totalReviews: providers.totalReviews, country: providers.country })
     .from(providers)
     .where(eq(providers.userId, userId))
   if (!provider) redirect("/provider/profile")
   const pid = provider.id
 
-  const [completedRow, cancelledRow, totalBidsRow, acceptedBidsRow, byCustomer, earnedRow] = await Promise.all([
-    db.select({ c: count() }).from(bookings).where(and(eq(bookings.providerId, pid), eq(bookings.status, "completed"))),
-    db.select({ c: count() }).from(bookings).where(and(eq(bookings.providerId, pid), eq(bookings.status, "cancelled"), eq(bookings.cancelledBy, userId))),
-    db.select({ c: count() }).from(bids).where(eq(bids.providerId, pid)),
-    db.select({ c: count() }).from(bids).where(and(eq(bids.providerId, pid), eq(bids.status, "accepted"))),
-    db.select({ customerId: bookings.customerId, c: count() }).from(bookings).where(and(eq(bookings.providerId, pid), eq(bookings.status, "completed"))).groupBy(bookings.customerId),
-    db.select({ total: sum(bookings.providerPayout) }).from(bookings).where(and(eq(bookings.providerId, pid), eq(bookings.status, "completed"))),
+  // Each query has its own .catch so one failure degrades a single metric instead of crashing the page.
+  const [completedRow, cancelledRow, decidedBidsRow, acceptedBidsRow, byCustomer, earnedRow] = await Promise.all([
+    db.select({ c: count() }).from(bookings).where(and(eq(bookings.providerId, pid), eq(bookings.status, "completed"))).catch(() => [{ c: 0 }]),
+    db.select({ c: count() }).from(bookings).where(and(eq(bookings.providerId, pid), eq(bookings.status, "cancelled"), eq(bookings.cancelledBy, userId))).catch(() => [{ c: 0 }]),
+    // Win rate denominator = DECIDED bids (accepted + rejected); pending/withdrawn bids shouldn't drag it down.
+    db.select({ c: count() }).from(bids).where(and(eq(bids.providerId, pid), inArray(bids.status, ["accepted", "rejected"]))).catch(() => [{ c: 0 }]),
+    db.select({ c: count() }).from(bids).where(and(eq(bids.providerId, pid), eq(bids.status, "accepted"))).catch(() => [{ c: 0 }]),
+    db.select({ customerId: bookings.customerId, c: count() }).from(bookings).where(and(eq(bookings.providerId, pid), eq(bookings.status, "completed"))).groupBy(bookings.customerId).catch(() => []),
+    db.select({ total: sum(bookings.providerPayout) }).from(bookings).where(and(eq(bookings.providerId, pid), eq(bookings.status, "completed"))).catch(() => [{ total: 0 }]),
   ])
 
   const completed = Number(completedRow[0]?.c ?? 0)
   const cancelledByProvider = Number(cancelledRow[0]?.c ?? 0)
-  const totalBids = Number(totalBidsRow[0]?.c ?? 0)
+  const totalBids = Number(decidedBidsRow[0]?.c ?? 0)
   const acceptedBids = Number(acceptedBidsRow[0]?.c ?? 0)
   const repeatClients = byCustomer.filter((g) => Number(g.c) > 1).length
   const totalEarned = Number(earnedRow[0]?.total ?? 0)
@@ -51,7 +54,7 @@ export default async function ProviderStatisticsPage() {
     { icon: Gavel, label: t("bidWinRate"), value: totalBids > 0 ? `${winRate}%` : "—" },
     { icon: Repeat, label: t("repeatClients"), value: String(repeatClients) },
     { icon: MessageSquare, label: t("totalReviews"), value: String(provider.totalReviews) },
-    { icon: TrendingUp, label: t("totalEarned"), value: `€${(totalEarned / 100).toFixed(0)}` },
+    { icon: TrendingUp, label: t("totalEarned"), value: formatCurrencyShortForCountry(totalEarned, provider.country ?? "DE") },
   ]
 
   return (

@@ -1,6 +1,6 @@
 import { inngest } from "../client"
 import { db } from "@/lib/db"
-import { bookings, payments, users, notifications, referrals, referralCommissions, referralCredits } from "@/lib/db/schema"
+import { bookings, payments, users, notifications, providers, referrals, referralCommissions, referralCredits } from "@/lib/db/schema"
 import { stripe } from "@/lib/stripe/client"
 import { resend, FROM } from "@/lib/resend/client"
 import { reviewRequestEmail, reviewReminderEmail } from "@/lib/resend/transactionalEmails"
@@ -10,7 +10,7 @@ import { getReferralPct } from "@/lib/platform/settings"
 export const onBookingCompleted = inngest.createFunction(
   { id: "booking-completed", retries: 3, triggers: [{ event: "booking/completed" }] },
   async ({ event, step }: { event: { data: { bookingId: string; paymentIntentId: string; providerId: string; customerId: string } }; step: any }) => {
-    const { bookingId, paymentIntentId, customerId } = event.data
+    const { bookingId, paymentIntentId, providerId, customerId } = event.data
 
     // Split capture and DB write into separate steps so a DB failure on retry
     // doesn't re-hit Stripe — the idempotency key ensures Stripe deduplicates.
@@ -39,7 +39,12 @@ export const onBookingCompleted = inngest.createFunction(
       // Only flip to completed if still pending_capture — never clobber a status a chargeback
       // webhook moved to `disputed` (or an admin moved to cancelled/refunded) while capture was
       // in flight.
-      await db.update(bookings).set({ status: "completed" }).where(and(eq(bookings.id, bookingId), eq(bookings.status, "pending_capture")))
+      const updated = await db.update(bookings).set({ status: "completed" }).where(and(eq(bookings.id, bookingId), eq(bookings.status, "pending_capture"))).returning({ id: bookings.id })
+      // Increment the cleaner's lifetime completed-jobs counter exactly once — only when THIS call
+      // performed the flip, so it stays idempotent across Inngest retries.
+      if (updated.length > 0) {
+        await db.update(providers).set({ totalJobsCompleted: sql`total_jobs_completed + 1` }).where(eq(providers.id, providerId))
+      }
     })
 
     await step.run("notify-customer", async () => {
