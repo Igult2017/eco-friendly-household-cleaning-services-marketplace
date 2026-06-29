@@ -28,7 +28,7 @@ export function CookieBanner() {
   if (!visible) return null
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-6">
+    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 pb-20 md:p-6">
       <div className="max-w-3xl mx-auto bg-[#2B3441] rounded-2xl shadow-2xl p-5 md:p-6 flex flex-col md:flex-row items-start md:items-center gap-4">
         <div className="flex-1">
           <p className="text-white text-sm font-semibold mb-1">{t("title")}</p>

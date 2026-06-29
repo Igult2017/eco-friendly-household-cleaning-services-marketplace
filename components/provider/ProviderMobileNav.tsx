@@ -21,7 +21,10 @@ export function ProviderMobileNav() {
     <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-gray-200 pb-[env(safe-area-inset-bottom)]">
       <div className="grid grid-cols-5">
         {ITEMS.map((it) => {
-          const active = pathname.startsWith(it.href)
+          // "More" (profile) is the catch-all: active on any page none of the other tabs match
+          // (statistics, earnings, bookings…), so there's always a highlighted tab.
+          const onAnotherTab = ITEMS.some((o) => o.key !== "more" && pathname.startsWith(o.href))
+          const active = it.key === "more" ? pathname.startsWith(it.href) || !onAnotherTab : pathname.startsWith(it.href)
           return (
             <Link
               key={it.href}

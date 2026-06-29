@@ -68,7 +68,7 @@ export default async function CustomerDashboardPage() {
   ])
 
   const reviewedBookingIds = reviewedRows.map(r => r.bookingId)
-  const upcoming       = allBookings.filter(b => ["payment_authorized", "confirmed", "in_progress", "pending_capture"].includes(b.status))
+  const upcoming       = allBookings.filter(b => ["payment_authorized", "confirmed", "in_progress", "pending_capture"].includes(b.status)).sort((a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime())
   const past           = allBookings.filter(b => ["completed", "cancelled", "disputed", "refunded"].includes(b.status)).slice(0, 4)
   const pendingPayment = allBookings.filter(b => b.status === "pending_payment")
   const jobsWithBids   = recentJobs.filter(j => j.bids.some(bid => bid.status === "pending") && ["open", "bidding"].includes(j.status))
