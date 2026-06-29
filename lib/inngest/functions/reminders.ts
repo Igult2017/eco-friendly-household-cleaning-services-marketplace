@@ -3,11 +3,7 @@ import { db } from "@/lib/db"
 import { bookings, users, providers, notifications } from "@/lib/db/schema"
 import { eq, and, sql } from "drizzle-orm"
 import { resend, FROM } from "@/lib/resend/client"
-
-/** Escape HTML special characters to prevent XSS in email bodies. */
-function esc(s: string): string {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")
-}
+import { reminderTomorrowEmail } from "@/lib/resend/transactionalEmails"
 
 export const bookingReminders = inngest.createFunction(
   { id: "booking-reminders", retries: 2, triggers: [{ event: "booking/created" }] },
@@ -42,22 +38,16 @@ export const bookingReminders = inngest.createFunction(
 
       await step.run("remind-customer-email", async () => {
         const [customer] = await db
-          .select({ email: users.email, firstName: users.firstName })
+          .select({ email: users.email, firstName: users.firstName, locale: users.locale })
           .from(users)
           .where(eq(users.id, customerId))
         if (!customer?.email) return
-        await resend.emails.send({
-          from: FROM,
-          to: customer.email,
-          subject: "Reminder: Your cleaning is tomorrow 🌿",
-          html: `
-            <h2>Your cleaning is tomorrow!</h2>
-            <p>Hi ${esc(customer.firstName ?? "there")},</p>
-            <p>Just a reminder that your cleaning session is scheduled for <strong>${scheduledTime.toLocaleString("en-GB")}</strong>.</p>
-            ${addr ? `<p>Address: ${esc(addr)}</p>` : ""}
-            <p>Thank you for choosing DORIXÉ 🌿</p>
-          `,
+        const { subject, html } = reminderTomorrowEmail(customer.locale, {
+          name: customer.firstName,
+          time: scheduledTime.toLocaleString(customer.locale ?? "en-GB"),
+          address: addr || undefined,
         })
+        await resend.emails.send({ from: FROM, to: customer.email, subject, html })
       })
 
       await step.run("remind-provider-day-before", async () => {

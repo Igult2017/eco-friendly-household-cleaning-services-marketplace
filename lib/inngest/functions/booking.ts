@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { bookings, users, providers, notifications } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { resend, FROM } from "@/lib/resend/client"
+import { bookingConfirmedEmail } from "@/lib/resend/transactionalEmails"
 
 export const onBookingCreated = inngest.createFunction(
   { id: "booking-created", triggers: [{ event: "booking/created" }] },
@@ -21,7 +22,7 @@ export const onBookingCreated = inngest.createFunction(
     if (!booking) return { skipped: true }
 
     const [customer, provider] = await step.run("fetch-parties", async () => {
-      const [c] = await db.select({ email: users.email, firstName: users.firstName }).from(users).where(eq(users.id, customerId))
+      const [c] = await db.select({ email: users.email, firstName: users.firstName, locale: users.locale }).from(users).where(eq(users.id, customerId))
       const [p] = await db.select({ businessName: providers.businessName, userId: providers.userId, timezone: providers.timezone }).from(providers).where(eq(providers.id, providerId))
       return [c, p]
     })
@@ -39,19 +40,13 @@ export const onBookingCreated = inngest.createFunction(
 
     await step.run("email-customer", async () => {
       if (!customer?.email) return
-      await resend.emails.send({
-        from: FROM,
-        to: customer.email,
-        subject: `Booking Confirmed — ${booking.bookingNumber}`,
-        html: `
-          <h2>Your booking is confirmed!</h2>
-          <p>Booking number: <strong>${booking.bookingNumber}</strong></p>
-          <p>Service: ${booking.service?.name}</p>
-          <p>Scheduled: ${new Date(booking.scheduledAt).toLocaleString("en-GB", { timeZone: provider?.timezone || "Europe/Berlin" })}</p>
-          <p>Your card has been pre-authorised. You will only be charged once the cleaning is completed.</p>
-          <p>Thank you for choosing DORIXÉ 🌿</p>
-        `,
+      const tz = provider?.timezone || "Europe/Berlin"
+      const { subject, html } = bookingConfirmedEmail(customer.locale, {
+        number: booking.bookingNumber,
+        service: booking.service?.name ?? "",
+        scheduled: new Date(booking.scheduledAt).toLocaleString(customer.locale ?? "en-GB", { timeZone: tz }),
       })
+      await resend.emails.send({ from: FROM, to: customer.email, subject, html })
     })
 
     return { bookingId, notified: true }

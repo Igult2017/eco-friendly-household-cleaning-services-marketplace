@@ -2,6 +2,7 @@ import { inngest } from "../client"
 import { db } from "@/lib/db"
 import { payments, payouts, bookings, providers, users } from "@/lib/db/schema"
 import { resend, FROM } from "@/lib/resend/client"
+import { weeklyEarningsEmail } from "@/lib/resend/transactionalEmails"
 import { eq, and, gte, lte, inArray, isNull } from "drizzle-orm"
 
 // PAYOUT MODEL — read before changing anything here.
@@ -144,24 +145,18 @@ export const processProviderPayout = inngest.createFunction(
 
     await step.run("email-provider", async () => {
       const [user] = await db
-        .select({ email: users.email, firstName: users.firstName })
+        .select({ email: users.email, firstName: users.firstName, locale: users.locale })
         .from(users)
         .where(eq(users.id, provider.userId))
       if (!user?.email) return
-      await resend.emails.send({
-        from: FROM,
-        to: user.email,
-        subject: `Your weekly earnings summary: €${(totalPayout / 100).toFixed(2)}`,
-        html: `
-          <h2>Your earnings this week</h2>
-          <p>Hi ${user.firstName ?? "there"},</p>
-          <p>You earned <strong>€${(totalPayout / 100).toFixed(2)}</strong> across ${bookingIdList.length} booking(s).</p>
-          <p>Period: ${periodStart} to ${periodEnd}</p>
-          <p>These funds are paid directly into your connected Stripe account as each job completes,
-          and Stripe pays out to your bank on your account's payout schedule.</p>
-          <p>Thank you for being part of DORIXÉ 🌿</p>
-        `,
+      const { subject, html } = weeklyEarningsEmail(user.locale, {
+        name: user.firstName,
+        amount: `€${(totalPayout / 100).toFixed(2)}`,
+        count: bookingIdList.length,
+        start: String(periodStart),
+        end: String(periodEnd),
       })
+      await resend.emails.send({ from: FROM, to: user.email, subject, html })
     })
 
     return { payoutId: payout.id, amount: totalPayout, ledger: true }

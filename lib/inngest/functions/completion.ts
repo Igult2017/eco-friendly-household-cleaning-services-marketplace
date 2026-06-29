@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { bookings, payments, users, notifications, referrals, referralCommissions, referralCredits } from "@/lib/db/schema"
 import { stripe } from "@/lib/stripe/client"
 import { resend, FROM } from "@/lib/resend/client"
+import { reviewRequestEmail, reviewReminderEmail } from "@/lib/resend/transactionalEmails"
 import { eq, and, sql } from "drizzle-orm"
 import { getReferralPct } from "@/lib/platform/settings"
 
@@ -52,24 +53,17 @@ export const onBookingCompleted = inngest.createFunction(
     })
 
     const customer = await step.run("fetch-customer", async () => {
-      const [c] = await db.select({ email: users.email, firstName: users.firstName }).from(users).where(eq(users.id, customerId))
+      const [c] = await db.select({ email: users.email, firstName: users.firstName, locale: users.locale }).from(users).where(eq(users.id, customerId))
       return c
     })
 
     await step.run("email-customer-review", async () => {
       if (!customer?.email) return
-      await resend.emails.send({
-        from: FROM,
-        to: customer.email,
-        subject: "How was your cleaning? Leave a review 🌿",
-        html: `
-          <h2>Your home is sparkling clean!</h2>
-          <p>Hi ${customer.firstName ?? "there"},</p>
-          <p>Your cleaning session has been completed and payment captured.</p>
-          <a href="${process.env.NEXT_PUBLIC_APP_URL}/bookings/${bookingId}/review" style="background:#2D7A5F;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;display:inline-block;margin-top:16px;">Leave a Review</a>
-          <p style="margin-top:24px;color:#6B7280;">Thank you for choosing DORIXÉ 🌿</p>
-        `,
+      const { subject, html } = reviewRequestEmail(customer.locale, {
+        name: customer.firstName,
+        reviewUrl: `${process.env.NEXT_PUBLIC_APP_URL}/bookings/${bookingId}/review`,
       })
+      await resend.emails.send({ from: FROM, to: customer.email, subject, html })
     })
 
     // Process referral commission — 5% of booking subtotal credited to referrer
@@ -159,18 +153,16 @@ export const onBookingCompleted = inngest.createFunction(
       if (existing.length > 0) return { skipped: "already_reviewed" }
 
       const [freshUser] = await db
-        .select({ email: users.email, deletedAt: users.deletedAt })
+        .select({ email: users.email, deletedAt: users.deletedAt, locale: users.locale })
         .from(users)
         .where(eq(users.id, customerId))
 
       if (!freshUser || freshUser.deletedAt || !freshUser.email) return { skipped: "account_deleted" }
 
-      await resend.emails.send({
-        from: FROM,
-        to: freshUser.email,
-        subject: "Reminder: Share your DORIXÉ experience",
-        html: `<p>Just a friendly reminder to leave a review for your recent cleaning. <a href="${process.env.NEXT_PUBLIC_APP_URL}/bookings/${bookingId}/review">Click here</a>.</p>`,
+      const { subject, html } = reviewReminderEmail(freshUser.locale, {
+        reviewUrl: `${process.env.NEXT_PUBLIC_APP_URL}/bookings/${bookingId}/review`,
       })
+      await resend.emails.send({ from: FROM, to: freshUser.email, subject, html })
     })
 
     return { bookingId, amountCaptured: captureResult.amount_received }
