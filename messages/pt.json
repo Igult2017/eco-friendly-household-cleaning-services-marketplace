@@ -947,7 +947,9 @@
     "earnings": "Ganhos",
     "profile": "Perfil",
     "adminPanel": "Painel de administração",
-    "pricing": "Preços"
+    "pricing": "Preços",
+    "calendar": "Calendar",
+    "messages": "Messages"
   },
   "providerProviderBookingsPage": {
     "title": "Minhas reservas",
@@ -1014,7 +1016,11 @@
     "colProcessed": "Processado",
     "statusPaid": "Pago",
     "statusPending": "Pendente",
-    "processedPending": "Pendente"
+    "processedPending": "Pendente",
+    "periodPrevious": "Previous earnings ({month})",
+    "periodCurrent": "Current earnings ({month})",
+    "periodEstimated": "Estimated earnings ({month})",
+    "periodEstimatedSub": "Based on bookings already scheduled"
   },
   "providerProviderJobsPage": {
     "genericError": "Algo correu mal. Tente novamente.",
@@ -1698,5 +1704,60 @@
     "allCategories": "Todos",
     "emptyTitle": "Ainda não há nada aqui",
     "emptyBody": "Estamos a preparar as nossas primeiras recomendações — volte em breve."
+  },
+  "providerMobileNav": {
+    "home": "Home",
+    "requests": "Requests",
+    "chat": "Chat",
+    "calendar": "Calendar",
+    "more": "More"
+  },
+  "compProviderReliabilityCard": {
+    "title": "Your current status",
+    "viewStatistics": "View your statistics",
+    "tier_new": "Building reputation",
+    "tier_reliable": "Reliable",
+    "tier_high": "High reliability",
+    "tier_top": "Top rated"
+  },
+  "providerStatisticsPage": {
+    "heading": "Your statistics",
+    "subheading": "Your performance and reliability at a glance.",
+    "yourStatus": "Your current status",
+    "reliabilityExplainer": "Your reliability score combines your average rating with how reliably you complete the jobs you accept.",
+    "tier_new": "Building reputation",
+    "tier_reliable": "Reliable",
+    "tier_high": "High reliability",
+    "tier_top": "Top rated",
+    "jobsCompleted": "Jobs completed",
+    "avgRating": "Average rating",
+    "completionRate": "Completion rate",
+    "ownCancellations": "Your cancellations",
+    "bidWinRate": "Bid win rate",
+    "repeatClients": "Repeat clients",
+    "totalReviews": "Reviews",
+    "totalEarned": "Total earned"
+  },
+  "providerCalendarPage": {
+    "heading": "Calendar",
+    "subheading": "All your bookings in one place.",
+    "booking": "Booking",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "today": "Today",
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat",
+    "sun": "Sun"
+  },
+  "providerMessagesPage": {
+    "heading": "Messages",
+    "subheading": "Your conversations with clients.",
+    "emptyTitle": "No messages yet",
+    "emptyDescription": "When a client messages you about a booking, it'll show up here.",
+    "client": "Client"
   }
 }

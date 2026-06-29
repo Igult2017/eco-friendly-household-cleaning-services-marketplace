@@ -18,6 +18,8 @@ import { ProviderDashboardDisputes }     from "@/components/provider/ProviderDas
 import { ReferralCard }                  from "@/components/referral/ReferralCard"
 import { ProviderApprovalNotice }        from "@/components/provider/ProviderApprovalNotice"
 import { PayoutConnect }                  from "@/components/provider/PayoutConnect"
+import { ReliabilityCard }                from "@/components/provider/ReliabilityCard"
+import { computeReliability }             from "@/lib/provider/reliability"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
@@ -159,6 +161,18 @@ export default async function ProviderDashboardPage() {
     .catch(() => [{ paid: 0 }])
   const pendingPayout = Math.max(0, totalEarnings - Number(paidOutRow?.paid ?? 0))
 
+  const [cancelRow] = await db
+    .select({ c: sql<number>`COUNT(*)` })
+    .from(bookings)
+    .where(and(eq(bookings.providerId, pid), eq(bookings.status, "cancelled"), eq(bookings.cancelledBy, uid)))
+    .catch(() => [{ c: 0 }])
+  const reliability = computeReliability({
+    completed: provider.totalJobsCompleted ?? 0,
+    cancelledByProvider: Number(cancelRow?.c ?? 0),
+    averageRating: provider.averageRating ? Number(provider.averageRating) : null,
+    totalReviews: provider.totalReviews ?? 0,
+  })
+
   const unreadCount = recentNotifs.filter((n) => !n.isRead).length
   const activeDisputes = providerDisputes.filter((d) =>
     ["open", "under_review", "escalated"].includes(d.status)
@@ -212,6 +226,8 @@ export default async function ProviderDashboardPage() {
             </div>
           ))}
         </div>
+
+        <ReliabilityCard reliability={reliability} />
 
         {/* Main grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

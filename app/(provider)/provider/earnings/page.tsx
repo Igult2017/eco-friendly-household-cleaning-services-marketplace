@@ -2,19 +2,28 @@ export const dynamic = "force-dynamic"
 
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
-import { getTranslations } from "next-intl/server"
+import { getTranslations, getLocale } from "next-intl/server"
 import { db } from "@/lib/db"
 import { providers, payouts, bookings, payments } from "@/lib/db/schema"
-import { eq, and, sum, count, desc } from "drizzle-orm"
+import { eq, and, sum, count, desc, gte, lt, inArray } from "drizzle-orm"
 import { PayoutConnect } from "@/components/provider/PayoutConnect"
 import { getConnectAccountStatus } from "@/lib/stripe/connect"
 
 async function getEarningsData(providerId: string) {
-  const [totalEarned, pendingPayout, completedJobs, recentPayouts] = await Promise.all([
+  const now = new Date()
+  const startThis = new Date(now.getFullYear(), now.getMonth(), 1)
+  const startPrev = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+  const startNext = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+  const startAfterNext = new Date(now.getFullYear(), now.getMonth() + 2, 1)
+
+  const [totalEarned, pendingPayout, completedJobs, recentPayouts, prevMonth, thisMonth, estNext] = await Promise.all([
     db.select({ total: sum(payouts.amount) }).from(payouts).where(and(eq(payouts.providerId, providerId), eq(payouts.status, "paid"))),
     db.select({ total: sum(bookings.providerPayout) }).from(bookings).where(and(eq(bookings.providerId, providerId), eq(bookings.status, "completed"))),
     db.select({ count: count() }).from(bookings).where(and(eq(bookings.providerId, providerId), eq(bookings.status, "completed"))),
     db.select({ id: payouts.id, amount: payouts.amount, status: payouts.status, periodStart: payouts.periodStart, periodEnd: payouts.periodEnd, processedAt: payouts.processedAt }).from(payouts).where(eq(payouts.providerId, providerId)).orderBy(desc(payouts.processedAt)).limit(10),
+    db.select({ total: sum(bookings.providerPayout) }).from(bookings).where(and(eq(bookings.providerId, providerId), eq(bookings.status, "completed"), gte(bookings.scheduledAt, startPrev), lt(bookings.scheduledAt, startThis))),
+    db.select({ total: sum(bookings.providerPayout) }).from(bookings).where(and(eq(bookings.providerId, providerId), eq(bookings.status, "completed"), gte(bookings.scheduledAt, startThis), lt(bookings.scheduledAt, startNext))),
+    db.select({ total: sum(bookings.providerPayout) }).from(bookings).where(and(eq(bookings.providerId, providerId), inArray(bookings.status, ["payment_authorized", "confirmed", "in_progress", "pending_capture"]), gte(bookings.scheduledAt, startNext), lt(bookings.scheduledAt, startAfterNext))),
   ])
 
   return {
@@ -22,6 +31,9 @@ async function getEarningsData(providerId: string) {
     pendingPayout: Number(pendingPayout[0]?.total ?? 0),
     completedJobs: Number(completedJobs[0]?.count ?? 0),
     recentPayouts,
+    prevMonthEarned: Number(prevMonth[0]?.total ?? 0),
+    thisMonthEarned: Number(thisMonth[0]?.total ?? 0),
+    estNextEarned: Number(estNext[0]?.total ?? 0),
   }
 }
 
@@ -51,6 +63,16 @@ export default async function EarningsPage({ searchParams }: { searchParams: Pro
   const data = await getEarningsData(provider.id)
 
   const t = await getTranslations("providerProviderEarningsPage")
+  const locale = await getLocale()
+  const now = new Date()
+  const monthName = (offset: number) =>
+    new Date(now.getFullYear(), now.getMonth() + offset, 1).toLocaleDateString(locale, { month: "long" })
+
+  const periods = [
+    { label: t("periodPrevious", { month: monthName(-1) }), value: data.prevMonthEarned, accent: false, sub: "" },
+    { label: t("periodCurrent", { month: monthName(0) }), value: data.thisMonthEarned, accent: true, sub: "" },
+    { label: t("periodEstimated", { month: monthName(1) }), value: data.estNextEarned, accent: false, sub: t("periodEstimatedSub") },
+  ]
 
   const kpis = [
     { label: t("kpiTotalEarned"), value: `€${(data.totalEarned / 100).toFixed(2)}`, sub: t("kpiAllTime") },
@@ -67,6 +89,17 @@ export default async function EarningsPage({ searchParams }: { searchParams: Pro
 
       {/* Payout setup — a cleaner can't be paid until Stripe Connect is active. */}
       <PayoutConnect status={payoutStatus} />
+
+      {/* Monthly breakdown — previous / current / estimated next month */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {periods.map((p) => (
+          <div key={p.label} className={`rounded-xl p-6 shadow-sm ${p.accent ? "bg-[#2D7A5F] text-white" : "bg-white"}`}>
+            <p className={`text-xs font-medium ${p.accent ? "text-white/80" : "text-[#6B7280]"}`}>{p.label}</p>
+            <p className={`text-3xl font-bold mt-1 ${p.accent ? "text-white" : "text-[#2B3441]"}`}>€{(p.value / 100).toFixed(2)}</p>
+            {p.sub && <p className={`text-xs mt-0.5 ${p.accent ? "text-white/70" : "text-[#9CA3AF]"}`}>{p.sub}</p>}
+          </div>
+        ))}
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {kpis.map((k) => (
