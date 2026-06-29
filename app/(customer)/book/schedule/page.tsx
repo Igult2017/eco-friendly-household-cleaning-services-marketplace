@@ -54,7 +54,7 @@ export default function BookStep3Page() {
   const [selectedDate, setSelectedDate] = useState<string | null>(restoreDate(scheduledAt))
   const [selectedTime, setSelectedTime] = useState<string | null>(restoreTime(scheduledAt))
   const [selectedDuration, setSelectedDuration] = useState(durationMinutes)
-  const [availability, setAvailability] = useState<{ available: boolean; timezone?: string; workingHours?: { start: string; end: string } } | null>(null)
+  const [availability, setAvailability] = useState<{ available: boolean; timezone?: string; workingHours?: { start: string; end: string }; bookedSlots?: { start: string; end: string | null }[] } | null>(null)
   const [loadingAvail, setLoadingAvail] = useState(false)
 
   useEffect(() => {
@@ -88,6 +88,22 @@ export default function BookStep3Page() {
 
   const days = getNext14Days()
   const availableSlots = filterSlots(TIME_SLOTS)
+
+  // Grey out slots the cleaner is already booked for, so the client sees conflicts up front (not just
+  // at checkout). Slot times are the cleaner's local time → convert to a UTC instant in their tz.
+  const slotTz = availability?.timezone
+  const bookedSet = new Set<string>()
+  if (selectedDate && slotTz && availability?.bookedSlots?.length) {
+    for (const slot of availableSlots) {
+      const slotMs = zonedTimeToUtc(selectedDate, slot, slotTz).getTime()
+      const taken = availability.bookedSlots.some((bs) => {
+        const s = new Date(bs.start).getTime()
+        const e = bs.end ? new Date(bs.end).getTime() : s + 60 * 60 * 1000
+        return slotMs >= s && slotMs < e
+      })
+      if (taken) bookedSet.add(slot)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#F4FAF6] py-10 px-4">
@@ -137,22 +153,28 @@ export default function BookStep3Page() {
               <p className="text-sm text-[#9CA3AF] py-2">{t("notAvailable")}</p>
             ) : (
               <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
-                {(loadingAvail ? TIME_SLOTS : availableSlots).map((t) => (
-                  <button
-                    key={t}
-                    disabled={loadingAvail}
-                    onClick={() => setSelectedTime(t)}
-                    className={cn(
-                      "py-2 rounded-lg text-sm font-medium border-2 transition-all",
-                      selectedTime === t
-                        ? "border-[#2D7A5F] bg-[#2D7A5F] text-white"
-                        : "border-[#E5EBF0] hover:border-[#4CB87A] text-[#2B3441]",
-                      loadingAvail && "opacity-40"
-                    )}
-                  >
-                    {t}
-                  </button>
-                ))}
+                {(loadingAvail ? TIME_SLOTS : availableSlots).map((slot) => {
+                  const isBooked = bookedSet.has(slot)
+                  return (
+                    <button
+                      key={slot}
+                      disabled={loadingAvail || isBooked}
+                      onClick={() => !isBooked && setSelectedTime(slot)}
+                      title={isBooked ? t("slotBooked") : undefined}
+                      className={cn(
+                        "py-2 rounded-lg text-sm font-medium border-2 transition-all",
+                        isBooked
+                          ? "border-[#E5EBF0] bg-gray-50 text-[#C0C6CE] line-through cursor-not-allowed"
+                          : selectedTime === slot
+                          ? "border-[#2D7A5F] bg-[#2D7A5F] text-white"
+                          : "border-[#E5EBF0] hover:border-[#4CB87A] text-[#2B3441]",
+                        loadingAvail && "opacity-40"
+                      )}
+                    >
+                      {slot}
+                    </button>
+                  )
+                })}
               </div>
             )}
           </div>

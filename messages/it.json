@@ -677,7 +677,8 @@
     "freq_one_time": "Una tantum",
     "freq_weekly": "Settimanale",
     "freq_biweekly": "Ogni 2 settimane",
-    "freq_monthly": "Mensile"
+    "freq_monthly": "Mensile",
+    "slotBooked": "Occupato"
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Impossibile caricare la prenotazione",

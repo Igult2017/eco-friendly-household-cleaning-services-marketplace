@@ -677,7 +677,8 @@
     "freq_one_time": "Eenmalig",
     "freq_weekly": "Wekelijks",
     "freq_biweekly": "Om de 2 weken",
-    "freq_monthly": "Maandelijks"
+    "freq_monthly": "Maandelijks",
+    "slotBooked": "Bezet"
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Boeking kon niet worden geladen",

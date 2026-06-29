@@ -677,7 +677,8 @@
     "freq_one_time": "Jednorazowo",
     "freq_weekly": "Co tydzień",
     "freq_biweekly": "Co 2 tygodnie",
-    "freq_monthly": "Co miesiąc"
+    "freq_monthly": "Co miesiąc",
+    "slotBooked": "Zajęte"
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Nie udało się załadować rezerwacji",
