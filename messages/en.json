@@ -1770,5 +1770,19 @@
     "emptyTitle": "No messages yet",
     "emptyDescription": "When you message a cleaner about a booking, it will show up here.",
     "cleaner": "Cleaner"
+  },
+  "customerPaymentMethods": {
+    "title": "Payment methods",
+    "subtitle": "Save a card for faster checkout and recurring bookings.",
+    "addCard": "Add card",
+    "save": "Save card",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "empty": "No saved cards yet.",
+    "default": "Default",
+    "setDefault": "Set as default",
+    "remove": "Remove",
+    "expires": "Expires {date}",
+    "error": "Could not save the card. Please try again."
   }
 }

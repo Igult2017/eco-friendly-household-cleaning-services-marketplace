@@ -6,6 +6,7 @@ import { eq, desc } from "drizzle-orm"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
 import { Leaf } from "lucide-react"
 import { getTranslations } from "next-intl/server"
+import { PaymentMethods } from "@/components/customer/PaymentMethods"
 
 export const dynamic = "force-dynamic"
 
@@ -57,6 +58,9 @@ export default async function CustomerPaymentsPage() {
         <h1 className="font-serif text-3xl font-bold text-[#2B3441]">{t("title")}</h1>
         <p className="text-sm text-[#6B7280] mt-1">{t("subtitle")}</p>
       </div>
+
+      {/* Saved cards — add/manage payment methods (used for faster checkout + recurring bookings). */}
+      <PaymentMethods />
 
       {/* KPI row */}
       <div className="grid grid-cols-2 gap-4">

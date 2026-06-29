@@ -1770,5 +1770,19 @@
     "emptyTitle": "Brak wiadomości",
     "emptyDescription": "Gdy napiszesz do osoby sprzątającej w sprawie rezerwacji, pojawi się to tutaj.",
     "cleaner": "Osoba sprzątająca"
+  },
+  "customerPaymentMethods": {
+    "title": "Metody płatności",
+    "subtitle": "Zapisz kartę, aby szybciej płacić i korzystać z rezerwacji cyklicznych.",
+    "addCard": "Dodaj kartę",
+    "save": "Zapisz kartę",
+    "saving": "Zapisywanie…",
+    "cancel": "Anuluj",
+    "empty": "Brak zapisanych kart.",
+    "default": "Domyślna",
+    "setDefault": "Ustaw jako domyślną",
+    "remove": "Usuń",
+    "expires": "Wygasa {date}",
+    "error": "Nie udało się zapisać karty. Spróbuj ponownie."
   }
 }

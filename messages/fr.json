@@ -1770,5 +1770,19 @@
     "emptyTitle": "Aucun message pour le moment",
     "emptyDescription": "Lorsque vous écrivez à un intervenant au sujet d une réservation, cela apparaîtra ici.",
     "cleaner": "Intervenant"
+  },
+  "customerPaymentMethods": {
+    "title": "Moyens de paiement",
+    "subtitle": "Enregistrez une carte pour un paiement plus rapide et les réservations récurrentes.",
+    "addCard": "Ajouter une carte",
+    "save": "Enregistrer la carte",
+    "saving": "Enregistrement…",
+    "cancel": "Annuler",
+    "empty": "Aucune carte enregistrée.",
+    "default": "Par défaut",
+    "setDefault": "Définir par défaut",
+    "remove": "Supprimer",
+    "expires": "Expire {date}",
+    "error": "Impossible d enregistrer la carte. Veuillez réessayer."
   }
 }

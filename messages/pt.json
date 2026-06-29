@@ -1770,5 +1770,19 @@
     "emptyTitle": "Ainda não há mensagens",
     "emptyDescription": "Quando enviares mensagem a um profissional sobre uma reserva, aparecerá aqui.",
     "cleaner": "Profissional"
+  },
+  "customerPaymentMethods": {
+    "title": "Métodos de pagamento",
+    "subtitle": "Guarde um cartão para pagar mais rápido e para reservas recorrentes.",
+    "addCard": "Adicionar cartão",
+    "save": "Guardar cartão",
+    "saving": "A guardar…",
+    "cancel": "Cancelar",
+    "empty": "Ainda não há cartões guardados.",
+    "default": "Predefinido",
+    "setDefault": "Definir como predefinido",
+    "remove": "Remover",
+    "expires": "Expira {date}",
+    "error": "Não foi possível guardar o cartão. Tente novamente."
   }
 }

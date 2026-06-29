@@ -1770,5 +1770,19 @@
     "emptyTitle": "Nog geen berichten",
     "emptyDescription": "Wanneer je een schoonmaker over een boeking bericht, verschijnt het hier.",
     "cleaner": "Schoonmaker"
+  },
+  "customerPaymentMethods": {
+    "title": "Betaalmethoden",
+    "subtitle": "Bewaar een kaart voor sneller afrekenen en terugkerende boekingen.",
+    "addCard": "Kaart toevoegen",
+    "save": "Kaart opslaan",
+    "saving": "Opslaan…",
+    "cancel": "Annuleren",
+    "empty": "Nog geen opgeslagen kaarten.",
+    "default": "Standaard",
+    "setDefault": "Instellen als standaard",
+    "remove": "Verwijderen",
+    "expires": "Verloopt {date}",
+    "error": "Kaart kon niet worden opgeslagen. Probeer het opnieuw."
   }
 }

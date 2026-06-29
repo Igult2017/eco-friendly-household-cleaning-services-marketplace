@@ -1770,5 +1770,19 @@
     "emptyTitle": "Noch keine Nachrichten",
     "emptyDescription": "Wenn du einer Reinigungskraft zu einer Buchung schreibst, erscheint es hier.",
     "cleaner": "Reinigungskraft"
+  },
+  "customerPaymentMethods": {
+    "title": "Zahlungsmethoden",
+    "subtitle": "Speichere eine Karte für schnelleres Bezahlen und wiederkehrende Buchungen.",
+    "addCard": "Karte hinzufügen",
+    "save": "Karte speichern",
+    "saving": "Wird gespeichert…",
+    "cancel": "Abbrechen",
+    "empty": "Noch keine gespeicherten Karten.",
+    "default": "Standard",
+    "setDefault": "Als Standard festlegen",
+    "remove": "Entfernen",
+    "expires": "Gültig bis {date}",
+    "error": "Karte konnte nicht gespeichert werden. Bitte versuche es erneut."
   }
 }

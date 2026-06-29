@@ -1770,5 +1770,19 @@
     "emptyTitle": "Ancora nessun messaggio",
     "emptyDescription": "Quando scrivi a un addetto per una prenotazione, comparirà qui.",
     "cleaner": "Addetto"
+  },
+  "customerPaymentMethods": {
+    "title": "Metodi di pagamento",
+    "subtitle": "Salva una carta per pagare più velocemente e per le prenotazioni ricorrenti.",
+    "addCard": "Aggiungi carta",
+    "save": "Salva carta",
+    "saving": "Salvataggio…",
+    "cancel": "Annulla",
+    "empty": "Nessuna carta salvata.",
+    "default": "Predefinita",
+    "setDefault": "Imposta come predefinita",
+    "remove": "Rimuovi",
+    "expires": "Scade {date}",
+    "error": "Impossibile salvare la carta. Riprova."
   }
 }
