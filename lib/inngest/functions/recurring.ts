@@ -237,7 +237,12 @@ export const recurringBookingCron = inngest.createFunction(
           .set({ nextBookingAt: nextDate, updatedAt: new Date() })
           .where(eq(recurringSchedules.id, schedule.id))
 
-        if (!paymentFailed) created++
+        if (!paymentFailed) {
+          // Emit the same event a normal booking fires so reminders get scheduled + the confirmation
+          // is sent — recurring bookings previously got NO reminders at all.
+          await inngest.send({ name: "booking/created", data: { bookingId: newBooking.id, customerId: schedule.customerId, providerId: schedule.providerId } })
+          created++
+        }
       })
     }
 

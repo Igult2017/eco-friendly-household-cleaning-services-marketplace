@@ -191,6 +191,41 @@ const NOTIF: Record<string, Record<string, S>> = {
     pl: { title: "Pominięto cykliczną rezerwację", body: "Twoja cykliczna osoba sprzątająca jest tymczasowo niedostępna, więc ten cykl został pominięty. Spróbujemy ponownie następnym razem." },
     pt: { title: "Reserva recorrente ignorada", body: "O seu profissional de limpeza recorrente está temporariamente indisponível, pelo que este ciclo foi ignorado. Tentaremos novamente da próxima vez." },
   },
+  // Time-agnostic CLIENT reminder ({datetime} carries day-before vs same-day specifics). The base
+  // booking_reminder copy is cleaner-perspective, so clients need their own wording.
+  booking_reminder_client: {
+    en: { title: "Upcoming cleaning", body: "Reminder — your cleaning is scheduled for {datetime}." },
+    de: { title: "Bevorstehende Reinigung", body: "Erinnerung — deine Reinigung ist für {datetime} geplant." },
+    fr: { title: "Nettoyage à venir", body: "Rappel — votre ménage est prévu pour le {datetime}." },
+    es: { title: "Limpieza próxima", body: "Recordatorio: tu limpieza está programada para el {datetime}." },
+    it: { title: "Pulizia in arrivo", body: "Promemoria — la tua pulizia è prevista per il {datetime}." },
+    nl: { title: "Aankomende schoonmaak", body: "Herinnering — je schoonmaak staat gepland voor {datetime}." },
+    pl: { title: "Nadchodzące sprzątanie", body: "Przypomnienie — Twoje sprzątanie jest zaplanowane na {datetime}." },
+    pt: { title: "Limpeza a chegar", body: "Lembrete — a sua limpeza está agendada para {datetime}." },
+  },
+  // Cancellation notice sent to the OTHER party (booking_cancelled base copy means "Payment failed").
+  booking_cancelled_party: {
+    en: { title: "Booking cancelled", body: "Your booking scheduled for {datetime} has been cancelled." },
+    de: { title: "Buchung storniert", body: "Deine Buchung für {datetime} wurde storniert." },
+    fr: { title: "Réservation annulée", body: "Votre réservation prévue le {datetime} a été annulée." },
+    es: { title: "Reserva cancelada", body: "Tu reserva del {datetime} ha sido cancelada." },
+    it: { title: "Prenotazione annullata", body: "La tua prenotazione del {datetime} è stata annullata." },
+    nl: { title: "Boeking geannuleerd", body: "Je boeking voor {datetime} is geannuleerd." },
+    pl: { title: "Rezerwacja anulowana", body: "Twoja rezerwacja na {datetime} została anulowana." },
+    pt: { title: "Reserva cancelada", body: "A sua reserva de {datetime} foi cancelada." },
+  },
+  // Provider "new booking" (the base booking_confirmed copy is client-perspective, so the provider
+  // notification mislocalized to "your booking is confirmed" without this variant).
+  new_booking_provider: {
+    en: { title: "New booking!", body: "You have a new booking for {service} on {datetime}." },
+    de: { title: "Neue Buchung!", body: "Du hast eine neue Buchung für {service} am {datetime}." },
+    fr: { title: "Nouvelle réservation !", body: "Vous avez une nouvelle réservation pour {service} le {datetime}." },
+    es: { title: "¡Nueva reserva!", body: "Tienes una nueva reserva de {service} el {datetime}." },
+    it: { title: "Nuova prenotazione!", body: "Hai una nuova prenotazione per {service} il {datetime}." },
+    nl: { title: "Nieuwe boeking!", body: "Je hebt een nieuwe boeking voor {service} op {datetime}." },
+    pl: { title: "Nowa rezerwacja!", body: "Masz nową rezerwację na {service} w dniu {datetime}." },
+    pt: { title: "Nova reserva!", body: "Tens uma nova reserva de {service} em {datetime}." },
+  },
 }
 
 // Placeholders each type's strings expect. A type localizes only if metadata supplies all of them.
@@ -205,6 +240,9 @@ const PARAMS: Record<string, string[]> = {
   recurring_booking_created: ["datetime"],
   recurring_payment_failed: ["datetime"],
   recurring_skipped: [],
+  booking_reminder_client: ["datetime"],
+  booking_cancelled_party: ["datetime"],
+  new_booking_provider: ["service", "datetime"],
 }
 
 /**

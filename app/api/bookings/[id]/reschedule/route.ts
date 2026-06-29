@@ -8,6 +8,7 @@ import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
 import { isUuid } from "@/lib/utils/uuid"
 import { zonedDayAndTime } from "@/lib/utils/tz"
 import { logError } from "@/lib/utils/logError"
+import { inngest } from "@/lib/inngest/client"
 
 const rescheduleSchema = z.object({
   newScheduledAt: z.string().datetime(),
@@ -166,6 +167,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       body: "Your booking has been rescheduled.",
       link: `/bookings/${bookingId}`,
     })
+
+    // Re-schedule reminders for the NEW time. The old reminder flow self-skips (stale scheduledAt);
+    // this is a distinct event from booking/created so it doesn't re-send the confirmation email.
+    await inngest.send({ name: "booking/rescheduled", data: { bookingId, customerId: booking.customerId, providerId: booking.providerId } })
 
     return NextResponse.json({ success: true, scheduledAt: newScheduledAt })
   } catch (err) {

@@ -29,11 +29,28 @@ export const onBookingCreated = inngest.createFunction(
 
     await step.run("notify-provider", async () => {
       if (!provider) return
+      const svc = booking.service?.name ?? "a service"
+      const dt = new Date(booking.scheduledAt).toLocaleString("en-GB", { timeZone: provider?.timezone || "Europe/Berlin" })
       await db.insert(notifications).values({
         userId: provider.userId,
         type: "booking_confirmed",
         title: "New Booking!",
-        body: `You have a new booking for ${booking.service?.name ?? "a service"} on ${new Date(booking.scheduledAt).toLocaleDateString("en-GB", { timeZone: provider?.timezone || "Europe/Berlin" })}`,
+        body: `You have a new booking for ${svc} on ${dt}`,
+        link: `/bookings/${bookingId}`,
+        // Base booking_confirmed copy is client-perspective — use the provider variant so the cleaner
+        // sees "New booking!" in their language, not "your booking is confirmed".
+        metadata: { variant: "new_booking_provider", service: svc, datetime: dt },
+      })
+    })
+
+    await step.run("notify-customer", async () => {
+      // The client previously got only a confirmation EMAIL — add an in-app confirmation too. The base
+      // booking_confirmed copy is client-perspective, so it localizes correctly with no params.
+      await db.insert(notifications).values({
+        userId: customerId,
+        type: "booking_confirmed",
+        title: "Booking confirmed",
+        body: "Your booking has been confirmed.",
         link: `/bookings/${bookingId}`,
       })
     })

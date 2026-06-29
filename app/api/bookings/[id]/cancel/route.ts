@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { bookings, payments, providers, promoCodes, promoCodeUsages, carbonOffsetContributions } from "@/lib/db/schema"
+import { bookings, payments, providers, promoCodes, promoCodeUsages, carbonOffsetContributions, notifications } from "@/lib/db/schema"
 import { stripe } from "@/lib/stripe/client"
 import { calculateRefundPercent } from "@/lib/utils/refunds"
 import { eq, and, sql } from "drizzle-orm"
@@ -126,6 +126,30 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       // The carbon-offset hold was released (never captured), so the contribution wasn't collected.
       await tx.delete(carbonOffsetContributions).where(eq(carbonOffsetContributions.bookingId, bookingId))
     })
+
+    // Notify the OTHER party — the canceller already knows. (booking_cancelled base copy means
+    // "Payment failed", so use the booking_cancelled_party variant for a proper localized message.)
+    try {
+      const dt = new Date(booking.scheduledAt).toLocaleString("en-GB")
+      if (callerRole === "customer") {
+        const [pv] = await db.select({ userId: providers.userId }).from(providers).where(eq(providers.id, booking.providerId))
+        if (pv) {
+          await db.insert(notifications).values({
+            userId: pv.userId, type: "booking_cancelled", title: "Booking cancelled",
+            body: `A booking scheduled for ${dt} was cancelled by the client.`,
+            link: "/provider/bookings", metadata: { variant: "booking_cancelled_party", datetime: dt },
+          })
+        }
+      } else {
+        await db.insert(notifications).values({
+          userId: booking.customerId, type: "booking_cancelled", title: "Booking cancelled",
+          body: `Your booking scheduled for ${dt} was cancelled.`,
+          link: "/dashboard", metadata: { variant: "booking_cancelled_party", datetime: dt },
+        })
+      }
+    } catch (notifErr) {
+      console.warn("[cancel] failed to notify other party:", notifErr)
+    }
 
     return NextResponse.json({ success: true, refundPercent, feeCharged: capturedFee, refundedAmount: fullHold - capturedFee })
   } catch (err) {
