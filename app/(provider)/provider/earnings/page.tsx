@@ -6,6 +6,7 @@ import { getTranslations } from "next-intl/server"
 import { db } from "@/lib/db"
 import { providers, payouts, bookings, payments } from "@/lib/db/schema"
 import { eq, and, sum, count, desc } from "drizzle-orm"
+import { PayoutConnect } from "@/components/provider/PayoutConnect"
 
 async function getEarningsData(providerId: string) {
   const [totalEarned, pendingPayout, completedJobs, recentPayouts] = await Promise.all([
@@ -27,7 +28,7 @@ export default async function EarningsPage() {
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
 
-  const [provider] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, userId))
+  const [provider] = await db.select({ id: providers.id, stripeAccountStatus: providers.stripeAccountStatus }).from(providers).where(eq(providers.userId, userId))
   if (!provider) redirect("/provider/profile")
 
   const data = await getEarningsData(provider.id)
@@ -46,6 +47,9 @@ export default async function EarningsPage() {
         <h1 className="font-serif text-3xl font-bold text-[#2B3441]">{t("heading")}</h1>
         <p className="text-sm text-[#6B7280] mt-1">{t("subheading")}</p>
       </div>
+
+      {/* Payout setup — a cleaner can't be paid until Stripe Connect is active. */}
+      <PayoutConnect status={provider.stripeAccountStatus} />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {kpis.map((k) => (

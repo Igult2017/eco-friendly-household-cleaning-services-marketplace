@@ -17,6 +17,7 @@ import { ProviderDashboardRating }       from "@/components/provider/ProviderDas
 import { ProviderDashboardDisputes }     from "@/components/provider/ProviderDashboardDisputes"
 import { ReferralCard }                  from "@/components/referral/ReferralCard"
 import { ProviderApprovalNotice }        from "@/components/provider/ProviderApprovalNotice"
+import { PayoutConnect }                  from "@/components/provider/PayoutConnect"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
@@ -39,6 +40,7 @@ export default async function ProviderDashboardPage() {
       longitude: providers.longitude,
       serviceRadiusKm: providers.serviceRadiusKm,
       country: providers.country,
+      stripeAccountStatus: providers.stripeAccountStatus,
     })
     .from(providers)
     .where(eq(providers.userId, userId))
@@ -167,6 +169,11 @@ export default async function ProviderDashboardPage() {
       <div className="max-w-5xl mx-auto space-y-8">
 
         <ProviderApprovalNotice isApproved={provider.isApproved} isSuspended={provider.isSuspended} />
+
+        {/* Until payouts are connected, the cleaner can't be paid (and customers can't be charged). */}
+        {!["active", "charges_enabled"].includes(provider.stripeAccountStatus ?? "") && (
+          <PayoutConnect status={provider.stripeAccountStatus} />
+        )}
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
