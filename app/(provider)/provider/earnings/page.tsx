@@ -7,6 +7,7 @@ import { db } from "@/lib/db"
 import { providers, payouts, bookings, payments } from "@/lib/db/schema"
 import { eq, and, sum, count, desc } from "drizzle-orm"
 import { PayoutConnect } from "@/components/provider/PayoutConnect"
+import { getConnectAccountStatus } from "@/lib/stripe/connect"
 
 async function getEarningsData(providerId: string) {
   const [totalEarned, pendingPayout, completedJobs, recentPayouts] = await Promise.all([
@@ -24,12 +25,28 @@ async function getEarningsData(providerId: string) {
   }
 }
 
-export default async function EarningsPage() {
+export default async function EarningsPage({ searchParams }: { searchParams: Promise<{ connect?: string }> }) {
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
 
-  const [provider] = await db.select({ id: providers.id, stripeAccountStatus: providers.stripeAccountStatus }).from(providers).where(eq(providers.userId, userId))
+  const [provider] = await db.select({ id: providers.id, stripeAccountId: providers.stripeAccountId, stripeAccountStatus: providers.stripeAccountStatus }).from(providers).where(eq(providers.userId, userId))
   if (!provider) redirect("/provider/profile")
+
+  // Returning from Stripe Connect onboarding — refresh status live so it flips to "active"
+  // immediately, without depending on the account.updated webhook being configured in Stripe.
+  let payoutStatus = provider.stripeAccountStatus
+  const sp = await searchParams
+  if ((sp.connect === "success" || sp.connect === "refresh") && provider.stripeAccountId) {
+    try {
+      const fresh = await getConnectAccountStatus(provider.stripeAccountId)
+      if (fresh !== provider.stripeAccountStatus) {
+        await db.update(providers).set({ stripeAccountStatus: fresh }).where(eq(providers.id, provider.id))
+      }
+      payoutStatus = fresh
+    } catch (e) {
+      console.warn("[earnings] connect status refresh failed:", e)
+    }
+  }
 
   const data = await getEarningsData(provider.id)
 
@@ -49,7 +66,7 @@ export default async function EarningsPage() {
       </div>
 
       {/* Payout setup — a cleaner can't be paid until Stripe Connect is active. */}
-      <PayoutConnect status={provider.stripeAccountStatus} />
+      <PayoutConnect status={payoutStatus} />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {kpis.map((k) => (
