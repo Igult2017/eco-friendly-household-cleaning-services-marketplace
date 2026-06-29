@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { cookies } from "next/headers"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { jobPosts, providers } from "@/lib/db/schema"
@@ -55,11 +56,16 @@ export async function GET(req: Request) {
       createdAt: j.createdAt,
     }))
 
-    // Only a cleaner (a user with a provider profile) can bid — clients never get a bid button.
+    // "Can bid" = has a provider profile AND is currently in CLEANER mode. A dual-role user or admin
+    // who switched to their CLIENT account (cookie dorix_active_role=customer) is acting as a client,
+    // so the bid button is hidden for them too — even though their provider profile still exists.
     let canBid = false
     if (userId) {
-      const [prov] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, userId))
-      canBid = !!prov
+      const activeRole = (await cookies()).get("dorix_active_role")?.value
+      if (activeRole !== "customer") {
+        const [prov] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, userId))
+        canBid = !!prov
+      }
     }
 
     return NextResponse.json({ jobs: safe, canBid })
