@@ -1859,5 +1859,29 @@
     "status": "Statut",
     "notInvoice": "Ceci est un relevé de gains, pas une facture TVA.",
     "print": "Imprimer / Enregistrer en PDF"
+  },
+  "customerRecurringNewPage": {
+    "title": "Configurer le ménage récurrent",
+    "subtitle": "{service} avec {business} — choisissez la fréquence, puis confirmez.",
+    "frequencyLabel": "Fréquence",
+    "freq_weekly": "Hebdomadaire",
+    "freq_biweekly": "Toutes les 2 semaines",
+    "freq_monthly": "Mensuel",
+    "dayLabel": "Jour de la semaine",
+    "daySunday": "Dimanche",
+    "dayMonday": "Lundi",
+    "dayTuesday": "Mardi",
+    "dayWednesday": "Mercredi",
+    "dayThursday": "Jeudi",
+    "dayFriday": "Vendredi",
+    "daySaturday": "Samedi",
+    "timeLabel": "Heure préférée",
+    "cardLabel": "Payer avec",
+    "addCard": "Ajouter une carte",
+    "consentLabel": "J'autorise DORIXÉ à débiter automatiquement cette carte pour chaque ménage récurrent jusqu'à annulation.",
+    "noCardError": "Veuillez choisir une carte enregistrée.",
+    "consentError": "Veuillez autoriser le prélèvement récurrent pour continuer.",
+    "genericError": "Impossible de configurer le planning. Veuillez réessayer.",
+    "submit": "Activer le planning récurrent"
   }
 }

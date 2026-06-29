@@ -1859,5 +1859,29 @@
     "status": "Stato",
     "notInvoice": "Questo è un riepilogo dei guadagni, non una fattura con IVA.",
     "print": "Stampa / Salva come PDF"
+  },
+  "customerRecurringNewPage": {
+    "title": "Imposta pulizia ricorrente",
+    "subtitle": "{service} con {business} — scegli la frequenza e conferma.",
+    "frequencyLabel": "Ogni quanto",
+    "freq_weekly": "Settimanale",
+    "freq_biweekly": "Ogni 2 settimane",
+    "freq_monthly": "Mensile",
+    "dayLabel": "Giorno della settimana",
+    "daySunday": "Domenica",
+    "dayMonday": "Lunedì",
+    "dayTuesday": "Martedì",
+    "dayWednesday": "Mercoledì",
+    "dayThursday": "Giovedì",
+    "dayFriday": "Venerdì",
+    "daySaturday": "Sabato",
+    "timeLabel": "Orario preferito",
+    "cardLabel": "Paga con",
+    "addCard": "Aggiungi una carta",
+    "consentLabel": "Autorizzo DORIXÉ ad addebitare automaticamente questa carta per ogni pulizia ricorrente fino all'annullamento.",
+    "noCardError": "Scegli una carta salvata.",
+    "consentError": "Autorizza l'addebito ricorrente per continuare.",
+    "genericError": "Impossibile impostare la pianificazione. Riprova.",
+    "submit": "Attiva pianificazione ricorrente"
   }
 }

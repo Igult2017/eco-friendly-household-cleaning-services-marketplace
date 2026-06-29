@@ -1859,5 +1859,29 @@
     "status": "Status",
     "notInvoice": "Dies ist eine Verdienstaufstellung, keine Mehrwertsteuerrechnung.",
     "print": "Drucken / als PDF speichern"
+  },
+  "customerRecurringNewPage": {
+    "title": "Wiederkehrende Reinigung einrichten",
+    "subtitle": "{service} mit {business} — wähle die Häufigkeit und bestätige.",
+    "frequencyLabel": "Wie oft",
+    "freq_weekly": "Wöchentlich",
+    "freq_biweekly": "Alle 2 Wochen",
+    "freq_monthly": "Monatlich",
+    "dayLabel": "Wochentag",
+    "daySunday": "Sonntag",
+    "dayMonday": "Montag",
+    "dayTuesday": "Dienstag",
+    "dayWednesday": "Mittwoch",
+    "dayThursday": "Donnerstag",
+    "dayFriday": "Freitag",
+    "daySaturday": "Samstag",
+    "timeLabel": "Bevorzugte Uhrzeit",
+    "cardLabel": "Bezahlen mit",
+    "addCard": "Zahlungskarte hinzufügen",
+    "consentLabel": "Ich autorisiere DORIXÉ, diese Karte für jede wiederkehrende Reinigung automatisch zu belasten, bis ich kündige.",
+    "noCardError": "Bitte wähle eine gespeicherte Karte.",
+    "consentError": "Bitte autorisiere die wiederkehrende Belastung, um fortzufahren.",
+    "genericError": "Zeitplan konnte nicht eingerichtet werden. Bitte versuche es erneut.",
+    "submit": "Wiederkehrenden Plan aktivieren"
   }
 }

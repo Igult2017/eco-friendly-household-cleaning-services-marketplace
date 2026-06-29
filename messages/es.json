@@ -1859,5 +1859,29 @@
     "status": "Estado",
     "notInvoice": "Este es un resumen de ganancias, no una factura con IVA.",
     "print": "Imprimir / Guardar como PDF"
+  },
+  "customerRecurringNewPage": {
+    "title": "Configurar limpieza recurrente",
+    "subtitle": "{service} con {business} — elige la frecuencia y confirma.",
+    "frequencyLabel": "Con qué frecuencia",
+    "freq_weekly": "Semanal",
+    "freq_biweekly": "Cada 2 semanas",
+    "freq_monthly": "Mensual",
+    "dayLabel": "Día de la semana",
+    "daySunday": "Domingo",
+    "dayMonday": "Lunes",
+    "dayTuesday": "Martes",
+    "dayWednesday": "Miércoles",
+    "dayThursday": "Jueves",
+    "dayFriday": "Viernes",
+    "daySaturday": "Sábado",
+    "timeLabel": "Hora preferida",
+    "cardLabel": "Pagar con",
+    "addCard": "Añadir una tarjeta",
+    "consentLabel": "Autorizo a DORIXÉ a cobrar automáticamente esta tarjeta por cada limpieza recurrente hasta que cancele.",
+    "noCardError": "Elige una tarjeta guardada.",
+    "consentError": "Autoriza el cobro recurrente para continuar.",
+    "genericError": "No se pudo configurar la programación. Inténtalo de nuevo.",
+    "submit": "Activar programación recurrente"
   }
 }

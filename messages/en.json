@@ -1859,5 +1859,29 @@
     "status": "Status",
     "notInvoice": "This is an earnings statement, not a VAT invoice.",
     "print": "Print / Save as PDF"
+  },
+  "customerRecurringNewPage": {
+    "title": "Set up recurring cleaning",
+    "subtitle": "{service} with {business} — choose how often, then confirm.",
+    "frequencyLabel": "How often",
+    "freq_weekly": "Weekly",
+    "freq_biweekly": "Every 2 weeks",
+    "freq_monthly": "Monthly",
+    "dayLabel": "Day of the week",
+    "daySunday": "Sunday",
+    "dayMonday": "Monday",
+    "dayTuesday": "Tuesday",
+    "dayWednesday": "Wednesday",
+    "dayThursday": "Thursday",
+    "dayFriday": "Friday",
+    "daySaturday": "Saturday",
+    "timeLabel": "Preferred time",
+    "cardLabel": "Pay with",
+    "addCard": "Add a payment card",
+    "consentLabel": "I authorize DORIXÉ to automatically charge this card for each recurring cleaning until I cancel.",
+    "noCardError": "Please choose a saved card.",
+    "consentError": "Please authorize the recurring charge to continue.",
+    "genericError": "Could not set up the schedule. Please try again.",
+    "submit": "Activate recurring schedule"
   }
 }

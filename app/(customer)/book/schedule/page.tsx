@@ -61,6 +61,22 @@ export default function BookStep3Page() {
     if (!selectedProviderId) { router.replace("/book"); return }
   }, [selectedProviderId, router])
 
+  // Pre-fill the cadence from the client's stated profile preference (once per session) so a "I want
+  // weekly cleaning" preference flows into the booking — they can still change it here.
+  useEffect(() => {
+    if (frequency !== "one_time") return
+    if (typeof window !== "undefined" && sessionStorage.getItem("recurringPrefApplied")) return
+    fetch("/api/customers/profile")
+      .then((r) => r.json())
+      .then((d) => {
+        const pref = d?.user?.recurringInterest
+        if (typeof window !== "undefined") sessionStorage.setItem("recurringPrefApplied", "1")
+        if (pref && pref !== "none" && pref !== "one_time") setFrequency(pref)
+      })
+      .catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   useEffect(() => {
     if (!selectedDate || !selectedProviderId) return
     setLoadingAvail(true)

@@ -1859,5 +1859,29 @@
     "status": "Estado",
     "notInvoice": "Este é um resumo de ganhos, não uma fatura com IVA.",
     "print": "Imprimir / Guardar como PDF"
+  },
+  "customerRecurringNewPage": {
+    "title": "Configurar limpeza recorrente",
+    "subtitle": "{service} com {business} — escolhe a frequência e confirma.",
+    "frequencyLabel": "Com que frequência",
+    "freq_weekly": "Semanal",
+    "freq_biweekly": "A cada 2 semanas",
+    "freq_monthly": "Mensal",
+    "dayLabel": "Dia da semana",
+    "daySunday": "Domingo",
+    "dayMonday": "Segunda",
+    "dayTuesday": "Terça",
+    "dayWednesday": "Quarta",
+    "dayThursday": "Quinta",
+    "dayFriday": "Sexta",
+    "daySaturday": "Sábado",
+    "timeLabel": "Hora preferida",
+    "cardLabel": "Pagar com",
+    "addCard": "Adicionar um cartão",
+    "consentLabel": "Autorizo a DORIXÉ a cobrar automaticamente este cartão por cada limpeza recorrente até eu cancelar.",
+    "noCardError": "Escolhe um cartão guardado.",
+    "consentError": "Autoriza o débito recorrente para continuar.",
+    "genericError": "Não foi possível configurar o agendamento. Tenta novamente.",
+    "submit": "Ativar agendamento recorrente"
   }
 }

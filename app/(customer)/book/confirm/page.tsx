@@ -240,7 +240,7 @@ export default function BookStep5Page() {
           <div className="mb-6 max-w-sm w-full rounded-xl border border-[#2D7A5F]/20 bg-[#EDF5F0] px-5 py-4 text-center">
             <p className="text-sm font-semibold text-[#2B3441] mb-1">{t("recurringPromptTitle")}</p>
             <p className="text-xs text-[#6B7280] mb-3">{t("recurringPromptText")}</p>
-            <Button onClick={() => { store.reset(); router.push("/recurring") }} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white h-9 text-sm">
+            <Button onClick={() => { const id = success.bookingId; store.reset(); router.push(`/recurring/new?bookingId=${id}`) }} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white h-9 text-sm">
               {t("setUpRecurring")}
             </Button>
           </div>

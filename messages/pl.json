@@ -1859,5 +1859,29 @@
     "status": "Status",
     "notInvoice": "To jest zestawienie zarobków, a nie faktura VAT.",
     "print": "Drukuj / Zapisz jako PDF"
+  },
+  "customerRecurringNewPage": {
+    "title": "Skonfiguruj cykliczne sprzątanie",
+    "subtitle": "{service} z {business} — wybierz częstotliwość i potwierdź.",
+    "frequencyLabel": "Jak często",
+    "freq_weekly": "Co tydzień",
+    "freq_biweekly": "Co 2 tygodnie",
+    "freq_monthly": "Co miesiąc",
+    "dayLabel": "Dzień tygodnia",
+    "daySunday": "Niedziela",
+    "dayMonday": "Poniedziałek",
+    "dayTuesday": "Wtorek",
+    "dayWednesday": "Środa",
+    "dayThursday": "Czwartek",
+    "dayFriday": "Piątek",
+    "daySaturday": "Sobota",
+    "timeLabel": "Preferowana godzina",
+    "cardLabel": "Zapłać kartą",
+    "addCard": "Dodaj kartę płatniczą",
+    "consentLabel": "Upoważniam DORIXÉ do automatycznego obciążania tej karty za każde cykliczne sprzątanie do czasu anulowania.",
+    "noCardError": "Wybierz zapisaną kartę.",
+    "consentError": "Aby kontynuować, autoryzuj cykliczne obciążenie.",
+    "genericError": "Nie udało się ustawić harmonogramu. Spróbuj ponownie.",
+    "submit": "Aktywuj cykliczny harmonogram"
   }
 }

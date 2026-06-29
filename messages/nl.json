@@ -1859,5 +1859,29 @@
     "status": "Status",
     "notInvoice": "Dit is een verdienstenoverzicht, geen btw-factuur.",
     "print": "Afdrukken / opslaan als PDF"
+  },
+  "customerRecurringNewPage": {
+    "title": "Terugkerende schoonmaak instellen",
+    "subtitle": "{service} met {business} — kies de frequentie en bevestig.",
+    "frequencyLabel": "Hoe vaak",
+    "freq_weekly": "Wekelijks",
+    "freq_biweekly": "Om de 2 weken",
+    "freq_monthly": "Maandelijks",
+    "dayLabel": "Dag van de week",
+    "daySunday": "Zondag",
+    "dayMonday": "Maandag",
+    "dayTuesday": "Dinsdag",
+    "dayWednesday": "Woensdag",
+    "dayThursday": "Donderdag",
+    "dayFriday": "Vrijdag",
+    "daySaturday": "Zaterdag",
+    "timeLabel": "Voorkeurstijd",
+    "cardLabel": "Betalen met",
+    "addCard": "Betaalkaart toevoegen",
+    "consentLabel": "Ik machtig DORIXÉ om deze kaart automatisch te belasten voor elke terugkerende schoonmaak totdat ik opzeg.",
+    "noCardError": "Kies een opgeslagen kaart.",
+    "consentError": "Machtig de terugkerende afschrijving om door te gaan.",
+    "genericError": "Kon het schema niet instellen. Probeer opnieuw.",
+    "submit": "Terugkerend schema activeren"
   }
 }
