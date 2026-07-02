@@ -1,11 +1,20 @@
 /** Format a date for display: "Thursday, 5 June 2026" */
 export function formatDate(date: Date | string, locale = "en-GB"): string {
+  // Date-ONLY strings ("2026-07-10") parse as UTC midnight, so any negative-UTC browser (US) renders
+  // the PREVIOUS day. Pin them to local noon — calendar dates have no timezone.
+  const d = typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date) ? new Date(`${date}T12:00:00`) : new Date(date)
   return new Intl.DateTimeFormat(locale, {
     weekday: "long",
     day: "numeric",
     month: "long",
     year: "numeric",
-  }).format(new Date(date))
+  }).format(d)
+}
+
+/** Today's date as YYYY-MM-DD in the BROWSER's local timezone (for date-input `min` attributes —
+ * toISOString() is UTC and blocks "today" for US users in the evening). */
+export function localTodayYmd(): string {
+  return new Date().toLocaleDateString("en-CA")
 }
 
 /** Format date + time: "5 Jun 2026, 10:00" */

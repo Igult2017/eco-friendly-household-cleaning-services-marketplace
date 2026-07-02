@@ -45,7 +45,13 @@ export function StripePaymentForm({ paymentIntentId, providerId, serviceId, onSu
       redirect: "if_required",
     })
 
-    if (stripeError) {
+    // Retry after a transient booking-POST failure: the card is ALREADY authorized, so re-confirming
+    // errors with "unexpected state" — treat that as success and proceed to (re-)create the booking
+    // (the API is idempotent per PaymentIntent). Otherwise the authorized hold was unrecoverable.
+    const alreadyAuthorized =
+      stripeError?.code === "payment_intent_unexpected_state" &&
+      stripeError.payment_intent?.status === "requires_capture"
+    if (stripeError && !alreadyAuthorized) {
       setError(stripeError.message ?? t("paymentFailed"))
       setLoading(false)
       return

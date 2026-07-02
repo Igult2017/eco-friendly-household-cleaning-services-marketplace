@@ -15,13 +15,18 @@ interface BookingDraft {
   providerName: string | null     // display name for the "Booking with X" banner
   providerPreselected: boolean    // true when the cleaner was chosen BEFORE the wizard (browse/profile Book) — skips the search step
   scheduledAt: string | null   // ISO 8601 string — survives sessionStorage round-trip
+  // Raw wall-clock parts as picked (cleaner's tz) — restoring from the UTC instant via the BROWSER's
+  // tz shifted times for cross-tz clients on back-navigation.
+  scheduledDateStr: string | null
+  scheduledTimeStr: string | null
   durationMinutes: number
   specialInstructions: string
   ecoOptions: string[]
   addOnIds: string[]           // selected provider add-on ids
   carbonOffsetCents: number    // 0 | 200 — persisted so 3DS redirect restores it
   bidAmountCents: number | null // non-null when booking originates from an accepted bid
-  frequency: "one_time" | "weekly" | "biweekly" | "monthly"
+  // "recurring" = cadence unspecified (bid-flow jobs only state one-time vs recurrent)
+  frequency: "one_time" | "recurring" | "weekly" | "biweekly" | "monthly"
   recurringDays: number[]         // 0=Sun..6=Sat — which weekdays the client wants repeat service on
   step: 1 | 2 | 3 | 4 | 5
 }
@@ -37,6 +42,7 @@ interface BidFlowData {
   durationMinutes: number
   bidAmountCents: number
   providerCountry?: string | null
+  requestedFrequency?: string | null
 }
 
 interface BookingStore extends BookingDraft {
@@ -45,7 +51,7 @@ interface BookingStore extends BookingDraft {
   setProvider: (providerId: string, country?: string | null) => void
   setPreselectedProvider: (providerId: string, name: string, country?: string | null) => void
   clearPreselection: () => void
-  setSchedule: (date: Date, durationMinutes: number) => void
+  setSchedule: (date: Date, durationMinutes: number, dateStr?: string, timeStr?: string) => void
   setExtras: (instructions: string, ecoOptions: string[], addOnIds: string[]) => void
   setCarbonOffset: (cents: number) => void
   setFrequency: (frequency: BookingDraft["frequency"]) => void
@@ -66,6 +72,8 @@ const initialState: BookingDraft = {
   providerName: null,
   providerPreselected: false,
   scheduledAt: null,
+  scheduledDateStr: null,
+  scheduledTimeStr: null,
   durationMinutes: 120,
   specialInstructions: "",
   ecoOptions: [],
@@ -81,16 +89,18 @@ export const useBookingStore = create<BookingStore>()(
   persist(
     (set) => ({
       ...initialState,
-      setCategory: (id, name) => set({ categoryId: id, categoryName: name, step: 2 }),
+      // Wizard setters clear any leftover bid draft — a persisted bidAmountCents from an old accepted
+      // bid otherwise poisons the price of every later wizard/preselected booking.
+      setCategory: (id, name) => set({ categoryId: id, categoryName: name, bidAmountCents: null, step: 2 }),
       setAddress: (address, latitude, longitude) => set({ address, latitude, longitude }),
       setProvider: (selectedProviderId, providerCountry = null) =>
-        set({ selectedProviderId, providerCountry, providerPreselected: false, providerName: null, step: 3 }),
+        set({ selectedProviderId, providerCountry, providerPreselected: false, providerName: null, bidAmountCents: null, step: 3 }),
       setPreselectedProvider: (selectedProviderId, providerName, providerCountry = null) =>
-        set({ selectedProviderId, providerName, providerCountry, providerPreselected: true }),
+        set({ selectedProviderId, providerName, providerCountry, providerPreselected: true, bidAmountCents: null }),
       clearPreselection: () =>
         set({ selectedProviderId: null, providerName: null, providerCountry: null, providerPreselected: false }),
-      setSchedule: (date, durationMinutes) =>
-        set({ scheduledAt: date.toISOString(), durationMinutes, step: 4 }),
+      setSchedule: (date, durationMinutes, dateStr, timeStr) =>
+        set({ scheduledAt: date.toISOString(), durationMinutes, scheduledDateStr: dateStr ?? null, scheduledTimeStr: timeStr ?? null, step: 4 }),
       setExtras: (specialInstructions, ecoOptions, addOnIds) =>
         set({ specialInstructions, ecoOptions, addOnIds, step: 5 }),
       setCarbonOffset: (carbonOffsetCents) => set({ carbonOffsetCents }),
@@ -109,6 +119,11 @@ export const useBookingStore = create<BookingStore>()(
           scheduledAt: data.scheduledAt,
           durationMinutes: data.durationMinutes,
           bidAmountCents: data.bidAmountCents,
+          frequency: (["recurring", "weekly", "biweekly", "monthly"] as const).includes(
+            data.requestedFrequency as "recurring" | "weekly" | "biweekly" | "monthly",
+          )
+            ? (data.requestedFrequency as BookingDraft["frequency"])
+            : "one_time",
           step: 5,
         }),
       reset: () => set(initialState),

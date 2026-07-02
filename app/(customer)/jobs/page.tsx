@@ -8,7 +8,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { AcceptBidButton } from "@/components/bidding/AcceptBidButton"
-import { formatCurrency } from "@/lib/utils/formatCurrency"
+import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
 import { formatDate } from "@/lib/utils/formatDate"
 import { cn } from "@/lib/utils"
 import {
@@ -122,7 +122,8 @@ function BidCard({ bid, jobId, jobStatus }: { bid: Bid; jobId: string; jobStatus
               )}
             </div>
             <div className="text-right flex-shrink-0">
-              <p className="font-bold text-[#2D7A5F] text-lg leading-tight">{formatCurrency(bid.amount)}</p>
+              {/* Bid amounts are in the CLEANER's currency — a US cleaner's $ bid must not render as €. */}
+              <p className="font-bold text-[#2D7A5F] text-lg leading-tight">{formatCurrencyForCountry(bid.amount, p?.country ?? "DE")}</p>
               <p className="text-xs text-[#9CA3AF]">{t("bidAmount")}</p>
             </div>
           </div>
@@ -305,7 +306,9 @@ export default function CustomerJobsPage() {
                       <div className="text-right flex-shrink-0">
                         {job.budgetMin && job.budgetMax && (
                           <p className="text-sm font-bold text-[#2D7A5F]">
-                            {formatCurrency(job.budgetMin)} – {formatCurrency(job.budgetMax)}
+                            {job.budgetMin === job.budgetMax
+                              ? formatCurrencyForCountry(job.budgetMin, job.serviceAddress.country)
+                              : <>{formatCurrencyForCountry(job.budgetMin, job.serviceAddress.country)} – {formatCurrencyForCountry(job.budgetMax, job.serviceAddress.country)}</>}
                           </p>
                         )}
                       </div>

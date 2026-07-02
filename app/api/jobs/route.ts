@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { jobPosts, providers, users } from "@/lib/db/schema"
+import { jobPosts, providers, users, bids } from "@/lib/db/schema"
 import type { NewJobPost } from "@/lib/db/schema/jobs"
 import { inngest } from "@/lib/inngest/client"
 import { jobRatelimit } from "@/lib/redis/client"
@@ -82,7 +82,7 @@ export async function POST(req: Request) {
       categoryId: data.categoryId ?? null,
       budgetMin: data.budgetMin ?? null,
       budgetMax: data.budgetMax ?? null,
-      desiredDate: data.desiredDate ?? null,
+      desiredDate: data.desiredDate || null, // "" from an untouched date picker must not hit the date column
       desiredTimeRange: data.desiredTimeRange ?? null,
       serviceAddress: {
         line1: data.serviceAddress.line1 ?? "",
@@ -137,12 +137,14 @@ export async function GET(req: Request) {
 
     if (forProvider) {
       const [provider] = await db
-        .select({ id: providers.id, latitude: providers.latitude, longitude: providers.longitude, country: providers.country, isApproved: providers.isApproved })
+        .select({ id: providers.id, latitude: providers.latitude, longitude: providers.longitude, country: providers.country, isApproved: providers.isApproved, isSuspended: providers.isSuspended })
         .from(providers)
         .where(eq(providers.userId, userId))
 
-      if (!provider || !provider.isApproved) {
-        console.warn("[jobs feed] empty (not active):", { userId, hasProvider: !!provider, isApproved: provider?.isApproved ?? null })
+      // Mirror the bid API's gate (approved AND not suspended) — otherwise a suspended cleaner sees a
+      // fully biddable board where every submission 403s with a contradictory message.
+      if (!provider || !provider.isApproved || provider.isSuspended) {
+        console.warn("[jobs feed] empty (not active):", { userId, hasProvider: !!provider, isApproved: provider?.isApproved ?? null, isSuspended: provider?.isSuspended ?? null })
         return NextResponse.json({ jobs: [], reason: "not_active" })
       }
 
@@ -187,6 +189,14 @@ export async function GET(req: Request) {
 
       const nearbyIds = geoRows.map((r) => r.id)
 
+      // Which of these jobs this cleaner already bid on — the UI's session-local "submitted" state
+      // is lost on reload, letting them re-open the form only to hit the API's 409.
+      const myBids = await db
+        .select({ jobPostId: bids.jobPostId })
+        .from(bids)
+        .where(and(eq(bids.providerId, provider.id), inArray(bids.jobPostId, nearbyIds)))
+      const myBidJobIds = new Set(myBids.map((b) => b.jobPostId))
+
       // Step 2: fetch full job data with relations for the nearby IDs
       const rawJobs = await db.query.jobPosts.findMany({
         where: (jp: any, { inArray: inArrayFn }: any) => inArrayFn(jp.id, nearbyIds),
@@ -209,6 +219,7 @@ export async function GET(req: Request) {
             ? { city: j.serviceAddress.city ?? null, postalCode: j.serviceAddress.postalCode ?? null, country: j.serviceAddress.country ?? null }
             : null,
           ...(meta.get(j.id) ?? { own: false, withinRadius: false, distanceLabel: null }),
+          alreadyBid: myBidJobIds.has(j.id),
         }))
         // Biddable-nearby first, then the rest; newest first within each group.
         .sort((a: any, b: any) => {

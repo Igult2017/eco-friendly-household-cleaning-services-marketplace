@@ -75,17 +75,20 @@ export default function BookStep5Page() {
     setLoading(true)
     setError(null)
     try {
+      // 3DS return: React state (incl. the server-resolved serviceId) is lost across the redirect.
+      // Re-derive best-effort; when none resolves (bid flow), createBooking falls back to the service
+      // id pinned in the PaymentIntent metadata — never strand an authorized hold over this.
       const svcRes = await fetch(`/api/providers/${store.selectedProviderId}/services${store.categoryId ? `?categorySlug=${store.categoryId}` : ""}`)
       const svcData = await svcRes.json()
       const service = svcData.services?.[0]
-      if (!service) { setError(t("errorServiceNotFoundSupport")); return }
+      if (!service && store.bidAmountCents === null) { setError(t("errorServiceNotFoundSupport")); return }
 
       const res = await fetch("/api/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           providerId: store.selectedProviderId,
-          serviceId: service.id,
+          ...(service ? { serviceId: service.id } : {}),
           paymentIntentId: piId,
           scheduledAt: store.scheduledAt,
           durationMinutes: store.durationMinutes,
@@ -134,7 +137,16 @@ export default function BookStep5Page() {
       // Commission is deducted from the cleaner, so the customer's price is simply the
       // service price (+ add-ons, after any promo) + the optional offset — no fee on top.
       // Bug 5: bid-flow bookings use the accepted bid amount, not the service list price
-      const subtotalCents: number = (store.bidAmountCents ?? service?.basePrice ?? 0) + addOnsTotal
+      // Mirror the intent route's pricing: per_hour services charge basePrice × booked hours — a flat
+      // preview here disagreed with the actual charge by the hours factor.
+      const base =
+        store.bidAmountCents ??
+        (service
+          ? service.priceUnit === "per_hour"
+            ? Math.round((service.basePrice * store.durationMinutes) / 60)
+            : service.basePrice
+          : 0)
+      const subtotalCents: number = base + addOnsTotal
       setAmounts({ subtotalCents, totalCharged: subtotalCents })
     } catch {
       setError(t("errorLoadPricing"))

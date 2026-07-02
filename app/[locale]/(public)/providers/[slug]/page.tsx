@@ -43,13 +43,15 @@ export default async function ProviderProfilePage({ params }: { params: Promise<
         profilePhotoUrl: providers.profilePhotoUrl,
         galleryUrls: providers.galleryUrls,
         isApproved: providers.isApproved,
+        isSuspended: providers.isSuspended,
         userId: providers.userId,
         verificationStatus: providers.verificationStatus,
       })
       .from(providers)
       .where(eq(providers.slug, slug))
 
-    if (!provider || !provider.isApproved) notFound()
+    // Suspended cleaners must not stay publicly bookable — every downstream step rejects them anyway.
+    if (!provider || !provider.isApproved || provider.isSuspended) notFound()
 
     ;[owner] = await db.select({ firstName: users.firstName, lastName: users.lastName }).from(users).where(eq(users.id, provider.userId))
 

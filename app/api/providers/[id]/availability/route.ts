@@ -48,9 +48,11 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       return NextResponse.json({ available: false, reason: blackout ? "blackout" : "no_schedule" })
     }
 
-    // Count existing bookings that day — use UTC boundaries to match how timestamps are stored
-    const dayStart = new Date(dateStr + "T00:00:00Z")
-    const dayEnd = new Date(dateStr + "T23:59:59.999Z")
+    // Existing bookings around that day. Pad ±1 day: the UTC day-window missed bookings whose LOCAL
+    // day (negative-offset cleaners, e.g. US Pacific evenings) lands on the neighbouring UTC day —
+    // the conflicting slot then wasn't greyed. Overfetch is harmless; greying compares exact instants.
+    const dayStart = new Date(new Date(dateStr + "T00:00:00Z").getTime() - 24 * 60 * 60 * 1000)
+    const dayEnd = new Date(new Date(dateStr + "T23:59:59.999Z").getTime() + 24 * 60 * 60 * 1000)
 
     // Bug 4: only count active bookings — cancelled/disputed/refunded must not block time slots
     const existingBookings = await db

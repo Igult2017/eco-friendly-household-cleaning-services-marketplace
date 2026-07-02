@@ -37,7 +37,7 @@ function getNext14Days(): string[] {
 export default function BookStep3Page() {
   const t = useTranslations("customerBookSchedulePage")
   const router = useRouter()
-  const { selectedProviderId, setSchedule, scheduledAt, durationMinutes, frequency, setFrequency, recurringDays, setRecurringDays } = useBookingStore()
+  const { selectedProviderId, setSchedule, scheduledAt, scheduledDateStr, scheduledTimeStr, durationMinutes, frequency, setFrequency, recurringDays, setRecurringDays } = useBookingStore()
 
   // scheduledAt is now an ISO string; convert back to local date/time parts for display
   const restoreDate = (iso: string | null) => {
@@ -51,8 +51,10 @@ export default function BookStep3Page() {
     return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`
   }
 
-  const [selectedDate, setSelectedDate] = useState<string | null>(restoreDate(scheduledAt))
-  const [selectedTime, setSelectedTime] = useState<string | null>(restoreTime(scheduledAt))
+  // Prefer the raw picked parts (cleaner's tz); decoding the UTC instant in the browser's tz is only
+  // the legacy fallback and shifts times for cross-timezone clients.
+  const [selectedDate, setSelectedDate] = useState<string | null>(scheduledDateStr ?? restoreDate(scheduledAt))
+  const [selectedTime, setSelectedTime] = useState<string | null>(scheduledTimeStr ?? restoreTime(scheduledAt))
   const [selectedDuration, setSelectedDuration] = useState(durationMinutes)
   const [availability, setAvailability] = useState<{ available: boolean; timezone?: string; workingHours?: { start: string; end: string }; bookedSlots?: { start: string; end: string | null }[] } | null>(null)
   const [loadingAvail, setLoadingAvail] = useState(false)
@@ -98,7 +100,9 @@ export default function BookStep3Page() {
     // not the client's browser timezone — otherwise a cross-tz client books the wrong instant.
     const tz = availability?.timezone
     const dt = tz ? zonedTimeToUtc(selectedDate, selectedTime, tz) : new Date(`${selectedDate}T${selectedTime}:00`)
-    setSchedule(dt, selectedDuration)
+    // Persist the raw picked parts too — restoring them from the UTC instant via the BROWSER's tz
+    // silently shifted the booking for cross-timezone clients on back-navigation.
+    setSchedule(dt, selectedDuration, selectedDate, selectedTime)
     router.push("/book/extras")
   }
 
@@ -112,10 +116,13 @@ export default function BookStep3Page() {
   if (selectedDate && slotTz && availability?.bookedSlots?.length) {
     for (const slot of availableSlots) {
       const slotMs = zonedTimeToUtc(selectedDate, slot, slotTz).getTime()
+      // Test the WHOLE requested window (start + chosen duration), not just the start instant — a long
+      // booking that runs INTO an existing one otherwise looks free and only fails after payment.
+      const slotEndMs = slotMs + selectedDuration * 60_000
       const taken = availability.bookedSlots.some((bs) => {
         const s = new Date(bs.start).getTime()
         const e = bs.end ? new Date(bs.end).getTime() : s + 60 * 60 * 1000
-        return slotMs >= s && slotMs < e
+        return slotMs < e && slotEndMs > s
       })
       if (taken) bookedSet.add(slot)
     }

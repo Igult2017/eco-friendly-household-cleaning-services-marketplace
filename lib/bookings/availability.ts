@@ -30,7 +30,11 @@ export async function checkProviderAvailable(
   if (slots.length > 0) {
     const daySlot = slots.find((s) => s.dayOfWeek === dayOfWeek)
     if (!daySlot) return { ok: false, reason: "The cleaner is not available on that day." }
-    if (hhmm < daySlot.startTime || hhmm >= daySlot.endTime) {
+    // Postgres time columns read back as "HH:MM:SS" while hhmm is "HH:MM" — compare like-for-like or
+    // the string comparison rejects the exact opening hour ("09:00" < "09:00:00" is true).
+    const opens = daySlot.startTime.slice(0, 5)
+    const closes = daySlot.endTime.slice(0, 5)
+    if (hhmm < opens || hhmm >= closes) {
       return { ok: false, reason: "That time is outside the cleaner's working hours." }
     }
   }

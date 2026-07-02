@@ -12,7 +12,9 @@ import { UserCheck, X } from "lucide-react"
 const SERVICE_CATEGORIES = [
   { id: "regular", slug: "regular-cleaning", icon: "🌿", name: "Regular Cleaning", from: "€29" },
   { id: "deep", slug: "deep-cleaning", icon: "🏠", name: "Deep Cleaning", from: "€79" },
-  { id: "move", slug: "move-in-out", icon: "📦", name: "Move-in / Move-out", from: "€99" },
+  // Slug MUST match the DB category ("move-cleaning" — see seed + ensure script); "move-in-out"
+  // matched nothing, so Move bookings could never resolve a service.
+  { id: "move", slug: "move-cleaning", icon: "📦", name: "Move-in / Move-out", from: "€99" },
   { id: "office", slug: "office-cleaning", icon: "🏢", name: "Office Cleaning", from: "€49" },
   { id: "laundry", slug: "laundry", icon: "👕", name: "Laundry Service", from: "€19" },
   { id: "windows", slug: "window-cleaning", icon: "🪟", name: "Window Cleaning", from: "€39" },
@@ -25,6 +27,8 @@ export default function BookStep1Page() {
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null)
   // null = no preselection constraint (normal flow); array = only these slugs are bookable.
   const [offeredSlugs, setOfferedSlugs] = useState<string[] | null>(null)
+  // While the summary fetch is in flight all cards look enabled — hold Continue until it resolves.
+  const [preLoading, setPreLoading] = useState(false)
 
   useEffect(() => {
     if (categoryId) setSelectedSlug(categoryId)
@@ -37,6 +41,7 @@ export default function BookStep1Page() {
     const targetId = urlId ?? (providerPreselected ? selectedProviderId : null)
     if (!targetId) { setOfferedSlugs(null); return }
     let cancelled = false
+    setPreLoading(true)
     fetch(`/api/providers/${targetId}/summary`)
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
@@ -46,6 +51,7 @@ export default function BookStep1Page() {
         setOfferedSlugs(d.categorySlugs ?? [])
       })
       .catch(() => {})
+      .finally(() => { if (!cancelled) setPreLoading(false) })
     return () => { cancelled = true }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -120,7 +126,7 @@ export default function BookStep1Page() {
 
         <Button
           onClick={handleNext}
-          disabled={!selectedSlug || !isOffered(selectedSlug)}
+          disabled={preLoading || !selectedSlug || !isOffered(selectedSlug)}
           className="w-full h-12 bg-[#2D7A5F] hover:bg-[#235f49] text-white font-semibold text-base"
         >
           {t("continueButton")}

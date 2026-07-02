@@ -7,6 +7,7 @@ import { bidAcceptedEmail } from "@/lib/resend/transactionalEmails"
 import { eq, and, ne } from "drizzle-orm"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
 import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
+import { zonedTimeToUtc } from "@/lib/utils/tz"
 import { logError } from "@/lib/utils/logError"
 
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string; bidId: string }> }) {
@@ -29,6 +30,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
         serviceLatitude: jobPosts.serviceLatitude,
         serviceLongitude: jobPosts.serviceLongitude,
         desiredDate: jobPosts.desiredDate,
+        recurringFrequency: jobPosts.recurringFrequency,
       })
       .from(jobPosts)
       .where(and(eq(jobPosts.id, jobPostId), eq(jobPosts.customerId, userId)))
@@ -105,7 +107,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
 
     // Bug 10: link to provider bookings list, not the customer job post
     const [provider] = await db
-      .select({ userId: providers.userId, country: providers.country })
+      .select({ userId: providers.userId, country: providers.country, timezone: providers.timezone })
       .from(providers)
       .where(eq(providers.id, bid.providerId))
     if (provider) {
@@ -130,20 +132,29 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       }
     }
 
-    // Build ISO scheduledAt — always non-null so confirm page guard doesn't redirect to /book.
-    // Falls back to 7 days from now at 10:00 UTC when neither bid nor job has a date.
+    // Build the booking instant. Two past bugs here:
+    // 1. The proposed wall-time was stamped with "Z" (treated as UTC) — shifting the real slot by the
+    //    cleaner's UTC offset. Interpret it in the CLEANER's timezone instead.
+    // 2. No future check — a bid accepted after its proposed date sailed through payment auth and then
+    //    createBooking's future-refine rejected it, stranding the card hold. Clamp to the fallback.
+    const tz = provider?.timezone || "Europe/Berlin"
     const dateStr = bid.proposedDate ?? job.desiredDate
     const timeStr = bid.proposedTimeStart ? bid.proposedTimeStart.substring(0, 5) : "10:00"
-    let scheduledAt: string
-    if (dateStr) {
-      scheduledAt = `${dateStr}T${timeStr}:00Z`
-    } else {
+    const fallback = () => {
       const fd = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-      const yy = fd.getUTCFullYear()
-      const mm = String(fd.getUTCMonth() + 1).padStart(2, "0")
-      const dd = String(fd.getUTCDate()).padStart(2, "0")
-      scheduledAt = `${yy}-${mm}-${dd}T10:00:00Z`
+      const ymd = fd.toLocaleDateString("en-CA", { timeZone: tz })
+      return zonedTimeToUtc(ymd, "10:00", tz)
     }
+    let when: Date
+    if (dateStr) {
+      try { when = zonedTimeToUtc(dateStr, timeStr, tz) } catch { when = fallback() }
+      // At least 2h in the future, else use the fallback date — never hand the client an
+      // instant that payment will authorize but booking creation must reject.
+      if (when.getTime() < Date.now() + 2 * 60 * 60 * 1000) when = fallback()
+    } else {
+      when = fallback()
+    }
+    const scheduledAt = when.toISOString()
 
     return NextResponse.json({
       success: true,
@@ -160,6 +171,8 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
         durationMinutes: bid.estimatedDurationMinutes ?? 120,
         bidAmountCents: bid.amount,
         providerCountry: provider?.country ?? null,
+        // Carry the job's recurring intent into the booking (was silently dropped at this handoff).
+        requestedFrequency: job.recurringFrequency ?? null,
       },
     })
   } catch (err) {

@@ -25,7 +25,7 @@ const ecoLabelColors: Record<string, string> = {
 }
 
 async function getProviders(filters: { city?: string; ecoLevel?: string; minRating?: string }) {
-  const conditions: Parameters<typeof and>[0][] = [eq(providers.isApproved, true)]
+  const conditions: Parameters<typeof and>[0][] = [eq(providers.isApproved, true), eq(providers.isSuspended, false)]
 
   if (filters.city) conditions.push(ilike(providers.city, "%" + filters.city + "%"))
   if (filters.ecoLevel) conditions.push(eq(providers.ecoLevel, filters.ecoLevel as "basic" | "certified" | "premium" | "zero_impact"))

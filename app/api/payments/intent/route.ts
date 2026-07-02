@@ -7,7 +7,7 @@ import { getCommissionPct } from "@/lib/platform/settings"
 import { bookingRatelimit } from "@/lib/redis/client"
 import { paymentIntentSchema } from "@/lib/validations/booking"
 import { getCurrencyForCountry } from "@/lib/utils/locale"
-import { and, eq, inArray } from "drizzle-orm"
+import { and, eq, inArray, isNull, desc } from "drizzle-orm"
 import { createHash } from "node:crypto"
 import { logError } from "@/lib/utils/logError"
 
@@ -88,7 +88,10 @@ export async function POST(req: Request) {
           eq(bids.amount, bidAmountCents),
           eq(bids.status, "accepted"),
           eq(jobPosts.customerId, userId),  // prevent using another customer's accepted bid
+          isNull(bids.bookingId),           // never pin an OLD already-booked bid of the same amount
         ))
+        .orderBy(desc(bids.createdAt))
+        .limit(1)
       if (!acceptedBid) return NextResponse.json({ error: "Accepted bid not found" }, { status: 422 })
       acceptedBidId = acceptedBid.id
     }

@@ -7,8 +7,8 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { formatCurrency } from "@/lib/utils/formatCurrency"
-import { formatDate } from "@/lib/utils/formatDate"
+import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
+import { formatDate, localTodayYmd } from "@/lib/utils/formatDate"
 import { Loader2, MapPin, Clock, Euro, CheckCircle2, Repeat } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
@@ -27,7 +27,8 @@ interface JobPost {
   own: boolean
   withinRadius: boolean
   distanceLabel: string | null
-  serviceAddress: { line1: string; city: string; postalCode: string }
+  alreadyBid: boolean
+  serviceAddress: { line1: string; city: string; postalCode: string; country: string | null }
   ecoRequirements: string[]
   recurringFrequency: string | null
   expiresAt: string
@@ -82,7 +83,8 @@ export default function ProviderJobsPage() {
         body: JSON.stringify({
           amount: Math.round(amountEuros * 100),
           message: bidForm.message || undefined,
-          estimatedDurationMinutes: parseInt(bidForm.estimatedDurationMinutes),
+          // A cleared field parses to NaN → JSON null → zod rejects with a cryptic error. Omit instead.
+          estimatedDurationMinutes: Number.isFinite(parseInt(bidForm.estimatedDurationMinutes)) ? parseInt(bidForm.estimatedDurationMinutes) : undefined,
           proposedDate: bidForm.proposedDate || undefined,
         }),
       })
@@ -145,7 +147,8 @@ export default function ProviderJobsPage() {
         })() : (
           <div className="space-y-4">
             {jobs.map((job) => {
-              const alreadyBid = submitted.has(job.id)
+              // Server flag survives reloads; the local set covers bids submitted this session.
+              const alreadyBid = job.alreadyBid || submitted.has(job.id)
               const isOpen = bidding === job.id
 
               return (
@@ -159,14 +162,16 @@ export default function ProviderJobsPage() {
                       <div className="text-right flex-shrink-0">
                         {job.budgetMin && job.budgetMax && (
                           <p className="font-bold text-[#2D7A5F] text-sm">
-                            {job.budgetMin === job.budgetMax ? formatCurrency(job.budgetMin) : <>{formatCurrency(job.budgetMin)} – {formatCurrency(job.budgetMax)}</>}
+                            {job.budgetMin === job.budgetMax
+                              ? formatCurrencyForCountry(job.budgetMin, job.serviceAddress.country ?? "DE")
+                              : <>{formatCurrencyForCountry(job.budgetMin, job.serviceAddress.country ?? "DE")} – {formatCurrencyForCountry(job.budgetMax, job.serviceAddress.country ?? "DE")}</>}
                           </p>
                         )}
-                        {/* Implied hourly — per-hour is the payment mode; helps cleaners bid. */}
+                        {/* Implied hourly — per-hour is the payment mode; currency follows the JOB's country. */}
                         {job.budgetMin && job.budgetMax && job.estimatedDurationMinutes ? (
                           <p className="text-[11px] text-[#6B7280]">
-                            ≈ {formatCurrency(Math.round((job.budgetMin * 60) / job.estimatedDurationMinutes))}
-                            {job.budgetMin !== job.budgetMax && <> – {formatCurrency(Math.round((job.budgetMax * 60) / job.estimatedDurationMinutes))}</>}/h
+                            ≈ {formatCurrencyForCountry(Math.round((job.budgetMin * 60) / job.estimatedDurationMinutes), job.serviceAddress.country ?? "DE")}
+                            {job.budgetMin !== job.budgetMax && <> – {formatCurrencyForCountry(Math.round((job.budgetMax * 60) / job.estimatedDurationMinutes), job.serviceAddress.country ?? "DE")}</>}/h
                           </p>
                         ) : null}
                         <p className="text-xs text-[#9CA3AF] mt-1">{t("bidCount", { count: job.bids.length })}</p>
@@ -241,7 +246,7 @@ export default function ProviderJobsPage() {
                       </div>
                       <div>
                         <Label className="text-xs font-medium text-[#2B3441] mb-1 block">{t("proposedDateLabel")}</Label>
-                        <Input type="date" value={bidForm.proposedDate} onChange={(e) => setBidForm((p) => ({ ...p, proposedDate: e.target.value }))} className="bg-white" min={new Date().toISOString().split("T")[0]} />
+                        <Input type="date" value={bidForm.proposedDate} onChange={(e) => setBidForm((p) => ({ ...p, proposedDate: e.target.value }))} className="bg-white" min={localTodayYmd()} />
                       </div>
                       <div>
                         <Label className="text-xs font-medium text-[#2B3441] mb-1 block">{t("messageLabel")}</Label>

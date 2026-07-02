@@ -1,7 +1,9 @@
 import { z } from "zod"
 
 export const addressSchema = z.object({
-  line1: z.string().min(2).max(200),
+  // Street line is OPTIONAL end-to-end: the wizard's address step doesn't require it and job posts
+  // store "" when blank — a min(2) here rejected bid-flow bookings AFTER the card hold was placed.
+  line1: z.string().max(200).default(""),
   line2: z.string().max(100).optional(),
   city: z.string().min(2).max(100),
   state: z.string().max(100).optional(),
@@ -11,7 +13,9 @@ export const addressSchema = z.object({
 
 export const createBookingSchema = z.object({
   providerId: z.string().uuid(),
-  serviceId: z.string().uuid(),
+  // Optional for bid-flow (incl. the 3DS return path) — createBooking falls back to the service id
+  // pinned in the PaymentIntent metadata, which is authoritative anyway.
+  serviceId: z.string().uuid().optional(),
   paymentIntentId: z.string().min(1),
   scheduledAt: z
     .string()
@@ -24,7 +28,8 @@ export const createBookingSchema = z.object({
   specialInstructions: z.string().max(1000).optional(),
   ecoOptions: z.array(z.string().max(100)).max(20).default([]),
   carbonOffsetCents: z.union([z.literal(0), z.literal(200)]).optional().default(0),
-  requestedFrequency: z.enum(["weekly", "biweekly", "monthly"]).optional(),
+  // "recurring" = cadence unspecified (job posts only ask one-time vs recurrent).
+  requestedFrequency: z.enum(["recurring", "weekly", "biweekly", "monthly"]).optional(),
   requestedDays: z.array(z.number().int().min(0).max(6)).max(7).optional(),
 })
 

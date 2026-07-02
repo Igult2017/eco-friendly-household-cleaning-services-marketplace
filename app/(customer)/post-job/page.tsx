@@ -15,6 +15,7 @@ import type { GeoResult } from "@/lib/nominatim"
 import { geocodeFlexible, extractPostalCode } from "@/lib/nominatim"
 import { CountryField } from "@/components/location/CountryField"
 import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
+import { localTodayYmd } from "@/lib/utils/formatDate"
 
 const ECO_OPTIONS = ["Eco-certified products only", "No single-use plastics", "Fragrance-free", "Energy-saving methods"]
 const ECO_OPTION_KEYS: Record<string, string> = {
@@ -192,7 +193,7 @@ export default function PostJobPage() {
             </div>
             <div>
               <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("desiredDateLabel")}</Label>
-              <Input type="date" value={form.desiredDate} onChange={(e) => set("desiredDate", e.target.value)} min={new Date().toISOString().split("T")[0]} />
+              <Input type="date" value={form.desiredDate} onChange={(e) => set("desiredDate", e.target.value)} min={localTodayYmd()} />
               {form.desiredDate && (
                 // Day of week derives from the date — surface it so the poster sees which day this is.
                 <p className="text-xs text-[#2D7A5F] font-medium mt-1">

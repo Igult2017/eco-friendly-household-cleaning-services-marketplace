@@ -177,15 +177,17 @@ export default function BookStep2Page() {
               <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">{t("labelCity")}</Label>
               <Input
                 value={address.city}
-                onChange={(e) => setAddressForm((prev) => ({ ...prev, city: e.target.value }))}
+                onChange={(e) => { setAddressForm((prev) => ({ ...prev, city: e.target.value })); latRef.current = null; lngRef.current = null }}
                 placeholder={t("placeholderCity")}
               />
             </div>
             <div>
               <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">{t("labelPostalCode")}</Label>
+              {/* Editing after "Use my location" must invalidate the detected coords, or the
+                  preselected-continue path saves the OLD spot for the new address. */}
               <Input
                 value={address.postalCode}
-                onChange={(e) => setAddressForm((prev) => ({ ...prev, postalCode: e.target.value }))}
+                onChange={(e) => { setAddressForm((prev) => ({ ...prev, postalCode: e.target.value })); latRef.current = null; lngRef.current = null }}
                 placeholder={t("placeholderPostalCode")}
               />
             </div>

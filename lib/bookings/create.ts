@@ -5,7 +5,7 @@ import { stripe, calculateBookingAmounts } from "@/lib/stripe/client"
 import { getCommissionPct } from "@/lib/platform/settings"
 import { inngest } from "@/lib/inngest/client"
 import { redis } from "@/lib/redis/client"
-import { eq, and, sql, inArray, lte, gte, isNull } from "drizzle-orm"
+import { eq, and, sql, inArray, lt, gt, isNull } from "drizzle-orm"
 import type { CreateBookingInput } from "@/lib/validations/booking"
 import { checkProviderAvailable } from "@/lib/bookings/availability"
 
@@ -36,6 +36,16 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     ecoOptions, carbonOffsetCents = 0,
   } = data
 
+  // Idempotency: a refresh/double-submit of the SAME PaymentIntent must return the booking it
+  // already created — NOT fall through to the overlap guard, find its own booking, and cancel the
+  // very hold that backs it (which silently unfunded the booking).
+  const [already] = await db
+    .select({ id: bookings.id, bookingNumber: bookings.bookingNumber })
+    .from(payments)
+    .innerJoin(bookings, eq(payments.bookingId, bookings.id))
+    .where(eq(payments.stripePaymentIntentId, paymentIntentId))
+  if (already) return { id: already.id, bookingNumber: already.bookingNumber }
+
   const intent = await stripe.paymentIntents.retrieve(paymentIntentId)
 
   if (intent.status !== "requires_capture") {
@@ -49,13 +59,17 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
 
   if (intent.metadata.clerk_customer_id !== userId) await cancel(403, "Intent mismatch")
   if (intent.metadata.provider_id !== providerId) await cancel(403, "Intent mismatch")
-  if (intent.metadata.service_id !== serviceId) await cancel(403, "Intent mismatch")
+  // Bid-flow clients may not know the service — the PI metadata (pinned server-side at intent
+  // creation) is authoritative. When the client DOES send one it must match.
+  const effectiveServiceId = serviceId ?? intent.metadata.service_id
+  if (!effectiveServiceId) await cancel(403, "Intent mismatch")
+  if (serviceId && intent.metadata.service_id !== serviceId) await cancel(403, "Intent mismatch")
   if (intent.metadata.carbon_offset_cents !== String(carbonOffsetCents)) await cancel(403, "Intent mismatch")
 
   const [[service], [provider]] = await Promise.all([
-    db.select({ basePrice: providerServices.basePrice })
+    db.select({ basePrice: providerServices.basePrice, priceUnit: providerServices.priceUnit })
       .from(providerServices)
-      .where(and(eq(providerServices.id, serviceId), eq(providerServices.providerId, providerId), eq(providerServices.isActive, true))),
+      .where(and(eq(providerServices.id, effectiveServiceId), eq(providerServices.providerId, providerId), eq(providerServices.isActive, true))),
     db.select({ id: providers.id, isApproved: providers.isApproved, isSuspended: providers.isSuspended })
       .from(providers)
       .where(eq(providers.id, providerId)),
@@ -74,7 +88,13 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
   const bidId = intent.metadata.bid_id ?? null
   // Add-ons were summed + validated server-side at PI creation; their total rides in metadata.
   const addOnsTotal = intent.metadata.addon_total_cents ? parseInt(intent.metadata.addon_total_cents, 10) : 0
-  const subtotal = (bidAmountCents ?? service!.basePrice) + addOnsTotal
+  // MUST mirror the intent route's pricing exactly: per_hour services charge basePrice × booked hours
+  // (bids are whole-job totals). A flat re-derivation here made the totalCharged check below cancel
+  // the payment for every hourly booking that wasn't exactly 60 minutes.
+  const baseAmount =
+    bidAmountCents ??
+    (service!.priceUnit === "per_hour" ? Math.round((service!.basePrice * durationMinutes) / 60) : service!.basePrice)
+  const subtotal = baseAmount + addOnsTotal
 
   // Promo code from PI metadata
   const promoCodeId = intent.metadata.promo_code_id ?? null
@@ -105,8 +125,10 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     .where(and(
       eq(bookings.providerId, providerId),
       inArray(bookings.status, ["payment_authorized", "confirmed", "in_progress", "pending_capture"]),
-      lte(bookings.scheduledAt, scheduledEnd),
-      gte(bookings.scheduledEndAt, new Date(scheduledAt)),
+      // Half-open interval — back-to-back bookings (one ends exactly when the next starts) are FINE.
+      // The closed-interval version rejected slots the schedule UI correctly showed as free.
+      lt(bookings.scheduledAt, scheduledEnd),
+      gt(bookings.scheduledEndAt, new Date(scheduledAt)),
     ))
     .limit(1)
   if (overlap.length > 0) await cancel(409, "This cleaner is already booked at that time. Please choose another slot.")
@@ -136,6 +158,7 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     requestedFrequency: data.requestedFrequency ?? null,
     requestedDays: data.requestedDays?.length ? data.requestedDays : null,
   }
+  insertData.serviceId = effectiveServiceId
 
   let result: { id: string; bookingNumber: string }
   try {
