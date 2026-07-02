@@ -7,6 +7,7 @@ import { pusherServer } from "@/lib/pusher/server"
 import { bidRatelimit } from "@/lib/redis/client"
 import { eq, and } from "drizzle-orm"
 import { getClientIp } from "@/lib/utils/ip"
+import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
 import { z } from "zod"
 import { logError } from "@/lib/utils/logError"
 
@@ -43,7 +44,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
     const [provider] = await db
-      .select({ id: providers.id, businessName: providers.businessName, userId: providers.userId, isApproved: providers.isApproved, latitude: providers.latitude, longitude: providers.longitude })
+      .select({ id: providers.id, businessName: providers.businessName, userId: providers.userId, isApproved: providers.isApproved, latitude: providers.latitude, longitude: providers.longitude, country: providers.country })
       .from(providers)
       .where(and(eq(providers.userId, userId), eq(providers.isApproved, true), eq(providers.isSuspended, false)))
 
@@ -112,15 +113,17 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       await db.update(jobPosts).set({ status: "bidding" }).where(eq(jobPosts.id, jobPostId))
     }
 
+    // Bid amounts are in the CLEANER's currency (EUR/USD by their country) — never hardcode €.
+    const amountLabel = formatCurrencyForCountry(data.amount, provider.country || "DE")
     await db.insert(notifications).values({
       userId: job.customerId,
       type: "bid_received",
       title: `New bid from ${provider.businessName}`,
-      body: `€${(data.amount / 100).toFixed(2)} — ${data.message?.slice(0, 80) ?? "No message"}`,
+      body: `${amountLabel} — ${data.message?.slice(0, 80) ?? "No message"}`,
       link: `/jobs/${jobPostId}`,
       metadata: {
         name: provider.businessName,
-        amount: `€${(data.amount / 100).toFixed(2)}`,
+        amount: amountLabel,
         message: data.message?.slice(0, 80) ?? "No message",
       },
     })

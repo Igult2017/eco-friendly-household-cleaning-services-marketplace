@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { bids, jobPosts, providers, notifications, serviceCategories } from "@/lib/db/schema"
 import { eq, and, ne } from "drizzle-orm"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
+import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
 import { logError } from "@/lib/utils/logError"
 
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string; bidId: string }> }) {
@@ -106,13 +107,14 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       .from(providers)
       .where(eq(providers.id, bid.providerId))
     if (provider) {
+      const amountLabel = formatCurrencyForCountry(bid.amount, provider.country || "DE")
       await db.insert(notifications).values({
         userId: provider.userId,
         type: "bid_accepted",
         title: "Your bid was accepted!",
-        body: `A customer accepted your bid of €${(bid.amount / 100).toFixed(2)}. A booking is being prepared.`,
+        body: `A customer accepted your bid of ${amountLabel}. A booking is being prepared.`,
         link: "/provider/bookings",
-        metadata: { amount: `€${(bid.amount / 100).toFixed(2)}` },
+        metadata: { amount: amountLabel },
       })
     }
 
