@@ -21,6 +21,7 @@ interface JobPost {
   budgetMin: number | null
   budgetMax: number | null
   desiredDate: string | null
+  desiredTimeRange: { start: string; end: string } | null
   serviceAddress: { line1: string; city: string; postalCode: string }
   ecoRequirements: string[]
   recurringFrequency: string | null
@@ -163,9 +164,13 @@ export default function ProviderJobsPage() {
                     <div className="flex flex-wrap gap-3 text-xs text-[#9CA3AF] mb-4">
                       <span className="flex items-center gap-1"><MapPin size={12} />{job.serviceAddress.city}, {job.serviceAddress.postalCode}</span>
                       {job.desiredDate && <span className="flex items-center gap-1"><Clock size={12} />{formatDate(job.desiredDate)}</span>}
+                      {job.desiredTimeRange?.start && job.desiredTimeRange?.end && (
+                        <span className="flex items-center gap-1">{job.desiredTimeRange.start}–{job.desiredTimeRange.end}</span>
+                      )}
                       {job.recurringFrequency && (
                         <span className="flex items-center gap-1 bg-[#D1F0E0] text-[#2D7A5F] font-medium px-2 py-0.5 rounded-full">
-                          <Repeat size={12} />{t("recurringLabel")} · {t(`recurring_${job.recurringFrequency}`)}
+                          <Repeat size={12} />{t("recurringLabel")}
+                          {["weekly", "biweekly", "monthly"].includes(job.recurringFrequency) && <> · {t(`recurring_${job.recurringFrequency}`)}</>}
                         </span>
                       )}
                     </div>

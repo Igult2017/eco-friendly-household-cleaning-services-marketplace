@@ -18,7 +18,10 @@ const createJobSchema = z.object({
   budgetMin: z.number().int().min(100).optional(),
   budgetMax: z.number().int().min(100).optional(),
   desiredDate: z.string().optional(),
-  desiredTimeRange: z.object({ start: z.string(), end: z.string() }).optional(),
+  desiredTimeRange: z
+    .object({ start: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/), end: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/) })
+    .refine((r) => r.end > r.start, { message: "end must be after start" })
+    .optional(),
   serviceAddress: z.object({
     line1: z.string().max(200).optional(),
     city: z.string().min(2).max(100),
@@ -29,7 +32,9 @@ const createJobSchema = z.object({
   serviceLongitude: z.number().min(-180).max(180),
   radiusKm: z.number().int().min(1).max(100).default(25),
   ecoRequirements: z.array(z.string().max(100)).max(10).default([]),
-  recurringFrequency: z.enum(["weekly", "biweekly", "monthly"]).optional(),
+  // "recurring" = cadence unspecified (form asks only one-time vs recurrent); cadence values kept for
+  // back-compat with existing rows.
+  recurringFrequency: z.enum(["recurring", "weekly", "biweekly", "monthly"]).optional(),
 }).refine(
   (d) => !d.budgetMin || !d.budgetMax || d.budgetMax >= d.budgetMin,
   { message: "budgetMax must be >= budgetMin", path: ["budgetMax"] },

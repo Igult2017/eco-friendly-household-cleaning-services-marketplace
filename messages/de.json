@@ -921,13 +921,17 @@
     "posting": "Wird veröffentlicht...",
     "submitButton": "Auftrag veröffentlichen & Angebote erhalten",
     "recurringLabel": "Wiederkehrender Service (optional)",
-    "recurringHint": "Wähle einen Rhythmus, wenn die Reinigung wiederkehren soll.",
+    "recurringHint": "Wähle Wiederkehrend, wenn du die Reinigung regelmäßig brauchst.",
     "recurring_none": "Nur einmalig",
     "recurring_weekly": "Wöchentlich",
     "recurring_biweekly": "Alle 2 Wochen",
     "recurring_monthly": "Monatlich",
     "countryLabel": "Land",
-    "countryInvalid": "Bitte wähle ein Land aus der Liste"
+    "countryInvalid": "Bitte wähle ein Land aus der Liste",
+    "timeWindowLabel": "Zeitfenster (optional)",
+    "timeWindowHint": "Zwischen welchen Uhrzeiten brauchst du die Reinigungskraft an dem Tag?",
+    "errorTimeRange": "Bitte beide Uhrzeiten angeben — Ende nach Beginn.",
+    "recurring_recurring": "Wiederkehrend"
   },
   "customerProfilePage": {
     "title": "Mein Profil",

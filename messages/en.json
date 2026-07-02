@@ -921,13 +921,17 @@
     "posting": "Posting...",
     "submitButton": "Post Job & Get Bids",
     "recurringLabel": "Recurring service (optional)",
-    "recurringHint": "Pick a cadence if you need this cleaning to repeat.",
+    "recurringHint": "Choose Recurrent if you need this cleaning regularly.",
     "recurring_none": "One-time only",
     "recurring_weekly": "Weekly",
     "recurring_biweekly": "Every 2 weeks",
     "recurring_monthly": "Monthly",
     "countryLabel": "Country",
-    "countryInvalid": "Please pick a country from the list"
+    "countryInvalid": "Please pick a country from the list",
+    "timeWindowLabel": "Time window (optional)",
+    "timeWindowHint": "Between what times do you need the cleaner on that day?",
+    "errorTimeRange": "Please set both times, with the end after the start.",
+    "recurring_recurring": "Recurrent"
   },
   "customerProfilePage": {
     "title": "My Profile",

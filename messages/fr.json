@@ -921,13 +921,17 @@
     "posting": "Publication...",
     "submitButton": "Publier l'annonce et recevoir des offres",
     "recurringLabel": "Service récurrent (optionnel)",
-    "recurringHint": "Choisissez une fréquence si ce ménage doit se répéter.",
+    "recurringHint": "Choisissez Récurrent si vous avez besoin de ce ménage régulièrement.",
     "recurring_none": "Une seule fois",
     "recurring_weekly": "Hebdomadaire",
     "recurring_biweekly": "Toutes les 2 semaines",
     "recurring_monthly": "Mensuel",
     "countryLabel": "Pays",
-    "countryInvalid": "Veuillez choisir un pays dans la liste"
+    "countryInvalid": "Veuillez choisir un pays dans la liste",
+    "timeWindowLabel": "Créneau horaire (optionnel)",
+    "timeWindowHint": "Entre quelles heures avez-vous besoin de l'intervenant ce jour-là ?",
+    "errorTimeRange": "Renseignez les deux heures, la fin après le début.",
+    "recurring_recurring": "Récurrent"
   },
   "customerProfilePage": {
     "title": "Mon profil",

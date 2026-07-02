@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -25,6 +25,7 @@ const ECO_OPTION_KEYS: Record<string, string> = {
 
 export default function PostJobPage() {
   const t = useTranslations("customerPostjobPage")
+  const locale = useLocale()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -39,6 +40,8 @@ export default function PostJobPage() {
     budgetMin: "",
     budgetMax: "",
     desiredDate: "",
+    desiredTimeStart: "",
+    desiredTimeEnd: "",
     serviceAddress: { line1: "", city: "", postalCode: "", country: "DE" },
     serviceLatitude: 0,
     serviceLongitude: 0,
@@ -104,6 +107,12 @@ export default function PostJobPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!form.serviceLatitude) { setError(t("errorMissingLocation")); return }
+    // Time window: both ends or neither, and end must be after start.
+    const hasStart = !!form.desiredTimeStart
+    const hasEnd = !!form.desiredTimeEnd
+    if (hasStart !== hasEnd || (hasStart && hasEnd && form.desiredTimeEnd <= form.desiredTimeStart)) {
+      setError(t("errorTimeRange")); return
+    }
     setLoading(true); setError(null)
     try {
       const res = await fetch("/api/jobs", {
@@ -115,6 +124,7 @@ export default function PostJobPage() {
           serviceAddress: { ...form.serviceAddress, postalCode: extractPostalCode(form.serviceAddress.postalCode) },
           budgetMin: form.budgetMin ? parseInt(form.budgetMin) * 100 : undefined,
           budgetMax: form.budgetMax ? parseInt(form.budgetMax) * 100 : undefined,
+          desiredTimeRange: hasStart && hasEnd ? { start: form.desiredTimeStart, end: form.desiredTimeEnd } : undefined,
           recurringFrequency: form.recurringFrequency || undefined,
         }),
       })
@@ -139,7 +149,7 @@ export default function PostJobPage() {
         <p className="text-[#6B7280] text-center mb-8 max-w-sm">{t("successDescription")}</p>
         <div className="flex gap-3">
           <Button onClick={() => router.push("/jobs")} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white">{t("viewMyJobs")}</Button>
-          <Button variant="outline" onClick={() => { setSuccess(false); setForm({ title: "", description: "", budgetMin: "", budgetMax: "", desiredDate: "", serviceAddress: { line1: "", city: "", postalCode: "", country: "DE" }, serviceLatitude: 0, serviceLongitude: 0, radiusKm: 25, ecoRequirements: [], recurringFrequency: "" }) }} className="border-[#E5EBF0]">{t("postAnother")}</Button>
+          <Button variant="outline" onClick={() => { setSuccess(false); setForm({ title: "", description: "", budgetMin: "", budgetMax: "", desiredDate: "", desiredTimeStart: "", desiredTimeEnd: "", serviceAddress: { line1: "", city: "", postalCode: "", country: "DE" }, serviceLatitude: 0, serviceLongitude: 0, radiusKm: 25, ecoRequirements: [], recurringFrequency: "" }) }} className="border-[#E5EBF0]">{t("postAnother")}</Button>
         </div>
       </div>
     )
@@ -174,15 +184,28 @@ export default function PostJobPage() {
             <div>
               <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("desiredDateLabel")}</Label>
               <Input type="date" value={form.desiredDate} onChange={(e) => set("desiredDate", e.target.value)} min={new Date().toISOString().split("T")[0]} />
+              {form.desiredDate && (
+                // Day of week derives from the date — surface it so the poster sees which day this is.
+                <p className="text-xs text-[#2D7A5F] font-medium mt-1">
+                  {new Date(form.desiredDate + "T12:00:00").toLocaleDateString(locale, { weekday: "long" })}
+                </p>
+              )}
+            </div>
+            <div>
+              <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("timeWindowLabel")}</Label>
+              <div className="flex items-center gap-2">
+                <Input type="time" value={form.desiredTimeStart} onChange={(e) => set("desiredTimeStart", e.target.value)} className="flex-1" />
+                <span className="text-[#9CA3AF]">–</span>
+                <Input type="time" value={form.desiredTimeEnd} onChange={(e) => set("desiredTimeEnd", e.target.value)} className="flex-1" />
+              </div>
+              <p className="text-xs text-[#9CA3AF] mt-1">{t("timeWindowHint")}</p>
             </div>
             <div>
               <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("recurringLabel")}</Label>
               <select value={form.recurringFrequency} onChange={(e) => set("recurringFrequency", e.target.value)}
                 className="flex h-10 w-full rounded-md border border-[#E5EBF0] bg-white px-3 py-2 text-sm focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]">
                 <option value="">{t("recurring_none")}</option>
-                <option value="weekly">{t("recurring_weekly")}</option>
-                <option value="biweekly">{t("recurring_biweekly")}</option>
-                <option value="monthly">{t("recurring_monthly")}</option>
+                <option value="recurring">{t("recurring_recurring")}</option>
               </select>
               <p className="text-xs text-[#9CA3AF] mt-1">{t("recurringHint")}</p>
             </div>

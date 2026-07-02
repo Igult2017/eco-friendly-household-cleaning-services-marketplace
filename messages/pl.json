@@ -921,13 +921,17 @@
     "posting": "Publikowanie...",
     "submitButton": "Opublikuj zlecenie i otrzymaj oferty",
     "recurringLabel": "Usługa cykliczna (opcjonalnie)",
-    "recurringHint": "Wybierz częstotliwość, jeśli sprzątanie ma się powtarzać.",
+    "recurringHint": "Wybierz Cykliczne, jeśli potrzebujesz sprzątania regularnie.",
     "recurring_none": "Tylko jednorazowo",
     "recurring_weekly": "Co tydzień",
     "recurring_biweekly": "Co 2 tygodnie",
     "recurring_monthly": "Co miesiąc",
     "countryLabel": "Kraj",
-    "countryInvalid": "Wybierz kraj z listy"
+    "countryInvalid": "Wybierz kraj z listy",
+    "timeWindowLabel": "Przedział czasowy (opcjonalnie)",
+    "timeWindowHint": "W jakich godzinach potrzebujesz osoby sprzątającej tego dnia?",
+    "errorTimeRange": "Podaj obie godziny — koniec po początku.",
+    "recurring_recurring": "Cykliczne"
   },
   "customerProfilePage": {
     "title": "Mój profil",

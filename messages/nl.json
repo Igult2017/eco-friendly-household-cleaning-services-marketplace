@@ -921,13 +921,17 @@
     "posting": "Bezig met plaatsen...",
     "submitButton": "Klus plaatsen & biedingen ontvangen",
     "recurringLabel": "Terugkerende service (optioneel)",
-    "recurringHint": "Kies een frequentie als deze schoonmaak terugkerend moet zijn.",
+    "recurringHint": "Kies Terugkerend als je deze schoonmaak regelmatig nodig hebt.",
     "recurring_none": "Eenmalig",
     "recurring_weekly": "Wekelijks",
     "recurring_biweekly": "Om de 2 weken",
     "recurring_monthly": "Maandelijks",
     "countryLabel": "Land",
-    "countryInvalid": "Kies een land uit de lijst"
+    "countryInvalid": "Kies een land uit de lijst",
+    "timeWindowLabel": "Tijdvak (optioneel)",
+    "timeWindowHint": "Tussen welke tijden heb je de schoonmaker die dag nodig?",
+    "errorTimeRange": "Vul beide tijden in; de eindtijd moet na de begintijd liggen.",
+    "recurring_recurring": "Terugkerend"
   },
   "customerProfilePage": {
     "title": "Mijn profiel",

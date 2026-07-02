@@ -921,13 +921,17 @@
     "posting": "Pubblicazione...",
     "submitButton": "Pubblica richiesta e ricevi offerte",
     "recurringLabel": "Servizio ricorrente (facoltativo)",
-    "recurringHint": "Scegli una frequenza se vuoi che la pulizia si ripeta.",
+    "recurringHint": "Scegli Ricorrente se ti serve questa pulizia regolarmente.",
     "recurring_none": "Solo una volta",
     "recurring_weekly": "Settimanale",
     "recurring_biweekly": "Ogni 2 settimane",
     "recurring_monthly": "Mensile",
     "countryLabel": "Paese",
-    "countryInvalid": "Scegli un paese dall'elenco"
+    "countryInvalid": "Scegli un paese dall'elenco",
+    "timeWindowLabel": "Fascia oraria (facoltativa)",
+    "timeWindowHint": "Tra quali orari ti serve l'addetto quel giorno?",
+    "errorTimeRange": "Inserisci entrambi gli orari; la fine deve seguire l'inizio.",
+    "recurring_recurring": "Ricorrente"
   },
   "customerProfilePage": {
     "title": "Il mio profilo",
