@@ -334,6 +334,17 @@ const NOTIF: Record<string, Record<string, S>> = {
     pl: { title: "Propozycja odrzucona", body: "Klient odrzucił zmiany — rezerwacja pozostaje bez zmian." },
     pt: { title: "Sugestão recusada", body: "O cliente recusou as alterações — a reserva mantém-se como combinado." },
   },
+  // The DORIXÉ support team replied to the user's support thread. {message} = reply snippet.
+  support_reply: {
+    en: { title: "Support replied", body: "DORIXÉ support replied: {message}" },
+    de: { title: "Support hat geantwortet", body: "Der DORIXÉ-Support hat geantwortet: {message}" },
+    fr: { title: "Le support a répondu", body: "Le support DORIXÉ a répondu : {message}" },
+    es: { title: "Soporte ha respondido", body: "El soporte de DORIXÉ respondió: {message}" },
+    it: { title: "Il supporto ha risposto", body: "Il supporto DORIXÉ ha risposto: {message}" },
+    nl: { title: "Support heeft geantwoord", body: "DORIXÉ-support heeft geantwoord: {message}" },
+    pl: { title: "Wsparcie odpowiedziało", body: "Zespół DORIXÉ odpowiedział: {message}" },
+    pt: { title: "O suporte respondeu", body: "O suporte da DORIXÉ respondeu: {message}" },
+  },
   // A client tried to book a cleaner whose payout account isn't connected/active yet.
   payout_setup_needed: {
     en: { title: "A client tried to book you — finish your payout setup", body: "A client tried to book you, but you haven't connected your payout account yet. Connect it in Earnings so you can get booked and paid." },
@@ -379,6 +390,7 @@ const PARAMS: Record<string, string[]> = {
   booking_overdue_cleaner: ["datetime"],
   booking_overdue_client: ["datetime"],
   booking_rejected: ["datetime", "reason"],
+  support_reply: ["message"],
 }
 
 /**

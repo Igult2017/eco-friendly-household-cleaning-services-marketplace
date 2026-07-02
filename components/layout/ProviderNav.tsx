@@ -5,7 +5,7 @@ import { useUnread } from "@/hooks/useUnread"
 
 type Labels = {
   dashboard: string; findJobs: string; bookings: string; calendar: string
-  messages: string; earnings: string; pricing: string; profile: string
+  messages: string; earnings: string; pricing: string; support: string; profile: string
 }
 
 // Per-section unread badges, mapped by each notification's link. Matchers are DISJOINT (anything
@@ -18,6 +18,7 @@ const ITEMS: { key: keyof Labels; href: string; match?: (l: string) => boolean }
   { key: "messages", href: "/provider/messages", match: (l) => l.includes("/messages") },
   { key: "earnings", href: "/provider/earnings", match: (l) => l.startsWith("/provider/earnings") },
   { key: "pricing", href: "/provider/profile/services" },
+  { key: "support", href: "/provider/support", match: (l) => l.startsWith("/provider/support") },
   { key: "profile", href: "/provider/profile" },
 ]
 

@@ -868,7 +868,8 @@
     "navNotifications": "Meldingen",
     "navProfile": "Profiel",
     "navMessages": "Berichten",
-    "navBookings": "Boekingen"
+    "navBookings": "Boekingen",
+    "navSupport": "Support"
   },
   "customerNotificationsPage": {
     "heading": "Meldingen",
@@ -1009,7 +1010,8 @@
     "adminPanel": "Beheerderspaneel",
     "pricing": "Tarieven",
     "calendar": "Agenda",
-    "messages": "Berichten"
+    "messages": "Berichten",
+    "support": "Support"
   },
   "providerProviderBookingsPage": {
     "title": "Mijn boekingen",
@@ -1965,5 +1967,13 @@
     "completeBooking": "Boeking afronden & betalen",
     "viewBooking": "Boeking bekijken",
     "failed": "Kon de boeking niet hervatten. Probeer opnieuw."
+  },
+  "customerSupportPage": {
+    "title": "Support",
+    "subtitle": "Stuur het DORIXÉ-team een bericht — we antwoorden hier en per e-mail."
+  },
+  "providerSupportPage": {
+    "title": "Support",
+    "subtitle": "Stuur het DORIXÉ-team een bericht — we antwoorden hier en per e-mail."
   }
 }

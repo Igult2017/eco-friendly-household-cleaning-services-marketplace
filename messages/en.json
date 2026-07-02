@@ -868,7 +868,8 @@
     "navNotifications": "Notifications",
     "navProfile": "Profile",
     "navMessages": "Messages",
-    "navBookings": "Bookings"
+    "navBookings": "Bookings",
+    "navSupport": "Support"
   },
   "customerNotificationsPage": {
     "heading": "Notifications",
@@ -1009,7 +1010,8 @@
     "adminPanel": "Admin Panel",
     "pricing": "Pricing",
     "calendar": "Calendar",
-    "messages": "Messages"
+    "messages": "Messages",
+    "support": "Support"
   },
   "providerProviderBookingsPage": {
     "title": "My Bookings",
@@ -1965,5 +1967,13 @@
     "completeBooking": "Complete booking & pay",
     "viewBooking": "View booking",
     "failed": "Could not resume the booking. Please try again."
+  },
+  "customerSupportPage": {
+    "title": "Support",
+    "subtitle": "Message the DORIXÉ team — we reply here and by email."
+  },
+  "providerSupportPage": {
+    "title": "Support",
+    "subtitle": "Message the DORIXÉ team — we reply here and by email."
   }
 }

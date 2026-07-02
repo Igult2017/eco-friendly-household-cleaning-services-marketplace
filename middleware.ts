@@ -67,6 +67,7 @@ const isCustomerOnlyRoute = createRouteMatcher([
   "/notifications(.*)",
   "/profile(.*)",
   "/recurring(.*)",
+  "/support(.*)",
 ])
 
 const isProviderRoute = createRouteMatcher(["/provider/(.*)"])

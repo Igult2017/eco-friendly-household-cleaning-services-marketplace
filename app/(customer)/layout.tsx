@@ -46,7 +46,7 @@ export default async function CustomerLayout({ children }: { children: React.Rea
             labels={{
               dashboard: t("navDashboard"), book: t("navBook"), bookings: t("navBookings"), postJob: t("navPostJob"),
               myJobs: t("navMyJobs"), messages: t("navMessages"), payments: t("navPayments"),
-              notifications: t("navNotifications"), profile: t("navProfile"),
+              notifications: t("navNotifications"), support: t("navSupport"), profile: t("navProfile"),
             }}
           />
           <div className="flex items-center gap-2">

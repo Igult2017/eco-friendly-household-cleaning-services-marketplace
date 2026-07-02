@@ -75,6 +75,16 @@ ALTER TABLE store_products ADD COLUMN IF NOT EXISTS pack_id uuid;
 ALTER TABLE messages ALTER COLUMN booking_id DROP NOT NULL;
 ALTER TABLE messages ADD COLUMN IF NOT EXISTS job_post_id uuid;
 CREATE INDEX IF NOT EXISTS messages_job_post_idx ON messages(job_post_id);
+CREATE TABLE IF NOT EXISTS support_messages (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id text NOT NULL,
+  sender_id text NOT NULL,
+  from_admin boolean NOT NULL DEFAULT false,
+  body text NOT NULL,
+  is_read boolean NOT NULL DEFAULT false,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS support_messages_user_idx ON support_messages(user_id);
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS requested_frequency varchar(12);
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS requested_days jsonb;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS pending_proposal jsonb;

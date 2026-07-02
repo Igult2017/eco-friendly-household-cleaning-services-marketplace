@@ -868,7 +868,8 @@
     "navNotifications": "Notificaciones",
     "navProfile": "Perfil",
     "navMessages": "Mensajes",
-    "navBookings": "Reservas"
+    "navBookings": "Reservas",
+    "navSupport": "Soporte"
   },
   "customerNotificationsPage": {
     "heading": "Notificaciones",
@@ -1009,7 +1010,8 @@
     "adminPanel": "Panel de administración",
     "pricing": "Tarifas",
     "calendar": "Calendario",
-    "messages": "Mensajes"
+    "messages": "Mensajes",
+    "support": "Soporte"
   },
   "providerProviderBookingsPage": {
     "title": "Mis reservas",
@@ -1965,5 +1967,13 @@
     "completeBooking": "Completar reserva y pagar",
     "viewBooking": "Ver reserva",
     "failed": "No se pudo reanudar la reserva. Inténtalo de nuevo."
+  },
+  "customerSupportPage": {
+    "title": "Soporte",
+    "subtitle": "Escribe al equipo de DORIXÉ: respondemos aquí y por correo."
+  },
+  "providerSupportPage": {
+    "title": "Soporte",
+    "subtitle": "Escribe al equipo de DORIXÉ: respondemos aquí y por correo."
   }
 }

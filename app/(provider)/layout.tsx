@@ -46,7 +46,7 @@ export default async function ProviderLayout({ children }: { children: React.Rea
           <ProviderNav
             labels={{
               dashboard: t("dashboard"), findJobs: t("findJobs"), bookings: t("bookings"), calendar: t("calendar"),
-              messages: t("messages"), earnings: t("earnings"), pricing: t("pricing"), profile: t("profile"),
+              messages: t("messages"), earnings: t("earnings"), pricing: t("pricing"), support: t("support"), profile: t("profile"),
             }}
           />
           <div className="flex items-center gap-2">
