@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils"
 import { LocationDetectButton } from "@/components/location/LocationDetectButton"
 import { usePostalValidation } from "@/hooks/usePostalValidation"
 import type { GeoResult } from "@/lib/nominatim"
+import { geocodeFlexible, extractPostalCode } from "@/lib/nominatim"
 
 const ECO_OPTIONS = ["Eco-certified products only", "No single-use plastics", "Fragrance-free", "Energy-saving methods"]
 const ECO_OPTION_KEYS: Record<string, string> = {
@@ -53,13 +54,9 @@ export default function PostJobPage() {
     if (!form.serviceAddress.city || !form.serviceAddress.postalCode) return
     setGeocoding(true)
     try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&postalcode=${encodeURIComponent(form.serviceAddress.postalCode)}&city=${encodeURIComponent(form.serviceAddress.city)}&country=${form.serviceAddress.country}&limit=1`,
-        { headers: { "Accept-Language": "en", "User-Agent": "DORIXE-marketplace/1.0 (contact: antiperhenryotieno@gmail.com)" } }
-      )
-      const data = await res.json()
-      if (data[0]) {
-        setForm((prev) => ({ ...prev, serviceLatitude: parseFloat(data[0].lat), serviceLongitude: parseFloat(data[0].lon) }))
+      const geo = await geocodeFlexible(form.serviceAddress)
+      if (geo) {
+        setForm((prev) => ({ ...prev, serviceLatitude: geo.lat, serviceLongitude: geo.lng }))
       }
     } finally {
       setGeocoding(false)
@@ -113,6 +110,8 @@ export default function PostJobPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          // Normalize messy postal input ("12047 Neukölln" → "12047") — API caps postal at 10 chars.
+          serviceAddress: { ...form.serviceAddress, postalCode: extractPostalCode(form.serviceAddress.postalCode) },
           budgetMin: form.budgetMin ? parseInt(form.budgetMin) * 100 : undefined,
           budgetMax: form.budgetMax ? parseInt(form.budgetMax) * 100 : undefined,
           recurringFrequency: form.recurringFrequency || undefined,

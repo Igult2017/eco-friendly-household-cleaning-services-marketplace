@@ -14,6 +14,7 @@ import type { GeoProvider } from "@/lib/db/queries/geo"
 import type { Address } from "@/types"
 import { LocationDetectButton } from "@/components/location/LocationDetectButton"
 import type { GeoResult } from "@/lib/nominatim"
+import { geocodeFlexible, extractPostalCode } from "@/lib/nominatim"
 
 export default function BookStep2Page() {
   const t = useTranslations("customerBookProvidersPage")
@@ -66,17 +67,18 @@ export default function BookStep2Page() {
     setSearching(true)
     setError(null)
     try {
+      // Normalize the postal ("12047 Neukölln" → "12047") — the booking API caps postal at 10 chars.
+      const cleanAddr = { ...address, postalCode: extractPostalCode(address.postalCode) }
       let lat = latRef.current
       let lng = lngRef.current
       if (lat == null || lng == null) {
-        const geocodeUrl = `https://nominatim.openstreetmap.org/search?format=json&postalcode=${encodeURIComponent(address.postalCode)}&city=${encodeURIComponent(address.city)}&country=${address.country}&limit=1`
-        const geoRes = await fetch(geocodeUrl, { headers: { "Accept-Language": "en", "User-Agent": "DORIXE-marketplace/1.0 (contact: antiperhenryotieno@gmail.com)" } })
-        const geoData = await geoRes.json()
-        if (!geoData[0]) { setError(t("errorAddressNotFound")); return }
-        lat = parseFloat(geoData[0].lat)
-        lng = parseFloat(geoData[0].lon)
+        const geo = await geocodeFlexible(cleanAddr)
+        if (!geo) { setError(t("errorAddressNotFound")); return }
+        lat = geo.lat
+        lng = geo.lng
       }
-      setAddress(address, lat, lng)
+      setAddressForm(cleanAddr)
+      setAddress(cleanAddr, lat, lng)
       router.push("/book/schedule")
     } catch {
       setError(t("errorSearchFailed"))
@@ -94,21 +96,18 @@ export default function BookStep2Page() {
     setError(null)
 
     try {
-      const geocodeUrl = `https://nominatim.openstreetmap.org/search?format=json&postalcode=${encodeURIComponent(address.postalCode)}&city=${encodeURIComponent(address.city)}&country=${address.country}&limit=1`
-      const geoRes = await fetch(geocodeUrl, { headers: { "Accept-Language": "en", "User-Agent": "DORIXE-marketplace/1.0 (contact: antiperhenryotieno@gmail.com)" } })
-      const geoData = await geoRes.json()
-
-      if (!geoData[0]) {
+      // Normalize the postal ("12047 Neukölln" → "12047") — the booking API caps postal at 10 chars.
+      const cleanAddr = { ...address, postalCode: extractPostalCode(address.postalCode) }
+      const geo = await geocodeFlexible(cleanAddr)
+      if (!geo) {
         setError(t("errorAddressNotFound"))
         return
       }
+      setAddressForm(cleanAddr)
+      latRef.current = geo.lat
+      lngRef.current = geo.lng
 
-      const lat = parseFloat(geoData[0].lat)
-      const lng = parseFloat(geoData[0].lon)
-      latRef.current = lat
-      lngRef.current = lng
-
-      const params = new URLSearchParams({ lat: String(lat), lng: String(lng), radius: "25" })
+      const params = new URLSearchParams({ lat: String(geo.lat), lng: String(geo.lng), radius: "25" })
       if (categoryId) params.set("categoryId", categoryId)
 
       const res = await fetch(`/api/geo/providers?${params}`)
