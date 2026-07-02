@@ -58,6 +58,9 @@ export function StoreProductForm({ initial }: { initial?: StoreProduct }) {
   const [published, setPublished] = useState(initial?.status === "published")
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
+  const [flash, setFlash] = useState("")
+  // Which row a save updates — cleared by "Save & add another" so the next save CREATES a new product.
+  const [editingId, setEditingId] = useState(initial?.id)
 
   // Starter packs a product can belong to (a pack is a titled LIST of products).
   useEffect(() => {
@@ -75,9 +78,10 @@ export function StoreProductForm({ initial }: { initial?: StoreProduct }) {
     if (!slugTouched) setSlug(slugify(v))
   }
 
-  async function save() {
+  async function save(addAnother = false) {
     setSaving(true)
     setError("")
+    setFlash("")
     const priceCents =
       price.trim() === "" ? null : Math.round(parseFloat(price) * 100)
     if (priceCents != null && Number.isNaN(priceCents)) {
@@ -103,8 +107,8 @@ export function StoreProductForm({ initial }: { initial?: StoreProduct }) {
       status: published ? "published" : "draft",
     }
     try {
-      const res = initial?.id
-        ? await fetch(`/api/admin/store/${initial.id}`, {
+      const res = editingId
+        ? await fetch(`/api/admin/store/${editingId}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body),
@@ -117,6 +121,24 @@ export function StoreProductForm({ initial }: { initial?: StoreProduct }) {
       if (!res.ok) {
         setError(readError(await res.json().catch(() => ({}))))
         setSaving(false)
+        return
+      }
+      if (addAnother) {
+        // Keep type, pack, category and currency — clear everything product-specific so the admin can
+        // rattle through a 20-product pack without re-navigating or re-selecting the pack.
+        setEditingId(undefined)
+        setTitle("")
+        setSlug("")
+        setSlugTouched(false)
+        setBrand("")
+        setDescription("")
+        setImageUrl("")
+        setAffiliateUrl("")
+        setBenefits([])
+        setPrice("")
+        setSaving(false)
+        setFlash(`Saved “${title}” ✓ — add the next product`)
+        window.scrollTo({ top: 0, behavior: "smooth" })
         return
       }
       router.push("/admin/content/store")
@@ -268,10 +290,15 @@ export function StoreProductForm({ initial }: { initial?: StoreProduct }) {
           {error}
         </p>
       )}
+      {flash && (
+        <p role="status" className="rounded-lg bg-[#EDF5F0] px-3 py-2 text-sm font-medium text-[#2D7A5F]">
+          {flash}
+        </p>
+      )}
 
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-3">
         <Button
-          onClick={save}
+          onClick={() => save(false)}
           disabled={saving || !title || (type === "product" && !affiliateUrl)}
           className="bg-[#2D7A5F] hover:bg-[#235f49] text-white"
         >
@@ -279,14 +306,24 @@ export function StoreProductForm({ initial }: { initial?: StoreProduct }) {
             <>
               <Loader2 className="h-4 w-4 animate-spin" /> Saving…
             </>
-          ) : initial?.id ? (
+          ) : editingId ? (
             "Save changes"
           ) : (
             "Create product"
           )}
         </Button>
+        {type === "product" && (
+          <Button
+            variant="outline"
+            onClick={() => save(true)}
+            disabled={saving || !title || !affiliateUrl}
+            className="border-[#2D7A5F]/40 text-[#2D7A5F] hover:bg-[#EDF5F0]"
+          >
+            Save & add another
+          </Button>
+        )}
         <Button variant="outline" onClick={() => router.back()} disabled={saving}>
-          Cancel
+          {flash ? "Done" : "Cancel"}
         </Button>
       </div>
     </div>
