@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
     // promoCodeDiscountCents is intentionally NOT destructured — the discount is recomputed
     // server-side (FIN-003); any client-supplied amount is ignored.
-    const { providerId, serviceId, scheduledAt, carbonOffsetCents = 0, bidAmountCents, promoCodeId, addOnIds = [] } = parsed.data
+    const { providerId, serviceId, scheduledAt, durationMinutes, carbonOffsetCents = 0, bidAmountCents, promoCodeId, addOnIds = [] } = parsed.data
 
     const [[provider], [service]] = await Promise.all([
       db
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
         .from(providers)
         .where(eq(providers.id, providerId)),
       db
-        .select({ id: providerServices.id, basePrice: providerServices.basePrice })
+        .select({ id: providerServices.id, basePrice: providerServices.basePrice, priceUnit: providerServices.priceUnit })
         .from(providerServices)
         .where(and(eq(providerServices.id, serviceId), eq(providerServices.providerId, providerId), eq(providerServices.isActive, true))),
     ])
@@ -87,7 +87,13 @@ export async function POST(req: Request) {
       validAddOnIds = rows.map((r) => r.id)
     }
 
-    const subtotal = (bidAmountCents ?? service.basePrice) + addOnsTotal
+    // Hourly services charge basePrice × booked hours (per-hour is the payment mode in EU + US) —
+    // previously the duration selector was ignored and 6h cost the same as 1h. Accepted bids are a
+    // total for the whole job and flat-priced services stay as-is.
+    const baseAmount =
+      bidAmountCents ??
+      (service.priceUnit === "per_hour" ? Math.round((service.basePrice * durationMinutes) / 60) : service.basePrice)
+    const subtotal = baseAmount + addOnsTotal
 
     // Resolve promo discount: prefer the pre-computed promoCodeDiscountCents from the client,
     // but verify the promo code exists and is active when promoCodeId is supplied.

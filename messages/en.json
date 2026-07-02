@@ -217,7 +217,8 @@
     "heroSubtitleClient": "Browse jobs from other clients — or post your own and get bids from cleaners.",
     "viewJobsToBid": "View jobs to bid on",
     "postAJob": "Post a job",
-    "becomeCleanerToBid": "Become a cleaner to bid"
+    "becomeCleanerToBid": "Become a cleaner to bid",
+    "estHours": "≈ {hours} h"
   },
   "providerProfile": {
     "idVerified": "ID Verified",
@@ -933,7 +934,9 @@
     "timeWindowLabel": "Time window (optional)",
     "timeWindowHint": "Between what times do you need the cleaner on that day?",
     "errorTimeRange": "Please set both times, with the end after the start.",
-    "recurring_recurring": "Recurrent"
+    "recurring_recurring": "Recurrent",
+    "estimatedHoursLabel": "Estimated hours of work",
+    "estimatedHoursHint": "How many hours the job should take — cleaners use this to price per hour."
   },
   "customerProfilePage": {
     "title": "My Profile",
@@ -1110,7 +1113,8 @@
     "recurringLabel": "Recurring",
     "recurring_weekly": "Weekly",
     "recurring_biweekly": "Every 2 weeks",
-    "recurring_monthly": "Monthly"
+    "recurring_monthly": "Monthly",
+    "estHours": "≈ {hours} h"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifications",

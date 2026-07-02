@@ -35,6 +35,7 @@ const createJobSchema = z.object({
   // "recurring" = cadence unspecified (form asks only one-time vs recurrent); cadence values kept for
   // back-compat with existing rows.
   recurringFrequency: z.enum(["recurring", "weekly", "biweekly", "monthly"]).optional(),
+  estimatedHours: z.number().min(0.5).max(12).optional(),
 }).refine(
   (d) => !d.budgetMin || !d.budgetMax || d.budgetMax >= d.budgetMin,
   { message: "budgetMax must be >= budgetMin", path: ["budgetMax"] },
@@ -93,6 +94,7 @@ export async function POST(req: Request) {
       radiusKm: data.radiusKm,
       ecoRequirements: data.ecoRequirements,
       recurringFrequency: data.recurringFrequency ?? null,
+      estimatedDurationMinutes: data.estimatedHours ? Math.round(data.estimatedHours * 60) : null,
       expiresAt,
       status: "open",
       postedIp: getClientIp(req),
@@ -230,7 +232,7 @@ export async function GET(req: Request) {
         columns: {
           id: true, title: true, description: true, status: true,
           budgetMin: true, budgetMax: true, desiredDate: true, desiredTimeRange: true,
-          radiusKm: true, ecoRequirements: true, recurringFrequency: true, viewCount: true, expiresAt: true, createdAt: true,
+          radiusKm: true, ecoRequirements: true, recurringFrequency: true, estimatedDurationMinutes: true, viewCount: true, expiresAt: true, createdAt: true,
           serviceAddress: true, // reduced to coarse locality below
         },
         with: { category: { columns: { name: true, slug: true } }, bids: { columns: { id: true, status: true, providerId: true } } },

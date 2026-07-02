@@ -42,6 +42,7 @@ export default function PostJobPage() {
     desiredDate: "",
     desiredTimeStart: "",
     desiredTimeEnd: "",
+    estimatedHours: "2",
     serviceAddress: { line1: "", city: "", postalCode: "", country: "DE" },
     serviceLatitude: 0,
     serviceLongitude: 0,
@@ -125,6 +126,7 @@ export default function PostJobPage() {
           budgetMin: form.budgetMin ? parseInt(form.budgetMin) * 100 : undefined,
           budgetMax: form.budgetMax ? parseInt(form.budgetMax) * 100 : undefined,
           desiredTimeRange: hasStart && hasEnd ? { start: form.desiredTimeStart, end: form.desiredTimeEnd } : undefined,
+          estimatedHours: form.estimatedHours ? parseFloat(form.estimatedHours) : undefined,
           recurringFrequency: form.recurringFrequency || undefined,
         }),
       })
@@ -149,7 +151,7 @@ export default function PostJobPage() {
         <p className="text-[#6B7280] text-center mb-8 max-w-sm">{t("successDescription")}</p>
         <div className="flex gap-3">
           <Button onClick={() => router.push("/jobs")} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white">{t("viewMyJobs")}</Button>
-          <Button variant="outline" onClick={() => { setSuccess(false); setForm({ title: "", description: "", budgetMin: "", budgetMax: "", desiredDate: "", desiredTimeStart: "", desiredTimeEnd: "", serviceAddress: { line1: "", city: "", postalCode: "", country: "DE" }, serviceLatitude: 0, serviceLongitude: 0, radiusKm: 25, ecoRequirements: [], recurringFrequency: "" }) }} className="border-[#E5EBF0]">{t("postAnother")}</Button>
+          <Button variant="outline" onClick={() => { setSuccess(false); setForm({ title: "", description: "", budgetMin: "", budgetMax: "", desiredDate: "", desiredTimeStart: "", desiredTimeEnd: "", estimatedHours: "2", serviceAddress: { line1: "", city: "", postalCode: "", country: "DE" }, serviceLatitude: 0, serviceLongitude: 0, radiusKm: 25, ecoRequirements: [], recurringFrequency: "" }) }} className="border-[#E5EBF0]">{t("postAnother")}</Button>
         </div>
       </div>
     )
@@ -190,6 +192,11 @@ export default function PostJobPage() {
                   {new Date(form.desiredDate + "T12:00:00").toLocaleDateString(locale, { weekday: "long" })}
                 </p>
               )}
+            </div>
+            <div>
+              <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("estimatedHoursLabel")}</Label>
+              <Input type="number" min={0.5} max={12} step={0.5} value={form.estimatedHours} onChange={(e) => set("estimatedHours", e.target.value)} required />
+              <p className="text-xs text-[#9CA3AF] mt-1">{t("estimatedHoursHint")}</p>
             </div>
             <div>
               <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("timeWindowLabel")}</Label>

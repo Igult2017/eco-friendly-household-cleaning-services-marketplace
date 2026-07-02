@@ -217,7 +217,8 @@
     "heroSubtitleClient": "Durchsuche Aufträge anderer Kunden – oder erstelle deinen eigenen und erhalte Angebote von Reinigungskräften.",
     "viewJobsToBid": "Aufträge zum Bieten ansehen",
     "postAJob": "Auftrag erstellen",
-    "becomeCleanerToBid": "Reinigungskraft werden, um zu bieten"
+    "becomeCleanerToBid": "Reinigungskraft werden, um zu bieten",
+    "estHours": "≈ {hours} Std."
   },
   "providerProfile": {
     "idVerified": "Identität verifiziert",
@@ -933,7 +934,9 @@
     "timeWindowLabel": "Zeitfenster (optional)",
     "timeWindowHint": "Zwischen welchen Uhrzeiten brauchst du die Reinigungskraft an dem Tag?",
     "errorTimeRange": "Bitte beide Uhrzeiten angeben — Ende nach Beginn.",
-    "recurring_recurring": "Wiederkehrend"
+    "recurring_recurring": "Wiederkehrend",
+    "estimatedHoursLabel": "Geschätzte Arbeitsstunden",
+    "estimatedHoursHint": "Wie viele Stunden der Auftrag dauern sollte — Reinigungskräfte kalkulieren damit den Stundenpreis."
   },
   "customerProfilePage": {
     "title": "Mein Profil",
@@ -1110,7 +1113,8 @@
     "recurringLabel": "Wiederkehrend",
     "recurring_weekly": "Wöchentlich",
     "recurring_biweekly": "Alle 2 Wochen",
-    "recurring_monthly": "Monatlich"
+    "recurring_monthly": "Monatlich",
+    "estHours": "≈ {hours} Std."
   },
   "providerProviderNotificationsPage": {
     "heading": "Benachrichtigungen",

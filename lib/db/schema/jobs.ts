@@ -56,6 +56,8 @@ export const jobPosts = pgTable(
     // Recurring cadence the client wants (weekly|biweekly|monthly), null = one-time. Shown to cleaners
     // on the job board so they know it's repeat work before bidding.
     recurringFrequency: varchar("recurring_frequency", { length: 12 }),
+    // Expected hours of work (stored as minutes) — lets cleaners compute an hourly bid from the budget.
+    estimatedDurationMinutes: integer("estimated_duration_minutes"),
     acceptedBidId: uuid("accepted_bid_id"),
     // Poster's client IP — self-bid fraud prevention (hide/block the poster's own jobs even from a
     // second account on the same connection).

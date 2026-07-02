@@ -217,7 +217,8 @@
     "heroSubtitleClient": "Sfoglia i lavori di altri clienti — o pubblica il tuo e ricevi offerte dagli addetti.",
     "viewJobsToBid": "Vedi i lavori per fare offerte",
     "postAJob": "Pubblica un lavoro",
-    "becomeCleanerToBid": "Diventa un addetto per fare offerte"
+    "becomeCleanerToBid": "Diventa un addetto per fare offerte",
+    "estHours": "≈ {hours} h"
   },
   "providerProfile": {
     "idVerified": "Identità verificata",
@@ -933,7 +934,9 @@
     "timeWindowLabel": "Fascia oraria (facoltativa)",
     "timeWindowHint": "Tra quali orari ti serve l'addetto quel giorno?",
     "errorTimeRange": "Inserisci entrambi gli orari; la fine deve seguire l'inizio.",
-    "recurring_recurring": "Ricorrente"
+    "recurring_recurring": "Ricorrente",
+    "estimatedHoursLabel": "Ore di lavoro stimate",
+    "estimatedHoursHint": "Quante ore dovrebbe richiedere il lavoro — gli addetti la usano per calcolare la tariffa oraria."
   },
   "customerProfilePage": {
     "title": "Il mio profilo",
@@ -1110,7 +1113,8 @@
     "recurringLabel": "Ricorrente",
     "recurring_weekly": "Settimanale",
     "recurring_biweekly": "Ogni 2 settimane",
-    "recurring_monthly": "Mensile"
+    "recurring_monthly": "Mensile",
+    "estHours": "≈ {hours} h"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifiche",

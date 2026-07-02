@@ -217,7 +217,8 @@
     "heroSubtitleClient": "Parcourez les annonces d'autres clients — ou publiez la vôtre et recevez des devis d'intervenants.",
     "viewJobsToBid": "Voir les offres à soumissionner",
     "postAJob": "Publier une annonce",
-    "becomeCleanerToBid": "Devenir intervenant pour soumissionner"
+    "becomeCleanerToBid": "Devenir intervenant pour soumissionner",
+    "estHours": "≈ {hours} h"
   },
   "providerProfile": {
     "idVerified": "Identité vérifiée",
@@ -933,7 +934,9 @@
     "timeWindowLabel": "Créneau horaire (optionnel)",
     "timeWindowHint": "Entre quelles heures avez-vous besoin de l'intervenant ce jour-là ?",
     "errorTimeRange": "Renseignez les deux heures, la fin après le début.",
-    "recurring_recurring": "Récurrent"
+    "recurring_recurring": "Récurrent",
+    "estimatedHoursLabel": "Heures de travail estimées",
+    "estimatedHoursHint": "Durée estimée du travail — les intervenants s en servent pour calculer le tarif horaire."
   },
   "customerProfilePage": {
     "title": "Mon profil",
@@ -1110,7 +1113,8 @@
     "recurringLabel": "Récurrent",
     "recurring_weekly": "Hebdomadaire",
     "recurring_biweekly": "Toutes les 2 semaines",
-    "recurring_monthly": "Mensuel"
+    "recurring_monthly": "Mensuel",
+    "estHours": "≈ {hours} h"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifications",

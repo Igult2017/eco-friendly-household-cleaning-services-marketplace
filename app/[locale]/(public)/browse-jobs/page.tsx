@@ -15,6 +15,7 @@ type Job = {
   budgetMin: number | null
   budgetMax: number | null
   desiredDate: string | null
+  estimatedDurationMinutes: number | null
   city: string | null
   country: string
   ecoRequirements: string[]
@@ -186,6 +187,11 @@ export default function BrowseJobsPage() {
                       {new Date(job.desiredDate).toLocaleDateString("de-DE", { day: "2-digit", month: "short", year: "numeric" })}
                     </span>
                   )}
+                  {job.estimatedDurationMinutes ? (
+                    <span className="flex items-center gap-1.5">
+                      {t("estHours", { hours: job.estimatedDurationMinutes % 60 === 0 ? String(job.estimatedDurationMinutes / 60) : (job.estimatedDurationMinutes / 60).toFixed(1) })}
+                    </span>
+                  ) : null}
                   <span className="flex items-center gap-1.5">
                     <Users size={12} className="text-[#2D7A5F]" />
                     {t("bidCount", { count: job.bidCount })}

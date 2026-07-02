@@ -217,7 +217,8 @@
     "heroSubtitleClient": "Przeglądaj zlecenia innych klientów — lub dodaj własne i otrzymuj oferty od osób sprzątających.",
     "viewJobsToBid": "Zobacz zlecenia do licytacji",
     "postAJob": "Dodaj zlecenie",
-    "becomeCleanerToBid": "Zostań sprzątaczem, aby licytować"
+    "becomeCleanerToBid": "Zostań sprzątaczem, aby licytować",
+    "estHours": "≈ {hours} godz."
   },
   "providerProfile": {
     "idVerified": "Tożsamość zweryfikowana",
@@ -933,7 +934,9 @@
     "timeWindowLabel": "Przedział czasowy (opcjonalnie)",
     "timeWindowHint": "W jakich godzinach potrzebujesz osoby sprzątającej tego dnia?",
     "errorTimeRange": "Podaj obie godziny — koniec po początku.",
-    "recurring_recurring": "Cykliczne"
+    "recurring_recurring": "Cykliczne",
+    "estimatedHoursLabel": "Szacowane godziny pracy",
+    "estimatedHoursHint": "Ile godzin powinno zająć zlecenie — osoby sprzątające wyceniają na tej podstawie stawkę godzinową."
   },
   "customerProfilePage": {
     "title": "Mój profil",
@@ -1110,7 +1113,8 @@
     "recurringLabel": "Cykliczne",
     "recurring_weekly": "Co tydzień",
     "recurring_biweekly": "Co 2 tygodnie",
-    "recurring_monthly": "Co miesiąc"
+    "recurring_monthly": "Co miesiąc",
+    "estHours": "≈ {hours} godz."
   },
   "providerProviderNotificationsPage": {
     "heading": "Powiadomienia",

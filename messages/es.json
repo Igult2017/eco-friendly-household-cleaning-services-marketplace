@@ -217,7 +217,8 @@
     "heroSubtitleClient": "Explora los trabajos de otros clientes — o publica el tuyo y recibe ofertas de profesionales.",
     "viewJobsToBid": "Ver trabajos para pujar",
     "postAJob": "Publicar un trabajo",
-    "becomeCleanerToBid": "Hazte profesional para pujar"
+    "becomeCleanerToBid": "Hazte profesional para pujar",
+    "estHours": "≈ {hours} h"
   },
   "providerProfile": {
     "idVerified": "Identidad verificada",
@@ -933,7 +934,9 @@
     "timeWindowLabel": "Franja horaria (opcional)",
     "timeWindowHint": "¿Entre qué horas necesitas al profesional ese día?",
     "errorTimeRange": "Indica ambas horas; el fin debe ser posterior al inicio.",
-    "recurring_recurring": "Recurrente"
+    "recurring_recurring": "Recurrente",
+    "estimatedHoursLabel": "Horas de trabajo estimadas",
+    "estimatedHoursHint": "Cuántas horas debería llevar el trabajo: los profesionales lo usan para calcular el precio por hora."
   },
   "customerProfilePage": {
     "title": "Mi perfil",
@@ -1110,7 +1113,8 @@
     "recurringLabel": "Recurrente",
     "recurring_weekly": "Semanal",
     "recurring_biweekly": "Cada 2 semanas",
-    "recurring_monthly": "Mensual"
+    "recurring_monthly": "Mensual",
+    "estHours": "≈ {hours} h"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notificaciones",

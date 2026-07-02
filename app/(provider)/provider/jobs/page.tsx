@@ -22,6 +22,7 @@ interface JobPost {
   budgetMax: number | null
   desiredDate: string | null
   desiredTimeRange: { start: string; end: string } | null
+  estimatedDurationMinutes: number | null
   serviceAddress: { line1: string; city: string; postalCode: string }
   ecoRequirements: string[]
   recurringFrequency: string | null
@@ -155,6 +156,12 @@ export default function ProviderJobsPage() {
                         {job.budgetMin && job.budgetMax && (
                           <p className="font-bold text-[#2D7A5F] text-sm">{formatCurrency(job.budgetMin)} – {formatCurrency(job.budgetMax)}</p>
                         )}
+                        {/* Implied hourly range — per-hour is the payment mode; helps cleaners bid. */}
+                        {job.budgetMin && job.budgetMax && job.estimatedDurationMinutes ? (
+                          <p className="text-[11px] text-[#6B7280]">
+                            ≈ {formatCurrency(Math.round((job.budgetMin * 60) / job.estimatedDurationMinutes))} – {formatCurrency(Math.round((job.budgetMax * 60) / job.estimatedDurationMinutes))}/h
+                          </p>
+                        ) : null}
                         <p className="text-xs text-[#9CA3AF] mt-1">{t("bidCount", { count: job.bids.length })}</p>
                       </div>
                     </div>
@@ -166,6 +173,9 @@ export default function ProviderJobsPage() {
                       {job.desiredDate && <span className="flex items-center gap-1"><Clock size={12} />{formatDate(job.desiredDate)}</span>}
                       {job.desiredTimeRange?.start && job.desiredTimeRange?.end && (
                         <span className="flex items-center gap-1">{job.desiredTimeRange.start}–{job.desiredTimeRange.end}</span>
+                      )}
+                      {job.estimatedDurationMinutes && (
+                        <span className="flex items-center gap-1">{t("estHours", { hours: job.estimatedDurationMinutes % 60 === 0 ? String(job.estimatedDurationMinutes / 60) : (job.estimatedDurationMinutes / 60).toFixed(1) })}</span>
                       )}
                       {job.recurringFrequency && (
                         <span className="flex items-center gap-1 bg-[#D1F0E0] text-[#2D7A5F] font-medium px-2 py-0.5 rounded-full">

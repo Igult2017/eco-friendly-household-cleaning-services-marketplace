@@ -46,6 +46,7 @@ export async function GET(req: Request) {
       budgetMin: j.budgetMin,
       budgetMax: j.budgetMax,
       desiredDate: j.desiredDate,
+      estimatedDurationMinutes: j.estimatedDurationMinutes,
       city: j.serviceAddress?.city ?? null,
       country: j.serviceAddress?.country ?? "DE",
       ecoRequirements: j.ecoRequirements,

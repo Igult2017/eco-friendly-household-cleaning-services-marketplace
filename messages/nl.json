@@ -217,7 +217,8 @@
     "heroSubtitleClient": "Bekijk klussen van andere klanten — of plaats zelf een klus en ontvang biedingen van schoonmakers.",
     "viewJobsToBid": "Bekijk klussen om op te bieden",
     "postAJob": "Klus plaatsen",
-    "becomeCleanerToBid": "Word schoonmaker om te bieden"
+    "becomeCleanerToBid": "Word schoonmaker om te bieden",
+    "estHours": "≈ {hours} u"
   },
   "providerProfile": {
     "idVerified": "Identiteit geverifieerd",
@@ -933,7 +934,9 @@
     "timeWindowLabel": "Tijdvak (optioneel)",
     "timeWindowHint": "Tussen welke tijden heb je de schoonmaker die dag nodig?",
     "errorTimeRange": "Vul beide tijden in; de eindtijd moet na de begintijd liggen.",
-    "recurring_recurring": "Terugkerend"
+    "recurring_recurring": "Terugkerend",
+    "estimatedHoursLabel": "Geschatte werkuren",
+    "estimatedHoursHint": "Hoeveel uur de klus zou moeten duren — schoonmakers gebruiken dit om per uur te prijzen."
   },
   "customerProfilePage": {
     "title": "Mijn profiel",
@@ -1110,7 +1113,8 @@
     "recurringLabel": "Terugkerend",
     "recurring_weekly": "Wekelijks",
     "recurring_biweekly": "Om de 2 weken",
-    "recurring_monthly": "Maandelijks"
+    "recurring_monthly": "Maandelijks",
+    "estHours": "≈ {hours} u"
   },
   "providerProviderNotificationsPage": {
     "heading": "Meldingen",
