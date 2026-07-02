@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { LogoImage } from "@/components/layout/LogoImage"
 import { useState } from "react"
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs"
+import { NotificationBell } from "@/components/notifications/NotificationBell"
 import { Menu, X, Leaf } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { AdminCleanerSwitch } from "@/components/layout/AdminCleanerSwitch"
@@ -83,6 +84,9 @@ export function Navbar() {
                 <DashboardLinkIcon />
                 {label}
               </NextLink>
+              {/* Bell on the PUBLIC navbar too — see messages/notifications right at login, before
+                  ever entering the dashboard. */}
+              <NotificationBell />
               <UserButton />
             </>
           ) : (

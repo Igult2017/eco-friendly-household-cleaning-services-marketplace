@@ -12,6 +12,7 @@ import { NextIntlClientProvider } from "next-intl"
 import { CookieBanner } from "@/components/gdpr/CookieBanner"
 import { RoleSwitchToast } from "@/components/layout/RoleSwitchToast"
 import { ProviderMobileNav } from "@/components/provider/ProviderMobileNav"
+import { ProviderNav } from "@/components/layout/ProviderNav"
 
 export default async function ProviderLayout({ children }: { children: React.ReactNode }) {
   const t = await getTranslations("providerLayout")
@@ -42,16 +43,12 @@ export default async function ProviderLayout({ children }: { children: React.Rea
       <header className="sticky top-0 z-30 h-14 bg-white/90 backdrop-blur border-b border-gray-200">
         <div className="max-w-7xl mx-auto h-full px-4 flex items-center justify-between gap-4">
           <Link href="/"><Image src="/logo.png" alt="DORIXÉ" width={100} height={26} priority /></Link>
-          <nav className="hidden md:flex items-center gap-5 text-sm font-medium text-[#6B7280]">
-            <Link href="/provider/dashboard" className="hover:text-[#2D7A5F] transition-colors">{t("dashboard")}</Link>
-            <Link href="/provider/jobs" className="hover:text-[#2D7A5F] transition-colors">{t("findJobs")}</Link>
-            <Link href="/provider/bookings" className="hover:text-[#2D7A5F] transition-colors">{t("bookings")}</Link>
-            <Link href="/provider/calendar" className="hover:text-[#2D7A5F] transition-colors">{t("calendar")}</Link>
-            <Link href="/provider/messages" className="hover:text-[#2D7A5F] transition-colors">{t("messages")}</Link>
-            <Link href="/provider/earnings" className="hover:text-[#2D7A5F] transition-colors">{t("earnings")}</Link>
-            <Link href="/provider/profile/services" className="hover:text-[#2D7A5F] transition-colors">{t("pricing")}</Link>
-            <Link href="/provider/profile" className="hover:text-[#2D7A5F] transition-colors">{t("profile")}</Link>
-          </nav>
+          <ProviderNav
+            labels={{
+              dashboard: t("dashboard"), findJobs: t("findJobs"), bookings: t("bookings"), calendar: t("calendar"),
+              messages: t("messages"), earnings: t("earnings"), pricing: t("pricing"), profile: t("profile"),
+            }}
+          />
           <div className="flex items-center gap-2">
             {primaryRole === "admin" && (
               <Link
