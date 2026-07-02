@@ -38,6 +38,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
           ...(data.currency !== undefined ? { currency: normalize(data.currency) } : {}),
           ...(data.benefits !== undefined ? { benefits: data.benefits } : {}),
           ...(data.category !== undefined ? { category: normalize(data.category) } : {}),
+          ...(data.packId !== undefined ? { packId: data.packId ?? null } : {}),
           ...(data.tags !== undefined ? { tags: data.tags } : {}),
           ...(data.featured !== undefined ? { featured: data.featured } : {}),
           ...(data.status !== undefined ? { status: data.status } : {}),

@@ -1769,7 +1769,8 @@
     "getStarted": "Commencer",
     "allCategories": "Tous",
     "emptyTitle": "Rien pour l'instant",
-    "emptyBody": "Nous préparons nos premières recommandations — revenez bientôt."
+    "emptyBody": "Nous préparons nos premières recommandations — revenez bientôt.",
+    "packItemsTitle": "Ce qui est inclus ({count} produits)"
   },
   "providerMobileNav": {
     "home": "Accueil",

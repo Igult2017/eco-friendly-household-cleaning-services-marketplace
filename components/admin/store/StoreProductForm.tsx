@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
@@ -52,10 +52,23 @@ export function StoreProductForm({ initial }: { initial?: StoreProduct }) {
   const [affiliateUrl, setAffiliateUrl] = useState(initial?.affiliateUrl ?? "")
   const [imageUrl, setImageUrl] = useState(initial?.imageUrl ?? "")
   const [benefits, setBenefits] = useState<string[]>(initial?.benefits ?? [])
+  const [packId, setPackId] = useState(initial?.packId ?? "")
+  const [packs, setPacks] = useState<{ id: string; title: string }[]>([])
   const [featured, setFeatured] = useState(initial?.featured ?? false)
   const [published, setPublished] = useState(initial?.status === "published")
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
+
+  // Starter packs a product can belong to (a pack is a titled LIST of products).
+  useEffect(() => {
+    fetch("/api/admin/store")
+      .then((r) => r.json())
+      .then((d) => {
+        const rows: StoreProduct[] = d.products ?? []
+        setPacks(rows.filter((p) => p.type === "starter_pack" && p.id !== initial?.id).map((p) => ({ id: p.id, title: p.title })))
+      })
+      .catch(() => {})
+  }, [initial?.id])
 
   function onTitleChange(v: string) {
     setTitle(v)
@@ -82,8 +95,9 @@ export function StoreProductForm({ initial }: { initial?: StoreProduct }) {
       affiliateUrl,
       priceCents,
       currency: currency || undefined,
-      benefits: type === "starter_pack" ? benefits.map((b) => b.trim()).filter(Boolean) : [],
+      benefits: benefits.map((b) => b.trim()).filter(Boolean),
       category: category || undefined,
+      packId: type === "product" && packId ? packId : null,
       tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
       featured,
       status: published ? "published" : "draft",
@@ -159,9 +173,27 @@ export function StoreProductForm({ initial }: { initial?: StoreProduct }) {
           type="url"
           value={affiliateUrl}
           onChange={(e) => setAffiliateUrl(e.target.value)}
-          placeholder="https://… (required)"
+          placeholder={type === "starter_pack" ? "https://… (optional — the pack's products carry their own links)" : "https://… (required)"}
         />
       </div>
+
+      {type === "product" && packs.length > 0 && (
+        <div className="space-y-1.5">
+          <Label>Part of starter pack</Label>
+          <Select value={packId || "none"} onValueChange={(v) => setPackId(!v || v === "none" ? "" : v)}>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">— none (standalone product) —</SelectItem>
+              {packs.map((p) => (
+                <SelectItem key={p.id} value={p.id}>{p.title}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-[#9CA3AF]">Products in a pack are listed under the pack&apos;s title on the eco-store (up to 20 per pack).</p>
+        </div>
+      )}
 
       <div className="space-y-1.5">
         <Label htmlFor="description">Description</Label>
@@ -217,7 +249,8 @@ export function StoreProductForm({ initial }: { initial?: StoreProduct }) {
         </div>
       </div>
 
-      {type === "starter_pack" && <BenefitsEditor benefits={benefits} onChange={setBenefits} />}
+      {/* Benefits panel for EVERY listing — shown under the product on the store page. */}
+      <BenefitsEditor benefits={benefits} onChange={setBenefits} />
 
       <div className="flex flex-wrap items-center gap-6 pt-1">
         <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
@@ -239,7 +272,7 @@ export function StoreProductForm({ initial }: { initial?: StoreProduct }) {
       <div className="flex gap-3">
         <Button
           onClick={save}
-          disabled={saving || !title || !affiliateUrl}
+          disabled={saving || !title || (type === "product" && !affiliateUrl)}
           className="bg-[#2D7A5F] hover:bg-[#235f49] text-white"
         >
           {saving ? (

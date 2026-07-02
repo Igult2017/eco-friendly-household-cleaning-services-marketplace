@@ -1769,7 +1769,8 @@
     "getStarted": "Get started",
     "allCategories": "All",
     "emptyTitle": "Nothing here yet",
-    "emptyBody": "We're curating our first recommendations — check back soon."
+    "emptyBody": "We're curating our first recommendations — check back soon.",
+    "packItemsTitle": "What is inside ({count} products)"
   },
   "providerMobileNav": {
     "home": "Home",

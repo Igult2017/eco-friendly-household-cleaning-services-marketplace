@@ -1769,7 +1769,8 @@
     "getStarted": "Loslegen",
     "allCategories": "Alle",
     "emptyTitle": "Noch nichts vorhanden",
-    "emptyBody": "Wir stellen gerade unsere ersten Empfehlungen zusammen — schauen Sie bald wieder vorbei."
+    "emptyBody": "Wir stellen gerade unsere ersten Empfehlungen zusammen — schauen Sie bald wieder vorbei.",
+    "packItemsTitle": "Das ist enthalten ({count} Produkte)"
   },
   "providerMobileNav": {
     "home": "Start",

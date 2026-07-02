@@ -36,6 +36,9 @@ export const storeProducts = pgTable(
     // Starter-pack selling points, shown as a benefits list.
     benefits: jsonb("benefits").$type<string[]>().notNull().default([]),
     category: varchar("category", { length: 100 }),
+    // Membership: a product can belong to a starter-pack row (self-reference) — packs are titled
+    // LISTS of products ("Cleaners starter pack", "Top 10 eco products…"), rendered as one section.
+    packId: uuid("pack_id"),
     tags: jsonb("tags").$type<string[]>().notNull().default([]),
     featured: boolean("featured").notNull().default(false),
     status: storeProductStatusEnum("status").notNull().default("draft"),

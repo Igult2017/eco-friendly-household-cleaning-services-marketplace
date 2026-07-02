@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic"
 import type { Metadata } from "next"
 import { db } from "@/lib/db"
 import { storeProducts } from "@/lib/db/schema"
-import { eq, and, desc, asc } from "drizzle-orm"
+import { eq, and, desc, asc, isNull, isNotNull } from "drizzle-orm"
 import { getTranslations } from "next-intl/server"
 import { Link } from "@/i18n/navigation"
 import { Leaf } from "lucide-react"
@@ -31,15 +31,33 @@ async function getStarterPacks() {
   })
 }
 
+// Published products assigned to a pack, grouped by pack id — rendered inside the pack's section.
+async function getPackMembers() {
+  const rows = await db.query.storeProducts.findMany({
+    where: and(eq(storeProducts.status, "published"), eq(storeProducts.type, "product"), isNotNull(storeProducts.packId)),
+    orderBy: ordering,
+  })
+  const byPack = new Map<string, typeof rows>()
+  for (const r of rows) {
+    if (!r.packId) continue
+    const list = byPack.get(r.packId) ?? []
+    list.push(r)
+    byPack.set(r.packId, list)
+  }
+  return byPack
+}
+
+// Standalone products only — pack members are shown inside their pack, not duplicated in the grid.
 async function getProducts(category?: string) {
   return db.query.storeProducts.findMany({
     where: category
       ? and(
           eq(storeProducts.status, "published"),
           eq(storeProducts.type, "product"),
+          isNull(storeProducts.packId),
           eq(storeProducts.category, category)
         )
-      : and(eq(storeProducts.status, "published"), eq(storeProducts.type, "product")),
+      : and(eq(storeProducts.status, "published"), eq(storeProducts.type, "product"), isNull(storeProducts.packId)),
     orderBy: ordering,
   })
 }
@@ -58,10 +76,11 @@ export default async function EcoStorePage({
   searchParams: Promise<{ category?: string }>
 }) {
   const { category } = await searchParams
-  const [starterPacks, products, categories] = await Promise.all([
+  const [starterPacks, products, categories, packMembers] = await Promise.all([
     getStarterPacks(),
     getProducts(category),
     getProductCategories(),
+    getPackMembers(),
   ])
   const t = await getTranslations("ecoStore")
 
@@ -116,9 +135,15 @@ export default async function EcoStorePage({
                   <p className="text-[#6B7280] mt-1">{t("starterPacksSubtitle")}</p>
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {starterPacks.map((pack) => (
-                    <StarterPackCard key={pack.id} pack={pack} />
-                  ))}
+                  {starterPacks.map((pack) => {
+                    const members = packMembers.get(pack.id) ?? []
+                    return (
+                      // A pack with a product list spans the full row — a 20-item list needs the width.
+                      <div key={pack.id} className={members.length > 0 ? "lg:col-span-2" : undefined}>
+                        <StarterPackCard pack={pack} members={members} />
+                      </div>
+                    )
+                  })}
                 </div>
               </section>
             )}

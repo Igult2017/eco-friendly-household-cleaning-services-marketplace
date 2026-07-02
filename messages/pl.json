@@ -1769,7 +1769,8 @@
     "getStarted": "Zacznij",
     "allCategories": "Wszystkie",
     "emptyTitle": "Jeszcze nic tu nie ma",
-    "emptyBody": "Przygotowujemy nasze pierwsze rekomendacje — zajrzyj wkrótce."
+    "emptyBody": "Przygotowujemy nasze pierwsze rekomendacje — zajrzyj wkrótce.",
+    "packItemsTitle": "Co zawiera ({count} produktów)"
   },
   "providerMobileNav": {
     "home": "Start",

@@ -1,4 +1,4 @@
-import { Tag, ExternalLink } from "lucide-react"
+import { Tag, ExternalLink, Check } from "lucide-react"
 import { getTranslations } from "next-intl/server"
 import type { StoreProduct } from "@/lib/db/schema"
 
@@ -53,7 +53,19 @@ export async function ProductCard({ product }: { product: StoreProduct }) {
         </h3>
 
         {product.description && (
-          <p className="text-sm text-[#6B7280] leading-relaxed line-clamp-2 mb-4">{product.description}</p>
+          <p className="text-sm text-[#6B7280] leading-relaxed line-clamp-2 mb-3">{product.description}</p>
+        )}
+
+        {/* Benefits panel — admin-written selling points for this product. */}
+        {(product.benefits ?? []).length > 0 && (
+          <ul className="mb-4 space-y-1.5">
+            {(product.benefits ?? []).slice(0, 4).map((b, i) => (
+              <li key={i} className="flex items-start gap-2 text-sm text-[#2B3441]">
+                <Check size={13} className="mt-0.5 shrink-0 text-[#2D7A5F]" aria-hidden="true" />
+                <span className="leading-relaxed">{b}</span>
+              </li>
+            ))}
+          </ul>
         )}
 
         <div className="mt-auto flex items-center justify-between gap-3 pt-2">

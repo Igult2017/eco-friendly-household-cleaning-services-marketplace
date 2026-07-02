@@ -1769,7 +1769,8 @@
     "getStarted": "Aan de slag",
     "allCategories": "Alle",
     "emptyTitle": "Nog niets hier",
-    "emptyBody": "We stellen onze eerste aanbevelingen samen — kom snel terug."
+    "emptyBody": "We stellen onze eerste aanbevelingen samen — kom snel terug.",
+    "packItemsTitle": "Wat zit erin ({count} producten)"
   },
   "providerMobileNav": {
     "home": "Home",
