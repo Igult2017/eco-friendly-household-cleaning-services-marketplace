@@ -12,6 +12,9 @@ export function organizationSchema(): Json {
     "@type": "Organization",
     "@id": `${SITE_URL}/#organization`,
     name: SITE_NAME,
+    // Unaccented spellings people actually type — helps Google connect the query "dorixe"/"dorix"
+    // to this brand (the é + IDN domain otherwise weaken that string match).
+    alternateName: ["Dorixe", "DORIXE", "Dorix", "dorixe.com"],
     url: SITE_URL,
     logo: absoluteUrl("/logo.png"),
     description: SITE_DESCRIPTION,
@@ -27,6 +30,7 @@ export function websiteSchema(): Json {
     "@type": "WebSite",
     "@id": `${SITE_URL}/#website`,
     name: SITE_NAME,
+    alternateName: ["Dorixe", "Dorix"],
     url: SITE_URL,
     description: SITE_DESCRIPTION,
     publisher: { "@id": `${SITE_URL}/#organization` },
