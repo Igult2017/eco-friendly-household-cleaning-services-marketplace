@@ -1956,5 +1956,10 @@
     "decline": "Mantieni come concordato",
     "rateNote": "Accettando una nuova tariffa, la carta salvata viene autorizzata per il nuovo importo; il blocco precedente viene rilasciato.",
     "genericError": "Qualcosa è andato storto. Riprova."
+  },
+  "compBiddingCompleteBooking": {
+    "completeBooking": "Completa la prenotazione e paga",
+    "viewBooking": "Vedi prenotazione",
+    "failed": "Impossibile riprendere la prenotazione. Riprova."
   }
 }

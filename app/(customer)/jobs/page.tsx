@@ -9,6 +9,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { AcceptBidButton } from "@/components/bidding/AcceptBidButton"
+import { CompleteBookingButton } from "@/components/bidding/CompleteBookingButton"
 import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
 import { formatDate } from "@/lib/utils/formatDate"
 import { cn } from "@/lib/utils"
@@ -34,6 +35,7 @@ interface BidProvider {
 interface Bid {
   id: string
   status: string
+  bookingId: string | null
   amount: number
   message: string | null
   estimatedDurationMinutes: number | null
@@ -199,7 +201,11 @@ function BidCard({ bid, jobId, jobStatus }: { bid: Bid; jobId: string; jobStatus
 
         <div className="flex items-center justify-between pt-1">
           {bid.status === "accepted" && (
-            <span className="text-xs font-semibold text-[#2D7A5F]">{t("bidAccepted")}</span>
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-semibold text-[#2D7A5F]">{t("bidAccepted")}</span>
+              {/* Resume path — the accept-time redirect state is lost if the client navigated away. */}
+              <CompleteBookingButton jobId={jobId} bookingId={bid.bookingId} />
+            </div>
           )}
           {bid.status === "rejected" && (
             <span className="text-xs text-[#9CA3AF]">{t("bidDeclined")}</span>

@@ -1956,5 +1956,10 @@
     "decline": "Keep as agreed",
     "rateNote": "Accepting a new rate re-authorizes your saved card for the new amount; the old hold is released.",
     "genericError": "Something went wrong. Please try again."
+  },
+  "compBiddingCompleteBooking": {
+    "completeBooking": "Complete booking & pay",
+    "viewBooking": "View booking",
+    "failed": "Could not resume the booking. Please try again."
   }
 }

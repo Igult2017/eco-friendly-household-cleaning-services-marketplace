@@ -1956,5 +1956,10 @@
     "decline": "Zostaw bez zmian",
     "rateNote": "Akceptując nową stawkę, zapisana karta zostanie autoryzowana na nową kwotę; poprzednia blokada zostanie zwolniona.",
     "genericError": "Coś poszło nie tak. Spróbuj ponownie."
+  },
+  "compBiddingCompleteBooking": {
+    "completeBooking": "Dokończ rezerwację i zapłać",
+    "viewBooking": "Zobacz rezerwację",
+    "failed": "Nie udało się wznowić rezerwacji. Spróbuj ponownie."
   }
 }

@@ -1956,5 +1956,10 @@
     "decline": "Garder comme convenu",
     "rateNote": "En acceptant un nouveau tarif, votre carte enregistrée est autorisée pour le nouveau montant ; l'ancienne empreinte est libérée.",
     "genericError": "Une erreur est survenue. Veuillez réessayer."
+  },
+  "compBiddingCompleteBooking": {
+    "completeBooking": "Finaliser la réservation et payer",
+    "viewBooking": "Voir la réservation",
+    "failed": "Impossible de reprendre la réservation. Veuillez réessayer."
   }
 }

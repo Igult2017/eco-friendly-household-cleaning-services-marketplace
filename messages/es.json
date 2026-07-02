@@ -1956,5 +1956,10 @@
     "decline": "Mantener lo acordado",
     "rateNote": "Al aceptar una nueva tarifa, tu tarjeta guardada se autoriza por el nuevo importe; la retención anterior se libera.",
     "genericError": "Algo salió mal. Inténtalo de nuevo."
+  },
+  "compBiddingCompleteBooking": {
+    "completeBooking": "Completar reserva y pagar",
+    "viewBooking": "Ver reserva",
+    "failed": "No se pudo reanudar la reserva. Inténtalo de nuevo."
   }
 }

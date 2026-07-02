@@ -1956,5 +1956,10 @@
     "decline": "Wie vereinbart lassen",
     "rateNote": "Bei Annahme eines neuen Satzes wird deine gespeicherte Karte über den neuen Betrag autorisiert; die alte Reservierung wird freigegeben.",
     "genericError": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
+  },
+  "compBiddingCompleteBooking": {
+    "completeBooking": "Buchung abschließen & bezahlen",
+    "viewBooking": "Buchung ansehen",
+    "failed": "Buchung konnte nicht fortgesetzt werden. Bitte erneut versuchen."
   }
 }

@@ -1956,5 +1956,10 @@
     "decline": "Houden zoals afgesproken",
     "rateNote": "Bij acceptatie van een nieuw tarief wordt je opgeslagen kaart voor het nieuwe bedrag geautoriseerd; de oude reservering wordt vrijgegeven.",
     "genericError": "Er ging iets mis. Probeer opnieuw."
+  },
+  "compBiddingCompleteBooking": {
+    "completeBooking": "Boeking afronden & betalen",
+    "viewBooking": "Boeking bekijken",
+    "failed": "Kon de boeking niet hervatten. Probeer opnieuw."
   }
 }
