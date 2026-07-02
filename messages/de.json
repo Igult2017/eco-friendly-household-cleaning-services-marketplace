@@ -937,8 +937,9 @@
     "recurring_recurring": "Wiederkehrend",
     "estimatedHoursLabel": "Geschätzte Arbeitsstunden",
     "estimatedHoursHint": "Wie viele Stunden der Auftrag dauern sollte — Reinigungskräfte kalkulieren damit den Stundenpreis.",
-    "budgetTotalHint": "Gesamt für {hours} Std.: {min} – {max}",
-    "errorHoursRequired": "Bitte gib die geschätzten Stunden an, damit der Gesamtbetrag berechnet werden kann."
+    "budgetTotalHint": "Gesamt für {hours} Std.: {total}",
+    "errorHoursRequired": "Bitte gib die geschätzten Stunden an, damit der Gesamtbetrag berechnet werden kann.",
+    "hourlyRateLabel": "Betrag pro Stunde"
   },
   "customerProfilePage": {
     "title": "Mein Profil",

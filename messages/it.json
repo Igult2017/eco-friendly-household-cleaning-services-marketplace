@@ -937,8 +937,9 @@
     "recurring_recurring": "Ricorrente",
     "estimatedHoursLabel": "Ore di lavoro stimate",
     "estimatedHoursHint": "Quante ore dovrebbe richiedere il lavoro — gli addetti la usano per calcolare la tariffa oraria.",
-    "budgetTotalHint": "Totale per {hours} h: {min} – {max}",
-    "errorHoursRequired": "Indica le ore stimate per calcolare il totale."
+    "budgetTotalHint": "Totale per {hours} h: {total}",
+    "errorHoursRequired": "Indica le ore stimate per calcolare il totale.",
+    "hourlyRateLabel": "Importo all ora"
   },
   "customerProfilePage": {
     "title": "Il mio profilo",

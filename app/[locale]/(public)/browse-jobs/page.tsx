@@ -165,7 +165,9 @@ export default function BrowseJobsPage() {
                       <p className="text-xs text-[#9CA3AF] mb-0.5">{t("budget")}</p>
                       <p className="font-bold text-[#2D7A5F] text-lg">
                         {job.budgetMin && job.budgetMax
-                          ? `${formatCurrency(job.budgetMin)} – ${formatCurrency(job.budgetMax)}`
+                          ? job.budgetMin === job.budgetMax
+                            ? formatCurrency(job.budgetMin)
+                            : `${formatCurrency(job.budgetMin)} – ${formatCurrency(job.budgetMax)}`
                           : job.budgetMax
                           ? t("budgetUpTo", { amount: formatCurrency(job.budgetMax) })
                           : formatCurrency(job.budgetMin!)}

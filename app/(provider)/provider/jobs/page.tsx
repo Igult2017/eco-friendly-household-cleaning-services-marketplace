@@ -154,12 +154,15 @@ export default function ProviderJobsPage() {
                       </div>
                       <div className="text-right flex-shrink-0">
                         {job.budgetMin && job.budgetMax && (
-                          <p className="font-bold text-[#2D7A5F] text-sm">{formatCurrency(job.budgetMin)} – {formatCurrency(job.budgetMax)}</p>
+                          <p className="font-bold text-[#2D7A5F] text-sm">
+                            {job.budgetMin === job.budgetMax ? formatCurrency(job.budgetMin) : <>{formatCurrency(job.budgetMin)} – {formatCurrency(job.budgetMax)}</>}
+                          </p>
                         )}
-                        {/* Implied hourly range — per-hour is the payment mode; helps cleaners bid. */}
+                        {/* Implied hourly — per-hour is the payment mode; helps cleaners bid. */}
                         {job.budgetMin && job.budgetMax && job.estimatedDurationMinutes ? (
                           <p className="text-[11px] text-[#6B7280]">
-                            ≈ {formatCurrency(Math.round((job.budgetMin * 60) / job.estimatedDurationMinutes))} – {formatCurrency(Math.round((job.budgetMax * 60) / job.estimatedDurationMinutes))}/h
+                            ≈ {formatCurrency(Math.round((job.budgetMin * 60) / job.estimatedDurationMinutes))}
+                            {job.budgetMin !== job.budgetMax && <> – {formatCurrency(Math.round((job.budgetMax * 60) / job.estimatedDurationMinutes))}</>}/h
                           </p>
                         ) : null}
                         <p className="text-xs text-[#9CA3AF] mt-1">{t("bidCount", { count: job.bids.length })}</p>

@@ -937,8 +937,9 @@
     "recurring_recurring": "Récurrent",
     "estimatedHoursLabel": "Heures de travail estimées",
     "estimatedHoursHint": "Durée estimée du travail — les intervenants s en servent pour calculer le tarif horaire.",
-    "budgetTotalHint": "Total pour {hours} h : {min} – {max}",
-    "errorHoursRequired": "Indiquez les heures estimées pour calculer le total."
+    "budgetTotalHint": "Total pour {hours} h : {total}",
+    "errorHoursRequired": "Indiquez les heures estimées pour calculer le total.",
+    "hourlyRateLabel": "Montant par heure"
   },
   "customerProfilePage": {
     "title": "Mon profil",

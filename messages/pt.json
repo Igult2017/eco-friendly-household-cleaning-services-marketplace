@@ -937,8 +937,9 @@
     "recurring_recurring": "Recorrente",
     "estimatedHoursLabel": "Horas de trabalho estimadas",
     "estimatedHoursHint": "Quantas horas o trabalho deve demorar — os profissionais usam isto para calcular o preço por hora.",
-    "budgetTotalHint": "Total para {hours} h: {min} – {max}",
-    "errorHoursRequired": "Indica as horas estimadas para calcular o total."
+    "budgetTotalHint": "Total para {hours} h: {total}",
+    "errorHoursRequired": "Indica as horas estimadas para calcular o total.",
+    "hourlyRateLabel": "Valor por hora"
   },
   "customerProfilePage": {
     "title": "O meu perfil",

@@ -38,8 +38,7 @@ export default function PostJobPage() {
   const [form, setForm] = useState({
     title: "",
     description: "",
-    budgetMin: "",
-    budgetMax: "",
+    hourlyRate: "",
     desiredDate: "",
     desiredTimeStart: "",
     desiredTimeEnd: "",
@@ -118,7 +117,7 @@ export default function PostJobPage() {
     // Budget is entered PER HOUR (the payment mode in EU + US); the stored budget is the job total
     // (rate × estimated hours) — what cleaners actually bid against.
     const hrs = parseFloat(form.estimatedHours)
-    if ((form.budgetMin || form.budgetMax) && !(hrs > 0)) { setError(t("errorHoursRequired")); return }
+    if (form.hourlyRate && !(hrs > 0)) { setError(t("errorHoursRequired")); return }
     setLoading(true); setError(null)
     try {
       const res = await fetch("/api/jobs", {
@@ -128,8 +127,9 @@ export default function PostJobPage() {
           ...form,
           // Normalize messy postal input ("12047 Neukölln" → "12047") — API caps postal at 10 chars.
           serviceAddress: { ...form.serviceAddress, postalCode: extractPostalCode(form.serviceAddress.postalCode) },
-          budgetMin: form.budgetMin ? Math.round(parseFloat(form.budgetMin) * 100 * hrs) : undefined,
-          budgetMax: form.budgetMax ? Math.round(parseFloat(form.budgetMax) * 100 * hrs) : undefined,
+          // Single hourly rate → one job total, stored in both bounds (boards collapse equal values).
+          budgetMin: form.hourlyRate ? Math.round(parseFloat(form.hourlyRate) * 100 * hrs) : undefined,
+          budgetMax: form.hourlyRate ? Math.round(parseFloat(form.hourlyRate) * 100 * hrs) : undefined,
           desiredTimeRange: hasStart && hasEnd ? { start: form.desiredTimeStart, end: form.desiredTimeEnd } : undefined,
           estimatedHours: form.estimatedHours ? parseFloat(form.estimatedHours) : undefined,
           recurringFrequency: form.recurringFrequency || undefined,
@@ -156,7 +156,7 @@ export default function PostJobPage() {
         <p className="text-[#6B7280] text-center mb-8 max-w-sm">{t("successDescription")}</p>
         <div className="flex gap-3">
           <Button onClick={() => router.push("/jobs")} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white">{t("viewMyJobs")}</Button>
-          <Button variant="outline" onClick={() => { setSuccess(false); setForm({ title: "", description: "", budgetMin: "", budgetMax: "", desiredDate: "", desiredTimeStart: "", desiredTimeEnd: "", estimatedHours: "2", serviceAddress: { line1: "", city: "", postalCode: "", country: "DE" }, serviceLatitude: 0, serviceLongitude: 0, radiusKm: 25, ecoRequirements: [], recurringFrequency: "" }) }} className="border-[#E5EBF0]">{t("postAnother")}</Button>
+          <Button variant="outline" onClick={() => { setSuccess(false); setForm({ title: "", description: "", hourlyRate: "", desiredDate: "", desiredTimeStart: "", desiredTimeEnd: "", estimatedHours: "2", serviceAddress: { line1: "", city: "", postalCode: "", country: "DE" }, serviceLatitude: 0, serviceLongitude: 0, radiusKm: 25, ecoRequirements: [], recurringFrequency: "" }) }} className="border-[#E5EBF0]">{t("postAnother")}</Button>
         </div>
       </div>
     )
@@ -178,25 +178,18 @@ export default function PostJobPage() {
               <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("descriptionLabel")}</Label>
               <Textarea value={form.description} onChange={(e) => set("description", e.target.value)} placeholder={t("descriptionPlaceholder")} rows={4} required minLength={20} className="resize-none" />
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("budgetMinLabel")}</Label>
-                <Input type="number" value={form.budgetMin} onChange={(e) => set("budgetMin", e.target.value)} placeholder="20" min={1} step="0.5" />
-              </div>
-              <div>
-                <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("budgetMaxLabel")}</Label>
-                <Input type="number" value={form.budgetMax} onChange={(e) => set("budgetMax", e.target.value)} placeholder="35" min={1} step="0.5" />
-              </div>
+            <div>
+              <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("hourlyRateLabel")}</Label>
+              <Input type="number" value={form.hourlyRate} onChange={(e) => set("hourlyRate", e.target.value)} placeholder="25" min={1} step="0.5" />
+              {form.hourlyRate && parseFloat(form.estimatedHours) > 0 && (
+                <p className="text-xs text-[#2D7A5F] font-medium mt-1">
+                  {t("budgetTotalHint", {
+                    hours: form.estimatedHours,
+                    total: formatCurrencyForCountry(Math.round((parseFloat(form.hourlyRate) || 0) * 100 * parseFloat(form.estimatedHours)), form.serviceAddress.country),
+                  })}
+                </p>
+              )}
             </div>
-            {(form.budgetMin || form.budgetMax) && parseFloat(form.estimatedHours) > 0 && (
-              <p className="text-xs text-[#2D7A5F] font-medium -mt-2">
-                {t("budgetTotalHint", {
-                  hours: form.estimatedHours,
-                  min: formatCurrencyForCountry(Math.round((parseFloat(form.budgetMin || form.budgetMax) || 0) * 100 * parseFloat(form.estimatedHours)), form.serviceAddress.country),
-                  max: formatCurrencyForCountry(Math.round((parseFloat(form.budgetMax || form.budgetMin) || 0) * 100 * parseFloat(form.estimatedHours)), form.serviceAddress.country),
-                })}
-              </p>
-            )}
             <div>
               <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("desiredDateLabel")}</Label>
               <Input type="date" value={form.desiredDate} onChange={(e) => set("desiredDate", e.target.value)} min={new Date().toISOString().split("T")[0]} />

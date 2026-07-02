@@ -937,8 +937,9 @@
     "recurring_recurring": "Cykliczne",
     "estimatedHoursLabel": "Szacowane godziny pracy",
     "estimatedHoursHint": "Ile godzin powinno zająć zlecenie — osoby sprzątające wyceniają na tej podstawie stawkę godzinową.",
-    "budgetTotalHint": "Łącznie za {hours} godz.: {min} – {max}",
-    "errorHoursRequired": "Podaj szacowane godziny, aby obliczyć łączną kwotę."
+    "budgetTotalHint": "Łącznie za {hours} godz.: {total}",
+    "errorHoursRequired": "Podaj szacowane godziny, aby obliczyć łączną kwotę.",
+    "hourlyRateLabel": "Kwota za godzinę"
   },
   "customerProfilePage": {
     "title": "Mój profil",

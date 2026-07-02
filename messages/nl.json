@@ -937,8 +937,9 @@
     "recurring_recurring": "Terugkerend",
     "estimatedHoursLabel": "Geschatte werkuren",
     "estimatedHoursHint": "Hoeveel uur de klus zou moeten duren — schoonmakers gebruiken dit om per uur te prijzen.",
-    "budgetTotalHint": "Totaal voor {hours} u: {min} – {max}",
-    "errorHoursRequired": "Vul de geschatte uren in zodat het totaal berekend kan worden."
+    "budgetTotalHint": "Totaal voor {hours} u: {total}",
+    "errorHoursRequired": "Vul de geschatte uren in zodat het totaal berekend kan worden.",
+    "hourlyRateLabel": "Bedrag per uur"
   },
   "customerProfilePage": {
     "title": "Mijn profiel",
