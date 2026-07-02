@@ -699,7 +699,9 @@
     "freq_weekly": "Semanal",
     "freq_biweekly": "Cada 2 semanas",
     "freq_monthly": "Mensual",
-    "slotBooked": "Reservado"
+    "slotBooked": "Reservado",
+    "recurringDaysLabel": "¿Qué días?",
+    "recurringDaysHint": "Elige los días de la semana para la limpieza recurrente."
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "No se pudo cargar la reserva",
@@ -1016,7 +1018,9 @@
     "yourPayout": "tu pago",
     "scheduledAt": "{date} a las {time}",
     "markAsComplete": "Marcar como completada",
-    "receiptLink": "Recibo"
+    "receiptLink": "Recibo",
+    "recurringChip": "Recurrente",
+    "awaitingClient": "Sugerencia enviada: esperando la respuesta del cliente."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "No se pudo marcar como completado",
@@ -1910,5 +1914,32 @@
     "consentError": "Autoriza el cobro recurrente para continuar.",
     "genericError": "No se pudo configurar la programación. Inténtalo de nuevo.",
     "submit": "Activar programación recurrente"
+  },
+  "compBookingRespondActions": {
+    "accept": "Aceptar reserva",
+    "suggestChanges": "Sugerir cambios",
+    "reject": "Rechazar",
+    "suggestTitle": "Sugerir otra hora u otra tarifa",
+    "newDate": "Nueva fecha",
+    "newTime": "Nueva hora",
+    "newRatePlaceholder": "Nueva tarifa por hora (p. ej. 25)",
+    "messagePlaceholder": "Mensaje para el cliente (opcional)",
+    "sendSuggestion": "Enviar sugerencia",
+    "rejectTitle": "Rechazar esta reserva",
+    "reasonPlaceholder": "Explica al cliente por qué no puedes aceptar este trabajo",
+    "confirmReject": "Rechazar reserva",
+    "back": "Atrás",
+    "reasonTooShort": "Indica un motivo breve (mínimo 5 caracteres).",
+    "suggestNothing": "Sugiere una nueva hora, una nueva tarifa o ambas.",
+    "genericError": "Algo salió mal. Inténtalo de nuevo."
+  },
+  "compBookingProposalBanner": {
+    "title": "Tu profesional sugiere cambios",
+    "newTime": "Nueva hora",
+    "newRate": "Nueva tarifa por hora",
+    "accept": "Aceptar cambios",
+    "decline": "Mantener lo acordado",
+    "rateNote": "Al aceptar una nueva tarifa, tu tarjeta guardada se autoriza por el nuevo importe; la retención anterior se libera.",
+    "genericError": "Algo salió mal. Inténtalo de nuevo."
   }
 }

@@ -699,7 +699,9 @@
     "freq_weekly": "Settimanale",
     "freq_biweekly": "Ogni 2 settimane",
     "freq_monthly": "Mensile",
-    "slotBooked": "Occupato"
+    "slotBooked": "Occupato",
+    "recurringDaysLabel": "In quali giorni?",
+    "recurringDaysHint": "Scegli i giorni della settimana per la pulizia ricorrente."
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Impossibile caricare la prenotazione",
@@ -1016,7 +1018,9 @@
     "yourPayout": "il tuo compenso",
     "scheduledAt": "{date} alle {time}",
     "markAsComplete": "Segna come completata",
-    "receiptLink": "Ricevuta"
+    "receiptLink": "Ricevuta",
+    "recurringChip": "Ricorrente",
+    "awaitingClient": "Proposta inviata — in attesa della risposta del cliente."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Impossibile contrassegnare come completato",
@@ -1910,5 +1914,32 @@
     "consentError": "Autorizza l'addebito ricorrente per continuare.",
     "genericError": "Impossibile impostare la pianificazione. Riprova.",
     "submit": "Attiva pianificazione ricorrente"
+  },
+  "compBookingRespondActions": {
+    "accept": "Accetta prenotazione",
+    "suggestChanges": "Suggerisci modifiche",
+    "reject": "Rifiuta",
+    "suggestTitle": "Suggerisci un altro orario o un'altra tariffa",
+    "newDate": "Nuova data",
+    "newTime": "Nuovo orario",
+    "newRatePlaceholder": "Nuova tariffa oraria (es. 25)",
+    "messagePlaceholder": "Messaggio al cliente (facoltativo)",
+    "sendSuggestion": "Invia suggerimento",
+    "rejectTitle": "Rifiuta questa prenotazione",
+    "reasonPlaceholder": "Spiega al cliente perché non puoi accettare questo lavoro",
+    "confirmReject": "Rifiuta prenotazione",
+    "back": "Indietro",
+    "reasonTooShort": "Indica un breve motivo (almeno 5 caratteri).",
+    "suggestNothing": "Suggerisci un nuovo orario, una nuova tariffa o entrambi.",
+    "genericError": "Qualcosa è andato storto. Riprova."
+  },
+  "compBookingProposalBanner": {
+    "title": "Il tuo addetto suggerisce modifiche",
+    "newTime": "Nuovo orario",
+    "newRate": "Nuova tariffa oraria",
+    "accept": "Accetta modifiche",
+    "decline": "Mantieni come concordato",
+    "rateNote": "Accettando una nuova tariffa, la carta salvata viene autorizzata per il nuovo importo; il blocco precedente viene rilasciato.",
+    "genericError": "Qualcosa è andato storto. Riprova."
   }
 }

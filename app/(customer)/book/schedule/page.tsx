@@ -37,7 +37,7 @@ function getNext14Days(): string[] {
 export default function BookStep3Page() {
   const t = useTranslations("customerBookSchedulePage")
   const router = useRouter()
-  const { selectedProviderId, setSchedule, scheduledAt, durationMinutes, frequency, setFrequency } = useBookingStore()
+  const { selectedProviderId, setSchedule, scheduledAt, durationMinutes, frequency, setFrequency, recurringDays, setRecurringDays } = useBookingStore()
 
   // scheduledAt is now an ISO string; convert back to local date/time parts for display
   const restoreDate = (iso: string | null) => {
@@ -235,6 +235,30 @@ export default function BookStep3Page() {
               </button>
             ))}
           </div>
+
+          {frequency !== "one_time" && (
+            <div className="mt-4 border-t border-[#E5EBF0] pt-4">
+              <Label className="text-sm font-semibold text-[#2B3441] mb-1 block">{t("recurringDaysLabel")}</Label>
+              <p className="text-xs text-[#6B7280] mb-3">{t("recurringDaysHint")}</p>
+              <div className="flex flex-wrap gap-2">
+                {[1, 2, 3, 4, 5, 6, 0].map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => setRecurringDays(recurringDays.includes(d) ? recurringDays.filter((x) => x !== d) : [...recurringDays, d])}
+                    className={cn(
+                      "px-3 py-2 rounded-lg text-sm font-medium border-2 transition-all",
+                      recurringDays.includes(d)
+                        ? "border-[#2D7A5F] bg-[#2D7A5F] text-white"
+                        : "border-[#E5EBF0] hover:border-[#4CB87A] text-[#2B3441]"
+                    )}
+                  >
+                    {/* 2024-01-07 is a Sunday — offset by d for a locale-aware weekday name. */}
+                    {new Date(Date.UTC(2024, 0, 7 + d)).toLocaleDateString(undefined, { weekday: "short", timeZone: "UTC" })}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex gap-3">

@@ -134,6 +134,7 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     promoCodeId: promoCodeId ?? undefined,
     discountAmount: discountCents,
     requestedFrequency: data.requestedFrequency ?? null,
+    requestedDays: data.requestedDays?.length ? data.requestedDays : null,
   }
 
   let result: { id: string; bookingNumber: string }

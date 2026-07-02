@@ -71,6 +71,8 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS email_reminders boolean NOT NULL DEFA
 ALTER TABLE users ADD COLUMN IF NOT EXISTS recurring_interest varchar(12);
 ALTER TABLE job_posts ADD COLUMN IF NOT EXISTS recurring_frequency varchar(12);
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS requested_frequency varchar(12);
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS requested_days jsonb;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS pending_proposal jsonb;
 ALTER TABLE providers ADD COLUMN IF NOT EXISTS recurring_discount_pct integer NOT NULL DEFAULT 0;
 
 -- Optional per-post author display name (overrides the author's account name on the blog).

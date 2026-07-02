@@ -699,7 +699,9 @@
     "freq_weekly": "Co tydzień",
     "freq_biweekly": "Co 2 tygodnie",
     "freq_monthly": "Co miesiąc",
-    "slotBooked": "Zajęte"
+    "slotBooked": "Zajęte",
+    "recurringDaysLabel": "W jakie dni?",
+    "recurringDaysHint": "Wybierz dni tygodnia dla cyklicznego sprzątania."
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Nie udało się załadować rezerwacji",
@@ -1016,7 +1018,9 @@
     "yourPayout": "Twoja wypłata",
     "scheduledAt": "{date} o {time}",
     "markAsComplete": "Oznacz jako zakończone",
-    "receiptLink": "Potwierdzenie"
+    "receiptLink": "Potwierdzenie",
+    "recurringChip": "Cykliczne",
+    "awaitingClient": "Propozycja wysłana — czekamy na odpowiedź klienta."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Nie udało się oznaczyć jako ukończone",
@@ -1910,5 +1914,32 @@
     "consentError": "Aby kontynuować, autoryzuj cykliczne obciążenie.",
     "genericError": "Nie udało się ustawić harmonogramu. Spróbuj ponownie.",
     "submit": "Aktywuj cykliczny harmonogram"
+  },
+  "compBookingRespondActions": {
+    "accept": "Zaakceptuj rezerwację",
+    "suggestChanges": "Zaproponuj zmiany",
+    "reject": "Odrzuć",
+    "suggestTitle": "Zaproponuj inny termin lub stawkę",
+    "newDate": "Nowa data",
+    "newTime": "Nowa godzina",
+    "newRatePlaceholder": "Nowa stawka godzinowa (np. 25)",
+    "messagePlaceholder": "Wiadomość do klienta (opcjonalnie)",
+    "sendSuggestion": "Wyślij propozycję",
+    "rejectTitle": "Odrzuć tę rezerwację",
+    "reasonPlaceholder": "Wyjaśnij klientowi, dlaczego nie możesz przyjąć zlecenia",
+    "confirmReject": "Odrzuć rezerwację",
+    "back": "Wstecz",
+    "reasonTooShort": "Podaj krótki powód (min. 5 znaków).",
+    "suggestNothing": "Zaproponuj nowy termin, nową stawkę lub oba.",
+    "genericError": "Coś poszło nie tak. Spróbuj ponownie."
+  },
+  "compBookingProposalBanner": {
+    "title": "Osoba sprzątająca proponuje zmiany",
+    "newTime": "Nowy termin",
+    "newRate": "Nowa stawka godzinowa",
+    "accept": "Zaakceptuj zmiany",
+    "decline": "Zostaw bez zmian",
+    "rateNote": "Akceptując nową stawkę, zapisana karta zostanie autoryzowana na nową kwotę; poprzednia blokada zostanie zwolniona.",
+    "genericError": "Coś poszło nie tak. Spróbuj ponownie."
   }
 }

@@ -699,7 +699,9 @@
     "freq_weekly": "Wekelijks",
     "freq_biweekly": "Om de 2 weken",
     "freq_monthly": "Maandelijks",
-    "slotBooked": "Bezet"
+    "slotBooked": "Bezet",
+    "recurringDaysLabel": "Op welke dagen?",
+    "recurringDaysHint": "Kies de weekdagen voor de terugkerende schoonmaak."
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Boeking kon niet worden geladen",
@@ -1016,7 +1018,9 @@
     "yourPayout": "jouw uitbetaling",
     "scheduledAt": "{date} om {time}",
     "markAsComplete": "Markeren als voltooid",
-    "receiptLink": "Bon"
+    "receiptLink": "Bon",
+    "recurringChip": "Terugkerend",
+    "awaitingClient": "Voorstel verstuurd — wachten op reactie van de klant."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Markeren als voltooid mislukt",
@@ -1910,5 +1914,32 @@
     "consentError": "Machtig de terugkerende afschrijving om door te gaan.",
     "genericError": "Kon het schema niet instellen. Probeer opnieuw.",
     "submit": "Terugkerend schema activeren"
+  },
+  "compBookingRespondActions": {
+    "accept": "Boeking accepteren",
+    "suggestChanges": "Wijzigingen voorstellen",
+    "reject": "Weigeren",
+    "suggestTitle": "Stel een andere tijd of een ander tarief voor",
+    "newDate": "Nieuwe datum",
+    "newTime": "Nieuwe tijd",
+    "newRatePlaceholder": "Nieuw uurtarief (bijv. 25)",
+    "messagePlaceholder": "Bericht aan de klant (optioneel)",
+    "sendSuggestion": "Voorstel versturen",
+    "rejectTitle": "Deze boeking weigeren",
+    "reasonPlaceholder": "Vertel de klant waarom je deze klus niet kunt aannemen",
+    "confirmReject": "Boeking weigeren",
+    "back": "Terug",
+    "reasonTooShort": "Geef een korte reden (minimaal 5 tekens).",
+    "suggestNothing": "Stel een nieuwe tijd, een nieuw tarief of beide voor.",
+    "genericError": "Er ging iets mis. Probeer opnieuw."
+  },
+  "compBookingProposalBanner": {
+    "title": "Je schoonmaker stelt wijzigingen voor",
+    "newTime": "Nieuwe tijd",
+    "newRate": "Nieuw uurtarief",
+    "accept": "Wijzigingen accepteren",
+    "decline": "Houden zoals afgesproken",
+    "rateNote": "Bij acceptatie van een nieuw tarief wordt je opgeslagen kaart voor het nieuwe bedrag geautoriseerd; de oude reservering wordt vrijgegeven.",
+    "genericError": "Er ging iets mis. Probeer opnieuw."
   }
 }

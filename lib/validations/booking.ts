@@ -25,6 +25,7 @@ export const createBookingSchema = z.object({
   ecoOptions: z.array(z.string().max(100)).max(20).default([]),
   carbonOffsetCents: z.union([z.literal(0), z.literal(200)]).optional().default(0),
   requestedFrequency: z.enum(["weekly", "biweekly", "monthly"]).optional(),
+  requestedDays: z.array(z.number().int().min(0).max(6)).max(7).optional(),
 })
 
 export const paymentIntentSchema = z.object({

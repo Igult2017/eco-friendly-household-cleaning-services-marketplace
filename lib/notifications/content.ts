@@ -303,6 +303,48 @@ const NOTIF: Record<string, Record<string, S>> = {
     pl: { title: "Rezerwacja usunięta", body: "Zaległa rezerwacja została usunięta z Twojego harmonogramu i przypisana innej osobie sprzątającej." },
     pt: { title: "Reserva removida", body: "Uma reserva em atraso foi removida do teu calendário e reatribuída a outro profissional." },
   },
+  // Cleaner counter-offered on a booking (new time and/or rate) — client should review.
+  booking_proposal: {
+    en: { title: "Your cleaner suggests changes", body: "Your cleaner suggested changes to your booking. Review and accept or decline." },
+    de: { title: "Deine Reinigungskraft schlägt Änderungen vor", body: "Deine Reinigungskraft hat Änderungen an deiner Buchung vorgeschlagen. Prüfe sie und nimm an oder lehne ab." },
+    fr: { title: "Votre intervenant propose des modifications", body: "Votre intervenant a proposé des modifications à votre réservation. Consultez-les et acceptez ou refusez." },
+    es: { title: "Tu profesional sugiere cambios", body: "Tu profesional ha sugerido cambios en tu reserva. Revísalos y acepta o rechaza." },
+    it: { title: "Il tuo addetto suggerisce modifiche", body: "Il tuo addetto ha suggerito modifiche alla prenotazione. Controlla e accetta o rifiuta." },
+    nl: { title: "Je schoonmaker stelt wijzigingen voor", body: "Je schoonmaker heeft wijzigingen aan je boeking voorgesteld. Bekijk ze en accepteer of wijs af." },
+    pl: { title: "Osoba sprzątająca proponuje zmiany", body: "Osoba sprzątająca zaproponowała zmiany w rezerwacji. Sprawdź i zaakceptuj lub odrzuć." },
+    pt: { title: "O teu profissional sugere alterações", body: "O teu profissional sugeriu alterações à tua reserva. Analisa e aceita ou recusa." },
+  },
+  proposal_accepted: {
+    en: { title: "Suggestion accepted", body: "The client accepted your suggested changes — the booking has been updated." },
+    de: { title: "Vorschlag angenommen", body: "Der Kunde hat deine vorgeschlagenen Änderungen angenommen — die Buchung wurde aktualisiert." },
+    fr: { title: "Proposition acceptée", body: "Le client a accepté vos modifications — la réservation a été mise à jour." },
+    es: { title: "Sugerencia aceptada", body: "El cliente aceptó tus cambios sugeridos: la reserva se ha actualizado." },
+    it: { title: "Proposta accettata", body: "Il cliente ha accettato le modifiche suggerite — la prenotazione è stata aggiornata." },
+    nl: { title: "Voorstel geaccepteerd", body: "De klant heeft je voorgestelde wijzigingen geaccepteerd — de boeking is bijgewerkt." },
+    pl: { title: "Propozycja przyjęta", body: "Klient zaakceptował zaproponowane zmiany — rezerwacja została zaktualizowana." },
+    pt: { title: "Sugestão aceite", body: "O cliente aceitou as tuas alterações — a reserva foi atualizada." },
+  },
+  proposal_declined: {
+    en: { title: "Suggestion declined", body: "The client declined your suggested changes — the booking stays as originally agreed." },
+    de: { title: "Vorschlag abgelehnt", body: "Der Kunde hat deine vorgeschlagenen Änderungen abgelehnt — die Buchung bleibt wie vereinbart." },
+    fr: { title: "Proposition refusée", body: "Le client a refusé vos modifications — la réservation reste comme convenu." },
+    es: { title: "Sugerencia rechazada", body: "El cliente rechazó tus cambios: la reserva se mantiene como se acordó." },
+    it: { title: "Proposta rifiutata", body: "Il cliente ha rifiutato le modifiche — la prenotazione resta come concordato." },
+    nl: { title: "Voorstel afgewezen", body: "De klant heeft je voorstel afgewezen — de boeking blijft zoals afgesproken." },
+    pl: { title: "Propozycja odrzucona", body: "Klient odrzucił zmiany — rezerwacja pozostaje bez zmian." },
+    pt: { title: "Sugestão recusada", body: "O cliente recusou as alterações — a reserva mantém-se como combinado." },
+  },
+  // Cleaner rejected a fresh booking with a stated reason; the hold was fully released.
+  booking_rejected: {
+    en: { title: "Booking declined", body: "Your cleaner can't take the booking scheduled for {datetime}. Reason: {reason}. Your payment hold was fully released." },
+    de: { title: "Buchung abgelehnt", body: "Deine Reinigungskraft kann die Buchung am {datetime} nicht übernehmen. Grund: {reason}. Deine Zahlungsreservierung wurde vollständig freigegeben." },
+    fr: { title: "Réservation refusée", body: "Votre intervenant ne peut pas assurer la réservation du {datetime}. Motif : {reason}. Votre empreinte bancaire a été entièrement libérée." },
+    es: { title: "Reserva rechazada", body: "Tu profesional no puede atender la reserva del {datetime}. Motivo: {reason}. La retención del pago se liberó por completo." },
+    it: { title: "Prenotazione rifiutata", body: "Il tuo addetto non può accettare la prenotazione del {datetime}. Motivo: {reason}. Il blocco sul pagamento è stato rilasciato." },
+    nl: { title: "Boeking geweigerd", body: "Je schoonmaker kan de boeking van {datetime} niet aannemen. Reden: {reason}. De reservering op je betaling is volledig vrijgegeven." },
+    pl: { title: "Rezerwacja odrzucona", body: "Osoba sprzątająca nie może przyjąć rezerwacji z {datetime}. Powód: {reason}. Blokada płatności została w pełni zwolniona." },
+    pt: { title: "Reserva recusada", body: "O teu profissional não pode aceitar a reserva de {datetime}. Motivo: {reason}. A retenção do pagamento foi totalmente libertada." },
+  },
 }
 
 // Placeholders each type's strings expect. A type localizes only if metadata supplies all of them.
@@ -325,6 +367,7 @@ const PARAMS: Record<string, string[]> = {
   booking_reminder_provider: ["datetime"],
   booking_overdue_cleaner: ["datetime"],
   booking_overdue_client: ["datetime"],
+  booking_rejected: ["datetime", "reason"],
 }
 
 /**

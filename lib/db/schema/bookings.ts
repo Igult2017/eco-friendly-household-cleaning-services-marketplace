@@ -83,6 +83,16 @@ export const bookings = pgTable(
     // Recurring cadence the client asked for at booking (weekly|biweekly|monthly), null = one-time.
     // Lets the cleaner see it's repeat work; the actual schedule is created separately via /recurring.
     requestedFrequency: varchar("requested_frequency", { length: 12 }),
+    // Days of week (0=Sun..6=Sat) the client wants the recurring service on.
+    requestedDays: jsonb("requested_days").$type<number[]>(),
+    // Cleaner's pending counter-offer (new time and/or hourly rate) awaiting the client's response.
+    pendingProposal: jsonb("pending_proposal").$type<{
+      scheduledAt?: string
+      durationMinutes?: number
+      hourlyCents?: number
+      message?: string
+      proposedAt: string
+    }>(),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },

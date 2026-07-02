@@ -22,6 +22,7 @@ interface BookingDraft {
   carbonOffsetCents: number    // 0 | 200 — persisted so 3DS redirect restores it
   bidAmountCents: number | null // non-null when booking originates from an accepted bid
   frequency: "one_time" | "weekly" | "biweekly" | "monthly"
+  recurringDays: number[]         // 0=Sun..6=Sat — which weekdays the client wants repeat service on
   step: 1 | 2 | 3 | 4 | 5
 }
 
@@ -48,6 +49,7 @@ interface BookingStore extends BookingDraft {
   setExtras: (instructions: string, ecoOptions: string[], addOnIds: string[]) => void
   setCarbonOffset: (cents: number) => void
   setFrequency: (frequency: BookingDraft["frequency"]) => void
+  setRecurringDays: (days: number[]) => void
   setStep: (step: BookingDraft["step"]) => void
   setBidFlow: (data: BidFlowData) => void  // pre-populate all wizard fields from accepted bid
   reset: () => void
@@ -71,6 +73,7 @@ const initialState: BookingDraft = {
   carbonOffsetCents: 0,
   bidAmountCents: null,
   frequency: "one_time",
+  recurringDays: [],
   step: 1,
 }
 
@@ -92,6 +95,7 @@ export const useBookingStore = create<BookingStore>()(
         set({ specialInstructions, ecoOptions, addOnIds, step: 5 }),
       setCarbonOffset: (carbonOffsetCents) => set({ carbonOffsetCents }),
       setFrequency: (frequency) => set({ frequency }),
+      setRecurringDays: (recurringDays) => set({ recurringDays }),
       setStep: (step) => set({ step }),
       setBidFlow: (data) =>
         set({

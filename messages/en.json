@@ -699,7 +699,9 @@
     "freq_weekly": "Weekly",
     "freq_biweekly": "Every 2 weeks",
     "freq_monthly": "Monthly",
-    "slotBooked": "Booked"
+    "slotBooked": "Booked",
+    "recurringDaysLabel": "On which days?",
+    "recurringDaysHint": "Pick the weekdays you want the recurring cleaning on."
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Failed to load booking",
@@ -1016,7 +1018,9 @@
     "yourPayout": "your payout",
     "scheduledAt": "{date} at {time}",
     "markAsComplete": "Mark as Complete",
-    "receiptLink": "Receipt"
+    "receiptLink": "Receipt",
+    "recurringChip": "Recurring",
+    "awaitingClient": "Suggestion sent — waiting for the client to respond."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Failed to mark as complete",
@@ -1910,5 +1914,32 @@
     "consentError": "Please authorize the recurring charge to continue.",
     "genericError": "Could not set up the schedule. Please try again.",
     "submit": "Activate recurring schedule"
+  },
+  "compBookingRespondActions": {
+    "accept": "Accept booking",
+    "suggestChanges": "Suggest changes",
+    "reject": "Reject",
+    "suggestTitle": "Suggest a different time or rate",
+    "newDate": "New date",
+    "newTime": "New time",
+    "newRatePlaceholder": "New hourly rate (e.g. 25)",
+    "messagePlaceholder": "Message to the client (optional)",
+    "sendSuggestion": "Send suggestion",
+    "rejectTitle": "Reject this booking",
+    "reasonPlaceholder": "Tell the client why you cannot take this job",
+    "confirmReject": "Reject booking",
+    "back": "Back",
+    "reasonTooShort": "Please give a short reason (at least 5 characters).",
+    "suggestNothing": "Suggest a new time, a new rate, or both.",
+    "genericError": "Something went wrong. Please try again."
+  },
+  "compBookingProposalBanner": {
+    "title": "Your cleaner suggests changes",
+    "newTime": "New time",
+    "newRate": "New hourly rate",
+    "accept": "Accept changes",
+    "decline": "Keep as agreed",
+    "rateNote": "Accepting a new rate re-authorizes your saved card for the new amount; the old hold is released.",
+    "genericError": "Something went wrong. Please try again."
   }
 }

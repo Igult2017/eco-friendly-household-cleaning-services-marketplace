@@ -1,10 +1,14 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Loader2, CalendarClock, MapPin, FileText } from "lucide-react"
+import { Loader2, CalendarClock, MapPin, FileText, Repeat, Hourglass } from "lucide-react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
+import { BookingRespondActions } from "@/components/booking/BookingRespondActions"
+
+// 2024-01-07 is a Sunday — offset by day number for a locale-aware short weekday name.
+const dayName = (d: number) => new Date(Date.UTC(2024, 0, 7 + d)).toLocaleDateString(undefined, { weekday: "short", timeZone: "UTC" })
 
 type Booking = {
   id: string
@@ -20,6 +24,9 @@ type Booking = {
   serviceName: string | null
   customerName: string | null
   customerEmail: string | null
+  requestedFrequency: string | null
+  requestedDays: number[] | null
+  pendingProposal: { scheduledAt?: string; hourlyCents?: number } | null
   createdAt: string
 }
 
@@ -41,11 +48,12 @@ export default function ProviderBookingsPage() {
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState("all")
 
-  useEffect(() => {
+  function load() {
     fetch("/api/provider/bookings")
       .then((r) => r.json())
       .then((d) => { setBookings(d.bookings ?? []); setLoading(false) })
-  }, [])
+  }
+  useEffect(() => { load() }, [])
 
   const visible = tab === "all" ? bookings : bookings.filter((b) => b.status === tab)
 
@@ -115,13 +123,32 @@ export default function ProviderBookingsPage() {
                   </div>
                 </div>
 
+                {b.requestedFrequency && (
+                  <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-[#D1F0E0] px-2.5 py-1 text-xs font-medium text-[#2D7A5F]">
+                    <Repeat size={12} /> {t("recurringChip")}
+                    {b.requestedDays && b.requestedDays.length > 0 && <> · {b.requestedDays.map(dayName).join(", ")}</>}
+                  </p>
+                )}
+
                 {b.specialInstructions && (
                   <p className="mt-2 text-xs text-[#6B7280] bg-[#F4FAF6] rounded-lg px-3 py-2">
                     {b.specialInstructions}
                   </p>
                 )}
 
-                {(b.status === "payment_authorized" || b.status === "confirmed" || b.status === "in_progress") && (
+                {/* New booking → accept / counter-offer / reject. Once a counter-offer is out, wait. */}
+                {b.status === "payment_authorized" && (
+                  <div className="mt-3 pt-3 border-t border-[#E5EBF0]">
+                    {b.pendingProposal ? (
+                      <p className="inline-flex items-center gap-1.5 text-sm text-amber-700">
+                        <Hourglass size={14} /> {t("awaitingClient")}
+                      </p>
+                    ) : (
+                      <BookingRespondActions bookingId={b.id} onDone={load} />
+                    )}
+                  </div>
+                )}
+                {(b.status === "confirmed" || b.status === "in_progress") && (
                   <div className="mt-3 pt-3 border-t border-[#E5EBF0]">
                     <Link
                       href={`/bookings/${b.id}/complete`}

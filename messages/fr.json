@@ -699,7 +699,9 @@
     "freq_weekly": "Hebdomadaire",
     "freq_biweekly": "Toutes les 2 semaines",
     "freq_monthly": "Mensuel",
-    "slotBooked": "Réservé"
+    "slotBooked": "Réservé",
+    "recurringDaysLabel": "Quels jours ?",
+    "recurringDaysHint": "Choisissez les jours de la semaine pour le ménage récurrent."
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Échec du chargement de la réservation",
@@ -1016,7 +1018,9 @@
     "yourPayout": "votre rémunération",
     "scheduledAt": "{date} à {time}",
     "markAsComplete": "Marquer comme terminée",
-    "receiptLink": "Reçu"
+    "receiptLink": "Reçu",
+    "recurringChip": "Récurrent",
+    "awaitingClient": "Proposition envoyée — en attente de la réponse du client."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Échec du marquage comme terminé",
@@ -1910,5 +1914,32 @@
     "consentError": "Veuillez autoriser le prélèvement récurrent pour continuer.",
     "genericError": "Impossible de configurer le planning. Veuillez réessayer.",
     "submit": "Activer le planning récurrent"
+  },
+  "compBookingRespondActions": {
+    "accept": "Accepter la réservation",
+    "suggestChanges": "Proposer des modifications",
+    "reject": "Refuser",
+    "suggestTitle": "Proposer un autre horaire ou un autre tarif",
+    "newDate": "Nouvelle date",
+    "newTime": "Nouvelle heure",
+    "newRatePlaceholder": "Nouveau tarif horaire (ex. 25)",
+    "messagePlaceholder": "Message au client (optionnel)",
+    "sendSuggestion": "Envoyer la proposition",
+    "rejectTitle": "Refuser cette réservation",
+    "reasonPlaceholder": "Expliquez au client pourquoi vous ne pouvez pas prendre ce travail",
+    "confirmReject": "Refuser la réservation",
+    "back": "Retour",
+    "reasonTooShort": "Merci d'indiquer un motif (au moins 5 caractères).",
+    "suggestNothing": "Proposez un nouvel horaire, un nouveau tarif, ou les deux.",
+    "genericError": "Une erreur est survenue. Veuillez réessayer."
+  },
+  "compBookingProposalBanner": {
+    "title": "Votre intervenant propose des modifications",
+    "newTime": "Nouvel horaire",
+    "newRate": "Nouveau tarif horaire",
+    "accept": "Accepter les modifications",
+    "decline": "Garder comme convenu",
+    "rateNote": "En acceptant un nouveau tarif, votre carte enregistrée est autorisée pour le nouveau montant ; l'ancienne empreinte est libérée.",
+    "genericError": "Une erreur est survenue. Veuillez réessayer."
   }
 }

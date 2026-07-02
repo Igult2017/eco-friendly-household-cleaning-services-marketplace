@@ -140,6 +140,14 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             link: "/provider/bookings", metadata: { variant: "booking_cancelled_party", datetime: dt },
           })
         }
+      } else if (reason) {
+        // Provider REJECTED the booking with a stated reason — tell the client why and that the hold
+        // was fully released (provider-initiated cancel is always a 100% release).
+        await db.insert(notifications).values({
+          userId: booking.customerId, type: "booking_cancelled", title: "Booking declined",
+          body: `Your cleaner can't take the booking scheduled for ${dt}. Reason: ${reason}. Your payment hold was fully released.`,
+          link: "/browse", metadata: { variant: "booking_rejected", datetime: dt, reason },
+        })
       } else {
         await db.insert(notifications).values({
           userId: booking.customerId, type: "booking_cancelled", title: "Booking cancelled",

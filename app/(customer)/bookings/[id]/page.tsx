@@ -9,6 +9,7 @@ import { formatCurrency } from "@/lib/utils/formatCurrency"
 import { formatDate } from "@/lib/utils/formatDate"
 import { CalendarDays, MapPin, Leaf, Star, MessageSquare, MessageSquareWarning, XCircle, CheckCircle2, Clock, AlertCircle, CalendarClock, FileText } from "lucide-react"
 import { ConfirmCompletionButton } from "@/components/customer/ConfirmCompletionButton"
+import { ProposalBanner } from "@/components/booking/ProposalBanner"
 
 export const dynamic = "force-dynamic"
 
@@ -56,6 +57,8 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
       providerBusinessName: providers.businessName,
       providerSlug: providers.slug,
       providerCity: providers.city,
+      providerCountry: providers.country,
+      pendingProposal: bookings.pendingProposal,
       serviceName: providerServices.name,
     })
     .from(bookings)
@@ -104,6 +107,11 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
           </span>
         </div>
       </div>
+
+      {/* Cleaner's pending counter-offer (new time / rate) — client accepts or declines. */}
+      {booking.pendingProposal && ["payment_authorized", "confirmed"].includes(booking.status) && (
+        <ProposalBanner bookingId={booking.id} proposal={booking.pendingProposal} providerCountry={booking.providerCountry ?? "DE"} />
+      )}
 
       {/* Details */}
       <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-6 space-y-4">

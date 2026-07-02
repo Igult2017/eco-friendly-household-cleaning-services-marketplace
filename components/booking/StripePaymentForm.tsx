@@ -21,6 +21,7 @@ interface Props {
     ecoOptions: string[]
     carbonOffsetCents?: number
     requestedFrequency?: string
+    requestedDays?: number[]
   }
 }
 

@@ -699,7 +699,9 @@
     "freq_weekly": "Wöchentlich",
     "freq_biweekly": "Alle 2 Wochen",
     "freq_monthly": "Monatlich",
-    "slotBooked": "Belegt"
+    "slotBooked": "Belegt",
+    "recurringDaysLabel": "An welchen Tagen?",
+    "recurringDaysHint": "Wähle die Wochentage für die wiederkehrende Reinigung."
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Buchung konnte nicht geladen werden",
@@ -1016,7 +1018,9 @@
     "yourPayout": "deine Auszahlung",
     "scheduledAt": "{date} um {time}",
     "markAsComplete": "Als abgeschlossen markieren",
-    "receiptLink": "Beleg"
+    "receiptLink": "Beleg",
+    "recurringChip": "Wiederkehrend",
+    "awaitingClient": "Vorschlag gesendet — warte auf die Antwort des Kunden."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Als abgeschlossen markieren fehlgeschlagen",
@@ -1910,5 +1914,32 @@
     "consentError": "Bitte autorisiere die wiederkehrende Belastung, um fortzufahren.",
     "genericError": "Zeitplan konnte nicht eingerichtet werden. Bitte versuche es erneut.",
     "submit": "Wiederkehrenden Plan aktivieren"
+  },
+  "compBookingRespondActions": {
+    "accept": "Buchung annehmen",
+    "suggestChanges": "Änderungen vorschlagen",
+    "reject": "Ablehnen",
+    "suggestTitle": "Andere Zeit oder anderen Stundensatz vorschlagen",
+    "newDate": "Neues Datum",
+    "newTime": "Neue Uhrzeit",
+    "newRatePlaceholder": "Neuer Stundensatz (z. B. 25)",
+    "messagePlaceholder": "Nachricht an den Kunden (optional)",
+    "sendSuggestion": "Vorschlag senden",
+    "rejectTitle": "Diese Buchung ablehnen",
+    "reasonPlaceholder": "Erkläre dem Kunden, warum du den Auftrag nicht übernehmen kannst",
+    "confirmReject": "Buchung ablehnen",
+    "back": "Zurück",
+    "reasonTooShort": "Bitte gib einen kurzen Grund an (mind. 5 Zeichen).",
+    "suggestNothing": "Schlage eine neue Zeit, einen neuen Satz oder beides vor.",
+    "genericError": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
+  },
+  "compBookingProposalBanner": {
+    "title": "Deine Reinigungskraft schlägt Änderungen vor",
+    "newTime": "Neue Zeit",
+    "newRate": "Neuer Stundensatz",
+    "accept": "Änderungen annehmen",
+    "decline": "Wie vereinbart lassen",
+    "rateNote": "Bei Annahme eines neuen Satzes wird deine gespeicherte Karte über den neuen Betrag autorisiert; die alte Reservierung wird freigegeben.",
+    "genericError": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
   }
 }
