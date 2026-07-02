@@ -16,6 +16,7 @@ type Job = {
   budgetMax: number | null
   desiredDate: string | null
   estimatedDurationMinutes: number | null
+  own: boolean
   city: string | null
   country: string
   ecoRequirements: string[]
@@ -206,6 +207,8 @@ export default function BrowseJobsPage() {
                     <p className="text-xs text-[#9CA3AF]">
                       {job.status === "assigned" ? t("providerSelected") : t("jobExpired")}
                     </p>
+                  ) : job.own ? (
+                    <p className="text-xs text-[#9CA3AF]">{t("yourOwnJob")}</p>
                   ) : clientCannotBid ? (
                     <p className="text-xs text-[#9CA3AF]">{t("onlyCleanersBid")}</p>
                   ) : (

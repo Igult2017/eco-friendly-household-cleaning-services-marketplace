@@ -218,7 +218,8 @@
     "viewJobsToBid": "Zobacz zlecenia do licytacji",
     "postAJob": "Dodaj zlecenie",
     "becomeCleanerToBid": "Zostań sprzątaczem, aby licytować",
-    "estHours": "≈ {hours} godz."
+    "estHours": "≈ {hours} godz.",
+    "yourOwnJob": "To Twoje zlecenie"
   },
   "providerProfile": {
     "idVerified": "Tożsamość zweryfikowana",
@@ -1117,7 +1118,9 @@
     "recurring_weekly": "Co tydzień",
     "recurring_biweekly": "Co 2 tygodnie",
     "recurring_monthly": "Co miesiąc",
-    "estHours": "≈ {hours} godz."
+    "estHours": "≈ {hours} godz.",
+    "ownJobNotice": "To Twoje zlecenie — nie możesz na nie licytować.",
+    "outOfRadiusNotice": "Ten klient jest w {city} i szuka osoby sprzątającej w promieniu {radius} km — poza Twoim obszarem."
   },
   "providerProviderNotificationsPage": {
     "heading": "Powiadomienia",

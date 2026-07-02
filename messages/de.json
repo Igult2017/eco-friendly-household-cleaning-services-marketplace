@@ -218,7 +218,8 @@
     "viewJobsToBid": "Aufträge zum Bieten ansehen",
     "postAJob": "Auftrag erstellen",
     "becomeCleanerToBid": "Reinigungskraft werden, um zu bieten",
-    "estHours": "≈ {hours} Std."
+    "estHours": "≈ {hours} Std.",
+    "yourOwnJob": "Du hast diesen Auftrag erstellt"
   },
   "providerProfile": {
     "idVerified": "Identität verifiziert",
@@ -1117,7 +1118,9 @@
     "recurring_weekly": "Wöchentlich",
     "recurring_biweekly": "Alle 2 Wochen",
     "recurring_monthly": "Monatlich",
-    "estHours": "≈ {hours} Std."
+    "estHours": "≈ {hours} Std.",
+    "ownJobNotice": "Du hast diesen Auftrag erstellt — du kannst nicht darauf bieten.",
+    "outOfRadiusNotice": "Dieser Kunde ist in {city} und braucht eine Reinigungskraft im Umkreis von {radius} km — außerhalb deines Einsatzgebiets."
   },
   "providerProviderNotificationsPage": {
     "heading": "Benachrichtigungen",

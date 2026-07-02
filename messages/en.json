@@ -218,7 +218,8 @@
     "viewJobsToBid": "View jobs to bid on",
     "postAJob": "Post a job",
     "becomeCleanerToBid": "Become a cleaner to bid",
-    "estHours": "≈ {hours} h"
+    "estHours": "≈ {hours} h",
+    "yourOwnJob": "You posted this job"
   },
   "providerProfile": {
     "idVerified": "ID Verified",
@@ -1117,7 +1118,9 @@
     "recurring_weekly": "Weekly",
     "recurring_biweekly": "Every 2 weeks",
     "recurring_monthly": "Monthly",
-    "estHours": "≈ {hours} h"
+    "estHours": "≈ {hours} h",
+    "ownJobNotice": "You posted this job — you cannot bid on it.",
+    "outOfRadiusNotice": "This client is in {city} and needs a cleaner within {radius} km of their location — outside your service area."
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifications",

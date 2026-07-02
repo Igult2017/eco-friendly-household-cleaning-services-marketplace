@@ -218,7 +218,8 @@
     "viewJobsToBid": "Vedi i lavori per fare offerte",
     "postAJob": "Pubblica un lavoro",
     "becomeCleanerToBid": "Diventa un addetto per fare offerte",
-    "estHours": "≈ {hours} h"
+    "estHours": "≈ {hours} h",
+    "yourOwnJob": "Hai pubblicato tu questo lavoro"
   },
   "providerProfile": {
     "idVerified": "Identità verificata",
@@ -1117,7 +1118,9 @@
     "recurring_weekly": "Settimanale",
     "recurring_biweekly": "Ogni 2 settimane",
     "recurring_monthly": "Mensile",
-    "estHours": "≈ {hours} h"
+    "estHours": "≈ {hours} h",
+    "ownJobNotice": "Hai pubblicato tu questo lavoro — non puoi fare offerte.",
+    "outOfRadiusNotice": "Questo cliente è a {city} e cerca un addetto entro {radius} km — fuori dalla tua zona."
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifiche",

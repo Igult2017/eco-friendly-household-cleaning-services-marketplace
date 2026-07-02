@@ -218,7 +218,8 @@
     "viewJobsToBid": "Ver trabajos para pujar",
     "postAJob": "Publicar un trabajo",
     "becomeCleanerToBid": "Hazte profesional para pujar",
-    "estHours": "≈ {hours} h"
+    "estHours": "≈ {hours} h",
+    "yourOwnJob": "Tú publicaste este trabajo"
   },
   "providerProfile": {
     "idVerified": "Identidad verificada",
@@ -1117,7 +1118,9 @@
     "recurring_weekly": "Semanal",
     "recurring_biweekly": "Cada 2 semanas",
     "recurring_monthly": "Mensual",
-    "estHours": "≈ {hours} h"
+    "estHours": "≈ {hours} h",
+    "ownJobNotice": "Tú publicaste este trabajo: no puedes pujar por él.",
+    "outOfRadiusNotice": "Este cliente está en {city} y necesita un profesional a menos de {radius} km de su ubicación, fuera de tu zona."
   },
   "providerProviderNotificationsPage": {
     "heading": "Notificaciones",

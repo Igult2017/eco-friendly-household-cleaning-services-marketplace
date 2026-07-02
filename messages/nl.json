@@ -218,7 +218,8 @@
     "viewJobsToBid": "Bekijk klussen om op te bieden",
     "postAJob": "Klus plaatsen",
     "becomeCleanerToBid": "Word schoonmaker om te bieden",
-    "estHours": "≈ {hours} u"
+    "estHours": "≈ {hours} u",
+    "yourOwnJob": "Jij hebt deze klus geplaatst"
   },
   "providerProfile": {
     "idVerified": "Identiteit geverifieerd",
@@ -1117,7 +1118,9 @@
     "recurring_weekly": "Wekelijks",
     "recurring_biweekly": "Om de 2 weken",
     "recurring_monthly": "Maandelijks",
-    "estHours": "≈ {hours} u"
+    "estHours": "≈ {hours} u",
+    "ownJobNotice": "Jij hebt deze klus geplaatst — je kunt er niet op bieden.",
+    "outOfRadiusNotice": "Deze klant zit in {city} en zoekt een schoonmaker binnen {radius} km — buiten jouw werkgebied."
   },
   "providerProviderNotificationsPage": {
     "heading": "Meldingen",

@@ -23,6 +23,10 @@ interface JobPost {
   desiredDate: string | null
   desiredTimeRange: { start: string; end: string } | null
   estimatedDurationMinutes: number | null
+  radiusKm: number
+  own: boolean
+  withinRadius: boolean
+  distanceLabel: string | null
   serviceAddress: { line1: string; city: string; postalCode: string }
   ecoRequirements: string[]
   recurringFrequency: string | null
@@ -172,7 +176,7 @@ export default function ProviderJobsPage() {
                     <p className="text-sm text-[#6B7280] mb-3 line-clamp-3">{job.description}</p>
 
                     <div className="flex flex-wrap gap-3 text-xs text-[#9CA3AF] mb-4">
-                      <span className="flex items-center gap-1"><MapPin size={12} />{job.serviceAddress.city}, {job.serviceAddress.postalCode}</span>
+                      <span className="flex items-center gap-1"><MapPin size={12} />{job.serviceAddress.city}, {job.serviceAddress.postalCode}{job.distanceLabel && <> · {job.distanceLabel}</>}</span>
                       {job.desiredDate && <span className="flex items-center gap-1"><Clock size={12} />{formatDate(job.desiredDate)}</span>}
                       {job.desiredTimeRange?.start && job.desiredTimeRange?.end && (
                         <span className="flex items-center gap-1">{job.desiredTimeRange.start}–{job.desiredTimeRange.end}</span>
@@ -200,6 +204,9 @@ export default function ProviderJobsPage() {
                       <div className="flex items-center gap-2 text-sm text-[#2D7A5F] font-medium">
                         <CheckCircle2 size={16} /> {t("bidSubmittedSuccess")}
                       </div>
+                    ) : job.own ? (
+                      // Upwork model: your own posting is visible but never biddable.
+                      <p className="text-sm text-[#9CA3AF]">{t("ownJobNotice")}</p>
                     ) : (
                       <Button
                         onClick={() => { setError(null); setBidding(isOpen ? null : job.id) }}
@@ -210,7 +217,16 @@ export default function ProviderJobsPage() {
                     )}
                   </div>
 
-                  {isOpen && !alreadyBid && (
+                  {isOpen && !alreadyBid && !job.own && !job.withinRadius && (
+                    // Visible but out of the client's requested radius — explain instead of a form.
+                    <div className="border-t border-[#F4FAF6] bg-amber-50 p-5">
+                      <p className="text-sm text-amber-800">
+                        {t("outOfRadiusNotice", { city: job.serviceAddress.city ?? "—", radius: job.radiusKm })}
+                      </p>
+                    </div>
+                  )}
+
+                  {isOpen && !alreadyBid && !job.own && job.withinRadius && (
                     <div className="border-t border-[#F4FAF6] bg-[#F4FAF6] p-5 space-y-3">
                       <h3 className="font-semibold text-sm text-[#2B3441]">{t("yourBid")}</h3>
                       <div className="grid grid-cols-2 gap-3">

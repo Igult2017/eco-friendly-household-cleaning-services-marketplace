@@ -218,7 +218,8 @@
     "viewJobsToBid": "Voir les offres à soumissionner",
     "postAJob": "Publier une annonce",
     "becomeCleanerToBid": "Devenir intervenant pour soumissionner",
-    "estHours": "≈ {hours} h"
+    "estHours": "≈ {hours} h",
+    "yourOwnJob": "Vous avez publié cette annonce"
   },
   "providerProfile": {
     "idVerified": "Identité vérifiée",
@@ -1117,7 +1118,9 @@
     "recurring_weekly": "Hebdomadaire",
     "recurring_biweekly": "Toutes les 2 semaines",
     "recurring_monthly": "Mensuel",
-    "estHours": "≈ {hours} h"
+    "estHours": "≈ {hours} h",
+    "ownJobNotice": "Vous avez publié cette annonce — vous ne pouvez pas soumissionner.",
+    "outOfRadiusNotice": "Ce client est à {city} et cherche un intervenant dans un rayon de {radius} km — hors de votre zone."
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifications",

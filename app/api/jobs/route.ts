@@ -7,6 +7,7 @@ import { inngest } from "@/lib/inngest/client"
 import { jobRatelimit } from "@/lib/redis/client"
 import { eq, desc, and, inArray, sql } from "drizzle-orm"
 import { getClientIp } from "@/lib/utils/ip"
+import { formatDistance } from "@/lib/utils/locale"
 import { z } from "zod"
 import { logError } from "@/lib/utils/logError"
 import { ensureUserRow } from "@/lib/clerk/ensureUser"
@@ -136,7 +137,7 @@ export async function GET(req: Request) {
 
     if (forProvider) {
       const [provider] = await db
-        .select({ id: providers.id, latitude: providers.latitude, longitude: providers.longitude, serviceRadiusKm: providers.serviceRadiusKm, isApproved: providers.isApproved })
+        .select({ id: providers.id, latitude: providers.latitude, longitude: providers.longitude, country: providers.country, isApproved: providers.isApproved })
         .from(providers)
         .where(eq(providers.userId, userId))
 
@@ -144,85 +145,47 @@ export async function GET(req: Request) {
         console.warn("[jobs feed] empty (not active):", { userId, hasProvider: !!provider, isApproved: provider?.isApproved ?? null })
         return NextResponse.json({ jobs: [], reason: "not_active" })
       }
-      if (provider.latitude == null || provider.longitude == null) {
-        console.warn("[jobs feed] empty (no location):", { userId })
-        return NextResponse.json({ jobs: [], reason: "no_location" })
-      }
 
-      // Bug 8: use PostGIS ST_DWithin to push the geo filter into SQL — eliminates the 200-row in-memory cap
-      const providerLat = provider.latitude
-      const providerLng = provider.longitude
-      const radiusMeters = (provider.serviceRadiusKm ?? 25) * 1000
-
-      // Self-bid prevention (defence in depth): also hide jobs posted from this same IP, so a customer
-      // can't see — let alone bid on — their own job via a second account on the same connection.
+      // Upwork model: EVERY cleaner sees ALL open jobs. Ownership/same-IP and distance no longer HIDE
+      // jobs — they gate the BID action instead (per-job flags below; the bid API stays authoritative).
       const currentIp = getClientIp(req)
-      const ipFilter = currentIp ? sql`(posted_ip IS NULL OR posted_ip <> ${currentIp})` : sql`TRUE`
+      const geoRows = await db
+        .select({
+          id: jobPosts.id,
+          lat: jobPosts.serviceLatitude,
+          lng: jobPosts.serviceLongitude,
+          radiusKm: jobPosts.radiusKm,
+          customerId: jobPosts.customerId,
+          postedIp: jobPosts.postedIp,
+        })
+        .from(jobPosts)
+        .where(and(inArray(jobPosts.status, ["open", "bidding"]), sql`expires_at > NOW()`))
+        .orderBy(desc(jobPosts.createdAt))
+        .limit(50)
 
-      // Step 1: get nearby job IDs. PostGIS path (fast, indexed) with a pure-SQL Haversine
-      // bounding-box fallback for servers where PostGIS isn't installed — WITHOUT this the entire
-      // provider job feed 500s and cleaners see no jobs to bid on. Mirrors lib/db/queries/geo.ts.
-      // Fraud prevention (both paths): users cannot bid on jobs they posted as customers.
-      let nearbyRows: { id: string }[]
-      try {
-        nearbyRows = await db
-          .select({ id: jobPosts.id })
-          .from(jobPosts)
-          .where(and(
-            inArray(jobPosts.status, ["open", "bidding"]),
-            sql`expires_at > NOW()`,
-            sql`customer_id != ${userId}`,
-            ipFilter,
-            sql`service_location IS NOT NULL AND ST_DWithin(service_location::geography, ST_MakePoint(${providerLng}, ${providerLat})::geography, ${radiusMeters})`,
-          ))
-          .orderBy(sql`ST_Distance(service_location::geography, ST_MakePoint(${providerLng}, ${providerLat})::geography)`)
-          .limit(30)
-      } catch {
-        // PostGIS not available — fall back to a lat/lng bounding box on the plain columns.
-        const radiusKmVal = provider.serviceRadiusKm ?? 25
-        const latDelta = radiusKmVal / 111.32
-        const lngDelta = radiusKmVal / (111.32 * Math.cos((providerLat * Math.PI) / 180))
-        nearbyRows = await db
-          .select({ id: jobPosts.id })
-          .from(jobPosts)
-          .where(and(
-            inArray(jobPosts.status, ["open", "bidding"]),
-            sql`expires_at > NOW()`,
-            sql`customer_id != ${userId}`,
-            ipFilter,
-            sql`service_latitude BETWEEN ${providerLat - latDelta} AND ${providerLat + latDelta}`,
-            sql`service_longitude BETWEEN ${providerLng - lngDelta} AND ${providerLng + lngDelta}`,
-          ))
-          .orderBy(desc(jobPosts.createdAt))
-          .limit(30)
+      if (geoRows.length === 0) return NextResponse.json({ jobs: [], reason: "none_posted" })
+
+      // Distance is computed SERVER-side (exact job coords are never sent to the browser — H3).
+      const haversineKm = (aLat: number, aLng: number, bLat: number, bLng: number) => {
+        const R = 6371
+        const dLat = ((bLat - aLat) * Math.PI) / 180
+        const dLng = ((bLng - aLng) * Math.PI) / 180
+        const h = Math.sin(dLat / 2) ** 2 + Math.cos((aLat * Math.PI) / 180) * Math.cos((bLat * Math.PI) / 180) * Math.sin(dLng / 2) ** 2
+        return 2 * R * Math.asin(Math.sqrt(h))
       }
+      const meta = new Map(
+        geoRows.map((r) => {
+          const own = r.customerId === userId || (!!currentIp && !!r.postedIp && r.postedIp === currentIp)
+          const km = provider.latitude != null && provider.longitude != null ? haversineKm(provider.latitude, provider.longitude, r.lat, r.lng) : null
+          return [r.id, {
+            own,
+            withinRadius: km != null && km <= (r.radiusKm ?? 25),
+            distanceLabel: km != null ? formatDistance(km, provider.country || "DE") : null,
+          }]
+        }),
+      )
 
-      if (nearbyRows.length === 0) {
-        // Distinguish "no jobs posted at all" vs "the only open jobs are this cleaner's own" (hidden
-        // by design) vs "jobs exist but are outside this cleaner's service radius" — so the UI can
-        // show a specific, actionable message instead of a blank empty state.
-        // Count a same-IP job as "own" too, so the empty-state reason is "only_own" (hidden by
-        // design) rather than a misleading "none_nearby".
-        const ownFilter = currentIp
-          ? sql`customer_id = ${userId} OR posted_ip = ${currentIp}`
-          : sql`customer_id = ${userId}`
-        const [diag] = await db
-          .select({
-            totalOpen: sql<number>`count(*)`,
-            ownOpen: sql<number>`count(*) filter (where ${ownFilter})`,
-          })
-          .from(jobPosts)
-          .where(and(inArray(jobPosts.status, ["open", "bidding"]), sql`expires_at > NOW()`))
-        const totalOpen = Number(diag?.totalOpen ?? 0)
-        const ownOpen = Number(diag?.ownOpen ?? 0)
-        const othersOpen = totalOpen - ownOpen
-        // others exist but none nearby → out of radius; else only own jobs → hidden; else none posted
-        const reason = othersOpen > 0 ? "none_nearby" : ownOpen > 0 ? "only_own" : "none_posted"
-        console.warn("[jobs feed] empty (no nearby):", { userId, providerLat, providerLng, radiusKm: provider.serviceRadiusKm ?? 25, totalOpen, ownOpen, reason })
-        return NextResponse.json({ jobs: [], reason })
-      }
-
-      const nearbyIds = nearbyRows.map((r: { id: string }) => r.id)
+      const nearbyIds = geoRows.map((r) => r.id)
 
       // Step 2: fetch full job data with relations for the nearby IDs
       const rawJobs = await db.query.jobPosts.findMany({
@@ -239,12 +202,20 @@ export async function GET(req: Request) {
       })
       // H3: strip the street line + keep only city/postal/country until a bid is accepted, so
       // providers can't scrape exact home addresses + GPS of every nearby customer (GDPR).
-      const jobs = rawJobs.map((j: any) => ({
-        ...j,
-        serviceAddress: j.serviceAddress
-          ? { city: j.serviceAddress.city ?? null, postalCode: j.serviceAddress.postalCode ?? null, country: j.serviceAddress.country ?? null }
-          : null,
-      }))
+      const jobs = rawJobs
+        .map((j: any) => ({
+          ...j,
+          serviceAddress: j.serviceAddress
+            ? { city: j.serviceAddress.city ?? null, postalCode: j.serviceAddress.postalCode ?? null, country: j.serviceAddress.country ?? null }
+            : null,
+          ...(meta.get(j.id) ?? { own: false, withinRadius: false, distanceLabel: null }),
+        }))
+        // Biddable-nearby first, then the rest; newest first within each group.
+        .sort((a: any, b: any) => {
+          const rank = (x: any) => (x.own ? 2 : x.withinRadius ? 0 : 1)
+          if (rank(a) !== rank(b)) return rank(a) - rank(b)
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        })
 
       // Increment view count — each provider load counts as an impression
       try {

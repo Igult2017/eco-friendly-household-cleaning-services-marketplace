@@ -14,20 +14,14 @@ export async function GET(req: Request) {
     const currentIp = getClientIp(req)
     const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
 
+    // Upwork model: EVERYONE sees every job. Own/same-IP jobs are FLAGGED (`own`) so the UI hides the
+    // bid button on them; the bid API remains the authoritative block.
     const jobs = await db.query.jobPosts.findMany({
-      where: (jp, { inArray: inArr, and, gte, ne, or, isNull }) => {
-        const conds = [
+      where: (jp, { inArray: inArr, and, gte }) =>
+        and(
           inArr(jp.status, ["open", "bidding", "assigned", "expired"]),
           gte(jp.createdAt, cutoff),
-        ]
-        // Never show a user their OWN posted jobs — they can't bid on them, so no bid button can ever
-        // appear on own work (same user id across a dual cleaner/client account).
-        if (userId) conds.push(ne(jp.customerId, userId))
-        // Fraud prevention: also hide jobs posted from this same IP, so a second account on the same
-        // connection can't see — let alone bid on — a job the user posted from another account.
-        if (currentIp) conds.push(or(isNull(jp.postedIp), ne(jp.postedIp, currentIp))!)
-        return and(...conds)
-      },
+        ),
       with: {
         category: { columns: { name: true, slug: true } },
         bids: { columns: { id: true } },
@@ -55,6 +49,8 @@ export async function GET(req: Request) {
       categorySlug: j.category?.slug ?? null,
       expiresAt: j.expiresAt,
       createdAt: j.createdAt,
+      // The viewer posted this (same account or same IP) — bid button hidden client-side.
+      own: (!!userId && j.customerId === userId) || (!!currentIp && !!j.postedIp && j.postedIp === currentIp),
     }))
 
     // "Can bid" = has a provider profile AND is currently in CLEANER mode. A dual-role user or admin

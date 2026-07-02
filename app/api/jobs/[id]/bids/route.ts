@@ -43,14 +43,14 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
     const [provider] = await db
-      .select({ id: providers.id, businessName: providers.businessName, userId: providers.userId, isApproved: providers.isApproved })
+      .select({ id: providers.id, businessName: providers.businessName, userId: providers.userId, isApproved: providers.isApproved, latitude: providers.latitude, longitude: providers.longitude })
       .from(providers)
       .where(and(eq(providers.userId, userId), eq(providers.isApproved, true), eq(providers.isSuspended, false)))
 
     if (!provider) return NextResponse.json({ error: "Not an approved provider" }, { status: 403 })
 
     const [job] = await db
-      .select({ id: jobPosts.id, status: jobPosts.status, customerId: jobPosts.customerId, expiresAt: jobPosts.expiresAt, postedIp: jobPosts.postedIp })
+      .select({ id: jobPosts.id, status: jobPosts.status, customerId: jobPosts.customerId, expiresAt: jobPosts.expiresAt, postedIp: jobPosts.postedIp, serviceLatitude: jobPosts.serviceLatitude, serviceLongitude: jobPosts.serviceLongitude, radiusKm: jobPosts.radiusKm, serviceAddress: jobPosts.serviceAddress })
       .from(jobPosts)
       .where(eq(jobPosts.id, jobPostId))
 
@@ -60,6 +60,26 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const bidderIp = getClientIp(req)
     if (bidderIp && job.postedIp && job.postedIp === bidderIp) {
       return NextResponse.json({ error: "Cannot bid on your own job" }, { status: 403 })
+    }
+    // Jobs are VISIBLE to everyone (Upwork model), but bidding requires being within the client's
+    // requested radius — tell the cleaner where the client is instead of a silent block.
+    {
+      const R = 6371
+      const toRad = (d: number) => (d * Math.PI) / 180
+      const km = provider.latitude != null && provider.longitude != null
+        ? 2 * R * Math.asin(Math.sqrt(
+            Math.sin(toRad(job.serviceLatitude - provider.latitude) / 2) ** 2 +
+            Math.cos(toRad(provider.latitude)) * Math.cos(toRad(job.serviceLatitude)) *
+            Math.sin(toRad(job.serviceLongitude - provider.longitude) / 2) ** 2,
+          ))
+        : null
+      if (km == null || km > (job.radiusKm ?? 25)) {
+        const city = (job.serviceAddress as { city?: string } | null)?.city ?? "another area"
+        return NextResponse.json(
+          { error: `This client is in ${city} and needs a cleaner within ${job.radiusKm ?? 25} km of their location — outside your service area.` },
+          { status: 422 },
+        )
+      }
     }
     if (!["open", "bidding"].includes(job.status)) return NextResponse.json({ error: "Job is not accepting bids" }, { status: 422 })
     if (new Date(job.expiresAt) < new Date()) {
