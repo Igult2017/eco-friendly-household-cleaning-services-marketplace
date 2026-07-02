@@ -855,7 +855,9 @@
     "hideBids": "Ocultar ofertas",
     "viewBids": "{count, plural, one {Ver # oferta} other {Ver # ofertas}}",
     "waitingForBids": "Esperando ofertas — caduca el {date}",
-    "bidsReceived": "{count, plural, one {# oferta recibida} other {# ofertas recibidas}}"
+    "bidsReceived": "{count, plural, one {# oferta recibida} other {# ofertas recibidas}}",
+    "messageCleaner": "Escribe a tu profesional",
+    "hideChat": "Ocultar chat"
   },
   "customerLayout": {
     "navDashboard": "Panel",
@@ -1120,7 +1122,9 @@
     "recurring_monthly": "Mensual",
     "estHours": "≈ {hours} h",
     "ownJobNotice": "Tú publicaste este trabajo: no puedes pujar por él.",
-    "outOfRadiusNotice": "Este cliente está en {city} y necesita un profesional a menos de {radius} km de su ubicación, fuera de tu zona."
+    "outOfRadiusNotice": "Este cliente está en {city} y necesita un profesional a menos de {radius} km de su ubicación, fuera de tu zona.",
+    "wonChat": "Ganaste este trabajo: chatea con el cliente",
+    "hideChat": "Ocultar chat"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notificaciones",

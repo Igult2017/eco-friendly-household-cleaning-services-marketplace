@@ -855,7 +855,9 @@
     "hideBids": "Ocultar propostas",
     "viewBids": "{count, plural, one {Ver # proposta} other {Ver # propostas}}",
     "waitingForBids": "À espera de propostas — expira em {date}",
-    "bidsReceived": "{count, plural, one {# proposta recebida} other {# propostas recebidas}}"
+    "bidsReceived": "{count, plural, one {# proposta recebida} other {# propostas recebidas}}",
+    "messageCleaner": "Enviar mensagem ao teu profissional",
+    "hideChat": "Ocultar conversa"
   },
   "customerLayout": {
     "navDashboard": "Painel",
@@ -1120,7 +1122,9 @@
     "recurring_monthly": "Mensal",
     "estHours": "≈ {hours} h",
     "ownJobNotice": "Publicaste este trabalho — não podes licitar nele.",
-    "outOfRadiusNotice": "Este cliente está em {city} e precisa de um profissional num raio de {radius} km — fora da tua zona."
+    "outOfRadiusNotice": "Este cliente está em {city} e precisa de um profissional num raio de {radius} km — fora da tua zona.",
+    "wonChat": "Ganhaste este trabalho — conversa com o cliente",
+    "hideChat": "Ocultar conversa"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notificações",

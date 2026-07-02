@@ -855,7 +855,9 @@
     "hideBids": "Ukryj oferty",
     "viewBids": "{count, plural, one {Zobacz # ofertę} few {Zobacz # oferty} many {Zobacz # ofert} other {Zobacz # ofert}}",
     "waitingForBids": "Oczekiwanie na oferty — wygasa {date}",
-    "bidsReceived": "{count, plural, one {Otrzymano # ofertę} few {Otrzymano # oferty} many {Otrzymano # ofert} other {Otrzymano # ofert}}"
+    "bidsReceived": "{count, plural, one {Otrzymano # ofertę} few {Otrzymano # oferty} many {Otrzymano # ofert} other {Otrzymano # ofert}}",
+    "messageCleaner": "Napisz do osoby sprzątającej",
+    "hideChat": "Ukryj czat"
   },
   "customerLayout": {
     "navDashboard": "Panel",
@@ -1120,7 +1122,9 @@
     "recurring_monthly": "Co miesiąc",
     "estHours": "≈ {hours} godz.",
     "ownJobNotice": "To Twoje zlecenie — nie możesz na nie licytować.",
-    "outOfRadiusNotice": "Ten klient jest w {city} i szuka osoby sprzątającej w promieniu {radius} km — poza Twoim obszarem."
+    "outOfRadiusNotice": "Ten klient jest w {city} i szuka osoby sprzątającej w promieniu {radius} km — poza Twoim obszarem.",
+    "wonChat": "Wygrałeś to zlecenie — napisz do klienta",
+    "hideChat": "Ukryj czat"
   },
   "providerProviderNotificationsPage": {
     "heading": "Powiadomienia",

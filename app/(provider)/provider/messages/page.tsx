@@ -41,6 +41,7 @@ export default async function ProviderMessagesPage() {
 
   const map = new Map<string, Convo>()
   for (const m of rows) {
+    if (!m.bookingId) continue // job-level chats (pre-booking) live on the job card, not this inbox
     let c = map.get(m.bookingId)
     if (!c) {
       c = {

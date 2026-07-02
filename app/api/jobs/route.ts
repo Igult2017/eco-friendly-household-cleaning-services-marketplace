@@ -165,7 +165,18 @@ export async function GET(req: Request) {
         .orderBy(desc(jobPosts.createdAt))
         .limit(50)
 
-      if (geoRows.length === 0) return NextResponse.json({ jobs: [], reason: "none_posted" })
+      // Jobs this cleaner WON (bid accepted, status assigned) stay on their board so the client chat
+      // is reachable — assigned jobs are otherwise filtered out.
+      const wonRows = await db
+        .select({ id: jobPosts.id })
+        .from(jobPosts)
+        .innerJoin(bids, eq(jobPosts.acceptedBidId, bids.id))
+        .where(and(eq(jobPosts.status, "assigned"), eq(bids.providerId, provider.id)))
+        .orderBy(desc(jobPosts.createdAt))
+        .limit(10)
+      const wonIds = new Set(wonRows.map((r) => r.id))
+
+      if (geoRows.length === 0 && wonRows.length === 0) return NextResponse.json({ jobs: [], reason: "none_posted" })
 
       // Distance is computed SERVER-side (exact job coords are never sent to the browser — H3).
       const haversineKm = (aLat: number, aLng: number, bLat: number, bLng: number) => {
@@ -187,7 +198,7 @@ export async function GET(req: Request) {
         }),
       )
 
-      const nearbyIds = geoRows.map((r) => r.id)
+      const nearbyIds = [...new Set([...geoRows.map((r) => r.id), ...wonIds])]
 
       // Which of these jobs this cleaner already bid on — the UI's session-local "submitted" state
       // is lost on reload, letting them re-open the form only to hit the API's 409.
@@ -220,10 +231,11 @@ export async function GET(req: Request) {
             : null,
           ...(meta.get(j.id) ?? { own: false, withinRadius: false, distanceLabel: null }),
           alreadyBid: myBidJobIds.has(j.id),
+          wonByMe: wonIds.has(j.id),
         }))
-        // Biddable-nearby first, then the rest; newest first within each group.
+        // Won jobs first (client chat lives there), then biddable-nearby, then the rest; own last.
         .sort((a: any, b: any) => {
-          const rank = (x: any) => (x.own ? 2 : x.withinRadius ? 0 : 1)
+          const rank = (x: any) => (x.wonByMe ? -1 : x.own ? 2 : x.withinRadius ? 0 : 1)
           if (rank(a) !== rank(b)) return rank(a) - rank(b)
           return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         })

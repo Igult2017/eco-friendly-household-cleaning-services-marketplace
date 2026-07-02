@@ -855,7 +855,9 @@
     "hideBids": "Biedingen verbergen",
     "viewBids": "{count, plural, one {Bekijk # bieding} other {Bekijk # biedingen}}",
     "waitingForBids": "Wachten op biedingen — verloopt op {date}",
-    "bidsReceived": "{count, plural, one {# bieding ontvangen} other {# biedingen ontvangen}}"
+    "bidsReceived": "{count, plural, one {# bieding ontvangen} other {# biedingen ontvangen}}",
+    "messageCleaner": "Stuur je schoonmaker een bericht",
+    "hideChat": "Chat verbergen"
   },
   "customerLayout": {
     "navDashboard": "Dashboard",
@@ -1120,7 +1122,9 @@
     "recurring_monthly": "Maandelijks",
     "estHours": "≈ {hours} u",
     "ownJobNotice": "Jij hebt deze klus geplaatst — je kunt er niet op bieden.",
-    "outOfRadiusNotice": "Deze klant zit in {city} en zoekt een schoonmaker binnen {radius} km — buiten jouw werkgebied."
+    "outOfRadiusNotice": "Deze klant zit in {city} en zoekt een schoonmaker binnen {radius} km — buiten jouw werkgebied.",
+    "wonChat": "Klus gewonnen — chat met de klant",
+    "hideChat": "Chat verbergen"
   },
   "providerProviderNotificationsPage": {
     "heading": "Meldingen",

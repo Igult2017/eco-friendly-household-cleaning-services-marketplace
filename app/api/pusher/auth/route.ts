@@ -2,7 +2,7 @@ import { auth, clerkClient } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { pusherServer } from "@/lib/pusher/server"
 import { db } from "@/lib/db"
-import { providers, bookings } from "@/lib/db/schema"
+import { providers, bookings, jobPosts, bids } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { logError } from "@/lib/utils/logError"
 
@@ -46,6 +46,25 @@ export async function POST(req: Request) {
         .leftJoin(providers, eq(bookings.providerId, providers.id))
         .where(eq(bookings.id, bookingId))
       allowed = !!b && (b.customerId === userId || b.providerUserId === userId)
+    } else if (channelName.startsWith("private-job-")) {
+      // Job-level chat (accepted bid, pre-booking) — only the client or the accepted cleaner.
+      const jobId = channelName.replace("private-job-", "")
+      const [j] = await db
+        .select({ customerId: jobPosts.customerId, acceptedBidId: jobPosts.acceptedBidId })
+        .from(jobPosts)
+        .where(eq(jobPosts.id, jobId))
+      if (j?.acceptedBidId) {
+        if (j.customerId === userId) {
+          allowed = true
+        } else {
+          const [w] = await db
+            .select({ providerUserId: providers.userId })
+            .from(bids)
+            .innerJoin(providers, eq(bids.providerId, providers.id))
+            .where(eq(bids.id, j.acceptedBidId))
+          allowed = w?.providerUserId === userId
+        }
+      }
     }
 
     if (!allowed) return new NextResponse("Forbidden", { status: 403 })

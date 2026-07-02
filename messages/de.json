@@ -855,7 +855,9 @@
     "hideBids": "Angebote ausblenden",
     "viewBids": "{count, plural, one {# Angebot ansehen} other {# Angebote ansehen}}",
     "waitingForBids": "Warten auf Angebote — läuft ab am {date}",
-    "bidsReceived": "{count, plural, one {# Angebot erhalten} other {# Angebote erhalten}}"
+    "bidsReceived": "{count, plural, one {# Angebot erhalten} other {# Angebote erhalten}}",
+    "messageCleaner": "Nachricht an deine Reinigungskraft",
+    "hideChat": "Chat ausblenden"
   },
   "customerLayout": {
     "navDashboard": "Dashboard",
@@ -1120,7 +1122,9 @@
     "recurring_monthly": "Monatlich",
     "estHours": "≈ {hours} Std.",
     "ownJobNotice": "Du hast diesen Auftrag erstellt — du kannst nicht darauf bieten.",
-    "outOfRadiusNotice": "Dieser Kunde ist in {city} und braucht eine Reinigungskraft im Umkreis von {radius} km — außerhalb deines Einsatzgebiets."
+    "outOfRadiusNotice": "Dieser Kunde ist in {city} und braucht eine Reinigungskraft im Umkreis von {radius} km — außerhalb deines Einsatzgebiets.",
+    "wonChat": "Du hast den Auftrag — chatte mit dem Kunden",
+    "hideChat": "Chat ausblenden"
   },
   "providerProviderNotificationsPage": {
     "heading": "Benachrichtigungen",

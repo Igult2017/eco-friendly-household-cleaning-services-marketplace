@@ -4,7 +4,10 @@ import { users } from "./users"
 
 export const messages = pgTable("messages", {
   id: uuid("id").primaryKey().defaultRandom(),
-  bookingId: uuid("booking_id").notNull().references(() => bookings.id, { onDelete: "cascade" }),
+  // One of bookingId / jobPostId is set: booking chat, or the job-level chat that opens between the
+  // client and the ACCEPTED cleaner the moment a bid is accepted (before payment/booking exist).
+  bookingId: uuid("booking_id").references(() => bookings.id, { onDelete: "cascade" }),
+  jobPostId: uuid("job_post_id"),
   senderId: text("sender_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   body: text("body").notNull(),
   attachmentUrl: text("attachment_url"),

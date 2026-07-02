@@ -855,7 +855,9 @@
     "hideBids": "Nascondi offerte",
     "viewBids": "{count, plural, one {Vedi # offerta} other {Vedi # offerte}}",
     "waitingForBids": "In attesa di offerte — scade il {date}",
-    "bidsReceived": "{count, plural, one {# offerta ricevuta} other {# offerte ricevute}}"
+    "bidsReceived": "{count, plural, one {# offerta ricevuta} other {# offerte ricevute}}",
+    "messageCleaner": "Scrivi al tuo addetto",
+    "hideChat": "Nascondi chat"
   },
   "customerLayout": {
     "navDashboard": "Dashboard",
@@ -1120,7 +1122,9 @@
     "recurring_monthly": "Mensile",
     "estHours": "≈ {hours} h",
     "ownJobNotice": "Hai pubblicato tu questo lavoro — non puoi fare offerte.",
-    "outOfRadiusNotice": "Questo cliente è a {city} e cerca un addetto entro {radius} km — fuori dalla tua zona."
+    "outOfRadiusNotice": "Questo cliente è a {city} e cerca un addetto entro {radius} km — fuori dalla tua zona.",
+    "wonChat": "Hai vinto questo lavoro — chatta con il cliente",
+    "hideChat": "Nascondi chat"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifiche",

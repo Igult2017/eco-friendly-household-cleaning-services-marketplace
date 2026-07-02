@@ -37,6 +37,7 @@ export default async function CustomerMessagesPage() {
 
   const map = new Map<string, Convo>()
   for (const m of rows) {
+    if (!m.bookingId) continue // job-level chats (pre-booking) live on the job card, not this inbox
     let c = map.get(m.bookingId)
     if (!c) {
       c = { bookingId: m.bookingId, name: m.businessName || t("cleaner"), lastBody: m.body, lastAt: m.createdAt, unread: 0 }

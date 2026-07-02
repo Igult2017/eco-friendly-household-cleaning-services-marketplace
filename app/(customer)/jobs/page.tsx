@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useTranslations } from "next-intl"
 import { useUser } from "@clerk/nextjs"
 import { usePusherChannel } from "@/hooks/usePusherChannel"
+import { MessageThread } from "@/components/messaging/MessageThread"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -220,6 +221,7 @@ export default function CustomerJobsPage() {
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
+  const [chatOpen, setChatOpen] = useState<string | null>(null)
 
   function load() {
     fetch("/api/jobs")
@@ -352,7 +354,28 @@ export default function CustomerJobsPage() {
                         {t("waitingForBids", { date: formatDate(job.expiresAt) })}
                       </p>
                     )}
+
+                    {/* Bid accepted → the chat with the chosen cleaner is open (before payment too). */}
+                    {job.status === "assigned" && (
+                      <button
+                        onClick={() => setChatOpen((prev) => (prev === job.id ? null : job.id))}
+                        className="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-[#2D7A5F] px-4 py-2 text-sm font-semibold text-white hover:bg-[#235f49] transition-colors"
+                      >
+                        <MessageSquare size={14} /> {chatOpen === job.id ? t("hideChat") : t("messageCleaner")}
+                      </button>
+                    )}
                   </div>
+
+                  {job.status === "assigned" && chatOpen === job.id && user && (
+                    <div className="border-t border-[#F4FAF6] p-4">
+                      <MessageThread
+                        bookingId={job.id}
+                        currentUserId={user.id}
+                        endpoint={`/api/jobs/${job.id}/messages`}
+                        channel={`private-job-${job.id}`}
+                      />
+                    </div>
+                  )}
 
                   {/* Expandable bids panel */}
                   {isOpen && hasBids && (

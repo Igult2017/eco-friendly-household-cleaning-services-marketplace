@@ -17,6 +17,9 @@ interface Message {
 interface Props {
   bookingId: string
   currentUserId: string
+  // Overrides for non-booking threads (e.g. job-level chat after a bid is accepted).
+  endpoint?: string
+  channel?: string
 }
 
 function formatTime(iso: string) {
@@ -34,8 +37,9 @@ function formatDate(iso: string) {
   })
 }
 
-export function MessageThread({ bookingId, currentUserId }: Props) {
+export function MessageThread({ bookingId, currentUserId, endpoint, channel }: Props) {
   const t = useTranslations("compMessagingMessageThread")
+  const api = endpoint ?? `/api/bookings/${bookingId}/messages`
   const queryClient = useQueryClient()
   const scrollRef = useRef<HTMLDivElement>(null)
   const [body, setBody] = useState("")
@@ -43,9 +47,9 @@ export function MessageThread({ bookingId, currentUserId }: Props) {
   const [sendError, setSendError] = useState<string | null>(null)
 
   const { data, isLoading } = useQuery<{ messages: Message[] }>({
-    queryKey: ["messages", bookingId],
+    queryKey: ["messages", api],
     queryFn: async () => {
-      const res = await fetch(`/api/bookings/${bookingId}/messages`)
+      const res = await fetch(api)
       if (!res.ok) throw new Error("Failed to load messages")
       return res.json() as Promise<{ messages: Message[] }>
     },
@@ -55,10 +59,10 @@ export function MessageThread({ bookingId, currentUserId }: Props) {
   const messages = data?.messages ?? []
 
   function handleNewMessage() {
-    queryClient.invalidateQueries({ queryKey: ["messages", bookingId] })
+    queryClient.invalidateQueries({ queryKey: ["messages", api] })
   }
 
-  usePusherChannel(`private-booking-${bookingId}`, {
+  usePusherChannel(channel ?? `private-booking-${bookingId}`, {
     "new-message": handleNewMessage,
   })
 
@@ -75,7 +79,7 @@ export function MessageThread({ bookingId, currentUserId }: Props) {
     setSending(true)
     setSendError(null)
     try {
-      const res = await fetch(`/api/bookings/${bookingId}/messages`, {
+      const res = await fetch(api, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ body: trimmed }),
@@ -86,7 +90,7 @@ export function MessageThread({ bookingId, currentUserId }: Props) {
         return
       }
       setBody("")
-      queryClient.invalidateQueries({ queryKey: ["messages", bookingId] })
+      queryClient.invalidateQueries({ queryKey: ["messages", api] })
     } catch {
       setSendError(t("genericError"))
     } finally {

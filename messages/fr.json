@@ -855,7 +855,9 @@
     "hideBids": "Masquer les offres",
     "viewBids": "{count, plural, one {Voir # offre} other {Voir # offres}}",
     "waitingForBids": "En attente d'offres — expire le {date}",
-    "bidsReceived": "{count, plural, one {# offre reçue} other {# offres reçues}}"
+    "bidsReceived": "{count, plural, one {# offre reçue} other {# offres reçues}}",
+    "messageCleaner": "Écrire à votre intervenant",
+    "hideChat": "Masquer la discussion"
   },
   "customerLayout": {
     "navDashboard": "Tableau de bord",
@@ -1120,7 +1122,9 @@
     "recurring_monthly": "Mensuel",
     "estHours": "≈ {hours} h",
     "ownJobNotice": "Vous avez publié cette annonce — vous ne pouvez pas soumissionner.",
-    "outOfRadiusNotice": "Ce client est à {city} et cherche un intervenant dans un rayon de {radius} km — hors de votre zone."
+    "outOfRadiusNotice": "Ce client est à {city} et cherche un intervenant dans un rayon de {radius} km — hors de votre zone.",
+    "wonChat": "Mission remportée — discutez avec le client",
+    "hideChat": "Masquer la discussion"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifications",

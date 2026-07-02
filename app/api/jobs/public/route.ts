@@ -19,7 +19,8 @@ export async function GET(req: Request) {
     const jobs = await db.query.jobPosts.findMany({
       where: (jp, { inArray: inArr, and, gte }) =>
         and(
-          inArr(jp.status, ["open", "bidding", "assigned", "expired"]),
+          // Accepted (assigned) jobs leave the board INSTANTLY — only jobs still open to bids show.
+          inArr(jp.status, ["open", "bidding"]),
           gte(jp.createdAt, cutoff),
         ),
       with: {

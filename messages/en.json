@@ -855,7 +855,9 @@
     "hideBids": "Hide bids",
     "viewBids": "{count, plural, one {View # bid} other {View # bids}}",
     "waitingForBids": "Waiting for bids — expires {date}",
-    "bidsReceived": "{count, plural, one {# Bid Received} other {# Bids Received}}"
+    "bidsReceived": "{count, plural, one {# Bid Received} other {# Bids Received}}",
+    "messageCleaner": "Message your cleaner",
+    "hideChat": "Hide chat"
   },
   "customerLayout": {
     "navDashboard": "Dashboard",
@@ -1120,7 +1122,9 @@
     "recurring_monthly": "Monthly",
     "estHours": "≈ {hours} h",
     "ownJobNotice": "You posted this job — you cannot bid on it.",
-    "outOfRadiusNotice": "This client is in {city} and needs a cleaner within {radius} km of their location — outside your service area."
+    "outOfRadiusNotice": "This client is in {city} and needs a cleaner within {radius} km of their location — outside your service area.",
+    "wonChat": "You won this job — chat with the client",
+    "hideChat": "Hide chat"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifications",
