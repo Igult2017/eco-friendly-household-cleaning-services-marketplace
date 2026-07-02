@@ -44,7 +44,8 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     .from(payments)
     .innerJoin(bookings, eq(payments.bookingId, bookings.id))
     .where(eq(payments.stripePaymentIntentId, paymentIntentId))
-  if (already) return { id: already.id, bookingNumber: already.bookingNumber }
+  // Must match the normal return shape below — clients read data.bookingId.
+  if (already) return { bookingId: already.id, bookingNumber: already.bookingNumber }
 
   const intent = await stripe.paymentIntents.retrieve(paymentIntentId)
 

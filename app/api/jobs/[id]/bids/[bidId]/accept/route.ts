@@ -117,7 +117,9 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
         type: "bid_accepted",
         title: "Your bid was accepted!",
         body: `A customer accepted your bid of ${amountLabel}. A booking is being prepared.`,
-        link: "/provider/bookings",
+        // The booking doesn't exist until the client pays — land on the jobs board, where the won
+        // job is pinned on top with the client chat.
+        link: "/provider/jobs",
         metadata: { amount: amountLabel },
       })
       // Always email the cleaner — an accepted bid is money-relevant, not a mere reminder.

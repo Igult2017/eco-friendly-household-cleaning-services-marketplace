@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useUser } from "@clerk/nextjs"
 import { useTranslations } from "next-intl"
 import { MapPin, Calendar, Leaf, Users } from "lucide-react"
-import { formatCurrency } from "@/lib/utils/formatCurrency"
+import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
 
 type Job = {
   id: string
@@ -167,11 +167,11 @@ export default function BrowseJobsPage() {
                       <p className="font-bold text-[#2D7A5F] text-lg">
                         {job.budgetMin && job.budgetMax
                           ? job.budgetMin === job.budgetMax
-                            ? formatCurrency(job.budgetMin)
-                            : `${formatCurrency(job.budgetMin)} – ${formatCurrency(job.budgetMax)}`
+                            ? formatCurrencyForCountry(job.budgetMin, job.country)
+                            : `${formatCurrencyForCountry(job.budgetMin, job.country)} – ${formatCurrencyForCountry(job.budgetMax, job.country)}`
                           : job.budgetMax
-                          ? t("budgetUpTo", { amount: formatCurrency(job.budgetMax) })
-                          : formatCurrency(job.budgetMin!)}
+                          ? t("budgetUpTo", { amount: formatCurrencyForCountry(job.budgetMax, job.country) })
+                          : formatCurrencyForCountry(job.budgetMin!, job.country)}
                       </p>
                     </div>
                   )}
