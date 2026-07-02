@@ -32,11 +32,16 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     // Bug 5: use getUTCDay() so the day number matches the YYYY-MM-DD input, not the server's local timezone
     const dayOfWeek = date.getUTCDay() // 0=Sunday, unambiguous for any UTC offset
 
-    // Check availability for that day
-    const [availability] = await db
+    // ALL active weekly slots. A cleaner with NO configured availability hasn't restricted their
+    // hours yet — that must NOT block booking (mirrors checkProviderAvailable, which allows it).
+    // Blocking here dead-ended the wizard on EVERY date ("Continue — Add Details" forever disabled)
+    // for any cleaner who skipped the availability setup. A day missing from a CONFIGURED week,
+    // however, is a genuine day off.
+    const weekSlots = await db
       .select()
       .from(providerAvailability)
-      .where(and(eq(providerAvailability.providerId, id), eq(providerAvailability.dayOfWeek, dayOfWeek), eq(providerAvailability.isActive, true)))
+      .where(and(eq(providerAvailability.providerId, id), eq(providerAvailability.isActive, true)))
+    const availability = weekSlots.find((s) => s.dayOfWeek === dayOfWeek) ?? null
 
     // Check blackout dates — use the original dateStr directly (already YYYY-MM-DD)
     const [blackout] = await db
@@ -44,8 +49,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       .from(providerBlackoutDates)
       .where(and(eq(providerBlackoutDates.providerId, id), eq(providerBlackoutDates.date, dateStr)))
 
-    if (blackout || !availability) {
-      return NextResponse.json({ available: false, reason: blackout ? "blackout" : "no_schedule" })
+    if (blackout || (weekSlots.length > 0 && !availability)) {
+      return NextResponse.json({ available: false, reason: blackout ? "blackout" : "day_off" })
     }
 
     // Existing bookings around that day. Pad ±1 day: the UTC day-window missed bookings whose LOCAL
@@ -72,9 +77,10 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       // The cleaner's timezone — the client picks slots in this frame, so the booking time must be
       // built in it (not the client's browser tz).
       timezone: provider.timezone ?? "Europe/Berlin",
+      // Unrestricted cleaner → the full slot range the wizard offers (08:00–17:00 starts).
       workingHours: {
-        start: availability.startTime,
-        end: availability.endTime,
+        start: availability?.startTime ?? "08:00",
+        end: availability?.endTime ?? "18:00",
       },
       bookedSlots: existingBookings.map((b) => ({
         start: b.scheduledAt,
