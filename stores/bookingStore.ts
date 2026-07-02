@@ -12,6 +12,8 @@ interface BookingDraft {
   longitude: number | null
   selectedProviderId: string | null
   providerCountry: string | null  // selected cleaner's country → currency + locale (EU vs US)
+  providerName: string | null     // display name for the "Booking with X" banner
+  providerPreselected: boolean    // true when the cleaner was chosen BEFORE the wizard (browse/profile Book) — skips the search step
   scheduledAt: string | null   // ISO 8601 string — survives sessionStorage round-trip
   durationMinutes: number
   specialInstructions: string
@@ -40,6 +42,8 @@ interface BookingStore extends BookingDraft {
   setCategory: (id: string, name: string) => void
   setAddress: (address: Address, lat: number, lng: number) => void
   setProvider: (providerId: string, country?: string | null) => void
+  setPreselectedProvider: (providerId: string, name: string, country?: string | null) => void
+  clearPreselection: () => void
   setSchedule: (date: Date, durationMinutes: number) => void
   setExtras: (instructions: string, ecoOptions: string[], addOnIds: string[]) => void
   setCarbonOffset: (cents: number) => void
@@ -57,6 +61,8 @@ const initialState: BookingDraft = {
   longitude: null,
   selectedProviderId: null,
   providerCountry: null,
+  providerName: null,
+  providerPreselected: false,
   scheduledAt: null,
   durationMinutes: 120,
   specialInstructions: "",
@@ -74,7 +80,12 @@ export const useBookingStore = create<BookingStore>()(
       ...initialState,
       setCategory: (id, name) => set({ categoryId: id, categoryName: name, step: 2 }),
       setAddress: (address, latitude, longitude) => set({ address, latitude, longitude }),
-      setProvider: (selectedProviderId, providerCountry = null) => set({ selectedProviderId, providerCountry, step: 3 }),
+      setProvider: (selectedProviderId, providerCountry = null) =>
+        set({ selectedProviderId, providerCountry, providerPreselected: false, providerName: null, step: 3 }),
+      setPreselectedProvider: (selectedProviderId, providerName, providerCountry = null) =>
+        set({ selectedProviderId, providerName, providerCountry, providerPreselected: true }),
+      clearPreselection: () =>
+        set({ selectedProviderId: null, providerName: null, providerCountry: null, providerPreselected: false }),
       setSchedule: (date, durationMinutes) =>
         set({ scheduledAt: date.toISOString(), durationMinutes, step: 4 }),
       setExtras: (specialInstructions, ecoOptions, addOnIds) =>

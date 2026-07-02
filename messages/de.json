@@ -178,7 +178,13 @@
     "priceRangeLabel": "Preis (€/Std.)",
     "minPricePlaceholder": "Min",
     "maxPricePlaceholder": "Max",
-    "priceOnRequest": "Preis auf Anfrage"
+    "priceOnRequest": "Preis auf Anfrage",
+    "nearDetecting": "Suche Reinigungskräfte in deiner Nähe…",
+    "nearYouChip": "In der Nähe von {city}",
+    "emptyNearTitle": "Noch keine Reinigungskräfte in deiner Gegend",
+    "emptyNearBody": "Erstelle einen Auftrag und lass die Reinigungskräfte zu dir kommen — Kräfte in der Nähe werden benachrichtigt und senden dir Angebote.",
+    "postJobCta": "Auftrag erstellen",
+    "showAllCleaners": "Alle Reinigungskräfte anzeigen"
   },
   "browseJobs": {
     "heroTitle": "Offene Reinigungsaufträge",
@@ -644,7 +650,11 @@
     "category_windows_name": "Fensterreinigung",
     "category_windows_desc": "Streifenfrei innen & außen",
     "fromPrice": "Ab {price}",
-    "continueButton": "Weiter — Standort wählen →"
+    "continueButton": "Weiter — Standort wählen →",
+    "preBannerTitle": "Buchung bei {name}",
+    "preBannerHint": "Nur Leistungen, die diese Reinigungskraft anbietet, sind wählbar.",
+    "notOfferedBadge": "Nicht angeboten",
+    "changeCleaner": "Reinigungskraft wechseln"
   },
   "customerBookProvidersPage": {
     "heading": "Wo benötigen Sie eine Reinigung?",
@@ -666,7 +676,11 @@
     "continueButton": "Weiter — Termin wählen →",
     "errorSearchFailed": "Suche fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "errorMissingCityPostal": "Bitte geben Sie Ihre Stadt und Postleitzahl ein",
-    "errorAddressNotFound": "Ihre Adresse konnte nicht gefunden werden. Bitte überprüfen Sie Ihre Postleitzahl."
+    "errorAddressNotFound": "Ihre Adresse konnte nicht gefunden werden. Bitte überprüfen Sie Ihre Postleitzahl.",
+    "preHeading": "Wo soll {name} reinigen?",
+    "preSubheading": "Gib die Serviceadresse ein — keine erneute Suche nötig.",
+    "preBadge": "Deine Reinigungskraft: {name}",
+    "changeCleaner": "Reinigungskraft wechseln"
   },
   "customerBookSchedulePage": {
     "heading": "Wann passt es Ihnen?",

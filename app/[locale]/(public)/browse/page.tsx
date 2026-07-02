@@ -7,6 +7,7 @@ import Link from "next/link"
 import type { Metadata } from "next"
 import { getTranslations } from "next-intl/server"
 import { formatCurrencyShort, priceUnitSuffix } from "@/lib/utils/formatCurrency"
+import { BrowseNearMe } from "@/components/browse/BrowseNearMe"
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("browse")
@@ -139,12 +140,27 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
       </form>
       <div className="mb-8">
         <h1 className="font-serif text-4xl font-bold text-[#2B3441]">{t("heading")}</h1>
-        <p className="text-[#6B7280] mt-2">{hasFilters ? t("resultsFiltered", { count: providerList.length }) : t("resultsAvailable", { count: providerList.length })}</p>
+        <div className="mt-2 flex flex-wrap items-center gap-3">
+          <p className="text-[#6B7280]">{hasFilters ? t("resultsFiltered", { count: providerList.length }) : t("resultsAvailable", { count: providerList.length })}</p>
+          <BrowseNearMe activeCity={city ?? null} labels={{ detecting: t("nearDetecting"), nearYou: t("nearYouChip") }} />
+        </div>
       </div>
 
       {providerList.length === 0 ? (
-        <div className="text-center py-20">
-          <p className="text-[#6B7280]">{t("emptyState")}</p>
+        <div className="mx-auto max-w-md rounded-2xl bg-white border border-[#E5EBF0] shadow-sm px-6 py-14 text-center">
+          <p className="font-serif text-xl font-bold text-[#2B3441] mb-2">{t("emptyNearTitle")}</p>
+          <p className="text-sm text-[#6B7280] mb-6">{t("emptyNearBody")}</p>
+          <Link
+            href="/post-job"
+            className="inline-flex items-center justify-center rounded-xl bg-[#2D7A5F] hover:bg-[#256349] text-white text-sm font-semibold px-6 py-3 transition-colors"
+          >
+            {t("postJobCta")}
+          </Link>
+          {hasFilters && (
+            <p className="mt-4">
+              <Link href="/browse" className="text-sm text-[#6B7280] underline hover:text-[#2B3441]">{t("showAllCleaners")}</Link>
+            </p>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

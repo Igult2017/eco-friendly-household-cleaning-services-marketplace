@@ -178,7 +178,13 @@
     "priceRangeLabel": "Cena (€/godz.)",
     "minPricePlaceholder": "Min",
     "maxPricePlaceholder": "Maks",
-    "priceOnRequest": "Cena na zapytanie"
+    "priceOnRequest": "Cena na zapytanie",
+    "nearDetecting": "Szukanie osób sprzątających w pobliżu…",
+    "nearYouChip": "W pobliżu: {city}",
+    "emptyNearTitle": "Brak osób sprzątających w Twojej okolicy",
+    "emptyNearBody": "Dodaj zlecenie i pozwól, aby osoby sprzątające same się zgłosiły — te w pobliżu dostaną powiadomienie i prześlą oferty.",
+    "postJobCta": "Dodaj zlecenie",
+    "showAllCleaners": "Pokaż wszystkich"
   },
   "browseJobs": {
     "heroTitle": "Otwarte zlecenia sprzątania",
@@ -644,7 +650,11 @@
     "category_windows_name": "Mycie okien",
     "category_windows_desc": "Bez smug, wewnątrz i na zewnątrz",
     "fromPrice": "Od {price}",
-    "continueButton": "Dalej — Wybierz lokalizację →"
+    "continueButton": "Dalej — Wybierz lokalizację →",
+    "preBannerTitle": "Rezerwacja u {name}",
+    "preBannerHint": "Można wybrać tylko usługi oferowane przez tę osobę.",
+    "notOfferedBadge": "Niedostępne",
+    "changeCleaner": "Zmień osobę sprzątającą"
   },
   "customerBookProvidersPage": {
     "heading": "Gdzie potrzebujesz sprzątania?",
@@ -666,7 +676,11 @@
     "continueButton": "Dalej — Wybierz termin →",
     "errorSearchFailed": "Wyszukiwanie nie powiodło się. Spróbuj ponownie.",
     "errorMissingCityPostal": "Podaj swoje miasto i kod pocztowy",
-    "errorAddressNotFound": "Nie udało się zlokalizować Twojego adresu. Sprawdź kod pocztowy."
+    "errorAddressNotFound": "Nie udało się zlokalizować Twojego adresu. Sprawdź kod pocztowy.",
+    "preHeading": "Gdzie {name} ma posprzątać?",
+    "preSubheading": "Podaj adres usługi — nie musisz szukać ponownie.",
+    "preBadge": "Twoja osoba sprzątająca: {name}",
+    "changeCleaner": "Zmień osobę sprzątającą"
   },
   "customerBookSchedulePage": {
     "heading": "Kiedy Ci pasuje?",

@@ -178,7 +178,13 @@
     "priceRangeLabel": "Prix (€/h)",
     "minPricePlaceholder": "Min",
     "maxPricePlaceholder": "Max",
-    "priceOnRequest": "Prix sur demande"
+    "priceOnRequest": "Prix sur demande",
+    "nearDetecting": "Recherche d'intervenants près de chez vous…",
+    "nearYouChip": "Près de {city}",
+    "emptyNearTitle": "Pas encore d'intervenants dans votre région",
+    "emptyNearBody": "Publiez votre annonce et laissez les intervenants venir à vous — ceux à proximité sont notifiés et vous envoient leurs offres.",
+    "postJobCta": "Publier une annonce",
+    "showAllCleaners": "Voir tous les intervenants"
   },
   "browseJobs": {
     "heroTitle": "Missions de ménage disponibles",
@@ -644,7 +650,11 @@
     "category_windows_name": "Nettoyage des vitres",
     "category_windows_desc": "Sans traces, intérieur & extérieur",
     "fromPrice": "À partir de {price}",
-    "continueButton": "Continuer — Choisir le lieu →"
+    "continueButton": "Continuer — Choisir le lieu →",
+    "preBannerTitle": "Réservation avec {name}",
+    "preBannerHint": "Seuls les services proposés par cet intervenant sont sélectionnables.",
+    "notOfferedBadge": "Non proposé",
+    "changeCleaner": "Changer d'intervenant"
   },
   "customerBookProvidersPage": {
     "heading": "Où avez-vous besoin d'un ménage ?",
@@ -666,7 +676,11 @@
     "continueButton": "Continuer — Choisir un créneau →",
     "errorSearchFailed": "La recherche a échoué. Veuillez réessayer.",
     "errorMissingCityPostal": "Veuillez saisir votre ville et votre code postal",
-    "errorAddressNotFound": "Impossible de localiser votre adresse. Veuillez vérifier votre code postal."
+    "errorAddressNotFound": "Impossible de localiser votre adresse. Veuillez vérifier votre code postal.",
+    "preHeading": "Où {name} doit-il faire le ménage ?",
+    "preSubheading": "Saisissez l'adresse d'intervention — pas besoin de chercher à nouveau.",
+    "preBadge": "Votre intervenant : {name}",
+    "changeCleaner": "Changer d'intervenant"
   },
   "customerBookSchedulePage": {
     "heading": "Quand cela vous convient-il ?",

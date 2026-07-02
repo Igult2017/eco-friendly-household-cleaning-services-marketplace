@@ -178,7 +178,13 @@
     "priceRangeLabel": "Preço (€/h)",
     "minPricePlaceholder": "Mín",
     "maxPricePlaceholder": "Máx",
-    "priceOnRequest": "Preço sob consulta"
+    "priceOnRequest": "Preço sob consulta",
+    "nearDetecting": "A procurar profissionais perto de ti…",
+    "nearYouChip": "Perto de {city}",
+    "emptyNearTitle": "Ainda não há profissionais na tua zona",
+    "emptyNearBody": "Publica o teu trabalho e deixa os profissionais virem até ti — os que estão perto são notificados e enviam-te as suas propostas.",
+    "postJobCta": "Publicar um trabalho",
+    "showAllCleaners": "Mostrar todos os profissionais"
   },
   "browseJobs": {
     "heroTitle": "Trabalhos de limpeza disponíveis",
@@ -644,7 +650,11 @@
     "category_windows_name": "Limpeza de vidros",
     "category_windows_desc": "Sem riscos, interior e exterior",
     "fromPrice": "A partir de {price}",
-    "continueButton": "Continuar — Escolher localização →"
+    "continueButton": "Continuar — Escolher localização →",
+    "preBannerTitle": "Reserva com {name}",
+    "preBannerHint": "Só podes escolher serviços oferecidos por este profissional.",
+    "notOfferedBadge": "Não oferecido",
+    "changeCleaner": "Mudar de profissional"
   },
   "customerBookProvidersPage": {
     "heading": "Onde precisa de limpeza?",
@@ -666,7 +676,11 @@
     "continueButton": "Continuar — Escolher um horário →",
     "errorSearchFailed": "A pesquisa falhou. Tente novamente.",
     "errorMissingCityPostal": "Introduza a sua cidade e código postal",
-    "errorAddressNotFound": "Não foi possível localizar a sua morada. Verifique o seu código postal."
+    "errorAddressNotFound": "Não foi possível localizar a sua morada. Verifique o seu código postal.",
+    "preHeading": "Onde deve {name} limpar?",
+    "preSubheading": "Indica a morada do serviço — não precisas de procurar novamente.",
+    "preBadge": "O teu profissional: {name}",
+    "changeCleaner": "Mudar de profissional"
   },
   "customerBookSchedulePage": {
     "heading": "Quando é melhor para si?",

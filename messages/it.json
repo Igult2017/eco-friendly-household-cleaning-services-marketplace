@@ -178,7 +178,13 @@
     "priceRangeLabel": "Prezzo (€/h)",
     "minPricePlaceholder": "Min",
     "maxPricePlaceholder": "Max",
-    "priceOnRequest": "Prezzo su richiesta"
+    "priceOnRequest": "Prezzo su richiesta",
+    "nearDetecting": "Ricerca di addetti vicino a te…",
+    "nearYouChip": "Vicino a {city}",
+    "emptyNearTitle": "Ancora nessun addetto nella tua zona",
+    "emptyNearBody": "Pubblica il tuo lavoro e lascia che gli addetti vengano da te: quelli vicini ricevono una notifica e ti inviano le loro offerte.",
+    "postJobCta": "Pubblica un lavoro",
+    "showAllCleaners": "Mostra tutti gli addetti"
   },
   "browseJobs": {
     "heroTitle": "Lavori di pulizia disponibili",
@@ -644,7 +650,11 @@
     "category_windows_name": "Pulizia vetri",
     "category_windows_desc": "Senza aloni, interno ed esterno",
     "fromPrice": "Da {price}",
-    "continueButton": "Continua — Scegli la località →"
+    "continueButton": "Continua — Scegli la località →",
+    "preBannerTitle": "Prenotazione con {name}",
+    "preBannerHint": "Puoi selezionare solo i servizi offerti da questo addetto.",
+    "notOfferedBadge": "Non offerto",
+    "changeCleaner": "Cambia addetto"
   },
   "customerBookProvidersPage": {
     "heading": "Dove ti serve la pulizia?",
@@ -666,7 +676,11 @@
     "continueButton": "Continua — Scegli un orario →",
     "errorSearchFailed": "Ricerca non riuscita. Riprova.",
     "errorMissingCityPostal": "Inserisci la tua città e il codice postale",
-    "errorAddressNotFound": "Non è stato possibile individuare il tuo indirizzo. Controlla il codice postale."
+    "errorAddressNotFound": "Non è stato possibile individuare il tuo indirizzo. Controlla il codice postale.",
+    "preHeading": "Dove deve pulire {name}?",
+    "preSubheading": "Inserisci l'indirizzo del servizio — non serve cercare di nuovo.",
+    "preBadge": "Il tuo addetto: {name}",
+    "changeCleaner": "Cambia addetto"
   },
   "customerBookSchedulePage": {
     "heading": "Quando ti è comodo?",

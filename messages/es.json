@@ -178,7 +178,13 @@
     "priceRangeLabel": "Precio (€/h)",
     "minPricePlaceholder": "Mín",
     "maxPricePlaceholder": "Máx",
-    "priceOnRequest": "Precio a consultar"
+    "priceOnRequest": "Precio a consultar",
+    "nearDetecting": "Buscando profesionales cerca de ti…",
+    "nearYouChip": "Cerca de {city}",
+    "emptyNearTitle": "Aún no hay profesionales en tu zona",
+    "emptyNearBody": "Publica tu trabajo y deja que los profesionales vengan a ti: los cercanos reciben una notificación y te envían sus ofertas.",
+    "postJobCta": "Publicar un trabajo",
+    "showAllCleaners": "Ver todos los profesionales"
   },
   "browseJobs": {
     "heroTitle": "Trabajos de limpieza disponibles",
@@ -644,7 +650,11 @@
     "category_windows_name": "Limpieza de ventanas",
     "category_windows_desc": "Sin marcas, interior y exterior",
     "fromPrice": "Desde {price}",
-    "continueButton": "Continuar — Elegir ubicación →"
+    "continueButton": "Continuar — Elegir ubicación →",
+    "preBannerTitle": "Reserva con {name}",
+    "preBannerHint": "Solo se pueden elegir los servicios que ofrece este profesional.",
+    "notOfferedBadge": "No disponible",
+    "changeCleaner": "Cambiar de profesional"
   },
   "customerBookProvidersPage": {
     "heading": "¿Dónde necesitas la limpieza?",
@@ -666,7 +676,11 @@
     "continueButton": "Continuar — Elegir hora →",
     "errorSearchFailed": "La búsqueda falló. Inténtalo de nuevo.",
     "errorMissingCityPostal": "Introduce tu ciudad y código postal",
-    "errorAddressNotFound": "No pudimos localizar tu dirección. Comprueba tu código postal."
+    "errorAddressNotFound": "No pudimos localizar tu dirección. Comprueba tu código postal.",
+    "preHeading": "¿Dónde debe limpiar {name}?",
+    "preSubheading": "Introduce la dirección del servicio: no hace falta buscar de nuevo.",
+    "preBadge": "Tu profesional: {name}",
+    "changeCleaner": "Cambiar de profesional"
   },
   "customerBookSchedulePage": {
     "heading": "¿Cuándo te viene bien?",

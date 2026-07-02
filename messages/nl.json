@@ -178,7 +178,13 @@
     "priceRangeLabel": "Prijs (€/uur)",
     "minPricePlaceholder": "Min",
     "maxPricePlaceholder": "Max",
-    "priceOnRequest": "Prijs op aanvraag"
+    "priceOnRequest": "Prijs op aanvraag",
+    "nearDetecting": "Schoonmakers bij jou in de buurt zoeken…",
+    "nearYouChip": "In de buurt van {city}",
+    "emptyNearTitle": "Nog geen schoonmakers in jouw omgeving",
+    "emptyNearBody": "Plaats je klus en laat schoonmakers naar jou komen — schoonmakers in de buurt krijgen een melding en sturen je hun aanbod.",
+    "postJobCta": "Klus plaatsen",
+    "showAllCleaners": "Alle schoonmakers tonen"
   },
   "browseJobs": {
     "heroTitle": "Open schoonmaakklussen",
@@ -644,7 +650,11 @@
     "category_windows_name": "Glazenwassen",
     "category_windows_desc": "Streeploos binnen & buiten",
     "fromPrice": "Vanaf {price}",
-    "continueButton": "Doorgaan — Locatie kiezen →"
+    "continueButton": "Doorgaan — Locatie kiezen →",
+    "preBannerTitle": "Boeking bij {name}",
+    "preBannerHint": "Alleen diensten die deze schoonmaker aanbiedt zijn te kiezen.",
+    "notOfferedBadge": "Niet aangeboden",
+    "changeCleaner": "Andere schoonmaker"
   },
   "customerBookProvidersPage": {
     "heading": "Waar heb je schoonmaak nodig?",
@@ -666,7 +676,11 @@
     "continueButton": "Doorgaan — Kies een tijd →",
     "errorSearchFailed": "Zoeken mislukt. Probeer het opnieuw.",
     "errorMissingCityPostal": "Voer je plaats en postcode in",
-    "errorAddressNotFound": "We konden je adres niet vinden. Controleer je postcode."
+    "errorAddressNotFound": "We konden je adres niet vinden. Controleer je postcode.",
+    "preHeading": "Waar moet {name} schoonmaken?",
+    "preSubheading": "Vul het serviceadres in — opnieuw zoeken is niet nodig.",
+    "preBadge": "Jouw schoonmaker: {name}",
+    "changeCleaner": "Andere schoonmaker"
   },
   "customerBookSchedulePage": {
     "heading": "Wanneer komt het u uit?",

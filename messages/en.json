@@ -178,7 +178,13 @@
     "priceRangeLabel": "Price (€/hr)",
     "minPricePlaceholder": "Min",
     "maxPricePlaceholder": "Max",
-    "priceOnRequest": "Price on request"
+    "priceOnRequest": "Price on request",
+    "nearDetecting": "Finding cleaners near you…",
+    "nearYouChip": "Near {city}",
+    "emptyNearTitle": "No cleaners in your area yet",
+    "emptyNearBody": "Post your job and let cleaners come to you — nearby cleaners get notified and send you their offers.",
+    "postJobCta": "Post a job",
+    "showAllCleaners": "Show all cleaners"
   },
   "browseJobs": {
     "heroTitle": "Open Cleaning Jobs",
@@ -644,7 +650,11 @@
     "category_windows_name": "Window Cleaning",
     "category_windows_desc": "Streak-free interior & exterior",
     "fromPrice": "From {price}",
-    "continueButton": "Continue — Choose Location →"
+    "continueButton": "Continue — Choose Location →",
+    "preBannerTitle": "Booking with {name}",
+    "preBannerHint": "Only services offered by this cleaner can be selected.",
+    "notOfferedBadge": "Not offered",
+    "changeCleaner": "Change cleaner"
   },
   "customerBookProvidersPage": {
     "heading": "Where do you need cleaning?",
@@ -666,7 +676,11 @@
     "continueButton": "Continue — Pick a Time →",
     "errorSearchFailed": "Search failed. Please try again.",
     "errorMissingCityPostal": "Please enter your city and postal code",
-    "errorAddressNotFound": "Could not locate your address. Please check your postal code."
+    "errorAddressNotFound": "Could not locate your address. Please check your postal code.",
+    "preHeading": "Where should {name} clean?",
+    "preSubheading": "Enter the service address — no need to search again.",
+    "preBadge": "Your cleaner: {name}",
+    "changeCleaner": "Change cleaner"
   },
   "customerBookSchedulePage": {
     "heading": "When works for you?",
