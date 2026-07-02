@@ -1,7 +1,10 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { bids, jobPosts, providers, notifications } from "@/lib/db/schema"
+import { bids, jobPosts, providers, notifications, users } from "@/lib/db/schema"
+import { sql } from "drizzle-orm"
+import { resend, FROM } from "@/lib/resend/client"
+import { newBidEmail } from "@/lib/resend/transactionalEmails"
 import type { NewBid } from "@/lib/db/schema/bids"
 import { pusherServer } from "@/lib/pusher/server"
 import { bidRatelimit } from "@/lib/redis/client"
@@ -51,7 +54,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     if (!provider) return NextResponse.json({ error: "Not an approved provider" }, { status: 403 })
 
     const [job] = await db
-      .select({ id: jobPosts.id, status: jobPosts.status, customerId: jobPosts.customerId, expiresAt: jobPosts.expiresAt, postedIp: jobPosts.postedIp, serviceLatitude: jobPosts.serviceLatitude, serviceLongitude: jobPosts.serviceLongitude, radiusKm: jobPosts.radiusKm, serviceAddress: jobPosts.serviceAddress })
+      .select({ id: jobPosts.id, title: jobPosts.title, status: jobPosts.status, customerId: jobPosts.customerId, expiresAt: jobPosts.expiresAt, postedIp: jobPosts.postedIp, serviceLatitude: jobPosts.serviceLatitude, serviceLongitude: jobPosts.serviceLongitude, radiusKm: jobPosts.radiusKm, serviceAddress: jobPosts.serviceAddress })
       .from(jobPosts)
       .where(eq(jobPosts.id, jobPostId))
 
@@ -136,6 +139,21 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         amount: data.amount,
       })
     } catch {}
+
+    // Email the client for the FIRST THREE bids on a job (respecting their email-reminders setting).
+    // Acceptance closes bidding entirely, so if the first bid is accepted only one email ever goes out.
+    try {
+      const [cnt] = await db.select({ n: sql<number>`count(*)` }).from(bids).where(eq(bids.jobPostId, jobPostId))
+      if (Number(cnt?.n ?? 0) <= 3) {
+        const [cu] = await db.select({ email: users.email, locale: users.locale, emailReminders: users.emailReminders }).from(users).where(eq(users.id, job.customerId))
+        if (cu?.email && cu.emailReminders !== false) {
+          const { subject, html } = newBidEmail(cu.locale, { name: provider.businessName, amount: amountLabel, title: job.title })
+          await resend.emails.send({ from: FROM, to: cu.email, subject, html })
+        }
+      }
+    } catch (emailErr) {
+      console.warn("[bids POST] new-bid email failed (bid still created):", emailErr)
+    }
 
     return NextResponse.json({ bidId: newBid.id }, { status: 201 })
   } catch (err) {

@@ -1,7 +1,9 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { bids, jobPosts, providers, notifications, serviceCategories } from "@/lib/db/schema"
+import { bids, jobPosts, providers, notifications, serviceCategories, users } from "@/lib/db/schema"
+import { resend, FROM } from "@/lib/resend/client"
+import { bidAcceptedEmail } from "@/lib/resend/transactionalEmails"
 import { eq, and, ne } from "drizzle-orm"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
 import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
@@ -116,6 +118,16 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
         link: "/provider/bookings",
         metadata: { amount: amountLabel },
       })
+      // Always email the cleaner — an accepted bid is money-relevant, not a mere reminder.
+      try {
+        const [pu] = await db.select({ email: users.email, locale: users.locale }).from(users).where(eq(users.id, provider.userId))
+        if (pu?.email) {
+          const { subject, html } = bidAcceptedEmail(pu.locale, { amount: amountLabel })
+          await resend.emails.send({ from: FROM, to: pu.email, subject, html })
+        }
+      } catch (emailErr) {
+        console.warn("[bids accept] email failed (accept still succeeded):", emailErr)
+      }
     }
 
     // Build ISO scheduledAt — always non-null so confirm page guard doesn't redirect to /book.

@@ -163,3 +163,39 @@ export function overdueEmail(locale: string | null | undefined, v: { number: str
   const inner = `<h1 style="${H1S}">${t.heading}</h1><p style="${PS}">${sub(t.body, { number: esc(v.number), date: esc(v.date) })}</p>`
   return { subject: sub(t.subject, { number: v.number }), html: shell(inner) }
 }
+
+// Client "new bid on your job" email — sent for the FIRST THREE bids only. {name}, {amount}, {title}.
+const NEW_BID: Record<string, { subject: string; heading: string; body: string }> = {
+  en: { subject: "New bid on your job — {name}", heading: "You received a new bid", body: "{name} offered {amount} for your job “{title}”. Log in to compare bids and accept the one you like." },
+  de: { subject: "Neues Angebot für deinen Auftrag — {name}", heading: "Du hast ein neues Angebot", body: "{name} bietet {amount} für deinen Auftrag „{title}“. Melde dich an, um Angebote zu vergleichen und das passende anzunehmen." },
+  fr: { subject: "Nouvelle offre pour votre annonce — {name}", heading: "Vous avez reçu une nouvelle offre", body: "{name} propose {amount} pour votre annonce « {title} ». Connectez-vous pour comparer les offres et accepter celle qui vous convient." },
+  es: { subject: "Nueva oferta para tu trabajo — {name}", heading: "Has recibido una nueva oferta", body: "{name} ofrece {amount} por tu trabajo «{title}». Inicia sesión para comparar ofertas y aceptar la que prefieras." },
+  it: { subject: "Nuova offerta per il tuo lavoro — {name}", heading: "Hai ricevuto una nuova offerta", body: "{name} offre {amount} per il tuo lavoro “{title}”. Accedi per confrontare le offerte e accettare quella che preferisci." },
+  nl: { subject: "Nieuw bod op je klus — {name}", heading: "Je hebt een nieuw bod", body: "{name} biedt {amount} voor je klus “{title}”. Log in om biedingen te vergelijken en het beste te accepteren." },
+  pl: { subject: "Nowa oferta na Twoje zlecenie — {name}", heading: "Masz nową ofertę", body: "{name} oferuje {amount} za Twoje zlecenie „{title}”. Zaloguj się, aby porównać oferty i zaakceptować najlepszą." },
+  pt: { subject: "Nova proposta para o teu trabalho — {name}", heading: "Recebeste uma nova proposta", body: "{name} propõe {amount} pelo teu trabalho “{title}”. Inicia sessão para comparar propostas e aceitar a que preferires." },
+}
+
+export function newBidEmail(locale: string | null | undefined, v: { name: string; amount: string; title: string }) {
+  const t = NEW_BID[loc(locale)] ?? NEW_BID[defaultLocale]
+  const inner = `<h1 style="${H1S}">${t.heading}</h1><p style="${PS}">${sub(t.body, { name: esc(v.name), amount: esc(v.amount), title: esc(v.title) })}</p>`
+  return { subject: sub(t.subject, { name: v.name }), html: shell(inner) }
+}
+
+// Cleaner "your bid was accepted" email — always sent (money-relevant). {amount}.
+const BID_ACCEPTED: Record<string, { subject: string; heading: string; body: string }> = {
+  en: { subject: "Your bid was accepted 🎉", heading: "Your bid was accepted!", body: "A client accepted your bid of {amount}. Open your bookings to see the schedule and next steps." },
+  de: { subject: "Dein Angebot wurde angenommen 🎉", heading: "Dein Angebot wurde angenommen!", body: "Ein Kunde hat dein Angebot über {amount} angenommen. Öffne deine Buchungen für Termin und nächste Schritte." },
+  fr: { subject: "Votre offre a été acceptée 🎉", heading: "Votre offre a été acceptée !", body: "Un client a accepté votre offre de {amount}. Ouvrez vos réservations pour voir le planning et les prochaines étapes." },
+  es: { subject: "Tu oferta fue aceptada 🎉", heading: "¡Tu oferta fue aceptada!", body: "Un cliente aceptó tu oferta de {amount}. Abre tus reservas para ver el horario y los próximos pasos." },
+  it: { subject: "La tua offerta è stata accettata 🎉", heading: "La tua offerta è stata accettata!", body: "Un cliente ha accettato la tua offerta di {amount}. Apri le tue prenotazioni per vedere il programma e i prossimi passi." },
+  nl: { subject: "Je bod is geaccepteerd 🎉", heading: "Je bod is geaccepteerd!", body: "Een klant heeft je bod van {amount} geaccepteerd. Open je boekingen voor de planning en de volgende stappen." },
+  pl: { subject: "Twoja oferta została przyjęta 🎉", heading: "Twoja oferta została przyjęta!", body: "Klient zaakceptował Twoją ofertę {amount}. Otwórz swoje rezerwacje, aby zobaczyć harmonogram i kolejne kroki." },
+  pt: { subject: "A tua proposta foi aceite 🎉", heading: "A tua proposta foi aceite!", body: "Um cliente aceitou a tua proposta de {amount}. Abre as tuas reservas para ver o horário e os próximos passos." },
+}
+
+export function bidAcceptedEmail(locale: string | null | undefined, v: { amount: string }) {
+  const t = BID_ACCEPTED[loc(locale)] ?? BID_ACCEPTED[defaultLocale]
+  const inner = `<h1 style="${H1S}">${t.heading}</h1><p style="${PS}">${sub(t.body, { amount: esc(v.amount) })}</p>`
+  return { subject: t.subject, html: shell(inner) }
+}

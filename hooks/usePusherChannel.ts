@@ -20,6 +20,7 @@ export function usePusherChannel(
   eventsRef.current = events  // sync on every render without triggering the effect
 
   useEffect(() => {
+    if (!channelName) return // caller's identity not loaded yet — nothing to subscribe to
     const pusher = getPusherClient()
     const channel = pusher.subscribe(channelName)
     channelRef.current = channel

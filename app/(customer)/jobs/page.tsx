@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { useTranslations } from "next-intl"
+import { useUser } from "@clerk/nextjs"
+import { usePusherChannel } from "@/hooks/usePusherChannel"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -213,16 +215,22 @@ function BidCard({ bid, jobId, jobStatus }: { bid: Bid; jobId: string; jobStatus
 
 export default function CustomerJobsPage() {
   const t = useTranslations("customerJobsPage")
+  const { user } = useUser()
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
 
-  useEffect(() => {
+  function load() {
     fetch("/api/jobs")
       .then((r) => r.json())
       .then((d) => setJobs(d.jobs ?? []))
       .finally(() => setLoading(false))
-  }, [])
+  }
+  useEffect(() => { load() }, [])
+
+  // LIVE bids: the bid API pushes "new-bid" on the client's private channel — refetch instantly so a
+  // fresh bid appears without waiting for the notification bell's poll.
+  usePusherChannel(user ? `private-customer-${user.id}` : "", { "new-bid": () => load() })
 
   function toggleBids(jobId: string) {
     setExpanded((prev) => {
