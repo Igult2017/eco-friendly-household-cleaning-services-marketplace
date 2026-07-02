@@ -30,7 +30,9 @@ export const createBookingSchema = z.object({
 
 export const paymentIntentSchema = z.object({
   providerId: z.string().uuid(),
-  serviceId: z.string().uuid(),
+  // Optional in the BID flow (job posts carry no category; the route resolves the provider's first
+  // active service). Still effectively required for wizard bookings — the route enforces it.
+  serviceId: z.string().uuid().optional(),
   scheduledAt: z.string().datetime(),
   durationMinutes: z.number().int().min(30).max(480),
   carbonOffsetCents: z.union([z.literal(0), z.literal(200)]).optional().default(0),

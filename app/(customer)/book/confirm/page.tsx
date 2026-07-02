@@ -117,8 +117,10 @@ export default function BookStep5Page() {
       const svcRes = await fetch(`/api/providers/${store.selectedProviderId}/services${store.categoryId ? `?categorySlug=${store.categoryId}` : ""}`)
       const svcData = await svcRes.json()
       const service = svcData.services?.[0]
-      if (!service) { setError(t("errorProviderNoService")); return }
-      setServiceId(service.id)
+      // Bid flow: the accepted bid IS the price — a missing service listing must not dead-end the
+      // summary (job posts have no category, and bid-only cleaners may have no listed services).
+      if (!service && store.bidAmountCents === null) { setError(t("errorProviderNoService")); return }
+      if (service) setServiceId(service.id)
       // Sum any selected add-ons so the preview total matches what the PI will charge.
       let addOnsTotal = 0
       if (store.addOnIds.length > 0) {
@@ -132,7 +134,7 @@ export default function BookStep5Page() {
       // Commission is deducted from the cleaner, so the customer's price is simply the
       // service price (+ add-ons, after any promo) + the optional offset — no fee on top.
       // Bug 5: bid-flow bookings use the accepted bid amount, not the service list price
-      const subtotalCents: number = (store.bidAmountCents ?? service.basePrice) + addOnsTotal
+      const subtotalCents: number = (store.bidAmountCents ?? service?.basePrice ?? 0) + addOnsTotal
       setAmounts({ subtotalCents, totalCharged: subtotalCents })
     } catch {
       setError(t("errorLoadPricing"))
@@ -142,7 +144,10 @@ export default function BookStep5Page() {
   }
 
   useEffect(() => {
-    if (store.selectedProviderId && store.categoryId) fetchPricePreview()
+    // Bid-flow bookings have NO category (job posts don't carry one) — the accepted bid amount is the
+    // price, so the preview must run regardless. Gating on categoryId left bid-flow clients on an
+    // empty summary with no pay button.
+    if (store.selectedProviderId && (store.categoryId || isBidFlow)) fetchPricePreview()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -183,14 +188,15 @@ export default function BookStep5Page() {
       const svcRes = await fetch(`/api/providers/${store.selectedProviderId}/services${store.categoryId ? `?categorySlug=${store.categoryId}` : ""}`)
       const svcData = await svcRes.json()
       const service = svcData.services?.[0]
-      if (!service) { setError(t("errorServiceNotFound")); return }
+      // Bid flow may proceed without a service listing — the intent API resolves one server-side.
+      if (!service && store.bidAmountCents === null) { setError(t("errorServiceNotFound")); return }
 
       const res = await fetch("/api/payments/intent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           providerId: store.selectedProviderId,
-          serviceId: service.id,
+          ...(service ? { serviceId: service.id } : {}),
           scheduledAt: store.scheduledAt!,
           durationMinutes: store.durationMinutes,
           carbonOffsetCents: addCarbonOffset ? CARBON_OFFSET_CENTS : 0,
@@ -205,6 +211,7 @@ export default function BookStep5Page() {
       setClientSecret(data.clientSecret)
       setIntentId(data.paymentIntentId)
       setAmounts(data.amounts)
+      if (data.serviceId) setServiceId(data.serviceId) // server-resolved (bid flow without a listing)
       store.setCarbonOffset(addCarbonOffset ? CARBON_OFFSET_CENTS : 0)
       setStep("payment")
     } catch {

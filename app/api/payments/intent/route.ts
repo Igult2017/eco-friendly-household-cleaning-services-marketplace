@@ -38,15 +38,28 @@ export async function POST(req: Request) {
     // server-side (FIN-003); any client-supplied amount is ignored.
     const { providerId, serviceId, scheduledAt, durationMinutes, carbonOffsetCents = 0, bidAmountCents, promoCodeId, addOnIds = [] } = parsed.data
 
+    // serviceId is optional ONLY for bid-flow bookings (job posts have no category, and a bid-only
+    // cleaner may have no listing) — the accepted bid amount is the price; resolve any active service
+    // row for the FK. Wizard bookings must still name their service.
+    if (!serviceId && bidAmountCents === undefined) {
+      return NextResponse.json({ error: "serviceId is required" }, { status: 400 })
+    }
+
     const [[provider], [service]] = await Promise.all([
       db
         .select({ id: providers.id, country: providers.country, stripeAccountId: providers.stripeAccountId, stripeAccountStatus: providers.stripeAccountStatus, isApproved: providers.isApproved, isSuspended: providers.isSuspended })
         .from(providers)
         .where(eq(providers.id, providerId)),
-      db
-        .select({ id: providerServices.id, basePrice: providerServices.basePrice, priceUnit: providerServices.priceUnit })
-        .from(providerServices)
-        .where(and(eq(providerServices.id, serviceId), eq(providerServices.providerId, providerId), eq(providerServices.isActive, true))),
+      serviceId
+        ? db
+            .select({ id: providerServices.id, basePrice: providerServices.basePrice, priceUnit: providerServices.priceUnit })
+            .from(providerServices)
+            .where(and(eq(providerServices.id, serviceId), eq(providerServices.providerId, providerId), eq(providerServices.isActive, true)))
+        : db
+            .select({ id: providerServices.id, basePrice: providerServices.basePrice, priceUnit: providerServices.priceUnit })
+            .from(providerServices)
+            .where(and(eq(providerServices.providerId, providerId), eq(providerServices.isActive, true)))
+            .limit(1),
     ])
 
     if (!provider?.isApproved || provider.isSuspended) return NextResponse.json({ error: "Provider not available" }, { status: 422 })
@@ -56,7 +69,12 @@ export async function POST(req: Request) {
     if (provider.stripeAccountStatus && provider.stripeAccountStatus !== "active") {
       return NextResponse.json({ error: "Provider payment account not ready" }, { status: 422 })
     }
-    if (!service) return NextResponse.json({ error: "Service not found" }, { status: 404 })
+    if (!service) {
+      return NextResponse.json(
+        { error: serviceId ? "Service not found" : "This cleaner hasn't finished setting up their services yet. Please contact support." },
+        { status: serviceId ? 404 : 422 },
+      )
+    }
 
     // Bug 5: when booking from an accepted bid, validate the bid and use its amount as subtotal
     let acceptedBidId: string | null = null
@@ -151,7 +169,7 @@ export async function POST(req: Request) {
     const metadata: Record<string, string> = {
       clerk_customer_id: userId,
       provider_id: providerId,
-      service_id: serviceId,
+      service_id: service.id,
       carbon_offset_cents: String(carbonOffsetCents),
       // FIN-010: pin the commission rate used for THIS PI so booking creation stores the
       // same split even if an admin changes the commission between PI creation and confirm.
@@ -192,13 +210,14 @@ export async function POST(req: Request) {
       // (final total + promo code) so changing the promo or carbon offset on the same slot
       // creates a NEW PI with the correct amount, while pure network retries of the same
       // request still return the cached PI.
-      { idempotencyKey: `pi-${userId}-${providerId}-${serviceId}-${scheduledAt}-${totalWithOffset}-${promoCodeId ?? "none"}-${addonSig}` },
+      { idempotencyKey: `pi-${userId}-${providerId}-${service.id}-${scheduledAt}-${totalWithOffset}-${promoCodeId ?? "none"}-${addonSig}` },
     )
 
     return NextResponse.json({
       clientSecret: intent.client_secret,
       paymentIntentId: intent.id,
       currency: chargeCurrency,
+      serviceId: service.id, // server-resolved for bid-flow clients that arrived without one
       amounts: { ...amounts, carbonOffsetCents, totalCharged: totalWithOffset, commissionPct },
     })
   } catch (err) {
