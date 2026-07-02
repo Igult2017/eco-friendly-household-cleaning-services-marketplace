@@ -15,6 +15,7 @@ import type { Address } from "@/types"
 import { LocationDetectButton } from "@/components/location/LocationDetectButton"
 import type { GeoResult } from "@/lib/nominatim"
 import { geocodeFlexible, extractPostalCode } from "@/lib/nominatim"
+import { SUPPORTED_COUNTRIES, isSupportedCountry } from "@/lib/utils/countries"
 
 export default function BookStep2Page() {
   const t = useTranslations("customerBookProvidersPage")
@@ -190,7 +191,17 @@ export default function BookStep2Page() {
             </div>
             <div>
               <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">{t("labelCountry")}</Label>
-              <Input value={preselected ? address.country : t("countryGermany")} disabled className="text-[#6B7280]" />
+              <select
+                value={address.country}
+                onChange={(e) => setAddressForm((prev) => ({ ...prev, country: e.target.value }))}
+                className="flex h-10 w-full rounded-md border border-[#E5EBF0] bg-white px-3 py-2 text-sm text-[#2B3441] focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]"
+              >
+                {/* Keep a detected-but-unlisted country selectable instead of blanking the field. */}
+                {!isSupportedCountry(address.country) && <option value={address.country}>{address.country}</option>}
+                {SUPPORTED_COUNTRIES.map(([code, name]) => (
+                  <option key={code} value={code}>{name}</option>
+                ))}
+              </select>
             </div>
           </div>
 

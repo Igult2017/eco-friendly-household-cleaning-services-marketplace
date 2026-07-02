@@ -26,12 +26,10 @@ interface Props {
   onValidChange?: (valid: boolean) => void
 }
 
-const EU_COUNTRIES: [string, string][] = [
-  ["DE", "Germany"], ["NL", "Netherlands"], ["BE", "Belgium"], ["AT", "Austria"],
-  ["FR", "France"], ["ES", "Spain"], ["IT", "Italy"], ["PL", "Poland"],
-  ["SE", "Sweden"], ["DK", "Denmark"], ["FI", "Finland"], ["NO", "Norway"],
-  ["CH", "Switzerland"], ["PT", "Portugal"], ["IE", "Ireland"],
-]
+import { SUPPORTED_COUNTRIES } from "@/lib/utils/countries"
+
+// Shared EU+US list — a US cleaner must be able to onboard too (both-markets rule).
+const EU_COUNTRIES = SUPPORTED_COUNTRIES
 
 const ECO_LEVEL_KEYS = ["basic", "certified", "premium", "zero_impact"] as const
 

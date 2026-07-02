@@ -924,7 +924,8 @@
     "recurring_none": "Une seule fois",
     "recurring_weekly": "Hebdomadaire",
     "recurring_biweekly": "Toutes les 2 semaines",
-    "recurring_monthly": "Mensuel"
+    "recurring_monthly": "Mensuel",
+    "countryLabel": "Pays"
   },
   "customerProfilePage": {
     "title": "Mon profil",

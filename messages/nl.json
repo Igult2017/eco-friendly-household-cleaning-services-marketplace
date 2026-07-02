@@ -924,7 +924,8 @@
     "recurring_none": "Eenmalig",
     "recurring_weekly": "Wekelijks",
     "recurring_biweekly": "Om de 2 weken",
-    "recurring_monthly": "Maandelijks"
+    "recurring_monthly": "Maandelijks",
+    "countryLabel": "Land"
   },
   "customerProfilePage": {
     "title": "Mijn profiel",
