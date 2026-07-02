@@ -334,6 +334,17 @@ const NOTIF: Record<string, Record<string, S>> = {
     pl: { title: "Propozycja odrzucona", body: "Klient odrzucił zmiany — rezerwacja pozostaje bez zmian." },
     pt: { title: "Sugestão recusada", body: "O cliente recusou as alterações — a reserva mantém-se como combinado." },
   },
+  // A client tried to book a cleaner whose payout account isn't connected/active yet.
+  payout_setup_needed: {
+    en: { title: "A client tried to book you — finish your payout setup", body: "A client tried to book you, but you haven't connected your payout account yet. Connect it in Earnings so you can get booked and paid." },
+    de: { title: "Ein Kunde wollte dich buchen — schließe deine Auszahlung ein", body: "Ein Kunde wollte dich buchen, aber dein Auszahlungskonto ist noch nicht verbunden. Verbinde es unter Einnahmen, damit du gebucht und bezahlt werden kannst." },
+    fr: { title: "Un client a voulu vous réserver — finalisez vos paiements", body: "Un client a voulu vous réserver, mais votre compte de versement n'est pas encore connecté. Connectez-le dans Revenus pour pouvoir être réservé et payé." },
+    es: { title: "Un cliente intentó reservarte: completa tu configuración de cobros", body: "Un cliente intentó reservarte, pero aún no has conectado tu cuenta de cobros. Conéctala en Ingresos para poder recibir reservas y pagos." },
+    it: { title: "Un cliente ha provato a prenotarti — completa i pagamenti", body: "Un cliente ha provato a prenotarti, ma non hai ancora collegato il conto per i pagamenti. Collegalo in Guadagni per poter essere prenotato e pagato." },
+    nl: { title: "Een klant wilde je boeken — voltooi je uitbetaling", body: "Een klant wilde je boeken, maar je uitbetalingsaccount is nog niet gekoppeld. Koppel het bij Inkomsten zodat je geboekt en betaald kunt worden." },
+    pl: { title: "Klient próbował Cię zarezerwować — dokończ konfigurację wypłat", body: "Klient próbował Cię zarezerwować, ale nie połączyłeś jeszcze konta wypłat. Połącz je w Zarobkach, aby można było Cię rezerwować i płacić." },
+    pt: { title: "Um cliente tentou reservar-te — conclui a configuração de pagamentos", body: "Um cliente tentou reservar-te, mas ainda não ligaste a tua conta de pagamentos. Liga-a em Ganhos para poderes ser reservado e pago." },
+  },
   // Cleaner rejected a fresh booking with a stated reason; the hold was fully released.
   booking_rejected: {
     en: { title: "Booking declined", body: "Your cleaner can't take the booking scheduled for {datetime}. Reason: {reason}. Your payment hold was fully released." },

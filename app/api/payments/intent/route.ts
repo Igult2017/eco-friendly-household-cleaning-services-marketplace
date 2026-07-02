@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { providers, providerServices, users, bids, jobPosts, promoCodes, promoCodeUsages, providerAddons } from "@/lib/db/schema"
+import { providers, providerServices, users, bids, jobPosts, promoCodes, promoCodeUsages, providerAddons, notifications } from "@/lib/db/schema"
 import { stripe, calculateBookingAmounts } from "@/lib/stripe/client"
 import { getCommissionPct } from "@/lib/platform/settings"
 import { bookingRatelimit } from "@/lib/redis/client"
@@ -47,7 +47,7 @@ export async function POST(req: Request) {
 
     const [[provider], [service]] = await Promise.all([
       db
-        .select({ id: providers.id, country: providers.country, stripeAccountId: providers.stripeAccountId, stripeAccountStatus: providers.stripeAccountStatus, isApproved: providers.isApproved, isSuspended: providers.isSuspended })
+        .select({ id: providers.id, userId: providers.userId, country: providers.country, stripeAccountId: providers.stripeAccountId, stripeAccountStatus: providers.stripeAccountStatus, isApproved: providers.isApproved, isSuspended: providers.isSuspended })
         .from(providers)
         .where(eq(providers.id, providerId)),
       serviceId
@@ -63,11 +63,30 @@ export async function POST(req: Request) {
     ])
 
     if (!provider?.isApproved || provider.isSuspended) return NextResponse.json({ error: "Provider not available" }, { status: 422 })
-    if (!provider.stripeAccountId) return NextResponse.json({ error: "Provider payment not set up" }, { status: 422 })
-    // Don't route a destination charge to a Connect account that can't receive funds yet
-    // (onboarding incomplete / charges disabled). account.updated keeps this in sync.
-    if (provider.stripeAccountStatus && provider.stripeAccountStatus !== "active") {
-      return NextResponse.json({ error: "Provider payment account not ready" }, { status: 422 })
+    // Don't route a destination charge to a Connect account that doesn't exist / can't receive funds
+    // yet. Nudge the CLEANER (once per open nudge) and give the client a human explanation — the raw
+    // "Provider payment not set up" read like the client's own card problem.
+    if (!provider.stripeAccountId || (provider.stripeAccountStatus && provider.stripeAccountStatus !== "active")) {
+      try {
+        const [pending] = await db
+          .select({ id: notifications.id })
+          .from(notifications)
+          .where(and(eq(notifications.userId, provider.userId), eq(notifications.isRead, false), eq(notifications.link, "/provider/earnings")))
+        if (!pending) {
+          await db.insert(notifications).values({
+            userId: provider.userId,
+            type: "booking_reminder",
+            title: "A client tried to book you — finish your payout setup",
+            body: "A client tried to book you, but you haven't connected your payout account yet. Connect it in Earnings so you can get booked and paid.",
+            link: "/provider/earnings",
+            metadata: { variant: "payout_setup_needed" },
+          })
+        }
+      } catch { /* nudge is best-effort */ }
+      return NextResponse.json(
+        { error: "This cleaner hasn't finished their payout setup yet, so they can't be booked right now. We've notified them — please try again later or choose another cleaner." },
+        { status: 422 },
+      )
     }
     if (!service) {
       return NextResponse.json(
