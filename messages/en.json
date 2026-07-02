@@ -1832,14 +1832,18 @@
     "subheading": "Your conversations with clients.",
     "emptyTitle": "No messages yet",
     "emptyDescription": "When a client messages you about a booking, it'll show up here.",
-    "client": "Client"
+    "client": "Client",
+    "threadBack": "Back to messages",
+    "threadWith": "with {name}"
   },
   "customerMessagesPage": {
     "heading": "Messages",
     "subheading": "Your conversations with cleaners.",
     "emptyTitle": "No messages yet",
     "emptyDescription": "When you message a cleaner about a booking, it will show up here.",
-    "cleaner": "Cleaner"
+    "cleaner": "Cleaner",
+    "threadBack": "Back to messages",
+    "threadWith": "with {name}"
   },
   "customerPaymentMethods": {
     "title": "Payment methods",

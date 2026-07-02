@@ -1832,14 +1832,18 @@
     "subheading": "Tus conversaciones con los clientes.",
     "emptyTitle": "Aún no hay mensajes",
     "emptyDescription": "Cuando un cliente te escriba sobre una reserva, aparecerá aquí.",
-    "client": "Cliente"
+    "client": "Cliente",
+    "threadBack": "Volver a mensajes",
+    "threadWith": "con {name}"
   },
   "customerMessagesPage": {
     "heading": "Mensajes",
     "subheading": "Tus conversaciones con profesionales de limpieza.",
     "emptyTitle": "Aún no hay mensajes",
     "emptyDescription": "Cuando escribas a un profesional sobre una reserva, aparecerá aquí.",
-    "cleaner": "Profesional"
+    "cleaner": "Profesional",
+    "threadBack": "Volver a mensajes",
+    "threadWith": "con {name}"
   },
   "customerPaymentMethods": {
     "title": "Métodos de pago",

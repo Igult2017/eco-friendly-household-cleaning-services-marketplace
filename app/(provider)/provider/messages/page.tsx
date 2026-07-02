@@ -5,11 +5,11 @@ import { redirect } from "next/navigation"
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 import { db } from "@/lib/db"
-import { providers, bookings, messages, users } from "@/lib/db/schema"
-import { eq, desc } from "drizzle-orm"
+import { providers, bookings, messages, users, jobPosts, bids } from "@/lib/db/schema"
+import { eq, desc, and, isNotNull } from "drizzle-orm"
 import { MessageSquare } from "lucide-react"
 
-type Convo = { bookingId: string; name: string; lastBody: string; lastAt: Date | string; unread: number }
+type Convo = { key: string; link: string; name: string; lastBody: string; lastAt: Date | string; unread: number }
 
 export default async function ProviderMessagesPage() {
   const { userId } = await auth()
@@ -39,23 +39,46 @@ export default async function ProviderMessagesPage() {
     .limit(500)
     .catch(() => [])
 
+  // Job-level threads (won bids) — one thread per job, titled with the JOB's title.
+  const jobRows = await db
+    .select({ jobPostId: messages.jobPostId, body: messages.body, createdAt: messages.createdAt, senderId: messages.senderId, isRead: messages.isRead, title: jobPosts.title })
+    .from(messages)
+    .innerJoin(jobPosts, eq(messages.jobPostId, jobPosts.id))
+    .innerJoin(bids, eq(jobPosts.acceptedBidId, bids.id))
+    .where(and(eq(bids.providerId, provider.id), isNotNull(messages.jobPostId)))
+    .orderBy(desc(messages.createdAt))
+    .limit(300)
+    .catch(() => [])
+
   const map = new Map<string, Convo>()
   for (const m of rows) {
-    if (!m.bookingId) continue // job-level chats (pre-booking) live on the job card, not this inbox
-    let c = map.get(m.bookingId)
+    if (!m.bookingId) continue
+    const key = `b-${m.bookingId}`
+    let c = map.get(key)
     if (!c) {
       c = {
-        bookingId: m.bookingId,
+        key,
+        link: `/provider/bookings/${m.bookingId}/messages`,
         name: [m.firstName, m.lastName].filter(Boolean).join(" ") || t("client"),
         lastBody: m.body,
         lastAt: m.createdAt,
         unread: 0,
       }
-      map.set(m.bookingId, c)
+      map.set(key, c)
     }
     if (m.senderId !== userId && !m.isRead) c.unread++
   }
-  const convos = [...map.values()]
+  for (const m of jobRows) {
+    if (!m.jobPostId) continue
+    const key = `j-${m.jobPostId}`
+    let c = map.get(key)
+    if (!c) {
+      c = { key, link: `/provider/jobs/${m.jobPostId}/messages`, name: m.title, lastBody: m.body, lastAt: m.createdAt, unread: 0 }
+      map.set(key, c)
+    }
+    if (m.senderId !== userId && !m.isRead) c.unread++
+  }
+  const convos = [...map.values()].sort((a, b) => new Date(b.lastAt).getTime() - new Date(a.lastAt).getTime())
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -73,7 +96,7 @@ export default async function ProviderMessagesPage() {
       ) : (
         <div className="rounded-2xl bg-white border border-[#E5EBF0] shadow-sm divide-y divide-[#F0F4F8] overflow-hidden">
           {convos.map((c) => (
-            <Link key={c.bookingId} href={`/provider/bookings/${c.bookingId}/messages`} className="flex items-center gap-3 px-5 py-4 hover:bg-[#F4FAF6] transition-colors">
+            <Link key={c.key} href={c.link} className="flex items-center gap-3 px-5 py-4 hover:bg-[#F4FAF6] transition-colors">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#2D7A5F]/10 text-[#2D7A5F] font-semibold">
                 {(c.name[0] ?? "C").toUpperCase()}
               </div>

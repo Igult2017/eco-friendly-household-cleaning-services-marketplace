@@ -1832,14 +1832,18 @@
     "subheading": "Twoje rozmowy z klientami.",
     "emptyTitle": "Brak wiadomości",
     "emptyDescription": "Gdy klient napisze do Ciebie w sprawie rezerwacji, pojawi się to tutaj.",
-    "client": "Klient"
+    "client": "Klient",
+    "threadBack": "Powrót do wiadomości",
+    "threadWith": "z {name}"
   },
   "customerMessagesPage": {
     "heading": "Wiadomości",
     "subheading": "Twoje rozmowy z osobami sprzątającymi.",
     "emptyTitle": "Brak wiadomości",
     "emptyDescription": "Gdy napiszesz do osoby sprzątającej w sprawie rezerwacji, pojawi się to tutaj.",
-    "cleaner": "Osoba sprzątająca"
+    "cleaner": "Osoba sprzątająca",
+    "threadBack": "Powrót do wiadomości",
+    "threadWith": "z {name}"
   },
   "customerPaymentMethods": {
     "title": "Metody płatności",

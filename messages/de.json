@@ -1832,14 +1832,18 @@
     "subheading": "Deine Gespräche mit Kund:innen.",
     "emptyTitle": "Noch keine Nachrichten",
     "emptyDescription": "Wenn dir ein:e Kund:in zu einer Buchung schreibt, erscheint es hier.",
-    "client": "Kunde"
+    "client": "Kunde",
+    "threadBack": "Zurück zu den Nachrichten",
+    "threadWith": "mit {name}"
   },
   "customerMessagesPage": {
     "heading": "Nachrichten",
     "subheading": "Deine Gespräche mit Reinigungskräften.",
     "emptyTitle": "Noch keine Nachrichten",
     "emptyDescription": "Wenn du einer Reinigungskraft zu einer Buchung schreibst, erscheint es hier.",
-    "cleaner": "Reinigungskraft"
+    "cleaner": "Reinigungskraft",
+    "threadBack": "Zurück zu den Nachrichten",
+    "threadWith": "mit {name}"
   },
   "customerPaymentMethods": {
     "title": "Zahlungsmethoden",

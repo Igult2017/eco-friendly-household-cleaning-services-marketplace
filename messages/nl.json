@@ -1832,14 +1832,18 @@
     "subheading": "Je gesprekken met klanten.",
     "emptyTitle": "Nog geen berichten",
     "emptyDescription": "Wanneer een klant je over een boeking bericht, verschijnt het hier.",
-    "client": "Klant"
+    "client": "Klant",
+    "threadBack": "Terug naar berichten",
+    "threadWith": "met {name}"
   },
   "customerMessagesPage": {
     "heading": "Berichten",
     "subheading": "Je gesprekken met schoonmakers.",
     "emptyTitle": "Nog geen berichten",
     "emptyDescription": "Wanneer je een schoonmaker over een boeking bericht, verschijnt het hier.",
-    "cleaner": "Schoonmaker"
+    "cleaner": "Schoonmaker",
+    "threadBack": "Terug naar berichten",
+    "threadWith": "met {name}"
   },
   "customerPaymentMethods": {
     "title": "Betaalmethoden",

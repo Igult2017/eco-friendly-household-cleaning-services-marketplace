@@ -2,7 +2,9 @@ import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { z } from "zod"
 import { db } from "@/lib/db"
-import { jobPosts, bids, providers, messages, notifications } from "@/lib/db/schema"
+import { jobPosts, bids, providers, messages, notifications, users } from "@/lib/db/schema"
+import { resend, FROM } from "@/lib/resend/client"
+import { newMessageEmail } from "@/lib/resend/transactionalEmails"
 import { eq, and, asc, ne } from "drizzle-orm"
 import { pusherServer } from "@/lib/pusher/server"
 import { isUuid } from "@/lib/utils/uuid"
@@ -14,7 +16,7 @@ type RouteContext = { params: Promise<{ id: string }> }
 // so they can coordinate details before payment creates the booking (and it stays usable after).
 async function verifyAccess(jobPostId: string, userId: string) {
   const [job] = await db
-    .select({ id: jobPosts.id, customerId: jobPosts.customerId, acceptedBidId: jobPosts.acceptedBidId })
+    .select({ id: jobPosts.id, title: jobPosts.title, customerId: jobPosts.customerId, acceptedBidId: jobPosts.acceptedBidId })
     .from(jobPosts)
     .where(eq(jobPosts.id, jobPostId))
   if (!job?.acceptedBidId) return null // chat exists only once a bid is accepted
@@ -51,7 +53,7 @@ export async function GET(_req: Request, { params }: RouteContext) {
         .where(and(eq(messages.jobPostId, id), ne(messages.senderId, userId), eq(messages.isRead, false)))
     }
     // Clear this thread's new_message notifications so the bell badge updates.
-    const viewerLink = access.isCustomer ? "/jobs" : "/provider/jobs"
+    const viewerLink = access.isCustomer ? `/jobs/${id}/messages` : `/provider/jobs/${id}/messages`
     await db
       .update(notifications)
       .set({ isRead: true })
@@ -91,9 +93,20 @@ export async function POST(req: Request, { params }: RouteContext) {
       type: "new_message",
       title: "New message",
       body: parsed.data.body.slice(0, 100),
-      link: access.isCustomer ? "/provider/jobs" : "/jobs",
+      link: access.isCustomer ? `/provider/jobs/${id}/messages` : `/jobs/${id}/messages`,
       metadata: { message: parsed.data.body.slice(0, 100) },
     })
+
+    // Email the recipient too (localized; respects their email-reminders setting; never blocks the send).
+    try {
+      const [ru] = await db.select({ email: users.email, locale: users.locale, emailReminders: users.emailReminders }).from(users).where(eq(users.id, recipientId))
+      if (ru?.email && ru.emailReminders !== false) {
+        const { subject, html } = newMessageEmail(ru.locale, { title: access.job.title, snippet: parsed.data.body.slice(0, 120) })
+        await resend.emails.send({ from: FROM, to: ru.email, subject, html })
+      }
+    } catch (emailErr) {
+      console.warn("[jobs messages] email failed (message still sent):", emailErr)
+    }
 
     try {
       await pusherServer.trigger(`private-job-${id}`, "new-message", {

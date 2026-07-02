@@ -1832,14 +1832,18 @@
     "subheading": "Vos conversations avec les clients.",
     "emptyTitle": "Aucun message pour le moment",
     "emptyDescription": "Lorsqu'un client vous écrira au sujet d'une réservation, cela apparaîtra ici.",
-    "client": "Client"
+    "client": "Client",
+    "threadBack": "Retour aux messages",
+    "threadWith": "avec {name}"
   },
   "customerMessagesPage": {
     "heading": "Messages",
     "subheading": "Vos conversations avec les intervenants.",
     "emptyTitle": "Aucun message pour le moment",
     "emptyDescription": "Lorsque vous écrivez à un intervenant au sujet d une réservation, cela apparaîtra ici.",
-    "cleaner": "Intervenant"
+    "cleaner": "Intervenant",
+    "threadBack": "Retour aux messages",
+    "threadWith": "avec {name}"
   },
   "customerPaymentMethods": {
     "title": "Moyens de paiement",

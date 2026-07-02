@@ -194,6 +194,24 @@ const BID_ACCEPTED: Record<string, { subject: string; heading: string; body: str
   pt: { subject: "A tua proposta foi aceite 🎉", heading: "A tua proposta foi aceite!", body: "Um cliente aceitou a tua proposta de {amount}. Abre as tuas reservas para ver o horário e os próximos passos." },
 }
 
+// New chat message about a job — {title}, {snippet}.
+const NEW_MESSAGE: Record<string, { subject: string; heading: string; body: string }> = {
+  en: { subject: "New message — “{title}”", heading: "You have a new message", body: "New message about “{title}”: “{snippet}”. Log in to DORIXÉ to reply." },
+  de: { subject: "Neue Nachricht — „{title}“", heading: "Du hast eine neue Nachricht", body: "Neue Nachricht zu „{title}“: „{snippet}“. Melde dich bei DORIXÉ an, um zu antworten." },
+  fr: { subject: "Nouveau message — « {title} »", heading: "Vous avez un nouveau message", body: "Nouveau message concernant « {title} » : « {snippet} ». Connectez-vous à DORIXÉ pour répondre." },
+  es: { subject: "Nuevo mensaje — «{title}»", heading: "Tienes un nuevo mensaje", body: "Nuevo mensaje sobre «{title}»: «{snippet}». Inicia sesión en DORIXÉ para responder." },
+  it: { subject: "Nuovo messaggio — “{title}”", heading: "Hai un nuovo messaggio", body: "Nuovo messaggio su “{title}”: “{snippet}”. Accedi a DORIXÉ per rispondere." },
+  nl: { subject: "Nieuw bericht — “{title}”", heading: "Je hebt een nieuw bericht", body: "Nieuw bericht over “{title}”: “{snippet}”. Log in bij DORIXÉ om te antwoorden." },
+  pl: { subject: "Nowa wiadomość — „{title}”", heading: "Masz nową wiadomość", body: "Nowa wiadomość dotycząca „{title}”: „{snippet}”. Zaloguj się do DORIXÉ, aby odpowiedzieć." },
+  pt: { subject: "Nova mensagem — “{title}”", heading: "Tens uma nova mensagem", body: "Nova mensagem sobre “{title}”: “{snippet}”. Inicia sessão na DORIXÉ para responder." },
+}
+
+export function newMessageEmail(locale: string | null | undefined, v: { title: string; snippet: string }) {
+  const t = NEW_MESSAGE[loc(locale)] ?? NEW_MESSAGE[defaultLocale]
+  const inner = `<h1 style="${H1S}">${t.heading}</h1><p style="${PS}">${sub(t.body, { title: esc(v.title), snippet: esc(v.snippet) })}</p>`
+  return { subject: sub(t.subject, { title: v.title }), html: shell(inner) }
+}
+
 export function bidAcceptedEmail(locale: string | null | undefined, v: { amount: string }) {
   const t = BID_ACCEPTED[loc(locale)] ?? BID_ACCEPTED[defaultLocale]
   const inner = `<h1 style="${H1S}">${t.heading}</h1><p style="${PS}">${sub(t.body, { amount: esc(v.amount) })}</p>`

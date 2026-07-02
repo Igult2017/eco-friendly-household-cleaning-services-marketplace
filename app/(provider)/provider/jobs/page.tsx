@@ -12,8 +12,6 @@ import { formatDate, localTodayYmd } from "@/lib/utils/formatDate"
 import { Loader2, MapPin, Clock, Euro, CheckCircle2, Repeat } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
-import { useUser } from "@clerk/nextjs"
-import { MessageThread } from "@/components/messaging/MessageThread"
 
 interface JobPost {
   id: string
@@ -42,7 +40,6 @@ interface JobPost {
 
 export default function ProviderJobsPage() {
   const t = useTranslations("providerProviderJobsPage")
-  const { user } = useUser()
   const [jobs, setJobs] = useState<JobPost[]>([])
   const [reason, setReason] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -210,12 +207,12 @@ export default function ProviderJobsPage() {
                     )}
 
                     {job.wonByMe ? (
-                      <button
-                        onClick={() => { setError(null); setBidding(isOpen ? null : job.id) }}
+                      <Link
+                        href={`/provider/jobs/${job.id}/messages`}
                         className="inline-flex items-center gap-2 rounded-xl bg-[#2D7A5F] px-4 py-2 text-sm font-semibold text-white hover:bg-[#235f49] transition-colors"
                       >
-                        <CheckCircle2 size={14} /> {isOpen ? t("hideChat") : t("wonChat")}
-                      </button>
+                        <CheckCircle2 size={14} /> {t("wonChat")}
+                      </Link>
                     ) : alreadyBid ? (
                       <div className="flex items-center gap-2 text-sm text-[#2D7A5F] font-medium">
                         <CheckCircle2 size={16} /> {t("bidSubmittedSuccess")}
@@ -232,18 +229,6 @@ export default function ProviderJobsPage() {
                       </Button>
                     )}
                   </div>
-
-                  {/* Won job → the client chat, right on the card. */}
-                  {isOpen && job.wonByMe && user && (
-                    <div className="border-t border-[#F4FAF6] p-4">
-                      <MessageThread
-                        bookingId={job.id}
-                        currentUserId={user.id}
-                        endpoint={`/api/jobs/${job.id}/messages`}
-                        channel={`private-job-${job.id}`}
-                      />
-                    </div>
-                  )}
 
                   {isOpen && !job.wonByMe && !alreadyBid && !job.own && !job.withinRadius && (
                     // Visible but out of the client's requested radius — explain instead of a form.
