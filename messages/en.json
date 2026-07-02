@@ -904,8 +904,8 @@
     "jobTitlePlaceholder": "e.g. Deep clean 3-bedroom apartment",
     "descriptionLabel": "Description *",
     "descriptionPlaceholder": "What do you need cleaned? Any special requirements? Access instructions?",
-    "budgetMinLabel": "Budget min (€)",
-    "budgetMaxLabel": "Budget max (€)",
+    "budgetMinLabel": "Rate min (per hour)",
+    "budgetMaxLabel": "Rate max (per hour)",
     "desiredDateLabel": "Desired date",
     "serviceLocationTitle": "Service location",
     "streetAddressLabel": "Street address",
@@ -936,7 +936,9 @@
     "errorTimeRange": "Please set both times, with the end after the start.",
     "recurring_recurring": "Recurrent",
     "estimatedHoursLabel": "Estimated hours of work",
-    "estimatedHoursHint": "How many hours the job should take — cleaners use this to price per hour."
+    "estimatedHoursHint": "How many hours the job should take — cleaners use this to price per hour.",
+    "budgetTotalHint": "Total for {hours} h: {min} – {max}",
+    "errorHoursRequired": "Please set the estimated hours so the total can be calculated."
   },
   "customerProfilePage": {
     "title": "My Profile",

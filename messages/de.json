@@ -904,8 +904,8 @@
     "jobTitlePlaceholder": "z. B. Grundreinigung 3-Zimmer-Wohnung",
     "descriptionLabel": "Beschreibung *",
     "descriptionPlaceholder": "Was soll gereinigt werden? Besondere Anforderungen? Zugangshinweise?",
-    "budgetMinLabel": "Budget min. (€)",
-    "budgetMaxLabel": "Budget max. (€)",
+    "budgetMinLabel": "Satz min. (pro Stunde)",
+    "budgetMaxLabel": "Satz max. (pro Stunde)",
     "desiredDateLabel": "Wunschtermin",
     "serviceLocationTitle": "Einsatzort",
     "streetAddressLabel": "Straße und Hausnummer",
@@ -936,7 +936,9 @@
     "errorTimeRange": "Bitte beide Uhrzeiten angeben — Ende nach Beginn.",
     "recurring_recurring": "Wiederkehrend",
     "estimatedHoursLabel": "Geschätzte Arbeitsstunden",
-    "estimatedHoursHint": "Wie viele Stunden der Auftrag dauern sollte — Reinigungskräfte kalkulieren damit den Stundenpreis."
+    "estimatedHoursHint": "Wie viele Stunden der Auftrag dauern sollte — Reinigungskräfte kalkulieren damit den Stundenpreis.",
+    "budgetTotalHint": "Gesamt für {hours} Std.: {min} – {max}",
+    "errorHoursRequired": "Bitte gib die geschätzten Stunden an, damit der Gesamtbetrag berechnet werden kann."
   },
   "customerProfilePage": {
     "title": "Mein Profil",

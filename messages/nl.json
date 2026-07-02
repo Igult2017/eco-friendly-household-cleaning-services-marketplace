@@ -904,8 +904,8 @@
     "jobTitlePlaceholder": "bijv. Grondige schoonmaak appartement met 3 slaapkamers",
     "descriptionLabel": "Omschrijving *",
     "descriptionPlaceholder": "Wat moet er schoongemaakt worden? Bijzondere wensen? Toegangsinstructies?",
-    "budgetMinLabel": "Budget min. (€)",
-    "budgetMaxLabel": "Budget max. (€)",
+    "budgetMinLabel": "Tarief min (per uur)",
+    "budgetMaxLabel": "Tarief max (per uur)",
     "desiredDateLabel": "Gewenste datum",
     "serviceLocationTitle": "Locatie van de dienst",
     "streetAddressLabel": "Adres",
@@ -936,7 +936,9 @@
     "errorTimeRange": "Vul beide tijden in; de eindtijd moet na de begintijd liggen.",
     "recurring_recurring": "Terugkerend",
     "estimatedHoursLabel": "Geschatte werkuren",
-    "estimatedHoursHint": "Hoeveel uur de klus zou moeten duren — schoonmakers gebruiken dit om per uur te prijzen."
+    "estimatedHoursHint": "Hoeveel uur de klus zou moeten duren — schoonmakers gebruiken dit om per uur te prijzen.",
+    "budgetTotalHint": "Totaal voor {hours} u: {min} – {max}",
+    "errorHoursRequired": "Vul de geschatte uren in zodat het totaal berekend kan worden."
   },
   "customerProfilePage": {
     "title": "Mijn profiel",

@@ -904,8 +904,8 @@
     "jobTitlePlaceholder": "np. Gruntowne sprzątanie mieszkania 3-pokojowego",
     "descriptionLabel": "Opis *",
     "descriptionPlaceholder": "Co trzeba posprzątać? Specjalne wymagania? Instrukcje dotyczące dostępu?",
-    "budgetMinLabel": "Budżet min. (€)",
-    "budgetMaxLabel": "Budżet maks. (€)",
+    "budgetMinLabel": "Stawka min (za godzinę)",
+    "budgetMaxLabel": "Stawka maks (za godzinę)",
     "desiredDateLabel": "Preferowana data",
     "serviceLocationTitle": "Miejsce usługi",
     "streetAddressLabel": "Adres",
@@ -936,7 +936,9 @@
     "errorTimeRange": "Podaj obie godziny — koniec po początku.",
     "recurring_recurring": "Cykliczne",
     "estimatedHoursLabel": "Szacowane godziny pracy",
-    "estimatedHoursHint": "Ile godzin powinno zająć zlecenie — osoby sprzątające wyceniają na tej podstawie stawkę godzinową."
+    "estimatedHoursHint": "Ile godzin powinno zająć zlecenie — osoby sprzątające wyceniają na tej podstawie stawkę godzinową.",
+    "budgetTotalHint": "Łącznie za {hours} godz.: {min} – {max}",
+    "errorHoursRequired": "Podaj szacowane godziny, aby obliczyć łączną kwotę."
   },
   "customerProfilePage": {
     "title": "Mój profil",

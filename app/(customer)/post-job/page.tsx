@@ -14,6 +14,7 @@ import { usePostalValidation } from "@/hooks/usePostalValidation"
 import type { GeoResult } from "@/lib/nominatim"
 import { geocodeFlexible, extractPostalCode } from "@/lib/nominatim"
 import { CountryField } from "@/components/location/CountryField"
+import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
 
 const ECO_OPTIONS = ["Eco-certified products only", "No single-use plastics", "Fragrance-free", "Energy-saving methods"]
 const ECO_OPTION_KEYS: Record<string, string> = {
@@ -114,6 +115,10 @@ export default function PostJobPage() {
     if (hasStart !== hasEnd || (hasStart && hasEnd && form.desiredTimeEnd <= form.desiredTimeStart)) {
       setError(t("errorTimeRange")); return
     }
+    // Budget is entered PER HOUR (the payment mode in EU + US); the stored budget is the job total
+    // (rate × estimated hours) — what cleaners actually bid against.
+    const hrs = parseFloat(form.estimatedHours)
+    if ((form.budgetMin || form.budgetMax) && !(hrs > 0)) { setError(t("errorHoursRequired")); return }
     setLoading(true); setError(null)
     try {
       const res = await fetch("/api/jobs", {
@@ -123,8 +128,8 @@ export default function PostJobPage() {
           ...form,
           // Normalize messy postal input ("12047 Neukölln" → "12047") — API caps postal at 10 chars.
           serviceAddress: { ...form.serviceAddress, postalCode: extractPostalCode(form.serviceAddress.postalCode) },
-          budgetMin: form.budgetMin ? parseInt(form.budgetMin) * 100 : undefined,
-          budgetMax: form.budgetMax ? parseInt(form.budgetMax) * 100 : undefined,
+          budgetMin: form.budgetMin ? Math.round(parseFloat(form.budgetMin) * 100 * hrs) : undefined,
+          budgetMax: form.budgetMax ? Math.round(parseFloat(form.budgetMax) * 100 * hrs) : undefined,
           desiredTimeRange: hasStart && hasEnd ? { start: form.desiredTimeStart, end: form.desiredTimeEnd } : undefined,
           estimatedHours: form.estimatedHours ? parseFloat(form.estimatedHours) : undefined,
           recurringFrequency: form.recurringFrequency || undefined,
@@ -176,13 +181,22 @@ export default function PostJobPage() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("budgetMinLabel")}</Label>
-                <Input type="number" value={form.budgetMin} onChange={(e) => set("budgetMin", e.target.value)} placeholder="50" min={1} />
+                <Input type="number" value={form.budgetMin} onChange={(e) => set("budgetMin", e.target.value)} placeholder="20" min={1} step="0.5" />
               </div>
               <div>
                 <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("budgetMaxLabel")}</Label>
-                <Input type="number" value={form.budgetMax} onChange={(e) => set("budgetMax", e.target.value)} placeholder="150" min={1} />
+                <Input type="number" value={form.budgetMax} onChange={(e) => set("budgetMax", e.target.value)} placeholder="35" min={1} step="0.5" />
               </div>
             </div>
+            {(form.budgetMin || form.budgetMax) && parseFloat(form.estimatedHours) > 0 && (
+              <p className="text-xs text-[#2D7A5F] font-medium -mt-2">
+                {t("budgetTotalHint", {
+                  hours: form.estimatedHours,
+                  min: formatCurrencyForCountry(Math.round((parseFloat(form.budgetMin || form.budgetMax) || 0) * 100 * parseFloat(form.estimatedHours)), form.serviceAddress.country),
+                  max: formatCurrencyForCountry(Math.round((parseFloat(form.budgetMax || form.budgetMin) || 0) * 100 * parseFloat(form.estimatedHours)), form.serviceAddress.country),
+                })}
+              </p>
+            )}
             <div>
               <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("desiredDateLabel")}</Label>
               <Input type="date" value={form.desiredDate} onChange={(e) => set("desiredDate", e.target.value)} min={new Date().toISOString().split("T")[0]} />

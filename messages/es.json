@@ -904,8 +904,8 @@
     "jobTitlePlaceholder": "p. ej. Limpieza a fondo de un piso de 3 habitaciones",
     "descriptionLabel": "Descripción *",
     "descriptionPlaceholder": "¿Qué necesitas limpiar? ¿Algún requisito especial? ¿Instrucciones de acceso?",
-    "budgetMinLabel": "Presupuesto mín. (€)",
-    "budgetMaxLabel": "Presupuesto máx. (€)",
+    "budgetMinLabel": "Tarifa mín. (por hora)",
+    "budgetMaxLabel": "Tarifa máx. (por hora)",
     "desiredDateLabel": "Fecha deseada",
     "serviceLocationTitle": "Ubicación del servicio",
     "streetAddressLabel": "Dirección",
@@ -936,7 +936,9 @@
     "errorTimeRange": "Indica ambas horas; el fin debe ser posterior al inicio.",
     "recurring_recurring": "Recurrente",
     "estimatedHoursLabel": "Horas de trabajo estimadas",
-    "estimatedHoursHint": "Cuántas horas debería llevar el trabajo: los profesionales lo usan para calcular el precio por hora."
+    "estimatedHoursHint": "Cuántas horas debería llevar el trabajo: los profesionales lo usan para calcular el precio por hora.",
+    "budgetTotalHint": "Total para {hours} h: {min} – {max}",
+    "errorHoursRequired": "Indica las horas estimadas para poder calcular el total."
   },
   "customerProfilePage": {
     "title": "Mi perfil",

@@ -904,8 +904,8 @@
     "jobTitlePlaceholder": "es. Pulizia approfondita appartamento trilocale",
     "descriptionLabel": "Descrizione *",
     "descriptionPlaceholder": "Cosa devi far pulire? Esigenze particolari? Istruzioni per l'accesso?",
-    "budgetMinLabel": "Budget min. (€)",
-    "budgetMaxLabel": "Budget max. (€)",
+    "budgetMinLabel": "Tariffa min (all ora)",
+    "budgetMaxLabel": "Tariffa max (all ora)",
     "desiredDateLabel": "Data desiderata",
     "serviceLocationTitle": "Luogo del servizio",
     "streetAddressLabel": "Indirizzo",
@@ -936,7 +936,9 @@
     "errorTimeRange": "Inserisci entrambi gli orari; la fine deve seguire l'inizio.",
     "recurring_recurring": "Ricorrente",
     "estimatedHoursLabel": "Ore di lavoro stimate",
-    "estimatedHoursHint": "Quante ore dovrebbe richiedere il lavoro — gli addetti la usano per calcolare la tariffa oraria."
+    "estimatedHoursHint": "Quante ore dovrebbe richiedere il lavoro — gli addetti la usano per calcolare la tariffa oraria.",
+    "budgetTotalHint": "Totale per {hours} h: {min} – {max}",
+    "errorHoursRequired": "Indica le ore stimate per calcolare il totale."
   },
   "customerProfilePage": {
     "title": "Il mio profilo",

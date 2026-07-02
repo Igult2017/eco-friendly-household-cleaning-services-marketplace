@@ -904,8 +904,8 @@
     "jobTitlePlaceholder": "ex. Limpeza profunda de apartamento T3",
     "descriptionLabel": "Descrição *",
     "descriptionPlaceholder": "O que precisa de limpar? Algum requisito especial? Instruções de acesso?",
-    "budgetMinLabel": "Orçamento mín. (€)",
-    "budgetMaxLabel": "Orçamento máx. (€)",
+    "budgetMinLabel": "Tarifa mín (por hora)",
+    "budgetMaxLabel": "Tarifa máx (por hora)",
     "desiredDateLabel": "Data pretendida",
     "serviceLocationTitle": "Local do serviço",
     "streetAddressLabel": "Morada",
@@ -936,7 +936,9 @@
     "errorTimeRange": "Indica ambas as horas; o fim deve ser depois do início.",
     "recurring_recurring": "Recorrente",
     "estimatedHoursLabel": "Horas de trabalho estimadas",
-    "estimatedHoursHint": "Quantas horas o trabalho deve demorar — os profissionais usam isto para calcular o preço por hora."
+    "estimatedHoursHint": "Quantas horas o trabalho deve demorar — os profissionais usam isto para calcular o preço por hora.",
+    "budgetTotalHint": "Total para {hours} h: {min} – {max}",
+    "errorHoursRequired": "Indica as horas estimadas para calcular o total."
   },
   "customerProfilePage": {
     "title": "O meu perfil",
