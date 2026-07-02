@@ -16,7 +16,8 @@ export const createBookingSchema = z.object({
   // Optional for bid-flow (incl. the 3DS return path) — createBooking falls back to the service id
   // pinned in the PaymentIntent metadata, which is authoritative anyway.
   serviceId: z.string().uuid().optional(),
-  paymentIntentId: z.string().min(1),
+  // Optional: absent = the client chose to book WITHOUT adding a card (createUnpaidBooking path).
+  paymentIntentId: z.string().min(1).optional(),
   scheduledAt: z
     .string()
     .datetime()

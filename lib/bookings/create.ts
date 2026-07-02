@@ -9,7 +9,7 @@ import { eq, and, sql, inArray, lt, gt, isNull } from "drizzle-orm"
 import type { CreateBookingInput } from "@/lib/validations/booking"
 import { checkProviderAvailable } from "@/lib/bookings/availability"
 
-async function generateBookingNumber(): Promise<string> {
+export async function generateBookingNumber(): Promise<string> {
   let seq: number
   try {
     seq = await redis.incr("booking:seq")
@@ -35,6 +35,8 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     serviceLatitude, serviceLongitude, specialInstructions,
     ecoOptions, carbonOffsetCents = 0,
   } = data
+
+  if (!paymentIntentId) throw new BookingError(400, "paymentIntentId is required") // no-card path uses createUnpaidBooking
 
   // Idempotency: a refresh/double-submit of the SAME PaymentIntent must return the booking it
   // already created — NOT fall through to the overlap guard, find its own booking, and cancel the

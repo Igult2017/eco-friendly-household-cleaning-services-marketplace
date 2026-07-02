@@ -334,6 +334,28 @@ const NOTIF: Record<string, Record<string, S>> = {
     pl: { title: "Propozycja odrzucona", body: "Klient odrzucił zmiany — rezerwacja pozostaje bez zmian." },
     pt: { title: "Sugestão recusada", body: "O cliente recusou as alterações — a reserva mantém-se como combinado." },
   },
+  // Client booked WITHOUT adding a card — warn the cleaner to trade with care / ask them to add one.
+  booking_no_card: {
+    en: { title: "Heads up: no payment method on file", body: "This client booked without adding a card, so payment can't be collected automatically. Ask them to add one, or agree on payment directly — trade with care." },
+    de: { title: "Achtung: keine Zahlungsmethode hinterlegt", body: "Dieser Kunde hat ohne Karte gebucht — die Zahlung kann nicht automatisch eingezogen werden. Bitte ihn, eine hinzuzufügen, oder vereinbart die Zahlung direkt. Sei vorsichtig." },
+    fr: { title: "Attention : aucun moyen de paiement enregistré", body: "Ce client a réservé sans ajouter de carte — le paiement ne peut pas être prélevé automatiquement. Demandez-lui d'en ajouter une ou convenez du paiement directement. Soyez prudent." },
+    es: { title: "Atención: sin método de pago registrado", body: "Este cliente reservó sin añadir tarjeta: el pago no se puede cobrar automáticamente. Pídele que añada una o acordad el pago directamente. Actúa con precaución." },
+    it: { title: "Attenzione: nessun metodo di pagamento registrato", body: "Questo cliente ha prenotato senza carta: il pagamento non può essere addebitato automaticamente. Chiedigli di aggiungerne una o accordatevi direttamente. Fai attenzione." },
+    nl: { title: "Let op: geen betaalmethode bekend", body: "Deze klant boekte zonder kaart — betaling kan niet automatisch worden geïnd. Vraag om een kaart toe te voegen of spreek de betaling direct af. Wees voorzichtig." },
+    pl: { title: "Uwaga: brak metody płatności", body: "Ten klient zarezerwował bez karty — płatności nie można pobrać automatycznie. Poproś o jej dodanie lub umówcie się na płatność bezpośrednio. Zachowaj ostrożność." },
+    pt: { title: "Atenção: sem método de pagamento registado", body: "Este cliente reservou sem adicionar cartão — o pagamento não pode ser cobrado automaticamente. Pede-lhe que adicione um, ou combinem o pagamento diretamente. Tem cuidado." },
+  },
+  // Both parties confirmed completion on a booking WITHOUT a card — settle directly.
+  booking_completed_offline: {
+    en: { title: "Task completed", body: "Both of you confirmed the task is done. No payment method was on file — please settle payment directly as agreed." },
+    de: { title: "Auftrag abgeschlossen", body: "Ihr habt beide bestätigt, dass der Auftrag erledigt ist. Es war keine Zahlungsmethode hinterlegt — bitte rechnet direkt wie vereinbart ab." },
+    fr: { title: "Tâche terminée", body: "Vous avez tous deux confirmé que la tâche est terminée. Aucun moyen de paiement n'était enregistré — réglez le paiement directement comme convenu." },
+    es: { title: "Tarea completada", body: "Ambos confirmasteis que la tarea está hecha. No había método de pago registrado: liquidad el pago directamente según lo acordado." },
+    it: { title: "Lavoro completato", body: "Entrambi avete confermato che il lavoro è finito. Non c'era un metodo di pagamento registrato — regolate il pagamento direttamente come concordato." },
+    nl: { title: "Taak voltooid", body: "Jullie hebben allebei bevestigd dat de taak klaar is. Er was geen betaalmethode bekend — reken direct af zoals afgesproken." },
+    pl: { title: "Zadanie ukończone", body: "Oboje potwierdziliście wykonanie zadania. Nie było metody płatności — rozliczcie się bezpośrednio zgodnie z ustaleniami." },
+    pt: { title: "Tarefa concluída", body: "Ambos confirmaram que a tarefa está feita. Não havia método de pagamento registado — acertem o pagamento diretamente como combinado." },
+  },
   // The DORIXÉ support team replied to the user's support thread. {message} = reply snippet.
   support_reply: {
     en: { title: "Support replied", body: "DORIXÉ support replied: {message}" },

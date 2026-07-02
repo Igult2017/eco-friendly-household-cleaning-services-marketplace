@@ -613,7 +613,9 @@
     "backToDetails": "← Volver a los detalles",
     "recurringPromptTitle": "Hacerlo periódico",
     "recurringPromptText": "Has elegido una frecuencia periódica. Configúrala para reservar automáticamente las próximas limpiezas.",
-    "setUpRecurring": "Configurar periódico"
+    "setUpRecurring": "Configurar periódico",
+    "bookWithoutCard": "Reservar sin añadir tarjeta",
+    "bookWithoutCardNote": "Tu profesional sabrá que no hay método de pago registrado: liquidáis directamente, o añades una tarjeta más tarde en Pagos."
   },
   "customerBookExtrasPage": {
     "heading": "¿Alguna petición especial?",
@@ -1975,5 +1977,16 @@
   "providerSupportPage": {
     "title": "Soporte",
     "subtitle": "Escribe al equipo de DORIXÉ: respondemos aquí y por correo."
+  },
+  "compBookingCompletionBar": {
+    "markDone": "Marcar tarea como completada",
+    "waitingClient": "Marcaste la tarea como hecha — esperando la confirmación del cliente. El pedido se cierra cuando AMBOS confirmáis.",
+    "confirmDone": "Confirmar tarea completada",
+    "confirmReleasesPayment": "Al confirmar se libera el pago a tu profesional.",
+    "confirmNoCardNote": "No hay método de pago registrado: tras confirmar, liquida el pago directamente con tu profesional.",
+    "cleanerFirstHint": "Cuando el trabajo esté hecho, tu profesional lo marca primero; luego confirmas aquí. Ambas confirmaciones cierran el pedido.",
+    "completedClosed": "Tarea confirmada por ambas partes: este chat está cerrado.",
+    "settleDirect": "liquidad el pago directamente según lo acordado",
+    "genericError": "Algo salió mal. Inténtalo de nuevo."
   }
 }

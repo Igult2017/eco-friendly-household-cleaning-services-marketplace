@@ -613,7 +613,9 @@
     "backToDetails": "← Powrót do szczegółów",
     "recurringPromptTitle": "Ustaw cyklicznie",
     "recurringPromptText": "Wybrano powtarzalny rytm. Skonfiguruj go, aby automatycznie rezerwować kolejne sprzątania.",
-    "setUpRecurring": "Ustaw cykliczne"
+    "setUpRecurring": "Ustaw cykliczne",
+    "bookWithoutCard": "Zarezerwuj bez dodawania karty",
+    "bookWithoutCardNote": "Osoba sprzątająca dowie się, że nie ma metody płatności — rozliczycie się bezpośrednio lub dodasz kartę później w Płatnościach."
   },
   "customerBookExtrasPage": {
     "heading": "Masz specjalne życzenia?",
@@ -1975,5 +1977,16 @@
   "providerSupportPage": {
     "title": "Pomoc",
     "subtitle": "Napisz do zespołu DORIXÉ — odpowiadamy tutaj i e-mailem."
+  },
+  "compBookingCompletionBar": {
+    "markDone": "Oznacz zadanie jako wykonane",
+    "waitingClient": "Oznaczyłeś zadanie jako wykonane — czekamy na potwierdzenie klienta. Zlecenie zamyka się, gdy potwierdzicie OBOJE.",
+    "confirmDone": "Potwierdź wykonanie zadania",
+    "confirmReleasesPayment": "Potwierdzenie zwalnia płatność dla osoby sprzątającej.",
+    "confirmNoCardNote": "Brak metody płatności — po potwierdzeniu rozlicz się bezpośrednio z osobą sprzątającą.",
+    "cleanerFirstHint": "Gdy praca jest skończona, najpierw oznacza ją osoba sprzątająca — potem Ty potwierdzasz tutaj. Oba potwierdzenia zamykają zlecenie.",
+    "completedClosed": "Zadanie potwierdzone przez obie strony — ten czat jest zamknięty.",
+    "settleDirect": "rozliczcie się bezpośrednio zgodnie z ustaleniami",
+    "genericError": "Coś poszło nie tak. Spróbuj ponownie."
   }
 }

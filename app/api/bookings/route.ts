@@ -6,6 +6,7 @@ import { bookingRatelimit } from "@/lib/redis/client"
 import { createBookingSchema } from "@/lib/validations/booking"
 import { desc, eq } from "drizzle-orm"
 import { createBooking, BookingError } from "@/lib/bookings/create"
+import { createUnpaidBooking } from "@/lib/bookings/createUnpaid"
 import { logError } from "@/lib/utils/logError"
 
 export async function POST(req: Request) {
@@ -34,7 +35,10 @@ export async function POST(req: Request) {
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
     try {
-      const result = await createBooking(userId, parsed.data)
+      // No paymentIntentId = the client chose to book without adding a card (cleaner gets warned).
+      const result = parsed.data.paymentIntentId
+        ? await createBooking(userId, parsed.data)
+        : await createUnpaidBooking(userId, parsed.data)
       return NextResponse.json(result, { status: 201 })
     } catch (err) {
       if (err instanceof BookingError) {

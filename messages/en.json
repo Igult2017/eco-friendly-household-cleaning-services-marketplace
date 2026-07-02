@@ -613,7 +613,9 @@
     "backToDetails": "← Back to details",
     "recurringPromptTitle": "Make it recurring",
     "recurringPromptText": "You chose a repeating schedule. Set it up to auto-book future cleans.",
-    "setUpRecurring": "Set up recurring"
+    "setUpRecurring": "Set up recurring",
+    "bookWithoutCard": "Book without adding a card",
+    "bookWithoutCardNote": "Your cleaner will be told no payment method is on file — you settle payment directly, or add a card later under Payments."
   },
   "customerBookExtrasPage": {
     "heading": "Any special requests?",
@@ -1975,5 +1977,16 @@
   "providerSupportPage": {
     "title": "Support",
     "subtitle": "Message the DORIXÉ team — we reply here and by email."
+  },
+  "compBookingCompletionBar": {
+    "markDone": "Mark task as completed",
+    "waitingClient": "You marked the task done — waiting for the client to confirm. The order closes when you BOTH confirm.",
+    "confirmDone": "Confirm task completed",
+    "confirmReleasesPayment": "Confirming releases the payment to your cleaner.",
+    "confirmNoCardNote": "No payment method is on file — after confirming, settle payment directly with your cleaner.",
+    "cleanerFirstHint": "When the job is done, your cleaner marks it completed first — then you confirm here. Both confirmations close the order.",
+    "completedClosed": "Task completed by both parties — this chat is closed.",
+    "settleDirect": "settle payment directly as agreed",
+    "genericError": "Something went wrong. Please try again."
   }
 }

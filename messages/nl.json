@@ -613,7 +613,9 @@
     "backToDetails": "← Terug naar details",
     "recurringPromptTitle": "Maak het terugkerend",
     "recurringPromptText": "Je hebt een terugkerend ritme gekozen. Stel het in om toekomstige schoonmaakbeurten automatisch te boeken.",
-    "setUpRecurring": "Terugkerend instellen"
+    "setUpRecurring": "Terugkerend instellen",
+    "bookWithoutCard": "Boeken zonder kaart toe te voegen",
+    "bookWithoutCardNote": "Je schoonmaker hoort dat er geen betaalmethode bekend is — jullie rekenen direct af, of je voegt later een kaart toe bij Betalingen."
   },
   "customerBookExtrasPage": {
     "heading": "Speciale verzoeken?",
@@ -1975,5 +1977,16 @@
   "providerSupportPage": {
     "title": "Support",
     "subtitle": "Stuur het DORIXÉ-team een bericht — we antwoorden hier en per e-mail."
+  },
+  "compBookingCompletionBar": {
+    "markDone": "Taak als voltooid markeren",
+    "waitingClient": "Je hebt de taak als klaar gemarkeerd — wachten op bevestiging van de klant. De opdracht sluit pas als jullie BEIDEN bevestigen.",
+    "confirmDone": "Taak voltooid bevestigen",
+    "confirmReleasesPayment": "Met je bevestiging wordt de betaling aan je schoonmaker vrijgegeven.",
+    "confirmNoCardNote": "Geen betaalmethode bekend — reken na bevestiging direct af met je schoonmaker.",
+    "cleanerFirstHint": "Als de klus klaar is, markeert je schoonmaker hem eerst — daarna bevestig jij hier. Beide bevestigingen sluiten de opdracht.",
+    "completedClosed": "Taak door beiden bevestigd — deze chat is gesloten.",
+    "settleDirect": "reken direct af zoals afgesproken",
+    "genericError": "Er ging iets mis. Probeer opnieuw."
   }
 }

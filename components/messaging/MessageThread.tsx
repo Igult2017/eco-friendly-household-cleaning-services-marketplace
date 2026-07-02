@@ -20,6 +20,8 @@ interface Props {
   // Overrides for non-booking threads (e.g. job-level chat after a bid is accepted).
   endpoint?: string
   channel?: string
+  // Hide the composer (e.g. the order is completed — chat is closed for new messages).
+  readOnly?: boolean
 }
 
 function formatTime(iso: string) {
@@ -37,7 +39,7 @@ function formatDate(iso: string) {
   })
 }
 
-export function MessageThread({ bookingId, currentUserId, endpoint, channel }: Props) {
+export function MessageThread({ bookingId, currentUserId, endpoint, channel, readOnly = false }: Props) {
   const t = useTranslations("compMessagingMessageThread")
   const api = endpoint ?? `/api/bookings/${bookingId}/messages`
   const queryClient = useQueryClient()
@@ -171,7 +173,8 @@ export function MessageThread({ bookingId, currentUserId, endpoint, channel }: P
         })}
       </div>
 
-      {/* Composer */}
+      {/* Composer — hidden when the thread is closed (e.g. order completed by both parties). */}
+      {readOnly ? null : (
       <div className="border-t border-[#E5EBF0] px-4 py-3 bg-white">
         {sendError && (
           <p className="text-red-500 text-xs mb-2">{sendError}</p>
@@ -200,6 +203,7 @@ export function MessageThread({ bookingId, currentUserId, endpoint, channel }: P
           </button>
         </div>
       </div>
+      )}
     </div>
   )
 }

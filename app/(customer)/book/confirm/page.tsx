@@ -193,6 +193,42 @@ export default function BookStep5Page() {
     setPromoError(null)
   }
 
+  // Book WITHOUT adding a card: booking is created with no hold; the cleaner is warned there's no
+  // payment method on file (settle directly or ask the client to add one).
+  async function bookWithoutCard() {
+    setLoading(true)
+    setError(null)
+    try {
+      const svcRes = await fetch(`/api/providers/${store.selectedProviderId}/services${store.categoryId ? `?categorySlug=${store.categoryId}` : ""}`)
+      const svcData = await svcRes.json()
+      const service = svcData.services?.[0]
+      const res = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          providerId: store.selectedProviderId,
+          ...(service ? { serviceId: service.id } : {}),
+          scheduledAt: store.scheduledAt,
+          durationMinutes: store.durationMinutes,
+          serviceAddress: store.address,
+          serviceLatitude: store.latitude ?? undefined,
+          serviceLongitude: store.longitude ?? undefined,
+          specialInstructions: store.specialInstructions || undefined,
+          ecoOptions: store.ecoOptions,
+          requestedFrequency: store.frequency !== "one_time" ? store.frequency : undefined,
+          requestedDays: store.frequency !== "one_time" && store.recurringDays.length ? store.recurringDays : undefined,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setError(data.error ?? t("errorBookingFailedSupport")); return }
+      setSuccess({ bookingId: data.bookingId, bookingNumber: data.bookingNumber })
+    } catch {
+      setError(t("errorGeneric"))
+    } finally {
+      setLoading(false)
+    }
+  }
+
   async function proceedToPayment() {
     setLoading(true)
     setError(null)
@@ -383,6 +419,16 @@ export default function BookStep5Page() {
             >
               {loading ? <><Loader2 size={18} className="animate-spin mr-2" />{t("preparingPayment")}</> : t("continueToPayment")}
             </Button>
+            {/* No-card path: booking is created without a hold; the cleaner is warned. */}
+            <Button
+              variant="outline"
+              onClick={bookWithoutCard}
+              disabled={loading}
+              className="w-full h-11 border-[#E5EBF0] text-[#6B7280] hover:text-[#2B3441]"
+            >
+              {t("bookWithoutCard")}
+            </Button>
+            <p className="text-xs text-center text-[#9CA3AF]">{t("bookWithoutCardNote")}</p>
           </div>
         )}
 

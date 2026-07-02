@@ -2,7 +2,8 @@ import { auth } from "@clerk/nextjs/server"
 import { redirect, notFound } from "next/navigation"
 import Link from "next/link"
 import { db } from "@/lib/db"
-import { bookings, providers } from "@/lib/db/schema"
+import { bookings, providers, payments } from "@/lib/db/schema"
+import { CompletionBar } from "@/components/booking/CompletionBar"
 import { eq, and } from "drizzle-orm"
 import { MessageThread } from "@/components/messaging/MessageThread"
 import { ArrowLeft, MessageSquare } from "lucide-react"
@@ -27,6 +28,9 @@ export default async function CustomerMessagesPage({
       id: bookings.id,
       customerId: bookings.customerId,
       providerId: bookings.providerId,
+      status: bookings.status,
+      providerCompletedAt: bookings.providerCompletedAt,
+      clientConfirmedAt: bookings.clientConfirmedAt,
       providerBusinessName: providers.businessName,
     })
     .from(bookings)
@@ -34,6 +38,7 @@ export default async function CustomerMessagesPage({
     .where(and(eq(bookings.id, id), eq(bookings.customerId, userId)))
 
   if (!booking) notFound()
+  const [payment] = await db.select({ id: payments.id }).from(payments).where(eq(payments.bookingId, id))
 
   return (
     <div className="max-w-2xl mx-auto py-6 px-4 space-y-4">
@@ -60,7 +65,17 @@ export default async function CustomerMessagesPage({
         </div>
       </div>
 
-      <MessageThread bookingId={id} currentUserId={userId} />
+      {/* Dual-confirm completion, right in the chat — both press their button to close the order. */}
+      <CompletionBar
+        bookingId={id}
+        side="client"
+        status={booking.status}
+        providerCompleted={!!booking.providerCompletedAt}
+        clientConfirmed={!!booking.clientConfirmedAt}
+        hasPayment={!!payment}
+      />
+
+      <MessageThread bookingId={id} currentUserId={userId} readOnly={booking.status === "completed" || booking.status === "cancelled"} />
     </div>
   )
 }

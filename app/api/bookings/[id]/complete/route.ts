@@ -6,6 +6,7 @@ import { eq, and, inArray } from "drizzle-orm"
 import { inngest } from "@/lib/inngest/client"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
 import { isUuid } from "@/lib/utils/uuid"
+import { finalizeUnpaidBooking } from "@/lib/bookings/finalizeUnpaid"
 import { logError } from "@/lib/utils/logError"
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -37,7 +38,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       .where(and(eq(bookings.id, bookingId), eq(bookings.providerId, provider.id)))
 
     if (!booking) return NextResponse.json({ error: "Booking not found" }, { status: 404 })
-    if (!["payment_authorized", "confirmed", "in_progress"].includes(booking.status)) {
+    // pending_payment = booked WITHOUT a card — completable too; settlement happens directly.
+    if (!["pending_payment", "payment_authorized", "confirmed", "in_progress"].includes(booking.status)) {
       return NextResponse.json({ error: "Booking cannot be completed in its current state" }, { status: 422 })
     }
     // H4: don't allow capturing the customer's card before the appointment time unless the job was
@@ -63,7 +65,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       .where(and(
         eq(bookings.id, bookingId),
         eq(bookings.providerId, provider.id),
-        inArray(bookings.status, ["payment_authorized", "confirmed", "in_progress"]),
+        inArray(bookings.status, ["pending_payment", "payment_authorized", "confirmed", "in_progress"]),
       ))
       .returning({ id: bookings.id })
     if (updated.length === 0) {
@@ -90,6 +92,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         try {
           await inngest.send({ name: "booking/completed", data: { bookingId, paymentIntentId: payment.stripePaymentIntentId, providerId: provider.id, customerId: booking.customerId } })
         } catch (e) { console.warn("[bookings/complete POST] capture send failed:", e) }
+      } else {
+        await finalizeUnpaidBooking(bookingId) // no card on file — nothing to capture
       }
     } else {
       // Ask the client to confirm + start the admin-nudge timer. No money moves yet.

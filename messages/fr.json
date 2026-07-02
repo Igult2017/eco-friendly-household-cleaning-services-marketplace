@@ -613,7 +613,9 @@
     "backToDetails": "← Retour aux détails",
     "recurringPromptTitle": "Rendre récurrent",
     "recurringPromptText": "Vous avez choisi un rythme récurrent. Configurez-le pour réserver automatiquement les prochains ménages.",
-    "setUpRecurring": "Configurer la récurrence"
+    "setUpRecurring": "Configurer la récurrence",
+    "bookWithoutCard": "Réserver sans ajouter de carte",
+    "bookWithoutCardNote": "Votre intervenant saura qu'aucun moyen de paiement n'est enregistré — réglez directement, ou ajoutez une carte plus tard dans Paiements."
   },
   "customerBookExtrasPage": {
     "heading": "Des demandes particulières ?",
@@ -1975,5 +1977,16 @@
   "providerSupportPage": {
     "title": "Assistance",
     "subtitle": "Écrivez à l équipe DORIXÉ — nous répondons ici et par e-mail."
+  },
+  "compBookingCompletionBar": {
+    "markDone": "Marquer la tâche comme terminée",
+    "waitingClient": "Vous avez marqué la tâche terminée — en attente de la confirmation du client. La commande se clôt quand VOUS DEUX confirmez.",
+    "confirmDone": "Confirmer la tâche terminée",
+    "confirmReleasesPayment": "La confirmation libère le paiement vers votre intervenant.",
+    "confirmNoCardNote": "Aucun moyen de paiement enregistré — après confirmation, réglez directement avec votre intervenant.",
+    "cleanerFirstHint": "Quand le travail est fini, votre intervenant le marque d'abord — puis vous confirmez ici. Les deux confirmations clôturent la commande.",
+    "completedClosed": "Tâche confirmée par les deux parties — cette discussion est fermée.",
+    "settleDirect": "réglez le paiement directement comme convenu",
+    "genericError": "Une erreur est survenue. Veuillez réessayer."
   }
 }

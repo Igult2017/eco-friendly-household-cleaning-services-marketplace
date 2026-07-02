@@ -613,7 +613,9 @@
     "backToDetails": "← Zurück zu den Details",
     "recurringPromptTitle": "Wiederkehrend machen",
     "recurringPromptText": "Du hast einen wiederkehrenden Rhythmus gewählt. Richte ihn ein, um künftige Reinigungen automatisch zu buchen.",
-    "setUpRecurring": "Wiederkehrend einrichten"
+    "setUpRecurring": "Wiederkehrend einrichten",
+    "bookWithoutCard": "Ohne Karte buchen",
+    "bookWithoutCardNote": "Deine Reinigungskraft erfährt, dass keine Zahlungsmethode hinterlegt ist — ihr rechnet direkt ab, oder du fügst später unter Zahlungen eine Karte hinzu."
   },
   "customerBookExtrasPage": {
     "heading": "Besondere Wünsche?",
@@ -1975,5 +1977,16 @@
   "providerSupportPage": {
     "title": "Support",
     "subtitle": "Schreib dem DORIXÉ-Team — wir antworten hier und per E-Mail."
+  },
+  "compBookingCompletionBar": {
+    "markDone": "Auftrag als erledigt markieren",
+    "waitingClient": "Du hast den Auftrag als erledigt markiert — warte auf die Bestätigung des Kunden. Der Auftrag schließt erst, wenn BEIDE bestätigen.",
+    "confirmDone": "Auftrag bestätigen",
+    "confirmReleasesPayment": "Mit der Bestätigung wird die Zahlung an deine Reinigungskraft freigegeben.",
+    "confirmNoCardNote": "Keine Zahlungsmethode hinterlegt — rechne nach der Bestätigung direkt mit deiner Reinigungskraft ab.",
+    "cleanerFirstHint": "Wenn der Auftrag erledigt ist, markiert ihn zuerst deine Reinigungskraft — dann bestätigst du hier. Beide Bestätigungen schließen den Auftrag.",
+    "completedClosed": "Auftrag von beiden bestätigt — dieser Chat ist geschlossen.",
+    "settleDirect": "rechnet direkt wie vereinbart ab",
+    "genericError": "Etwas ist schiefgelaufen. Bitte erneut versuchen."
   }
 }

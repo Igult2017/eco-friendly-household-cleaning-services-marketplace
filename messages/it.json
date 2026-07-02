@@ -613,7 +613,9 @@
     "backToDetails": "← Torna ai dettagli",
     "recurringPromptTitle": "Rendi ricorrente",
     "recurringPromptText": "Hai scelto una cadenza ricorrente. Impostala per prenotare automaticamente le prossime pulizie.",
-    "setUpRecurring": "Imposta ricorrenza"
+    "setUpRecurring": "Imposta ricorrenza",
+    "bookWithoutCard": "Prenota senza aggiungere una carta",
+    "bookWithoutCardNote": "Il tuo addetto saprà che non c'è un metodo di pagamento registrato — regolate direttamente, o aggiungi una carta più tardi in Pagamenti."
   },
   "customerBookExtrasPage": {
     "heading": "Richieste particolari?",
@@ -1975,5 +1977,16 @@
   "providerSupportPage": {
     "title": "Assistenza",
     "subtitle": "Scrivi al team DORIXÉ — rispondiamo qui e via e-mail."
+  },
+  "compBookingCompletionBar": {
+    "markDone": "Segna il lavoro come completato",
+    "waitingClient": "Hai segnato il lavoro come fatto — in attesa della conferma del cliente. L'ordine si chiude quando ENTRAMBI confermate.",
+    "confirmDone": "Conferma lavoro completato",
+    "confirmReleasesPayment": "Confermando, il pagamento viene rilasciato al tuo addetto.",
+    "confirmNoCardNote": "Nessun metodo di pagamento registrato — dopo la conferma, regola il pagamento direttamente con il tuo addetto.",
+    "cleanerFirstHint": "Quando il lavoro è finito, il tuo addetto lo segna per primo — poi confermi qui. Entrambe le conferme chiudono l'ordine.",
+    "completedClosed": "Lavoro confermato da entrambi — questa chat è chiusa.",
+    "settleDirect": "regolate il pagamento direttamente come concordato",
+    "genericError": "Qualcosa è andato storto. Riprova."
   }
 }

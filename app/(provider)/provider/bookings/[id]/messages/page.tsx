@@ -2,7 +2,8 @@ import { auth } from "@clerk/nextjs/server"
 import { redirect, notFound } from "next/navigation"
 import Link from "next/link"
 import { db } from "@/lib/db"
-import { bookings, providers, users } from "@/lib/db/schema"
+import { bookings, providers, users, payments } from "@/lib/db/schema"
+import { CompletionBar } from "@/components/booking/CompletionBar"
 import { eq } from "drizzle-orm"
 import { MessageThread } from "@/components/messaging/MessageThread"
 import { ArrowLeft, MessageSquare } from "lucide-react"
@@ -25,6 +26,9 @@ export default async function ProviderMessagesPage({
     .select({
       bookingId: bookings.id,
       customerId: bookings.customerId,
+      status: bookings.status,
+      providerCompletedAt: bookings.providerCompletedAt,
+      clientConfirmedAt: bookings.clientConfirmedAt,
       providerUserId: providers.userId,
       customerFirstName: users.firstName,
       customerLastName: users.lastName,
@@ -37,6 +41,7 @@ export default async function ProviderMessagesPage({
 
   if (!row) notFound()
   if (row.providerUserId !== userId) notFound()
+  const [payment] = await db.select({ id: payments.id }).from(payments).where(eq(payments.bookingId, id))
 
   const customerName =
     [row.customerFirstName, row.customerLastName].filter(Boolean).join(" ") ||
@@ -66,7 +71,17 @@ export default async function ProviderMessagesPage({
         </div>
       </div>
 
-      <MessageThread bookingId={id} currentUserId={userId} />
+      {/* Dual-confirm completion, right in the chat — both press their button to close the order. */}
+      <CompletionBar
+        bookingId={id}
+        side="cleaner"
+        status={row.status}
+        providerCompleted={!!row.providerCompletedAt}
+        clientConfirmed={!!row.clientConfirmedAt}
+        hasPayment={!!payment}
+      />
+
+      <MessageThread bookingId={id} currentUserId={userId} readOnly={row.status === "completed" || row.status === "cancelled"} />
     </div>
   )
 }
