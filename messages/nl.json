@@ -680,7 +680,8 @@
     "preHeading": "Waar moet {name} schoonmaken?",
     "preSubheading": "Vul het serviceadres in — opnieuw zoeken is niet nodig.",
     "preBadge": "Jouw schoonmaker: {name}",
-    "changeCleaner": "Andere schoonmaker"
+    "changeCleaner": "Andere schoonmaker",
+    "countryInvalid": "Kies een land uit de lijst"
   },
   "customerBookSchedulePage": {
     "heading": "Wanneer komt het u uit?",
@@ -925,7 +926,8 @@
     "recurring_weekly": "Wekelijks",
     "recurring_biweekly": "Om de 2 weken",
     "recurring_monthly": "Maandelijks",
-    "countryLabel": "Land"
+    "countryLabel": "Land",
+    "countryInvalid": "Kies een land uit de lijst"
   },
   "customerProfilePage": {
     "title": "Mijn profiel",

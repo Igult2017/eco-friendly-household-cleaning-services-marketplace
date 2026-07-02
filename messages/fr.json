@@ -680,7 +680,8 @@
     "preHeading": "Où {name} doit-il faire le ménage ?",
     "preSubheading": "Saisissez l'adresse d'intervention — pas besoin de chercher à nouveau.",
     "preBadge": "Votre intervenant : {name}",
-    "changeCleaner": "Changer d'intervenant"
+    "changeCleaner": "Changer d'intervenant",
+    "countryInvalid": "Veuillez choisir un pays dans la liste"
   },
   "customerBookSchedulePage": {
     "heading": "Quand cela vous convient-il ?",
@@ -925,7 +926,8 @@
     "recurring_weekly": "Hebdomadaire",
     "recurring_biweekly": "Toutes les 2 semaines",
     "recurring_monthly": "Mensuel",
-    "countryLabel": "Pays"
+    "countryLabel": "Pays",
+    "countryInvalid": "Veuillez choisir un pays dans la liste"
   },
   "customerProfilePage": {
     "title": "Mon profil",

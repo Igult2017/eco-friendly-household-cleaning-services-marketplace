@@ -680,7 +680,8 @@
     "preHeading": "Gdzie {name} ma posprzątać?",
     "preSubheading": "Podaj adres usługi — nie musisz szukać ponownie.",
     "preBadge": "Twoja osoba sprzątająca: {name}",
-    "changeCleaner": "Zmień osobę sprzątającą"
+    "changeCleaner": "Zmień osobę sprzątającą",
+    "countryInvalid": "Wybierz kraj z listy"
   },
   "customerBookSchedulePage": {
     "heading": "Kiedy Ci pasuje?",
@@ -925,7 +926,8 @@
     "recurring_weekly": "Co tydzień",
     "recurring_biweekly": "Co 2 tygodnie",
     "recurring_monthly": "Co miesiąc",
-    "countryLabel": "Kraj"
+    "countryLabel": "Kraj",
+    "countryInvalid": "Wybierz kraj z listy"
   },
   "customerProfilePage": {
     "title": "Mój profil",

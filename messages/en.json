@@ -680,7 +680,8 @@
     "preHeading": "Where should {name} clean?",
     "preSubheading": "Enter the service address — no need to search again.",
     "preBadge": "Your cleaner: {name}",
-    "changeCleaner": "Change cleaner"
+    "changeCleaner": "Change cleaner",
+    "countryInvalid": "Please pick a country from the list"
   },
   "customerBookSchedulePage": {
     "heading": "When works for you?",
@@ -925,7 +926,8 @@
     "recurring_weekly": "Weekly",
     "recurring_biweekly": "Every 2 weeks",
     "recurring_monthly": "Monthly",
-    "countryLabel": "Country"
+    "countryLabel": "Country",
+    "countryInvalid": "Please pick a country from the list"
   },
   "customerProfilePage": {
     "title": "My Profile",

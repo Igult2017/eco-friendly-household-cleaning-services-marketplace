@@ -13,7 +13,7 @@ import { LocationDetectButton } from "@/components/location/LocationDetectButton
 import { usePostalValidation } from "@/hooks/usePostalValidation"
 import type { GeoResult } from "@/lib/nominatim"
 import { geocodeFlexible, extractPostalCode } from "@/lib/nominatim"
-import { SUPPORTED_COUNTRIES, isSupportedCountry } from "@/lib/utils/countries"
+import { CountryField } from "@/components/location/CountryField"
 
 const ECO_OPTIONS = ["Eco-certified products only", "No single-use plastics", "Fragrance-free", "Energy-saving methods"]
 const ECO_OPTION_KEYS: Record<string, string> = {
@@ -215,16 +215,12 @@ export default function PostJobPage() {
             </div>
             <div>
               <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">{t("countryLabel")}</Label>
-              <select
-                value={form.serviceAddress.country}
-                onChange={(e) => setForm((p) => ({ ...p, serviceAddress: { ...p.serviceAddress, country: e.target.value } }))}
-                className="flex h-10 w-full rounded-md border border-[#E5EBF0] bg-white px-3 py-2 text-sm text-[#2B3441] focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]"
-              >
-                {!isSupportedCountry(form.serviceAddress.country) && <option value={form.serviceAddress.country}>{form.serviceAddress.country}</option>}
-                {SUPPORTED_COUNTRIES.map(([code, name]) => (
-                  <option key={code} value={code}>{name}</option>
-                ))}
-              </select>
+              <CountryField
+                id="postjob-country"
+                code={form.serviceAddress.country}
+                onCode={(c) => setForm((p) => ({ ...p, serviceAddress: { ...p.serviceAddress, country: c } }))}
+                invalidText={t("countryInvalid")}
+              />
             </div>
             {postal.postalError && (
               <div className="flex items-start gap-2 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-800">

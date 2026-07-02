@@ -680,7 +680,8 @@
     "preHeading": "Dove deve pulire {name}?",
     "preSubheading": "Inserisci l'indirizzo del servizio — non serve cercare di nuovo.",
     "preBadge": "Il tuo addetto: {name}",
-    "changeCleaner": "Cambia addetto"
+    "changeCleaner": "Cambia addetto",
+    "countryInvalid": "Scegli un paese dall'elenco"
   },
   "customerBookSchedulePage": {
     "heading": "Quando ti è comodo?",
@@ -925,7 +926,8 @@
     "recurring_weekly": "Settimanale",
     "recurring_biweekly": "Ogni 2 settimane",
     "recurring_monthly": "Mensile",
-    "countryLabel": "Paese"
+    "countryLabel": "Paese",
+    "countryInvalid": "Scegli un paese dall'elenco"
   },
   "customerProfilePage": {
     "title": "Il mio profilo",
