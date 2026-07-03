@@ -884,7 +884,15 @@
     "deleteConfirm": "Diesen Auftrag löschen? Das kann nicht rückgängig gemacht werden.",
     "deleteFailed": "Auftrag konnte nicht gelöscht werden.",
     "bestMatch": "Beste Wahl",
-    "bestMatchWhy": "Zuverlässigste Reinigungskraft mit den besten Bewertungen unter deinen Angeboten"
+    "bestMatchWhy": "Zuverlässigste Reinigungskraft mit den besten Bewertungen unter deinen Angeboten",
+    "coverLetter": "Angebotstext der Reinigungskraft",
+    "noCoverLetter": "Die Reinigungskraft hat keine Nachricht hinterlassen.",
+    "viewProfile": "Profil ansehen",
+    "distanceAway": "{distance} entfernt",
+    "impliedRate": "≈ {rate}/Std.",
+    "tier_reliable": "Zuverlässig",
+    "tier_high": "Sehr zuverlässig",
+    "tier_top": "Top bewertet"
   },
   "customerLayout": {
     "navDashboard": "Dashboard",

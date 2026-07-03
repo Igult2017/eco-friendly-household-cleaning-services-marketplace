@@ -884,7 +884,15 @@
     "deleteConfirm": "Eliminare questo annuncio? L operazione è irreversibile.",
     "deleteFailed": "Impossibile eliminare il lavoro.",
     "bestMatch": "Scelta migliore",
-    "bestMatchWhy": "L addetto più affidabile e con le recensioni migliori tra le tue offerte"
+    "bestMatchWhy": "L addetto più affidabile e con le recensioni migliori tra le tue offerte",
+    "coverLetter": "Proposta dell addetto",
+    "noCoverLetter": "L addetto non ha lasciato alcun messaggio.",
+    "viewProfile": "Vedi profilo",
+    "distanceAway": "a {distance}",
+    "impliedRate": "≈ {rate}/h",
+    "tier_reliable": "Affidabile",
+    "tier_high": "Molto affidabile",
+    "tier_top": "Il più votato"
   },
   "customerLayout": {
     "navDashboard": "Dashboard",

@@ -884,7 +884,15 @@
     "deleteConfirm": "Usunąć to zlecenie? Tej operacji nie można cofnąć.",
     "deleteFailed": "Nie udało się usunąć zlecenia.",
     "bestMatch": "Najlepszy wybór",
-    "bestMatchWhy": "Najbardziej niezawodna i najlepiej oceniana osoba wśród ofert"
+    "bestMatchWhy": "Najbardziej niezawodna i najlepiej oceniana osoba wśród ofert",
+    "coverLetter": "Propozycja od osoby sprzątającej",
+    "noCoverLetter": "Osoba sprzątająca nie dołączyła wiadomości.",
+    "viewProfile": "Zobacz profil",
+    "distanceAway": "{distance} stąd",
+    "impliedRate": "≈ {rate}/godz.",
+    "tier_reliable": "Niezawodna",
+    "tier_high": "Bardzo niezawodna",
+    "tier_top": "Najlepiej oceniana"
   },
   "customerLayout": {
     "navDashboard": "Panel",

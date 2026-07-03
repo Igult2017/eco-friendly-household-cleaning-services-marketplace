@@ -884,7 +884,15 @@
     "deleteConfirm": "Eliminar este trabalho? Não pode ser desfeito.",
     "deleteFailed": "Não foi possível eliminar o trabalho.",
     "bestMatch": "Melhor escolha",
-    "bestMatchWhy": "O profissional mais fiável e mais bem avaliado entre as tuas propostas"
+    "bestMatchWhy": "O profissional mais fiável e mais bem avaliado entre as tuas propostas",
+    "coverLetter": "Proposta do profissional",
+    "noCoverLetter": "O profissional não incluiu nenhuma mensagem.",
+    "viewProfile": "Ver perfil",
+    "distanceAway": "a {distance}",
+    "impliedRate": "≈ {rate}/h",
+    "tier_reliable": "Fiável",
+    "tier_high": "Muito fiável",
+    "tier_top": "Melhor avaliado"
   },
   "customerLayout": {
     "navDashboard": "Painel",

@@ -884,7 +884,15 @@
     "deleteConfirm": "Supprimer cette annonce ? Cette action est irréversible.",
     "deleteFailed": "Impossible de supprimer l annonce.",
     "bestMatch": "Meilleur choix",
-    "bestMatchWhy": "L intervenant le plus fiable et le mieux noté parmi vos offres"
+    "bestMatchWhy": "L intervenant le plus fiable et le mieux noté parmi vos offres",
+    "coverLetter": "Proposition de l intervenant",
+    "noCoverLetter": "L intervenant n a pas laissé de message.",
+    "viewProfile": "Voir le profil",
+    "distanceAway": "à {distance}",
+    "impliedRate": "≈ {rate}/h",
+    "tier_reliable": "Fiable",
+    "tier_high": "Très fiable",
+    "tier_top": "Le mieux noté"
   },
   "customerLayout": {
     "navDashboard": "Tableau de bord",

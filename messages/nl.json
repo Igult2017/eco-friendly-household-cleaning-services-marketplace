@@ -884,7 +884,15 @@
     "deleteConfirm": "Deze klus verwijderen? Dit kan niet ongedaan worden gemaakt.",
     "deleteFailed": "Kon de klus niet verwijderen.",
     "bestMatch": "Beste match",
-    "bestMatchWhy": "De betrouwbaarste, best beoordeelde schoonmaker onder je biedingen"
+    "bestMatchWhy": "De betrouwbaarste, best beoordeelde schoonmaker onder je biedingen",
+    "coverLetter": "Voorstel van de schoonmaker",
+    "noCoverLetter": "De schoonmaker heeft geen bericht achtergelaten.",
+    "viewProfile": "Bekijk profiel",
+    "distanceAway": "{distance} verderop",
+    "impliedRate": "≈ {rate}/u",
+    "tier_reliable": "Betrouwbaar",
+    "tier_high": "Zeer betrouwbaar",
+    "tier_top": "Best beoordeeld"
   },
   "customerLayout": {
     "navDashboard": "Dashboard",

@@ -12,12 +12,14 @@ import { CompleteBookingButton } from "@/components/bidding/CompleteBookingButto
 import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
 import { formatDate, localTodayYmd } from "@/lib/utils/formatDate"
 import { cn } from "@/lib/utils"
+import { TIER_CLASS } from "@/lib/provider/reliability"
 import {
   Plus, Star, Clock, Leaf, Eye, ChevronDown, ChevronUp,
   MapPin, Timer, CalendarDays, MessageSquare, Briefcase, Loader2,
 } from "lucide-react"
 
 interface BidProvider {
+  slug: string
   businessName: string
   bio: string | null
   averageRating: number | null
@@ -45,6 +47,7 @@ interface Bid {
   bestMatch?: boolean
   reliabilityScore?: number
   reliabilityTier?: string
+  distanceLabel?: string | null
 }
 
 interface Job {
@@ -123,11 +126,18 @@ function BidCard({ bid, jobId, jobStatus }: { bid: Bid; jobId: string; jobStatus
                   <Star size={9} className="fill-amber-500 text-amber-500" /> {t("bestMatch")}
                 </span>
               )}
-              <h3 className="font-semibold text-[#2B3441] text-sm">{p?.businessName ?? t("unknownProvider")}</h3>
+              <h3 className="font-semibold text-[#2B3441] text-sm">
+                {p?.slug ? (
+                  <Link href={`/providers/${p.slug}`} target="_blank" className="hover:text-[#2D7A5F] hover:underline transition-colors">
+                    {p.businessName}
+                  </Link>
+                ) : (p?.businessName ?? t("unknownProvider"))}
+              </h3>
               {location && (
                 <p className="flex items-center gap-1 text-xs text-[#6B7280] mt-0.5">
                   <MapPin size={11} className="flex-shrink-0" />
                   {location}
+                  {bid.distanceLabel && <span className="font-medium text-[#2D7A5F]"> · {t("distanceAway", { distance: bid.distanceLabel })}</span>}
                 </p>
               )}
             </div>
@@ -135,6 +145,9 @@ function BidCard({ bid, jobId, jobStatus }: { bid: Bid; jobId: string; jobStatus
               {/* Bid amounts are in the CLEANER's currency — a US cleaner's $ bid must not render as €. */}
               <p className="font-bold text-[#2D7A5F] text-lg leading-tight">{formatCurrencyForCountry(bid.amount, p?.country ?? "DE")}</p>
               <p className="text-xs text-[#9CA3AF]">{t("bidAmount")}</p>
+              {bid.estimatedDurationMinutes ? (
+                <p className="text-[11px] text-[#6B7280]">{t("impliedRate", { rate: formatCurrencyForCountry(Math.round((bid.amount * 60) / bid.estimatedDurationMinutes), p?.country ?? "DE") })}</p>
+              ) : null}
             </div>
           </div>
 
@@ -161,6 +174,11 @@ function BidCard({ bid, jobId, jobStatus }: { bid: Bid; jobId: string; jobStatus
             )}
             {(p?.ecoScore ?? 0) > 0 && (
               <span className="text-xs text-[#2D7A5F] font-medium">{t("ecoScore", { score: p!.ecoScore })}</span>
+            )}
+            {bid.reliabilityTier && bid.reliabilityTier !== "new" && (
+              <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold", TIER_CLASS[bid.reliabilityTier as keyof typeof TIER_CLASS] ?? "bg-gray-100 text-gray-600")}>
+                {t(`tier_${bid.reliabilityTier}` as Parameters<typeof t>[0])} · {bid.reliabilityScore}/100
+              </span>
             )}
           </div>
 
@@ -197,14 +215,18 @@ function BidCard({ bid, jobId, jobStatus }: { bid: Bid; jobId: string; jobStatus
           </span>
         </div>
 
-        {bid.message && (
-          <div className="bg-[#F4FAF6] rounded-lg p-3">
-            <p className="flex items-start gap-1.5 text-xs text-[#2B3441]">
-              <MessageSquare size={12} className="flex-shrink-0 mt-0.5 text-[#6B7280]" />
-              <span className="italic">&ldquo;{bid.message}&rdquo;</span>
-            </p>
-          </div>
-        )}
+        {/* Cover letter — the cleaner's proposal to the client. Rendered even when absent so the
+            client sees the difference between "wrote nothing" and a real pitch. */}
+        <div className="bg-[#F4FAF6] rounded-lg p-3">
+          <p className="mb-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-[#6B7280]">
+            <MessageSquare size={11} /> {t("coverLetter")}
+          </p>
+          {bid.message ? (
+            <p className="text-xs text-[#2B3441] leading-relaxed whitespace-pre-wrap">{bid.message}</p>
+          ) : (
+            <p className="text-xs italic text-[#9CA3AF]">{t("noCoverLetter")}</p>
+          )}
+        </div>
 
         <div className="flex items-center justify-between pt-1">
           {bid.status === "accepted" && (
@@ -218,7 +240,16 @@ function BidCard({ bid, jobId, jobStatus }: { bid: Bid; jobId: string; jobStatus
             <span className="text-xs text-[#9CA3AF]">{t("bidDeclined")}</span>
           )}
           {canAccept && (
-            <div className="ml-auto">
+            <div className="ml-auto flex items-center gap-2">
+              {p?.slug && (
+                <Link
+                  href={`/providers/${p.slug}`}
+                  target="_blank"
+                  className="rounded-lg border border-[#E5EBF0] px-3 py-1.5 text-xs font-medium text-[#6B7280] transition-colors hover:border-[#2D7A5F] hover:text-[#2D7A5F]"
+                >
+                  {t("viewProfile")}
+                </Link>
+              )}
               <AcceptBidButton jobId={jobId} bidId={bid.id} />
             </div>
           )}

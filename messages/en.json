@@ -884,7 +884,15 @@
     "deleteConfirm": "Delete this job post? This cannot be undone.",
     "deleteFailed": "Could not delete the job.",
     "bestMatch": "Best match",
-    "bestMatchWhy": "Most reliable, best-reviewed cleaner among your bids"
+    "bestMatchWhy": "Most reliable, best-reviewed cleaner among your bids",
+    "coverLetter": "Proposal from the cleaner",
+    "noCoverLetter": "The cleaner did not include a message.",
+    "viewProfile": "View profile",
+    "distanceAway": "{distance} away",
+    "impliedRate": "≈ {rate}/h",
+    "tier_reliable": "Reliable",
+    "tier_high": "Highly reliable",
+    "tier_top": "Top rated"
   },
   "customerLayout": {
     "navDashboard": "Dashboard",

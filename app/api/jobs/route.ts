@@ -262,6 +262,7 @@ export async function GET(req: Request) {
           with: {
             provider: {
               columns: {
+                slug: true,
                 businessName: true,
                 bio: true,
                 averageRating: true,
@@ -273,6 +274,8 @@ export async function GET(req: Request) {
                 city: true,
                 postalCode: true,
                 country: true,
+                latitude: true,
+                longitude: true,
               },
             },
           },
@@ -286,6 +289,13 @@ export async function GET(req: Request) {
     // Review privilege: bids are ranked by the cleaner's reliability (rating 60% + completion 40%,
     // same engine as /provider/statistics) — best-reviewed cleaners surface FIRST, and the top
     // bidder with a real track record is flagged as the best match for the client.
+    const km = (aLat: number, aLng: number, bLat: number, bLng: number) => {
+      const R = 6371
+      const dLat = ((bLat - aLat) * Math.PI) / 180
+      const dLng = ((bLng - aLng) * Math.PI) / 180
+      const h = Math.sin(dLat / 2) ** 2 + Math.cos((aLat * Math.PI) / 180) * Math.cos((bLat * Math.PI) / 180) * Math.sin(dLng / 2) ** 2
+      return 2 * R * Math.asin(Math.sqrt(h))
+    }
     const ranked = jobs.map((j: any) => {
       const scored = [...j.bids].map((b: any) => ({
         b,
@@ -299,12 +309,23 @@ export async function GET(req: Request) {
       scored.sort((x, y) => y.r.score - x.r.score || (y.b.provider?.totalJobsCompleted ?? 0) - (x.b.provider?.totalJobsCompleted ?? 0))
       return {
         ...j,
-        bids: scored.map(({ b, r }, i) => ({
-          ...b,
-          reliabilityScore: r.score,
-          reliabilityTier: r.tier,
-          bestMatch: i === 0 && r.tier !== "new",
-        })),
+        bids: scored.map(({ b, r }, i) => {
+          // Distance cleaner↔job computed server-side; raw coords are never sent to the browser (H3).
+          const p = b.provider
+          const distanceLabel =
+            p?.latitude != null && p?.longitude != null && j.serviceLatitude != null && j.serviceLongitude != null
+              ? formatDistance(km(p.latitude, p.longitude, j.serviceLatitude, j.serviceLongitude), j.serviceAddress?.country ?? p.country ?? "DE")
+              : null
+          const provider = p ? { ...p, latitude: undefined, longitude: undefined } : null
+          return {
+            ...b,
+            provider,
+            distanceLabel,
+            reliabilityScore: r.score,
+            reliabilityTier: r.tier,
+            bestMatch: i === 0 && r.tier !== "new",
+          }
+        }),
       }
     })
 
