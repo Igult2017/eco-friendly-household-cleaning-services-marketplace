@@ -58,10 +58,8 @@ function StatusBadge({ status, t }: { status: string; t: TFn }) {
 export default function BrowseJobsPage() {
   const t = useTranslations("browseJobs")
   const { isSignedIn } = useUser()
-  // Signed-in users go straight to the provider bid area (the provider layout routes by role);
-  // only signed-out users are sent through sign-in. Routing a signed-in user through /sign-in
-  // bounced them to the homepage, so the bid button appeared "broken".
-  const bidHref = isSignedIn === false ? "/sign-in?redirect_url=/provider/jobs" : "/provider/jobs"
+  // Signed-in users open the job DETAIL directly (the provider layout routes by role); signed-out
+  // users go through sign-in with the detail page as the return destination.
   const [jobs, setJobs] = useState<Job[]>([])
   const [canBid, setCanBid] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -156,23 +154,39 @@ export default function BrowseJobsPage() {
                       <StatusBadge status={job.status} t={t} />
                       <span className="text-xs text-[#9CA3AF] ml-auto">{timeAgo(job.createdAt, t)}</span>
                     </div>
-                    <h2 className="font-semibold text-[#2B3441] text-lg leading-snug">{job.title}</h2>
+                    <h2 className="font-semibold text-[#2B3441] text-lg leading-snug">
+                      {/* Upwork-style: the title opens the full job (cleaners land on the detail + bid form;
+                          signed-out visitors go through sign-in and return there). */}
+                      <Link href={`/provider/jobs/${job.id}`} className="hover:text-[#2D7A5F] hover:underline transition-colors">{job.title}</Link>
+                    </h2>
                     <p className="text-sm text-[#6B7280] mt-1 line-clamp-2 leading-relaxed">{job.description}</p>
                   </div>
 
-                  {/* Budget */}
+                  {/* Price: per-hour rate first (the payment mode), total beneath. */}
                   {(job.budgetMin || job.budgetMax) && (
                     <div className="text-right shrink-0">
-                      <p className="text-xs text-[#9CA3AF] mb-0.5">{t("budget")}</p>
-                      <p className="font-bold text-[#2D7A5F] text-lg">
-                        {job.budgetMin && job.budgetMax
-                          ? job.budgetMin === job.budgetMax
-                            ? formatCurrencyForCountry(job.budgetMin, job.country)
-                            : `${formatCurrencyForCountry(job.budgetMin, job.country)} – ${formatCurrencyForCountry(job.budgetMax, job.country)}`
-                          : job.budgetMax
-                          ? t("budgetUpTo", { amount: formatCurrencyForCountry(job.budgetMax, job.country) })
-                          : formatCurrencyForCountry(job.budgetMin!, job.country)}
-                      </p>
+                      {job.budgetMin && job.estimatedDurationMinutes ? (
+                        <>
+                          <p className="text-xs text-[#9CA3AF] mb-0.5">{t("rateLabel")}</p>
+                          <p className="font-bold text-[#2D7A5F] text-lg">
+                            {t("perHour", { amount: formatCurrencyForCountry(Math.round((job.budgetMin * 60) / job.estimatedDurationMinutes), job.country) })}
+                          </p>
+                          <p className="text-xs text-[#6B7280]">{t("totalApprox", { amount: formatCurrencyForCountry(job.budgetMin, job.country) })}</p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-xs text-[#9CA3AF] mb-0.5">{t("budget")}</p>
+                          <p className="font-bold text-[#2D7A5F] text-lg">
+                            {job.budgetMin && job.budgetMax
+                              ? job.budgetMin === job.budgetMax
+                                ? formatCurrencyForCountry(job.budgetMin, job.country)
+                                : `${formatCurrencyForCountry(job.budgetMin, job.country)} – ${formatCurrencyForCountry(job.budgetMax, job.country)}`
+                              : job.budgetMax
+                              ? t("budgetUpTo", { amount: formatCurrencyForCountry(job.budgetMax, job.country) })
+                              : formatCurrencyForCountry(job.budgetMin!, job.country)}
+                          </p>
+                        </>
+                      )}
                     </div>
                   )}
                 </div>
@@ -215,7 +229,7 @@ export default function BrowseJobsPage() {
                     <>
                       <p className="text-xs text-[#9CA3AF]">{t("signInAsProvider")}</p>
                       <Link
-                        href={bidHref}
+                        href={isSignedIn === false ? `/sign-in?redirect_url=/provider/jobs/${job.id}` : `/provider/jobs/${job.id}`}
                         className="inline-flex items-center gap-1.5 rounded-xl bg-[#2D7A5F] hover:bg-[#256349] text-white text-sm font-semibold px-4 py-2 transition-colors"
                       >
                         {t("bidOnThisJob")}

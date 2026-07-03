@@ -219,7 +219,10 @@
     "postAJob": "Publicar um trabalho",
     "becomeCleanerToBid": "Torna-te profissional para licitar",
     "estHours": "≈ {hours} h",
-    "yourOwnJob": "Publicaste este trabalho"
+    "yourOwnJob": "Publicaste este trabalho",
+    "rateLabel": "Tarifa",
+    "perHour": "{amount}/h",
+    "totalApprox": "≈ {amount} no total"
   },
   "providerProfile": {
     "idVerified": "Identidade verificada",
@@ -1158,7 +1161,11 @@
     "firstBidNote": "Ainda sem propostas — serias o primeiro. Ótimas hipóteses!",
     "competitionNote": "Este trabalho já tem {count} proposta(s).",
     "fewerBidsTip": "Dica: “{title}” só tem {count} proposta(s) até agora — as tuas hipóteses são melhores lá.",
-    "viewSuggested": "Ver esse trabalho"
+    "viewSuggested": "Ver esse trabalho",
+    "perHour": "{amount}/h",
+    "totalApprox": "≈ {amount} no total",
+    "backToJobs": "← Todos os trabalhos",
+    "jobNotFound": "Este trabalho já não está disponível."
   },
   "providerProviderNotificationsPage": {
     "heading": "Notificações",

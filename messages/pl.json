@@ -219,7 +219,10 @@
     "postAJob": "Dodaj zlecenie",
     "becomeCleanerToBid": "Zostań sprzątaczem, aby licytować",
     "estHours": "≈ {hours} godz.",
-    "yourOwnJob": "To Twoje zlecenie"
+    "yourOwnJob": "To Twoje zlecenie",
+    "rateLabel": "Stawka",
+    "perHour": "{amount}/godz.",
+    "totalApprox": "≈ {amount} łącznie"
   },
   "providerProfile": {
     "idVerified": "Tożsamość zweryfikowana",
@@ -1158,7 +1161,11 @@
     "firstBidNote": "Brak ofert — Twoja byłaby pierwsza. Świetne szanse!",
     "competitionNote": "To zlecenie ma już {count} ofert(y).",
     "fewerBidsTip": "Wskazówka: „{title}” ma na razie tylko {count} ofert(y) — tam masz większe szanse.",
-    "viewSuggested": "Zobacz to zlecenie"
+    "viewSuggested": "Zobacz to zlecenie",
+    "perHour": "{amount}/godz.",
+    "totalApprox": "≈ {amount} łącznie",
+    "backToJobs": "← Wszystkie zlecenia",
+    "jobNotFound": "To zlecenie nie jest już dostępne."
   },
   "providerProviderNotificationsPage": {
     "heading": "Powiadomienia",

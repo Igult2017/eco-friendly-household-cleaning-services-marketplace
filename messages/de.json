@@ -219,7 +219,10 @@
     "postAJob": "Auftrag erstellen",
     "becomeCleanerToBid": "Reinigungskraft werden, um zu bieten",
     "estHours": "≈ {hours} Std.",
-    "yourOwnJob": "Du hast diesen Auftrag erstellt"
+    "yourOwnJob": "Du hast diesen Auftrag erstellt",
+    "rateLabel": "Stundensatz",
+    "perHour": "{amount}/Std.",
+    "totalApprox": "≈ {amount} gesamt"
   },
   "providerProfile": {
     "idVerified": "Identität verifiziert",
@@ -1158,7 +1161,11 @@
     "firstBidNote": "Noch keine Angebote — du wärst das erste. Beste Chancen!",
     "competitionNote": "Auf diesen Auftrag gibt es bereits {count} Angebot(e).",
     "fewerBidsTip": "Tipp: „{title}“ hat bisher nur {count} Angebot(e) — dort stehen deine Chancen besser.",
-    "viewSuggested": "Zum Auftrag"
+    "viewSuggested": "Zum Auftrag",
+    "perHour": "{amount}/Std.",
+    "totalApprox": "≈ {amount} gesamt",
+    "backToJobs": "← Alle Aufträge",
+    "jobNotFound": "Dieser Auftrag ist nicht mehr verfügbar."
   },
   "providerProviderNotificationsPage": {
     "heading": "Benachrichtigungen",

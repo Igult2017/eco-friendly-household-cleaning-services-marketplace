@@ -157,22 +157,26 @@ export default function ProviderJobsPage() {
                   <div className="p-5">
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div>
-                        <h2 className="font-semibold text-[#2B3441]">{job.title}</h2>
+                        {/* Upwork-style: the title opens the full job detail (complete description + bid form). */}
+                        <h2 className="font-semibold text-[#2B3441]">
+                          <Link href={`/provider/jobs/${job.id}`} className="hover:text-[#2D7A5F] hover:underline transition-colors">{job.title}</Link>
+                        </h2>
                         {job.category && <Badge className="bg-[#D1F0E0] text-[#2D7A5F] text-xs mt-1">{job.category.name}</Badge>}
                       </div>
                       <div className="text-right flex-shrink-0">
-                        {job.budgetMin && job.budgetMax && (
+                        {/* Per-hour rate is THE price (payment mode in EU + US); total is secondary. */}
+                        {job.budgetMin && job.estimatedDurationMinutes ? (
+                          <>
+                            <p className="font-bold text-[#2D7A5F] text-base">
+                              {t("perHour", { amount: formatCurrencyForCountry(Math.round((job.budgetMin * 60) / job.estimatedDurationMinutes), job.serviceAddress.country ?? "DE") })}
+                            </p>
+                            <p className="text-[11px] text-[#6B7280]">{t("totalApprox", { amount: formatCurrencyForCountry(job.budgetMin, job.serviceAddress.country ?? "DE") })}</p>
+                          </>
+                        ) : job.budgetMin && job.budgetMax ? (
                           <p className="font-bold text-[#2D7A5F] text-sm">
                             {job.budgetMin === job.budgetMax
                               ? formatCurrencyForCountry(job.budgetMin, job.serviceAddress.country ?? "DE")
                               : <>{formatCurrencyForCountry(job.budgetMin, job.serviceAddress.country ?? "DE")} – {formatCurrencyForCountry(job.budgetMax, job.serviceAddress.country ?? "DE")}</>}
-                          </p>
-                        )}
-                        {/* Implied hourly — per-hour is the payment mode; currency follows the JOB's country. */}
-                        {job.budgetMin && job.budgetMax && job.estimatedDurationMinutes ? (
-                          <p className="text-[11px] text-[#6B7280]">
-                            ≈ {formatCurrencyForCountry(Math.round((job.budgetMin * 60) / job.estimatedDurationMinutes), job.serviceAddress.country ?? "DE")}
-                            {job.budgetMin !== job.budgetMax && <> – {formatCurrencyForCountry(Math.round((job.budgetMax * 60) / job.estimatedDurationMinutes), job.serviceAddress.country ?? "DE")}</>}/h
                           </p>
                         ) : null}
                         <p className="text-xs text-[#9CA3AF] mt-1">{t("bidCount", { count: job.bids.length })}</p>

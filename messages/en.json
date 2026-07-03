@@ -219,7 +219,10 @@
     "postAJob": "Post a job",
     "becomeCleanerToBid": "Become a cleaner to bid",
     "estHours": "≈ {hours} h",
-    "yourOwnJob": "You posted this job"
+    "yourOwnJob": "You posted this job",
+    "rateLabel": "Rate",
+    "perHour": "{amount}/hr",
+    "totalApprox": "≈ {amount} total"
   },
   "providerProfile": {
     "idVerified": "ID Verified",
@@ -1158,7 +1161,11 @@
     "firstBidNote": "No bids yet — you would be the first. Great odds!",
     "competitionNote": "This job already has {count} bid(s).",
     "fewerBidsTip": "Tip: “{title}” has only {count} bid(s) so far — your chances may be better there.",
-    "viewSuggested": "View that job"
+    "viewSuggested": "View that job",
+    "perHour": "{amount}/hr",
+    "totalApprox": "≈ {amount} total",
+    "backToJobs": "← All jobs",
+    "jobNotFound": "This job is no longer available."
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifications",
