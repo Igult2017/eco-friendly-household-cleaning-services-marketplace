@@ -615,7 +615,7 @@
     "recurringPromptText": "Du hast einen wiederkehrenden Rhythmus gewählt. Richte ihn ein, um künftige Reinigungen automatisch zu buchen.",
     "setUpRecurring": "Wiederkehrend einrichten",
     "bookWithoutCard": "Ohne Karte buchen",
-    "bookWithoutCardNote": "Deine Reinigungskraft erfährt, dass keine Zahlungsmethode hinterlegt ist — ihr rechnet direkt ab, oder du fügst später unter Zahlungen eine Karte hinzu."
+    "bookWithoutCardNote": "Deine Reinigungskraft wartet, bis du eine Zahlungsmethode hinzufügst — das geht jederzeit über die Buchung. Abgebucht wird erst nach beidseitiger Bestätigung."
   },
   "customerBookExtrasPage": {
     "heading": "Besondere Wünsche?",
@@ -1033,7 +1033,10 @@
     "markAsComplete": "Als abgeschlossen markieren",
     "receiptLink": "Beleg",
     "recurringChip": "Wiederkehrend",
-    "awaitingClient": "Vorschlag gesendet — warte auf die Antwort des Kunden."
+    "awaitingClient": "Vorschlag gesendet — warte auf die Antwort des Kunden.",
+    "statusAwaitingPayment": "Wartet auf Zahlungsmethode",
+    "noCardNotice": "Keine Zahlungsmethode hinterlegt — nimm den Auftrag noch nicht an. Bitte den Kunden, eine hinzuzufügen; die Zahlung wird dann beim Abschluss automatisch eingezogen.",
+    "askInChat": "Frag den Kunden im Chat →"
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Als abgeschlossen markieren fehlgeschlagen",
@@ -1987,6 +1990,17 @@
     "cleanerFirstHint": "Wenn der Auftrag erledigt ist, markiert ihn zuerst deine Reinigungskraft — dann bestätigst du hier. Beide Bestätigungen schließen den Auftrag.",
     "completedClosed": "Auftrag von beiden bestätigt — dieser Chat ist geschlossen.",
     "settleDirect": "rechnet direkt wie vereinbart ab",
-    "genericError": "Etwas ist schiefgelaufen. Bitte erneut versuchen."
+    "genericError": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
+    "addPayment": "Zahlungsmethode hinzufügen",
+    "addPaymentNote": "Deine Reinigungskraft kann den Auftrag erst annehmen, wenn eine Zahlungsmethode hinterlegt ist. Abgebucht wird erst, wenn ihr BEIDE den Abschluss bestätigt.",
+    "noCardCleanerWait": "Dieser Kunde hat noch keine Zahlungsmethode hinterlegt — bitte ihn im Chat darum. Nimm den Auftrag erst danach an; die Zahlung wird dann beim Abschluss automatisch eingezogen."
+  },
+  "customerBookingPayPage": {
+    "title": "Zahlungsmethode hinzufügen",
+    "subtitle": "Der Buchungsbetrag wird reserviert — abgebucht erst, wenn du und deine Reinigungskraft den Abschluss bestätigen.",
+    "secureButton": "Buchung absichern",
+    "holdNote": "Nur Vorautorisierung. Automatische Abbuchung nach Abschluss.",
+    "preparing": "Sichere Zahlung wird vorbereitet…",
+    "errorGeneric": "Etwas ist schiefgelaufen. Bitte erneut versuchen."
   }
 }

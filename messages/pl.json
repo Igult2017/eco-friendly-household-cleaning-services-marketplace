@@ -615,7 +615,7 @@
     "recurringPromptText": "Wybrano powtarzalny rytm. Skonfiguruj go, aby automatycznie rezerwować kolejne sprzątania.",
     "setUpRecurring": "Ustaw cykliczne",
     "bookWithoutCard": "Zarezerwuj bez dodawania karty",
-    "bookWithoutCardNote": "Osoba sprzątająca dowie się, że nie ma metody płatności — rozliczycie się bezpośrednio lub dodasz kartę później w Płatnościach."
+    "bookWithoutCardNote": "Osoba sprzątająca poczeka, aż dodasz metodę płatności — możesz to zrobić w każdej chwili z poziomu rezerwacji. Obciążenie następuje dopiero po potwierdzeniu przez oboje."
   },
   "customerBookExtrasPage": {
     "heading": "Masz specjalne życzenia?",
@@ -1033,7 +1033,10 @@
     "markAsComplete": "Oznacz jako zakończone",
     "receiptLink": "Potwierdzenie",
     "recurringChip": "Cykliczne",
-    "awaitingClient": "Propozycja wysłana — czekamy na odpowiedź klienta."
+    "awaitingClient": "Propozycja wysłana — czekamy na odpowiedź klienta.",
+    "statusAwaitingPayment": "Oczekuje na metodę płatności",
+    "noCardNotice": "Brak metody płatności — nie przyjmuj jeszcze tego zlecenia. Poproś klienta o jej dodanie; płatność zostanie pobrana automatycznie po ukończeniu.",
+    "askInChat": "Poproś klienta na czacie →"
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Nie udało się oznaczyć jako ukończone",
@@ -1987,6 +1990,17 @@
     "cleanerFirstHint": "Gdy praca jest skończona, najpierw oznacza ją osoba sprzątająca — potem Ty potwierdzasz tutaj. Oba potwierdzenia zamykają zlecenie.",
     "completedClosed": "Zadanie potwierdzone przez obie strony — ten czat jest zamknięty.",
     "settleDirect": "rozliczcie się bezpośrednio zgodnie z ustaleniami",
-    "genericError": "Coś poszło nie tak. Spróbuj ponownie."
+    "genericError": "Coś poszło nie tak. Spróbuj ponownie.",
+    "addPayment": "Dodaj metodę płatności",
+    "addPaymentNote": "Osoba sprzątająca może przyjąć zlecenie dopiero po dodaniu metody płatności. Obciążenie następuje dopiero, gdy OBOJE potwierdzicie ukończenie.",
+    "noCardCleanerWait": "Ten klient nie dodał jeszcze metody płatności — poproś o to na czacie. Nie przyjmuj zlecenia wcześniej; płatność zostanie pobrana automatycznie po ukończeniu."
+  },
+  "customerBookingPayPage": {
+    "title": "Dodaj metodę płatności",
+    "subtitle": "Kwota rezerwacji zostaje zablokowana — pobrana dopiero po potwierdzeniu przez Ciebie i osobę sprzątającą.",
+    "secureButton": "Zabezpiecz rezerwację",
+    "holdNote": "Tylko preautoryzacja. Automatyczne obciążenie po ukończeniu.",
+    "preparing": "Przygotowywanie bezpiecznej płatności…",
+    "errorGeneric": "Coś poszło nie tak. Spróbuj ponownie."
   }
 }

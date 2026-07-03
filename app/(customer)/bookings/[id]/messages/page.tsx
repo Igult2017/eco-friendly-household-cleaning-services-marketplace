@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server"
 import { redirect, notFound } from "next/navigation"
 import Link from "next/link"
 import { db } from "@/lib/db"
-import { bookings, providers, payments } from "@/lib/db/schema"
+import { bookings, providers } from "@/lib/db/schema"
 import { CompletionBar } from "@/components/booking/CompletionBar"
 import { eq, and } from "drizzle-orm"
 import { MessageThread } from "@/components/messaging/MessageThread"
@@ -38,7 +38,6 @@ export default async function CustomerMessagesPage({
     .where(and(eq(bookings.id, id), eq(bookings.customerId, userId)))
 
   if (!booking) notFound()
-  const [payment] = await db.select({ id: payments.id }).from(payments).where(eq(payments.bookingId, id))
 
   return (
     <div className="max-w-2xl mx-auto py-6 px-4 space-y-4">
@@ -72,7 +71,6 @@ export default async function CustomerMessagesPage({
         status={booking.status}
         providerCompleted={!!booking.providerCompletedAt}
         clientConfirmed={!!booking.clientConfirmedAt}
-        hasPayment={!!payment}
       />
 
       <MessageThread bookingId={id} currentUserId={userId} readOnly={booking.status === "completed" || booking.status === "cancelled"} />

@@ -6,7 +6,6 @@ import { eq, and } from "drizzle-orm"
 import { inngest } from "@/lib/inngest/client"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
 import { isUuid } from "@/lib/utils/uuid"
-import { finalizeUnpaidBooking } from "@/lib/bookings/finalizeUnpaid"
 import { logError } from "@/lib/utils/logError"
 
 // The CLIENT confirms the cleaner finished the job. Dual-confirm: this is the second mark — once the
@@ -57,8 +56,6 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       } catch (e) {
         console.warn("[confirm-completion] capture send failed:", e)
       }
-    } else {
-      await finalizeUnpaidBooking(bookingId) // no card on file — nothing to capture, settle directly
     }
     return NextResponse.json({ success: true })
   } catch (err) {

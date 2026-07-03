@@ -615,7 +615,7 @@
     "recurringPromptText": "Escolheu uma frequência recorrente. Configure-a para marcar automaticamente as próximas limpezas.",
     "setUpRecurring": "Configurar recorrência",
     "bookWithoutCard": "Reservar sem adicionar cartão",
-    "bookWithoutCardNote": "O teu profissional saberá que não há método de pagamento registado — acertam diretamente, ou adicionas um cartão mais tarde em Pagamentos."
+    "bookWithoutCardNote": "O teu profissional aguardará até adicionares um método de pagamento — podes fazê-lo a qualquer momento na reserva. Só é cobrado após a confirmação de ambos."
   },
   "customerBookExtrasPage": {
     "heading": "Algum pedido especial?",
@@ -1033,7 +1033,10 @@
     "markAsComplete": "Marcar como concluída",
     "receiptLink": "Recibo",
     "recurringChip": "Recorrente",
-    "awaitingClient": "Sugestão enviada — a aguardar resposta do cliente."
+    "awaitingClient": "Sugestão enviada — a aguardar resposta do cliente.",
+    "statusAwaitingPayment": "A aguardar método de pagamento",
+    "noCardNotice": "Sem método de pagamento registado — não aceites este trabalho ainda. Pede ao cliente que adicione um; o pagamento será cobrado automaticamente na conclusão.",
+    "askInChat": "Pede ao cliente no chat →"
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Falha ao marcar como concluído",
@@ -1987,6 +1990,17 @@
     "cleanerFirstHint": "Quando o trabalho estiver feito, o teu profissional marca primeiro — depois confirmas aqui. As duas confirmações fecham o pedido.",
     "completedClosed": "Tarefa confirmada por ambos — esta conversa está fechada.",
     "settleDirect": "acertem o pagamento diretamente como combinado",
-    "genericError": "Algo correu mal. Tenta novamente."
+    "genericError": "Algo correu mal. Tenta novamente.",
+    "addPayment": "Adicionar método de pagamento",
+    "addPaymentNote": "O teu profissional só pode aceitar o trabalho depois de adicionares um método de pagamento. Só é cobrado quando AMBOS confirmarem a conclusão.",
+    "noCardCleanerWait": "Este cliente ainda não adicionou um método de pagamento — pede no chat. Não aceites o trabalho antes disso; o pagamento será depois cobrado automaticamente na conclusão."
+  },
+  "customerBookingPayPage": {
+    "title": "Adiciona o teu método de pagamento",
+    "subtitle": "O valor da reserva fica retido — só é cobrado após a confirmação de ambos.",
+    "secureButton": "Garantir reserva",
+    "holdNote": "Apenas pré-autorização. Cobrança automática após a conclusão.",
+    "preparing": "A preparar pagamento seguro…",
+    "errorGeneric": "Algo correu mal. Tenta novamente."
   }
 }

@@ -615,7 +615,7 @@
     "recurringPromptText": "You chose a repeating schedule. Set it up to auto-book future cleans.",
     "setUpRecurring": "Set up recurring",
     "bookWithoutCard": "Book without adding a card",
-    "bookWithoutCardNote": "Your cleaner will be told no payment method is on file — you settle payment directly, or add a card later under Payments."
+    "bookWithoutCardNote": "Your cleaner will be told to wait until you add a payment method — add it any time from the booking. Payment is only charged after you both confirm completion."
   },
   "customerBookExtrasPage": {
     "heading": "Any special requests?",
@@ -1033,7 +1033,10 @@
     "markAsComplete": "Mark as Complete",
     "receiptLink": "Receipt",
     "recurringChip": "Recurring",
-    "awaitingClient": "Suggestion sent — waiting for the client to respond."
+    "awaitingClient": "Suggestion sent — waiting for the client to respond.",
+    "statusAwaitingPayment": "Awaiting payment method",
+    "noCardNotice": "No payment method on file — don't take this order yet. Ask the client to add one; payment is then collected automatically at completion.",
+    "askInChat": "Ask the client in the chat →"
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Failed to mark as complete",
@@ -1987,6 +1990,17 @@
     "cleanerFirstHint": "When the job is done, your cleaner marks it completed first — then you confirm here. Both confirmations close the order.",
     "completedClosed": "Task completed by both parties — this chat is closed.",
     "settleDirect": "settle payment directly as agreed",
-    "genericError": "Something went wrong. Please try again."
+    "genericError": "Something went wrong. Please try again.",
+    "addPayment": "Add payment method",
+    "addPaymentNote": "Your cleaner can only take the order once a payment method is added. It's only charged after you BOTH confirm completion.",
+    "noCardCleanerWait": "This client hasn't added a payment method yet — ask them in the chat. Don't take the order until it's added; payment is then collected automatically at completion."
+  },
+  "customerBookingPayPage": {
+    "title": "Add your payment method",
+    "subtitle": "A hold is placed for the booking amount — charged only after you and your cleaner both confirm completion.",
+    "secureButton": "Secure booking",
+    "holdNote": "Pre-authorisation only. Charged automatically after completion.",
+    "preparing": "Preparing secure payment…",
+    "errorGeneric": "Something went wrong. Please try again."
   }
 }

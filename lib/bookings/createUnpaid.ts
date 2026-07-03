@@ -106,8 +106,8 @@ export async function createUnpaidBooking(userId: string, data: CreateBookingInp
     await db.insert(notifications).values({
       userId: provider.userId,
       type: "booking_reminder",
-      title: "Heads up: no payment method on file",
-      body: "This client booked without adding a card, so payment can't be collected automatically. Ask them to add one, or agree on payment directly — trade with care.",
+      title: "No payment method on file — don't accept yet",
+      body: "This client booked without adding a payment method. Ask them in the chat to add it — you can take the order once it's added, and payment is then collected automatically after you both confirm completion.",
       link: "/provider/bookings",
       metadata: { variant: "booking_no_card" },
     })

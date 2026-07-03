@@ -615,7 +615,7 @@
     "recurringPromptText": "Hai scelto una cadenza ricorrente. Impostala per prenotare automaticamente le prossime pulizie.",
     "setUpRecurring": "Imposta ricorrenza",
     "bookWithoutCard": "Prenota senza aggiungere una carta",
-    "bookWithoutCardNote": "Il tuo addetto saprà che non c'è un metodo di pagamento registrato — regolate direttamente, o aggiungi una carta più tardi in Pagamenti."
+    "bookWithoutCardNote": "Il tuo addetto attenderà finché non aggiungi un metodo di pagamento — puoi farlo in qualsiasi momento dalla prenotazione. L'addebito avviene solo dopo la conferma di entrambi."
   },
   "customerBookExtrasPage": {
     "heading": "Richieste particolari?",
@@ -1033,7 +1033,10 @@
     "markAsComplete": "Segna come completata",
     "receiptLink": "Ricevuta",
     "recurringChip": "Ricorrente",
-    "awaitingClient": "Proposta inviata — in attesa della risposta del cliente."
+    "awaitingClient": "Proposta inviata — in attesa della risposta del cliente.",
+    "statusAwaitingPayment": "In attesa del metodo di pagamento",
+    "noCardNotice": "Nessun metodo di pagamento registrato — non accettare ancora questo lavoro. Chiedi al cliente di aggiungerne uno; il pagamento verrà addebitato automaticamente al completamento.",
+    "askInChat": "Chiedi al cliente in chat →"
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Impossibile contrassegnare come completato",
@@ -1987,6 +1990,17 @@
     "cleanerFirstHint": "Quando il lavoro è finito, il tuo addetto lo segna per primo — poi confermi qui. Entrambe le conferme chiudono l'ordine.",
     "completedClosed": "Lavoro confermato da entrambi — questa chat è chiusa.",
     "settleDirect": "regolate il pagamento direttamente come concordato",
-    "genericError": "Qualcosa è andato storto. Riprova."
+    "genericError": "Qualcosa è andato storto. Riprova.",
+    "addPayment": "Aggiungi metodo di pagamento",
+    "addPaymentNote": "Il tuo addetto può accettare il lavoro solo dopo che è stato aggiunto un metodo di pagamento. L'addebito avviene solo quando ENTRAMBI confermate il completamento.",
+    "noCardCleanerWait": "Questo cliente non ha ancora aggiunto un metodo di pagamento — chiediglielo in chat. Non accettare il lavoro finché non lo aggiunge; il pagamento verrà poi addebitato automaticamente al completamento."
+  },
+  "customerBookingPayPage": {
+    "title": "Aggiungi il tuo metodo di pagamento",
+    "subtitle": "Viene bloccato l'importo della prenotazione — addebitato solo dopo la conferma di entrambi.",
+    "secureButton": "Proteggi la prenotazione",
+    "holdNote": "Solo pre-autorizzazione. Addebito automatico al completamento.",
+    "preparing": "Preparazione del pagamento sicuro…",
+    "errorGeneric": "Qualcosa è andato storto. Riprova."
   }
 }

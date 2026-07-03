@@ -615,7 +615,7 @@
     "recurringPromptText": "Je hebt een terugkerend ritme gekozen. Stel het in om toekomstige schoonmaakbeurten automatisch te boeken.",
     "setUpRecurring": "Terugkerend instellen",
     "bookWithoutCard": "Boeken zonder kaart toe te voegen",
-    "bookWithoutCardNote": "Je schoonmaker hoort dat er geen betaalmethode bekend is — jullie rekenen direct af, of je voegt later een kaart toe bij Betalingen."
+    "bookWithoutCardNote": "Je schoonmaker wacht tot je een betaalmethode toevoegt — dat kan altijd via de boeking. Er wordt pas afgeschreven na bevestiging door jullie beiden."
   },
   "customerBookExtrasPage": {
     "heading": "Speciale verzoeken?",
@@ -1033,7 +1033,10 @@
     "markAsComplete": "Markeren als voltooid",
     "receiptLink": "Bon",
     "recurringChip": "Terugkerend",
-    "awaitingClient": "Voorstel verstuurd — wachten op reactie van de klant."
+    "awaitingClient": "Voorstel verstuurd — wachten op reactie van de klant.",
+    "statusAwaitingPayment": "Wacht op betaalmethode",
+    "noCardNotice": "Geen betaalmethode bekend — neem deze opdracht nog niet aan. Vraag de klant er een toe te voegen; de betaling wordt dan automatisch geïnd bij voltooiing.",
+    "askInChat": "Vraag de klant in de chat →"
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Markeren als voltooid mislukt",
@@ -1987,6 +1990,17 @@
     "cleanerFirstHint": "Als de klus klaar is, markeert je schoonmaker hem eerst — daarna bevestig jij hier. Beide bevestigingen sluiten de opdracht.",
     "completedClosed": "Taak door beiden bevestigd — deze chat is gesloten.",
     "settleDirect": "reken direct af zoals afgesproken",
-    "genericError": "Er ging iets mis. Probeer opnieuw."
+    "genericError": "Er ging iets mis. Probeer opnieuw.",
+    "addPayment": "Betaalmethode toevoegen",
+    "addPaymentNote": "Je schoonmaker kan de opdracht pas aannemen zodra er een betaalmethode is toegevoegd. Er wordt pas afgeschreven nadat jullie BEIDEN de voltooiing bevestigen.",
+    "noCardCleanerWait": "Deze klant heeft nog geen betaalmethode toegevoegd — vraag erom in de chat. Neem de opdracht pas daarna aan; de betaling wordt dan automatisch geïnd bij voltooiing."
+  },
+  "customerBookingPayPage": {
+    "title": "Voeg je betaalmethode toe",
+    "subtitle": "Het boekingsbedrag wordt gereserveerd — pas afgeschreven nadat jij en je schoonmaker beiden bevestigen.",
+    "secureButton": "Boeking veiligstellen",
+    "holdNote": "Alleen pre-autorisatie. Automatische afschrijving na voltooiing.",
+    "preparing": "Veilige betaling voorbereiden…",
+    "errorGeneric": "Er ging iets mis. Probeer opnieuw."
   }
 }

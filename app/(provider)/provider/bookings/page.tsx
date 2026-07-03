@@ -31,6 +31,7 @@ type Booking = {
 }
 
 const STATUS_LABEL: Record<string, { labelKey: string; color: string }> = {
+  pending_payment:    { labelKey: "statusAwaitingPayment", color: "bg-amber-100 text-amber-700" },
   payment_authorized: { labelKey: "statusConfirmed", color: "bg-blue-100 text-blue-700" },
   confirmed:          { labelKey: "statusConfirmed", color: "bg-blue-100 text-blue-700" },
   in_progress:        { labelKey: "statusInProgress", color: "bg-amber-100 text-amber-700" },
@@ -134,6 +135,18 @@ export default function ProviderBookingsPage() {
                   <p className="mt-2 text-xs text-[#6B7280] bg-[#F4FAF6] rounded-lg px-3 py-2">
                     {b.specialInstructions}
                   </p>
+                )}
+
+                {/* No payment method yet → the cleaner must NOT take the order; ask the client to add it. */}
+                {b.status === "pending_payment" && (
+                  <div className="mt-3 pt-3 border-t border-[#E5EBF0]">
+                    <p className="flex items-center gap-2 rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                      {t("noCardNotice")}
+                    </p>
+                    <Link href={`/bookings/${b.id}/messages`} className="mt-2 inline-flex text-sm font-medium text-[#2D7A5F] hover:underline">
+                      {t("askInChat")}
+                    </Link>
+                  </div>
                 )}
 
                 {/* New booking → accept / counter-offer / reject. Once a counter-offer is out, wait. */}

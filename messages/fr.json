@@ -615,7 +615,7 @@
     "recurringPromptText": "Vous avez choisi un rythme récurrent. Configurez-le pour réserver automatiquement les prochains ménages.",
     "setUpRecurring": "Configurer la récurrence",
     "bookWithoutCard": "Réserver sans ajouter de carte",
-    "bookWithoutCardNote": "Votre intervenant saura qu'aucun moyen de paiement n'est enregistré — réglez directement, ou ajoutez une carte plus tard dans Paiements."
+    "bookWithoutCardNote": "Votre intervenant attendra que vous ajoutiez un moyen de paiement — possible à tout moment depuis la réservation. Le débit n'a lieu qu'après votre double confirmation."
   },
   "customerBookExtrasPage": {
     "heading": "Des demandes particulières ?",
@@ -1033,7 +1033,10 @@
     "markAsComplete": "Marquer comme terminée",
     "receiptLink": "Reçu",
     "recurringChip": "Récurrent",
-    "awaitingClient": "Proposition envoyée — en attente de la réponse du client."
+    "awaitingClient": "Proposition envoyée — en attente de la réponse du client.",
+    "statusAwaitingPayment": "En attente d'un moyen de paiement",
+    "noCardNotice": "Aucun moyen de paiement enregistré — n'acceptez pas encore la mission. Demandez au client d'en ajouter un ; le paiement sera prélevé automatiquement à la fin.",
+    "askInChat": "Demandez au client dans la discussion →"
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Échec du marquage comme terminé",
@@ -1987,6 +1990,17 @@
     "cleanerFirstHint": "Quand le travail est fini, votre intervenant le marque d'abord — puis vous confirmez ici. Les deux confirmations clôturent la commande.",
     "completedClosed": "Tâche confirmée par les deux parties — cette discussion est fermée.",
     "settleDirect": "réglez le paiement directement comme convenu",
-    "genericError": "Une erreur est survenue. Veuillez réessayer."
+    "genericError": "Une erreur est survenue. Veuillez réessayer.",
+    "addPayment": "Ajouter un moyen de paiement",
+    "addPaymentNote": "Votre intervenant ne peut accepter la mission qu'une fois un moyen de paiement ajouté. Le débit n'a lieu qu'après votre DOUBLE confirmation.",
+    "noCardCleanerWait": "Ce client n'a pas encore ajouté de moyen de paiement — demandez-le dans la discussion. N'acceptez pas la mission avant ; le paiement sera ensuite prélevé automatiquement à la fin."
+  },
+  "customerBookingPayPage": {
+    "title": "Ajouter votre moyen de paiement",
+    "subtitle": "Une empreinte est posée pour le montant de la réservation — débitée seulement après votre double confirmation.",
+    "secureButton": "Sécuriser la réservation",
+    "holdNote": "Pré-autorisation uniquement. Débit automatique après la fin.",
+    "preparing": "Préparation du paiement sécurisé…",
+    "errorGeneric": "Une erreur est survenue. Veuillez réessayer."
   }
 }
