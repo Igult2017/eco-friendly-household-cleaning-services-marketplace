@@ -882,7 +882,9 @@
     "editJob": "Modifica lavoro",
     "deleteJob": "Elimina",
     "deleteConfirm": "Eliminare questo annuncio? L operazione è irreversibile.",
-    "deleteFailed": "Impossibile eliminare il lavoro."
+    "deleteFailed": "Impossibile eliminare il lavoro.",
+    "bestMatch": "Scelta migliore",
+    "bestMatchWhy": "L addetto più affidabile e con le recensioni migliori tra le tue offerte"
   },
   "customerLayout": {
     "navDashboard": "Dashboard",
@@ -1061,7 +1063,13 @@
     "awaitingClient": "Proposta inviata — in attesa della risposta del cliente.",
     "statusAwaitingPayment": "In attesa del metodo di pagamento",
     "noCardNotice": "Nessun metodo di pagamento registrato — non accettare ancora questo lavoro. Chiedi al cliente di aggiungerne uno; il pagamento verrà addebitato automaticamente al completamento.",
-    "askInChat": "Chiedi al cliente in chat →"
+    "askInChat": "Chiedi al cliente in chat →",
+    "rateClientTitle": "Valuta questo cliente",
+    "rateClientPlaceholder": "Com è stato lavorare con questo cliente? (facoltativo)",
+    "rateClientSubmit": "Invia recensione",
+    "rateClientSaving": "Salvataggio…",
+    "rateClientDone": "Hai valutato questo cliente — grazie!",
+    "rateClientFailed": "Impossibile salvare la recensione. Riprova."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Impossibile contrassegnare come completato",
@@ -1175,7 +1183,8 @@
     "statCompleted": "prenotazioni completate",
     "postedJustNow": "Pubblicato adesso",
     "postedHoursAgo": "Pubblicato {count} h fa",
-    "postedDaysAgo": "Pubblicato {count} g fa"
+    "postedDaysAgo": "Pubblicato {count} g fa",
+    "reviewsFromCleaners": "({count} da addetti)"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifiche",

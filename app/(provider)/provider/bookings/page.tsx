@@ -6,6 +6,7 @@ import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
 import { BookingRespondActions } from "@/components/booking/BookingRespondActions"
+import { RateClientCard } from "@/components/provider/RateClientCard"
 
 // 2024-01-07 is a Sunday — offset by day number for a locale-aware short weekday name.
 const dayName = (d: number) => new Date(Date.UTC(2024, 0, 7 + d)).toLocaleDateString(undefined, { weekday: "short", timeZone: "UTC" })
@@ -48,11 +49,16 @@ export default function ProviderBookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([])
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState("all")
+  const [reviewedIds, setReviewedIds] = useState<Set<string>>(new Set())
 
   function load() {
     fetch("/api/provider/bookings")
       .then((r) => r.json())
       .then((d) => { setBookings(d.bookings ?? []); setLoading(false) })
+    fetch("/api/provider/customer-review")
+      .then((r) => r.json())
+      .then((d) => setReviewedIds(new Set((d.bookingIds ?? []) as string[])))
+      .catch(() => {})
   }
   useEffect(() => { load() }, [])
 
@@ -135,6 +141,11 @@ export default function ProviderBookingsPage() {
                   <p className="mt-2 text-xs text-[#6B7280] bg-[#F4FAF6] rounded-lg px-3 py-2">
                     {b.specialInstructions}
                   </p>
+                )}
+
+                {/* Completed → two-way reviews: the cleaner rates the client. */}
+                {b.status === "completed" && (
+                  <RateClientCard bookingId={b.id} alreadyReviewed={reviewedIds.has(b.id)} />
                 )}
 
                 {/* No payment method yet → the cleaner must NOT take the order; ask the client to add it. */}

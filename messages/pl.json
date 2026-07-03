@@ -882,7 +882,9 @@
     "editJob": "Edytuj zlecenie",
     "deleteJob": "Usuń",
     "deleteConfirm": "Usunąć to zlecenie? Tej operacji nie można cofnąć.",
-    "deleteFailed": "Nie udało się usunąć zlecenia."
+    "deleteFailed": "Nie udało się usunąć zlecenia.",
+    "bestMatch": "Najlepszy wybór",
+    "bestMatchWhy": "Najbardziej niezawodna i najlepiej oceniana osoba wśród ofert"
   },
   "customerLayout": {
     "navDashboard": "Panel",
@@ -1061,7 +1063,13 @@
     "awaitingClient": "Propozycja wysłana — czekamy na odpowiedź klienta.",
     "statusAwaitingPayment": "Oczekuje na metodę płatności",
     "noCardNotice": "Brak metody płatności — nie przyjmuj jeszcze tego zlecenia. Poproś klienta o jej dodanie; płatność zostanie pobrana automatycznie po ukończeniu.",
-    "askInChat": "Poproś klienta na czacie →"
+    "askInChat": "Poproś klienta na czacie →",
+    "rateClientTitle": "Oceń tego klienta",
+    "rateClientPlaceholder": "Jak układała się współpraca z tym klientem? (opcjonalnie)",
+    "rateClientSubmit": "Wyślij opinię",
+    "rateClientSaving": "Zapisywanie…",
+    "rateClientDone": "Oceniłeś(-aś) tego klienta — dziękujemy!",
+    "rateClientFailed": "Nie udało się zapisać opinii. Spróbuj ponownie."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Nie udało się oznaczyć jako ukończone",
@@ -1175,7 +1183,8 @@
     "statCompleted": "ukończonych rezerwacji",
     "postedJustNow": "Opublikowano przed chwilą",
     "postedHoursAgo": "Opublikowano {count} godz. temu",
-    "postedDaysAgo": "Opublikowano {count} dni temu"
+    "postedDaysAgo": "Opublikowano {count} dni temu",
+    "reviewsFromCleaners": "({count} od sprzątających)"
   },
   "providerProviderNotificationsPage": {
     "heading": "Powiadomienia",

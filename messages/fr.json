@@ -882,7 +882,9 @@
     "editJob": "Modifier l'annonce",
     "deleteJob": "Supprimer",
     "deleteConfirm": "Supprimer cette annonce ? Cette action est irréversible.",
-    "deleteFailed": "Impossible de supprimer l annonce."
+    "deleteFailed": "Impossible de supprimer l annonce.",
+    "bestMatch": "Meilleur choix",
+    "bestMatchWhy": "L intervenant le plus fiable et le mieux noté parmi vos offres"
   },
   "customerLayout": {
     "navDashboard": "Tableau de bord",
@@ -1061,7 +1063,13 @@
     "awaitingClient": "Proposition envoyée — en attente de la réponse du client.",
     "statusAwaitingPayment": "En attente d'un moyen de paiement",
     "noCardNotice": "Aucun moyen de paiement enregistré — n'acceptez pas encore la mission. Demandez au client d'en ajouter un ; le paiement sera prélevé automatiquement à la fin.",
-    "askInChat": "Demandez au client dans la discussion →"
+    "askInChat": "Demandez au client dans la discussion →",
+    "rateClientTitle": "Évaluer ce client",
+    "rateClientPlaceholder": "Comment s est passée la collaboration avec ce client ? (facultatif)",
+    "rateClientSubmit": "Envoyer l avis",
+    "rateClientSaving": "Enregistrement…",
+    "rateClientDone": "Vous avez évalué ce client — merci !",
+    "rateClientFailed": "Impossible d enregistrer votre avis. Veuillez réessayer."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Échec du marquage comme terminé",
@@ -1175,7 +1183,8 @@
     "statCompleted": "réservations terminées",
     "postedJustNow": "Publiée à l instant",
     "postedHoursAgo": "Publiée il y a {count} h",
-    "postedDaysAgo": "Publiée il y a {count} j"
+    "postedDaysAgo": "Publiée il y a {count} j",
+    "reviewsFromCleaners": "({count} d intervenants)"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifications",

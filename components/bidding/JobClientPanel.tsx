@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useTranslations } from "next-intl"
-import { User, ShieldCheck, ShieldAlert, Briefcase, CheckCircle2, CalendarDays } from "lucide-react"
+import { User, ShieldCheck, ShieldAlert, Briefcase, CheckCircle2, CalendarDays, Star } from "lucide-react"
 
 interface ClientInfo {
   name: string
@@ -11,6 +11,9 @@ interface ClientInfo {
   hires: number
   completedBookings: number
   paymentOnFile: boolean
+  clientRating: number | null
+  clientReviewCount: number
+  recentReviews: { rating: number; body: string }[]
 }
 
 // "About the client" — Upwork-style trust panel on the job detail page. Self-fetching so the
@@ -39,7 +42,16 @@ export function JobClientPanel({ jobId }: { jobId: string }) {
           <User size={14} className="text-[#2D7A5F]" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-[#2B3441]">{info.name}</p>
+          <p className="flex items-center gap-2 text-sm font-semibold text-[#2B3441]">
+            {info.name}
+            {info.clientRating != null && (
+              <span className="flex items-center gap-0.5 text-xs font-bold text-[#2B3441]">
+                <Star size={11} className="fill-amber-400 text-amber-400" />
+                {info.clientRating.toFixed(1)}
+                <span className="font-normal text-[#9CA3AF]">{t("reviewsFromCleaners", { count: info.clientReviewCount })}</span>
+              </span>
+            )}
+          </p>
           {memberYear && (
             <p className="flex items-center gap-1 text-[11px] text-[#6B7280]"><CalendarDays size={11} />{t("memberSince", { year: memberYear })}</p>
           )}
@@ -53,6 +65,16 @@ export function JobClientPanel({ jobId }: { jobId: string }) {
           {info.paymentOnFile ? t("paymentVerified") : t("paymentUnverified")}
         </span>
       </div>
+
+      {info.recentReviews.length > 0 && (
+        <div className="mb-3 space-y-1.5">
+          {info.recentReviews.map((r, i) => (
+            <p key={i} className="rounded-lg bg-white border border-[#E5EBF0] px-3 py-2 text-xs italic text-[#6B7280]">
+              <span className="not-italic font-semibold text-[#2B3441]">{"★".repeat(r.rating)}</span> “{r.body}”
+            </p>
+          ))}
+        </div>
+      )}
 
       <div className="grid grid-cols-3 gap-2 text-center">
         <div className="rounded-lg bg-white border border-[#E5EBF0] px-2 py-2">

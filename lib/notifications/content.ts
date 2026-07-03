@@ -400,6 +400,17 @@ const NOTIF: Record<string, Record<string, S>> = {
     pl: { title: "Klient próbował Cię zarezerwować — dokończ konfigurację wypłat", body: "Klient próbował Cię zarezerwować, ale nie połączyłeś jeszcze konta wypłat. Połącz je w Zarobkach, aby można było Cię rezerwować i płacić." },
     pt: { title: "Um cliente tentou reservar-te — conclui a configuração de pagamentos", body: "Um cliente tentou reservar-te, mas ainda não ligaste a tua conta de pagamentos. Liga-a em Ganhos para poderes ser reservado e pago." },
   },
+  // Admin removed the client's job post from the board (moderation).
+  admin_job_removed: {
+    en: { title: "Your job post was removed", body: "Your job post “{title}” was removed from the job board by the DORIXÉ team. If you believe this was a mistake, contact support." },
+    de: { title: "Dein Auftrag wurde entfernt", body: "Dein Auftrag „{title}“ wurde vom DORIXÉ-Team von der Auftragsbörse entfernt. Wenn du glaubst, dass das ein Fehler war, wende dich an den Support." },
+    fr: { title: "Votre annonce a été retirée", body: "Votre annonce « {title} » a été retirée du tableau des missions par l'équipe DORIXÉ. Si vous pensez qu'il s'agit d'une erreur, contactez le support." },
+    es: { title: "Tu anuncio fue eliminado", body: "El equipo de DORIXÉ eliminó tu anuncio «{title}» del tablón de trabajos. Si crees que fue un error, contacta con soporte." },
+    it: { title: "Il tuo annuncio è stato rimosso", body: "Il tuo annuncio “{title}” è stato rimosso dalla bacheca dal team DORIXÉ. Se pensi sia un errore, contatta l'assistenza." },
+    nl: { title: "Je klus is verwijderd", body: "Je klus “{title}” is door het DORIXÉ-team van het klussenbord verwijderd. Denk je dat dit een vergissing is, neem dan contact op met support." },
+    pl: { title: "Twoje zlecenie zostało usunięte", body: "Twoje zlecenie „{title}” zostało usunięte z tablicy przez zespół DORIXÉ. Jeśli uważasz, że to pomyłka, skontaktuj się z pomocą." },
+    pt: { title: "O teu anúncio foi removido", body: "O teu anúncio “{title}” foi removido do quadro de trabalhos pela equipa DORIXÉ. Se achas que foi um engano, contacta o suporte." },
+  },
   // Monthly referral settlement credited last month's commissions to the wallet.
   referral_settled: {
     en: { title: "Referral earnings credited", body: "Your referral commissions from last month were credited to your balance." },
@@ -495,6 +506,7 @@ const PARAMS: Record<string, string[]> = {
   client_card_saved_wait: [],
   booking_request_sent: [],
   referral_settled: [],
+  admin_job_removed: ["title"],
 }
 
 /**

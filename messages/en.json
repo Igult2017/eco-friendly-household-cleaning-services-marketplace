@@ -882,7 +882,9 @@
     "editJob": "Edit job",
     "deleteJob": "Delete",
     "deleteConfirm": "Delete this job post? This cannot be undone.",
-    "deleteFailed": "Could not delete the job."
+    "deleteFailed": "Could not delete the job.",
+    "bestMatch": "Best match",
+    "bestMatchWhy": "Most reliable, best-reviewed cleaner among your bids"
   },
   "customerLayout": {
     "navDashboard": "Dashboard",
@@ -1061,7 +1063,13 @@
     "awaitingClient": "Suggestion sent — waiting for the client to respond.",
     "statusAwaitingPayment": "Awaiting payment method",
     "noCardNotice": "No payment method on file — don't take this order yet. Ask the client to add one; payment is then collected automatically at completion.",
-    "askInChat": "Ask the client in the chat →"
+    "askInChat": "Ask the client in the chat →",
+    "rateClientTitle": "Rate this client",
+    "rateClientPlaceholder": "How was working with this client? (optional)",
+    "rateClientSubmit": "Submit review",
+    "rateClientSaving": "Saving…",
+    "rateClientDone": "You reviewed this client — thanks!",
+    "rateClientFailed": "Could not save your review. Please try again."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Failed to mark as complete",
@@ -1175,7 +1183,8 @@
     "statCompleted": "completed bookings",
     "postedJustNow": "Posted just now",
     "postedHoursAgo": "Posted {count}h ago",
-    "postedDaysAgo": "Posted {count}d ago"
+    "postedDaysAgo": "Posted {count}d ago",
+    "reviewsFromCleaners": "({count} from cleaners)"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifications",

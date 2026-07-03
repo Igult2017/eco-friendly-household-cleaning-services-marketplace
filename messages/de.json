@@ -882,7 +882,9 @@
     "editJob": "Auftrag bearbeiten",
     "deleteJob": "Löschen",
     "deleteConfirm": "Diesen Auftrag löschen? Das kann nicht rückgängig gemacht werden.",
-    "deleteFailed": "Auftrag konnte nicht gelöscht werden."
+    "deleteFailed": "Auftrag konnte nicht gelöscht werden.",
+    "bestMatch": "Beste Wahl",
+    "bestMatchWhy": "Zuverlässigste Reinigungskraft mit den besten Bewertungen unter deinen Angeboten"
   },
   "customerLayout": {
     "navDashboard": "Dashboard",
@@ -1061,7 +1063,13 @@
     "awaitingClient": "Vorschlag gesendet — warte auf die Antwort des Kunden.",
     "statusAwaitingPayment": "Wartet auf Zahlungsmethode",
     "noCardNotice": "Keine Zahlungsmethode hinterlegt — nimm den Auftrag noch nicht an. Bitte den Kunden, eine hinzuzufügen; die Zahlung wird dann beim Abschluss automatisch eingezogen.",
-    "askInChat": "Frag den Kunden im Chat →"
+    "askInChat": "Frag den Kunden im Chat →",
+    "rateClientTitle": "Kunden bewerten",
+    "rateClientPlaceholder": "Wie war die Zusammenarbeit mit diesem Kunden? (optional)",
+    "rateClientSubmit": "Bewertung senden",
+    "rateClientSaving": "Wird gespeichert…",
+    "rateClientDone": "Du hast diesen Kunden bewertet — danke!",
+    "rateClientFailed": "Bewertung konnte nicht gespeichert werden. Bitte erneut versuchen."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Als abgeschlossen markieren fehlgeschlagen",
@@ -1175,7 +1183,8 @@
     "statCompleted": "abgeschlossene Buchungen",
     "postedJustNow": "Gerade eingestellt",
     "postedHoursAgo": "Vor {count} Std. eingestellt",
-    "postedDaysAgo": "Vor {count} Tagen eingestellt"
+    "postedDaysAgo": "Vor {count} Tagen eingestellt",
+    "reviewsFromCleaners": "({count} von Reinigungskräften)"
   },
   "providerProviderNotificationsPage": {
     "heading": "Benachrichtigungen",

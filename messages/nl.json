@@ -882,7 +882,9 @@
     "editJob": "Klus bewerken",
     "deleteJob": "Verwijderen",
     "deleteConfirm": "Deze klus verwijderen? Dit kan niet ongedaan worden gemaakt.",
-    "deleteFailed": "Kon de klus niet verwijderen."
+    "deleteFailed": "Kon de klus niet verwijderen.",
+    "bestMatch": "Beste match",
+    "bestMatchWhy": "De betrouwbaarste, best beoordeelde schoonmaker onder je biedingen"
   },
   "customerLayout": {
     "navDashboard": "Dashboard",
@@ -1061,7 +1063,13 @@
     "awaitingClient": "Voorstel verstuurd — wachten op reactie van de klant.",
     "statusAwaitingPayment": "Wacht op betaalmethode",
     "noCardNotice": "Geen betaalmethode bekend — neem deze opdracht nog niet aan. Vraag de klant er een toe te voegen; de betaling wordt dan automatisch geïnd bij voltooiing.",
-    "askInChat": "Vraag de klant in de chat →"
+    "askInChat": "Vraag de klant in de chat →",
+    "rateClientTitle": "Beoordeel deze klant",
+    "rateClientPlaceholder": "Hoe was het werken met deze klant? (optioneel)",
+    "rateClientSubmit": "Beoordeling versturen",
+    "rateClientSaving": "Opslaan…",
+    "rateClientDone": "Je hebt deze klant beoordeeld — bedankt!",
+    "rateClientFailed": "Beoordeling kon niet worden opgeslagen. Probeer opnieuw."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Markeren als voltooid mislukt",
@@ -1175,7 +1183,8 @@
     "statCompleted": "voltooide boekingen",
     "postedJustNow": "Zojuist geplaatst",
     "postedHoursAgo": "{count} u geleden geplaatst",
-    "postedDaysAgo": "{count} d geleden geplaatst"
+    "postedDaysAgo": "{count} d geleden geplaatst",
+    "reviewsFromCleaners": "({count} van schoonmakers)"
   },
   "providerProviderNotificationsPage": {
     "heading": "Meldingen",

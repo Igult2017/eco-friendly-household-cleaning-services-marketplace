@@ -42,6 +42,9 @@ interface Bid {
   proposedTimeStart: string | null
   createdAt: string
   provider: BidProvider | null
+  bestMatch?: boolean
+  reliabilityScore?: number
+  reliabilityTier?: string
 }
 
 interface Job {
@@ -115,6 +118,11 @@ function BidCard({ bid, jobId, jobStatus }: { bid: Bid; jobId: string; jobStatus
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2 flex-wrap">
             <div>
+              {bid.bestMatch && (
+                <span className="mb-1 inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700" title={t("bestMatchWhy")}>
+                  <Star size={9} className="fill-amber-500 text-amber-500" /> {t("bestMatch")}
+                </span>
+              )}
               <h3 className="font-semibold text-[#2B3441] text-sm">{p?.businessName ?? t("unknownProvider")}</h3>
               {location && (
                 <p className="flex items-center gap-1 text-xs text-[#6B7280] mt-0.5">

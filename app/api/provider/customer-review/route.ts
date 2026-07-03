@@ -12,6 +12,22 @@ const schema = z.object({
   body: z.string().max(1000).optional(),
 })
 
+// Which bookings has this provider already reviewed? (Drives the rate-client UI on the bookings list.)
+export async function GET() {
+  try {
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    const [provider] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, userId))
+    if (!provider) return NextResponse.json({ bookingIds: [] })
+    const rows = await db.select({ bookingId: customerReviews.bookingId }).from(customerReviews).where(eq(customerReviews.providerId, provider.id))
+    return NextResponse.json({ bookingIds: rows.map((r) => r.bookingId) })
+  } catch (err) {
+    console.error("[provider/customer-review GET]", err)
+    void logError({ message: "[provider/customer-review GET]", error: err, route: "/api/provider/customer-review", severity: "error" })
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
+}
+
 // Provider rates the customer for a completed booking (two-way reviews).
 export async function POST(req: Request) {
   try {

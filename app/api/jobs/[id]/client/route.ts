@@ -1,8 +1,8 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { jobPosts, users, bookings, payments, providers } from "@/lib/db/schema"
-import { eq, and, count, inArray } from "drizzle-orm"
+import { jobPosts, users, bookings, payments, providers, customerReviews } from "@/lib/db/schema"
+import { eq, and, count, inArray, sql, isNotNull, desc } from "drizzle-orm"
 import { stripe } from "@/lib/stripe/client"
 import { isUuid } from "@/lib/utils/uuid"
 import { logError } from "@/lib/utils/logError"
@@ -29,11 +29,18 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
       .from(users)
       .where(eq(users.id, cid))
 
-    const [[jp], [hires], [cb], [pay]] = await Promise.all([
+    const [[jp], [hires], [cb], [pay], [ratingAgg], recentReviews] = await Promise.all([
       db.select({ n: count() }).from(jobPosts).where(eq(jobPosts.customerId, cid)),
       db.select({ n: count() }).from(jobPosts).where(and(eq(jobPosts.customerId, cid), inArray(jobPosts.status, ["assigned", "completed"]))),
       db.select({ n: count() }).from(bookings).where(and(eq(bookings.customerId, cid), eq(bookings.status, "completed"))),
       db.select({ n: count() }).from(payments).where(and(eq(payments.customerId, cid), inArray(payments.status, ["authorized", "captured"]))),
+      // Reviews FROM cleaners about this client (two-way reviews).
+      db.select({ avg: sql<number>`AVG(rating)`.mapWith(Number), n: count() }).from(customerReviews).where(eq(customerReviews.customerId, cid)),
+      db.select({ rating: customerReviews.rating, body: customerReviews.body })
+        .from(customerReviews)
+        .where(and(eq(customerReviews.customerId, cid), isNotNull(customerReviews.body)))
+        .orderBy(desc(customerReviews.createdAt))
+        .limit(2),
     ])
 
     // Payment on file: any authorized/captured payment proves it cheaply; otherwise check for a
@@ -47,6 +54,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     }
 
     const name = `${client?.firstName ?? ""} ${client?.lastName ? client.lastName[0] + "." : ""}`.trim()
+    const reviewCount = Number(ratingAgg?.n ?? 0)
     return NextResponse.json({
       name: name || "Client",
       memberSince: client?.createdAt ?? null,
@@ -54,6 +62,9 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
       hires: Number(hires?.n ?? 0),
       completedBookings: Number(cb?.n ?? 0),
       paymentOnFile,
+      clientRating: reviewCount > 0 && ratingAgg?.avg != null ? Math.round(Number(ratingAgg.avg) * 10) / 10 : null,
+      clientReviewCount: reviewCount,
+      recentReviews: recentReviews.map((r) => ({ rating: r.rating, body: (r.body ?? "").slice(0, 200) })),
     })
   } catch (err) {
     console.error("[jobs/[id]/client GET]", err)

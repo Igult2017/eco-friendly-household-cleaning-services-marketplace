@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { jobPosts, providers, users, bids } from "@/lib/db/schema"
+import { computeReliability } from "@/lib/provider/reliability"
 import type { NewJobPost } from "@/lib/db/schema/jobs"
 import { inngest } from "@/lib/inngest/client"
 import { jobRatelimit } from "@/lib/redis/client"
@@ -282,7 +283,32 @@ export async function GET(req: Request) {
       limit: 20,
     })
 
-    return NextResponse.json({ jobs })
+    // Review privilege: bids are ranked by the cleaner's reliability (rating 60% + completion 40%,
+    // same engine as /provider/statistics) — best-reviewed cleaners surface FIRST, and the top
+    // bidder with a real track record is flagged as the best match for the client.
+    const ranked = jobs.map((j: any) => {
+      const scored = [...j.bids].map((b: any) => ({
+        b,
+        r: computeReliability({
+          completed: b.provider?.totalJobsCompleted ?? 0,
+          cancelledByProvider: 0,
+          averageRating: b.provider?.averageRating ?? null,
+          totalReviews: b.provider?.totalReviews ?? 0,
+        }),
+      }))
+      scored.sort((x, y) => y.r.score - x.r.score || (y.b.provider?.totalJobsCompleted ?? 0) - (x.b.provider?.totalJobsCompleted ?? 0))
+      return {
+        ...j,
+        bids: scored.map(({ b, r }, i) => ({
+          ...b,
+          reliabilityScore: r.score,
+          reliabilityTier: r.tier,
+          bestMatch: i === 0 && r.tier !== "new",
+        })),
+      }
+    })
+
+    return NextResponse.json({ jobs: ranked })
   } catch (err) {
     console.error("[jobs GET]", err)
     void logError({ message: "[jobs GET]", error: err, route: "/api/jobs", severity: "error" })

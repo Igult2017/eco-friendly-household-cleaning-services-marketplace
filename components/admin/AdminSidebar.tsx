@@ -33,6 +33,7 @@ const nav = [
   { label: "Users",       href: "/admin/users",      icon: ShieldCheck },
   { label: "Providers",   href: "/admin/providers",  icon: Briefcase },
   { label: "Bookings", href: "/admin/bookings", icon: CalendarCheck },
+  { label: "Job Board", href: "/admin/jobs", icon: Briefcase },
   { label: "Disputes", href: "/admin/disputes", icon: MessageSquareWarning },
   { label: "Support", href: "/admin/support", icon: LifeBuoy },
   { label: "Customers", href: "/admin/customers", icon: Users },
