@@ -16,6 +16,7 @@ import { LocationDetectButton } from "@/components/location/LocationDetectButton
 import type { GeoResult } from "@/lib/nominatim"
 import { geocodeFlexible, extractPostalCode } from "@/lib/nominatim"
 import { CountryField } from "@/components/location/CountryField"
+import { BackButton } from "@/components/ui/BackButton"
 
 export default function BookStep2Page() {
   const t = useTranslations("customerBookProvidersPage")
@@ -139,6 +140,7 @@ export default function BookStep2Page() {
   return (
     <div className="min-h-screen bg-[#F4FAF6] py-10 px-4">
       <WizardProgress current={2} />
+      <div className="mb-1"><BackButton fallback="/book" /></div>
 
       <div className="max-w-2xl mx-auto">
         <h1 className="font-serif text-3xl font-bold text-[#2B3441] text-center mb-2">

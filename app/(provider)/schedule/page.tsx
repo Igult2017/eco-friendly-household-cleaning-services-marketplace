@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Loader2, Check, Plus } from "lucide-react"
 import { useTranslations } from "next-intl"
+import { BackButton } from "@/components/ui/BackButton"
 
 const DAY_KEYS = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
 
@@ -59,6 +60,7 @@ export default function ProviderSchedulePage() {
 
   return (
     <div className="space-y-8 max-w-2xl">
+      <div className="mb-1"><BackButton fallback="/provider/dashboard" /></div>
       <div>
         <h1 className="font-serif text-3xl font-bold text-[#2B3441]">{t("title")}</h1>
         <p className="text-sm text-[#6B7280] mt-1">{t("subtitle")}</p>

@@ -10,6 +10,7 @@ import { Loader2, Clock } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useTranslations } from "next-intl"
 import { zonedTimeToUtc } from "@/lib/utils/tz"
+import { BackButton } from "@/components/ui/BackButton"
 
 const DURATION_OPTIONS = [
   { value: 60, hours: 1 },
@@ -131,6 +132,7 @@ export default function BookStep3Page() {
   return (
     <div className="min-h-screen bg-[#F4FAF6] py-10 px-4">
       <WizardProgress current={3} />
+      <div className="mb-1"><BackButton fallback="/book/providers" /></div>
 
       <div className="max-w-2xl mx-auto">
         <h1 className="font-serif text-3xl font-bold text-[#2B3441] text-center mb-2">

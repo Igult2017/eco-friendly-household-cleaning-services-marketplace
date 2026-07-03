@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Plus, Trash2, Loader2 } from "lucide-react"
 import { AddonsManager } from "@/components/provider/AddonsManager"
+import { BackButton } from "@/components/ui/BackButton"
 
 type Service = {
   id: string
@@ -91,6 +92,7 @@ export default function ProviderServicesPage() {
 
   return (
     <div className="max-w-2xl space-y-6">
+      <div className="mb-1"><BackButton fallback="/provider/profile" /></div>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-serif text-3xl font-bold text-[#2B3441]">{t("pageTitle")}</h1>

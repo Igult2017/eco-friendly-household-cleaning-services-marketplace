@@ -10,6 +10,7 @@ import { RefreshCw, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { RecurringScheduleCard } from "@/components/booking/RecurringScheduleCard"
 import { getTranslations } from "next-intl/server"
+import { BackButton } from "@/components/ui/BackButton"
 
 export const metadata = { title: "Recurring Bookings | DORIXÉ" }
 
@@ -39,6 +40,7 @@ export default async function RecurringPage() {
   return (
     <div className="min-h-screen bg-[#F4FAF6] py-8 px-4">
       <div className="max-w-3xl mx-auto">
+        <div className="mb-1"><BackButton fallback="/dashboard" /></div>
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>

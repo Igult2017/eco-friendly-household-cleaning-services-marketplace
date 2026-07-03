@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
 import { Loader2, MessageSquare } from "lucide-react"
+import { BackButton } from "@/components/ui/BackButton"
 
 type Review = {
   id: string
@@ -42,6 +43,7 @@ export default function ProviderReviewsPage() {
 
   return (
     <div className="max-w-2xl space-y-6">
+      <div className="mb-1"><BackButton fallback="/provider/dashboard" /></div>
       <div>
         <h1 className="font-serif text-3xl font-bold text-[#2B3441]">{t("title")}</h1>
         <p className="text-sm text-[#6B7280] mt-1">{t("subtitle")}</p>

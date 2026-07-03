@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { useTranslations } from "next-intl"
 import { Upload, Loader2, Plus, CheckCircle } from "lucide-react"
+import { BackButton } from "@/components/ui/BackButton"
 
 type Cert = {
   id: string
@@ -60,6 +61,7 @@ export default function EcoCertificationsPage() {
 
   return (
     <div className="max-w-2xl space-y-6">
+      <div className="mb-1"><BackButton fallback="/provider/profile" /></div>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-serif text-3xl font-bold text-[#2B3441]">{t("title")}</h1>

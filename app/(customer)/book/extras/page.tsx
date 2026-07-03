@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { useTranslations } from "next-intl"
 import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
+import { BackButton } from "@/components/ui/BackButton"
 
 type Addon = { id: string; name: string; priceCents: number }
 
@@ -56,6 +57,7 @@ export default function BookStep4Page() {
   return (
     <div className="min-h-screen bg-[#F4FAF6] py-10 px-4">
       <WizardProgress current={4} />
+      <div className="mb-1"><BackButton fallback="/book/schedule" /></div>
 
       <div className="max-w-2xl mx-auto">
         <h1 className="font-serif text-3xl font-bold text-[#2B3441] text-center mb-2">
