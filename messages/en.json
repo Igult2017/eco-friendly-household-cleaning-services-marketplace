@@ -1165,7 +1165,17 @@
     "perHour": "{amount}/hr",
     "totalApprox": "≈ {amount} total",
     "backToJobs": "← All jobs",
-    "jobNotFound": "This job is no longer available."
+    "jobNotFound": "This job is no longer available.",
+    "aboutClient": "About the client",
+    "memberSince": "Member since {year}",
+    "paymentVerified": "Payment method verified",
+    "paymentUnverified": "No payment method yet",
+    "statJobsPosted": "jobs posted",
+    "statHires": "hires",
+    "statCompleted": "completed bookings",
+    "postedJustNow": "Posted just now",
+    "postedHoursAgo": "Posted {count}h ago",
+    "postedDaysAgo": "Posted {count}d ago"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifications",

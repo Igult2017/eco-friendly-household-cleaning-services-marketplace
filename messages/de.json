@@ -1165,7 +1165,17 @@
     "perHour": "{amount}/Std.",
     "totalApprox": "≈ {amount} gesamt",
     "backToJobs": "← Alle Aufträge",
-    "jobNotFound": "Dieser Auftrag ist nicht mehr verfügbar."
+    "jobNotFound": "Dieser Auftrag ist nicht mehr verfügbar.",
+    "aboutClient": "Über den Kunden",
+    "memberSince": "Mitglied seit {year}",
+    "paymentVerified": "Zahlungsmethode hinterlegt",
+    "paymentUnverified": "Noch keine Zahlungsmethode",
+    "statJobsPosted": "Aufträge eingestellt",
+    "statHires": "Beauftragungen",
+    "statCompleted": "abgeschlossene Buchungen",
+    "postedJustNow": "Gerade eingestellt",
+    "postedHoursAgo": "Vor {count} Std. eingestellt",
+    "postedDaysAgo": "Vor {count} Tagen eingestellt"
   },
   "providerProviderNotificationsPage": {
     "heading": "Benachrichtigungen",

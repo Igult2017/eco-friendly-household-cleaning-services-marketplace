@@ -1165,7 +1165,17 @@
     "perHour": "{amount}/godz.",
     "totalApprox": "≈ {amount} łącznie",
     "backToJobs": "← Wszystkie zlecenia",
-    "jobNotFound": "To zlecenie nie jest już dostępne."
+    "jobNotFound": "To zlecenie nie jest już dostępne.",
+    "aboutClient": "O kliencie",
+    "memberSince": "Członek od {year}",
+    "paymentVerified": "Metoda płatności zweryfikowana",
+    "paymentUnverified": "Brak metody płatności",
+    "statJobsPosted": "zleceń opublikowanych",
+    "statHires": "zatrudnień",
+    "statCompleted": "ukończonych rezerwacji",
+    "postedJustNow": "Opublikowano przed chwilą",
+    "postedHoursAgo": "Opublikowano {count} godz. temu",
+    "postedDaysAgo": "Opublikowano {count} dni temu"
   },
   "providerProviderNotificationsPage": {
     "heading": "Powiadomienia",

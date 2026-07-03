@@ -8,6 +8,7 @@ import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
 import { formatDate, localTodayYmd } from "@/lib/utils/formatDate"
 import { Loader2, MapPin, Clock, CheckCircle2, Repeat, Users } from "lucide-react"
 import { ProviderBidForm } from "@/components/bidding/ProviderBidForm"
+import { JobClientPanel } from "@/components/bidding/JobClientPanel"
 
 interface JobPost {
   id: string; title: string; description: string; status: string
@@ -58,6 +59,8 @@ export default function ProviderJobDetailPage() {
   const hourly = job.budgetMin && mins ? Math.round((job.budgetMin * 60) / mins) : null
   const alreadyBid = job.alreadyBid || submitted
   const hoursLabel = mins ? (mins % 60 === 0 ? String(mins / 60) : (mins / 60).toFixed(1)) : null
+  const ageH = Math.floor((Date.now() - new Date(job.createdAt).getTime()) / 3_600_000)
+  const postedAgo = ageH < 1 ? t("postedJustNow") : ageH < 24 ? t("postedHoursAgo", { count: ageH }) : t("postedDaysAgo", { count: Math.floor(ageH / 24) })
 
   return (
     <div className="min-h-screen bg-[#F4FAF6] py-8 px-4">
@@ -68,7 +71,10 @@ export default function ProviderJobDetailPage() {
           <div className="flex items-start justify-between gap-4 flex-wrap mb-4">
             <div className="min-w-0">
               <h1 className="font-serif text-2xl font-bold text-[#2B3441] leading-snug">{job.title}</h1>
-              {job.category && <span className="inline-block mt-1 rounded-full bg-[#D1F0E0] px-2.5 py-0.5 text-xs font-semibold text-[#2D7A5F]">{job.category.name}</span>}
+              <div className="mt-1 flex flex-wrap items-center gap-2">
+                {job.category && <span className="inline-block rounded-full bg-[#D1F0E0] px-2.5 py-0.5 text-xs font-semibold text-[#2D7A5F]">{job.category.name}</span>}
+                <span className="text-xs text-[#9CA3AF]">{postedAgo}</span>
+              </div>
             </div>
             <div className="text-right shrink-0">
               {hourly ? (
@@ -111,6 +117,11 @@ export default function ProviderJobDetailPage() {
               ))}
             </div>
           )}
+
+          {/* Upwork-style trust signals: hiring history + payment-method status. */}
+          <div className="mb-5">
+            <JobClientPanel jobId={job.id} />
+          </div>
 
           <div className="border-t border-[#F4FAF6] pt-5">
             {job.wonByMe ? (

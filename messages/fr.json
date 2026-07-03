@@ -1165,7 +1165,17 @@
     "perHour": "{amount}/h",
     "totalApprox": "≈ {amount} au total",
     "backToJobs": "← Toutes les missions",
-    "jobNotFound": "Cette mission n est plus disponible."
+    "jobNotFound": "Cette mission n est plus disponible.",
+    "aboutClient": "À propos du client",
+    "memberSince": "Membre depuis {year}",
+    "paymentVerified": "Moyen de paiement vérifié",
+    "paymentUnverified": "Pas encore de moyen de paiement",
+    "statJobsPosted": "missions publiées",
+    "statHires": "embauches",
+    "statCompleted": "réservations terminées",
+    "postedJustNow": "Publiée à l instant",
+    "postedHoursAgo": "Publiée il y a {count} h",
+    "postedDaysAgo": "Publiée il y a {count} j"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifications",

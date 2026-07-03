@@ -1165,7 +1165,17 @@
     "perHour": "{amount}/u",
     "totalApprox": "≈ {amount} totaal",
     "backToJobs": "← Alle klussen",
-    "jobNotFound": "Deze klus is niet meer beschikbaar."
+    "jobNotFound": "Deze klus is niet meer beschikbaar.",
+    "aboutClient": "Over de klant",
+    "memberSince": "Lid sinds {year}",
+    "paymentVerified": "Betaalmethode geverifieerd",
+    "paymentUnverified": "Nog geen betaalmethode",
+    "statJobsPosted": "klussen geplaatst",
+    "statHires": "aannames",
+    "statCompleted": "voltooide boekingen",
+    "postedJustNow": "Zojuist geplaatst",
+    "postedHoursAgo": "{count} u geleden geplaatst",
+    "postedDaysAgo": "{count} d geleden geplaatst"
   },
   "providerProviderNotificationsPage": {
     "heading": "Meldingen",
