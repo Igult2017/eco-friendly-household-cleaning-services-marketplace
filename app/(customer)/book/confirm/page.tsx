@@ -41,6 +41,7 @@ export default function BookStep5Page() {
   const [intentId, setIntentId] = useState<string | null>(null)
   const [amounts, setAmounts] = useState<{ subtotalCents: number; totalCharged: number } | null>(null)
   const [serviceId, setServiceId] = useState<string | null>(null)
+  const [hourlyRateCents, setHourlyRateCents] = useState<number | null>(null)
   const [success, setSuccess] = useState<{ bookingId: string; bookingNumber: string } | null>(null)
   const [addCarbonOffset, setAddCarbonOffset] = useState(false)
   const [promoCode, setPromoCode] = useState("")
@@ -124,6 +125,8 @@ export default function BookStep5Page() {
       // summary (job posts have no category, and bid-only cleaners may have no listed services).
       if (!service && store.bidAmountCents === null) { setError(t("errorProviderNoService")); return }
       if (service) setServiceId(service.id)
+      // Per-hour transparency: show the client exactly what they pay per hour on the summary.
+      if (service && store.bidAmountCents === null && service.priceUnit === "per_hour") setHourlyRateCents(service.basePrice)
       // Sum any selected add-ons so the preview total matches what the PI will charge.
       let addOnsTotal = 0
       if (store.addOnIds.length > 0) {
@@ -330,6 +333,12 @@ export default function BookStep5Page() {
                 <span>{CATEGORY_SERVICE_KEYS[store.categoryId ?? ""] ? t(CATEGORY_SERVICE_KEYS[store.categoryId ?? ""]) : t("defaultCleaningService")}</span>
                 <span>{formatCurrency(amounts.subtotalCents, currency)}</span>
               </div>
+              {/* Per-hour breakdown — the client always sees the amount they pay per hour. */}
+              {hourlyRateCents !== null && (
+                <p className="text-xs text-[#9CA3AF] -mt-1">
+                  {t("rateBreakdown", { rate: formatCurrency(hourlyRateCents, currency), hours: store.durationMinutes % 60 === 0 ? String(store.durationMinutes / 60) : (store.durationMinutes / 60).toFixed(1) })}
+                </p>
+              )}
 
               {/* Promo code input */}
               {step === "summary" && (

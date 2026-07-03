@@ -615,7 +615,8 @@
     "recurringPromptText": "Vous avez choisi un rythme récurrent. Configurez-le pour réserver automatiquement les prochains ménages.",
     "setUpRecurring": "Configurer la récurrence",
     "bookWithoutCard": "Réserver sans ajouter de carte",
-    "bookWithoutCardNote": "Votre intervenant attendra que vous ajoutiez un moyen de paiement — possible à tout moment depuis la réservation. Le débit n'a lieu qu'après votre double confirmation."
+    "bookWithoutCardNote": "Votre intervenant attendra que vous ajoutiez un moyen de paiement — possible à tout moment depuis la réservation. Le débit n'a lieu qu'après votre double confirmation.",
+    "rateBreakdown": "{rate}/h × {hours} h"
   },
   "customerBookExtrasPage": {
     "heading": "Des demandes particulières ?",
@@ -685,7 +686,8 @@
     "preSubheading": "Saisissez l'adresse d'intervention — pas besoin de chercher à nouveau.",
     "preBadge": "Votre intervenant : {name}",
     "changeCleaner": "Changer d'intervenant",
-    "countryInvalid": "Veuillez choisir un pays dans la liste"
+    "countryInvalid": "Veuillez choisir un pays dans la liste",
+    "emptyPostJobCta": "Publier plutôt cette demande pour recevoir des offres"
   },
   "customerBookSchedulePage": {
     "heading": "Quand cela vous convient-il ?",
@@ -859,7 +861,10 @@
     "waitingForBids": "En attente d'offres — expire le {date}",
     "bidsReceived": "{count, plural, one {# offre reçue} other {# offres reçues}}",
     "messageCleaner": "Écrire à votre intervenant",
-    "hideChat": "Masquer la discussion"
+    "hideChat": "Masquer la discussion",
+    "overdueBy": "En retard de {days} jour(s) — prolongez la date pour continuer à recevoir des offres",
+    "waitingForBidsShort": "En attente d'offres…",
+    "editJob": "Modifier l'annonce"
   },
   "customerLayout": {
     "navDashboard": "Tableau de bord",
@@ -946,7 +951,8 @@
     "budgetTotalHint": "Total pour {hours} h : {total}",
     "errorHoursRequired": "Indiquez les heures estimées pour calculer le total.",
     "hourlyRateLabel": "Montant par heure",
-    "continueWithoutCard": "Continuer sans ajouter"
+    "continueWithoutCard": "Continuer sans ajouter",
+    "errorRateRequired": "Veuillez indiquer le montant par heure."
   },
   "customerProfilePage": {
     "title": "Mon profil",
@@ -1132,7 +1138,8 @@
     "ownJobNotice": "Vous avez publié cette annonce — vous ne pouvez pas soumissionner.",
     "outOfRadiusNotice": "Ce client est à {city} et cherche un intervenant dans un rayon de {radius} km — hors de votre zone.",
     "wonChat": "Mission remportée — discutez avec le client",
-    "hideChat": "Masquer la discussion"
+    "hideChat": "Masquer la discussion",
+    "overdueChip": "En retard · {days} j"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifications",
@@ -2009,5 +2016,14 @@
     "body": "Les intervenants n acceptent que les offres de clients avec un moyen de paiement enregistré. L ajouter ne vous débite pas — le paiement n est prélevé qu après le travail et votre double confirmation.",
     "addCard": "Ajouter un moyen de paiement",
     "saved": "Moyen de paiement enregistré — les intervenants peuvent désormais accepter vos offres."
+  },
+  "customerJobEditPage": {
+    "title": "Modifier l'annonce",
+    "subtitle": "Mettez à jour votre annonce — les intervenants voient les changements immédiatement.",
+    "onlyDateNote": "Des offres sont déjà arrivées — seule la date souhaitée peut être modifiée (prolongée).",
+    "dateHint": "Prolonger la date garde l'annonce attractive si elle était en retard.",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "errorGeneric": "Échec de l'enregistrement. Veuillez réessayer."
   }
 }

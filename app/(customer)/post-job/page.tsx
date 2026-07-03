@@ -118,8 +118,10 @@ export default function PostJobPage() {
     }
     // Budget is entered PER HOUR (the payment mode in EU + US); the stored budget is the job total
     // (rate × estimated hours) — what cleaners actually bid against.
+    // Per-hour amount is MANDATORY — cleaners bid against it, and it powers the ≈/h display.
+    if (!form.hourlyRate || !(parseFloat(form.hourlyRate) > 0)) { setError(t("errorRateRequired")); return }
     const hrs = parseFloat(form.estimatedHours)
-    if (form.hourlyRate && !(hrs > 0)) { setError(t("errorHoursRequired")); return }
+    if (!(hrs > 0)) { setError(t("errorHoursRequired")); return }
     setLoading(true); setError(null)
     try {
       const res = await fetch("/api/jobs", {
@@ -186,7 +188,7 @@ export default function PostJobPage() {
             </div>
             <div>
               <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("hourlyRateLabel")}</Label>
-              <Input type="number" value={form.hourlyRate} onChange={(e) => set("hourlyRate", e.target.value)} placeholder="25" min={1} step="0.5" />
+              <Input type="number" value={form.hourlyRate} onChange={(e) => set("hourlyRate", e.target.value)} placeholder="25" min={1} step="0.5" required />
               {form.hourlyRate && parseFloat(form.estimatedHours) > 0 && (
                 <p className="text-xs text-[#2D7A5F] font-medium mt-1">
                   {t("budgetTotalHint", {

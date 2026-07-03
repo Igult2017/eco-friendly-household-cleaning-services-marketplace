@@ -615,7 +615,8 @@
     "recurringPromptText": "Escolheu uma frequência recorrente. Configure-a para marcar automaticamente as próximas limpezas.",
     "setUpRecurring": "Configurar recorrência",
     "bookWithoutCard": "Reservar sem adicionar cartão",
-    "bookWithoutCardNote": "O teu profissional aguardará até adicionares um método de pagamento — podes fazê-lo a qualquer momento na reserva. Só é cobrado após a confirmação de ambos."
+    "bookWithoutCardNote": "O teu profissional aguardará até adicionares um método de pagamento — podes fazê-lo a qualquer momento na reserva. Só é cobrado após a confirmação de ambos.",
+    "rateBreakdown": "{rate}/h × {hours} h"
   },
   "customerBookExtrasPage": {
     "heading": "Algum pedido especial?",
@@ -685,7 +686,8 @@
     "preSubheading": "Indica a morada do serviço — não precisas de procurar novamente.",
     "preBadge": "O teu profissional: {name}",
     "changeCleaner": "Mudar de profissional",
-    "countryInvalid": "Escolhe um país da lista"
+    "countryInvalid": "Escolhe um país da lista",
+    "emptyPostJobCta": "Publica o trabalho para receber propostas"
   },
   "customerBookSchedulePage": {
     "heading": "Quando é melhor para si?",
@@ -859,7 +861,10 @@
     "waitingForBids": "À espera de propostas — expira em {date}",
     "bidsReceived": "{count, plural, one {# proposta recebida} other {# propostas recebidas}}",
     "messageCleaner": "Enviar mensagem ao teu profissional",
-    "hideChat": "Ocultar conversa"
+    "hideChat": "Ocultar conversa",
+    "overdueBy": "Atrasado {days} dia(s) — prolonga a data para continuar a receber propostas",
+    "waitingForBidsShort": "À espera de propostas…",
+    "editJob": "Editar trabalho"
   },
   "customerLayout": {
     "navDashboard": "Painel",
@@ -946,7 +951,8 @@
     "budgetTotalHint": "Total para {hours} h: {total}",
     "errorHoursRequired": "Indica as horas estimadas para calcular o total.",
     "hourlyRateLabel": "Valor por hora",
-    "continueWithoutCard": "Continuar sem adicionar"
+    "continueWithoutCard": "Continuar sem adicionar",
+    "errorRateRequired": "Indica o valor por hora."
   },
   "customerProfilePage": {
     "title": "O meu perfil",
@@ -1132,7 +1138,8 @@
     "ownJobNotice": "Publicaste este trabalho — não podes licitar nele.",
     "outOfRadiusNotice": "Este cliente está em {city} e precisa de um profissional num raio de {radius} km — fora da tua zona.",
     "wonChat": "Ganhaste este trabalho — conversa com o cliente",
-    "hideChat": "Ocultar conversa"
+    "hideChat": "Ocultar conversa",
+    "overdueChip": "Atrasado · {days} d"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notificações",
@@ -2009,5 +2016,14 @@
     "body": "Os profissionais só aceitam ofertas de clientes com método de pagamento registado. Adicionar um cartão NÃO cobra nada — o pagamento só acontece após o trabalho e a confirmação de ambos.",
     "addCard": "Adicionar dados de pagamento",
     "saved": "Método de pagamento guardado — os profissionais já podem aceitar as tuas ofertas."
+  },
+  "customerJobEditPage": {
+    "title": "Editar trabalho",
+    "subtitle": "Atualiza o teu anúncio — os profissionais veem as alterações de imediato.",
+    "onlyDateNote": "Já chegaram propostas — só a data pretendida pode ser alterada (prolongada).",
+    "dateHint": "Prolongar a data mantém o anúncio atrativo se ficou atrasado.",
+    "save": "Guardar alterações",
+    "cancel": "Cancelar",
+    "errorGeneric": "Não foi possível guardar. Tenta novamente."
   }
 }

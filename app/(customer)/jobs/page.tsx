@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { AcceptBidButton } from "@/components/bidding/AcceptBidButton"
 import { CompleteBookingButton } from "@/components/bidding/CompleteBookingButton"
 import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
-import { formatDate } from "@/lib/utils/formatDate"
+import { formatDate, localTodayYmd } from "@/lib/utils/formatDate"
 import { cn } from "@/lib/utils"
 import {
   Plus, Star, Clock, Leaf, Eye, ChevronDown, ChevronUp,
@@ -353,10 +353,26 @@ export default function CustomerJobsPage() {
                       )}
                     </div>
 
-                    {!hasBids && (
-                      <p className="text-xs text-[#9CA3AF] mt-3">
-                        {t("waitingForBids", { date: formatDate(job.expiresAt) })}
-                      </p>
+                    {/* Past desired date on a still-open job → label it OVERDUE with the day count. */}
+                    {(() => {
+                      const overdueDays =
+                        ["open", "bidding"].includes(job.status) && job.desiredDate && job.desiredDate < localTodayYmd()
+                          ? Math.max(1, Math.floor((Date.now() - new Date(job.desiredDate + "T12:00:00").getTime()) / 86_400_000))
+                          : 0
+                      return overdueDays > 0 ? (
+                        <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-700">
+                          {t("overdueBy", { days: overdueDays })}
+                        </p>
+                      ) : null
+                    })()}
+
+                    {["open", "bidding"].includes(job.status) && (
+                      <div className="mt-3 flex items-center gap-4">
+                        {!hasBids && <p className="text-xs text-[#9CA3AF]">{t("waitingForBidsShort")}</p>}
+                        <Link href={`/jobs/${job.id}/edit`} className="text-xs font-medium text-[#2D7A5F] hover:underline">
+                          {t("editJob")}
+                        </Link>
+                      </div>
                     )}
 
                     {/* Bid accepted → the per-job chat lives in Messages, titled with this job. */}

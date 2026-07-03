@@ -615,7 +615,8 @@
     "recurringPromptText": "Je hebt een terugkerend ritme gekozen. Stel het in om toekomstige schoonmaakbeurten automatisch te boeken.",
     "setUpRecurring": "Terugkerend instellen",
     "bookWithoutCard": "Boeken zonder kaart toe te voegen",
-    "bookWithoutCardNote": "Je schoonmaker wacht tot je een betaalmethode toevoegt — dat kan altijd via de boeking. Er wordt pas afgeschreven na bevestiging door jullie beiden."
+    "bookWithoutCardNote": "Je schoonmaker wacht tot je een betaalmethode toevoegt — dat kan altijd via de boeking. Er wordt pas afgeschreven na bevestiging door jullie beiden.",
+    "rateBreakdown": "{rate}/u × {hours} u"
   },
   "customerBookExtrasPage": {
     "heading": "Speciale verzoeken?",
@@ -685,7 +686,8 @@
     "preSubheading": "Vul het serviceadres in — opnieuw zoeken is niet nodig.",
     "preBadge": "Jouw schoonmaker: {name}",
     "changeCleaner": "Andere schoonmaker",
-    "countryInvalid": "Kies een land uit de lijst"
+    "countryInvalid": "Kies een land uit de lijst",
+    "emptyPostJobCta": "Plaats deze klus voor biedingen"
   },
   "customerBookSchedulePage": {
     "heading": "Wanneer komt het u uit?",
@@ -859,7 +861,10 @@
     "waitingForBids": "Wachten op biedingen — verloopt op {date}",
     "bidsReceived": "{count, plural, one {# bieding ontvangen} other {# biedingen ontvangen}}",
     "messageCleaner": "Stuur je schoonmaker een bericht",
-    "hideChat": "Chat verbergen"
+    "hideChat": "Chat verbergen",
+    "overdueBy": "{days} dag(en) over tijd — verleng de datum om biedingen te blijven ontvangen",
+    "waitingForBidsShort": "Wachten op biedingen…",
+    "editJob": "Klus bewerken"
   },
   "customerLayout": {
     "navDashboard": "Dashboard",
@@ -946,7 +951,8 @@
     "budgetTotalHint": "Totaal voor {hours} u: {total}",
     "errorHoursRequired": "Vul de geschatte uren in zodat het totaal berekend kan worden.",
     "hourlyRateLabel": "Bedrag per uur",
-    "continueWithoutCard": "Doorgaan zonder toevoegen"
+    "continueWithoutCard": "Doorgaan zonder toevoegen",
+    "errorRateRequired": "Vul het bedrag per uur in."
   },
   "customerProfilePage": {
     "title": "Mijn profiel",
@@ -1132,7 +1138,8 @@
     "ownJobNotice": "Jij hebt deze klus geplaatst — je kunt er niet op bieden.",
     "outOfRadiusNotice": "Deze klant zit in {city} en zoekt een schoonmaker binnen {radius} km — buiten jouw werkgebied.",
     "wonChat": "Klus gewonnen — chat met de klant",
-    "hideChat": "Chat verbergen"
+    "hideChat": "Chat verbergen",
+    "overdueChip": "Over tijd · {days} d"
   },
   "providerProviderNotificationsPage": {
     "heading": "Meldingen",
@@ -2009,5 +2016,14 @@
     "body": "Schoonmakers accepteren alleen aanbiedingen van klanten met een betaalmethode. Een kaart toevoegen kost niets — er wordt pas betaald na het werk en jullie beider bevestiging.",
     "addCard": "Betaalgegevens toevoegen",
     "saved": "Betaalmethode opgeslagen — schoonmakers kunnen je aanbiedingen nu accepteren."
+  },
+  "customerJobEditPage": {
+    "title": "Klus bewerken",
+    "subtitle": "Werk je klus bij — schoonmakers zien de wijzigingen direct.",
+    "onlyDateNote": "Er zijn al biedingen — alleen de gewenste datum kan worden gewijzigd (verlengd).",
+    "dateHint": "Een latere datum houdt de klus aantrekkelijk als hij over tijd was.",
+    "save": "Wijzigingen opslaan",
+    "cancel": "Annuleren",
+    "errorGeneric": "Opslaan mislukt. Probeer opnieuw."
   }
 }

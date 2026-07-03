@@ -615,7 +615,8 @@
     "recurringPromptText": "Hai scelto una cadenza ricorrente. Impostala per prenotare automaticamente le prossime pulizie.",
     "setUpRecurring": "Imposta ricorrenza",
     "bookWithoutCard": "Prenota senza aggiungere una carta",
-    "bookWithoutCardNote": "Il tuo addetto attenderà finché non aggiungi un metodo di pagamento — puoi farlo in qualsiasi momento dalla prenotazione. L'addebito avviene solo dopo la conferma di entrambi."
+    "bookWithoutCardNote": "Il tuo addetto attenderà finché non aggiungi un metodo di pagamento — puoi farlo in qualsiasi momento dalla prenotazione. L'addebito avviene solo dopo la conferma di entrambi.",
+    "rateBreakdown": "{rate}/h × {hours} h"
   },
   "customerBookExtrasPage": {
     "heading": "Richieste particolari?",
@@ -685,7 +686,8 @@
     "preSubheading": "Inserisci l'indirizzo del servizio — non serve cercare di nuovo.",
     "preBadge": "Il tuo addetto: {name}",
     "changeCleaner": "Cambia addetto",
-    "countryInvalid": "Scegli un paese dall'elenco"
+    "countryInvalid": "Scegli un paese dall'elenco",
+    "emptyPostJobCta": "Pubblica il lavoro per ricevere offerte"
   },
   "customerBookSchedulePage": {
     "heading": "Quando ti è comodo?",
@@ -859,7 +861,10 @@
     "waitingForBids": "In attesa di offerte — scade il {date}",
     "bidsReceived": "{count, plural, one {# offerta ricevuta} other {# offerte ricevute}}",
     "messageCleaner": "Scrivi al tuo addetto",
-    "hideChat": "Nascondi chat"
+    "hideChat": "Nascondi chat",
+    "overdueBy": "In ritardo di {days} giorno/i — estendi la data per continuare a ricevere offerte",
+    "waitingForBidsShort": "In attesa di offerte…",
+    "editJob": "Modifica lavoro"
   },
   "customerLayout": {
     "navDashboard": "Dashboard",
@@ -946,7 +951,8 @@
     "budgetTotalHint": "Totale per {hours} h: {total}",
     "errorHoursRequired": "Indica le ore stimate per calcolare il totale.",
     "hourlyRateLabel": "Importo all ora",
-    "continueWithoutCard": "Continua senza aggiungere"
+    "continueWithoutCard": "Continua senza aggiungere",
+    "errorRateRequired": "Inserisci l'importo all'ora."
   },
   "customerProfilePage": {
     "title": "Il mio profilo",
@@ -1132,7 +1138,8 @@
     "ownJobNotice": "Hai pubblicato tu questo lavoro — non puoi fare offerte.",
     "outOfRadiusNotice": "Questo cliente è a {city} e cerca un addetto entro {radius} km — fuori dalla tua zona.",
     "wonChat": "Hai vinto questo lavoro — chatta con il cliente",
-    "hideChat": "Nascondi chat"
+    "hideChat": "Nascondi chat",
+    "overdueChip": "In ritardo · {days} g"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifiche",
@@ -2009,5 +2016,14 @@
     "body": "Gli addetti accettano solo offerte da clienti con un metodo di pagamento registrato. Aggiungere una carta NON ti addebita nulla — il pagamento avviene solo a lavoro finito e dopo la conferma di entrambi.",
     "addCard": "Aggiungi dati di pagamento",
     "saved": "Metodo di pagamento salvato — gli addetti possono ora accettare le tue offerte."
+  },
+  "customerJobEditPage": {
+    "title": "Modifica lavoro",
+    "subtitle": "Aggiorna il tuo annuncio — gli addetti vedono subito le modifiche.",
+    "onlyDateNote": "Sono già arrivate offerte — si può cambiare (estendere) solo la data desiderata.",
+    "dateHint": "Estendere la data mantiene l'annuncio attraente se era in ritardo.",
+    "save": "Salva modifiche",
+    "cancel": "Annulla",
+    "errorGeneric": "Salvataggio non riuscito. Riprova."
   }
 }

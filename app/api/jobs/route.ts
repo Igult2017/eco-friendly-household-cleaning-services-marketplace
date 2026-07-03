@@ -16,8 +16,9 @@ const createJobSchema = z.object({
   title: z.string().min(5).max(200),
   description: z.string().min(20).max(2000),
   categoryId: z.string().uuid().optional(),
-  budgetMin: z.number().int().min(100).optional(),
-  budgetMax: z.number().int().min(100).optional(),
+  // Required: the per-hour amount (×hours = these totals) is mandatory when posting.
+  budgetMin: z.number().int().min(100),
+  budgetMax: z.number().int().min(100),
   desiredDate: z.string().optional(),
   desiredTimeRange: z
     .object({ start: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/), end: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/) })

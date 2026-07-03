@@ -615,7 +615,8 @@
     "recurringPromptText": "Wybrano powtarzalny rytm. Skonfiguruj go, aby automatycznie rezerwować kolejne sprzątania.",
     "setUpRecurring": "Ustaw cykliczne",
     "bookWithoutCard": "Zarezerwuj bez dodawania karty",
-    "bookWithoutCardNote": "Osoba sprzątająca poczeka, aż dodasz metodę płatności — możesz to zrobić w każdej chwili z poziomu rezerwacji. Obciążenie następuje dopiero po potwierdzeniu przez oboje."
+    "bookWithoutCardNote": "Osoba sprzątająca poczeka, aż dodasz metodę płatności — możesz to zrobić w każdej chwili z poziomu rezerwacji. Obciążenie następuje dopiero po potwierdzeniu przez oboje.",
+    "rateBreakdown": "{rate}/godz. × {hours} godz."
   },
   "customerBookExtrasPage": {
     "heading": "Masz specjalne życzenia?",
@@ -685,7 +686,8 @@
     "preSubheading": "Podaj adres usługi — nie musisz szukać ponownie.",
     "preBadge": "Twoja osoba sprzątająca: {name}",
     "changeCleaner": "Zmień osobę sprzątającą",
-    "countryInvalid": "Wybierz kraj z listy"
+    "countryInvalid": "Wybierz kraj z listy",
+    "emptyPostJobCta": "Zamiast tego dodaj zlecenie i zbieraj oferty"
   },
   "customerBookSchedulePage": {
     "heading": "Kiedy Ci pasuje?",
@@ -859,7 +861,10 @@
     "waitingForBids": "Oczekiwanie na oferty — wygasa {date}",
     "bidsReceived": "{count, plural, one {Otrzymano # ofertę} few {Otrzymano # oferty} many {Otrzymano # ofert} other {Otrzymano # ofert}}",
     "messageCleaner": "Napisz do osoby sprzątającej",
-    "hideChat": "Ukryj czat"
+    "hideChat": "Ukryj czat",
+    "overdueBy": "Zaległe o {days} dzień/dni — przedłuż datę, aby dalej otrzymywać oferty",
+    "waitingForBidsShort": "Oczekiwanie na oferty…",
+    "editJob": "Edytuj zlecenie"
   },
   "customerLayout": {
     "navDashboard": "Panel",
@@ -946,7 +951,8 @@
     "budgetTotalHint": "Łącznie za {hours} godz.: {total}",
     "errorHoursRequired": "Podaj szacowane godziny, aby obliczyć łączną kwotę.",
     "hourlyRateLabel": "Kwota za godzinę",
-    "continueWithoutCard": "Kontynuuj bez dodawania"
+    "continueWithoutCard": "Kontynuuj bez dodawania",
+    "errorRateRequired": "Podaj kwotę za godzinę."
   },
   "customerProfilePage": {
     "title": "Mój profil",
@@ -1132,7 +1138,8 @@
     "ownJobNotice": "To Twoje zlecenie — nie możesz na nie licytować.",
     "outOfRadiusNotice": "Ten klient jest w {city} i szuka osoby sprzątającej w promieniu {radius} km — poza Twoim obszarem.",
     "wonChat": "Wygrałeś to zlecenie — napisz do klienta",
-    "hideChat": "Ukryj czat"
+    "hideChat": "Ukryj czat",
+    "overdueChip": "Zaległe · {days} dn."
   },
   "providerProviderNotificationsPage": {
     "heading": "Powiadomienia",
@@ -2009,5 +2016,14 @@
     "body": "Osoby sprzątające przyjmują tylko oferty klientów z metodą płatności. Dodanie karty NIC nie kosztuje — płatność następuje dopiero po pracy i potwierdzeniu przez oboje.",
     "addCard": "Dodaj dane płatności",
     "saved": "Metoda płatności zapisana — osoby sprzątające mogą teraz przyjmować Twoje oferty."
+  },
+  "customerJobEditPage": {
+    "title": "Edytuj zlecenie",
+    "subtitle": "Zaktualizuj zlecenie — osoby sprzątające od razu zobaczą zmiany.",
+    "onlyDateNote": "Są już oferty — można zmienić (przedłużyć) tylko preferowaną datę.",
+    "dateHint": "Przedłużenie daty utrzymuje atrakcyjność zlecenia, jeśli było zaległe.",
+    "save": "Zapisz zmiany",
+    "cancel": "Anuluj",
+    "errorGeneric": "Nie udało się zapisać. Spróbuj ponownie."
   }
 }

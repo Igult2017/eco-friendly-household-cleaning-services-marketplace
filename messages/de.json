@@ -615,7 +615,8 @@
     "recurringPromptText": "Du hast einen wiederkehrenden Rhythmus gewählt. Richte ihn ein, um künftige Reinigungen automatisch zu buchen.",
     "setUpRecurring": "Wiederkehrend einrichten",
     "bookWithoutCard": "Ohne Karte buchen",
-    "bookWithoutCardNote": "Deine Reinigungskraft wartet, bis du eine Zahlungsmethode hinzufügst — das geht jederzeit über die Buchung. Abgebucht wird erst nach beidseitiger Bestätigung."
+    "bookWithoutCardNote": "Deine Reinigungskraft wartet, bis du eine Zahlungsmethode hinzufügst — das geht jederzeit über die Buchung. Abgebucht wird erst nach beidseitiger Bestätigung.",
+    "rateBreakdown": "{rate}/Std. × {hours} Std."
   },
   "customerBookExtrasPage": {
     "heading": "Besondere Wünsche?",
@@ -685,7 +686,8 @@
     "preSubheading": "Gib die Serviceadresse ein — keine erneute Suche nötig.",
     "preBadge": "Deine Reinigungskraft: {name}",
     "changeCleaner": "Reinigungskraft wechseln",
-    "countryInvalid": "Bitte wähle ein Land aus der Liste"
+    "countryInvalid": "Bitte wähle ein Land aus der Liste",
+    "emptyPostJobCta": "Stattdessen als Auftrag für Angebote einstellen"
   },
   "customerBookSchedulePage": {
     "heading": "Wann passt es Ihnen?",
@@ -859,7 +861,10 @@
     "waitingForBids": "Warten auf Angebote — läuft ab am {date}",
     "bidsReceived": "{count, plural, one {# Angebot erhalten} other {# Angebote erhalten}}",
     "messageCleaner": "Nachricht an deine Reinigungskraft",
-    "hideChat": "Chat ausblenden"
+    "hideChat": "Chat ausblenden",
+    "overdueBy": "{days} Tag(e) überfällig — verlängere das Datum, um weiter Angebote zu erhalten",
+    "waitingForBidsShort": "Warten auf Angebote…",
+    "editJob": "Auftrag bearbeiten"
   },
   "customerLayout": {
     "navDashboard": "Dashboard",
@@ -946,7 +951,8 @@
     "budgetTotalHint": "Gesamt für {hours} Std.: {total}",
     "errorHoursRequired": "Bitte gib die geschätzten Stunden an, damit der Gesamtbetrag berechnet werden kann.",
     "hourlyRateLabel": "Betrag pro Stunde",
-    "continueWithoutCard": "Ohne Hinzufügen fortfahren"
+    "continueWithoutCard": "Ohne Hinzufügen fortfahren",
+    "errorRateRequired": "Bitte gib den Betrag pro Stunde an."
   },
   "customerProfilePage": {
     "title": "Mein Profil",
@@ -1132,7 +1138,8 @@
     "ownJobNotice": "Du hast diesen Auftrag erstellt — du kannst nicht darauf bieten.",
     "outOfRadiusNotice": "Dieser Kunde ist in {city} und braucht eine Reinigungskraft im Umkreis von {radius} km — außerhalb deines Einsatzgebiets.",
     "wonChat": "Du hast den Auftrag — chatte mit dem Kunden",
-    "hideChat": "Chat ausblenden"
+    "hideChat": "Chat ausblenden",
+    "overdueChip": "Überfällig · {days} T."
   },
   "providerProviderNotificationsPage": {
     "heading": "Benachrichtigungen",
@@ -2009,5 +2016,14 @@
     "body": "Reinigungskräfte nehmen nur Angebote von Kunden mit hinterlegter Zahlungsmethode an. Das Hinzufügen kostet nichts — bezahlt wird erst nach erledigter Arbeit und beidseitiger Bestätigung.",
     "addCard": "Zahlungsdaten hinzufügen",
     "saved": "Zahlungsmethode gespeichert — Reinigungskräfte können deine Angebote jetzt annehmen."
+  },
+  "customerJobEditPage": {
+    "title": "Auftrag bearbeiten",
+    "subtitle": "Aktualisiere deinen Auftrag — Reinigungskräfte sehen die Änderungen sofort.",
+    "onlyDateNote": "Es sind bereits Angebote eingegangen — nur das Wunschdatum kann geändert (verlängert) werden.",
+    "dateHint": "Ein späteres Datum hält den Auftrag attraktiv, wenn er überfällig war.",
+    "save": "Änderungen speichern",
+    "cancel": "Abbrechen",
+    "errorGeneric": "Speichern fehlgeschlagen. Bitte erneut versuchen."
   }
 }

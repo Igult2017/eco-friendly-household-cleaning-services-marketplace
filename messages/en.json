@@ -615,7 +615,8 @@
     "recurringPromptText": "You chose a repeating schedule. Set it up to auto-book future cleans.",
     "setUpRecurring": "Set up recurring",
     "bookWithoutCard": "Book without adding a card",
-    "bookWithoutCardNote": "Your cleaner will be told to wait until you add a payment method — add it any time from the booking. Payment is only charged after you both confirm completion."
+    "bookWithoutCardNote": "Your cleaner will be told to wait until you add a payment method — add it any time from the booking. Payment is only charged after you both confirm completion.",
+    "rateBreakdown": "{rate}/h × {hours} h"
   },
   "customerBookExtrasPage": {
     "heading": "Any special requests?",
@@ -685,7 +686,8 @@
     "preSubheading": "Enter the service address — no need to search again.",
     "preBadge": "Your cleaner: {name}",
     "changeCleaner": "Change cleaner",
-    "countryInvalid": "Please pick a country from the list"
+    "countryInvalid": "Please pick a country from the list",
+    "emptyPostJobCta": "Post this job for bids instead"
   },
   "customerBookSchedulePage": {
     "heading": "When works for you?",
@@ -859,7 +861,10 @@
     "waitingForBids": "Waiting for bids — expires {date}",
     "bidsReceived": "{count, plural, one {# Bid Received} other {# Bids Received}}",
     "messageCleaner": "Message your cleaner",
-    "hideChat": "Hide chat"
+    "hideChat": "Hide chat",
+    "overdueBy": "Overdue by {days} day(s) — extend the date to keep attracting bids",
+    "waitingForBidsShort": "Waiting for bids…",
+    "editJob": "Edit job"
   },
   "customerLayout": {
     "navDashboard": "Dashboard",
@@ -946,7 +951,8 @@
     "budgetTotalHint": "Total for {hours} h: {total}",
     "errorHoursRequired": "Please set the estimated hours so the total can be calculated.",
     "hourlyRateLabel": "Amount per hour",
-    "continueWithoutCard": "Continue without adding"
+    "continueWithoutCard": "Continue without adding",
+    "errorRateRequired": "Please enter the amount you pay per hour."
   },
   "customerProfilePage": {
     "title": "My Profile",
@@ -1132,7 +1138,8 @@
     "ownJobNotice": "You posted this job — you cannot bid on it.",
     "outOfRadiusNotice": "This client is in {city} and needs a cleaner within {radius} km of their location — outside your service area.",
     "wonChat": "You won this job — chat with the client",
-    "hideChat": "Hide chat"
+    "hideChat": "Hide chat",
+    "overdueChip": "Overdue · {days}d"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifications",
@@ -2009,5 +2016,14 @@
     "body": "Cleaners only accept offers from clients with a payment method on file. Adding a card does NOT charge you — payment is only collected after the work is done and you both confirm.",
     "addCard": "Add payment details",
     "saved": "Payment method saved — cleaners can now accept your offers."
+  },
+  "customerJobEditPage": {
+    "title": "Edit job",
+    "subtitle": "Update your job post — cleaners see the changes immediately.",
+    "onlyDateNote": "Bids have already arrived — only the desired date can be changed (you can extend it).",
+    "dateHint": "Extending the date keeps the job attractive if it went overdue.",
+    "save": "Save changes",
+    "cancel": "Cancel",
+    "errorGeneric": "Could not save. Please try again."
   }
 }

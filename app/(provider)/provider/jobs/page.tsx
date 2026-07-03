@@ -184,6 +184,11 @@ export default function ProviderJobsPage() {
                     <div className="flex flex-wrap gap-3 text-xs text-[#9CA3AF] mb-4">
                       <span className="flex items-center gap-1"><MapPin size={12} />{job.serviceAddress.city}, {job.serviceAddress.postalCode}{job.distanceLabel && <> · {job.distanceLabel}</>}</span>
                       {job.desiredDate && <span className="flex items-center gap-1"><Clock size={12} />{formatDate(job.desiredDate)}</span>}
+                      {job.desiredDate && job.desiredDate < localTodayYmd() && (
+                        <span className="rounded-full bg-red-50 px-2 py-0.5 font-semibold text-red-700">
+                          {t("overdueChip", { days: Math.max(1, Math.floor((Date.now() - new Date(job.desiredDate + "T12:00:00").getTime()) / 86_400_000)) })}
+                        </span>
+                      )}
                       {job.desiredTimeRange?.start && job.desiredTimeRange?.end && (
                         <span className="flex items-center gap-1">{job.desiredTimeRange.start}–{job.desiredTimeRange.end}</span>
                       )}

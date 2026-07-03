@@ -222,6 +222,10 @@ export default function BookStep2Page() {
                 <MapPin size={40} className="mx-auto text-[#9CA3AF] mb-3" />
                 <p className="text-[#6B7280] font-medium">{t("emptyTitle")}</p>
                 <p className="text-sm text-[#9CA3AF] mt-1">{t("emptySubtitle")}</p>
+                {/* No cleaners here → route the demand into the bidding marketplace instead. */}
+                <a href="/post-job" className="mt-4 inline-flex items-center justify-center rounded-xl bg-[#2D7A5F] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#235f49] transition-colors">
+                  {t("emptyPostJobCta")}
+                </a>
               </div>
             ) : (
               <>
