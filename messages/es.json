@@ -2078,5 +2078,9 @@
     "save": "Guardar cambios",
     "cancel": "Cancelar",
     "errorGeneric": "No se pudo guardar. Inténtalo de nuevo."
+  },
+  "compChatActions": {
+    "cancelBooking": "Cancelar reserva",
+    "getHelp": "Obtener ayuda de DORIXÉ"
   }
 }

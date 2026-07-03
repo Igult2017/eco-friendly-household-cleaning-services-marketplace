@@ -2078,5 +2078,9 @@
     "save": "Salva modifiche",
     "cancel": "Annulla",
     "errorGeneric": "Salvataggio non riuscito. Riprova."
+  },
+  "compChatActions": {
+    "cancelBooking": "Annulla prenotazione",
+    "getHelp": "Chiedi aiuto a DORIXÉ"
   }
 }

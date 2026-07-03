@@ -2078,5 +2078,9 @@
     "save": "Änderungen speichern",
     "cancel": "Abbrechen",
     "errorGeneric": "Speichern fehlgeschlagen. Bitte erneut versuchen."
+  },
+  "compChatActions": {
+    "cancelBooking": "Buchung stornieren",
+    "getHelp": "Hilfe von DORIXÉ erhalten"
   }
 }

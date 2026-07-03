@@ -6,6 +6,7 @@ import { bookings, providers } from "@/lib/db/schema"
 import { CompletionBar } from "@/components/booking/CompletionBar"
 import { eq, and } from "drizzle-orm"
 import { MessageThread } from "@/components/messaging/MessageThread"
+import { ChatActions } from "@/components/messaging/ChatActions"
 import { ArrowLeft, MessageSquare } from "lucide-react"
 import { getTranslations } from "next-intl/server"
 
@@ -72,6 +73,7 @@ export default async function CustomerMessagesPage({
         providerCompleted={!!booking.providerCompletedAt}
         clientConfirmed={!!booking.clientConfirmedAt}
       />
+      <ChatActions side="client" bookingId={id} bookingStatus={booking.status} />
 
       <MessageThread bookingId={id} currentUserId={userId} readOnly={booking.status === "completed" || booking.status === "cancelled"} />
     </div>

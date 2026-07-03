@@ -2078,5 +2078,9 @@
     "save": "Enregistrer",
     "cancel": "Annuler",
     "errorGeneric": "Échec de l'enregistrement. Veuillez réessayer."
+  },
+  "compChatActions": {
+    "cancelBooking": "Annuler la réservation",
+    "getHelp": "Obtenir de l aide de DORIXÉ"
   }
 }
