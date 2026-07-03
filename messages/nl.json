@@ -616,7 +616,9 @@
     "setUpRecurring": "Terugkerend instellen",
     "bookWithoutCard": "Boeken zonder kaart toe te voegen",
     "bookWithoutCardNote": "Je schoonmaker wacht tot je een betaalmethode toevoegt — dat kan altijd via de boeking. Er wordt pas afgeschreven na bevestiging door jullie beiden.",
-    "rateBreakdown": "{rate}/u × {hours} u"
+    "rateBreakdown": "{rate}/u × {hours} u",
+    "payoutFallbackTitle": "Sla je kaart op om deze boeking veilig te stellen",
+    "payoutFallbackBody": "Deze schoonmaker is de uitbetaling nog aan het instellen, dus de betaling kan nog niet worden geautoriseerd — dat staat los van je kaart. Sla hem nu op: je boeking wordt aangemaakt, er wordt niets afgeschreven voordat het werk klaar is en de betaling volgt automatisch nadat jullie beiden de voltooiing bevestigen."
   },
   "customerBookExtrasPage": {
     "heading": "Speciale verzoeken?",

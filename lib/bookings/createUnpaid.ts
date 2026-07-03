@@ -1,18 +1,18 @@
 import { db } from "@/lib/db"
-import { bookings, providers, providerServices, bids, jobPosts, notifications } from "@/lib/db/schema"
+import { bookings, providers, providerServices, bids, jobPosts, notifications, users } from "@/lib/db/schema"
 import type { NewBooking } from "@/lib/db/schema/bookings"
 import { and, eq, isNull, desc, inArray, lt, gt } from "drizzle-orm"
 import { inngest } from "@/lib/inngest/client"
-import { calculateBookingAmounts } from "@/lib/stripe/client"
+import { calculateBookingAmounts, stripe } from "@/lib/stripe/client"
 import { getCommissionPct } from "@/lib/platform/settings"
 import { checkProviderAvailable } from "./availability"
 import { BookingError, generateBookingNumber } from "./create"
 import type { CreateBookingInput } from "@/lib/validations/booking"
 
-// Booking WITHOUT a payment method: the client chose not to add a card. The booking is real
-// (status pending_payment, no Stripe hold) and the cleaner is explicitly warned so they can trade
-// with care or ask the client to add a card. Completion still needs BOTH parties to confirm; with no
-// payment on file the money is settled directly between them.
+// Booking WITHOUT a payment hold (status pending_payment, no Stripe PI). Two ways here: the client
+// skipped adding a card, OR they saved a card but the cleaner's payout account isn't connected yet so
+// no hold can be authorized. There is NO offline settlement — the booking can't be taken/completed
+// until a hold exists (/bookings/[id]/pay); the notifications below differ by which case this is.
 export async function createUnpaidBooking(userId: string, data: CreateBookingInput) {
   const { providerId, serviceId, scheduledAt, durationMinutes, serviceAddress, serviceLatitude, serviceLongitude, specialInstructions, ecoOptions } = data
 
@@ -101,26 +101,56 @@ export async function createUnpaidBooking(userId: string, data: CreateBookingInp
 
   // Normal new-booking flow (cleaner notification + reminders)…
   try { await inngest.send({ name: "booking/created", data: { bookingId: nb.id, customerId: userId, providerId } }) } catch { /* non-fatal */ }
-  // …plus the explicit no-card warning to the cleaner.
+
+  // Card on file changes the message materially: the client DID their part — what's missing is the
+  // hold, usually because the CLEANER's payout account isn't connected yet.
+  let hasCard = false
   try {
-    await db.insert(notifications).values({
-      userId: provider.userId,
-      type: "booking_reminder",
-      title: "No payment method on file — don't accept yet",
-      body: "This client booked without adding a payment method. Ask them in the chat to add it — you can take the order once it's added, and payment is then collected automatically after you both confirm completion.",
-      link: "/provider/bookings",
-      metadata: { variant: "booking_no_card" },
-    })
-    // …and prompt the CLIENT: cleaners only take orders with a payment method on file, and adding
-    // one never charges before the work is done.
-    await db.insert(notifications).values({
-      userId,
-      type: "booking_reminder",
-      title: "Add a payment method so your cleaner can accept",
-      body: "Cleaners only accept orders from clients with a payment method on file. Adding one does NOT charge you — payment is only collected after the work is done and you both confirm.",
-      link: `/bookings/${nb.id}/pay`,
-      metadata: { variant: "client_add_payment_prompt" },
-    })
+    const [u] = await db.select({ stripeCustomerId: users.stripeCustomerId }).from(users).where(eq(users.id, userId))
+    if (u?.stripeCustomerId) {
+      const pms = await stripe.paymentMethods.list({ customer: u.stripeCustomerId, type: "card", limit: 1 })
+      hasCard = pms.data.length > 0
+    }
+  } catch { /* treat as no card */ }
+
+  try {
+    if (hasCard) {
+      await db.insert(notifications).values({
+        userId: provider.userId,
+        type: "booking_reminder",
+        title: "Client's card is on file — payment not yet secured",
+        body: "This client saved a payment method for the booking, but the payment hold couldn't be authorized yet. If you haven't connected your payout account in Earnings, do it now — then the client can authorize and you can take the order.",
+        link: "/provider/earnings",
+        metadata: { variant: "booking_card_on_file" },
+      })
+      await db.insert(notifications).values({
+        userId,
+        type: "booking_reminder",
+        title: "Card saved — booking created",
+        body: "Your card is saved and nothing is charged before the work is done. Once your cleaner finishes their payout setup, authorize the payment here so they can accept the order.",
+        link: `/bookings/${nb.id}/pay`,
+        metadata: { variant: "client_card_saved_wait" },
+      })
+    } else {
+      await db.insert(notifications).values({
+        userId: provider.userId,
+        type: "booking_reminder",
+        title: "No payment method on file — don't accept yet",
+        body: "This client booked without adding a payment method. Ask them in the chat to add it — you can take the order once it's added, and payment is then collected automatically after you both confirm completion.",
+        link: "/provider/bookings",
+        metadata: { variant: "booking_no_card" },
+      })
+      // …and prompt the CLIENT: cleaners only take orders with a payment method on file, and adding
+      // one never charges before the work is done.
+      await db.insert(notifications).values({
+        userId,
+        type: "booking_reminder",
+        title: "Add a payment method so your cleaner can accept",
+        body: "Cleaners only accept orders from clients with a payment method on file. Adding one does NOT charge you — payment is only collected after the work is done and you both confirm.",
+        link: `/bookings/${nb.id}/pay`,
+        metadata: { variant: "client_add_payment_prompt" },
+      })
+    }
   } catch { /* non-fatal */ }
 
   return { bookingId: nb.id, bookingNumber: nb.bookingNumber }

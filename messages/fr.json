@@ -616,7 +616,9 @@
     "setUpRecurring": "Configurer la récurrence",
     "bookWithoutCard": "Réserver sans ajouter de carte",
     "bookWithoutCardNote": "Votre intervenant attendra que vous ajoutiez un moyen de paiement — possible à tout moment depuis la réservation. Le débit n'a lieu qu'après votre double confirmation.",
-    "rateBreakdown": "{rate}/h × {hours} h"
+    "rateBreakdown": "{rate}/h × {hours} h",
+    "payoutFallbackTitle": "Enregistrez votre carte pour sécuriser cette réservation",
+    "payoutFallbackBody": "Cet intervenant finalise encore la configuration de ses versements, le paiement ne peut donc pas encore être autorisé — cela ne concerne pas votre carte. Enregistrez-la maintenant : votre réservation est créée, rien n est débité avant la fin du travail, et le paiement est prélevé automatiquement après votre double confirmation."
   },
   "customerBookExtrasPage": {
     "heading": "Des demandes particulières ?",

@@ -616,7 +616,9 @@
     "setUpRecurring": "Ustaw cykliczne",
     "bookWithoutCard": "Zarezerwuj bez dodawania karty",
     "bookWithoutCardNote": "Osoba sprzątająca poczeka, aż dodasz metodę płatności — możesz to zrobić w każdej chwili z poziomu rezerwacji. Obciążenie następuje dopiero po potwierdzeniu przez oboje.",
-    "rateBreakdown": "{rate}/godz. × {hours} godz."
+    "rateBreakdown": "{rate}/godz. × {hours} godz.",
+    "payoutFallbackTitle": "Zapisz kartę, aby zabezpieczyć tę rezerwację",
+    "payoutFallbackBody": "Ta osoba sprzątająca wciąż konfiguruje wypłaty, więc płatność nie może jeszcze zostać autoryzowana — to nie dotyczy Twojej karty. Zapisz ją teraz: rezerwacja zostanie utworzona, nic nie zostanie pobrane przed zakończeniem pracy, a płatność nastąpi automatycznie po potwierdzeniu przez oboje."
   },
   "customerBookExtrasPage": {
     "heading": "Masz specjalne życzenia?",

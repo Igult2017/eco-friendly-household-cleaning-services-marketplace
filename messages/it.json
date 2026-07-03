@@ -616,7 +616,9 @@
     "setUpRecurring": "Imposta ricorrenza",
     "bookWithoutCard": "Prenota senza aggiungere una carta",
     "bookWithoutCardNote": "Il tuo addetto attenderà finché non aggiungi un metodo di pagamento — puoi farlo in qualsiasi momento dalla prenotazione. L'addebito avviene solo dopo la conferma di entrambi.",
-    "rateBreakdown": "{rate}/h × {hours} h"
+    "rateBreakdown": "{rate}/h × {hours} h",
+    "payoutFallbackTitle": "Salva la tua carta per garantire questa prenotazione",
+    "payoutFallbackBody": "Questo addetto sta ancora completando la configurazione dei pagamenti, quindi il pagamento non può ancora essere autorizzato — ma la tua carta non c entra. Salvala ora: la prenotazione viene creata, nulla viene addebitato prima della fine del lavoro e il pagamento avviene automaticamente dopo la conferma di entrambi."
   },
   "customerBookExtrasPage": {
     "heading": "Richieste particolari?",

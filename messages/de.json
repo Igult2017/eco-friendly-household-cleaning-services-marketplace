@@ -616,7 +616,9 @@
     "setUpRecurring": "Wiederkehrend einrichten",
     "bookWithoutCard": "Ohne Karte buchen",
     "bookWithoutCardNote": "Deine Reinigungskraft wartet, bis du eine Zahlungsmethode hinzufügst — das geht jederzeit über die Buchung. Abgebucht wird erst nach beidseitiger Bestätigung.",
-    "rateBreakdown": "{rate}/Std. × {hours} Std."
+    "rateBreakdown": "{rate}/Std. × {hours} Std.",
+    "payoutFallbackTitle": "Speichere deine Karte, um diese Buchung zu sichern",
+    "payoutFallbackBody": "Diese Reinigungskraft richtet ihre Auszahlung noch ein, daher kann die Zahlung noch nicht autorisiert werden — deine Karte betrifft das nicht. Speichere sie jetzt: Deine Buchung wird erstellt, vor Abschluss der Arbeit wird nichts abgebucht, und die Zahlung erfolgt automatisch, nachdem ihr beide den Abschluss bestätigt habt."
   },
   "customerBookExtrasPage": {
     "heading": "Besondere Wünsche?",

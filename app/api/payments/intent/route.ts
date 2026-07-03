@@ -83,8 +83,13 @@ export async function POST(req: Request) {
           })
         }
       } catch { /* nudge is best-effort */ }
+      // code lets the checkout fall back to SAVING the card (SetupIntent — the client's payment
+      // guarantee doesn't depend on the cleaner's payout account) instead of dead-ending here.
       return NextResponse.json(
-        { error: "This cleaner hasn't finished their payout setup yet, so they can't be booked right now. We've notified them — please try again later or choose another cleaner." },
+        {
+          error: "This cleaner hasn't finished their payout setup yet, so they can't be booked right now. We've notified them — please try again later or choose another cleaner.",
+          code: "payout_not_ready",
+        },
         { status: 422 },
       )
     }

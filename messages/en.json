@@ -616,7 +616,9 @@
     "setUpRecurring": "Set up recurring",
     "bookWithoutCard": "Book without adding a card",
     "bookWithoutCardNote": "Your cleaner will be told to wait until you add a payment method — add it any time from the booking. Payment is only charged after you both confirm completion.",
-    "rateBreakdown": "{rate}/h × {hours} h"
+    "rateBreakdown": "{rate}/h × {hours} h",
+    "payoutFallbackTitle": "Save your card to secure this booking",
+    "payoutFallbackBody": "This cleaner is still finishing their payout setup, so the payment cannot be authorized yet — but that does not affect your card. Save it now: your booking is created, nothing is charged before the work is done, and payment is collected automatically after you both confirm completion."
   },
   "customerBookExtrasPage": {
     "heading": "Any special requests?",

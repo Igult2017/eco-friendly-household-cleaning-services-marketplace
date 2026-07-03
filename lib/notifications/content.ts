@@ -400,6 +400,28 @@ const NOTIF: Record<string, Record<string, S>> = {
     pl: { title: "Klient próbował Cię zarezerwować — dokończ konfigurację wypłat", body: "Klient próbował Cię zarezerwować, ale nie połączyłeś jeszcze konta wypłat. Połącz je w Zarobkach, aby można było Cię rezerwować i płacić." },
     pt: { title: "Um cliente tentou reservar-te — conclui a configuração de pagamentos", body: "Um cliente tentou reservar-te, mas ainda não ligaste a tua conta de pagamentos. Liga-a em Ganhos para poderes ser reservado e pago." },
   },
+  // Unpaid booking, but the CLIENT saved a card — the missing piece is the cleaner's payout account.
+  booking_card_on_file: {
+    en: { title: "Client's card is on file — payment not yet secured", body: "This client saved a payment method for the booking, but the payment hold couldn't be authorized yet. If you haven't connected your payout account in Earnings, do it now — then the client can authorize and you can take the order." },
+    de: { title: "Karte des Kunden hinterlegt — Zahlung noch nicht gesichert", body: "Dieser Kunde hat eine Zahlungsmethode hinterlegt, aber die Zahlungsreservierung konnte noch nicht autorisiert werden. Falls dein Auszahlungskonto unter Einnahmen noch nicht verbunden ist, verbinde es jetzt — dann kann der Kunde autorisieren und du kannst den Auftrag annehmen." },
+    fr: { title: "Carte du client enregistrée — paiement pas encore sécurisé", body: "Ce client a enregistré un moyen de paiement, mais l'empreinte bancaire n'a pas encore pu être autorisée. Si votre compte de versement n'est pas encore connecté dans Revenus, faites-le maintenant — le client pourra alors autoriser et vous pourrez accepter la mission." },
+    es: { title: "Tarjeta del cliente guardada: pago aún no asegurado", body: "Este cliente guardó un método de pago, pero la retención del pago aún no pudo autorizarse. Si no has conectado tu cuenta de cobros en Ingresos, hazlo ahora: el cliente podrá autorizar y tú aceptar el trabajo." },
+    it: { title: "Carta del cliente salvata — pagamento non ancora garantito", body: "Questo cliente ha salvato un metodo di pagamento, ma il blocco del pagamento non è stato ancora autorizzato. Se non hai collegato il conto per i pagamenti in Guadagni, fallo ora — poi il cliente potrà autorizzare e tu accettare il lavoro." },
+    nl: { title: "Kaart van de klant opgeslagen — betaling nog niet veiliggesteld", body: "Deze klant heeft een betaalmethode opgeslagen, maar de betaalreservering kon nog niet worden geautoriseerd. Koppel je uitbetalingsaccount bij Inkomsten als dat nog niet is gebeurd — dan kan de klant autoriseren en kun jij de opdracht aannemen." },
+    pl: { title: "Karta klienta zapisana — płatność jeszcze niezabezpieczona", body: "Klient zapisał metodę płatności, ale blokada płatności nie mogła jeszcze zostać autoryzowana. Jeśli nie połączyłeś konta wypłat w Zarobkach, zrób to teraz — wtedy klient autoryzuje płatność, a Ty przyjmiesz zlecenie." },
+    pt: { title: "Cartão do cliente guardado — pagamento ainda não garantido", body: "Este cliente guardou um método de pagamento, mas a retenção do pagamento ainda não pôde ser autorizada. Se ainda não ligaste a tua conta de pagamentos em Ganhos, fá-lo agora — depois o cliente autoriza e podes aceitar o trabalho." },
+  },
+  // Client saved a card on an unpaid booking; they'll authorize once the cleaner's payout is ready.
+  client_card_saved_wait: {
+    en: { title: "Card saved — booking created", body: "Your card is saved and nothing is charged before the work is done. Once your cleaner finishes their payout setup, authorize the payment here so they can accept the order." },
+    de: { title: "Karte gespeichert — Buchung erstellt", body: "Deine Karte ist gespeichert und vor Abschluss der Arbeit wird nichts abgebucht. Sobald deine Reinigungskraft ihre Auszahlung eingerichtet hat, autorisiere hier die Zahlung, damit sie den Auftrag annehmen kann." },
+    fr: { title: "Carte enregistrée — réservation créée", body: "Votre carte est enregistrée et rien n'est débité avant la fin du travail. Dès que votre intervenant aura finalisé ses versements, autorisez le paiement ici pour qu'il puisse accepter la mission." },
+    es: { title: "Tarjeta guardada: reserva creada", body: "Tu tarjeta está guardada y no se cobra nada antes de terminar el trabajo. Cuando tu profesional complete su configuración de cobros, autoriza aquí el pago para que pueda aceptar el trabajo." },
+    it: { title: "Carta salvata — prenotazione creata", body: "La tua carta è salvata e nulla viene addebitato prima della fine del lavoro. Quando il tuo addetto avrà completato i pagamenti, autorizza qui il pagamento così potrà accettare l'ordine." },
+    nl: { title: "Kaart opgeslagen — boeking aangemaakt", body: "Je kaart is opgeslagen en er wordt niets afgeschreven voordat het werk klaar is. Zodra je schoonmaker de uitbetaling heeft ingesteld, autoriseer je hier de betaling zodat hij/zij de opdracht kan aannemen." },
+    pl: { title: "Karta zapisana — rezerwacja utworzona", body: "Twoja karta jest zapisana i nic nie zostanie pobrane przed zakończeniem pracy. Gdy osoba sprzątająca skonfiguruje wypłaty, autoryzuj tutaj płatność, aby mogła przyjąć zlecenie." },
+    pt: { title: "Cartão guardado — reserva criada", body: "O teu cartão está guardado e nada é cobrado antes de o trabalho estar concluído. Assim que o teu profissional concluir a configuração de pagamentos, autoriza aqui o pagamento para que possa aceitar o trabalho." },
+  },
   // A job this cleaner bid on was assigned to someone else — encourage them to keep bidding.
   bid_lost_assigned: {
     en: { title: "Job assigned to another cleaner", body: "“{title}” was assigned to another cleaner. Don't stop — new jobs are posted all the time. Keep bidding!" },
@@ -447,6 +469,8 @@ const PARAMS: Record<string, string[]> = {
   booking_rejected: ["datetime", "reason"],
   support_reply: ["message"],
   bid_lost_assigned: ["title"],
+  booking_card_on_file: [],
+  client_card_saved_wait: [],
 }
 
 /**

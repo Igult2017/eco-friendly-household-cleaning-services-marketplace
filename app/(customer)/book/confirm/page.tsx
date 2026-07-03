@@ -2,6 +2,7 @@
 
 import { WizardProgress } from "@/components/booking/WizardProgress"
 import { StripePaymentForm } from "@/components/booking/StripePaymentForm"
+import { AddCardForm } from "@/components/customer/AddCardForm"
 import { useBookingStore } from "@/stores/bookingStore"
 import { useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
@@ -50,6 +51,10 @@ export default function BookStep5Page() {
   const [promoLabel, setPromoLabel] = useState<string | null>(null)
   const [promoLoading, setPromoLoading] = useState(false)
   const [promoError, setPromoError] = useState<string | null>(null)
+  // Cleaner's payout account not connected → a hold can't be authorized, but the client's card
+  // guarantee is independent of that. Fall back to SAVING the card (SetupIntent) + booking.
+  const [payoutFallback, setPayoutFallback] = useState(false)
+  const [saveCardSecret, setSaveCardSecret] = useState<string | null>(null)
 
   // Bid-flow bookings (accepted bid) may have null categoryId or a slug instead of UUID.
   // They always have bidAmountCents set. Loosen the guard accordingly.
@@ -232,6 +237,22 @@ export default function BookStep5Page() {
     }
   }
 
+  // Card-save fallback: with a card already on file the booking is created straight away; otherwise
+  // show the card panel in save mode (no charge, no cleaner account needed) and book after saving.
+  async function startPayoutFallback() {
+    try {
+      const m = await fetch("/api/payments/methods").then((r) => r.json()).catch(() => ({ cards: [] }))
+      if ((m.cards ?? []).length > 0) { await bookWithoutCard(); return }
+      const r = await fetch("/api/payments/setup-intent", { method: "POST" })
+      const d = await r.json()
+      if (!d.clientSecret) { setError(t("errorPreparePayment")); return }
+      setSaveCardSecret(d.clientSecret)
+      setPayoutFallback(true)
+    } catch {
+      setError(t("errorGeneric"))
+    }
+  }
+
   async function proceedToPayment() {
     setLoading(true)
     setError(null)
@@ -258,7 +279,10 @@ export default function BookStep5Page() {
         }),
       })
       const data = await res.json()
-      if (!res.ok) { setError(data.error ?? t("errorPreparePayment")); return }
+      if (!res.ok) {
+        if (data.code === "payout_not_ready") { await startPayoutFallback(); return }
+        setError(data.error ?? t("errorPreparePayment")); return
+      }
       setClientSecret(data.clientSecret)
       setIntentId(data.paymentIntentId)
       setAmounts(data.amounts)
@@ -418,8 +442,19 @@ export default function BookStep5Page() {
           <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
         )}
 
+        {/* Payout-fallback: cleaner's payout account isn't ready — save the card + book instead. */}
+        {step === "summary" && payoutFallback && saveCardSecret && (
+          <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-6 space-y-3">
+            <p className="text-sm font-semibold text-[#2B3441]">{t("payoutFallbackTitle")}</p>
+            <p className="text-xs text-[#6B7280]">{t("payoutFallbackBody")}</p>
+            <Elements stripe={stripePromise} options={{ clientSecret: saveCardSecret, appearance: { theme: "stripe", variables: { colorPrimary: "#2D7A5F" } } }}>
+              <AddCardForm onDone={() => { setPayoutFallback(false); void bookWithoutCard() }} onCancel={() => setPayoutFallback(false)} />
+            </Elements>
+          </div>
+        )}
+
         {/* Step: summary → show proceed button */}
-        {step === "summary" && amounts && (
+        {step === "summary" && amounts && !payoutFallback && (
           <div className="space-y-3 mb-6">
             <Button
               onClick={proceedToPayment}

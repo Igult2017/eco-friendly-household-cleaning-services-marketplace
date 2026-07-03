@@ -616,7 +616,9 @@
     "setUpRecurring": "Configurar recorrência",
     "bookWithoutCard": "Reservar sem adicionar cartão",
     "bookWithoutCardNote": "O teu profissional aguardará até adicionares um método de pagamento — podes fazê-lo a qualquer momento na reserva. Só é cobrado após a confirmação de ambos.",
-    "rateBreakdown": "{rate}/h × {hours} h"
+    "rateBreakdown": "{rate}/h × {hours} h",
+    "payoutFallbackTitle": "Guarda o teu cartão para garantir esta reserva",
+    "payoutFallbackBody": "Este profissional ainda está a concluir a configuração de pagamentos, pelo que o pagamento ainda não pode ser autorizado — isso não afeta o teu cartão. Guarda-o agora: a reserva é criada, nada é cobrado antes de o trabalho estar concluído e o pagamento é feito automaticamente após ambos confirmarem a conclusão."
   },
   "customerBookExtrasPage": {
     "heading": "Algum pedido especial?",
