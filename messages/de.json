@@ -470,7 +470,7 @@
     "testimonial1Followers": "82.000 YouTube",
     "testimonial2Quote": "Mein Newsletter zum nachhaltigen Lebensstil hat DORIXÉ letzten Monat empfohlen. Meine Leser fanden es großartig, und ich habe bereits zwei Monate meiner eigenen Reinigungen abgedeckt.",
     "testimonial2Followers": "41.000 Substack",
-    "testimonial3Quote": "Perfekt für Creator im Bereich Nachhaltigkeit. Das 5-%-Lebenslang-Modell ist wirklich selten — die meisten Programme zahlen nur bei der ersten Bestellung.",
+    "testimonial3Quote": "Perfekt für Creator im Bereich Nachhaltigkeit. Das {pct}-%-Lebenslang-Modell ist wirklich selten — die meisten Programme zahlen nur bei der ersten Bestellung.",
     "testimonial3Followers": "210.000 TikTok",
     "idealFor1": "Blogger & Vlogger für nachhaltigen Lebensstil",
     "idealFor2": "Creator für Inneneinrichtung & Wohnungsorganisation",
