@@ -23,6 +23,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
     const [job] = await db
       .select({
         id: jobPosts.id,
+        title: jobPosts.title,
         customerId: jobPosts.customerId,
         status: jobPosts.status,
         categoryId: jobPosts.categoryId,
@@ -64,6 +65,14 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       return NextResponse.json({ error: "This cleaner is no longer available. Please choose another bid." }, { status: 422 })
     }
 
+    // Losing bidders (captured BEFORE the transaction flips them to rejected) — notified below so
+    // they know to keep bidding elsewhere.
+    const losers = await db
+      .select({ providerUserId: providers.userId })
+      .from(bids)
+      .innerJoin(providers, eq(bids.providerId, providers.id))
+      .where(and(eq(bids.jobPostId, jobPostId), eq(bids.status, "pending"), ne(bids.id, bidId)))
+
     // TOCTOU: row-lock the job row inside a transaction before mutating state.
     // BUG-011: don't call tx.rollback() for the race-loser — it throws and the outer
     // catch turns it into a 500. Flag it and return a 409 below. Returning early from
@@ -91,6 +100,22 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
 
     if (lostRace) {
       return NextResponse.json({ error: "This job is no longer accepting bids" }, { status: 409 })
+    }
+
+    // Tell every losing bidder the job went to someone else — and to keep bidding on other offers.
+    if (losers.length > 0) {
+      try {
+        await db.insert(notifications).values(
+          losers.map((l) => ({
+            userId: l.providerUserId,
+            type: "bid_received" as const,
+            title: "Job assigned to another cleaner",
+            body: `“${job.title}” was assigned to another cleaner. Don't stop — new jobs are posted all the time, keep bidding!`,
+            link: "/provider/jobs",
+            metadata: { variant: "bid_lost_assigned", title: job.title },
+          })),
+        )
+      } catch (e) { console.warn("[bids accept] loser notifications failed:", e) }
     }
 
     // Look up category slug for bid-flow store hydration

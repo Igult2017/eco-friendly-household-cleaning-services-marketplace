@@ -1142,7 +1142,11 @@
     "outOfRadiusNotice": "Dieser Kunde ist in {city} und braucht eine Reinigungskraft im Umkreis von {radius} km — außerhalb deines Einsatzgebiets.",
     "wonChat": "Du hast den Auftrag — chatte mit dem Kunden",
     "hideChat": "Chat ausblenden",
-    "overdueChip": "Überfällig · {days} T."
+    "overdueChip": "Überfällig · {days} T.",
+    "firstBidNote": "Noch keine Angebote — du wärst das erste. Beste Chancen!",
+    "competitionNote": "Auf diesen Auftrag gibt es bereits {count} Angebot(e).",
+    "fewerBidsTip": "Tipp: „{title}“ hat bisher nur {count} Angebot(e) — dort stehen deine Chancen besser.",
+    "viewSuggested": "Zum Auftrag"
   },
   "providerProviderNotificationsPage": {
     "heading": "Benachrichtigungen",

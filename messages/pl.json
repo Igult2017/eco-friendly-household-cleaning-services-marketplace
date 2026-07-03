@@ -1142,7 +1142,11 @@
     "outOfRadiusNotice": "Ten klient jest w {city} i szuka osoby sprzątającej w promieniu {radius} km — poza Twoim obszarem.",
     "wonChat": "Wygrałeś to zlecenie — napisz do klienta",
     "hideChat": "Ukryj czat",
-    "overdueChip": "Zaległe · {days} dn."
+    "overdueChip": "Zaległe · {days} dn.",
+    "firstBidNote": "Brak ofert — Twoja byłaby pierwsza. Świetne szanse!",
+    "competitionNote": "To zlecenie ma już {count} ofert(y).",
+    "fewerBidsTip": "Wskazówka: „{title}” ma na razie tylko {count} ofert(y) — tam masz większe szanse.",
+    "viewSuggested": "Zobacz to zlecenie"
   },
   "providerProviderNotificationsPage": {
     "heading": "Powiadomienia",

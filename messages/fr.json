@@ -1142,7 +1142,11 @@
     "outOfRadiusNotice": "Ce client est à {city} et cherche un intervenant dans un rayon de {radius} km — hors de votre zone.",
     "wonChat": "Mission remportée — discutez avec le client",
     "hideChat": "Masquer la discussion",
-    "overdueChip": "En retard · {days} j"
+    "overdueChip": "En retard · {days} j",
+    "firstBidNote": "Aucune offre pour l instant — vous seriez le premier. Excellentes chances !",
+    "competitionNote": "Cette mission compte déjà {count} offre(s).",
+    "fewerBidsTip": "Astuce : « {title} » n a que {count} offre(s) pour l instant — vos chances y sont meilleures.",
+    "viewSuggested": "Voir cette mission"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifications",

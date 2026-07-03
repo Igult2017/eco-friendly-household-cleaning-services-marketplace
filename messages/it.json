@@ -1142,7 +1142,11 @@
     "outOfRadiusNotice": "Questo cliente è a {city} e cerca un addetto entro {radius} km — fuori dalla tua zona.",
     "wonChat": "Hai vinto questo lavoro — chatta con il cliente",
     "hideChat": "Nascondi chat",
-    "overdueChip": "In ritardo · {days} g"
+    "overdueChip": "In ritardo · {days} g",
+    "firstBidNote": "Ancora nessuna offerta — saresti il primo. Ottime probabilità!",
+    "competitionNote": "Questo lavoro ha già {count} offerta/e.",
+    "fewerBidsTip": "Suggerimento: “{title}” ha solo {count} offerta/e finora — lì hai più probabilità.",
+    "viewSuggested": "Vedi quel lavoro"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifiche",

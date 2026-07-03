@@ -153,7 +153,7 @@ export default function ProviderJobsPage() {
               const isOpen = bidding === job.id
 
               return (
-                <div key={job.id} className="bg-white rounded-2xl border border-[#E5EBF0] shadow-sm overflow-hidden">
+                <div key={job.id} id={`job-${job.id}`} className="bg-white rounded-2xl border border-[#E5EBF0] shadow-sm overflow-hidden">
                   <div className="p-5">
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div>
@@ -247,6 +247,38 @@ export default function ProviderJobsPage() {
                   {isOpen && !job.wonByMe && !alreadyBid && !job.own && job.withinRadius && (
                     <div className="border-t border-[#F4FAF6] bg-[#F4FAF6] p-5 space-y-3">
                       <h3 className="font-semibold text-sm text-[#2B3441]">{t("yourBid")}</h3>
+                      {/* Competition transparency: how crowded is this job — and is there an easier one? */}
+                      {(() => {
+                        const others = job.bids.length
+                        const suggestion = others >= 3
+                          ? jobs
+                              .filter((j) => j.id !== job.id && !j.own && !j.wonByMe && j.withinRadius && !(j.alreadyBid || submitted.has(j.id)) && ["open", "bidding"].includes(j.status) && j.bids.length < others)
+                              .sort((a, b) => a.bids.length - b.bids.length)[0]
+                          : undefined
+                        return (
+                          <div className="space-y-2">
+                            <p className={cn("text-xs font-medium", others === 0 ? "text-[#2D7A5F]" : "text-[#6B7280]")}>
+                              {others === 0 ? t("firstBidNote") : t("competitionNote", { count: others })}
+                            </p>
+                            {suggestion && (
+                              <div className="rounded-lg bg-white border border-[#D1F0E0] p-3 text-xs text-[#2B3441]">
+                                {t("fewerBidsTip", { title: suggestion.title, count: suggestion.bids.length })}{" "}
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setError(null)
+                                    setBidding(suggestion.id)
+                                    document.getElementById(`job-${suggestion.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" })
+                                  }}
+                                  className="font-semibold text-[#2D7A5F] hover:underline"
+                                >
+                                  {t("viewSuggested")}
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        )
+                      })()}
                       <div className="grid grid-cols-2 gap-3">
                         <div>
                           <Label className="text-xs font-medium text-[#2B3441] mb-1 block">{t("yourPriceLabel")}</Label>

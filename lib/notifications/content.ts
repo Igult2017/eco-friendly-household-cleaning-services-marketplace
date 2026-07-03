@@ -400,6 +400,17 @@ const NOTIF: Record<string, Record<string, S>> = {
     pl: { title: "Klient próbował Cię zarezerwować — dokończ konfigurację wypłat", body: "Klient próbował Cię zarezerwować, ale nie połączyłeś jeszcze konta wypłat. Połącz je w Zarobkach, aby można było Cię rezerwować i płacić." },
     pt: { title: "Um cliente tentou reservar-te — conclui a configuração de pagamentos", body: "Um cliente tentou reservar-te, mas ainda não ligaste a tua conta de pagamentos. Liga-a em Ganhos para poderes ser reservado e pago." },
   },
+  // A job this cleaner bid on was assigned to someone else — encourage them to keep bidding.
+  bid_lost_assigned: {
+    en: { title: "Job assigned to another cleaner", body: "“{title}” was assigned to another cleaner. Don't stop — new jobs are posted all the time. Keep bidding!" },
+    de: { title: "Auftrag an andere Reinigungskraft vergeben", body: "„{title}“ wurde an eine andere Reinigungskraft vergeben. Nicht aufgeben — es werden laufend neue Aufträge eingestellt. Biete weiter mit!" },
+    fr: { title: "Mission attribuée à un autre intervenant", body: "« {title} » a été attribuée à un autre intervenant. Ne lâchez rien — de nouvelles missions sont publiées en permanence. Continuez à proposer vos offres !" },
+    es: { title: "Trabajo asignado a otro profesional", body: "«{title}» se asignó a otro profesional. No te detengas: se publican trabajos nuevos constantemente. ¡Sigue enviando ofertas!" },
+    it: { title: "Lavoro assegnato a un altro addetto", body: "“{title}” è stato assegnato a un altro addetto. Non fermarti — nuovi lavori vengono pubblicati di continuo. Continua a fare offerte!" },
+    nl: { title: "Klus aan een andere schoonmaker toegewezen", body: "“{title}” is aan een andere schoonmaker toegewezen. Geef niet op — er worden voortdurend nieuwe klussen geplaatst. Blijf bieden!" },
+    pl: { title: "Zlecenie przydzielone innej osobie", body: "„{title}” przydzielono innej osobie sprzątającej. Nie poddawaj się — nowe zlecenia pojawiają się cały czas. Licytuj dalej!" },
+    pt: { title: "Trabalho atribuído a outro profissional", body: "“{title}” foi atribuído a outro profissional. Não pares — são publicados novos trabalhos a toda a hora. Continua a enviar propostas!" },
+  },
   // Cleaner rejected a fresh booking with a stated reason; the hold was fully released.
   booking_rejected: {
     en: { title: "Booking declined", body: "Your cleaner can't take the booking scheduled for {datetime}. Reason: {reason}. Your payment hold was fully released." },
@@ -435,6 +446,7 @@ const PARAMS: Record<string, string[]> = {
   booking_overdue_client: ["datetime"],
   booking_rejected: ["datetime", "reason"],
   support_reply: ["message"],
+  bid_lost_assigned: ["title"],
 }
 
 /**

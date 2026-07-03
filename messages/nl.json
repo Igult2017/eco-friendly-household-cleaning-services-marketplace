@@ -1142,7 +1142,11 @@
     "outOfRadiusNotice": "Deze klant zit in {city} en zoekt een schoonmaker binnen {radius} km — buiten jouw werkgebied.",
     "wonChat": "Klus gewonnen — chat met de klant",
     "hideChat": "Chat verbergen",
-    "overdueChip": "Over tijd · {days} d"
+    "overdueChip": "Over tijd · {days} d",
+    "firstBidNote": "Nog geen biedingen — jij zou de eerste zijn. Grote kans!",
+    "competitionNote": "Deze klus heeft al {count} bieding(en).",
+    "fewerBidsTip": "Tip: “{title}” heeft tot nu toe maar {count} bieding(en) — daar is je kans groter.",
+    "viewSuggested": "Bekijk die klus"
   },
   "providerProviderNotificationsPage": {
     "heading": "Meldingen",

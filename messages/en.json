@@ -1142,7 +1142,11 @@
     "outOfRadiusNotice": "This client is in {city} and needs a cleaner within {radius} km of their location — outside your service area.",
     "wonChat": "You won this job — chat with the client",
     "hideChat": "Hide chat",
-    "overdueChip": "Overdue · {days}d"
+    "overdueChip": "Overdue · {days}d",
+    "firstBidNote": "No bids yet — you would be the first. Great odds!",
+    "competitionNote": "This job already has {count} bid(s).",
+    "fewerBidsTip": "Tip: “{title}” has only {count} bid(s) so far — your chances may be better there.",
+    "viewSuggested": "View that job"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifications",
