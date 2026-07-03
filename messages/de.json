@@ -550,7 +550,15 @@
     "submitCustomer": "Jetzt buchen →",
     "affiliateCardTitle": "Werben & verdienen (Affiliate)",
     "affiliateCardDesc": "Empfiehl DORIXÉ und verdiene Provision — kein Reinigungs- oder Buchungskonto nötig.",
-    "submitAffiliate": "Dem Affiliate-Programm beitreten"
+    "submitAffiliate": "Dem Affiliate-Programm beitreten",
+    "missingIntro": "Bitte vervollständige:",
+    "missingRole": "Rolle wählen (Kunde, Reinigungskraft oder Partner)",
+    "missingBusinessName": "Firmenname",
+    "missingBio": "Über dich (mindestens 20 Zeichen)",
+    "missingCity": "Stadt",
+    "missingPostal": "Postleitzahl",
+    "missingGdpr": "AGB & Datenschutz akzeptieren",
+    "submitPickRole": "Wähle oben deine Rolle, um fortzufahren"
   },
   "authOnboardingProviderFields": {
     "businessInfo": "Unternehmensdaten",

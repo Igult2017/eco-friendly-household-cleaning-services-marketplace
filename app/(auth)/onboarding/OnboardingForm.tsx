@@ -36,24 +36,45 @@ export function OnboardingForm({ defaultFirstName = "", defaultLastName = "", de
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [locationValid, setLocationValid] = useState(true)
 
   function updateProvider(key: keyof typeof providerData, value: string) {
     setProviderData(prev => ({ ...prev, [key]: value }))
   }
 
-  const providerValid = providerData.businessName.trim().length >= 2
-    && providerData.bio.trim().length >= 20
-    && providerData.city.trim().length >= 2
-    && providerData.postalCode.trim().length >= 3
-    && locationValid
+  // A zod 400 arrives as a flatten() OBJECT — rendering it raw crashes React. Always reduce to text.
+  function extractError(e: unknown): string {
+    if (typeof e === "string") return e
+    if (e && typeof e === "object") {
+      const p = e as { formErrors?: string[]; fieldErrors?: Record<string, string[]> }
+      const all = [...(p.formErrors ?? []), ...Object.values(p.fieldErrors ?? {}).flat()]
+      if (all.length) return all.join(" · ")
+    }
+    return t("genericError")
+  }
 
-  const isValid = !!role && firstName.trim().length > 0 && lastName.trim().length > 0 && gdpr
-    && (role !== "provider" || providerValid)
+  // Never a silently-dead button: on submit, name exactly what's missing.
+  function missingFields(): string[] {
+    const missing: string[] = []
+    if (!role) missing.push(t("missingRole"))
+    if (!firstName.trim()) missing.push(t("firstNameLabel"))
+    if (!lastName.trim()) missing.push(t("lastNameLabel"))
+    if (role === "provider") {
+      if (providerData.businessName.trim().length < 2) missing.push(t("missingBusinessName"))
+      if (providerData.bio.trim().length < 20) missing.push(t("missingBio"))
+      if (providerData.city.trim().length < 2) missing.push(t("missingCity"))
+      if (providerData.postalCode.trim().length < 3) missing.push(t("missingPostal"))
+    }
+    if (!gdpr) missing.push(t("missingGdpr"))
+    return missing
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!isValid) return
+    const missing = missingFields()
+    if (missing.length) {
+      setError(`${t("missingIntro")} ${missing.join(" · ")}`)
+      return
+    }
     setLoading(true)
     setError(null)
     try {
@@ -68,7 +89,7 @@ export function OnboardingForm({ defaultFirstName = "", defaultLastName = "", de
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
-        setError((data as { error?: string }).error ?? t("genericError"))
+        setError(extractError((data as { error?: unknown }).error))
         return
       }
       window.location.href = (data as { redirect?: string }).redirect ?? "/dashboard"
@@ -129,7 +150,9 @@ export function OnboardingForm({ defaultFirstName = "", defaultLastName = "", de
           <Input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+31 6 12345678" />
         </div>
 
-        {role === "provider" && <ProviderFields values={providerData} onChange={updateProvider} onValidChange={setLocationValid} />}
+        {/* Postal↔city check stays ADVISORY (amber hint) — it must never wedge the submit button:
+            Nominatim is fuzzy and the server revalidates anyway. */}
+        {role === "provider" && <ProviderFields values={providerData} onChange={updateProvider} />}
 
         <label className="flex items-start gap-3 cursor-pointer">
           <input type="checkbox" checked={gdpr} onChange={e => setGdpr(e.target.checked)}
@@ -154,9 +177,9 @@ export function OnboardingForm({ defaultFirstName = "", defaultLastName = "", de
         </div>
       )}
 
-      <Button type="submit" disabled={!isValid || loading}
+      <Button type="submit" disabled={loading}
         className="w-full bg-[#2D7A5F] hover:bg-[#235f49] text-white h-12 text-base">
-        {loading ? t("submitLoading") : role === "provider" ? t("submitProvider") : role === "affiliate" ? t("submitAffiliate") : t("submitCustomer")}
+        {loading ? t("submitLoading") : role === "provider" ? t("submitProvider") : role === "affiliate" ? t("submitAffiliate") : !role ? t("submitPickRole") : t("submitCustomer")}
       </Button>
     </form>
   )

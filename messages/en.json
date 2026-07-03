@@ -550,7 +550,15 @@
     "submitCustomer": "Start booking →",
     "affiliateCardTitle": "Promote & earn (Affiliate)",
     "affiliateCardDesc": "Share DORIXÉ and earn commission — no cleaning or booking account needed.",
-    "submitAffiliate": "Join the affiliate program"
+    "submitAffiliate": "Join the affiliate program",
+    "missingIntro": "Please complete:",
+    "missingRole": "choose your role (client, cleaner or partner)",
+    "missingBusinessName": "business name",
+    "missingBio": "about you (at least 20 characters)",
+    "missingCity": "city",
+    "missingPostal": "postal code",
+    "missingGdpr": "accept the Terms & Privacy Policy",
+    "submitPickRole": "Choose your role above to continue"
   },
   "authOnboardingProviderFields": {
     "businessInfo": "Business info",

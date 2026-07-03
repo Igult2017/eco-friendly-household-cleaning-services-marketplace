@@ -550,7 +550,15 @@
     "submitCustomer": "Zacznij rezerwować →",
     "affiliateCardTitle": "Promuj i zarabiaj (Partner)",
     "affiliateCardDesc": "Polecaj DORIXÉ i zarabiaj prowizję — bez konta klienta ani sprzątacza.",
-    "submitAffiliate": "Dołącz do programu partnerskiego"
+    "submitAffiliate": "Dołącz do programu partnerskiego",
+    "missingIntro": "Uzupełnij:",
+    "missingRole": "wybierz rolę (klient, osoba sprzątająca lub partner)",
+    "missingBusinessName": "nazwa firmy",
+    "missingBio": "o Tobie (co najmniej 20 znaków)",
+    "missingCity": "miasto",
+    "missingPostal": "kod pocztowy",
+    "missingGdpr": "zaakceptuj regulamin i politykę prywatności",
+    "submitPickRole": "Wybierz rolę powyżej, aby kontynuować"
   },
   "authOnboardingProviderFields": {
     "businessInfo": "Informacje o firmie",

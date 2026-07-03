@@ -550,7 +550,15 @@
     "submitCustomer": "Inizia a prenotare →",
     "affiliateCardTitle": "Promuovi e guadagna (Affiliato)",
     "affiliateCardDesc": "Condividi DORIXÉ e guadagna una commissione — senza account cliente o addetto.",
-    "submitAffiliate": "Unisciti al programma di affiliazione"
+    "submitAffiliate": "Unisciti al programma di affiliazione",
+    "missingIntro": "Completa quanto segue:",
+    "missingRole": "scegli il tuo ruolo (cliente, addetto o partner)",
+    "missingBusinessName": "nome dell attività",
+    "missingBio": "su di te (almeno 20 caratteri)",
+    "missingCity": "città",
+    "missingPostal": "codice postale",
+    "missingGdpr": "accettare Termini e Privacy",
+    "submitPickRole": "Scegli il tuo ruolo qui sopra per continuare"
   },
   "authOnboardingProviderFields": {
     "businessInfo": "Informazioni sull'attività",

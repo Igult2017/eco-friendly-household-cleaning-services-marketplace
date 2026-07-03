@@ -550,7 +550,15 @@
     "submitCustomer": "Commencer à réserver →",
     "affiliateCardTitle": "Promouvoir & gagner (Affilié)",
     "affiliateCardDesc": "Partagez DORIXÉ et gagnez une commission — aucun compte client ou nettoyeur requis.",
-    "submitAffiliate": "Rejoindre le programme d'affiliation"
+    "submitAffiliate": "Rejoindre le programme d'affiliation",
+    "missingIntro": "Veuillez compléter :",
+    "missingRole": "choisir votre rôle (client, intervenant ou partenaire)",
+    "missingBusinessName": "nom de l entreprise",
+    "missingBio": "à propos de vous (au moins 20 caractères)",
+    "missingCity": "ville",
+    "missingPostal": "code postal",
+    "missingGdpr": "accepter les CGU et la politique de confidentialité",
+    "submitPickRole": "Choisissez votre rôle ci-dessus pour continuer"
   },
   "authOnboardingProviderFields": {
     "businessInfo": "Infos sur l'entreprise",

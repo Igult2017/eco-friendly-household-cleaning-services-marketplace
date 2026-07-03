@@ -550,7 +550,15 @@
     "submitCustomer": "Begin met boeken →",
     "affiliateCardTitle": "Promoot & verdien (Affiliate)",
     "affiliateCardDesc": "Deel DORIXÉ en verdien commissie — geen klant- of schoonmaakaccount nodig.",
-    "submitAffiliate": "Word affiliate"
+    "submitAffiliate": "Word affiliate",
+    "missingIntro": "Vul nog aan:",
+    "missingRole": "kies je rol (klant, schoonmaker of partner)",
+    "missingBusinessName": "bedrijfsnaam",
+    "missingBio": "over jou (minimaal 20 tekens)",
+    "missingCity": "stad",
+    "missingPostal": "postcode",
+    "missingGdpr": "de voorwaarden en privacyverklaring accepteren",
+    "submitPickRole": "Kies hierboven je rol om verder te gaan"
   },
   "authOnboardingProviderFields": {
     "businessInfo": "Bedrijfsgegevens",
