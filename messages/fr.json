@@ -2084,6 +2084,13 @@
   },
   "compChatActions": {
     "cancelBooking": "Annuler la réservation",
-    "getHelp": "Obtenir de l aide de DORIXÉ"
+    "getHelp": "Obtenir de l aide de DORIXÉ",
+    "notActiveClient": "Cette commande n est pas encore active — finalisez la réservation pour débloquer la clôture, l annulation et le paiement.",
+    "notActiveCleaner": "En attente de la finalisation de la réservation par le client — les boutons de clôture se débloqueront ensuite.",
+    "helpTitle": "Écrire à l équipe DORIXÉ au sujet de cette commande",
+    "helpPlaceholder": "Décrivez ce dont vous avez besoin…",
+    "helpSend": "Envoyer au support",
+    "helpSent": "Envoyé — l équipe DORIXÉ répondra dans votre messagerie Support.",
+    "helpOpenFull": "Ouvrir le fil support complet"
   }
 }

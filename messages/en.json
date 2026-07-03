@@ -2084,6 +2084,13 @@
   },
   "compChatActions": {
     "cancelBooking": "Cancel booking",
-    "getHelp": "Get help from DORIXÉ"
+    "getHelp": "Get help from DORIXÉ",
+    "notActiveClient": "This order is not active yet — finish the booking to unlock completion, cancellation and payment.",
+    "notActiveCleaner": "Waiting for the client to finalize the booking — completion controls unlock once they do.",
+    "helpTitle": "Message the DORIXÉ team about this order",
+    "helpPlaceholder": "Describe what you need help with…",
+    "helpSend": "Send to support",
+    "helpSent": "Sent — the DORIXÉ team will reply in your Support inbox.",
+    "helpOpenFull": "Open full support thread"
   }
 }

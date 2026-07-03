@@ -2084,6 +2084,13 @@
   },
   "compChatActions": {
     "cancelBooking": "Buchung stornieren",
-    "getHelp": "Hilfe von DORIXÉ erhalten"
+    "getHelp": "Hilfe von DORIXÉ erhalten",
+    "notActiveClient": "Dieser Auftrag ist noch nicht aktiv — schließe die Buchung ab, um Abschluss, Stornierung und Zahlung freizuschalten.",
+    "notActiveCleaner": "Warten, bis der Kunde die Buchung abschließt — dann werden die Abschluss-Buttons freigeschaltet.",
+    "helpTitle": "Dem DORIXÉ-Team zu diesem Auftrag schreiben",
+    "helpPlaceholder": "Beschreibe, wobei du Hilfe brauchst…",
+    "helpSend": "An den Support senden",
+    "helpSent": "Gesendet — das DORIXÉ-Team antwortet in deinem Support-Postfach.",
+    "helpOpenFull": "Kompletten Support-Chat öffnen"
   }
 }

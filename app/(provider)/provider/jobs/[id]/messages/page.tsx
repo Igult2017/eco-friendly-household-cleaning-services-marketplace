@@ -62,7 +62,7 @@ export default async function ProviderJobMessagesPage({ params }: { params: Prom
           clientConfirmed={!!booking.clientConfirmedAt}
         />
       )}
-      <ChatActions side="cleaner" bookingId={booking?.id} bookingStatus={booking?.status} />
+      <ChatActions side="cleaner" jobId={job.id} bookingId={booking?.id} bookingStatus={booking?.status} />
       <div className="rounded-2xl bg-white border border-[#E5EBF0] shadow-sm p-4">
         <MessageThread
           bookingId={job.id}

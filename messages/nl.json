@@ -2084,6 +2084,13 @@
   },
   "compChatActions": {
     "cancelBooking": "Boeking annuleren",
-    "getHelp": "Hulp van DORIXÉ krijgen"
+    "getHelp": "Hulp van DORIXÉ krijgen",
+    "notActiveClient": "Deze opdracht is nog niet actief — rond de boeking af om afronden, annuleren en betalen te ontgrendelen.",
+    "notActiveCleaner": "Wachten tot de klant de boeking afrondt — daarna worden de afrondknoppen ontgrendeld.",
+    "helpTitle": "Bericht het DORIXÉ-team over deze opdracht",
+    "helpPlaceholder": "Beschrijf waar je hulp bij nodig hebt…",
+    "helpSend": "Naar support sturen",
+    "helpSent": "Verstuurd — het DORIXÉ-team antwoordt in je Support-inbox.",
+    "helpOpenFull": "Volledige supportchat openen"
   }
 }
