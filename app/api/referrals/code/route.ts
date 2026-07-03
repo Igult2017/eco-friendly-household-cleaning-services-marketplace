@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { referralCodes } from "@/lib/db/schema"
+import { referralCodes, referrals } from "@/lib/db/schema"
 import { sql, and, ne } from "drizzle-orm"
 import { safeLimit, createRateLimiter } from "@/lib/redis/client"
 import { validateRefCode } from "@/lib/referrals/code"
@@ -12,13 +12,22 @@ import { ensureUserRow } from "@/lib/clerk/ensureUser"
 const limiter = createRateLimiter({ tokens: 20, windowSeconds: 60, prefix: "ratelimit:refcode" })
 
 // Is `code` free for this user to claim? Case-insensitive; the user's own current code counts as free.
+// ALSO blocked: any code another user EVER attributed signups with (referrals.code history) — else
+// user A renames their handle, user B claims the freed code and silently inherits every link A
+// already spread around the internet.
 async function isAvailable(code: string, userId: string): Promise<boolean> {
-  const rows = await db
+  const [current] = await db
     .select({ userId: referralCodes.userId })
     .from(referralCodes)
     .where(and(sql`lower(${referralCodes.code}) = ${code}`, ne(referralCodes.userId, userId)))
     .limit(1)
-  return rows.length === 0
+  if (current) return false
+  const [historic] = await db
+    .select({ referrerId: referrals.referrerId })
+    .from(referrals)
+    .where(and(sql`lower(${referrals.code}) = ${code}`, ne(referrals.referrerId, userId)))
+    .limit(1)
+  return !historic
 }
 
 // GET /api/referrals/code?code=xxx — live availability check for the dashboard editor.

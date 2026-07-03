@@ -8,6 +8,7 @@ import { eq, and, sql } from "drizzle-orm"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
 import { isUuid } from "@/lib/utils/uuid"
 import { logError } from "@/lib/utils/logError"
+import { clawbackReferralCommission } from "@/lib/referrals/clawback"
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -91,6 +92,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             { payment_intent: payment.stripePaymentIntentId, amount: refundCents },
             { idempotencyKey: `refund-${bookingId}` },
           )
+          // Refunded booking → its referral commission (if any was credited) is reversed.
+          await clawbackReferralCommission(bookingId)
         }
         newPaymentStatus = refundCents >= fullHold ? "refunded" : "partially_refunded"
       }

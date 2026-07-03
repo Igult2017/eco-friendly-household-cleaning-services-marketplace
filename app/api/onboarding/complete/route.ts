@@ -158,9 +158,11 @@ export async function POST(req: NextRequest) {
       } catch (e) { console.warn("[onboarding/complete] affiliate code creation failed:", e) }
     }
 
-    // Record referral if a valid ref cookie was set before sign-up
+    // Record referral if a valid ref cookie was set before sign-up. ONLY for genuinely new accounts:
+    // attributing an EXISTING user who merely re-onboards through someone's link (or a migrated
+    // account) would hand the referrer lifetime commissions on a user they never brought.
     const refCode = req.cookies.get("dorix_ref")?.value
-    if (refCode) {
+    if (refCode && isNewUser && !reonboarded) {
       try {
         const [refCodeRow] = await db
           .select({ userId: referralCodes.userId })

@@ -7,6 +7,7 @@ import { z } from "zod"
 import { requireAdmin } from "@/lib/auth/requireAdmin"
 import { logError } from "@/lib/utils/logError"
 import { ensureUserRow } from "@/lib/clerk/ensureUser"
+import { clawbackReferralCommission } from "@/lib/referrals/clawback"
 
 const resolveSchema = z.object({
   outcome: z.enum(["resolved_customer", "resolved_provider"]),
@@ -78,6 +79,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
           .update(payments)
           .set({ refundedAmount: refundAmount, status: refundPercent === 100 ? "refunded" : "partially_refunded" })
           .where(eq(payments.bookingId, dispute.bookingId))
+        // Refunded booking → its referral commission (credited at capture) is reversed.
+        await clawbackReferralCommission(dispute.bookingId)
       }
     }
 
