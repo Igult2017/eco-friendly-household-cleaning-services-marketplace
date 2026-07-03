@@ -35,12 +35,14 @@ export const onDisputeOpened = inngest.createFunction(
         notifyUserId = booking.customerId
       }
       if (!notifyUserId) return
+      // Link must match the RECIPIENT's role — the customer route 404s for a provider.
+      const providerRecipient = openedBy === booking.customerId
       await db.insert(notifications).values({
         userId: notifyUserId,
         type: "dispute_opened",
         title: "A dispute has been opened",
         body: `Reason: ${dispute.reason}. Please respond within 72 hours.`,
-        link: `/bookings/${bookingId}`,
+        link: providerRecipient ? "/provider/bookings" : `/bookings/${bookingId}`,
         metadata: { reason: String(dispute.reason) },
       })
     })

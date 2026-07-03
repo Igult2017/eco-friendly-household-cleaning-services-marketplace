@@ -105,7 +105,7 @@ export const bookingReminders = inngest.createFunction(
         if (provider) {
           await insertReminder({
             userId: provider.userId, bookingId, tag: "day_before", variant: "booking_reminder_provider",
-            datetime: fmtTz("en-GB"), link: `/bookings/${bookingId}`,
+            datetime: fmtTz("en-GB"), link: `/provider/bookings`,
             title: "Booking tomorrow", body: `You have a cleaning job scheduled for tomorrow at ${fmtTz("en-GB")}.`,
           })
         }
@@ -127,7 +127,7 @@ export const bookingReminders = inngest.createFunction(
         if (provider) {
           await insertReminder({
             userId: provider.userId, bookingId, tag: "2h", variant: "booking_reminder_provider",
-            datetime: fmtTz("en-GB"), link: `/bookings/${bookingId}`,
+            datetime: fmtTz("en-GB"), link: `/provider/bookings`,
             title: "Booking in 2 hours", body: `Reminder: your cleaning job starts at ${fmtTz("en-GB")}.`,
           })
         }
