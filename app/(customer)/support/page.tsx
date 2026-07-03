@@ -5,6 +5,7 @@ import { redirect } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { LifeBuoy } from "lucide-react"
 import { MessageThread } from "@/components/messaging/MessageThread"
+import { BackButton } from "@/components/ui/BackButton"
 
 // In-app support channel (client side): one ongoing thread with the DORIXÉ team.
 export default async function CustomerSupportPage() {
@@ -15,6 +16,7 @@ export default async function CustomerSupportPage() {
   return (
     <div className="max-w-2xl space-y-6">
       <div>
+        <div className="mb-2"><BackButton fallback="/dashboard" /></div>
         <h1 className="font-serif text-3xl font-bold text-[#2B3441] flex items-center gap-2">
           <LifeBuoy size={26} className="text-[#2D7A5F]" /> {t("title")}
         </h1>

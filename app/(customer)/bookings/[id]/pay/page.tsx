@@ -7,6 +7,7 @@ import { loadStripe } from "@stripe/stripe-js"
 import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js"
 import { Button } from "@/components/ui/button"
 import { Loader2, CreditCard } from "lucide-react"
+import { BackButton } from "@/components/ui/BackButton"
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
@@ -81,6 +82,7 @@ export default function BookingPayPage({ params }: { params: Promise<{ id: strin
 
   return (
     <div className="max-w-lg mx-auto py-10 px-4">
+      <div className="mb-3"><BackButton fallback={`/bookings/${id}`} /></div>
       <h1 className="font-serif text-2xl font-bold text-[#2B3441] flex items-center gap-2 mb-1">
         <CreditCard size={22} className="text-[#2D7A5F]" /> {t("title")}
       </h1>

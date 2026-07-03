@@ -7,6 +7,7 @@ import { db } from "@/lib/db"
 import { jobPosts, bids } from "@/lib/db/schema"
 import { eq, and, sql, inArray } from "drizzle-orm"
 import { EditJobForm } from "@/components/bidding/EditJobForm"
+import { BackButton } from "@/components/ui/BackButton"
 
 export default async function EditJobPage({ params }: { params: Promise<{ id: string }> }) {
   const { userId } = await auth()
@@ -34,6 +35,7 @@ export default async function EditJobPage({ params }: { params: Promise<{ id: st
   return (
     <div className="min-h-screen bg-[#F4FAF6] py-10 px-4">
       <div className="max-w-2xl mx-auto">
+        <div className="mb-3"><BackButton fallback="/jobs" /></div>
         <h1 className="font-serif text-2xl font-bold text-[#2B3441] mb-1">{t("title")}</h1>
         <p className="text-[#6B7280] mb-6">{t("subtitle")}</p>
         <EditJobForm

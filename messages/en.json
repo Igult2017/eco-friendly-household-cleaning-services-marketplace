@@ -2100,5 +2100,8 @@
     "writeAnother": "Write another",
     "openChat": "Open full chat →",
     "failed": "Could not send. Please try again."
+  },
+  "compBackButton": {
+    "back": "Back"
   }
 }

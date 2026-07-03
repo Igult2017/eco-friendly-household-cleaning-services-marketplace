@@ -2100,5 +2100,8 @@
     "writeAnother": "Nog een schrijven",
     "openChat": "Volledige chat openen →",
     "failed": "Versturen mislukt. Probeer opnieuw."
+  },
+  "compBackButton": {
+    "back": "Terug"
   }
 }

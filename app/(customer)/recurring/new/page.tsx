@@ -7,6 +7,7 @@ import { bookings, providers, providerServices } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
 import { zonedDayAndTime } from "@/lib/utils/tz"
 import { RecurringSetupForm } from "@/components/booking/RecurringSetupForm"
+import { BackButton } from "@/components/ui/BackButton"
 
 export const metadata = { title: "Set up recurring | DORIXÉ" }
 
@@ -45,7 +46,9 @@ export default async function RecurringNewPage({ searchParams }: { searchParams:
     : "weekly"
 
   return (
-    <RecurringSetupForm
+    <>
+      <div className="mx-auto max-w-2xl px-4 pt-6"><BackButton fallback="/bookings" /></div>
+      <RecurringSetupForm
       providerId={b.providerId}
       serviceId={b.serviceId}
       businessName={b.businessName}
@@ -57,6 +60,7 @@ export default async function RecurringNewPage({ searchParams }: { searchParams:
       initialFrequency={freq}
       initialDayOfWeek={dayOfWeek}
       initialTime={hhmm}
-    />
+      />
+    </>
   )
 }

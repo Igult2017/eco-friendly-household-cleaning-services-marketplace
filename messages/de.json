@@ -2100,5 +2100,8 @@
     "writeAnother": "Weitere schreiben",
     "openChat": "Kompletten Chat öffnen →",
     "failed": "Senden fehlgeschlagen. Bitte erneut versuchen."
+  },
+  "compBackButton": {
+    "back": "Zurück"
   }
 }

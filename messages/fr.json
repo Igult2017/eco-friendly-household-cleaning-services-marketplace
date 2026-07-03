@@ -2100,5 +2100,8 @@
     "writeAnother": "En écrire un autre",
     "openChat": "Ouvrir la conversation →",
     "failed": "Échec de l envoi. Veuillez réessayer."
+  },
+  "compBackButton": {
+    "back": "Retour"
   }
 }
