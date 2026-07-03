@@ -46,14 +46,15 @@ export const onBookingCreated = inngest.createFunction(
     })
 
     await step.run("notify-customer", async () => {
-      // The client previously got only a confirmation EMAIL — add an in-app confirmation too. The base
-      // booking_confirmed copy is client-perspective, so it localizes correctly with no params.
+      // Honest wording: at creation the booking is a REQUEST — the cleaner still has to accept it.
+      // Saying "confirmed" here read as auto-approval.
       await db.insert(notifications).values({
         userId: customerId,
         type: "booking_confirmed",
-        title: "Booking confirmed",
-        body: "Your booking has been confirmed.",
+        title: "Booking request sent",
+        body: "Your booking request was sent to the cleaner. You'll be notified as soon as they accept.",
         link: `/bookings/${bookingId}`,
+        metadata: { variant: "booking_request_sent" },
       })
     })
 

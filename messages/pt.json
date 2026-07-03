@@ -584,9 +584,9 @@
     "errorServiceNotFound": "Serviço não encontrado.",
     "errorPreparePayment": "Não foi possível preparar o pagamento",
     "errorGeneric": "Algo correu mal. Tente novamente.",
-    "bookingConfirmedTitle": "Reserva confirmada!",
+    "bookingConfirmedTitle": "Pedido de reserva enviado!",
     "bookingNumberLabel": "Número da reserva:",
-    "confirmationEmailNote": "Foi enviada uma confirmação para o seu e-mail. O seu cartão foi pré-autorizado — só será cobrado quando a limpeza for marcada como concluída.",
+    "confirmationEmailNote": "Enviámos-te os detalhes por e-mail. O teu profissional ainda tem de aceitar a reserva — serás notificado assim que o fizer. Só é cobrado depois de a limpeza estar concluída e confirmada.",
     "goToMyBookings": "Ir para as minhas reservas",
     "reviewAndPayTitle": "Rever e pagar",
     "reviewAndPaySubtitle": "Reveja os detalhes da sua reserva e conclua o pagamento",
@@ -618,7 +618,9 @@
     "bookWithoutCardNote": "O teu profissional aguardará até adicionares um método de pagamento — podes fazê-lo a qualquer momento na reserva. Só é cobrado após a confirmação de ambos.",
     "rateBreakdown": "{rate}/h × {hours} h",
     "payoutFallbackTitle": "Guarda o teu cartão para garantir esta reserva",
-    "payoutFallbackBody": "Este profissional ainda está a concluir a configuração de pagamentos, pelo que o pagamento ainda não pode ser autorizado — isso não afeta o teu cartão. Guarda-o agora: a reserva é criada, nada é cobrado antes de o trabalho estar concluído e o pagamento é feito automaticamente após ambos confirmarem a conclusão."
+    "payoutFallbackBody": "Este profissional ainda está a concluir a configuração de pagamentos, pelo que o pagamento ainda não pode ser autorizado — isso não afeta o teu cartão. Guarda-o agora: a reserva é criada, nada é cobrado antes de o trabalho estar concluído e o pagamento é feito automaticamente após ambos confirmarem a conclusão.",
+    "confirmBookingRequest": "Confirmar pedido de reserva",
+    "useDifferentCard": "Usar outro cartão"
   },
   "customerBookExtrasPage": {
     "heading": "Algum pedido especial?",

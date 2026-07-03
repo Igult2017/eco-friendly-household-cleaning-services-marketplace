@@ -584,9 +584,9 @@
     "errorServiceNotFound": "Dienst niet gevonden.",
     "errorPreparePayment": "Betaling kon niet worden voorbereid",
     "errorGeneric": "Er is iets misgegaan. Probeer het opnieuw.",
-    "bookingConfirmedTitle": "Boeking bevestigd!",
+    "bookingConfirmedTitle": "Boekingsaanvraag verzonden!",
     "bookingNumberLabel": "Boekingsnummer:",
-    "confirmationEmailNote": "Er is een bevestiging naar je e-mail gestuurd. Je kaart is vooraf geautoriseerd — er wordt pas afgeschreven zodra de schoonmaak als voltooid is gemarkeerd.",
+    "confirmationEmailNote": "We hebben je de details gemaild. Je schoonmaker moet de boeking nog accepteren — je krijgt bericht zodra dat gebeurt. Er wordt pas afgeschreven nadat de schoonmaak is afgerond en bevestigd.",
     "goToMyBookings": "Naar mijn boekingen",
     "reviewAndPayTitle": "Controleren & betalen",
     "reviewAndPaySubtitle": "Controleer je boekingsgegevens en rond de betaling af",
@@ -618,7 +618,9 @@
     "bookWithoutCardNote": "Je schoonmaker wacht tot je een betaalmethode toevoegt — dat kan altijd via de boeking. Er wordt pas afgeschreven na bevestiging door jullie beiden.",
     "rateBreakdown": "{rate}/u × {hours} u",
     "payoutFallbackTitle": "Sla je kaart op om deze boeking veilig te stellen",
-    "payoutFallbackBody": "Deze schoonmaker is de uitbetaling nog aan het instellen, dus de betaling kan nog niet worden geautoriseerd — dat staat los van je kaart. Sla hem nu op: je boeking wordt aangemaakt, er wordt niets afgeschreven voordat het werk klaar is en de betaling volgt automatisch nadat jullie beiden de voltooiing bevestigen."
+    "payoutFallbackBody": "Deze schoonmaker is de uitbetaling nog aan het instellen, dus de betaling kan nog niet worden geautoriseerd — dat staat los van je kaart. Sla hem nu op: je boeking wordt aangemaakt, er wordt niets afgeschreven voordat het werk klaar is en de betaling volgt automatisch nadat jullie beiden de voltooiing bevestigen.",
+    "confirmBookingRequest": "Boekingsaanvraag bevestigen",
+    "useDifferentCard": "Andere kaart gebruiken"
   },
   "customerBookExtrasPage": {
     "heading": "Speciale verzoeken?",

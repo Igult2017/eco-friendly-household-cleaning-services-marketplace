@@ -584,9 +584,9 @@
     "errorServiceNotFound": "Servizio non trovato.",
     "errorPreparePayment": "Impossibile preparare il pagamento",
     "errorGeneric": "Qualcosa è andato storto. Riprova.",
-    "bookingConfirmedTitle": "Prenotazione confermata!",
+    "bookingConfirmedTitle": "Richiesta di prenotazione inviata!",
     "bookingNumberLabel": "Numero di prenotazione:",
-    "confirmationEmailNote": "Una conferma è stata inviata alla tua email. La tua carta è stata preautorizzata — l'addebito avverrà solo quando la pulizia sarà contrassegnata come completata.",
+    "confirmationEmailNote": "Ti abbiamo inviato i dettagli via e-mail. Il tuo addetto deve ancora accettare la prenotazione — ti avviseremo non appena lo farà. L addebito avviene solo dopo il completamento e la conferma della pulizia.",
     "goToMyBookings": "Vai alle mie prenotazioni",
     "reviewAndPayTitle": "Rivedi e paga",
     "reviewAndPaySubtitle": "Controlla i dettagli della tua prenotazione e completa il pagamento",
@@ -618,7 +618,9 @@
     "bookWithoutCardNote": "Il tuo addetto attenderà finché non aggiungi un metodo di pagamento — puoi farlo in qualsiasi momento dalla prenotazione. L'addebito avviene solo dopo la conferma di entrambi.",
     "rateBreakdown": "{rate}/h × {hours} h",
     "payoutFallbackTitle": "Salva la tua carta per garantire questa prenotazione",
-    "payoutFallbackBody": "Questo addetto sta ancora completando la configurazione dei pagamenti, quindi il pagamento non può ancora essere autorizzato — ma la tua carta non c entra. Salvala ora: la prenotazione viene creata, nulla viene addebitato prima della fine del lavoro e il pagamento avviene automaticamente dopo la conferma di entrambi."
+    "payoutFallbackBody": "Questo addetto sta ancora completando la configurazione dei pagamenti, quindi il pagamento non può ancora essere autorizzato — ma la tua carta non c entra. Salvala ora: la prenotazione viene creata, nulla viene addebitato prima della fine del lavoro e il pagamento avviene automaticamente dopo la conferma di entrambi.",
+    "confirmBookingRequest": "Conferma la richiesta di prenotazione",
+    "useDifferentCard": "Usa un altra carta"
   },
   "customerBookExtrasPage": {
     "heading": "Richieste particolari?",

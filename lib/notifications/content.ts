@@ -400,6 +400,17 @@ const NOTIF: Record<string, Record<string, S>> = {
     pl: { title: "Klient próbował Cię zarezerwować — dokończ konfigurację wypłat", body: "Klient próbował Cię zarezerwować, ale nie połączyłeś jeszcze konta wypłat. Połącz je w Zarobkach, aby można było Cię rezerwować i płacić." },
     pt: { title: "Um cliente tentou reservar-te — conclui a configuração de pagamentos", body: "Um cliente tentou reservar-te, mas ainda não ligaste a tua conta de pagamentos. Liga-a em Ganhos para poderes ser reservado e pago." },
   },
+  // At creation a booking is a REQUEST — the cleaner still has to accept it manually.
+  booking_request_sent: {
+    en: { title: "Booking request sent", body: "Your booking request was sent to the cleaner. You'll be notified as soon as they accept." },
+    de: { title: "Buchungsanfrage gesendet", body: "Deine Buchungsanfrage wurde an die Reinigungskraft gesendet. Du wirst benachrichtigt, sobald sie annimmt." },
+    fr: { title: "Demande de réservation envoyée", body: "Votre demande de réservation a été envoyée à l'intervenant. Vous serez averti(e) dès qu'il l'acceptera." },
+    es: { title: "Solicitud de reserva enviada", body: "Tu solicitud de reserva se envió al profesional. Te avisaremos en cuanto la acepte." },
+    it: { title: "Richiesta di prenotazione inviata", body: "La tua richiesta di prenotazione è stata inviata all'addetto. Ti avviseremo non appena la accetterà." },
+    nl: { title: "Boekingsaanvraag verzonden", body: "Je boekingsaanvraag is naar de schoonmaker gestuurd. Je krijgt bericht zodra die wordt geaccepteerd." },
+    pl: { title: "Prośba o rezerwację wysłana", body: "Twoja prośba o rezerwację została wysłana do osoby sprzątającej. Powiadomimy Cię, gdy tylko ją zaakceptuje." },
+    pt: { title: "Pedido de reserva enviado", body: "O teu pedido de reserva foi enviado ao profissional. Serás notificado assim que o aceitar." },
+  },
   // Unpaid booking, but the CLIENT saved a card — the missing piece is the cleaner's payout account.
   booking_card_on_file: {
     en: { title: "Client's card is on file — payment not yet secured", body: "This client saved a payment method for the booking, but the payment hold couldn't be authorized yet. If you haven't connected your payout account in Earnings, do it now — then the client can authorize and you can take the order." },
@@ -471,6 +482,7 @@ const PARAMS: Record<string, string[]> = {
   bid_lost_assigned: ["title"],
   booking_card_on_file: [],
   client_card_saved_wait: [],
+  booking_request_sent: [],
 }
 
 /**

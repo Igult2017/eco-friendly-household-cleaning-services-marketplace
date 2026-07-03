@@ -584,9 +584,9 @@
     "errorServiceNotFound": "Service introuvable.",
     "errorPreparePayment": "Impossible de préparer le paiement",
     "errorGeneric": "Une erreur s'est produite. Veuillez réessayer.",
-    "bookingConfirmedTitle": "Réservation confirmée !",
+    "bookingConfirmedTitle": "Demande de réservation envoyée !",
     "bookingNumberLabel": "Numéro de réservation :",
-    "confirmationEmailNote": "Une confirmation a été envoyée à votre adresse e-mail. Votre carte a été pré-autorisée — vous ne serez débité qu'une fois le ménage marqué comme terminé.",
+    "confirmationEmailNote": "Nous vous avons envoyé les détails par e-mail. Votre intervenant doit encore accepter la réservation — vous serez averti(e) dès que ce sera fait. Vous ne serez débité(e) qu après la fin et la confirmation du ménage.",
     "goToMyBookings": "Voir mes réservations",
     "reviewAndPayTitle": "Vérifier et payer",
     "reviewAndPaySubtitle": "Vérifiez les détails de votre réservation et finalisez le paiement",
@@ -618,7 +618,9 @@
     "bookWithoutCardNote": "Votre intervenant attendra que vous ajoutiez un moyen de paiement — possible à tout moment depuis la réservation. Le débit n'a lieu qu'après votre double confirmation.",
     "rateBreakdown": "{rate}/h × {hours} h",
     "payoutFallbackTitle": "Enregistrez votre carte pour sécuriser cette réservation",
-    "payoutFallbackBody": "Cet intervenant finalise encore la configuration de ses versements, le paiement ne peut donc pas encore être autorisé — cela ne concerne pas votre carte. Enregistrez-la maintenant : votre réservation est créée, rien n est débité avant la fin du travail, et le paiement est prélevé automatiquement après votre double confirmation."
+    "payoutFallbackBody": "Cet intervenant finalise encore la configuration de ses versements, le paiement ne peut donc pas encore être autorisé — cela ne concerne pas votre carte. Enregistrez-la maintenant : votre réservation est créée, rien n est débité avant la fin du travail, et le paiement est prélevé automatiquement après votre double confirmation.",
+    "confirmBookingRequest": "Confirmer la demande de réservation",
+    "useDifferentCard": "Utiliser une autre carte"
   },
   "customerBookExtrasPage": {
     "heading": "Des demandes particulières ?",

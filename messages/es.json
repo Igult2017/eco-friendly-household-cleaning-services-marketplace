@@ -584,9 +584,9 @@
     "errorServiceNotFound": "Servicio no encontrado.",
     "errorPreparePayment": "No se pudo preparar el pago",
     "errorGeneric": "Algo salió mal. Inténtalo de nuevo.",
-    "bookingConfirmedTitle": "¡Reserva confirmada!",
+    "bookingConfirmedTitle": "¡Solicitud de reserva enviada!",
     "bookingNumberLabel": "Número de reserva:",
-    "confirmationEmailNote": "Se ha enviado una confirmación a tu correo electrónico. Tu tarjeta ha sido preautorizada: solo se te cobrará cuando la limpieza se marque como completada.",
+    "confirmationEmailNote": "Te hemos enviado los detalles por correo. Tu profesional aún debe aceptar la reserva; te avisaremos en cuanto lo haga. Solo se cobra después de completar y confirmar la limpieza.",
     "goToMyBookings": "Ir a mis reservas",
     "reviewAndPayTitle": "Revisar y pagar",
     "reviewAndPaySubtitle": "Revisa los detalles de tu reserva y completa el pago",
@@ -618,7 +618,9 @@
     "bookWithoutCardNote": "Tu profesional esperará hasta que añadas un método de pago — puedes hacerlo en cualquier momento desde la reserva. Solo se cobra tras la confirmación de ambos.",
     "rateBreakdown": "{rate}/h × {hours} h",
     "payoutFallbackTitle": "Guarda tu tarjeta para asegurar esta reserva",
-    "payoutFallbackBody": "Este profesional aún está completando su configuración de cobros, por lo que el pago todavía no puede autorizarse; eso no afecta a tu tarjeta. Guárdala ahora: tu reserva se crea, no se cobra nada antes de terminar el trabajo y el pago se realiza automáticamente cuando ambos confirméis la finalización."
+    "payoutFallbackBody": "Este profesional aún está completando su configuración de cobros, por lo que el pago todavía no puede autorizarse; eso no afecta a tu tarjeta. Guárdala ahora: tu reserva se crea, no se cobra nada antes de terminar el trabajo y el pago se realiza automáticamente cuando ambos confirméis la finalización.",
+    "confirmBookingRequest": "Confirmar solicitud de reserva",
+    "useDifferentCard": "Usar otra tarjeta"
   },
   "customerBookExtrasPage": {
     "heading": "¿Alguna petición especial?",

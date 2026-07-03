@@ -584,9 +584,9 @@
     "errorServiceNotFound": "Nie znaleziono usługi.",
     "errorPreparePayment": "Nie udało się przygotować płatności",
     "errorGeneric": "Coś poszło nie tak. Spróbuj ponownie.",
-    "bookingConfirmedTitle": "Rezerwacja potwierdzona!",
+    "bookingConfirmedTitle": "Prośba o rezerwację wysłana!",
     "bookingNumberLabel": "Numer rezerwacji:",
-    "confirmationEmailNote": "Potwierdzenie zostało wysłane na Twój adres e-mail. Twoja karta została wstępnie autoryzowana — opłata zostanie pobrana dopiero po oznaczeniu sprzątania jako zakończone.",
+    "confirmationEmailNote": "Wysłaliśmy Ci szczegóły e-mailem. Osoba sprzątająca musi jeszcze zaakceptować rezerwację — powiadomimy Cię, gdy tylko to zrobi. Opłata pobierana jest dopiero po zakończeniu i potwierdzeniu sprzątania.",
     "goToMyBookings": "Przejdź do moich rezerwacji",
     "reviewAndPayTitle": "Sprawdź i zapłać",
     "reviewAndPaySubtitle": "Sprawdź szczegóły rezerwacji i dokończ płatność",
@@ -618,7 +618,9 @@
     "bookWithoutCardNote": "Osoba sprzątająca poczeka, aż dodasz metodę płatności — możesz to zrobić w każdej chwili z poziomu rezerwacji. Obciążenie następuje dopiero po potwierdzeniu przez oboje.",
     "rateBreakdown": "{rate}/godz. × {hours} godz.",
     "payoutFallbackTitle": "Zapisz kartę, aby zabezpieczyć tę rezerwację",
-    "payoutFallbackBody": "Ta osoba sprzątająca wciąż konfiguruje wypłaty, więc płatność nie może jeszcze zostać autoryzowana — to nie dotyczy Twojej karty. Zapisz ją teraz: rezerwacja zostanie utworzona, nic nie zostanie pobrane przed zakończeniem pracy, a płatność nastąpi automatycznie po potwierdzeniu przez oboje."
+    "payoutFallbackBody": "Ta osoba sprzątająca wciąż konfiguruje wypłaty, więc płatność nie może jeszcze zostać autoryzowana — to nie dotyczy Twojej karty. Zapisz ją teraz: rezerwacja zostanie utworzona, nic nie zostanie pobrane przed zakończeniem pracy, a płatność nastąpi automatycznie po potwierdzeniu przez oboje.",
+    "confirmBookingRequest": "Potwierdź prośbę o rezerwację",
+    "useDifferentCard": "Użyj innej karty"
   },
   "customerBookExtrasPage": {
     "heading": "Masz specjalne życzenia?",

@@ -584,9 +584,9 @@
     "errorServiceNotFound": "Dienstleistung nicht gefunden.",
     "errorPreparePayment": "Zahlung konnte nicht vorbereitet werden",
     "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
-    "bookingConfirmedTitle": "Buchung bestätigt!",
+    "bookingConfirmedTitle": "Buchungsanfrage gesendet!",
     "bookingNumberLabel": "Buchungsnummer:",
-    "confirmationEmailNote": "Eine Bestätigung wurde an deine E-Mail-Adresse gesendet. Deine Karte wurde vorautorisiert — die Abbuchung erfolgt erst, sobald die Reinigung als abgeschlossen markiert ist.",
+    "confirmationEmailNote": "Wir haben dir die Details per E-Mail geschickt. Deine Reinigungskraft muss die Buchung noch annehmen — du wirst benachrichtigt, sobald das geschieht. Abgebucht wird erst nach Abschluss und Bestätigung der Reinigung.",
     "goToMyBookings": "Zu meinen Buchungen",
     "reviewAndPayTitle": "Prüfen & Bezahlen",
     "reviewAndPaySubtitle": "Überprüfe deine Buchungsdetails und schließe die Zahlung ab",
@@ -618,7 +618,9 @@
     "bookWithoutCardNote": "Deine Reinigungskraft wartet, bis du eine Zahlungsmethode hinzufügst — das geht jederzeit über die Buchung. Abgebucht wird erst nach beidseitiger Bestätigung.",
     "rateBreakdown": "{rate}/Std. × {hours} Std.",
     "payoutFallbackTitle": "Speichere deine Karte, um diese Buchung zu sichern",
-    "payoutFallbackBody": "Diese Reinigungskraft richtet ihre Auszahlung noch ein, daher kann die Zahlung noch nicht autorisiert werden — deine Karte betrifft das nicht. Speichere sie jetzt: Deine Buchung wird erstellt, vor Abschluss der Arbeit wird nichts abgebucht, und die Zahlung erfolgt automatisch, nachdem ihr beide den Abschluss bestätigt habt."
+    "payoutFallbackBody": "Diese Reinigungskraft richtet ihre Auszahlung noch ein, daher kann die Zahlung noch nicht autorisiert werden — deine Karte betrifft das nicht. Speichere sie jetzt: Deine Buchung wird erstellt, vor Abschluss der Arbeit wird nichts abgebucht, und die Zahlung erfolgt automatisch, nachdem ihr beide den Abschluss bestätigt habt.",
+    "confirmBookingRequest": "Buchungsanfrage bestätigen",
+    "useDifferentCard": "Andere Karte verwenden"
   },
   "customerBookExtrasPage": {
     "heading": "Besondere Wünsche?",

@@ -584,9 +584,9 @@
     "errorServiceNotFound": "Service not found.",
     "errorPreparePayment": "Failed to prepare payment",
     "errorGeneric": "Something went wrong. Please try again.",
-    "bookingConfirmedTitle": "Booking Confirmed!",
+    "bookingConfirmedTitle": "Booking request sent!",
     "bookingNumberLabel": "Booking number:",
-    "confirmationEmailNote": "A confirmation has been sent to your email. Your card has been pre-authorised — you will only be charged once the cleaning is marked complete.",
+    "confirmationEmailNote": "We have emailed you the details. Your cleaner still has to accept the booking — you will be notified as soon as they do. You are only charged after the cleaning is completed and confirmed.",
     "goToMyBookings": "Go to My Bookings",
     "reviewAndPayTitle": "Review & Pay",
     "reviewAndPaySubtitle": "Review your booking details and complete payment",
@@ -618,7 +618,9 @@
     "bookWithoutCardNote": "Your cleaner will be told to wait until you add a payment method — add it any time from the booking. Payment is only charged after you both confirm completion.",
     "rateBreakdown": "{rate}/h × {hours} h",
     "payoutFallbackTitle": "Save your card to secure this booking",
-    "payoutFallbackBody": "This cleaner is still finishing their payout setup, so the payment cannot be authorized yet — but that does not affect your card. Save it now: your booking is created, nothing is charged before the work is done, and payment is collected automatically after you both confirm completion."
+    "payoutFallbackBody": "This cleaner is still finishing their payout setup, so the payment cannot be authorized yet — but that does not affect your card. Save it now: your booking is created, nothing is charged before the work is done, and payment is collected automatically after you both confirm completion.",
+    "confirmBookingRequest": "Confirm booking request",
+    "useDifferentCard": "Use a different card"
   },
   "customerBookExtrasPage": {
     "heading": "Any special requests?",

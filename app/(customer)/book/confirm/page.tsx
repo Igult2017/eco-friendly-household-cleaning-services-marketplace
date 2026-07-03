@@ -11,7 +11,7 @@ import { loadStripe } from "@stripe/stripe-js"
 import { Elements } from "@stripe/react-stripe-js"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
 import { getCurrencyForCountry } from "@/lib/utils/locale"
-import { Loader2, CheckCircle2, Leaf, Tag, X } from "lucide-react"
+import { Loader2, CheckCircle2, Leaf, Tag, X, CreditCard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
@@ -55,6 +55,7 @@ export default function BookStep5Page() {
   // guarantee is independent of that. Fall back to SAVING the card (SetupIntent) + booking.
   const [payoutFallback, setPayoutFallback] = useState(false)
   const [saveCardSecret, setSaveCardSecret] = useState<string | null>(null)
+  const [savedCard, setSavedCard] = useState<{ brand: string; last4: string } | null>(null)
 
   // Bid-flow bookings (accepted bid) may have null categoryId or a slug instead of UUID.
   // They always have bidAmountCents set. Loosen the guard accordingly.
@@ -237,20 +238,30 @@ export default function BookStep5Page() {
     }
   }
 
-  // Card-save fallback: with a card already on file the booking is created straight away; otherwise
-  // show the card panel in save mode (no charge, no cleaner account needed) and book after saving.
+  // Card-save fallback. NEVER books silently: with a card on file the panel shows it and waits for an
+  // explicit "Confirm booking request"; without one it shows the card form (save = no charge).
   async function startPayoutFallback() {
     try {
       const m = await fetch("/api/payments/methods").then((r) => r.json()).catch(() => ({ cards: [] }))
-      if ((m.cards ?? []).length > 0) { await bookWithoutCard(); return }
-      const r = await fetch("/api/payments/setup-intent", { method: "POST" })
-      const d = await r.json()
-      if (!d.clientSecret) { setError(t("errorPreparePayment")); return }
-      setSaveCardSecret(d.clientSecret)
-      setPayoutFallback(true)
+      const card = (m.cards ?? [])[0]
+      if (card) {
+        setSavedCard({ brand: card.brand, last4: card.last4 })
+        setPayoutFallback(true)
+        return
+      }
+      await loadNewCardForm()
     } catch {
       setError(t("errorGeneric"))
     }
+  }
+
+  async function loadNewCardForm() {
+    const r = await fetch("/api/payments/setup-intent", { method: "POST" })
+    const d = await r.json()
+    if (!d.clientSecret) { setError(t("errorPreparePayment")); return }
+    setSavedCard(null)
+    setSaveCardSecret(d.clientSecret)
+    setPayoutFallback(true)
   }
 
   async function proceedToPayment() {
@@ -442,14 +453,32 @@ export default function BookStep5Page() {
           <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
         )}
 
-        {/* Payout-fallback: cleaner's payout account isn't ready — save the card + book instead. */}
-        {step === "summary" && payoutFallback && saveCardSecret && (
+        {/* Payout-fallback: cleaner's payout account isn't ready — save/confirm the card + book. */}
+        {step === "summary" && payoutFallback && (
           <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-6 space-y-3">
             <p className="text-sm font-semibold text-[#2B3441]">{t("payoutFallbackTitle")}</p>
             <p className="text-xs text-[#6B7280]">{t("payoutFallbackBody")}</p>
-            <Elements stripe={stripePromise} options={{ clientSecret: saveCardSecret, appearance: { theme: "stripe", variables: { colorPrimary: "#2D7A5F" } } }}>
-              <AddCardForm onDone={() => { setPayoutFallback(false); void bookWithoutCard() }} onCancel={() => setPayoutFallback(false)} />
-            </Elements>
+            {savedCard ? (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 rounded-lg border border-[#E5EBF0] bg-[#F4FAF6] px-3 py-2.5 text-sm text-[#2B3441]">
+                  <CreditCard size={16} className="text-[#2D7A5F]" />
+                  <span className="capitalize">{savedCard.brand}</span>
+                  <span>•••• {savedCard.last4}</span>
+                </div>
+                <Button onClick={bookWithoutCard} disabled={loading} className="w-full h-11 bg-[#2D7A5F] hover:bg-[#235f49] text-white font-semibold">
+                  {loading ? <><Loader2 size={16} className="animate-spin mr-2" />{t("preparingPayment")}</> : t("confirmBookingRequest")}
+                </Button>
+                <button type="button" onClick={() => void loadNewCardForm()} disabled={loading} className="w-full text-center text-xs text-[#6B7280] underline hover:text-[#2B3441] transition-colors">
+                  {t("useDifferentCard")}
+                </button>
+              </div>
+            ) : saveCardSecret ? (
+              <Elements stripe={stripePromise} options={{ clientSecret: saveCardSecret, appearance: { theme: "stripe", variables: { colorPrimary: "#2D7A5F" } } }}>
+                <AddCardForm onDone={() => { void bookWithoutCard() }} onCancel={() => setPayoutFallback(false)} />
+              </Elements>
+            ) : (
+              <div className="flex justify-center py-3"><Loader2 size={18} className="animate-spin text-[#2D7A5F]" /></div>
+            )}
           </div>
         )}
 
