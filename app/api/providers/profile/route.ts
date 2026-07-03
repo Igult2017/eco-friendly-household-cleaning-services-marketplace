@@ -9,6 +9,7 @@ import { nanoid } from "nanoid"
 import { sendProviderApprovedEmail } from "@/lib/resend/providerApproved"
 import { logError } from "@/lib/utils/logError"
 import { ensureUserRow } from "@/lib/clerk/ensureUser"
+import { sendApprovalSupportWelcome } from "@/lib/support/approvalWelcome"
 
 function toSlug(name: string, suffix: string): string {
   return (
@@ -131,9 +132,10 @@ export async function PATCH(req: Request) {
             type: "provider_approved",
             title: "You're approved — welcome to DORIXÉ!",
             body: "Your cleaner account is active. You can now browse jobs and place bids.",
-            link: "/provider/dashboard",
+            link: "/provider/support",
           })
         } catch (e) { console.warn("[providers/profile] approval notification failed:", e) }
+        await sendApprovalSupportWelcome(userId)
         try { await sendProviderApprovedEmail(userId) } catch (e) { console.warn("[providers/profile] approval email failed:", e) }
       }
       return NextResponse.json({ success: true })
@@ -192,9 +194,10 @@ export async function PATCH(req: Request) {
         type: "provider_approved",
         title: "You're approved — welcome to DORIXÉ!",
         body: "Your cleaner account is active. You can now browse jobs and place bids.",
-        link: "/provider/dashboard",
+        link: "/provider/support",
       })
     } catch (e) { console.warn("[providers/profile] approval notification failed:", e) }
+    await sendApprovalSupportWelcome(userId)
     try { await sendProviderApprovedEmail(userId) } catch (e) { console.warn("[providers/profile] approval email failed:", e) }
 
     return NextResponse.json({ success: true, created: true }, { status: 201 })

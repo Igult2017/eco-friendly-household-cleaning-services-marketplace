@@ -12,6 +12,7 @@ import { sendProviderApprovedEmail } from "@/lib/resend/providerApproved"
 import { z } from "zod"
 import { logError } from "@/lib/utils/logError"
 import { ensureUserRow } from "@/lib/clerk/ensureUser"
+import { sendApprovalSupportWelcome } from "@/lib/support/approvalWelcome"
 
 const enableSchema = z.object({
   businessName: z.string().min(2).max(100),
@@ -127,9 +128,10 @@ export async function POST(req: NextRequest) {
         type: "provider_approved",
         title: "You're approved — welcome to DORIXÉ!",
         body: "Your cleaner account is active. You can now browse jobs and place bids.",
-        link: "/provider/dashboard",
+        link: "/provider/support",
       })
     } catch (e) { console.warn("[enable-dual-role] approval notification failed:", e) }
+    await sendApprovalSupportWelcome(userId)
     try { await sendProviderApprovedEmail(userId) } catch (e) { console.warn("[enable-dual-role] approval email failed:", e) }
 
     const clerk = await clerkClient()

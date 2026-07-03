@@ -10,6 +10,7 @@ import { inngest } from "@/lib/inngest/client"
 import { sendProviderApprovedEmail } from "@/lib/resend/providerApproved"
 import { logError } from "@/lib/utils/logError"
 import { normalizeRefCode } from "@/lib/referrals/code"
+import { sendApprovalSupportWelcome } from "@/lib/support/approvalWelcome"
 import { isLocale, localeFromAcceptLanguage } from "@/i18n/config"
 
 const ROLE_COOKIE = "dorix_role"
@@ -138,9 +139,11 @@ export async function POST(req: NextRequest) {
             type: "provider_approved",
             title: "You're approved — welcome to DORIXÉ!",
             body: "Your cleaner account is active. You can now browse jobs and place bids.",
-            link: "/provider/dashboard",
+            // Opens the support thread, where the openable/replyable welcome message lives.
+            link: "/provider/support",
           })
         } catch (e) { console.warn("[onboarding/complete] approval notification failed:", e) }
+        await sendApprovalSupportWelcome(userId)
         try { await sendProviderApprovedEmail(userId) } catch (e) { console.warn("[onboarding/complete] approval email failed:", e) }
       }
     }

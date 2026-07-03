@@ -78,7 +78,8 @@ export async function POST(req: Request) {
               type: "provider_approved",
               title: "Identity verified!",
               body: "Your identity has been verified. You can now accept bookings on DORIXÉ.",
-              link: "/dashboard",
+              // Provider recipient — /dashboard is the CLIENT dashboard; open their support thread.
+              link: "/provider/support",
             })
           }
         }
