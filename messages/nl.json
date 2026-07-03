@@ -1077,7 +1077,10 @@
     "rateClientSubmit": "Beoordeling versturen",
     "rateClientSaving": "Opslaan…",
     "rateClientDone": "Je hebt deze klant beoordeeld — bedankt!",
-    "rateClientFailed": "Beoordeling kon niet worden opgeslagen. Probeer opnieuw."
+    "rateClientFailed": "Beoordeling kon niet worden opgeslagen. Probeer opnieuw.",
+    "acceptRequestPayment": "Accepteren & betaalmethode vragen",
+    "requestPaymentSending": "Versturen…",
+    "requestPaymentSent": "Klant geïnformeerd — wachten op betaalmethode"
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Markeren als voltooid mislukt",

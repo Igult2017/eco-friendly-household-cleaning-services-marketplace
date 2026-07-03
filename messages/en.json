@@ -1077,7 +1077,10 @@
     "rateClientSubmit": "Submit review",
     "rateClientSaving": "Saving…",
     "rateClientDone": "You reviewed this client — thanks!",
-    "rateClientFailed": "Could not save your review. Please try again."
+    "rateClientFailed": "Could not save your review. Please try again.",
+    "acceptRequestPayment": "Accept & request payment method",
+    "requestPaymentSending": "Sending…",
+    "requestPaymentSent": "Client notified — waiting for their payment method"
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Failed to mark as complete",

@@ -1077,7 +1077,10 @@
     "rateClientSubmit": "Envoyer l avis",
     "rateClientSaving": "Enregistrement…",
     "rateClientDone": "Vous avez évalué ce client — merci !",
-    "rateClientFailed": "Impossible d enregistrer votre avis. Veuillez réessayer."
+    "rateClientFailed": "Impossible d enregistrer votre avis. Veuillez réessayer.",
+    "acceptRequestPayment": "Accepter et demander un moyen de paiement",
+    "requestPaymentSending": "Envoi…",
+    "requestPaymentSent": "Client averti — en attente de son moyen de paiement"
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Échec du marquage comme terminé",

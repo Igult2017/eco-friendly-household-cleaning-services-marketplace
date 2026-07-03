@@ -1077,7 +1077,10 @@
     "rateClientSubmit": "Bewertung senden",
     "rateClientSaving": "Wird gespeichert…",
     "rateClientDone": "Du hast diesen Kunden bewertet — danke!",
-    "rateClientFailed": "Bewertung konnte nicht gespeichert werden. Bitte erneut versuchen."
+    "rateClientFailed": "Bewertung konnte nicht gespeichert werden. Bitte erneut versuchen.",
+    "acceptRequestPayment": "Annehmen & Zahlungsmethode anfordern",
+    "requestPaymentSending": "Wird gesendet…",
+    "requestPaymentSent": "Kunde benachrichtigt — warte auf die Zahlungsmethode"
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Als abgeschlossen markieren fehlgeschlagen",

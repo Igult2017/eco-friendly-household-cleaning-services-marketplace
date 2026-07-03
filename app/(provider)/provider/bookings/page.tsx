@@ -50,6 +50,18 @@ export default function ProviderBookingsPage() {
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState("all")
   const [reviewedIds, setReviewedIds] = useState<Set<string>>(new Set())
+  const [requestedIds, setRequestedIds] = useState<Set<string>>(new Set())
+  const [requesting, setRequesting] = useState<string | null>(null)
+
+  async function requestPayment(bookingId: string) {
+    setRequesting(bookingId)
+    try {
+      const res = await fetch(`/api/bookings/${bookingId}/request-payment`, { method: "POST" })
+      if (res.ok) setRequestedIds((prev) => new Set([...prev, bookingId]))
+    } finally {
+      setRequesting(null)
+    }
+  }
 
   function load() {
     fetch("/api/provider/bookings")
@@ -148,15 +160,30 @@ export default function ProviderBookingsPage() {
                   <RateClientCard bookingId={b.id} alreadyReviewed={reviewedIds.has(b.id)} />
                 )}
 
-                {/* No payment method yet → the cleaner must NOT take the order; ask the client to add it. */}
+                {/* No payment method yet → the cleaner must NOT take the order. Accept-pending
+                    tells the client the contract only takes effect once a payment method exists. */}
                 {b.status === "pending_payment" && (
                   <div className="mt-3 pt-3 border-t border-[#E5EBF0]">
                     <p className="flex items-center gap-2 rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-800">
                       {t("noCardNotice")}
                     </p>
-                    <Link href={`/bookings/${b.id}/messages`} className="mt-2 inline-flex text-sm font-medium text-[#2D7A5F] hover:underline">
-                      {t("askInChat")}
-                    </Link>
+                    <div className="mt-2 flex flex-wrap items-center gap-3">
+                      {requestedIds.has(b.id) ? (
+                        <span className="text-sm font-medium text-[#2D7A5F]">{t("requestPaymentSent")}</span>
+                      ) : (
+                        <button
+                          onClick={() => requestPayment(b.id)}
+                          disabled={requesting === b.id}
+                          className="inline-flex items-center rounded-xl bg-[#2D7A5F] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#235f49] disabled:opacity-60"
+                        >
+                          {requesting === b.id ? t("requestPaymentSending") : t("acceptRequestPayment")}
+                        </button>
+                      )}
+                      {/* Provider-side chat route — the /bookings/... route is the CLIENT's and 404s here. */}
+                      <Link href={`/provider/bookings/${b.id}/messages`} className="inline-flex text-sm font-medium text-[#2D7A5F] hover:underline">
+                        {t("askInChat")}
+                      </Link>
+                    </div>
                   </div>
                 )}
 

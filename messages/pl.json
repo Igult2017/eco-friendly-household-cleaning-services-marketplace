@@ -1077,7 +1077,10 @@
     "rateClientSubmit": "Wyślij opinię",
     "rateClientSaving": "Zapisywanie…",
     "rateClientDone": "Oceniłeś(-aś) tego klienta — dziękujemy!",
-    "rateClientFailed": "Nie udało się zapisać opinii. Spróbuj ponownie."
+    "rateClientFailed": "Nie udało się zapisać opinii. Spróbuj ponownie.",
+    "acceptRequestPayment": "Przyjmij i poproś o metodę płatności",
+    "requestPaymentSending": "Wysyłanie…",
+    "requestPaymentSent": "Klient powiadomiony — oczekiwanie na metodę płatności"
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Nie udało się oznaczyć jako ukończone",

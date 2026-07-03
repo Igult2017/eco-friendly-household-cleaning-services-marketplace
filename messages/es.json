@@ -1077,7 +1077,10 @@
     "rateClientSubmit": "Enviar valoración",
     "rateClientSaving": "Guardando…",
     "rateClientDone": "Ya valoraste a este cliente. ¡Gracias!",
-    "rateClientFailed": "No se pudo guardar la valoración. Inténtalo de nuevo."
+    "rateClientFailed": "No se pudo guardar la valoración. Inténtalo de nuevo.",
+    "acceptRequestPayment": "Aceptar y pedir método de pago",
+    "requestPaymentSending": "Enviando…",
+    "requestPaymentSent": "Cliente avisado: esperando su método de pago"
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "No se pudo marcar como completado",

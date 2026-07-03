@@ -400,6 +400,17 @@ const NOTIF: Record<string, Record<string, S>> = {
     pl: { title: "Klient próbował Cię zarezerwować — dokończ konfigurację wypłat", body: "Klient próbował Cię zarezerwować, ale nie połączyłeś jeszcze konta wypłat. Połącz je w Zarobkach, aby można było Cię rezerwować i płacić." },
     pt: { title: "Um cliente tentou reservar-te — conclui a configuração de pagamentos", body: "Um cliente tentou reservar-te, mas ainda não ligaste a tua conta de pagamentos. Liga-a em Ganhos para poderes ser reservado e pago." },
   },
+  // Cleaner accepted a booking that still lacks a payment method — the contract binds once added.
+  booking_accepted_pending_payment: {
+    en: { title: "Cleaner accepted — add a payment method to seal it", body: "Your cleaner has accepted your booking, pending a payment method. The contract only takes effect once you add one — nothing is charged before the work is completed and confirmed." },
+    de: { title: "Reinigungskraft hat angenommen — Zahlungsmethode hinzufügen", body: "Deine Reinigungskraft hat die Buchung angenommen, vorbehaltlich einer Zahlungsmethode. Der Vertrag gilt erst, wenn du eine hinzufügst — abgebucht wird erst nach Abschluss und Bestätigung der Arbeit." },
+    fr: { title: "Intervenant d'accord — ajoutez un moyen de paiement", body: "Votre intervenant a accepté la réservation, sous réserve d'un moyen de paiement. Le contrat ne prend effet qu'une fois celui-ci ajouté — rien n'est débité avant la fin et la confirmation du travail." },
+    es: { title: "El profesional aceptó: añade un método de pago", body: "Tu profesional aceptó la reserva, pendiente de un método de pago. El contrato solo entra en vigor cuando lo añadas; no se cobra nada antes de completar y confirmar el trabajo." },
+    it: { title: "L'addetto ha accettato — aggiungi un metodo di pagamento", body: "Il tuo addetto ha accettato la prenotazione, in attesa di un metodo di pagamento. Il contratto ha effetto solo dopo l'aggiunta — nulla viene addebitato prima del completamento e della conferma del lavoro." },
+    nl: { title: "Schoonmaker akkoord — voeg een betaalmethode toe", body: "Je schoonmaker heeft de boeking geaccepteerd, in afwachting van een betaalmethode. Het contract gaat pas in zodra je er een toevoegt — er wordt niets afgeschreven voordat het werk is afgerond en bevestigd." },
+    pl: { title: "Sprzątanie przyjęte — dodaj metodę płatności", body: "Osoba sprzątająca przyjęła rezerwację, oczekując na metodę płatności. Umowa wchodzi w życie dopiero po jej dodaniu — opłata pobierana jest dopiero po zakończeniu i potwierdzeniu pracy." },
+    pt: { title: "Profissional aceitou — adiciona um método de pagamento", body: "O teu profissional aceitou a reserva, pendente de um método de pagamento. O contrato só entra em vigor depois de o adicionares — nada é cobrado antes de o trabalho estar concluído e confirmado." },
+  },
   // Admin removed the client's job post from the board (moderation).
   admin_job_removed: {
     en: { title: "Your job post was removed", body: "Your job post “{title}” was removed from the job board by the DORIXÉ team. If you believe this was a mistake, contact support." },
@@ -507,6 +518,7 @@ const PARAMS: Record<string, string[]> = {
   booking_request_sent: [],
   referral_settled: [],
   admin_job_removed: ["title"],
+  booking_accepted_pending_payment: [],
 }
 
 /**

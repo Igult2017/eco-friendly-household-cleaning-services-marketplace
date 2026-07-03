@@ -1077,7 +1077,10 @@
     "rateClientSubmit": "Invia recensione",
     "rateClientSaving": "Salvataggio…",
     "rateClientDone": "Hai valutato questo cliente — grazie!",
-    "rateClientFailed": "Impossibile salvare la recensione. Riprova."
+    "rateClientFailed": "Impossibile salvare la recensione. Riprova.",
+    "acceptRequestPayment": "Accetta e richiedi metodo di pagamento",
+    "requestPaymentSending": "Invio…",
+    "requestPaymentSent": "Cliente avvisato — in attesa del metodo di pagamento"
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Impossibile contrassegnare come completato",
