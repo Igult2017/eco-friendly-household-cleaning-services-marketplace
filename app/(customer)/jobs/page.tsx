@@ -372,6 +372,20 @@ export default function CustomerJobsPage() {
                         <Link href={`/jobs/${job.id}/edit`} className="text-xs font-medium text-[#2D7A5F] hover:underline">
                           {t("editJob")}
                         </Link>
+                        {/* Deletable only while nobody has bid — the API enforces it too. */}
+                        {!hasBids && (
+                          <button
+                            onClick={async () => {
+                              if (!window.confirm(t("deleteConfirm"))) return
+                              const r = await fetch(`/api/jobs/${job.id}`, { method: "DELETE" })
+                              if (r.ok) load()
+                              else alert((await r.json().catch(() => ({}))).error ?? t("deleteFailed"))
+                            }}
+                            className="text-xs font-medium text-red-500 hover:underline"
+                          >
+                            {t("deleteJob")}
+                          </button>
+                        )}
                       </div>
                     )}
 

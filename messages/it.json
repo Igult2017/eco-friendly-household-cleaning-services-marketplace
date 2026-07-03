@@ -864,7 +864,10 @@
     "hideChat": "Nascondi chat",
     "overdueBy": "In ritardo di {days} giorno/i — estendi la data per continuare a ricevere offerte",
     "waitingForBidsShort": "In attesa di offerte…",
-    "editJob": "Modifica lavoro"
+    "editJob": "Modifica lavoro",
+    "deleteJob": "Elimina",
+    "deleteConfirm": "Eliminare questo annuncio? L operazione è irreversibile.",
+    "deleteFailed": "Impossibile eliminare il lavoro."
   },
   "customerLayout": {
     "navDashboard": "Dashboard",

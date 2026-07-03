@@ -864,7 +864,10 @@
     "hideChat": "Masquer la discussion",
     "overdueBy": "En retard de {days} jour(s) — prolongez la date pour continuer à recevoir des offres",
     "waitingForBidsShort": "En attente d'offres…",
-    "editJob": "Modifier l'annonce"
+    "editJob": "Modifier l'annonce",
+    "deleteJob": "Supprimer",
+    "deleteConfirm": "Supprimer cette annonce ? Cette action est irréversible.",
+    "deleteFailed": "Impossible de supprimer l annonce."
   },
   "customerLayout": {
     "navDashboard": "Tableau de bord",

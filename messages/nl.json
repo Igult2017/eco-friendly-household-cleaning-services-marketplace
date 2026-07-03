@@ -864,7 +864,10 @@
     "hideChat": "Chat verbergen",
     "overdueBy": "{days} dag(en) over tijd — verleng de datum om biedingen te blijven ontvangen",
     "waitingForBidsShort": "Wachten op biedingen…",
-    "editJob": "Klus bewerken"
+    "editJob": "Klus bewerken",
+    "deleteJob": "Verwijderen",
+    "deleteConfirm": "Deze klus verwijderen? Dit kan niet ongedaan worden gemaakt.",
+    "deleteFailed": "Kon de klus niet verwijderen."
   },
   "customerLayout": {
     "navDashboard": "Dashboard",

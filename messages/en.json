@@ -864,7 +864,10 @@
     "hideChat": "Hide chat",
     "overdueBy": "Overdue by {days} day(s) — extend the date to keep attracting bids",
     "waitingForBidsShort": "Waiting for bids…",
-    "editJob": "Edit job"
+    "editJob": "Edit job",
+    "deleteJob": "Delete",
+    "deleteConfirm": "Delete this job post? This cannot be undone.",
+    "deleteFailed": "Could not delete the job."
   },
   "customerLayout": {
     "navDashboard": "Dashboard",

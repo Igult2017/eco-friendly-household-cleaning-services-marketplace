@@ -864,7 +864,10 @@
     "hideChat": "Chat ausblenden",
     "overdueBy": "{days} Tag(e) überfällig — verlängere das Datum, um weiter Angebote zu erhalten",
     "waitingForBidsShort": "Warten auf Angebote…",
-    "editJob": "Auftrag bearbeiten"
+    "editJob": "Auftrag bearbeiten",
+    "deleteJob": "Löschen",
+    "deleteConfirm": "Diesen Auftrag löschen? Das kann nicht rückgängig gemacht werden.",
+    "deleteFailed": "Auftrag konnte nicht gelöscht werden."
   },
   "customerLayout": {
     "navDashboard": "Dashboard",

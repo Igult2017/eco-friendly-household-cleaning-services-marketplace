@@ -864,7 +864,10 @@
     "hideChat": "Ukryj czat",
     "overdueBy": "Zaległe o {days} dzień/dni — przedłuż datę, aby dalej otrzymywać oferty",
     "waitingForBidsShort": "Oczekiwanie na oferty…",
-    "editJob": "Edytuj zlecenie"
+    "editJob": "Edytuj zlecenie",
+    "deleteJob": "Usuń",
+    "deleteConfirm": "Usunąć to zlecenie? Tej operacji nie można cofnąć.",
+    "deleteFailed": "Nie udało się usunąć zlecenia."
   },
   "customerLayout": {
     "navDashboard": "Panel",

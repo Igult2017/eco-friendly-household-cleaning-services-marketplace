@@ -21,6 +21,36 @@ const editSchema = z.object({
   recurringFrequency: z.enum(["recurring", "weekly", "biweekly", "monthly"]).nullable().optional(),
 })
 
+// Client deletes their own job — allowed ONLY while it has no bids at all and isn't assigned.
+export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    const { id } = await params
+    if (!isUuid(id)) return NextResponse.json({ error: "Invalid job id" }, { status: 400 })
+
+    const [job] = await db
+      .select({ id: jobPosts.id, status: jobPosts.status })
+      .from(jobPosts)
+      .where(and(eq(jobPosts.id, id), eq(jobPosts.customerId, userId)))
+    if (!job) return NextResponse.json({ error: "Job not found" }, { status: 404 })
+    if (!["open", "bidding"].includes(job.status)) {
+      return NextResponse.json({ error: "This job has been assigned and can no longer be deleted." }, { status: 422 })
+    }
+    const [{ n }] = await db.select({ n: sql<number>`count(*)` }).from(bids).where(eq(bids.jobPostId, id))
+    if (Number(n) > 0) {
+      return NextResponse.json({ error: "Cleaners have already bid on this job — it can't be deleted. You can edit the date or accept a bid instead." }, { status: 422 })
+    }
+
+    await db.delete(jobPosts).where(and(eq(jobPosts.id, id), eq(jobPosts.customerId, userId)))
+    return NextResponse.json({ success: true })
+  } catch (err) {
+    console.error("[jobs/[id] DELETE]", err)
+    void logError({ message: "[jobs/[id] DELETE]", error: err, route: "/api/jobs/[id]", severity: "error" })
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
+}
+
 // Client edits their own job. Full edit while NO bids have arrived; once bids exist only the desired
 // date may be changed (extended) — anything else would pull the rug from under the bidders.
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
