@@ -945,7 +945,8 @@
     "estimatedHoursHint": "Wie viele Stunden der Auftrag dauern sollte — Reinigungskräfte kalkulieren damit den Stundenpreis.",
     "budgetTotalHint": "Gesamt für {hours} Std.: {total}",
     "errorHoursRequired": "Bitte gib die geschätzten Stunden an, damit der Gesamtbetrag berechnet werden kann.",
-    "hourlyRateLabel": "Betrag pro Stunde"
+    "hourlyRateLabel": "Betrag pro Stunde",
+    "continueWithoutCard": "Ohne Hinzufügen fortfahren"
   },
   "customerProfilePage": {
     "title": "Mein Profil",
@@ -2002,5 +2003,11 @@
     "holdNote": "Nur Vorautorisierung. Automatische Abbuchung nach Abschluss.",
     "preparing": "Sichere Zahlung wird vorbereitet…",
     "errorGeneric": "Etwas ist schiefgelaufen. Bitte erneut versuchen."
+  },
+  "compSaveCardPrompt": {
+    "title": "Zahlungsdaten hinzufügen (empfohlen)",
+    "body": "Reinigungskräfte nehmen nur Angebote von Kunden mit hinterlegter Zahlungsmethode an. Das Hinzufügen kostet nichts — bezahlt wird erst nach erledigter Arbeit und beidseitiger Bestätigung.",
+    "addCard": "Zahlungsdaten hinzufügen",
+    "saved": "Zahlungsmethode gespeichert — Reinigungskräfte können deine Angebote jetzt annehmen."
   }
 }

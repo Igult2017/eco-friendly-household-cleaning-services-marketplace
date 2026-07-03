@@ -945,7 +945,8 @@
     "estimatedHoursHint": "Ile godzin powinno zająć zlecenie — osoby sprzątające wyceniają na tej podstawie stawkę godzinową.",
     "budgetTotalHint": "Łącznie za {hours} godz.: {total}",
     "errorHoursRequired": "Podaj szacowane godziny, aby obliczyć łączną kwotę.",
-    "hourlyRateLabel": "Kwota za godzinę"
+    "hourlyRateLabel": "Kwota za godzinę",
+    "continueWithoutCard": "Kontynuuj bez dodawania"
   },
   "customerProfilePage": {
     "title": "Mój profil",
@@ -2002,5 +2003,11 @@
     "holdNote": "Tylko preautoryzacja. Automatyczne obciążenie po ukończeniu.",
     "preparing": "Przygotowywanie bezpiecznej płatności…",
     "errorGeneric": "Coś poszło nie tak. Spróbuj ponownie."
+  },
+  "compSaveCardPrompt": {
+    "title": "Dodaj dane płatności (zalecane)",
+    "body": "Osoby sprzątające przyjmują tylko oferty klientów z metodą płatności. Dodanie karty NIC nie kosztuje — płatność następuje dopiero po pracy i potwierdzeniu przez oboje.",
+    "addCard": "Dodaj dane płatności",
+    "saved": "Metoda płatności zapisana — osoby sprzątające mogą teraz przyjmować Twoje oferty."
   }
 }

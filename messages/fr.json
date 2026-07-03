@@ -945,7 +945,8 @@
     "estimatedHoursHint": "Durée estimée du travail — les intervenants s en servent pour calculer le tarif horaire.",
     "budgetTotalHint": "Total pour {hours} h : {total}",
     "errorHoursRequired": "Indiquez les heures estimées pour calculer le total.",
-    "hourlyRateLabel": "Montant par heure"
+    "hourlyRateLabel": "Montant par heure",
+    "continueWithoutCard": "Continuer sans ajouter"
   },
   "customerProfilePage": {
     "title": "Mon profil",
@@ -2002,5 +2003,11 @@
     "holdNote": "Pré-autorisation uniquement. Débit automatique après la fin.",
     "preparing": "Préparation du paiement sécurisé…",
     "errorGeneric": "Une erreur est survenue. Veuillez réessayer."
+  },
+  "compSaveCardPrompt": {
+    "title": "Ajouter un moyen de paiement (recommandé)",
+    "body": "Les intervenants n acceptent que les offres de clients avec un moyen de paiement enregistré. L ajouter ne vous débite pas — le paiement n est prélevé qu après le travail et votre double confirmation.",
+    "addCard": "Ajouter un moyen de paiement",
+    "saved": "Moyen de paiement enregistré — les intervenants peuvent désormais accepter vos offres."
   }
 }

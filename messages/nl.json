@@ -945,7 +945,8 @@
     "estimatedHoursHint": "Hoeveel uur de klus zou moeten duren — schoonmakers gebruiken dit om per uur te prijzen.",
     "budgetTotalHint": "Totaal voor {hours} u: {total}",
     "errorHoursRequired": "Vul de geschatte uren in zodat het totaal berekend kan worden.",
-    "hourlyRateLabel": "Bedrag per uur"
+    "hourlyRateLabel": "Bedrag per uur",
+    "continueWithoutCard": "Doorgaan zonder toevoegen"
   },
   "customerProfilePage": {
     "title": "Mijn profiel",
@@ -2002,5 +2003,11 @@
     "holdNote": "Alleen pre-autorisatie. Automatische afschrijving na voltooiing.",
     "preparing": "Veilige betaling voorbereiden…",
     "errorGeneric": "Er ging iets mis. Probeer opnieuw."
+  },
+  "compSaveCardPrompt": {
+    "title": "Betaalgegevens toevoegen (aanbevolen)",
+    "body": "Schoonmakers accepteren alleen aanbiedingen van klanten met een betaalmethode. Een kaart toevoegen kost niets — er wordt pas betaald na het werk en jullie beider bevestiging.",
+    "addCard": "Betaalgegevens toevoegen",
+    "saved": "Betaalmethode opgeslagen — schoonmakers kunnen je aanbiedingen nu accepteren."
   }
 }

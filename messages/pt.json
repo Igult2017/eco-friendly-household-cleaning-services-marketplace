@@ -945,7 +945,8 @@
     "estimatedHoursHint": "Quantas horas o trabalho deve demorar — os profissionais usam isto para calcular o preço por hora.",
     "budgetTotalHint": "Total para {hours} h: {total}",
     "errorHoursRequired": "Indica as horas estimadas para calcular o total.",
-    "hourlyRateLabel": "Valor por hora"
+    "hourlyRateLabel": "Valor por hora",
+    "continueWithoutCard": "Continuar sem adicionar"
   },
   "customerProfilePage": {
     "title": "O meu perfil",
@@ -2002,5 +2003,11 @@
     "holdNote": "Apenas pré-autorização. Cobrança automática após a conclusão.",
     "preparing": "A preparar pagamento seguro…",
     "errorGeneric": "Algo correu mal. Tenta novamente."
+  },
+  "compSaveCardPrompt": {
+    "title": "Adicionar dados de pagamento (recomendado)",
+    "body": "Os profissionais só aceitam ofertas de clientes com método de pagamento registado. Adicionar um cartão NÃO cobra nada — o pagamento só acontece após o trabalho e a confirmação de ambos.",
+    "addCard": "Adicionar dados de pagamento",
+    "saved": "Método de pagamento guardado — os profissionais já podem aceitar as tuas ofertas."
   }
 }

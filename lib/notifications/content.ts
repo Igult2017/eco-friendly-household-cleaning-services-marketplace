@@ -345,6 +345,28 @@ const NOTIF: Record<string, Record<string, S>> = {
     pl: { title: "Brak metody płatności — nie przyjmuj jeszcze", body: "Ten klient zarezerwował bez metody płatności. Poproś na czacie o jej dodanie — przyjmij zlecenie dopiero potem. Płatność zostanie pobrana automatycznie po potwierdzeniu przez oboje." },
     pt: { title: "Sem método de pagamento — não aceites ainda", body: "Este cliente reservou sem método de pagamento. Pede no chat que adicione um — aceita o trabalho só depois. O pagamento será cobrado automaticamente após a confirmação de ambos." },
   },
+  // Cleaner ACCEPTED the booking — includes the payment-method reassurance for the client.
+  booking_accepted_by_cleaner: {
+    en: { title: "Your booking has been confirmed!", body: "Your cleaner accepted your booking. Reminder: cleaners only accept orders from clients with a payment method on file — adding one never deducts anything before the work is done and you both confirm completion." },
+    de: { title: "Deine Buchung wurde bestätigt!", body: "Deine Reinigungskraft hat die Buchung angenommen. Zur Erinnerung: Reinigungskräfte nehmen nur Aufträge von Kunden mit hinterlegter Zahlungsmethode an — dabei wird nichts abgebucht, bevor die Arbeit erledigt ist und ihr beide bestätigt." },
+    fr: { title: "Votre réservation est confirmée !", body: "Votre intervenant a accepté la réservation. Rappel : les intervenants n'acceptent que les commandes de clients ayant un moyen de paiement enregistré — l'ajouter ne débite rien avant la fin du travail et votre double confirmation." },
+    es: { title: "¡Tu reserva está confirmada!", body: "Tu profesional aceptó la reserva. Recuerda: los profesionales solo aceptan pedidos de clientes con método de pago registrado; añadirlo no descuenta nada antes de terminar el trabajo y de que ambos confirméis." },
+    it: { title: "La tua prenotazione è confermata!", body: "Il tuo addetto ha accettato la prenotazione. Promemoria: gli addetti accettano solo ordini da clienti con un metodo di pagamento registrato — aggiungerlo non addebita nulla prima che il lavoro sia finito e che entrambi confermiate." },
+    nl: { title: "Je boeking is bevestigd!", body: "Je schoonmaker heeft de boeking geaccepteerd. Ter herinnering: schoonmakers nemen alleen opdrachten aan van klanten met een betaalmethode — toevoegen ervan schrijft niets af vóór het werk klaar is en jullie beiden bevestigen." },
+    pl: { title: "Twoja rezerwacja została potwierdzona!", body: "Osoba sprzątająca przyjęła rezerwację. Przypomnienie: przyjmowane są tylko zlecenia klientów z metodą płatności — jej dodanie niczego nie pobiera przed wykonaniem pracy i potwierdzeniem przez oboje." },
+    pt: { title: "A tua reserva foi confirmada!", body: "O teu profissional aceitou a reserva. Lembrete: os profissionais só aceitam pedidos de clientes com método de pagamento registado — adicioná-lo não desconta nada antes de o trabalho estar feito e de ambos confirmarem." },
+  },
+  // No-card booking created — prompt the CLIENT to add a payment method (nothing charged upfront).
+  client_add_payment_prompt: {
+    en: { title: "Add a payment method so your cleaner can accept", body: "Cleaners only accept orders from clients with a payment method on file. Adding one does NOT charge you — payment is only collected after the work is done and you both confirm." },
+    de: { title: "Füge eine Zahlungsmethode hinzu, damit deine Reinigungskraft annehmen kann", body: "Reinigungskräfte nehmen nur Aufträge von Kunden mit hinterlegter Zahlungsmethode an. Das Hinzufügen kostet nichts — bezahlt wird erst, wenn die Arbeit erledigt ist und ihr beide bestätigt." },
+    fr: { title: "Ajoutez un moyen de paiement pour que votre intervenant accepte", body: "Les intervenants n'acceptent que les commandes de clients avec un moyen de paiement enregistré. L'ajouter ne vous débite pas — le paiement n'est prélevé qu'après la fin du travail et votre double confirmation." },
+    es: { title: "Añade un método de pago para que tu profesional pueda aceptar", body: "Los profesionales solo aceptan pedidos de clientes con método de pago registrado. Añadirlo NO te cobra nada: el pago solo se realiza tras terminar el trabajo y confirmar ambos." },
+    it: { title: "Aggiungi un metodo di pagamento così il tuo addetto può accettare", body: "Gli addetti accettano solo ordini da clienti con un metodo di pagamento registrato. Aggiungerlo NON ti addebita nulla — il pagamento avviene solo a lavoro finito e dopo la conferma di entrambi." },
+    nl: { title: "Voeg een betaalmethode toe zodat je schoonmaker kan accepteren", body: "Schoonmakers nemen alleen opdrachten aan van klanten met een betaalmethode. Toevoegen kost niets — er wordt pas betaald nadat het werk klaar is en jullie beiden bevestigen." },
+    pl: { title: "Dodaj metodę płatności, aby osoba sprzątająca mogła przyjąć zlecenie", body: "Przyjmowane są tylko zlecenia klientów z metodą płatności. Jej dodanie NIC nie kosztuje — płatność następuje dopiero po wykonaniu pracy i potwierdzeniu przez oboje." },
+    pt: { title: "Adiciona um método de pagamento para o teu profissional poder aceitar", body: "Os profissionais só aceitam pedidos de clientes com método de pagamento registado. Adicioná-lo NÃO cobra nada — o pagamento só acontece depois de o trabalho estar feito e de ambos confirmarem." },
+  },
   // Client added their payment method to a pending booking — the cleaner can now take the order.
   client_added_payment: {
     en: { title: "Payment method added", body: "The client added their payment method — payment is secured and will be collected automatically after you both confirm completion. You can take the order." },

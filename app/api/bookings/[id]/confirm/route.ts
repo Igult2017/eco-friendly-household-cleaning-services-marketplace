@@ -45,12 +45,15 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       return NextResponse.json({ error: "Booking cannot be confirmed in its current state" }, { status: 409 })
     }
 
+    // Accept message includes the payment-method reassurance: cleaners only take orders from clients
+    // with a payment method on file, and adding one never charges before the work is done.
     await db.insert(notifications).values({
       userId: booking.customerId,
       type: "booking_confirmed",
       title: "Your booking has been confirmed!",
-      body: "Your cleaning provider has confirmed your booking.",
+      body: "Your cleaner accepted your booking. Reminder: cleaners only accept orders from clients with a payment method on file — adding one never deducts anything before the work is done and you both confirm completion.",
       link: `/bookings/${bookingId}`,
+      metadata: { variant: "booking_accepted_by_cleaner" },
     })
 
     return NextResponse.json({ success: true })

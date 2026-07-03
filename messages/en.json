@@ -945,7 +945,8 @@
     "estimatedHoursHint": "How many hours the job should take — cleaners use this to price per hour.",
     "budgetTotalHint": "Total for {hours} h: {total}",
     "errorHoursRequired": "Please set the estimated hours so the total can be calculated.",
-    "hourlyRateLabel": "Amount per hour"
+    "hourlyRateLabel": "Amount per hour",
+    "continueWithoutCard": "Continue without adding"
   },
   "customerProfilePage": {
     "title": "My Profile",
@@ -2002,5 +2003,11 @@
     "holdNote": "Pre-authorisation only. Charged automatically after completion.",
     "preparing": "Preparing secure payment…",
     "errorGeneric": "Something went wrong. Please try again."
+  },
+  "compSaveCardPrompt": {
+    "title": "Add payment details (recommended)",
+    "body": "Cleaners only accept offers from clients with a payment method on file. Adding a card does NOT charge you — payment is only collected after the work is done and you both confirm.",
+    "addCard": "Add payment details",
+    "saved": "Payment method saved — cleaners can now accept your offers."
   }
 }

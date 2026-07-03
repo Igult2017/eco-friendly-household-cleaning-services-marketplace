@@ -111,6 +111,16 @@ export async function createUnpaidBooking(userId: string, data: CreateBookingInp
       link: "/provider/bookings",
       metadata: { variant: "booking_no_card" },
     })
+    // …and prompt the CLIENT: cleaners only take orders with a payment method on file, and adding
+    // one never charges before the work is done.
+    await db.insert(notifications).values({
+      userId,
+      type: "booking_reminder",
+      title: "Add a payment method so your cleaner can accept",
+      body: "Cleaners only accept orders from clients with a payment method on file. Adding one does NOT charge you — payment is only collected after the work is done and you both confirm.",
+      link: `/bookings/${nb.id}/pay`,
+      metadata: { variant: "client_add_payment_prompt" },
+    })
   } catch { /* non-fatal */ }
 
   return { bookingId: nb.id, bookingNumber: nb.bookingNumber }

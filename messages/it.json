@@ -945,7 +945,8 @@
     "estimatedHoursHint": "Quante ore dovrebbe richiedere il lavoro — gli addetti la usano per calcolare la tariffa oraria.",
     "budgetTotalHint": "Totale per {hours} h: {total}",
     "errorHoursRequired": "Indica le ore stimate per calcolare il totale.",
-    "hourlyRateLabel": "Importo all ora"
+    "hourlyRateLabel": "Importo all ora",
+    "continueWithoutCard": "Continua senza aggiungere"
   },
   "customerProfilePage": {
     "title": "Il mio profilo",
@@ -2002,5 +2003,11 @@
     "holdNote": "Solo pre-autorizzazione. Addebito automatico al completamento.",
     "preparing": "Preparazione del pagamento sicuro…",
     "errorGeneric": "Qualcosa è andato storto. Riprova."
+  },
+  "compSaveCardPrompt": {
+    "title": "Aggiungi i dati di pagamento (consigliato)",
+    "body": "Gli addetti accettano solo offerte da clienti con un metodo di pagamento registrato. Aggiungere una carta NON ti addebita nulla — il pagamento avviene solo a lavoro finito e dopo la conferma di entrambi.",
+    "addCard": "Aggiungi dati di pagamento",
+    "saved": "Metodo di pagamento salvato — gli addetti possono ora accettare le tue offerte."
   }
 }

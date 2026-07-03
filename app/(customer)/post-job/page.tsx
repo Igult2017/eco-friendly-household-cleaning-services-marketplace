@@ -16,6 +16,7 @@ import { geocodeFlexible, extractPostalCode } from "@/lib/nominatim"
 import { CountryField } from "@/components/location/CountryField"
 import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
 import { localTodayYmd } from "@/lib/utils/formatDate"
+import { SaveCardPrompt } from "@/components/customer/SaveCardPrompt"
 
 const ECO_OPTIONS = ["Eco-certified products only", "No single-use plastics", "Fragrance-free", "Energy-saving methods"]
 const ECO_OPTION_KEYS: Record<string, string> = {
@@ -154,7 +155,11 @@ export default function PostJobPage() {
           <CheckCircle2 size={40} className="text-[#2D7A5F]" />
         </div>
         <h1 className="font-serif text-2xl font-bold text-[#2B3441] text-center mb-2">{t("successTitle")}</h1>
-        <p className="text-[#6B7280] text-center mb-8 max-w-sm">{t("successDescription")}</p>
+        <p className="text-[#6B7280] text-center mb-6 max-w-sm">{t("successDescription")}</p>
+        {/* Cleaners only accept offers from clients with a payment method — prompt now (no charge). */}
+        <div className="mb-6 w-full flex justify-center">
+          <SaveCardPrompt onSkip={() => router.push("/jobs")} skipLabel={t("continueWithoutCard")} />
+        </div>
         <div className="flex gap-3">
           <Button onClick={() => router.push("/jobs")} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white">{t("viewMyJobs")}</Button>
           <Button variant="outline" onClick={() => { setSuccess(false); setForm({ title: "", description: "", hourlyRate: "", desiredDate: "", desiredTimeStart: "", desiredTimeEnd: "", estimatedHours: "2", serviceAddress: { line1: "", city: "", postalCode: "", country: "DE" }, serviceLatitude: 0, serviceLongitude: 0, radiusKm: 25, ecoRequirements: [], recurringFrequency: "" }) }} className="border-[#E5EBF0]">{t("postAnother")}</Button>
