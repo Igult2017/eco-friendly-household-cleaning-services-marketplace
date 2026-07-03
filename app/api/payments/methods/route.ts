@@ -6,10 +6,11 @@ import { eq } from "drizzle-orm"
 import { stripe } from "@/lib/stripe/client"
 import { logError } from "@/lib/utils/logError"
 
+// Any role may hold saved cards (dual-role cleaners + admins book as clients too); ownership is
+// enforced by the per-user Stripe customer id, not the role.
 async function customerStripeId(userId: string): Promise<string | null> {
-  const [u] = await db.select({ stripeCustomerId: users.stripeCustomerId, role: users.role }).from(users).where(eq(users.id, userId))
-  if (!u || u.role !== "customer") return null
-  return u.stripeCustomerId ?? null
+  const [u] = await db.select({ stripeCustomerId: users.stripeCustomerId }).from(users).where(eq(users.id, userId))
+  return u?.stripeCustomerId ?? null
 }
 
 // List the client's saved cards + which one is the default.

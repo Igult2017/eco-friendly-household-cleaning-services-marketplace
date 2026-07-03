@@ -28,8 +28,10 @@ export async function POST() {
       .from(users)
       .where(eq(users.id, userId))
 
-    if (!user || user.role !== "customer") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    // Any signed-in account may save a card: dual-role cleaners and admins also book as clients,
+    // and the customer-only gate dead-ended their checkout card-save fallback with a 403.
+    if (!user) {
+      return NextResponse.json({ error: "Account not found. Please reload and try again." }, { status: 403 })
     }
 
     let stripeCustomerId = user.stripeCustomerId
