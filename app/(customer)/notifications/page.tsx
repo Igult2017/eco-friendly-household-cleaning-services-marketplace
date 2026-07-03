@@ -4,12 +4,12 @@ import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { notifications } from "@/lib/db/schema"
-import { eq, desc } from "drizzle-orm"
+import { eq, desc, and } from "drizzle-orm"
 import type { Metadata } from "next"
 import Link from "next/link"
 import { getTranslations, getLocale } from "next-intl/server"
-import { MarkAllReadButton } from "@/components/notifications/MarkAllReadButton"
 import { localizeNotification } from "@/lib/notifications/content"
+import { PingUnread } from "@/components/notifications/PingUnread"
 
 export const metadata: Metadata = { title: "Notifications — DORIXÉ" }
 
@@ -44,8 +44,17 @@ export default async function NotificationsPage() {
 
   const unreadCount = rows.filter(n => !n.isRead).length
 
+  // Opening the notification centre IS reading it: everything is marked read (the list below was
+  // snapshotted first, so the unread highlighting still shows this once) and badges clear instantly.
+  if (unreadCount > 0) {
+    try {
+      await db.update(notifications).set({ isRead: true }).where(and(eq(notifications.userId, userId), eq(notifications.isRead, false)))
+    } catch { /* badges clear on the next poll */ }
+  }
+
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
+      {unreadCount > 0 && <PingUnread />}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="font-serif text-2xl font-bold text-[#2B3441]">{t("heading")}</h1>
@@ -53,7 +62,6 @@ export default async function NotificationsPage() {
             <p className="text-sm text-[#6B7280] mt-1">{t("unreadCount", { count: unreadCount })}</p>
           )}
         </div>
-        {unreadCount > 0 && <MarkAllReadButton />}
       </div>
 
       {rows.length === 0 ? (

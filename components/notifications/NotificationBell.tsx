@@ -5,6 +5,7 @@ import { Bell } from "lucide-react"
 import Link from "next/link"
 import { useTranslations, useLocale } from "next-intl"
 import { localizeNotification } from "@/lib/notifications/content"
+import { pingUnread, UNREAD_EVENT } from "@/hooks/useUnread"
 
 type Notification = {
   id: string
@@ -31,7 +32,9 @@ export function NotificationBell() {
   useEffect(() => {
     load()
     const t = setInterval(load, 30_000)
-    return () => clearInterval(t)
+    // Stay in sync with the navs: whatever marks notifications read anywhere refreshes the bell too.
+    window.addEventListener(UNREAD_EVENT, load)
+    return () => { clearInterval(t); window.removeEventListener(UNREAD_EVENT, load) }
   }, [])
 
   useEffect(() => {
@@ -45,8 +48,9 @@ export function NotificationBell() {
   const unread = notifs.filter((n) => !n.isRead).length
 
   const markRead = async (id: string) => {
-    await fetch("/api/notifications", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) })
     setNotifs((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)))
+    await fetch("/api/notifications", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) })
+    pingUnread() // nav badges update instantly, not on the next 30s poll
   }
 
   return (

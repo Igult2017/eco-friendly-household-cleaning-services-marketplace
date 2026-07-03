@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useUnread } from "@/hooks/useUnread"
+import { useAutoClearSection } from "@/components/layout/CustomerNav"
 
 type Labels = {
   dashboard: string; findJobs: string; bookings: string; calendar: string
@@ -24,6 +25,7 @@ const ITEMS: { key: keyof Labels; href: string; match?: (l: string) => boolean }
 
 export function ProviderNav({ labels }: { labels: Labels }) {
   const unread = useUnread()
+  useAutoClearSection(ITEMS, unread)
   const count = (m?: (l: string) => boolean) => (m ? unread.filter((n) => n.link && m(n.link)).length : 0)
 
   return (

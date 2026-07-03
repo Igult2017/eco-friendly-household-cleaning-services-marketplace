@@ -4,8 +4,9 @@ import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { notifications, providers } from "@/lib/db/schema"
-import { eq, desc } from "drizzle-orm"
+import { eq, desc, and } from "drizzle-orm"
 import Link from "next/link"
+import { PingUnread } from "@/components/notifications/PingUnread"
 import { Bell, Briefcase, CheckCircle2, DollarSign, AlertTriangle, Info } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { getTranslations, getLocale } from "next-intl/server"
@@ -50,8 +51,16 @@ export default async function ProviderNotificationsPage() {
 
   const unread = notifs.filter((n) => !n.isRead).length
 
+  // Opening the notification centre IS reading it (list snapshotted above keeps the highlight once).
+  if (unread > 0) {
+    try {
+      await db.update(notifications).set({ isRead: true }).where(and(eq(notifications.userId, userId), eq(notifications.isRead, false)))
+    } catch { /* badges clear on the next poll */ }
+  }
+
   return (
     <div className="max-w-2xl mx-auto">
+      {unread > 0 && <PingUnread />}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="font-serif text-2xl font-bold text-[#2B3441] flex items-center gap-2">

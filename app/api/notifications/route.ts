@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { notifications } from "@/lib/db/schema"
-import { eq, and, desc } from "drizzle-orm"
+import { eq, and, desc, inArray } from "drizzle-orm"
 import { logError } from "@/lib/utils/logError"
 
 export async function GET() {
@@ -30,13 +30,18 @@ export async function PATCH(req: Request) {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-    const { id } = await req.json().catch(() => ({} as { id?: string }))
-    if (!id) return NextResponse.json({ error: "id required" }, { status: 400 })
+    const { id, ids } = await req.json().catch(() => ({} as { id?: string; ids?: string[] }))
+    if (!id && !Array.isArray(ids)) return NextResponse.json({ error: "id or ids required" }, { status: 400 })
 
-    if (id === "all") {
+    if (Array.isArray(ids)) {
+      const clean = ids.filter((x): x is string => typeof x === "string").slice(0, 100)
+      if (clean.length) {
+        await db.update(notifications).set({ isRead: true }).where(and(inArray(notifications.id, clean), eq(notifications.userId, userId)))
+      }
+    } else if (id === "all") {
       await db.update(notifications).set({ isRead: true }).where(eq(notifications.userId, userId))
     } else {
-      await db.update(notifications).set({ isRead: true }).where(and(eq(notifications.id, id), eq(notifications.userId, userId)))
+      await db.update(notifications).set({ isRead: true }).where(and(eq(notifications.id, id!), eq(notifications.userId, userId)))
     }
 
     return NextResponse.json({ success: true })
