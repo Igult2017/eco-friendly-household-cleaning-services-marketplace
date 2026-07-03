@@ -23,7 +23,7 @@ export interface GeoProvider {
   city: string | null; postalCode: string | null; country: string
   ecoLevel: string; ecoScore: number; averageRating: number | null
   totalReviews: number; totalJobsCompleted: number; profilePhotoUrl: string | null
-  isApproved: boolean; distanceMeters: number
+  isApproved: boolean; verificationStatus?: string | null; distanceMeters: number
   // Cheapest active service — surfaced on result cards as a "from" price.
   serviceBasePrice?: number | null; priceUnit?: string | null
 }
@@ -55,15 +55,17 @@ async function attachCheapestPrice(list: GeoProvider[]): Promise<GeoProvider[]> 
 }
 
 // Haversine bounding-box + exact distance — pure PostgreSQL, no PostGIS needed.
+// useProviderRadius: gate each cleaner by THEIR OWN service_radius_km (does this cleaner serve the
+// client's point?) instead of one fixed radius around the client.
 async function findProvidersHaversine(params: {
   latitude: number; longitude: number; radiusKm: number
-  categoryId?: string; limit: number
+  categoryId?: string; limit: number; useProviderRadius?: boolean
 }): Promise<GeoProvider[]> {
-  const { latitude, longitude, radiusKm, categoryId, limit } = params
+  const { latitude, longitude, radiusKm, categoryId, limit, useProviderRadius } = params
   // 1° lat ≈ 111.32 km. Longitude degree shrinks towards poles.
-  const latDelta = radiusKm / 111.32
-  const lngDelta = radiusKm / (111.32 * Math.cos((latitude * Math.PI) / 180))
-  const radiusM  = radiusKm * 1000
+  const boxKm = useProviderRadius ? 150 : radiusKm // box must cover the largest plausible provider radius
+  const latDelta = boxKm / 111.32
+  const lngDelta = boxKm / (111.32 * Math.cos((latitude * Math.PI) / 180))
 
   const result = await db.execute(sql`
     WITH distances AS (
@@ -74,6 +76,8 @@ async function findProvidersHaversine(params: {
         p.average_rating AS "averageRating", p.total_reviews AS "totalReviews",
         p.total_jobs_completed AS "totalJobsCompleted",
         p.profile_photo_url AS "profilePhotoUrl", p.is_approved AS "isApproved",
+        p.verification_status AS "verificationStatus",
+        GREATEST(COALESCE(p.service_radius_km, 25), 1) * 1000 AS "serviceRadiusM",
         6371000 * 2 * ASIN(SQRT(
           POWER(SIN(RADIANS((p.latitude - ${latitude}) / 2)), 2) +
           COS(RADIANS(${latitude})) * COS(RADIANS(p.latitude)) *
@@ -89,7 +93,7 @@ async function findProvidersHaversine(params: {
           : sql``}
     )
     SELECT * FROM distances
-    WHERE "distanceMeters" <= ${radiusM}
+    WHERE "distanceMeters" <= ${useProviderRadius ? sql`"serviceRadiusM"` : sql`${radiusKm * 1000}`}
     ORDER BY "distanceMeters" ASC, "averageRating" DESC NULLS LAST
     LIMIT ${limit}
   `)
@@ -103,10 +107,13 @@ async function findProvidersHaversine(params: {
  */
 export async function findProvidersNearLocation(params: {
   latitude: number; longitude: number; radiusKm: number
-  categoryId?: string; limit?: number
+  categoryId?: string; limit?: number; useProviderRadius?: boolean
 }): Promise<GeoProvider[]> {
-  const { latitude, longitude, radiusKm, limit = 20 } = params
+  const { latitude, longitude, radiusKm, limit = 20, useProviderRadius } = params
   const categoryId = await resolveCategoryId(params.categoryId)
+  const radiusExpr = useProviderRadius
+    ? sql`GREATEST(COALESCE(p.service_radius_km, 25), 1) * 1000`
+    : sql`${radiusKm * 1000}`
   let providersList: GeoProvider[]
   try {
     const result = await db.execute(sql`
@@ -117,11 +124,12 @@ export async function findProvidersNearLocation(params: {
         p.average_rating AS "averageRating", p.total_reviews AS "totalReviews",
         p.total_jobs_completed AS "totalJobsCompleted",
         p.profile_photo_url AS "profilePhotoUrl", p.is_approved AS "isApproved",
+        p.verification_status AS "verificationStatus",
         ST_Distance(p.location, ST_SetSRID(ST_MakePoint(${longitude}, ${latitude}), 4326)::geography)
           AS "distanceMeters"
       FROM providers p
       WHERE p.is_approved = true AND p.is_suspended = false AND p.location IS NOT NULL
-        AND ST_DWithin(p.location, ST_SetSRID(ST_MakePoint(${longitude}, ${latitude}), 4326)::geography, ${radiusKm * 1000})
+        AND ST_DWithin(p.location, ST_SetSRID(ST_MakePoint(${longitude}, ${latitude}), 4326)::geography, ${radiusExpr})
         ${categoryId
           ? sql`AND EXISTS (SELECT 1 FROM provider_services ps WHERE ps.provider_id = p.id AND ps.is_active = true AND (ps.category_id = ${categoryId} OR ps.category_ids @> jsonb_build_array(${categoryId}::text)))`
           : sql``}
@@ -131,7 +139,7 @@ export async function findProvidersNearLocation(params: {
     providersList = Array.from(result) as unknown as GeoProvider[]
   } catch {
     // PostGIS not installed — fall back to pure-SQL Haversine
-    providersList = await findProvidersHaversine({ latitude, longitude, radiusKm, categoryId, limit })
+    providersList = await findProvidersHaversine({ latitude, longitude, radiusKm, categoryId, limit, useProviderRadius })
   }
   return attachCheapestPrice(providersList)
 }

@@ -8,6 +8,7 @@ import type { Metadata } from "next"
 import { getTranslations } from "next-intl/server"
 import { formatCurrencyShort, priceUnitSuffix } from "@/lib/utils/formatCurrency"
 import { BrowseNearMe } from "@/components/browse/BrowseNearMe"
+import { findProvidersNearLocation } from "@/lib/db/queries/geo"
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("browse")
@@ -94,9 +95,24 @@ async function getProviders(filters: { city?: string; ecoLevel?: string; minRati
   }
 }
 
-export default async function BrowsePage({ searchParams }: { searchParams: Promise<{ city?: string; ecoLevel?: string; minRating?: string }> }) {
-  const { city, ecoLevel, minRating } = await searchParams
-  const providerList = await getProviders({ city, ecoLevel, minRating })
+export default async function BrowsePage({ searchParams }: { searchParams: Promise<{ city?: string; ecoLevel?: string; minRating?: string; lat?: string; lng?: string }> }) {
+  const { city, ecoLevel, minRating, lat, lng } = await searchParams
+  const latN = lat ? parseFloat(lat) : NaN
+  const lngN = lng ? parseFloat(lng) : NaN
+  const geoActive = Number.isFinite(latN) && Number.isFinite(lngN)
+
+  // With coordinates: only cleaners whose OWN service radius covers the client's location — a client
+  // can only book someone who actually serves their address. Without: plain directory (SEO/browsing).
+  let providerList
+  if (geoActive) {
+    const geo = await findProvidersNearLocation({ latitude: latN, longitude: lngN, radiusKm: 150, useProviderRadius: true, limit: 48 })
+    const minR = minRating ? parseFloat(minRating) : NaN
+    providerList = geo
+      .filter((p) => (!ecoLevel || p.ecoLevel === ecoLevel) && (!Number.isFinite(minR) || (p.averageRating ?? 0) >= minR))
+      .map((p) => ({ ...p, verificationStatus: p.verificationStatus ?? null, priceFrom: p.serviceBasePrice ?? null, priceUnit: p.priceUnit ?? null }))
+  } else {
+    providerList = await getProviders({ city, ecoLevel, minRating })
+  }
   const t = await getTranslations("browse")
   const hasFilters = !!(city || ecoLevel || minRating)
 
@@ -142,7 +158,7 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
         <h1 className="font-serif text-4xl font-bold text-[#2B3441]">{t("heading")}</h1>
         <div className="mt-2 flex flex-wrap items-center gap-3">
           <p className="text-[#6B7280]">{hasFilters ? t("resultsFiltered", { count: providerList.length }) : t("resultsAvailable", { count: providerList.length })}</p>
-          <BrowseNearMe activeCity={city ?? null} labels={{ detecting: t("nearDetecting"), nearYou: t("nearYouChip") }} />
+          <BrowseNearMe activeCity={city ?? null} geoActive={geoActive} labels={{ detecting: t("nearDetecting"), nearYou: t("nearYouChip") }} />
         </div>
       </div>
 
@@ -156,7 +172,7 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
           >
             {t("postJobCta")}
           </Link>
-          {hasFilters && (
+          {(hasFilters || geoActive) && (
             <p className="mt-4">
               <Link href="/browse" className="text-sm text-[#6B7280] underline hover:text-[#2B3441]">{t("showAllCleaners")}</Link>
             </p>
