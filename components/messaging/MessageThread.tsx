@@ -22,6 +22,8 @@ interface Props {
   channel?: string
   // Hide the composer (e.g. the order is completed — chat is closed for new messages).
   readOnly?: boolean
+  // Order controls (completion / cancel / support) rendered INSIDE the chat card, above the messages.
+  header?: React.ReactNode
 }
 
 function formatTime(iso: string) {
@@ -39,7 +41,7 @@ function formatDate(iso: string) {
   })
 }
 
-export function MessageThread({ bookingId, currentUserId, endpoint, channel, readOnly = false }: Props) {
+export function MessageThread({ bookingId, currentUserId, endpoint, channel, readOnly = false, header }: Props) {
   const t = useTranslations("compMessagingMessageThread")
   const api = endpoint ?? `/api/bookings/${bookingId}/messages`
   const queryClient = useQueryClient()
@@ -112,6 +114,12 @@ export function MessageThread({ bookingId, currentUserId, endpoint, channel, rea
 
   return (
     <div className="flex flex-col h-[calc(100vh-14rem)] bg-white rounded-2xl border border-[#E5EBF0] shadow-sm overflow-hidden">
+      {/* Order controls — part of the chat channel itself. */}
+      {header && (
+        <div className="shrink-0 space-y-3 border-b border-[#E5EBF0] bg-[#FAFCFB] px-4 py-3">
+          {header}
+        </div>
+      )}
       {/* Message list */}
       <div
         ref={scrollRef}

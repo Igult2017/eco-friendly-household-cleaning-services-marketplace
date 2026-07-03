@@ -65,17 +65,23 @@ export default async function CustomerMessagesPage({
         </div>
       </div>
 
-      {/* Dual-confirm completion, right in the chat — both press their button to close the order. */}
-      <CompletionBar
+      <MessageThread
         bookingId={id}
-        side="client"
-        status={booking.status}
-        providerCompleted={!!booking.providerCompletedAt}
-        clientConfirmed={!!booking.clientConfirmedAt}
+        currentUserId={userId}
+        readOnly={booking.status === "completed" || booking.status === "cancelled"}
+        header={
+          <>
+            <CompletionBar
+              bookingId={id}
+              side="client"
+              status={booking.status}
+              providerCompleted={!!booking.providerCompletedAt}
+              clientConfirmed={!!booking.clientConfirmedAt}
+            />
+            <ChatActions side="client" bookingId={id} bookingStatus={booking.status} />
+          </>
+        }
       />
-      <ChatActions side="client" bookingId={id} bookingStatus={booking.status} />
-
-      <MessageThread bookingId={id} currentUserId={userId} readOnly={booking.status === "completed" || booking.status === "cancelled"} />
     </div>
   )
 }

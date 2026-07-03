@@ -49,25 +49,27 @@ export default async function CustomerJobMessagesPage({ params }: { params: Prom
         <h1 className="mt-2 font-serif text-2xl font-bold text-[#2B3441]">{job.title}</h1>
         {winner && <p className="text-sm text-[#6B7280] mt-0.5">{t("threadWith", { name: winner.businessName })}</p>}
       </div>
-      {booking && (
-        <CompletionBar
-          bookingId={booking.id}
-          side="client"
-          status={booking.status}
-          providerCompleted={!!booking.providerCompletedAt}
-          clientConfirmed={!!booking.clientConfirmedAt}
-        />
-      )}
-      <ChatActions side="client" jobId={job.id} bookingId={booking?.id} bookingStatus={booking?.status} />
-      <div className="rounded-2xl bg-white border border-[#E5EBF0] shadow-sm p-4">
-        <MessageThread
-          bookingId={job.id}
-          currentUserId={userId}
-          endpoint={`/api/jobs/${job.id}/messages`}
-          channel={`private-job-${job.id}`}
-          readOnly={booking ? booking.status === "completed" || booking.status === "cancelled" : false}
-        />
-      </div>
+      <MessageThread
+        bookingId={job.id}
+        currentUserId={userId}
+        endpoint={`/api/jobs/${job.id}/messages`}
+        channel={`private-job-${job.id}`}
+        readOnly={booking ? booking.status === "completed" || booking.status === "cancelled" : false}
+        header={
+          <>
+            {booking && (
+              <CompletionBar
+                bookingId={booking.id}
+                side="client"
+                status={booking.status}
+                providerCompleted={!!booking.providerCompletedAt}
+                clientConfirmed={!!booking.clientConfirmedAt}
+              />
+            )}
+            <ChatActions side="client" jobId={job.id} bookingId={booking?.id} bookingStatus={booking?.status} />
+          </>
+        }
+      />
     </div>
   )
 }
