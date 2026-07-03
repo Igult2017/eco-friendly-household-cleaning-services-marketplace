@@ -2092,5 +2092,13 @@
     "helpSend": "Enviar a soporte",
     "helpSent": "Enviado: el equipo de DORIXÉ responderá en tu bandeja de Soporte.",
     "helpOpenFull": "Abrir el hilo completo de soporte"
+  },
+  "compInlineQuickMessage": {
+    "placeholder": "Escribe un mensaje rápido…",
+    "send": "Enviar",
+    "sent": "¡Mensaje enviado!",
+    "writeAnother": "Escribir otro",
+    "openChat": "Abrir chat completo →",
+    "failed": "No se pudo enviar. Inténtalo de nuevo."
   }
 }

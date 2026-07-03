@@ -2092,5 +2092,13 @@
     "helpSend": "Invia al supporto",
     "helpSent": "Inviato — il team DORIXÉ risponderà nella tua casella Supporto.",
     "helpOpenFull": "Apri la conversazione completa"
+  },
+  "compInlineQuickMessage": {
+    "placeholder": "Scrivi un messaggio veloce…",
+    "send": "Invia",
+    "sent": "Messaggio inviato!",
+    "writeAnother": "Scrivine un altro",
+    "openChat": "Apri la chat completa →",
+    "failed": "Invio non riuscito. Riprova."
   }
 }

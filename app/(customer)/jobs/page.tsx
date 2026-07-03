@@ -13,6 +13,7 @@ import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
 import { formatDate, localTodayYmd } from "@/lib/utils/formatDate"
 import { cn } from "@/lib/utils"
 import { TIER_CLASS } from "@/lib/provider/reliability"
+import { InlineQuickMessage } from "@/components/messaging/InlineQuickMessage"
 import {
   Plus, Star, Clock, Leaf, Eye, ChevronDown, ChevronUp,
   MapPin, Timer, CalendarDays, MessageSquare, Briefcase, Loader2,
@@ -428,14 +429,16 @@ export default function CustomerJobsPage() {
                       </div>
                     )}
 
-                    {/* Bid accepted → the per-job chat lives in Messages, titled with this job. */}
+                    {/* Bid accepted → quick message expands right here; full chat one link away. */}
                     {job.status === "assigned" && (
-                      <Link
-                        href={`/jobs/${job.id}/messages`}
-                        className="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-[#2D7A5F] px-4 py-2 text-sm font-semibold text-white hover:bg-[#235f49] transition-colors"
-                      >
-                        <MessageSquare size={14} /> {t("messageCleaner")}
-                      </Link>
+                      <div className="mt-3">
+                        <InlineQuickMessage
+                          endpoint={`/api/jobs/${job.id}/messages`}
+                          chatHref={`/jobs/${job.id}/messages`}
+                          label={t("messageCleaner")}
+                          variant="primary"
+                        />
+                      </div>
                     )}
                   </div>
 

@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
 import { BookingRespondActions } from "@/components/booking/BookingRespondActions"
 import { RateClientCard } from "@/components/provider/RateClientCard"
+import { InlineQuickMessage } from "@/components/messaging/InlineQuickMessage"
 
 // 2024-01-07 is a Sunday — offset by day number for a locale-aware short weekday name.
 const dayName = (d: number) => new Date(Date.UTC(2024, 0, 7 + d)).toLocaleDateString(undefined, { weekday: "short", timeZone: "UTC" })
@@ -179,10 +180,14 @@ export default function ProviderBookingsPage() {
                           {requesting === b.id ? t("requestPaymentSending") : t("acceptRequestPayment")}
                         </button>
                       )}
-                      {/* Provider-side chat route — the /bookings/... route is the CLIENT's and 404s here. */}
-                      <Link href={`/provider/bookings/${b.id}/messages`} className="inline-flex text-sm font-medium text-[#2D7A5F] hover:underline">
-                        {t("askInChat")}
-                      </Link>
+                    </div>
+                    {/* Expands in place — a quick message posts straight into the booking chat. */}
+                    <div className="mt-2">
+                      <InlineQuickMessage
+                        endpoint={`/api/bookings/${b.id}/messages`}
+                        chatHref={`/provider/bookings/${b.id}/messages`}
+                        label={t("askInChat")}
+                      />
                     </div>
                   </div>
                 )}

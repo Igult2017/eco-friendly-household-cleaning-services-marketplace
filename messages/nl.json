@@ -2092,5 +2092,13 @@
     "helpSend": "Naar support sturen",
     "helpSent": "Verstuurd — het DORIXÉ-team antwoordt in je Support-inbox.",
     "helpOpenFull": "Volledige supportchat openen"
+  },
+  "compInlineQuickMessage": {
+    "placeholder": "Schrijf een kort bericht…",
+    "send": "Versturen",
+    "sent": "Bericht verzonden!",
+    "writeAnother": "Nog een schrijven",
+    "openChat": "Volledige chat openen →",
+    "failed": "Versturen mislukt. Probeer opnieuw."
   }
 }

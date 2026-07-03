@@ -12,6 +12,7 @@ import { formatDate, localTodayYmd } from "@/lib/utils/formatDate"
 import { Loader2, MapPin, Clock, Euro, CheckCircle2, Repeat } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import { InlineQuickMessage } from "@/components/messaging/InlineQuickMessage"
 
 interface JobPost {
   id: string
@@ -216,12 +217,12 @@ export default function ProviderJobsPage() {
                     )}
 
                     {job.wonByMe ? (
-                      <Link
-                        href={`/provider/jobs/${job.id}/messages`}
-                        className="inline-flex items-center gap-2 rounded-xl bg-[#2D7A5F] px-4 py-2 text-sm font-semibold text-white hover:bg-[#235f49] transition-colors"
-                      >
-                        <CheckCircle2 size={14} /> {t("wonChat")}
-                      </Link>
+                      <InlineQuickMessage
+                        endpoint={`/api/jobs/${job.id}/messages`}
+                        chatHref={`/provider/jobs/${job.id}/messages`}
+                        label={t("wonChat")}
+                        variant="primary"
+                      />
                     ) : alreadyBid ? (
                       <div className="flex items-center gap-2 text-sm text-[#2D7A5F] font-medium">
                         <CheckCircle2 size={16} /> {t("bidSubmittedSuccess")}
