@@ -1470,11 +1470,11 @@
   "compCustomerDashboardActions": {
     "title": "Actie vereist",
     "itemCount": "{count, plural, one {# item} other {# items}}",
-    "paymentDue": "{bookingNumber} — Betaling verschuldigd",
-    "serviceWithProvider": "{service} met {provider}",
+    "paymentDue": "{bookingNumber} — Betaalmethode toevoegen",
+    "serviceWithProvider": "{service} met {provider} — er wordt niets afgeschreven voordat het werk klaar is",
     "defaultService": "Schoonmaak",
     "defaultProvider": "aanbieder",
-    "payNow": "Nu betalen",
+    "payNow": "Betaalmethode toevoegen",
     "newBidsWaiting": "{count, plural, one {# nieuw bod wacht op uw beoordeling} other {# nieuwe biedingen wachten op uw beoordeling}}",
     "reviewBids": "Biedingen bekijken"
   },

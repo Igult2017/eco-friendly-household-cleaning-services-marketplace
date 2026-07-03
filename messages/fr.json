@@ -1470,11 +1470,11 @@
   "compCustomerDashboardActions": {
     "title": "Action requise",
     "itemCount": "{count, plural, one {# élément} other {# éléments}}",
-    "paymentDue": "{bookingNumber} — Paiement à effectuer",
-    "serviceWithProvider": "{service} avec {provider}",
+    "paymentDue": "{bookingNumber} — Ajouter un moyen de paiement",
+    "serviceWithProvider": "{service} avec {provider} — rien n est débité avant la fin du travail",
     "defaultService": "Nettoyage",
     "defaultProvider": "prestataire",
-    "payNow": "Payer maintenant",
+    "payNow": "Ajouter un moyen de paiement",
     "newBidsWaiting": "{count, plural, one {# nouvelle offre en attente de votre examen} other {# nouvelles offres en attente de votre examen}}",
     "reviewBids": "Examiner les offres"
   },

@@ -1470,11 +1470,11 @@
   "compCustomerDashboardActions": {
     "title": "Azione richiesta",
     "itemCount": "{count, plural, one {# elemento} other {# elementi}}",
-    "paymentDue": "{bookingNumber} — Pagamento dovuto",
-    "serviceWithProvider": "{service} con {provider}",
+    "paymentDue": "{bookingNumber} — Aggiungi metodo di pagamento",
+    "serviceWithProvider": "{service} con {provider} — nulla viene addebitato prima della fine del lavoro",
     "defaultService": "Pulizia",
     "defaultProvider": "fornitore",
-    "payNow": "Paga ora",
+    "payNow": "Aggiungi metodo di pagamento",
     "newBidsWaiting": "{count, plural, one {# nuova offerta in attesa della tua revisione} other {# nuove offerte in attesa della tua revisione}}",
     "reviewBids": "Esamina le offerte"
   },

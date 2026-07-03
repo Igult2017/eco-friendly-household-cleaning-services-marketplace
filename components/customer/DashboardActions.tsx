@@ -49,7 +49,8 @@ export async function DashboardActions({ pendingBookings, jobsWithBids }: {
             </div>
             <div className="flex items-center gap-3 flex-shrink-0">
               <span className="font-bold text-sm text-[#2B3441]">{formatCurrency(b.totalAmount)}</span>
-              <Link href={`/bookings/${b.id}`}>
+              {/* Straight to the add-payment page — nothing is charged before completion. */}
+              <Link href={`/bookings/${b.id}/pay`}>
                 <Button size="sm" className="h-7 bg-[#2D7A5F] hover:bg-[#235f49] text-white text-xs">
                   {t("payNow")}
                 </Button>

@@ -1470,11 +1470,11 @@
   "compCustomerDashboardActions": {
     "title": "Wymagane działanie",
     "itemCount": "{count, plural, one {# pozycja} few {# pozycje} many {# pozycji} other {# pozycji}}",
-    "paymentDue": "{bookingNumber} — Płatność wymagana",
-    "serviceWithProvider": "{service} z {provider}",
+    "paymentDue": "{bookingNumber} — Dodaj metodę płatności",
+    "serviceWithProvider": "{service} z {provider} — opłata pobierana jest dopiero po zakończeniu pracy",
     "defaultService": "Sprzątanie",
     "defaultProvider": "usługodawca",
-    "payNow": "Zapłać teraz",
+    "payNow": "Dodaj metodę płatności",
     "newBidsWaiting": "{count, plural, one {# nowa oferta czeka na Twoją recenzję} few {# nowe oferty czekają na Twoją recenzję} many {# nowych ofert czeka na Twoją recenzję} other {# nowych ofert czeka na Twoją recenzję}}",
     "reviewBids": "Przejrzyj oferty"
   },
