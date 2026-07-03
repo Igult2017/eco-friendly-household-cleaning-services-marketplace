@@ -13,6 +13,7 @@ import { onUserWelcome, sendCampaign } from "@/lib/inngest/functions/marketing"
 import { captureSweeper } from "@/lib/inngest/functions/sweeper"
 import { onAwaitingConfirmation } from "@/lib/inngest/functions/awaitingConfirmation"
 import { bookingOverdueSweep } from "@/lib/inngest/functions/overdue"
+import { settleReferralCommissions } from "@/lib/inngest/functions/referralSettlement"
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -32,5 +33,6 @@ export const { GET, POST, PUT } = serve({
     captureSweeper,
     onAwaitingConfirmation,
     bookingOverdueSweep,
+    settleReferralCommissions,
   ],
 })

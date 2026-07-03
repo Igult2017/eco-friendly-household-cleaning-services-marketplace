@@ -400,6 +400,17 @@ const NOTIF: Record<string, Record<string, S>> = {
     pl: { title: "Klient próbował Cię zarezerwować — dokończ konfigurację wypłat", body: "Klient próbował Cię zarezerwować, ale nie połączyłeś jeszcze konta wypłat. Połącz je w Zarobkach, aby można było Cię rezerwować i płacić." },
     pt: { title: "Um cliente tentou reservar-te — conclui a configuração de pagamentos", body: "Um cliente tentou reservar-te, mas ainda não ligaste a tua conta de pagamentos. Liga-a em Ganhos para poderes ser reservado e pago." },
   },
+  // Monthly referral settlement credited last month's commissions to the wallet.
+  referral_settled: {
+    en: { title: "Referral earnings credited", body: "Your referral commissions from last month were credited to your balance." },
+    de: { title: "Empfehlungsprovision gutgeschrieben", body: "Deine Empfehlungsprovisionen des letzten Monats wurden deinem Guthaben gutgeschrieben." },
+    fr: { title: "Gains de parrainage crédités", body: "Vos commissions de parrainage du mois dernier ont été créditées sur votre solde." },
+    es: { title: "Ganancias de referidos acreditadas", body: "Tus comisiones de referidos del mes pasado se acreditaron en tu saldo." },
+    it: { title: "Guadagni referral accreditati", body: "Le tue commissioni referral del mese scorso sono state accreditate sul tuo saldo." },
+    nl: { title: "Verwijzingsinkomsten bijgeschreven", body: "Je verwijzingscommissies van vorige maand zijn bijgeschreven op je saldo." },
+    pl: { title: "Prowizje za polecenia naliczone", body: "Twoje prowizje za polecenia z zeszłego miesiąca zostały dopisane do salda." },
+    pt: { title: "Ganhos de indicação creditados", body: "As tuas comissões de indicação do mês passado foram creditadas no teu saldo." },
+  },
   // At creation a booking is a REQUEST — the cleaner still has to accept it manually.
   booking_request_sent: {
     en: { title: "Booking request sent", body: "Your booking request was sent to the cleaner. You'll be notified as soon as they accept." },
@@ -483,6 +494,7 @@ const PARAMS: Record<string, string[]> = {
   booking_card_on_file: [],
   client_card_saved_wait: [],
   booking_request_sent: [],
+  referral_settled: [],
 }
 
 /**

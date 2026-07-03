@@ -7,6 +7,21 @@ import { and, eq, sql } from "drizzle-orm"
 // Idempotent: the credited→cancelled flip gates the wallet decrement, so retries are safe.
 export async function clawbackReferralCommission(bookingId: string): Promise<void> {
   try {
+    // Pending (not yet month-end-settled): cancel it — no wallet was ever credited, so only the
+    // referral's running "earned" figure needs restating.
+    const pending = await db
+      .update(referralCommissions)
+      .set({ status: "cancelled" })
+      .where(and(eq(referralCommissions.bookingId, bookingId), eq(referralCommissions.status, "pending")))
+      .returning({ cents: referralCommissions.commissionCents, referralId: referralCommissions.referralId })
+    if (pending[0]) {
+      await db
+        .update(referrals)
+        .set({ totalCommissionEarnedCents: sql`GREATEST(total_commission_earned_cents - ${pending[0].cents}, 0)` })
+        .where(eq(referrals.id, pending[0].referralId))
+      return
+    }
+
     const updated = await db
       .update(referralCommissions)
       .set({ status: "cancelled" })

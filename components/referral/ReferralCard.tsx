@@ -7,6 +7,7 @@ import { Copy, Check, Users, TrendingUp, Gift, Wallet } from "lucide-react"
 interface ReferralStats {
   code: string | null
   referralUrl: string | null
+  referralPct?: number
   stats: { total: number; active: number; pending: number; totalEarnedCents: number }
   credit: { balanceCents: number; lifetimeEarnedCents: number }
 }
@@ -29,6 +30,8 @@ export function ReferralCard() {
       .finally(() => setLoading(false))
   }, [])
 
+  const pct = data?.referralPct ?? 5
+
   async function copyLink() {
     if (!data?.referralUrl) return
     await navigator.clipboard.writeText(data.referralUrl)
@@ -46,7 +49,7 @@ export function ReferralCard() {
           </div>
           <div>
             <h3 className="font-semibold text-white leading-tight">{t("title")}</h3>
-            <p className="text-xs text-white/60">{t("subtitle")}</p>
+            <p className="text-xs text-white/60">{t("subtitle", { pct })}</p>
           </div>
         </div>
 
@@ -92,7 +95,7 @@ export function ReferralCard() {
           {[
             t("step1"),
             t("step2"),
-            t("step3"),
+            t("step3", { pct }),
             t("step4"),
           ].map((step, i) => (
             <li key={i} className="flex items-start gap-2.5 text-xs text-[#6B7280]">

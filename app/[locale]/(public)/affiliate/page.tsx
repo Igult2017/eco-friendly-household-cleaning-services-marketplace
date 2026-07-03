@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const t = await getTranslations({ locale, namespace: "affiliate" })
   return {
     title: t("metaTitle"),
-    description: t("metaDescription"),
+    description: t("metaDescription", { pct: await getReferralPct() }),
     alternates: localeAlternates("/affiliate", locale),
   }
 }
@@ -58,7 +58,7 @@ export default async function AffiliatePage({ params }: { params: Promise<{ loca
     {
       step: "03",
       title: t("howStep3Title"),
-      body: t("howStep3Body"),
+      body: t("howStep3Body", { pct }),
       icon: BarChart3,
     },
     {
@@ -70,7 +70,7 @@ export default async function AffiliatePage({ params }: { params: Promise<{ loca
   ]
 
   const BENEFITS = [
-    { title: t("benefit1Title"), body: t("benefit1Body") },
+    { title: t("benefit1Title"), body: t("benefit1Body", { pct }) },
     { title: t("benefit2Title"), body: t("benefit2Body") },
     { title: t("benefit3Title"), body: t("benefit3Body") },
     { title: t("benefit4Title"), body: t("benefit4Body") },
@@ -92,7 +92,7 @@ export default async function AffiliatePage({ params }: { params: Promise<{ loca
       followers: t("testimonial2Followers"),
     },
     {
-      quote: t("testimonial3Quote"),
+      quote: t("testimonial3Quote", { pct }),
       name: "Jonas B.",
       handle: "@sustainjon",
       followers: t("testimonial3Followers"),
@@ -176,6 +176,7 @@ export default async function AffiliatePage({ params }: { params: Promise<{ loca
             <p className="text-lg sm:text-xl text-white/70 leading-relaxed mb-10 max-w-2xl">
               {t.rich("heroSubtitle", {
                 strong: (chunks) => <strong className="text-white">{chunks}</strong>,
+                pct,
               })}
             </p>
 
@@ -393,7 +394,7 @@ export default async function AffiliatePage({ params }: { params: Promise<{ loca
             {userId ? t("ctaTitleSignedIn") : t("ctaTitleSignedOut")}
           </h2>
           <p className="text-white/70 text-lg mb-10 max-w-xl mx-auto">
-            {userId ? t("ctaSubtitleSignedIn") : t("ctaSubtitleSignedOut")}
+            {userId ? t("ctaSubtitleSignedIn", { pct }) : t("ctaSubtitleSignedOut")}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link

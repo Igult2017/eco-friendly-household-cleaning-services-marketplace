@@ -441,7 +441,7 @@
   },
   "affiliate": {
     "metaTitle": "Partnerprogramm — DORIXÉ",
-    "metaDescription": "Werde Partner von DORIXÉ und verdiene 5 % lebenslange Provision auf jede Buchung von Kunden, die du wirbst. Der umweltfreundliche Weg, dein Einkommen zu steigern.",
+    "metaDescription": "Werde Partner von DORIXÉ und verdiene {pct} % lebenslange Provision auf jede Buchung von Kunden, die du wirbst. Der umweltfreundliche Weg, dein Einkommen zu steigern.",
     "statLifetimeCommission": "Lebenslange Provision",
     "statCostToJoin": "Kosten für den Beitritt",
     "statEarningPotential": "Verdienstpotenzial",
@@ -451,11 +451,11 @@
     "howStep2Title": "Teile deinen Link",
     "howStep2Body": "Poste ihn auf Instagram, YouTube, TikTok, in deinem Blog oder Newsletter. Wo auch immer dein Publikum unterwegs ist, dein Link funktioniert.",
     "howStep3Title": "Verdiene bei jeder Buchung",
-    "howStep3Body": "Wenn jemand auf deinen Link klickt und eine Reinigung bucht, verdienst du 5 % des Buchungswerts — automatisch deinem DORIXÉ-Konto gutgeschrieben.",
+    "howStep3Body": "Wenn jemand über deinen Link bucht, erhältst du {pct}% des Buchungswerts — gutgeschrieben auf dein DORIXÉ-Guthaben am Ende jedes Monats.",
     "howStep4Title": "Auszahlen oder selbst buchen",
     "howStep4Body": "Nutze dein Guthaben, um deine eigenen Reinigungen zu bezahlen, oder zahle es aus. Dein Guthaben, deine Wahl.",
     "benefit1Title": "Lebenslange Provision",
-    "benefit1Body": "Jede Buchung deiner geworbenen Person — nicht nur die erste — bringt dir 5 %.",
+    "benefit1Body": "Jede Buchung deiner geworbenen Person — nicht nur die erste — bringt dir {pct} %.",
     "benefit2Title": "Echtzeit-Dashboard",
     "benefit2Body": "Verfolge Klicks, Empfehlungen und Einnahmen in deinem persönlichen Dashboard, live aktualisiert.",
     "benefit3Title": "30-Tage-Cookie",
@@ -488,7 +488,7 @@
     "heroBadge": "Partnerprogramm",
     "heroTitleLine1": "Verdiene, während du",
     "heroTitleLine2": "den grünen Weg bewirbst",
-    "heroSubtitle": "Werde Partner von DORIXÉ und verdiene <strong>5 % lebenslange Provision</strong> auf jede Buchung von Kunden, die du wirbst. Keine Obergrenze. Kein Ablauf. Nur wiederkehrendes Guthaben für Arbeit, die du einmal gemacht hast.",
+    "heroSubtitle": "Werde Partner von DORIXÉ und verdiene <strong>{pct} % lebenslange Provision</strong> auf jede Buchung von Kunden, die du wirbst. Keine Obergrenze. Kein Ablauf. Nur wiederkehrendes Guthaben für Arbeit, die du einmal gemacht hast.",
     "yourLinkBadge": "Dein Link",
     "howTitle": "So funktioniert's",
     "howSubtitle": "Von der Registrierung bis zur ersten Provision in unter 5 Minuten.",
@@ -511,7 +511,7 @@
     "exampleMonthlyValue": "{amount} € / Mon.",
     "ctaTitleSignedIn": "Dein Partnerlink ist bereit.",
     "ctaTitleSignedOut": "Verdiene noch heute. Keine Freigabe nötig.",
-    "ctaSubtitleSignedIn": "Teile deinen einzigartigen Link und verdiene 5 % auf jede Buchung deiner geworbenen Personen — für immer.",
+    "ctaSubtitleSignedIn": "Teile deinen einzigartigen Link und verdiene {pct} % auf jede Buchung deiner geworbenen Personen — für immer.",
     "ctaSubtitleSignedOut": "Registriere dich, hol dir deinen Link und teile ihn. Deine erste Provision könnte schon vor Wochenende eintreffen.",
     "ctaSignIn": "Mit bestehendem Konto anmelden",
     "ctaTerms": "Mit dem Beitritt stimmst du unseren <terms>Nutzungsbedingungen</terms> zu. Die Provision wird als Plattform-Guthaben ausgezahlt."
@@ -1706,7 +1706,7 @@
   },
   "compReferralReferralCard": {
     "title": "Empfehlungsprogramm",
-    "subtitle": "Verdiene 5 % bei jeder Buchung, die deine Empfohlenen tätigen",
+    "subtitle": "Verdiene {pct}% an jeder Buchung deiner Empfehlungen",
     "copy": "Kopieren",
     "copied": "Kopiert!",
     "loadError": "Empfehlungslink konnte nicht geladen werden.",
@@ -1717,7 +1717,7 @@
     "howItWorks": "So funktioniert's",
     "step1": "Teile deinen Link — wer sich darüber registriert, wird als deine Empfehlung markiert",
     "step2": "Sobald die erste Buchung abgeschlossen ist, wird deine Empfehlung aktiv",
-    "step3": "Du verdienst dauerhaft 5 % jeder ihrer Buchungen als Plattform-Guthaben",
+    "step3": "Du erhältst {pct}% jeder ihrer Buchungen — gutgeschrieben am Ende jedes Monats",
     "step4": "Nutze dein Guthaben als Rabatt bei deiner nächsten Buchung"
   },
   "compUiDialog": {

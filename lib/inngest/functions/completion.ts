@@ -1,6 +1,6 @@
 import { inngest } from "../client"
 import { db } from "@/lib/db"
-import { bookings, payments, users, notifications, providers, referrals, referralCommissions, referralCredits } from "@/lib/db/schema"
+import { bookings, payments, users, notifications, providers, referrals, referralCommissions } from "@/lib/db/schema"
 import { stripe } from "@/lib/stripe/client"
 import { resend, FROM } from "@/lib/resend/client"
 import { reviewRequestEmail, reviewReminderEmail } from "@/lib/resend/transactionalEmails"
@@ -153,7 +153,9 @@ export const onBookingCompleted = inngest.createFunction(
       }
 
       // Unique constraint on booking_id makes this INSERT idempotent across retries.
-      // If it returns empty (conflict), a prior attempt already credited — skip wallet update.
+      // Commission accrues as PENDING — the wallet is NOT touched here. The monthly settlement
+      // cron (referralSettlement.ts) moves pending commissions into the withdrawable balance at
+      // the end of each month; the gap doubles as a refund/dispute window for clawbacks.
       const inserted = await db
         .insert(referralCommissions)
         .values({
@@ -162,28 +164,13 @@ export const onBookingCompleted = inngest.createFunction(
           referrerId: ref.referrerId,
           bookingAmountCents: booking.subtotalAmount,
           commissionCents,
-          status: "credited",
-          creditedAt: new Date(),
+          status: "pending",
         })
         .onConflictDoNothing()
         .returning({ id: referralCommissions.id })
 
       if (!inserted.length) return { skipped: "already_credited" }
-
-      // Only reaches here once per booking — safe to increment balance
-      await db
-        .insert(referralCredits)
-        .values({ userId: ref.referrerId, balanceCents: commissionCents, lifetimeEarnedCents: commissionCents })
-        .onConflictDoUpdate({
-          target: referralCredits.userId,
-          set: {
-            balanceCents: sql`referral_credits.balance_cents + ${commissionCents}`,
-            lifetimeEarnedCents: sql`referral_credits.lifetime_earned_cents + ${commissionCents}`,
-            updatedAt: new Date(),
-          },
-        })
-
-      return { commissionCents, referrerId: ref.referrerId }
+      return { commissionCents, referrerId: ref.referrerId, settlement: "monthly" }
     })
 
     await step.sleep("wait-24h", "24 hours")
