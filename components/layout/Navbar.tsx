@@ -4,7 +4,7 @@ import { Link } from "@/i18n/navigation"
 import NextLink from "next/link"
 import { useRouter } from "next/navigation"
 import { LogoImage } from "@/components/layout/LogoImage"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs"
 import { NotificationBell } from "@/components/notifications/NotificationBell"
 import { Menu, X, Leaf } from "lucide-react"
@@ -31,12 +31,40 @@ function dashboardHref(role: string | undefined) {
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [activeRole, setActiveRole] = useState<string | undefined>(undefined)
   const router = useRouter()
   const { isLoaded, isSignedIn, user } = useUser()
   const t = useTranslations("nav")
   const role = (isLoaded ? user?.publicMetadata?.role : undefined) as string | undefined
-  const href = dashboardHref(role)
-  const label = role === "provider" ? t("cleanerDashboard") : role === "admin" ? t("adminPanel") : role === "affiliate" ? t("affiliateDashboard") : t("myDashboard")
+  const effectiveRole = activeRole ?? role
+
+  useEffect(() => {
+    if (!isLoaded || !user) return
+    const dualRole = (user.publicMetadata as { dualRole?: boolean })?.dualRole === true
+    if (!dualRole || !role) {
+      setActiveRole(undefined)
+      return
+    }
+
+    const match = document.cookie
+      .split("; ")
+      .find((cookie) => cookie.startsWith("dorix_active_role="))
+    const value = match?.split("=")[1]
+    if (value === "customer" || value === "provider") {
+      setActiveRole(value)
+    } else {
+      setActiveRole(undefined)
+    }
+  }, [isLoaded, user, role])
+
+  const href = dashboardHref(effectiveRole)
+  const label = effectiveRole === "provider"
+    ? t("cleanerDashboard")
+    : effectiveRole === "admin"
+      ? t("adminPanel")
+      : effectiveRole === "affiliate"
+        ? t("affiliateDashboard")
+        : t("myDashboard")
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#E5EDE9]">
