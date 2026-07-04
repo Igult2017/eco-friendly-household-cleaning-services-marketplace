@@ -132,7 +132,7 @@ export function OnboardingForm({ defaultFirstName = "", defaultLastName = "", de
       </div>
 
       <div className="bg-white rounded-2xl border border-[#E5EDE9] shadow-sm p-5 space-y-4">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">{t("firstNameLabel")}</Label>
             <Input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder={t("firstNamePlaceholder")} required />

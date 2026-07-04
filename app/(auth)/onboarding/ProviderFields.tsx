@@ -78,7 +78,7 @@ export function ProviderFields({ values, onChange, onValidChange }: Props) {
           <LocationDetectButton onDetect={handleDetect} />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">{t("cityLabel")}</Label>
             <Input value={values.city} onChange={e => onChange("city", e.target.value)}
@@ -105,7 +105,7 @@ export function ProviderFields({ values, onChange, onValidChange }: Props) {
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
           <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">{t("countryLabel")}</Label>
           <Select value={values.country} onValueChange={v => { if (v) onChange("country", v) }}>

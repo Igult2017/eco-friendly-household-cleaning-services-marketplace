@@ -13,7 +13,7 @@ import { isLocale } from "@/i18n/config"
 const CLIENT_NAMESPACES = new Set<string>([
   "nav", "compGdprCookieBanner", "compUiDialog", "compUiSheet", "compUiLanguagePopup", "globalerror",
   "compLayoutAdminCleanerSwitch", "compLayoutRoleSwitcher", "compLayoutEnableCustomerRoleButton",
-  "compLayoutAddCleanerRoleForm", "roleBadge", "approvalNotice",
+  "compLayoutAddCleanerRoleForm", "authOnboardingProviderFields", "roleBadge", "approvalNotice",
   "compBookingProviderCard", "compLocationLocationDetectButton", "compReferralReferralCard",
   "compBlogShareButtons", "compBlogBlogComments", "compBlogBlogEditor", "compBlogBlogEditorToolbar",
   "compBookingProviderBookingActions", "compBookingBeforePhotoUpload", "compBookingRecurringScheduleCard",
