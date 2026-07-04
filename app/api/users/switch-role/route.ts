@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
 
     const res = NextResponse.json({ success: true, redirectTo })
     res.cookies.set("dorix_active_role", targetRole, {
-      httpOnly: true,
+      httpOnly: false,
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 24 * 7,

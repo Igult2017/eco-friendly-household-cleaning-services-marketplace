@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
 
       const res = NextResponse.json({ success: true, redirectTo: "/dashboard" })
       res.cookies.set("dorix_active_role", "customer", {
-        httpOnly: true, sameSite: "lax",
+        httpOnly: false, sameSite: "lax",
         secure: process.env.NODE_ENV === "production",
         maxAge: 60 * 60 * 24 * 7, path: "/",
       })
@@ -142,7 +142,7 @@ export async function POST(req: NextRequest) {
 
     const res = NextResponse.json({ success: true, redirectTo: "/provider/dashboard" })
     res.cookies.set("dorix_active_role", "provider", {
-      httpOnly: true, sameSite: "lax",
+      httpOnly: false, sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 24 * 7, path: "/",
     })
