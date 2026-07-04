@@ -103,10 +103,9 @@ export function Navbar() {
             <>
               {role === "admin" && <AdminCleanerSwitch />}
               <NextLink
-                href={isLoaded ? href : "#"}
+                href={href}
                 prefetch={false}
                 onMouseEnter={() => { if (isLoaded) router.prefetch(href) }}
-                onClick={!isLoaded ? (e) => e.preventDefault() : undefined}
                 className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg bg-[#EDF5F0] text-[#2D7A5F] hover:bg-[#D4EDE2] transition-colors"
               >
                 <DashboardLinkIcon />
@@ -166,9 +165,9 @@ export function Navbar() {
           <div className="pt-2 border-t border-[#E5EDE9] mt-1">
             {isSignedIn ? (
               <NextLink
-                href={isLoaded ? href : "#"}
+                href={href}
                 prefetch={false}
-                onClick={!isLoaded ? (e) => e.preventDefault() : () => setMobileOpen(false)}
+                onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-2 text-sm font-medium px-3 py-2 rounded-lg bg-[#EDF5F0] text-[#2D7A5F]"
               >
                 <DashboardLinkIcon /> {label}
