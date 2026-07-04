@@ -175,14 +175,24 @@ const clerkHandler = clerkMiddleware(async (auth, req) => {
     return res
   }
 
-  // Dual-role: use the active-role cookie to determine which section this user is browsing
-  const isDual = (sessionClaims?.metadata as { dualRole?: boolean } | undefined)?.dualRole === true
-  let effectiveRole = role
-  if (isDual) {
-    const activeRoleCookie = req.cookies.get("dorix_active_role")?.value
-    if (activeRoleCookie === "customer" || activeRoleCookie === "provider") {
-      effectiveRole = activeRoleCookie
+  // Dual-role: use the active-role cookie to determine which section this user is browsing.
+  // The JWT may still be stale for up to 60s after the role is enabled, so fall back to live
+  // Clerk metadata when an active-role cookie is present.
+  let isDual = (sessionClaims?.metadata as { dualRole?: boolean } | undefined)?.dualRole === true
+  const activeRoleCookie = req.cookies.get("dorix_active_role")?.value
+  if (!isDual && (activeRoleCookie === "customer" || activeRoleCookie === "provider")) {
+    try {
+      const client = await clerkClient()
+      const clerkUser = await client.users.getUser(userId)
+      isDual = ((clerkUser.publicMetadata as { dualRole?: boolean })?.dualRole === true)
+    } catch {
+      // If Clerk is unavailable, preserve the existing non-dual logic and allow the normal redirect.
     }
+  }
+
+  let effectiveRole = role
+  if (isDual && (activeRoleCookie === "customer" || activeRoleCookie === "provider")) {
+    effectiveRole = activeRoleCookie
   }
 
   if (isAffiliateRoute(req) && effectiveRole !== "affiliate") return NextResponse.redirect(new URL("/", base))
