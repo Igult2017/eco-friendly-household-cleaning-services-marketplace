@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic"
 import { auth, currentUser } from "@clerk/nextjs/server"
 import { getTranslations } from "next-intl/server"
 import { redirect } from "next/navigation"
+import { cookies } from "next/headers"
 import { db } from "@/lib/db"
 import { bookings, jobPosts, payments, notifications, reviews } from "@/lib/db/schema"
 import { eq, desc } from "drizzle-orm"
@@ -24,7 +25,11 @@ export default async function CustomerDashboardPage() {
   const user = await currentUser()
   const jwtRole = (sessionClaims?.metadata as { role?: string } | undefined)?.role
   const role = jwtRole ?? (user?.publicMetadata?.role as string | undefined)
-  if (role === "provider") redirect("/provider/dashboard")
+  const isDual = (user?.publicMetadata as { dualRole?: boolean })?.dualRole === true
+  const cookieStore = await cookies()
+  const activeRole = isDual ? cookieStore.get("dorix_active_role")?.value : undefined
+  const effectiveRole = activeRole ?? role
+  if (effectiveRole === "provider") redirect("/provider/dashboard")
   // Admin is allowed through to view customer-side data (My Provider Account)
 
   const [allBookings, recentJobs, recentPayments, recentNotifs, reviewedRows] = await Promise.all([
