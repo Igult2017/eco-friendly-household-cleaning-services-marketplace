@@ -86,6 +86,9 @@ export function Navbar() {
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-6">
           {NAV_LINKS.map(({ href: navHref, key }) => {
+              // Hide certain nav items for specific effective roles to avoid confusing users.
+              if (key === "findCleaners" && effectiveRole === "provider") return null
+              if (key === "browseJobs" && effectiveRole === "customer") return null
             // Eco-store gets a distinct eco-green pill + leaf so it stands out from the plain nav links.
             const isEco = key === "ecoStore"
             return (
@@ -162,6 +165,9 @@ export function Navbar() {
       {mobileOpen && (
         <div className="md:hidden bg-white border-b border-[#E5EDE9] px-4 py-4 flex flex-col gap-1">
           {NAV_LINKS.map(({ href: navHref, key }) => {
+              // Same role-based hiding for the mobile menu
+              if (key === "findCleaners" && effectiveRole === "provider") return null
+              if (key === "browseJobs" && effectiveRole === "customer") return null
             const isEco = key === "ecoStore"
             return (
               <Link
