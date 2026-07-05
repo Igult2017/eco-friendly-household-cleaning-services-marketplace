@@ -5,6 +5,7 @@ import NextLink from "next/link"
 import { useRouter } from "next/navigation"
 import { LogoImage } from "@/components/layout/LogoImage"
 import { useEffect, useState } from "react"
+import * as Sentry from "@sentry/nextjs"
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs"
 import { NotificationBell } from "@/components/notifications/NotificationBell"
 import { Menu, X, Leaf } from "lucide-react"
@@ -39,20 +40,29 @@ export function Navbar() {
   const effectiveRole = activeRole ?? role
 
   useEffect(() => {
-    if (!isLoaded || !user) return
-    const dualRole = (user.publicMetadata as { dualRole?: boolean })?.dualRole === true
-    if (!dualRole || !role) {
-      setActiveRole(undefined)
-      return
-    }
+    try {
+      if (!isLoaded || !user) return
+      const dualRole = (user.publicMetadata as { dualRole?: boolean })?.dualRole === true
+      if (!dualRole || !role) {
+        setActiveRole(undefined)
+        return
+      }
 
-    const match = document.cookie
-      .split("; ")
-      .find((cookie) => cookie.startsWith("dorix_active_role="))
-    const value = match?.split("=")[1]
-    if (value === "customer" || value === "provider") {
-      setActiveRole(value)
-    } else {
+      const match = document.cookie
+        .split("; ")
+        .find((cookie) => cookie.startsWith("dorix_active_role="))
+      const value = match?.split("=")[1]
+      if (value === "customer" || value === "provider") {
+        setActiveRole(value)
+      } else {
+        setActiveRole(undefined)
+      }
+    } catch (err) {
+      // Log client-side errors to console and Sentry to help debug deployment issues
+      // without blocking the UI.
+      // eslint-disable-next-line no-console
+      console.error("Navbar activeRole read failed:", err)
+      try { Sentry.captureException(err) } catch { /* ignore Sentry failures */ }
       setActiveRole(undefined)
     }
   }, [isLoaded, user, role])
@@ -105,7 +115,15 @@ export function Navbar() {
               <NextLink
                 href={href}
                 prefetch={false}
-                onMouseEnter={() => { if (isLoaded) router.prefetch(href) }}
+                onMouseEnter={() => {
+                  try {
+                    if (isLoaded) router.prefetch(href)
+                  } catch (err) {
+                    // eslint-disable-next-line no-console
+                    console.error("Router prefetch failed:", err)
+                    try { Sentry.captureException(err) } catch { /* ignore Sentry failures */ }
+                  }
+                }}
                 className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg bg-[#EDF5F0] text-[#2D7A5F] hover:bg-[#D4EDE2] transition-colors"
               >
                 <DashboardLinkIcon />
