@@ -169,7 +169,7 @@ export default function BrowseJobsPage() {
                         <>
                           <p className="text-xs text-[#9CA3AF] mb-0.5">{t("rateLabel")}</p>
                           <p className="font-bold text-[#2D7A5F] text-lg">
-                            {t("perHour", { amount: formatCurrencyForCountry(Math.round((job.budgetMin * 60) / job.estimatedDurationMinutes), job.country) })}
+                            {t("perHour", { amount: formatCurrencyForCountry(Math.round((job.budgetMin * 60) / job.estimatedDurationMinutes), job.country, "en-GB") })}
                           </p>
                           <p className="text-xs text-[#6B7280]">{t("totalApprox", { amount: formatCurrencyForCountry(job.budgetMin, job.country) })}</p>
                         </>

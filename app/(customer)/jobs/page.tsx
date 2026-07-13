@@ -147,7 +147,7 @@ function BidCard({ bid, jobId, jobStatus }: { bid: Bid; jobId: string; jobStatus
               <p className="font-bold text-[#2D7A5F] text-lg leading-tight">{formatCurrencyForCountry(bid.amount, p?.country ?? "DE")}</p>
               <p className="text-xs text-[#9CA3AF]">{t("bidAmount")}</p>
               {bid.estimatedDurationMinutes ? (
-                <p className="text-[11px] text-[#6B7280]">{t("impliedRate", { rate: formatCurrencyForCountry(Math.round((bid.amount * 60) / bid.estimatedDurationMinutes), p?.country ?? "DE") })}</p>
+                <p className="text-[11px] text-[#6B7280]">{t("impliedRate", { rate: formatCurrencyForCountry(Math.round((bid.amount * 60) / bid.estimatedDurationMinutes), p?.country ?? "DE", "en-GB") })}</p>
               ) : null}
             </div>
           </div>

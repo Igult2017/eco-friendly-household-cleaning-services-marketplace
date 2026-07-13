@@ -38,18 +38,18 @@ export function formatCurrencyShort(
 
 // Convenience: infer currency and locale from a 2-letter ISO country code.
 // Use this when you have the user's country but not an explicit currency.
-export function formatCurrencyForCountry(cents: number, countryCode: string): string {
+export function formatCurrencyForCountry(cents: number, countryCode: string, localeOverride?: string): string {
   return formatCurrency(
     cents,
     getCurrencyForCountry(countryCode),
-    getLocaleForCountry(countryCode),
+    localeOverride ?? getLocaleForCountry(countryCode),
   )
 }
 
-export function formatCurrencyShortForCountry(cents: number, countryCode: string): string {
+export function formatCurrencyShortForCountry(cents: number, countryCode: string, localeOverride?: string): string {
   return formatCurrencyShort(
     cents,
     getCurrencyForCountry(countryCode),
-    getLocaleForCountry(countryCode),
+    localeOverride ?? getLocaleForCountry(countryCode),
   )
 }

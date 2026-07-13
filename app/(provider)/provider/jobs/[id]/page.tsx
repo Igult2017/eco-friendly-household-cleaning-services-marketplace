@@ -79,7 +79,7 @@ export default function ProviderJobDetailPage() {
             <div className="text-right shrink-0">
               {hourly ? (
                 <>
-                  <p className="font-bold text-[#2D7A5F] text-2xl">{t("perHour", { amount: formatCurrencyForCountry(hourly, country) })}</p>
+                  <p className="font-bold text-[#2D7A5F] text-2xl">{t("perHour", { amount: formatCurrencyForCountry(hourly, country, "en-GB") })}</p>
                   {job.budgetMin ? <p className="text-xs text-[#6B7280]">{t("totalApprox", { amount: formatCurrencyForCountry(job.budgetMin, country) })}</p> : null}
                 </>
               ) : job.budgetMin ? (

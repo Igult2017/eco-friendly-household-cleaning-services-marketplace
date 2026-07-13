@@ -169,7 +169,7 @@ export default function ProviderJobsPage() {
                         {job.budgetMin && job.estimatedDurationMinutes ? (
                           <>
                             <p className="font-bold text-[#2D7A5F] text-base">
-                              {t("perHour", { amount: formatCurrencyForCountry(Math.round((job.budgetMin * 60) / job.estimatedDurationMinutes), job.serviceAddress.country ?? "DE") })}
+                              {t("perHour", { amount: formatCurrencyForCountry(Math.round((job.budgetMin * 60) / job.estimatedDurationMinutes), job.serviceAddress.country ?? "DE", "en-GB") })}
                             </p>
                             <p className="text-[11px] text-[#6B7280]">{t("totalApprox", { amount: formatCurrencyForCountry(job.budgetMin, job.serviceAddress.country ?? "DE") })}</p>
                           </>
