@@ -1,9 +1,11 @@
 import { redis } from "@/lib/redis/client"
 
 /**
- * ISO-3166 country code for an IP, cached in Redis. We resolve the country ourselves and hand it to
- * Umami (via the cf-ipcountry header it honours) so country analytics work regardless of whether the
- * Umami container ships a GeoIP database. Returns null when undeterminable (Umami then falls back).
+ * ISO-3166 country code for an IP, cached in Redis. Sent to Umami as cf-ipcountry alongside the raw
+ * x-forwarded-for. NOTE: self-hosted Umami 3.0.3 IGNORES cf-ipcountry and geolocates x-forwarded-for
+ * with its bundled GeoIP db — which only works because the app talks to the Umami container directly
+ * (same docker network); through Traefik the XFF gets replaced. The cf-ipcountry header is kept as
+ * insurance for setups that do honour it (Cloudflare in front, Umami Cloud).
  */
 export async function countryForIp(ip: string | null): Promise<string | null> {
   if (!ip) return null
