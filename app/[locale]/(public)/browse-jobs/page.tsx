@@ -171,7 +171,7 @@ export default function BrowseJobsPage() {
                           <p className="font-bold text-[#2D7A5F] text-lg">
                             {t("perHour", { amount: formatCurrencyForCountry(Math.round((job.budgetMin * 60) / job.estimatedDurationMinutes), job.country, "en-GB") })}
                           </p>
-                          <p className="text-xs text-[#6B7280]">{t("totalApprox", { amount: formatCurrencyForCountry(job.budgetMin, job.country) })}</p>
+                          <p className="text-xs text-[#6B7280]">{t("totalApprox", { amount: formatCurrencyForCountry(job.budgetMin, job.country, "en-GB") })}</p>
                         </>
                       ) : (
                         <>
@@ -179,11 +179,11 @@ export default function BrowseJobsPage() {
                           <p className="font-bold text-[#2D7A5F] text-lg">
                             {job.budgetMin && job.budgetMax
                               ? job.budgetMin === job.budgetMax
-                                ? formatCurrencyForCountry(job.budgetMin, job.country)
-                                : `${formatCurrencyForCountry(job.budgetMin, job.country)} – ${formatCurrencyForCountry(job.budgetMax, job.country)}`
+                                ? formatCurrencyForCountry(job.budgetMin, job.country, "en-GB")
+                                : `${formatCurrencyForCountry(job.budgetMin, job.country, "en-GB")} – ${formatCurrencyForCountry(job.budgetMax, job.country, "en-GB")}`
                               : job.budgetMax
-                              ? t("budgetUpTo", { amount: formatCurrencyForCountry(job.budgetMax, job.country) })
-                              : formatCurrencyForCountry(job.budgetMin!, job.country)}
+                              ? t("budgetUpTo", { amount: formatCurrencyForCountry(job.budgetMax, job.country, "en-GB") })
+                              : formatCurrencyForCountry(job.budgetMin!, job.country, "en-GB")}
                           </p>
                         </>
                       )}

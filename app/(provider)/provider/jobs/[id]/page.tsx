@@ -80,10 +80,10 @@ export default function ProviderJobDetailPage() {
               {hourly ? (
                 <>
                   <p className="font-bold text-[#2D7A5F] text-2xl">{t("perHour", { amount: formatCurrencyForCountry(hourly, country, "en-GB") })}</p>
-                  {job.budgetMin ? <p className="text-xs text-[#6B7280]">{t("totalApprox", { amount: formatCurrencyForCountry(job.budgetMin, country) })}</p> : null}
+                  {job.budgetMin ? <p className="text-xs text-[#6B7280]">{t("totalApprox", { amount: formatCurrencyForCountry(job.budgetMin, country, "en-GB") })}</p> : null}
                 </>
               ) : job.budgetMin ? (
-                <p className="font-bold text-[#2D7A5F] text-2xl">{formatCurrencyForCountry(job.budgetMin, country)}</p>
+                <p className="font-bold text-[#2D7A5F] text-2xl">{formatCurrencyForCountry(job.budgetMin, country, "en-GB")}</p>
               ) : null}
               <p className="text-xs text-[#9CA3AF] mt-1 flex items-center justify-end gap-1"><Users size={12} />{t("bidCount", { count: job.bids.length })}</p>
             </div>

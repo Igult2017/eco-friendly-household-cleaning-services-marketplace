@@ -353,8 +353,8 @@ export default function CustomerJobsPage() {
                         {job.budgetMin && job.budgetMax && (
                           <p className="text-sm font-bold text-[#2D7A5F]">
                             {job.budgetMin === job.budgetMax
-                              ? formatCurrencyForCountry(job.budgetMin, job.serviceAddress.country)
-                              : <>{formatCurrencyForCountry(job.budgetMin, job.serviceAddress.country)} – {formatCurrencyForCountry(job.budgetMax, job.serviceAddress.country)}</>}
+                              ? formatCurrencyForCountry(job.budgetMin, job.serviceAddress.country, "en-GB")
+                              : <>{formatCurrencyForCountry(job.budgetMin, job.serviceAddress.country, "en-GB")} – {formatCurrencyForCountry(job.budgetMax, job.serviceAddress.country, "en-GB")}</>}
                           </p>
                         )}
                       </div>
