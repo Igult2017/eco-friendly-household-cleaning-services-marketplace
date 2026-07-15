@@ -7,11 +7,14 @@ export const dynamic = "force-dynamic"
 const UMAMI = (process.env.UMAMI_INTERNAL_URL ?? "http://umami:3000").replace(/\/$/, "")
 
 /**
- * Umami event-collection proxy. The plain next.config rewrite forwards this POST from inside the app
- * container, so Umami geolocates the *internal Docker IP* and every visit lands under an unknown
- * country. Here we pull the visitor's REAL IP from the edge proxy's forwarded headers and pass it to
- * Umami explicitly (x-forwarded-for + x-real-ip), so its bundled GeoIP can resolve the country.
- * (script.js + other Umami paths keep using the next.config rewrite.)
+ * Umami event-collection proxy. A raw next.config rewrite to Umami would forward this POST from
+ * inside the app container, so Umami geolocates the *internal Docker IP* and every visit lands under
+ * an unknown country. Here we pull the visitor's REAL IP from the edge proxy's forwarded headers and
+ * pass it to Umami explicitly (x-forwarded-for + x-real-ip), so its GeoIP can resolve the country.
+ *
+ * The tracker posts to /_a/api/send; a next.config rewrite maps that here. This file must NOT live
+ * under app/_a/ — underscore-prefixed folders are private (excluded from routing) in the App Router,
+ * which is exactly how the original version of this handler ended up as unreachable dead code.
  */
 export async function POST(req: Request) {
   const body = await req.text()
