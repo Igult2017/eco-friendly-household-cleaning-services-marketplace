@@ -38,13 +38,16 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "images.unsplash.com" }, // blog cover images from Unsplash
     ],
   },
-  // Proxy the self-hosted Umami tracker through our own HTTPS origin so the
-  // script + event collection are same-origin (no mixed-content block from the
-  // HTTP Umami instance) and need no separate analytics subdomain.
+  // Proxy the self-hosted Umami tracker script through our own HTTPS origin so it is
+  // same-origin (no mixed-content block from the HTTP Umami instance) and needs no
+  // separate analytics subdomain. ONLY script.js — event collection (/_a/api/send) must
+  // reach the app route handler that injects the visitor's real IP + country; a broad
+  // /_a/:path* rewrite matches before app route handlers and would swallow that POST,
+  // recording every visit with a null country.
   async rewrites() {
     const umami = process.env.UMAMI_INTERNAL_URL
     if (!umami) return []
-    return [{ source: "/_a/:path*", destination: `${umami.replace(/\/$/, "")}/:path*` }]
+    return [{ source: "/_a/script.js", destination: `${umami.replace(/\/$/, "")}/script.js` }]
   },
   async headers() {
     return [

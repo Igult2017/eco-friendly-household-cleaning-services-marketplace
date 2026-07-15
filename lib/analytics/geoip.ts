@@ -19,7 +19,11 @@ export async function countryForIp(ip: string | null): Promise<string | null> {
   // /_a proxy never sent cf-ipcountry — leaving Umami (which has no GeoIP DB here) with "Unknown".
   // HTTPS ipapi.co is the provider /api/geo/country already resolves with successfully in prod.
   try {
-    const res = await fetch(`https://ipapi.co/${ip}/country/`, { signal: AbortSignal.timeout(2500), cache: "no-store" })
+    const res = await fetch(`https://ipapi.co/${ip}/country/`, {
+      headers: { Accept: "text/plain", "User-Agent": "DORIXE-marketplace/1.0" },
+      signal: AbortSignal.timeout(2500),
+      cache: "no-store",
+    })
     if (res.ok) {
       const text = (await res.text()).trim().toUpperCase()
       if (/^[A-Z]{2}$/.test(text)) cc = text
