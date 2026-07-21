@@ -3,16 +3,16 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { providers, users } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
-import { createConnectAccount, createAccountLink } from "@/lib/stripe/connect"
+import { createConnectAccount, createAccountSession } from "@/lib/stripe/connect"
 import { logError } from "@/lib/utils/logError"
 
-export async function POST(req: Request) {
+export async function POST() {
   try {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
     const [[provider], [user]] = await Promise.all([
-      db.select({ id: providers.id, stripeAccountId: providers.stripeAccountId })
+      db.select({ id: providers.id, stripeAccountId: providers.stripeAccountId, country: providers.country })
         .from(providers).where(eq(providers.userId, userId)),
       db.select({ email: users.email }).from(users).where(eq(users.id, userId)),
     ])
@@ -24,12 +24,11 @@ export async function POST(req: Request) {
     let stripeAccountId = provider.stripeAccountId
 
     if (!stripeAccountId) {
-      const body = await req.json().catch(() => ({}))
       // BUG-008d: idempotency-key the account creation per provider so a retry after a
       // failed DB write returns the same account rather than orphaning a duplicate.
       const account = await createConnectAccount({
         email: user?.email ?? undefined,
-        country: body.country ?? "DE",
+        country: provider.country,
         idempotencyKey: `connect-acct-${provider.id}`,
       })
       stripeAccountId = account.id
@@ -47,14 +46,8 @@ export async function POST(req: Request) {
       }
     }
 
-    const origin = req.headers.get("origin") ?? process.env.NEXT_PUBLIC_APP_URL!
-    const link = await createAccountLink({
-      accountId: stripeAccountId,
-      refreshUrl: `${origin}/provider/earnings?connect=refresh`,
-      returnUrl: `${origin}/provider/earnings?connect=success`,
-    })
-
-    return NextResponse.json({ url: link.url })
+    const clientSecret = await createAccountSession(stripeAccountId)
+    return NextResponse.json({ clientSecret })
   } catch (err) {
     console.error("[stripe/connect/account POST]", err)
     void logError({ message: "[stripe/connect/account POST]", error: err, route: "/api/stripe/connect/account", severity: "error" })

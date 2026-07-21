@@ -197,7 +197,7 @@ export async function POST(req: NextRequest) {
     }
 
     const redirect =
-      data.role === "provider" ? "/provider/dashboard"
+      data.role === "provider" ? "/onboarding/payout"
       : data.role === "affiliate" ? "/partner/dashboard"
       : "/dashboard"
     const res = NextResponse.json({ success: true, redirect })

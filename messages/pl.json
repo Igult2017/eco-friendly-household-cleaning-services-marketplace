@@ -1651,7 +1651,10 @@
     "connecting": "Przekierowywanie do Stripe...",
     "connectButton": "Połącz konto Stripe",
     "skip": "Pomiń na razie",
-    "footnote": "Stripe możesz połączyć później ze swojego panelu. Wypłaty wymagają połączonego konta."
+    "footnote": "Stripe możesz połączyć później ze swojego panelu. Wypłaty wymagają połączonego konta.",
+    "loading": "Wczytywanie procesu onboardingu Stripe...",
+    "kycDisclaimer": "Zostaniesz poproszony o zweryfikowanie tożsamości za pośrednictwem Stripe. Jest to wymóg regulacyjny (KYC) — nie oznacza to, że musisz już posiadać konto Stripe; zostanie ono dla Ciebie utworzone.",
+    "kycStepMessage": "Stripe weryfikuje teraz Twoją tożsamość. Ten krok jest wymagany przez przepisy finansowe (KYC) — nie potrzebujesz istniejącego konta Stripe, aby kontynuować."
   },
   "compProviderProviderDashboardBids": {
     "emptyTitle": "Brak ofert",

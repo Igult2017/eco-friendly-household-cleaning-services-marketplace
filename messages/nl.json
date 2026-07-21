@@ -1651,7 +1651,10 @@
     "connecting": "Doorsturen naar Stripe...",
     "connectButton": "Stripe-account koppelen",
     "skip": "Voorlopig overslaan",
-    "footnote": "Je kunt Stripe later koppelen via je dashboard. Voor uitbetalingen is een gekoppeld account vereist."
+    "footnote": "Je kunt Stripe later koppelen via je dashboard. Voor uitbetalingen is een gekoppeld account vereist.",
+    "loading": "Stripe-onboarding wordt geladen...",
+    "kycDisclaimer": "Je wordt gevraagd je identiteit te verifiëren via Stripe. Dit is een wettelijke vereiste (KYC) — het betekent niet dat je al een Stripe-account moet hebben; dit wordt voor je aangemaakt.",
+    "kycStepMessage": "Stripe verifieert nu je identiteit. Deze stap is wettelijk verplicht (KYC) — je hebt geen bestaand Stripe-account nodig om door te gaan."
   },
   "compProviderProviderDashboardBids": {
     "emptyTitle": "Nog geen biedingen",

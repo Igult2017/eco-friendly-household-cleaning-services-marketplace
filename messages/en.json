@@ -1651,7 +1651,10 @@
     "connecting": "Redirecting to Stripe...",
     "connectButton": "Connect Stripe account",
     "skip": "Skip for now",
-    "footnote": "You can connect Stripe later from your dashboard. Payouts require a connected account."
+    "footnote": "You can connect Stripe later from your dashboard. Payouts require a connected account.",
+    "loading": "Loading Stripe onboarding...",
+    "kycDisclaimer": "You'll be asked to verify your identity through Stripe. This is a financial regulation (KYC) requirement — it does not mean you need an existing Stripe account; this creates one for you.",
+    "kycStepMessage": "Stripe is verifying your identity now. This step is required by financial regulations (KYC) — you do not need a pre-existing Stripe account to continue."
   },
   "compProviderProviderDashboardBids": {
     "emptyTitle": "No bids yet",

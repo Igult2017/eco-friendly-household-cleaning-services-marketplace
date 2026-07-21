@@ -7,7 +7,6 @@ import { db } from "@/lib/db"
 import { providers, payouts, bookings, payments } from "@/lib/db/schema"
 import { eq, and, sum, count, desc, gte, lt, inArray } from "drizzle-orm"
 import { PayoutConnect } from "@/components/provider/PayoutConnect"
-import { getConnectAccountStatus } from "@/lib/stripe/connect"
 import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
 
 async function getEarningsData(providerId: string) {
@@ -42,28 +41,16 @@ async function getEarningsData(providerId: string) {
   }
 }
 
-export default async function EarningsPage({ searchParams }: { searchParams: Promise<{ connect?: string }> }) {
+export default async function EarningsPage() {
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
 
-  const [provider] = await db.select({ id: providers.id, stripeAccountId: providers.stripeAccountId, stripeAccountStatus: providers.stripeAccountStatus, country: providers.country }).from(providers).where(eq(providers.userId, userId))
+  const [provider] = await db.select({ id: providers.id, stripeAccountStatus: providers.stripeAccountStatus, country: providers.country }).from(providers).where(eq(providers.userId, userId))
   if (!provider) redirect("/provider/profile")
 
-  // Returning from Stripe Connect onboarding — refresh status live so it flips to "active"
-  // immediately, without depending on the account.updated webhook being configured in Stripe.
-  let payoutStatus = provider.stripeAccountStatus
-  const sp = await searchParams
-  if ((sp.connect === "success" || sp.connect === "refresh") && provider.stripeAccountId) {
-    try {
-      const fresh = await getConnectAccountStatus(provider.stripeAccountId)
-      if (fresh !== provider.stripeAccountStatus) {
-        await db.update(providers).set({ stripeAccountStatus: fresh }).where(eq(providers.id, provider.id))
-      }
-      payoutStatus = fresh
-    } catch (e) {
-      console.warn("[earnings] connect status refresh failed:", e)
-    }
-  }
+  // Status is kept in sync by the account.updated webhook, plus a live refresh the moment the
+  // cleaner exits the embedded Stripe onboarding component (see StripeConnectEmbed/PayoutConnect).
+  const payoutStatus = provider.stripeAccountStatus
 
   const data = await getEarningsData(provider.id)
   const country = provider.country ?? "DE"

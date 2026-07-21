@@ -28,23 +28,21 @@ export async function createConnectAccount(params: {
   )
 }
 
-/** Generate a Stripe Connect onboarding link */
-export async function createAccountLink(params: {
-  accountId: string
-  refreshUrl: string
-  returnUrl: string
-}) {
-  return stripe.accountLinks.create({
-    account: params.accountId,
-    refresh_url: params.refreshUrl,
-    return_url: params.returnUrl,
-    type: "account_onboarding",
+/** Create an Account Session client secret for the embedded Account Onboarding component
+ * (@stripe/connect-js / @stripe/react-connect-js). The cleaner never leaves the app — the
+ * onboarding form renders inline, themed to match. Stripe still owns all KYC/identity
+ * verification and bank-account collection; we only render the component. */
+export async function createAccountSession(accountId: string) {
+  const session = await stripe.accountSessions.create({
+    account: accountId,
+    components: {
+      account_onboarding: {
+        enabled: true,
+        features: { external_account_collection: true },
+      },
+    },
   })
-}
-
-/** Generate a Stripe Connect dashboard login link */
-export async function createLoginLink(accountId: string) {
-  return stripe.accounts.createLoginLink(accountId)
+  return session.client_secret
 }
 
 /** Retrieve the live Connect account status, mapped the same way as the account.updated webhook

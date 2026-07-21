@@ -1651,7 +1651,10 @@
     "connecting": "Reindirizzamento a Stripe...",
     "connectButton": "Collega account Stripe",
     "skip": "Salta per ora",
-    "footnote": "Potrai collegare Stripe in seguito dalla tua dashboard. I pagamenti richiedono un account collegato."
+    "footnote": "Potrai collegare Stripe in seguito dalla tua dashboard. I pagamenti richiedono un account collegato.",
+    "loading": "Caricamento dell'onboarding Stripe...",
+    "kycDisclaimer": "Ti verrà chiesto di verificare la tua identità tramite Stripe. Si tratta di un requisito normativo (KYC) — non significa che devi già avere un account Stripe; viene creato per te.",
+    "kycStepMessage": "Stripe sta verificando la tua identità. Questo passaggio è richiesto dalla normativa finanziaria (KYC) — non è necessario avere già un account Stripe per continuare."
   },
   "compProviderProviderDashboardBids": {
     "emptyTitle": "Ancora nessuna offerta",

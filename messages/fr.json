@@ -1651,7 +1651,10 @@
     "connecting": "Redirection vers Stripe...",
     "connectButton": "Connecter un compte Stripe",
     "skip": "Ignorer pour l'instant",
-    "footnote": "Vous pourrez connecter Stripe plus tard depuis votre tableau de bord. Les versements nécessitent un compte connecté."
+    "footnote": "Vous pourrez connecter Stripe plus tard depuis votre tableau de bord. Les versements nécessitent un compte connecté.",
+    "loading": "Chargement de l'intégration Stripe...",
+    "kycDisclaimer": "Il vous sera demandé de vérifier votre identité via Stripe. Il s'agit d'une exigence réglementaire (KYC) — cela ne signifie pas que vous devez déjà avoir un compte Stripe ; celui-ci est créé pour vous.",
+    "kycStepMessage": "Stripe vérifie actuellement votre identité. Cette étape est exigée par la réglementation financière (KYC) — vous n'avez pas besoin d'un compte Stripe existant pour continuer."
   },
   "compProviderProviderDashboardBids": {
     "emptyTitle": "Aucune offre pour le moment",

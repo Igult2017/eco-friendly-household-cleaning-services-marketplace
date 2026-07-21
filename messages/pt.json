@@ -1651,7 +1651,10 @@
     "connecting": "A redirecionar para o Stripe...",
     "connectButton": "Ligar conta Stripe",
     "skip": "Ignorar por agora",
-    "footnote": "Pode ligar o Stripe mais tarde a partir do seu painel. Os pagamentos requerem uma conta ligada."
+    "footnote": "Pode ligar o Stripe mais tarde a partir do seu painel. Os pagamentos requerem uma conta ligada.",
+    "loading": "A carregar o onboarding da Stripe...",
+    "kycDisclaimer": "Ser-lhe-á pedido que verifique a sua identidade através da Stripe. Este é um requisito regulamentar (KYC) — não significa que precise de já ter uma conta Stripe; esta é criada para si.",
+    "kycStepMessage": "A Stripe está agora a verificar a sua identidade. Este passo é exigido pela regulamentação financeira (KYC) — não precisa de uma conta Stripe pré-existente para continuar."
   },
   "compProviderProviderDashboardBids": {
     "emptyTitle": "Ainda não há propostas",

@@ -1651,7 +1651,10 @@
     "connecting": "Weiterleitung zu Stripe …",
     "connectButton": "Stripe-Konto verbinden",
     "skip": "Vorerst überspringen",
-    "footnote": "Du kannst Stripe später über dein Dashboard verbinden. Für Auszahlungen ist ein verbundenes Konto erforderlich."
+    "footnote": "Du kannst Stripe später über dein Dashboard verbinden. Für Auszahlungen ist ein verbundenes Konto erforderlich.",
+    "loading": "Stripe-Onboarding wird geladen...",
+    "kycDisclaimer": "Sie werden gebeten, Ihre Identität über Stripe zu bestätigen. Dies ist eine gesetzliche Anforderung (KYC) — Sie benötigen dafür kein bestehendes Stripe-Konto; es wird für Sie erstellt.",
+    "kycStepMessage": "Stripe überprüft jetzt Ihre Identität. Dieser Schritt ist gesetzlich vorgeschrieben (KYC) — Sie benötigen kein bestehendes Stripe-Konto, um fortzufahren."
   },
   "compProviderProviderDashboardBids": {
     "emptyTitle": "Noch keine Angebote",
