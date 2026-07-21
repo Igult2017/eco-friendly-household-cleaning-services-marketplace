@@ -24,7 +24,7 @@ export function ProviderPayoutStep({ onConnected, onSkip }: Props) {
       </div>
 
       <div className="bg-[#F4FAF6] rounded-xl p-4 border border-[#E5EDE9] text-left mb-6 space-y-2">
-        {[t("benefitWeeklyPayouts"), t("benefitDirectTransfer"), t("benefitTransparency"), t("benefitNoFees")].map((item) => (
+        {[t("benefitInstantPayout"), t("benefitDirectTransfer"), t("benefitTransparency"), t("benefitNoFees")].map((item) => (
           <div key={item} className="flex items-center gap-2 text-xs text-[#2B3441]">
             <CheckCircle className="w-3.5 h-3.5 text-[#2D7A5F] flex-shrink-0" />
             {item}
