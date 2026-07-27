@@ -8,7 +8,7 @@ import { useEffect, useState } from "react"
 import * as Sentry from "@sentry/nextjs"
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs"
 import { NotificationBell } from "@/components/notifications/NotificationBell"
-import { Menu, X, Leaf } from "lucide-react"
+import { Menu, X, Leaf, Plus, Search } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { AdminCleanerSwitch } from "@/components/layout/AdminCleanerSwitch"
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher"
@@ -76,6 +76,16 @@ export function Navbar() {
         ? t("affiliateDashboard")
         : t("myDashboard")
 
+  // The single highest-value action for each role, surfaced as a prominent button next to Dashboard
+  // on EVERY public page — not just discoverable once already inside the dashboard. Previously
+  // "Post a Job" wasn't in the public nav at all, and "Browse Jobs" was a plain link easy to miss
+  // among six others.
+  const primaryAction = effectiveRole === "customer"
+    ? { href: "/post-job", label: t("postJob"), Icon: Plus }
+    : effectiveRole === "provider"
+      ? { href: "/provider/jobs", label: t("browseJobs"), Icon: Search }
+      : null
+
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#E5EDE9]">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
@@ -89,6 +99,9 @@ export function Navbar() {
               // Hide certain nav items for specific effective roles to avoid confusing users.
               if (key === "findCleaners" && effectiveRole === "provider") return null
               if (key === "browseJobs" && effectiveRole === "customer") return null
+              // Providers get a prominent "Browse Jobs" CTA next to Dashboard instead — no need to
+              // also list it here as a plain link.
+              if (key === "browseJobs" && effectiveRole === "provider") return null
             // Eco-store gets a distinct eco-green pill + leaf so it stands out from the plain nav links.
             const isEco = key === "ecoStore"
             return (
@@ -115,6 +128,16 @@ export function Navbar() {
           {isSignedIn ? (
             <>
               {role === "admin" && <AdminCleanerSwitch />}
+              {primaryAction && (
+                <NextLink
+                  href={primaryAction.href}
+                  prefetch={false}
+                  className="hidden sm:inline-flex items-center gap-1.5 text-sm font-semibold px-3 py-1.5 rounded-lg bg-[#2D7A5F] text-white hover:bg-[#235f49] transition-colors"
+                >
+                  <primaryAction.Icon className="w-3.5 h-3.5" />
+                  {primaryAction.label}
+                </NextLink>
+              )}
               <NextLink
                 href={href}
                 prefetch={false}
@@ -168,6 +191,7 @@ export function Navbar() {
               // Same role-based hiding for the mobile menu
               if (key === "findCleaners" && effectiveRole === "provider") return null
               if (key === "browseJobs" && effectiveRole === "customer") return null
+              if (key === "browseJobs" && effectiveRole === "provider") return null
             const isEco = key === "ecoStore"
             return (
               <Link
@@ -186,16 +210,28 @@ export function Navbar() {
               </Link>
             )
           })}
-          <div className="pt-2 border-t border-[#E5EDE9] mt-1">
+          <div className="pt-2 border-t border-[#E5EDE9] mt-1 space-y-2">
             {isSignedIn ? (
-              <NextLink
-                href={href}
-                prefetch={false}
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-2 text-sm font-medium px-3 py-2 rounded-lg bg-[#EDF5F0] text-[#2D7A5F]"
-              >
-                <DashboardLinkIcon /> {label}
-              </NextLink>
+              <>
+                {primaryAction && (
+                  <NextLink
+                    href={primaryAction.href}
+                    prefetch={false}
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2 text-sm font-semibold px-3 py-2 rounded-lg bg-[#2D7A5F] text-white"
+                  >
+                    <primaryAction.Icon className="w-4 h-4" /> {primaryAction.label}
+                  </NextLink>
+                )}
+                <NextLink
+                  href={href}
+                  prefetch={false}
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2 text-sm font-medium px-3 py-2 rounded-lg bg-[#EDF5F0] text-[#2D7A5F]"
+                >
+                  <DashboardLinkIcon /> {label}
+                </NextLink>
+              </>
             ) : (
               <div className="flex gap-2">
                 <SignInButton mode="modal">
