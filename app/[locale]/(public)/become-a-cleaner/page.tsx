@@ -7,7 +7,7 @@ import Link from "next/link"
 
 export const metadata = {
   title: "Become a Cleaner — DORIXÉ",
-  description: "Join DORIXÉ as an eco-certified cleaner. Set your own rates, work your own schedule, get paid weekly.",
+  description: "Join DORIXÉ as an eco-certified cleaner. Set your own rates, work your own schedule, get paid instantly.",
 }
 
 export default async function BecomeACleanerPage() {
