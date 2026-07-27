@@ -1,5 +1,6 @@
-import { auth } from "@clerk/nextjs/server"
+import { auth, clerkClient } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
+import { cookies } from "next/headers"
 import { db } from "@/lib/db"
 import { jobPosts, providers, users, bids } from "@/lib/db/schema"
 import { computeReliability } from "@/lib/provider/reliability"
@@ -64,7 +65,21 @@ export async function POST(req: Request) {
       const [dbUser] = await db.select({ role: users.role }).from(users).where(eq(users.id, userId))
       role = dbUser?.role ?? "customer"
     }
-    if (role !== "customer") return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    // Admins can post jobs to test the customer experience — mirrors middleware.ts's "admin bypasses
+    // all role-gated routes" behavior and switch-role's "admin can always switch." A dual-role
+    // provider/affiliate who switched into customer mode (dorix_active_role cookie) can also post —
+    // verified live against Clerk rather than trusting the (non-httpOnly, client-settable) cookie
+    // alone, since this is a write with real side effects, unlike the read-only canBid check in
+    // /api/jobs/public that trusts the cookie directly.
+    let allowed = role === "admin" || role === "customer"
+    if (!allowed && (await cookies()).get("dorix_active_role")?.value === "customer") {
+      try {
+        const clerk = await clerkClient()
+        const clerkUser = await clerk.users.getUser(userId)
+        allowed = (clerkUser.publicMetadata as { dualRole?: boolean })?.dualRole === true
+      } catch { /* Clerk unavailable — fall through to Forbidden, fail-closed */ }
+    }
+    if (!allowed) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     if (!(await ensureUserRow(userId))) return NextResponse.json({ error: "Could not link your account. Please reload and try again." }, { status: 500 })
 
     const body = await req.json().catch(() => ({}))
