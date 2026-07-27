@@ -14,6 +14,7 @@ import { localTodayYmd } from "@/lib/utils/formatDate"
 export function ProviderBidForm({ jobId, onSubmitted }: { jobId: string; onSubmitted: () => void }) {
   const t = useTranslations("providerProviderJobsPage")
   const [form, setForm] = useState({ amount: "", message: "", estimatedDurationMinutes: "120", proposedDate: "" })
+  const [acceptedPolicy, setAcceptedPolicy] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -36,6 +37,10 @@ export function ProviderBidForm({ jobId, onSubmitted }: { jobId: string; onSubmi
       setError(t("invalidBidAmount"))
       return
     }
+    if (!acceptedPolicy) {
+      setError(t("mustAcceptCancellationPolicy"))
+      return
+    }
     setSubmitting(true); setError(null)
     try {
       const res = await fetch(`/api/jobs/${jobId}/bids`, {
@@ -46,6 +51,7 @@ export function ProviderBidForm({ jobId, onSubmitted }: { jobId: string; onSubmi
           message: form.message || undefined,
           estimatedDurationMinutes: Number.isFinite(parseInt(form.estimatedDurationMinutes)) ? parseInt(form.estimatedDurationMinutes) : undefined,
           proposedDate: form.proposedDate || undefined,
+          acceptedCancellationPolicy: acceptedPolicy,
         }),
       })
       if (!res.ok) {
@@ -80,8 +86,14 @@ export function ProviderBidForm({ jobId, onSubmitted }: { jobId: string; onSubmi
         <Label className="text-xs font-medium text-[#2B3441] mb-1 block">{t("messageLabel")}</Label>
         <Textarea value={form.message} onChange={(e) => setForm((p) => ({ ...p, message: e.target.value }))} placeholder={t("messagePlaceholder")} rows={3} className="resize-none bg-white text-sm" />
       </div>
+      <label className="flex items-start gap-2 cursor-pointer">
+        <input type="checkbox" checked={acceptedPolicy} onChange={(e) => setAcceptedPolicy(e.target.checked)} className="mt-0.5 h-3.5 w-3.5 accent-[#2D7A5F] rounded shrink-0" />
+        <span className="text-xs text-[#6B7280] leading-snug">
+          {t.rich("acceptCancellationPolicyBid", { link: (chunks) => <a href="/legal/terms#cancellation-policy" target="_blank" className="text-[#2D7A5F] underline">{chunks}</a> })}
+        </span>
+      </label>
       {error && <p className="text-red-500 text-xs">{error}</p>}
-      <Button onClick={submit} disabled={submitting} className="w-full h-10 bg-[#2D7A5F] hover:bg-[#235f49] text-white text-sm font-semibold">
+      <Button onClick={submit} disabled={submitting || !acceptedPolicy} className="w-full h-10 bg-[#2D7A5F] hover:bg-[#235f49] text-white text-sm font-semibold">
         {submitting ? <><Loader2 size={14} className="animate-spin mr-2" /> {t("submitting")}</> : t("submitBid")}
       </Button>
     </div>

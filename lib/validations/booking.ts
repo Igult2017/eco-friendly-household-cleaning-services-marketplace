@@ -32,6 +32,7 @@ export const createBookingSchema = z.object({
   // "recurring" = cadence unspecified (job posts only ask one-time vs recurrent).
   requestedFrequency: z.enum(["recurring", "weekly", "biweekly", "monthly"]).optional(),
   requestedDays: z.array(z.number().int().min(0).max(6)).max(7).optional(),
+  acceptedCancellationPolicy: z.literal(true, "You must accept the cancellation policy to book"),
 })
 
 export const paymentIntentSchema = z.object({

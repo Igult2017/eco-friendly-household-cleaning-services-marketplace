@@ -619,6 +619,7 @@
     "carbonOffsetDescription": "Bäume pflanzen, um diesen Service zu neutralisieren",
     "totalChargedToday": "Heute belasteter Gesamtbetrag",
     "preAuthNote": "Nur Vorautorisierung. Abbuchung nach Abschluss.",
+    "acceptCancellationPolicy": "Ich akzeptiere die <link>Stornierungsbedingungen</link> für diese Buchung.",
     "preparingPayment": "Zahlung wird vorbereitet…",
     "continueToPayment": "Weiter zur Zahlung",
     "backToDetails": "← Zurück zu den Details",
@@ -1139,6 +1140,8 @@
   "providerProviderJobsPage": {
     "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
     "invalidBidAmount": "Bitte geben Sie einen gültigen Angebotsbetrag ein (mindestens 1 €)",
+    "mustAcceptCancellationPolicy": "Sie müssen die Stornierungsbedingungen akzeptieren, um ein Angebot abzugeben.",
+    "acceptCancellationPolicyBid": "Ich akzeptiere die <link>Stornierungsbedingungen</link> für Aufträge, die ich annehme.",
     "networkError": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.",
     "pageTitle": "Verfügbare Aufträge",
     "pageSubtitle": "Aufträge von Kundinnen und Kunden in Ihrer Nähe",
@@ -2060,7 +2063,12 @@
     "genericError": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
     "addPayment": "Zahlungsmethode hinzufügen",
     "addPaymentNote": "Deine Reinigungskraft kann den Auftrag erst annehmen, wenn eine Zahlungsmethode hinterlegt ist. Abgebucht wird erst, wenn ihr BEIDE den Abschluss bestätigt.",
-    "noCardCleanerWait": "Dieser Kunde hat noch keine Zahlungsmethode hinterlegt — bitte ihn im Chat darum. Nimm den Auftrag erst danach an; die Zahlung wird dann beim Abschluss automatisch eingezogen."
+    "noCardCleanerWait": "Dieser Kunde hat noch keine Zahlungsmethode hinterlegt — bitte ihn im Chat darum. Nimm den Auftrag erst danach an; die Zahlung wird dann beim Abschluss automatisch eingezogen.",
+    "reportClientNoShow": "Kunde nicht erreichbar?",
+    "reportCleanerNoShow": "Reinigungskraft nicht erschienen?",
+    "noShowReasonPlaceholder": "Kurz beschreiben, was passiert ist (erforderlich)",
+    "noShowSubmit": "Nichterscheinen melden",
+    "noShowCancel": "Abbrechen"
   },
   "customerBookingPayPage": {
     "title": "Zahlungsmethode hinzufügen",

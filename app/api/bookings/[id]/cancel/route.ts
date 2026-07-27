@@ -1,9 +1,9 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { bookings, payments, providers, promoCodes, promoCodeUsages, carbonOffsetContributions, notifications } from "@/lib/db/schema"
+import { bookings, payments, providers, promoCodes, promoCodeUsages, carbonOffsetContributions, notifications, bookingCancellationEvents } from "@/lib/db/schema"
 import { stripe } from "@/lib/stripe/client"
-import { calculateRefundPercent } from "@/lib/utils/refunds"
+import { calculateCancellationFeeLive } from "@/lib/utils/refunds"
 import { eq, and, sql } from "drizzle-orm"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
 import { isUuid } from "@/lib/utils/uuid"
@@ -57,28 +57,34 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       .where(eq(payments.bookingId, bookingId))
 
     const hoursUntilJob = (new Date(booking.scheduledAt).getTime() - Date.now()) / (1000 * 60 * 60)
-    const refundPercent = calculateRefundPercent(hoursUntilJob, callerRole)
+    const { refundPercent, feePercent, travelCompensationCents } = await calculateCancellationFeeLive(hoursUntilJob, callerRole)
     // Non-refundable SERVICE portion = the cancellation fee (the carbon offset is always released).
-    const feeAmount = Math.round(booking.totalAmount * (100 - refundPercent) / 100)
+    const feeAmount = Math.round(booking.totalAmount * feePercent / 100)
     const fullHold = booking.totalAmount + (booking.carbonOffsetAmount ?? 0)
+    // Travel compensation is an ADDITIONAL charge on a very-late client cancellation, paid straight to
+    // the cleaner (no platform commission on it) — clamped to whatever headroom the original
+    // authorized hold still has, since Stripe can never capture beyond what was authorized.
+    const travelComp = Math.max(0, Math.min(travelCompensationCents, fullHold - feeAmount))
 
     let newPaymentStatus: "cancelled" | "refunded" | "partially_refunded" | "captured" = "cancelled"
     let capturedFee = 0
+    let capturedTravelComp = 0
     let feeCommission = 0
     if (payment) {
       // Idempotency keys: a retry after a partial failure must NOT charge / release twice (BUG-004).
       if (payment.status === "authorized") {
-        if (feeAmount > 0) {
-          // Late cancel: capture only the fee (Stripe releases the rest of the hold, incl. the carbon
-          // offset). Split like a normal job — platform keeps its commission, the cleaner is
-          // compensated for the slot they reserved.
+        if (feeAmount > 0 || travelComp > 0) {
+          // Late cancel: capture the fee + any travel comp (Stripe releases the rest of the hold,
+          // incl. the carbon offset). Fee is split like a normal job — platform keeps its commission,
+          // the cleaner is compensated for the slot they reserved; travel comp passes through in full.
           feeCommission = Math.round(feeAmount * (booking.platformFeePercent ?? 0) / 100)
           await stripe.paymentIntents.capture(payment.stripePaymentIntentId, {
-            amount_to_capture: feeAmount,
+            amount_to_capture: feeAmount + travelComp,
             application_fee_amount: feeCommission,
           }, { idempotencyKey: `cancel-fee-${bookingId}` })
           newPaymentStatus = "captured"
           capturedFee = feeAmount
+          capturedTravelComp = travelComp
         } else {
           // Full refund (early cancel, or provider-initiated) → release the entire hold.
           await stripe.paymentIntents.cancel(payment.stripePaymentIntentId, {}, { idempotencyKey: `cancel-${bookingId}` })
@@ -115,8 +121,16 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
           cancelledAt: new Date(),
           cancelledBy: userId,
           // When a late-cancel fee was captured, restate the money fields to what actually moved so
-          // earnings/ledger reads don't report the original (never-collected) full payout.
-          ...(capturedFee > 0 ? { totalAmount: feeAmount, platformFeeAmount: feeCommission, providerPayout: feeAmount - feeCommission } : {}),
+          // earnings/ledger reads don't report the original (never-collected) full payout. Travel
+          // comp passes to the cleaner in full (no commission), so it's added straight to the payout.
+          ...(capturedFee > 0 || capturedTravelComp > 0
+            ? {
+                totalAmount: feeAmount + capturedTravelComp,
+                platformFeeAmount: feeCommission,
+                providerPayout: feeAmount - feeCommission + capturedTravelComp,
+                travelCompensationAmount: capturedTravelComp,
+              }
+            : {}),
         })
         .where(eq(bookings.id, bookingId))
 
@@ -129,6 +143,24 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       // The carbon-offset hold was released (never captured), so the contribution wasn't collected.
       await tx.delete(carbonOffsetContributions).where(eq(carbonOffsetContributions.bookingId, bookingId))
     })
+
+    // Immutable audit trail — required for dispute resolution, never blocks the cancellation itself.
+    try {
+      await db.insert(bookingCancellationEvents).values({
+        bookingId,
+        actorUserId: userId,
+        actorRole: callerRole === "customer" ? "client" : "cleaner",
+        action: "cancelled",
+        scheduledAt: booking.scheduledAt,
+        statusBefore: booking.status,
+        cancellationFeeAmount: capturedFee,
+        travelCompensationAmount: capturedTravelComp,
+        refundAmount: fullHold - capturedFee - capturedTravelComp,
+        reason: reason ?? null,
+      })
+    } catch (auditErr) {
+      console.warn("[cancel] audit log insert failed:", auditErr)
+    }
 
     // Notify the OTHER party — the canceller already knows. (booking_cancelled base copy means
     // "Payment failed", so use the booking_cancelled_party variant for a proper localized message.)
@@ -162,7 +194,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       console.warn("[cancel] failed to notify other party:", notifErr)
     }
 
-    return NextResponse.json({ success: true, refundPercent, feeCharged: capturedFee, refundedAmount: fullHold - capturedFee })
+    return NextResponse.json({ success: true, refundPercent, feeCharged: capturedFee, travelCompensationCharged: capturedTravelComp, refundedAmount: fullHold - capturedFee - capturedTravelComp })
   } catch (err) {
     console.error("[bookings/[id]/cancel POST]", err)
     void logError({ message: "[bookings/[id]/cancel POST]", error: err, route: "/api/bookings/[id]/cancel", severity: "error" })

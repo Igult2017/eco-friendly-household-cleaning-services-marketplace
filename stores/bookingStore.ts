@@ -28,6 +28,7 @@ interface BookingDraft {
   // "recurring" = cadence unspecified (bid-flow jobs only state one-time vs recurrent)
   frequency: "one_time" | "recurring" | "weekly" | "biweekly" | "monthly"
   recurringDays: number[]         // 0=Sun..6=Sat — which weekdays the client wants repeat service on
+  acceptedCancellationPolicy: boolean // persisted so a 3DS redirect-and-return doesn't lose consent
   step: 1 | 2 | 3 | 4 | 5
 }
 
@@ -57,6 +58,7 @@ interface BookingStore extends BookingDraft {
   setFrequency: (frequency: BookingDraft["frequency"]) => void
   setRecurringDays: (days: number[]) => void
   setStep: (step: BookingDraft["step"]) => void
+  setAcceptedCancellationPolicy: (accepted: boolean) => void
   setBidFlow: (data: BidFlowData) => void  // pre-populate all wizard fields from accepted bid
   reset: () => void
 }
@@ -82,6 +84,7 @@ const initialState: BookingDraft = {
   bidAmountCents: null,
   frequency: "one_time",
   recurringDays: [],
+  acceptedCancellationPolicy: false,
   step: 1,
 }
 
@@ -107,6 +110,7 @@ export const useBookingStore = create<BookingStore>()(
       setFrequency: (frequency) => set({ frequency }),
       setRecurringDays: (recurringDays) => set({ recurringDays }),
       setStep: (step) => set({ step }),
+      setAcceptedCancellationPolicy: (acceptedCancellationPolicy) => set({ acceptedCancellationPolicy }),
       setBidFlow: (data) =>
         set({
           selectedProviderId: data.providerId,

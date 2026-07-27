@@ -619,6 +619,7 @@
     "carbonOffsetDescription": "Pianta alberi per neutralizzare questo servizio",
     "totalChargedToday": "Totale addebitato oggi",
     "preAuthNote": "Solo preautorizzazione. Addebito dopo il completamento.",
+    "acceptCancellationPolicy": "Accetto la <link>politica di cancellazione</link> per questa prenotazione.",
     "preparingPayment": "Preparazione del pagamento…",
     "continueToPayment": "Continua al pagamento",
     "backToDetails": "← Torna ai dettagli",
@@ -1139,6 +1140,8 @@
   "providerProviderJobsPage": {
     "genericError": "Qualcosa è andato storto. Riprova.",
     "invalidBidAmount": "Inserisci un importo dell'offerta valido (minimo 1 €)",
+    "mustAcceptCancellationPolicy": "Devi accettare la politica di cancellazione per inviare un'offerta.",
+    "acceptCancellationPolicyBid": "Accetto la <link>politica di cancellazione</link> per i lavori che accetto.",
     "networkError": "Errore di rete. Controlla la tua connessione.",
     "pageTitle": "Lavori disponibili",
     "pageSubtitle": "Lavori pubblicati da clienti vicino a te",
@@ -2060,7 +2063,12 @@
     "genericError": "Qualcosa è andato storto. Riprova.",
     "addPayment": "Aggiungi metodo di pagamento",
     "addPaymentNote": "Il tuo addetto può accettare il lavoro solo dopo che è stato aggiunto un metodo di pagamento. L'addebito avviene solo quando ENTRAMBI confermate il completamento.",
-    "noCardCleanerWait": "Questo cliente non ha ancora aggiunto un metodo di pagamento — chiediglielo in chat. Non accettare il lavoro finché non lo aggiunge; il pagamento verrà poi addebitato automaticamente al completamento."
+    "noCardCleanerWait": "Questo cliente non ha ancora aggiunto un metodo di pagamento — chiediglielo in chat. Non accettare il lavoro finché non lo aggiunge; il pagamento verrà poi addebitato automaticamente al completamento.",
+    "reportClientNoShow": "Cliente non disponibile?",
+    "reportCleanerNoShow": "Il professionista non si è presentato?",
+    "noShowReasonPlaceholder": "Descrivi brevemente cosa è successo (obbligatorio)",
+    "noShowSubmit": "Segnala assenza",
+    "noShowCancel": "Annulla"
   },
   "customerBookingPayPage": {
     "title": "Aggiungi il tuo metodo di pagamento",

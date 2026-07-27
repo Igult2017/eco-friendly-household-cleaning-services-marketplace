@@ -93,6 +93,7 @@ export async function createUnpaidBooking(userId: string, data: CreateBookingInp
     discountAmount: 0,
     requestedFrequency: data.requestedFrequency ?? null,
     requestedDays: data.requestedDays?.length ? data.requestedDays : null,
+    cancellationPolicyAcceptedAt: new Date(),
   }
   const [nb] = await db.insert(bookings).values(insertData).returning({ id: bookings.id, bookingNumber: bookings.bookingNumber })
   if (acceptedBid) {

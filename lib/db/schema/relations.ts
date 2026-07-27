@@ -11,6 +11,7 @@ import { disputes, disputeMessages } from "./disputes"
 import { notifications } from "./notifications"
 import { ecoCertifications, providerIdentityVerifications } from "./eco"
 import { blogPosts, blogComments } from "./blog"
+import { bookingCancellationEvents } from "./bookingCancellationEvents"
 
 export const usersRelations = relations(users, ({ many }) => ({
   bookings: many(bookings, { relationName: "customerBookings" }),
@@ -41,13 +42,19 @@ export const providerAvailabilityRelations = relations(providerAvailability, ({ 
   provider: one(providers, { fields: [providerAvailability.providerId], references: [providers.id] }),
 }))
 
-export const bookingsRelations = relations(bookings, ({ one }) => ({
+export const bookingsRelations = relations(bookings, ({ one, many }) => ({
   customer: one(users, { fields: [bookings.customerId], references: [users.id], relationName: "customerBookings" }),
   provider: one(providers, { fields: [bookings.providerId], references: [providers.id], relationName: "providerBookings" }),
   service: one(providerServices, { fields: [bookings.serviceId], references: [providerServices.id] }),
   payment: one(payments, { fields: [bookings.id], references: [payments.bookingId] }),
   review: one(reviews, { fields: [bookings.id], references: [reviews.bookingId] }),
   dispute: one(disputes, { fields: [bookings.id], references: [disputes.bookingId] }),
+  cancellationEvents: many(bookingCancellationEvents),
+}))
+
+export const bookingCancellationEventsRelations = relations(bookingCancellationEvents, ({ one }) => ({
+  booking: one(bookings, { fields: [bookingCancellationEvents.bookingId], references: [bookings.id] }),
+  actor: one(users, { fields: [bookingCancellationEvents.actorUserId], references: [users.id] }),
 }))
 
 export const jobPostsRelations = relations(jobPosts, ({ one, many }) => ({

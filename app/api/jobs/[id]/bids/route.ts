@@ -22,6 +22,7 @@ const bidSchema = z.object({
   estimatedDurationMinutes: z.number().int().min(30).max(480).optional(),
   proposedDate: z.string().optional(),
   proposedTimeStart: z.string().optional(),
+  acceptedCancellationPolicy: z.literal(true, "You must accept the cancellation policy to bid"),
 })
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -108,6 +109,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       proposedDate: data.proposedDate ?? null,
       proposedTimeStart: data.proposedTimeStart ?? null,
       status: "pending",
+      cancellationPolicyAcceptedAt: new Date(),
     }
 
     const [newBid] = await db.insert(bids).values(insertData).returning({ id: bids.id })

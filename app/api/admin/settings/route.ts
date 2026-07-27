@@ -11,6 +11,15 @@ const updateSchema = z.object({
   payout_schedule:       z.enum(["weekly", "biweekly", "monthly"]).optional(),
   max_service_radius_km: z.number().int().min(10).max(500).optional(),
   platform_name:         z.string().min(1).max(50).optional(),
+  // Cancellation & no-show policy — see lib/platform/settings.ts getCancellationConfig().
+  cancel_tier1_hours:          z.number().int().min(1).max(168).optional(),
+  cancel_tier2_hours:          z.number().int().min(1).max(168).optional(),
+  cancel_tier3_hours:          z.number().int().min(0).max(168).optional(),
+  cancel_fee_low_pct:          z.number().int().min(0).max(100).optional(),
+  cancel_fee_medium_pct:       z.number().int().min(0).max(100).optional(),
+  cancel_fee_late_pct:         z.number().int().min(0).max(100).optional(),
+  cancel_travel_comp_cents:    z.number().int().min(0).max(50_000).optional(),
+  cancel_noshow_grace_minutes: z.number().int().min(0).max(120).optional(),
 })
 
 type AdminCheckResult = "ok" | "unauthorized" | "forbidden"

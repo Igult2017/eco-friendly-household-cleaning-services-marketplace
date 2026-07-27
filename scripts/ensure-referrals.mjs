@@ -347,6 +347,47 @@ CREATE UNIQUE INDEX IF NOT EXISTS store_products_slug_idx     ON store_products(
 CREATE INDEX        IF NOT EXISTS store_products_status_idx   ON store_products(status);
 CREATE INDEX        IF NOT EXISTS store_products_type_idx     ON store_products(type);
 CREATE INDEX        IF NOT EXISTS store_products_featured_idx ON store_products(featured);
+
+-- Cancellation & no-show policy: admin-configurable fee tiers + travel compensation, immutable
+-- audit log, and per-transaction consent timestamps (client_no_show/cleaner_no_show enum values are
+-- added separately below — ALTER TYPE ADD VALUE can't run in the same transaction as its use).
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS travel_compensation_amount integer NOT NULL DEFAULT 0;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS cancellation_policy_accepted_at timestamptz;
+ALTER TABLE bids ADD COLUMN IF NOT EXISTS cancellation_policy_accepted_at timestamptz;
+
+DO $$ BEGIN CREATE TYPE cancellation_actor AS ENUM ('client','cleaner','admin','system'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN CREATE TYPE cancellation_action AS ENUM ('cancelled','client_no_show','cleaner_no_show','admin_override'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+CREATE TABLE IF NOT EXISTS booking_cancellation_events (
+  id                          UUID                PRIMARY KEY DEFAULT gen_random_uuid(),
+  booking_id                  UUID                NOT NULL REFERENCES bookings(id),
+  actor_user_id                TEXT                REFERENCES users(id),
+  actor_role                  cancellation_actor  NOT NULL,
+  action                      cancellation_action NOT NULL,
+  scheduled_at                TIMESTAMPTZ         NOT NULL,
+  status_before               VARCHAR(32)         NOT NULL,
+  cancellation_fee_amount     INTEGER             NOT NULL DEFAULT 0,
+  travel_compensation_amount  INTEGER             NOT NULL DEFAULT 0,
+  refund_amount               INTEGER             NOT NULL DEFAULT 0,
+  is_admin_override           BOOLEAN             NOT NULL DEFAULT false,
+  override_reason             TEXT,
+  reason                      TEXT,
+  created_at                  TIMESTAMPTZ         NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS booking_cancellation_events_booking_idx ON booking_cancellation_events(booking_id);
+CREATE INDEX IF NOT EXISTS booking_cancellation_events_created_idx ON booking_cancellation_events(created_at);
+
+-- Cancellation & no-show admin-configurable defaults (percentages/windows/grace period/travel comp).
+INSERT INTO platform_settings (key, value) VALUES
+  ('cancel_tier1_hours','24'),
+  ('cancel_tier2_hours','6'),
+  ('cancel_tier3_hours','2'),
+  ('cancel_fee_low_pct','10'),
+  ('cancel_fee_medium_pct','30'),
+  ('cancel_fee_late_pct','100'),
+  ('cancel_travel_comp_cents','500'),
+  ('cancel_noshow_grace_minutes','15')
+ON CONFLICT (key) DO NOTHING;
 `
 
 function isValidUrl(url) {
@@ -370,8 +411,13 @@ async function main() {
     // in the same transaction as the value is added). IF NOT EXISTS makes it idempotent across deploys.
     try { await sql.unsafe(`ALTER TYPE user_role ADD VALUE IF NOT EXISTS 'affiliate'`) }
     catch (e) { console.warn("[ensure-referrals] affiliate enum add skipped:", e?.message ?? e) }
+    // New booking_status values for no-show handling — same same-transaction restriction as above.
+    try { await sql.unsafe(`ALTER TYPE booking_status ADD VALUE IF NOT EXISTS 'client_no_show'`) }
+    catch (e) { console.warn("[ensure-referrals] client_no_show enum add skipped:", e?.message ?? e) }
+    try { await sql.unsafe(`ALTER TYPE booking_status ADD VALUE IF NOT EXISTS 'cleaner_no_show'`) }
+    catch (e) { console.warn("[ensure-referrals] cleaner_no_show enum add skipped:", e?.message ?? e) }
     await sql.unsafe(DDL)
-    console.log("[ensure-referrals] referral + customer_reviews + service_categories + platform_settings + job_posts(view_count/geo) ensured ✓")
+    console.log("[ensure-referrals] referral + customer_reviews + service_categories + platform_settings + job_posts(view_count/geo) + cancellation_policy ensured ✓")
   } finally {
     await sql.end({ timeout: 5 })
   }

@@ -619,6 +619,7 @@
     "carbonOffsetDescription": "Planta árboles para neutralizar este servicio",
     "totalChargedToday": "Total cobrado hoy",
     "preAuthNote": "Solo preautorización. Se cobra tras la finalización.",
+    "acceptCancellationPolicy": "Acepto la <link>política de cancelación</link> de esta reserva.",
     "preparingPayment": "Preparando el pago…",
     "continueToPayment": "Continuar al pago",
     "backToDetails": "← Volver a los detalles",
@@ -1139,6 +1140,8 @@
   "providerProviderJobsPage": {
     "genericError": "Algo salió mal. Inténtalo de nuevo.",
     "invalidBidAmount": "Introduce un importe de oferta válido (mínimo 1 €)",
+    "mustAcceptCancellationPolicy": "Debes aceptar la política de cancelación para enviar una oferta.",
+    "acceptCancellationPolicyBid": "Acepto la <link>política de cancelación</link> de los trabajos que acepto.",
     "networkError": "Error de red. Comprueba tu conexión.",
     "pageTitle": "Trabajos disponibles",
     "pageSubtitle": "Trabajos publicados por clientes cerca de ti",
@@ -2060,7 +2063,12 @@
     "genericError": "Algo salió mal. Inténtalo de nuevo.",
     "addPayment": "Añadir método de pago",
     "addPaymentNote": "Tu profesional solo puede aceptar el trabajo cuando haya un método de pago añadido. Solo se cobra cuando AMBOS confirmáis la finalización.",
-    "noCardCleanerWait": "Este cliente aún no ha añadido un método de pago: pídeselo en el chat. No aceptes el trabajo hasta entonces; el pago se cobrará automáticamente al completarlo."
+    "noCardCleanerWait": "Este cliente aún no ha añadido un método de pago: pídeselo en el chat. No aceptes el trabajo hasta entonces; el pago se cobrará automáticamente al completarlo.",
+    "reportClientNoShow": "¿Cliente no disponible?",
+    "reportCleanerNoShow": "¿El profesional no se presentó?",
+    "noShowReasonPlaceholder": "Describe brevemente qué ocurrió (obligatorio)",
+    "noShowSubmit": "Reportar ausencia",
+    "noShowCancel": "Cancelar"
   },
   "customerBookingPayPage": {
     "title": "Añade tu método de pago",

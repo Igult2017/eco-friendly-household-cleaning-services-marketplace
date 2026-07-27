@@ -619,6 +619,7 @@
     "carbonOffsetDescription": "Plant bomen om deze dienst te neutraliseren",
     "totalChargedToday": "Vandaag in rekening gebracht totaal",
     "preAuthNote": "Alleen voorautorisatie. Afgeschreven na voltooiing.",
+    "acceptCancellationPolicy": "Ik ga akkoord met het <link>annuleringsbeleid</link> voor deze boeking.",
     "preparingPayment": "Betaling voorbereiden…",
     "continueToPayment": "Doorgaan naar betaling",
     "backToDetails": "← Terug naar details",
@@ -1139,6 +1140,8 @@
   "providerProviderJobsPage": {
     "genericError": "Er is iets misgegaan. Probeer het opnieuw.",
     "invalidBidAmount": "Voer een geldig biedbedrag in (minimaal € 1)",
+    "mustAcceptCancellationPolicy": "Je moet het annuleringsbeleid accepteren om een bod te plaatsen.",
+    "acceptCancellationPolicyBid": "Ik ga akkoord met het <link>annuleringsbeleid</link> voor klussen die ik aanneem.",
     "networkError": "Netwerkfout. Controleer je verbinding.",
     "pageTitle": "Beschikbare klussen",
     "pageSubtitle": "Klussen geplaatst door klanten bij jou in de buurt",
@@ -2060,7 +2063,12 @@
     "genericError": "Er ging iets mis. Probeer opnieuw.",
     "addPayment": "Betaalmethode toevoegen",
     "addPaymentNote": "Je schoonmaker kan de opdracht pas aannemen zodra er een betaalmethode is toegevoegd. Er wordt pas afgeschreven nadat jullie BEIDEN de voltooiing bevestigen.",
-    "noCardCleanerWait": "Deze klant heeft nog geen betaalmethode toegevoegd — vraag erom in de chat. Neem de opdracht pas daarna aan; de betaling wordt dan automatisch geïnd bij voltooiing."
+    "noCardCleanerWait": "Deze klant heeft nog geen betaalmethode toegevoegd — vraag erom in de chat. Neem de opdracht pas daarna aan; de betaling wordt dan automatisch geïnd bij voltooiing.",
+    "reportClientNoShow": "Klant niet bereikbaar?",
+    "reportCleanerNoShow": "Cleaner niet komen opdagen?",
+    "noShowReasonPlaceholder": "Beschrijf kort wat er is gebeurd (verplicht)",
+    "noShowSubmit": "Meld no-show",
+    "noShowCancel": "Annuleren"
   },
   "customerBookingPayPage": {
     "title": "Voeg je betaalmethode toe",

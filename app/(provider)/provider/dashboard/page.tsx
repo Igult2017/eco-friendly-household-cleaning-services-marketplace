@@ -165,7 +165,8 @@ export default async function ProviderDashboardPage() {
   const [cancelRow] = await db
     .select({ c: sql<number>`COUNT(*)` })
     .from(bookings)
-    .where(and(eq(bookings.providerId, pid), eq(bookings.status, "cancelled"), eq(bookings.cancelledBy, uid)))
+    // A cleaner no-show counts against reliability the same as an own cancellation.
+    .where(and(eq(bookings.providerId, pid), inArray(bookings.status, ["cancelled", "cleaner_no_show"]), eq(bookings.cancelledBy, uid)))
     .catch(() => [{ c: 0 }])
   // Count completed bookings live (the providers.totalJobsCompleted counter is unreliable for
   // historical rows) so the dashboard agrees with /provider/statistics.

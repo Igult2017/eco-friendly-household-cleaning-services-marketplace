@@ -12,6 +12,14 @@ interface Config {
   payout_schedule?:       string
   max_service_radius_km?: string
   platform_name?:         string
+  cancel_tier1_hours?:          string
+  cancel_tier2_hours?:          string
+  cancel_tier3_hours?:          string
+  cancel_fee_low_pct?:          string
+  cancel_fee_medium_pct?:       string
+  cancel_fee_late_pct?:         string
+  cancel_travel_comp_cents?:    string
+  cancel_noshow_grace_minutes?: string
 }
 
 export default function AdminSettingsPage() {
@@ -41,6 +49,14 @@ export default function AdminSettingsPage() {
       if (cfg.payout_schedule       !== undefined && cfg.payout_schedule       !== "") payload.payout_schedule        = cfg.payout_schedule
       if (cfg.max_service_radius_km !== undefined && cfg.max_service_radius_km !== "") payload.max_service_radius_km = parseInt(cfg.max_service_radius_km, 10)
       if (cfg.platform_name         !== undefined && cfg.platform_name         !== "") payload.platform_name          = cfg.platform_name
+      if (cfg.cancel_tier1_hours          !== undefined && cfg.cancel_tier1_hours          !== "") payload.cancel_tier1_hours          = parseInt(cfg.cancel_tier1_hours, 10)
+      if (cfg.cancel_tier2_hours          !== undefined && cfg.cancel_tier2_hours          !== "") payload.cancel_tier2_hours          = parseInt(cfg.cancel_tier2_hours, 10)
+      if (cfg.cancel_tier3_hours          !== undefined && cfg.cancel_tier3_hours          !== "") payload.cancel_tier3_hours          = parseInt(cfg.cancel_tier3_hours, 10)
+      if (cfg.cancel_fee_low_pct          !== undefined && cfg.cancel_fee_low_pct          !== "") payload.cancel_fee_low_pct          = parseInt(cfg.cancel_fee_low_pct, 10)
+      if (cfg.cancel_fee_medium_pct       !== undefined && cfg.cancel_fee_medium_pct       !== "") payload.cancel_fee_medium_pct       = parseInt(cfg.cancel_fee_medium_pct, 10)
+      if (cfg.cancel_fee_late_pct         !== undefined && cfg.cancel_fee_late_pct         !== "") payload.cancel_fee_late_pct         = parseInt(cfg.cancel_fee_late_pct, 10)
+      if (cfg.cancel_travel_comp_cents    !== undefined && cfg.cancel_travel_comp_cents    !== "") payload.cancel_travel_comp_cents    = parseInt(cfg.cancel_travel_comp_cents, 10)
+      if (cfg.cancel_noshow_grace_minutes !== undefined && cfg.cancel_noshow_grace_minutes !== "") payload.cancel_noshow_grace_minutes = parseInt(cfg.cancel_noshow_grace_minutes, 10)
 
       const res = await fetch("/api/admin/settings", {
         method: "PATCH",
@@ -170,6 +186,73 @@ export default function AdminSettingsPage() {
               className="w-24 h-10 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]"
             />
             <span className="text-sm text-[#6B7280]">km</span>
+          </div>
+        </div>
+
+        {/* Cancellation & no-show policy */}
+        <div className="px-6 py-5">
+          <label className="block text-sm font-semibold text-[#2B3441] mb-1">
+            Cancellation &amp; No-Show Policy
+          </label>
+          <p className="text-xs text-[#6B7280] mb-4">
+            Fees are a reasonable estimate of the cleaner&apos;s lost-slot loss, not a penalty — see
+            Terms of Service Section 9. Changes apply to the very next cancellation or no-show report.
+          </p>
+
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            <div>
+              <label className="block text-xs font-medium text-[#6B7280] mb-1">Free window (hours)</label>
+              <input type="number" min={1} max={168} value={cfg.cancel_tier1_hours ?? "24"} onChange={e => set("cancel_tier1_hours", e.target.value)}
+                className="w-full h-10 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-[#6B7280] mb-1">Medium-fee window (hours)</label>
+              <input type="number" min={1} max={168} value={cfg.cancel_tier2_hours ?? "6"} onChange={e => set("cancel_tier2_hours", e.target.value)}
+                className="w-full h-10 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-[#6B7280] mb-1">Late-fee window (hours)</label>
+              <input type="number" min={0} max={168} value={cfg.cancel_tier3_hours ?? "2"} onChange={e => set("cancel_tier3_hours", e.target.value)}
+                className="w-full h-10 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]" />
+            </div>
+          </div>
+          <p className="text-xs text-[#6B7280] mb-4">
+            More than {cfg.cancel_tier1_hours ?? "24"}h before the job → free. Between {cfg.cancel_tier2_hours ?? "6"}h
+            and {cfg.cancel_tier1_hours ?? "24"}h → low fee. Between {cfg.cancel_tier3_hours ?? "2"}h and {cfg.cancel_tier2_hours ?? "6"}h
+            → medium fee. Less than {cfg.cancel_tier3_hours ?? "2"}h → late fee + travel compensation.
+          </p>
+
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            <div>
+              <label className="block text-xs font-medium text-[#6B7280] mb-1">Low fee %</label>
+              <input type="number" min={0} max={100} value={cfg.cancel_fee_low_pct ?? "10"} onChange={e => set("cancel_fee_low_pct", e.target.value)}
+                className="w-full h-10 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-[#6B7280] mb-1">Medium fee %</label>
+              <input type="number" min={0} max={100} value={cfg.cancel_fee_medium_pct ?? "30"} onChange={e => set("cancel_fee_medium_pct", e.target.value)}
+                className="w-full h-10 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-[#6B7280] mb-1">Late fee %</label>
+              <input type="number" min={0} max={100} value={cfg.cancel_fee_late_pct ?? "100"} onChange={e => set("cancel_fee_late_pct", e.target.value)}
+                className="w-full h-10 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-medium text-[#6B7280] mb-1">Travel compensation (€ cents)</label>
+              <input type="number" min={0} max={50000} value={cfg.cancel_travel_comp_cents ?? "500"} onChange={e => set("cancel_travel_comp_cents", e.target.value)}
+                className="w-full h-10 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]" />
+              <p className="text-xs text-[#6B7280] mt-1">Paid straight to the cleaner on a late cancellation. 500 = €5.00.</p>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-[#6B7280] mb-1">No-show grace period (minutes)</label>
+              <input type="number" min={0} max={120} value={cfg.cancel_noshow_grace_minutes ?? "15"} onChange={e => set("cancel_noshow_grace_minutes", e.target.value)}
+                className="w-full h-10 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]" />
+              <p className="text-xs text-[#6B7280] mt-1">Wait time after the scheduled start before either party can report a no-show.</p>
+            </div>
           </div>
         </div>
 

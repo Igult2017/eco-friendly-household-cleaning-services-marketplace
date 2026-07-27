@@ -47,6 +47,7 @@ export default function ProviderJobsPage() {
   const [bidding, setBidding] = useState<string | null>(null)
   const [submitted, setSubmitted] = useState<Set<string>>(new Set())
   const [bidForm, setBidForm] = useState({ amount: "", message: "", estimatedDurationMinutes: "120", proposedDate: "" })
+  const [acceptedPolicy, setAcceptedPolicy] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -77,6 +78,10 @@ export default function ProviderJobsPage() {
       setError(t("invalidBidAmount"))
       return
     }
+    if (!acceptedPolicy) {
+      setError(t("mustAcceptCancellationPolicy"))
+      return
+    }
     setSubmitting(true); setError(null)
     try {
       const res = await fetch(`/api/jobs/${jobId}/bids`, {
@@ -88,6 +93,7 @@ export default function ProviderJobsPage() {
           // A cleared field parses to NaN → JSON null → zod rejects with a cryptic error. Omit instead.
           estimatedDurationMinutes: Number.isFinite(parseInt(bidForm.estimatedDurationMinutes)) ? parseInt(bidForm.estimatedDurationMinutes) : undefined,
           proposedDate: bidForm.proposedDate || undefined,
+          acceptedCancellationPolicy: acceptedPolicy,
         }),
       })
       if (!res.ok) {
@@ -302,8 +308,14 @@ export default function ProviderJobsPage() {
                         <Label className="text-xs font-medium text-[#2B3441] mb-1 block">{t("messageLabel")}</Label>
                         <Textarea value={bidForm.message} onChange={(e) => setBidForm((p) => ({ ...p, message: e.target.value }))} placeholder={t("messagePlaceholder")} rows={3} className="resize-none bg-white text-sm" />
                       </div>
+                      <label className="flex items-start gap-2 cursor-pointer">
+                        <input type="checkbox" checked={acceptedPolicy} onChange={(e) => setAcceptedPolicy(e.target.checked)} className="mt-0.5 h-3.5 w-3.5 accent-[#2D7A5F] rounded shrink-0" />
+                        <span className="text-xs text-[#6B7280] leading-snug">
+                          {t.rich("acceptCancellationPolicyBid", { link: (chunks) => <a href="/legal/terms#cancellation-policy" target="_blank" className="text-[#2D7A5F] underline">{chunks}</a> })}
+                        </span>
+                      </label>
                       {error && <p className="text-red-500 text-xs">{error}</p>}
-                      <Button onClick={() => submitBid(job.id)} disabled={submitting} className="w-full h-9 bg-[#2D7A5F] hover:bg-[#235f49] text-white text-sm">
+                      <Button onClick={() => submitBid(job.id)} disabled={submitting || !acceptedPolicy} className="w-full h-9 bg-[#2D7A5F] hover:bg-[#235f49] text-white text-sm">
                         {submitting ? <><Loader2 size={14} className="animate-spin mr-2" /> {t("submitting")}</> : t("submitBid")}
                       </Button>
                     </div>

@@ -107,6 +107,7 @@ export default function BookStep5Page() {
           carbonOffsetCents: store.carbonOffsetCents || undefined,
           requestedFrequency: store.frequency !== "one_time" ? store.frequency : undefined,
           requestedDays: store.frequency !== "one_time" && store.recurringDays.length ? store.recurringDays : undefined,
+          acceptedCancellationPolicy: store.acceptedCancellationPolicy,
         }),
       })
       const data = await res.json()
@@ -226,6 +227,7 @@ export default function BookStep5Page() {
           ecoOptions: store.ecoOptions,
           requestedFrequency: store.frequency !== "one_time" ? store.frequency : undefined,
           requestedDays: store.frequency !== "one_time" && store.recurringDays.length ? store.recurringDays : undefined,
+          acceptedCancellationPolicy: store.acceptedCancellationPolicy,
         }),
       })
       const data = await res.json()
@@ -445,6 +447,27 @@ export default function BookStep5Page() {
                 <span className="text-[#2D7A5F]">{formatCurrency(totalWithOffset ?? amounts.totalCharged, currency)}</span>
               </div>
               <p className="text-xs text-[#9CA3AF]">{t("preAuthNote")}</p>
+
+              {step === "summary" && (
+                <>
+                  <div className="border-t border-[#E5EBF0] my-2" />
+                  <label className="flex items-start gap-2.5 cursor-pointer pt-1">
+                    <input
+                      type="checkbox"
+                      checked={store.acceptedCancellationPolicy}
+                      onChange={(e) => store.setAcceptedCancellationPolicy(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 accent-[#2D7A5F] rounded shrink-0"
+                    />
+                    <span className="text-xs text-[#6B7280] leading-relaxed">
+                      {t.rich("acceptCancellationPolicy", {
+                        link: (chunks) => (
+                          <a href="/legal/terms#cancellation-policy" target="_blank" className="text-[#2D7A5F] underline">{chunks}</a>
+                        ),
+                      })}
+                    </span>
+                  </label>
+                </>
+              )}
             </div>
           ) : null}
         </div>
@@ -487,7 +510,7 @@ export default function BookStep5Page() {
           <div className="space-y-3 mb-6">
             <Button
               onClick={proceedToPayment}
-              disabled={loading}
+              disabled={loading || !store.acceptedCancellationPolicy}
               className="w-full h-12 bg-[#2D7A5F] hover:bg-[#235f49] text-white font-semibold text-base"
             >
               {loading ? <><Loader2 size={18} className="animate-spin mr-2" />{t("preparingPayment")}</> : t("continueToPayment")}
@@ -496,7 +519,7 @@ export default function BookStep5Page() {
             <Button
               variant="outline"
               onClick={bookWithoutCard}
-              disabled={loading}
+              disabled={loading || !store.acceptedCancellationPolicy}
               className="w-full h-11 border-[#E5EBF0] text-[#6B7280] hover:text-[#2B3441]"
             >
               {t("bookWithoutCard")}
@@ -525,6 +548,7 @@ export default function BookStep5Page() {
                     carbonOffsetCents: addCarbonOffset ? CARBON_OFFSET_CENTS : undefined,
                     requestedFrequency: store.frequency !== "one_time" ? store.frequency : undefined,
                     requestedDays: store.frequency !== "one_time" && store.recurringDays.length ? store.recurringDays : undefined,
+                    acceptedCancellationPolicy: store.acceptedCancellationPolicy,
                   }}
                   onSuccess={(id, num) => setSuccess({ bookingId: id, bookingNumber: num })}
                 />

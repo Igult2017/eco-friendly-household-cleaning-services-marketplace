@@ -619,6 +619,7 @@
     "carbonOffsetDescription": "Plantez des arbres pour neutraliser ce service",
     "totalChargedToday": "Total débité aujourd'hui",
     "preAuthNote": "Pré-autorisation uniquement. Débité après la prestation.",
+    "acceptCancellationPolicy": "J'accepte la <link>politique d'annulation</link> pour cette réservation.",
     "preparingPayment": "Préparation du paiement…",
     "continueToPayment": "Continuer vers le paiement",
     "backToDetails": "← Retour aux détails",
@@ -1139,6 +1140,8 @@
   "providerProviderJobsPage": {
     "genericError": "Une erreur est survenue. Veuillez réessayer.",
     "invalidBidAmount": "Veuillez saisir un montant d'offre valide (minimum 1 €)",
+    "mustAcceptCancellationPolicy": "Vous devez accepter la politique d'annulation pour soumettre une offre.",
+    "acceptCancellationPolicyBid": "J'accepte la <link>politique d'annulation</link> pour les missions que j'accepte.",
     "networkError": "Erreur réseau. Veuillez vérifier votre connexion.",
     "pageTitle": "Missions disponibles",
     "pageSubtitle": "Missions publiées par des clients près de chez vous",
@@ -2060,7 +2063,12 @@
     "genericError": "Une erreur est survenue. Veuillez réessayer.",
     "addPayment": "Ajouter un moyen de paiement",
     "addPaymentNote": "Votre intervenant ne peut accepter la mission qu'une fois un moyen de paiement ajouté. Le débit n'a lieu qu'après votre DOUBLE confirmation.",
-    "noCardCleanerWait": "Ce client n'a pas encore ajouté de moyen de paiement — demandez-le dans la discussion. N'acceptez pas la mission avant ; le paiement sera ensuite prélevé automatiquement à la fin."
+    "noCardCleanerWait": "Ce client n'a pas encore ajouté de moyen de paiement — demandez-le dans la discussion. N'acceptez pas la mission avant ; le paiement sera ensuite prélevé automatiquement à la fin.",
+    "reportClientNoShow": "Client non disponible ?",
+    "reportCleanerNoShow": "La personne n'est pas venue ?",
+    "noShowReasonPlaceholder": "Décrivez brièvement ce qui s'est passé (obligatoire)",
+    "noShowSubmit": "Signaler une absence",
+    "noShowCancel": "Annuler"
   },
   "customerBookingPayPage": {
     "title": "Ajouter votre moyen de paiement",

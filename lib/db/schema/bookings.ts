@@ -25,6 +25,8 @@ export const bookingStatusEnum = pgEnum("booking_status", [
   "cancelled",
   "disputed",
   "refunded",
+  "client_no_show",   // cleaner reported the client as unreachable after the no-show grace period
+  "cleaner_no_show",  // client reported the cleaner never arrived after the no-show grace period
 ])
 
 export const bookings = pgTable(
@@ -71,6 +73,12 @@ export const bookings = pgTable(
     cancellationReason: text("cancellation_reason"),
     cancelledAt: timestamp("cancelled_at", { withTimezone: true }),
     cancelledBy: text("cancelled_by"),
+    // Extra fixed compensation paid to the cleaner on a late cancellation (on top of the ordinary
+    // cancellation fee split) — admin-configurable, see lib/platform/settings.ts.
+    travelCompensationAmount: integer("travel_compensation_amount").notNull().default(0),
+    // Recorded the moment the customer accepted the cancellation policy for THIS specific booking
+    // (policy percentages can change over time — a generic one-time signup consent isn't enough).
+    cancellationPolicyAcceptedAt: timestamp("cancellation_policy_accepted_at", { withTimezone: true }),
     // Dual completion confirmation — payment releases only when BOTH are set (or an admin releases).
     providerCompletedAt: timestamp("provider_completed_at", { withTimezone: true }),
     clientConfirmedAt: timestamp("client_confirmed_at", { withTimezone: true }),

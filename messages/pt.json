@@ -619,6 +619,7 @@
     "carbonOffsetDescription": "Plante árvores para neutralizar este serviço",
     "totalChargedToday": "Total cobrado hoje",
     "preAuthNote": "Apenas pré-autorização. Cobrado após a conclusão.",
+    "acceptCancellationPolicy": "Aceito a <link>política de cancelamento</link> desta reserva.",
     "preparingPayment": "A preparar o pagamento…",
     "continueToPayment": "Continuar para o pagamento",
     "backToDetails": "← Voltar aos detalhes",
@@ -1139,6 +1140,8 @@
   "providerProviderJobsPage": {
     "genericError": "Algo correu mal. Tente novamente.",
     "invalidBidAmount": "Introduza um valor de proposta válido (mínimo 1 €)",
+    "mustAcceptCancellationPolicy": "Tem de aceitar a política de cancelamento para enviar uma proposta.",
+    "acceptCancellationPolicyBid": "Aceito a <link>política de cancelamento</link> dos trabalhos que aceito.",
     "networkError": "Erro de rede. Verifique a sua ligação.",
     "pageTitle": "Trabalhos disponíveis",
     "pageSubtitle": "Trabalhos publicados por clientes perto de si",
@@ -2060,7 +2063,12 @@
     "genericError": "Algo correu mal. Tenta novamente.",
     "addPayment": "Adicionar método de pagamento",
     "addPaymentNote": "O teu profissional só pode aceitar o trabalho depois de adicionares um método de pagamento. Só é cobrado quando AMBOS confirmarem a conclusão.",
-    "noCardCleanerWait": "Este cliente ainda não adicionou um método de pagamento — pede no chat. Não aceites o trabalho antes disso; o pagamento será depois cobrado automaticamente na conclusão."
+    "noCardCleanerWait": "Este cliente ainda não adicionou um método de pagamento — pede no chat. Não aceites o trabalho antes disso; o pagamento será depois cobrado automaticamente na conclusão.",
+    "reportClientNoShow": "Cliente não disponível?",
+    "reportCleanerNoShow": "A pessoa não apareceu?",
+    "noShowReasonPlaceholder": "Descreva brevemente o que aconteceu (obrigatório)",
+    "noShowSubmit": "Reportar ausência",
+    "noShowCancel": "Cancelar"
   },
   "customerBookingPayPage": {
     "title": "Adiciona o teu método de pagamento",

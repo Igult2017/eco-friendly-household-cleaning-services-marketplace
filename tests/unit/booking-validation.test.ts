@@ -11,6 +11,7 @@ describe("createBookingSchema", () => {
     scheduledAt: new Date(Date.now() + 86_400_000).toISOString(),
     durationMinutes: 120,
     serviceAddress: baseAddress,
+    acceptedCancellationPolicy: true as const,
   }
 
   it("accepts a valid booking payload", () => {
@@ -39,6 +40,11 @@ describe("createBookingSchema", () => {
 
   it("rejects missing service address", () => {
     const r = createBookingSchema.safeParse({ ...valid, serviceAddress: undefined })
+    expect(r.success).toBe(false)
+  })
+
+  it("rejects a booking without accepting the cancellation policy", () => {
+    const r = createBookingSchema.safeParse({ ...valid, acceptedCancellationPolicy: false })
     expect(r.success).toBe(false)
   })
 })

@@ -22,6 +22,7 @@ interface Props {
     carbonOffsetCents?: number
     requestedFrequency?: string
     requestedDays?: number[]
+    acceptedCancellationPolicy: boolean
   }
 }
 

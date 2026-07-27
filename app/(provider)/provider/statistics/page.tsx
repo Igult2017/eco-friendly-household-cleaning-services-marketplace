@@ -26,7 +26,8 @@ export default async function ProviderStatisticsPage() {
   // Each query has its own .catch so one failure degrades a single metric instead of crashing the page.
   const [completedRow, cancelledRow, decidedBidsRow, acceptedBidsRow, byCustomer, earnedRow] = await Promise.all([
     db.select({ c: count() }).from(bookings).where(and(eq(bookings.providerId, pid), eq(bookings.status, "completed"))).catch(() => [{ c: 0 }]),
-    db.select({ c: count() }).from(bookings).where(and(eq(bookings.providerId, pid), eq(bookings.status, "cancelled"), eq(bookings.cancelledBy, userId))).catch(() => [{ c: 0 }]),
+    // A cleaner no-show counts against reliability the same as an own cancellation.
+    db.select({ c: count() }).from(bookings).where(and(eq(bookings.providerId, pid), inArray(bookings.status, ["cancelled", "cleaner_no_show"]), eq(bookings.cancelledBy, userId))).catch(() => [{ c: 0 }]),
     // Win rate denominator = DECIDED bids (accepted + rejected); pending/withdrawn bids shouldn't drag it down.
     db.select({ c: count() }).from(bids).where(and(eq(bids.providerId, pid), inArray(bids.status, ["accepted", "rejected"]))).catch(() => [{ c: 0 }]),
     db.select({ c: count() }).from(bids).where(and(eq(bids.providerId, pid), eq(bids.status, "accepted"))).catch(() => [{ c: 0 }]),

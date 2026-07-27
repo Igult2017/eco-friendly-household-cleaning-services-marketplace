@@ -160,6 +160,7 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     discountAmount: discountCents,
     requestedFrequency: data.requestedFrequency ?? null,
     requestedDays: data.requestedDays?.length ? data.requestedDays : null,
+    cancellationPolicyAcceptedAt: new Date(),
   }
   insertData.serviceId = effectiveServiceId
 

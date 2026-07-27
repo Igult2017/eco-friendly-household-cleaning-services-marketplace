@@ -619,6 +619,7 @@
     "carbonOffsetDescription": "Plant trees to neutralise this service",
     "totalChargedToday": "Total charged today",
     "preAuthNote": "Pre-authorisation only. Charged after completion.",
+    "acceptCancellationPolicy": "I accept the <link>cancellation policy</link> for this booking.",
     "preparingPayment": "Preparing payment…",
     "continueToPayment": "Continue to Payment",
     "backToDetails": "← Back to details",
@@ -1139,6 +1140,8 @@
   "providerProviderJobsPage": {
     "genericError": "Something went wrong. Please try again.",
     "invalidBidAmount": "Please enter a valid bid amount (minimum €1)",
+    "mustAcceptCancellationPolicy": "You must accept the cancellation policy to submit a bid.",
+    "acceptCancellationPolicyBid": "I accept the <link>cancellation policy</link> for jobs I take.",
     "networkError": "Network error. Please check your connection.",
     "pageTitle": "Available Jobs",
     "pageSubtitle": "Jobs posted by clients near you",
@@ -2060,7 +2063,12 @@
     "genericError": "Something went wrong. Please try again.",
     "addPayment": "Add payment method",
     "addPaymentNote": "Your cleaner can only take the order once a payment method is added. It's only charged after you BOTH confirm completion.",
-    "noCardCleanerWait": "This client hasn't added a payment method yet — ask them in the chat. Don't take the order until it's added; payment is then collected automatically at completion."
+    "noCardCleanerWait": "This client hasn't added a payment method yet — ask them in the chat. Don't take the order until it's added; payment is then collected automatically at completion.",
+    "reportClientNoShow": "Client not available?",
+    "reportCleanerNoShow": "Cleaner didn't show up?",
+    "noShowReasonPlaceholder": "Briefly describe what happened (required)",
+    "noShowSubmit": "Report no-show",
+    "noShowCancel": "Cancel"
   },
   "customerBookingPayPage": {
     "title": "Add your payment method",

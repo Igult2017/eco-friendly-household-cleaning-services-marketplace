@@ -39,6 +39,8 @@ export const bids = pgTable(
     proposedTimeStart: time("proposed_time_start"),
     bookingId: uuid("booking_id").references(() => bookings.id), // set when accepted
     expiresAt: timestamp("expires_at", { withTimezone: true }),
+    // Recorded the moment the cleaner accepted the cancellation policy when submitting THIS bid.
+    cancellationPolicyAcceptedAt: timestamp("cancellation_policy_accepted_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },

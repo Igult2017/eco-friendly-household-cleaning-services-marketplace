@@ -619,6 +619,7 @@
     "carbonOffsetDescription": "Posadź drzewa, aby zneutralizować tę usługę",
     "totalChargedToday": "Łączna kwota pobrana dzisiaj",
     "preAuthNote": "Tylko wstępna autoryzacja. Obciążenie po zakończeniu.",
+    "acceptCancellationPolicy": "Akceptuję <link>zasady anulowania</link> tej rezerwacji.",
     "preparingPayment": "Przygotowywanie płatności…",
     "continueToPayment": "Przejdź do płatności",
     "backToDetails": "← Powrót do szczegółów",
@@ -1139,6 +1140,8 @@
   "providerProviderJobsPage": {
     "genericError": "Coś poszło nie tak. Spróbuj ponownie.",
     "invalidBidAmount": "Podaj prawidłową kwotę oferty (minimum 1 €)",
+    "mustAcceptCancellationPolicy": "Musisz zaakceptować zasady anulowania, aby złożyć ofertę.",
+    "acceptCancellationPolicyBid": "Akceptuję <link>zasady anulowania</link> dla zleceń, które przyjmuję.",
     "networkError": "Błąd sieci. Sprawdź swoje połączenie.",
     "pageTitle": "Dostępne zlecenia",
     "pageSubtitle": "Zlecenia opublikowane przez klientów w Twojej okolicy",
@@ -2060,7 +2063,12 @@
     "genericError": "Coś poszło nie tak. Spróbuj ponownie.",
     "addPayment": "Dodaj metodę płatności",
     "addPaymentNote": "Osoba sprzątająca może przyjąć zlecenie dopiero po dodaniu metody płatności. Obciążenie następuje dopiero, gdy OBOJE potwierdzicie ukończenie.",
-    "noCardCleanerWait": "Ten klient nie dodał jeszcze metody płatności — poproś o to na czacie. Nie przyjmuj zlecenia wcześniej; płatność zostanie pobrana automatycznie po ukończeniu."
+    "noCardCleanerWait": "Ten klient nie dodał jeszcze metody płatności — poproś o to na czacie. Nie przyjmuj zlecenia wcześniej; płatność zostanie pobrana automatycznie po ukończeniu.",
+    "reportClientNoShow": "Klient niedostępny?",
+    "reportCleanerNoShow": "Sprzątaczka się nie pojawiła?",
+    "noShowReasonPlaceholder": "Krótko opisz, co się stało (wymagane)",
+    "noShowSubmit": "Zgłoś brak stawiennictwa",
+    "noShowCancel": "Anuluj"
   },
   "customerBookingPayPage": {
     "title": "Dodaj metodę płatności",

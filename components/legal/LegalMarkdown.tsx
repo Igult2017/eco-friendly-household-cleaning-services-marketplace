@@ -40,13 +40,18 @@ export function LegalMarkdown({ source }: { source: string }) {
     let mh: RegExpExecArray | null
     if ((mh = /^(#{1,4})\s+(.*)$/.exec(t))) {
       flush()
-      const lvl = mh[1].length, txt = mh[2]
+      const lvl = mh[1].length
+      // Optional trailing {#custom-id} attribute (standard Markdown convention) so a section can be
+      // deep-linked (e.g. a booking-flow consent checkbox linking straight to the cancellation
+      // section) without depending on fragile auto-slugified heading text.
+      const idMatch = /\s*\{#([a-z0-9-]+)\}\s*$/.exec(mh[2])
+      const txt = idMatch ? mh[2].slice(0, idMatch.index) : mh[2]
       const cls = lvl === 1 ? "font-serif text-4xl font-bold text-[#2B3441] mb-2"
         : lvl === 2 ? "font-serif text-2xl font-bold text-[#2B3441] mt-10 mb-3"
         : lvl === 3 ? "text-lg font-semibold text-[#2B3441] mt-6 mb-2"
         : "text-base font-semibold text-[#2B3441] mt-4 mb-1"
       const H = (lvl === 1 ? "h1" : lvl === 2 ? "h2" : lvl === 3 ? "h3" : "h4") as React.ElementType
-      blocks.push(<H key={key++} className={cls}>{inline(txt, `h${key}`)}</H>)
+      blocks.push(<H key={key++} id={idMatch?.[1]} className={cls}>{inline(txt, `h${key}`)}</H>)
       i++; continue
     }
     if (/^>\s?/.test(t)) {
