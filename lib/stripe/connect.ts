@@ -20,7 +20,7 @@ export async function createConnectAccount(params: {
       business_type: "individual",
       settings: {
         payouts: {
-          schedule: { interval: "weekly", weekly_anchor: "monday" },
+          schedule: { interval: "daily" },
         },
       },
     },
