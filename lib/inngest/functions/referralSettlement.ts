@@ -1,7 +1,8 @@
 import { inngest } from "../client"
 import { db } from "@/lib/db"
-import { referralCommissions, referralCredits, notifications } from "@/lib/db/schema"
-import { and, eq, lt, sql } from "drizzle-orm"
+import { referralCommissions, referralCredits, referralPayouts, notifications, users, providers } from "@/lib/db/schema"
+import { and, eq, lt, sql, inArray } from "drizzle-orm"
+import { stripe } from "@/lib/stripe/client"
 
 // Month-end referral settlement. Commissions accrue as `pending` when bookings complete
 // (completion.ts) and are moved into the referrer's withdrawable credit balance in one batch on
@@ -43,6 +44,54 @@ export const settleReferralCommissions = inngest.createFunction(
 
     if (!perUser.length) return { settled: 0 }
 
+    // Cleaner cash commissions are auto-paid out here — fully automated, no admin action. Client
+    // discount balances are NOT swept (they choose to spend at checkout or withdraw on demand —
+    // see /api/referrals/withdraw). Sweeps each cleaner's FULL current wallet balance (not just this
+    // month's delta) so a past failed payout gets retried automatically next month too.
+    const payoutResults: { userId: string; paid: boolean; reason?: string }[] = await step.run("auto-payout-cleaners", async () => {
+      const referrerIds = perUser.map(([userId]) => userId)
+      const cleanerRows = await db
+        .select({ userId: users.id, stripeAccountId: providers.stripeAccountId, stripeAccountStatus: providers.stripeAccountStatus })
+        .from(users)
+        .innerJoin(providers, eq(providers.userId, users.id))
+        .where(and(inArray(users.id, referrerIds), eq(users.role, "provider")))
+
+      const results: { userId: string; paid: boolean; reason?: string }[] = []
+      for (const cleaner of cleanerRows) {
+        if (!cleaner.stripeAccountId || cleaner.stripeAccountStatus !== "active") {
+          results.push({ userId: cleaner.userId, paid: false, reason: "payout_account_not_ready" })
+          continue
+        }
+        const [wallet] = await db.select({ balance: referralCredits.balanceCents }).from(referralCredits).where(eq(referralCredits.userId, cleaner.userId))
+        const amountCents = wallet?.balance ?? 0
+        if (amountCents <= 0) continue
+
+        const [debited] = await db
+          .update(referralCredits)
+          .set({ balanceCents: sql`referral_credits.balance_cents - ${amountCents}`, updatedAt: new Date() })
+          .where(and(eq(referralCredits.userId, cleaner.userId), sql`balance_cents >= ${amountCents}`))
+          .returning({ id: referralCredits.id })
+        if (!debited) { results.push({ userId: cleaner.userId, paid: false, reason: "balance_changed" }); continue }
+
+        const [payoutRow] = await db.insert(referralPayouts).values({ userId: cleaner.userId, amountCents, status: "pending" }).returning({ id: referralPayouts.id })
+        try {
+          const transfer = await stripe.transfers.create(
+            { amount: amountCents, currency: "eur", destination: cleaner.stripeAccountId },
+            { idempotencyKey: `referral-settlement-payout-${payoutRow.id}` },
+          )
+          await db.update(referralPayouts).set({ status: "paid", stripeTransferId: transfer.id }).where(eq(referralPayouts.id, payoutRow.id))
+          results.push({ userId: cleaner.userId, paid: true })
+        } catch (transferErr) {
+          await db.update(referralCredits).set({ balanceCents: sql`referral_credits.balance_cents + ${amountCents}`, updatedAt: new Date() }).where(eq(referralCredits.userId, cleaner.userId))
+          const message = transferErr instanceof Error ? transferErr.message : "Transfer failed"
+          await db.update(referralPayouts).set({ status: "failed", failureReason: message }).where(eq(referralPayouts.id, payoutRow.id))
+          console.error(`[referral-settlement] payout transfer failed for ${cleaner.userId}:`, transferErr)
+          results.push({ userId: cleaner.userId, paid: false, reason: "transfer_failed" })
+        }
+      }
+      return results
+    })
+
     await step.run("notify", async () => {
       for (const [userId] of perUser) {
         try {
@@ -58,6 +107,6 @@ export const settleReferralCommissions = inngest.createFunction(
       }
     })
 
-    return { settled: perUser.length }
+    return { settled: perUser.length, paidOut: payoutResults.filter((r) => r.paid).length }
   }
 )

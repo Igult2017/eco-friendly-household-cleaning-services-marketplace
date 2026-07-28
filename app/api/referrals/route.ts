@@ -4,7 +4,7 @@ import { safeLimit, createRateLimiter } from "@/lib/redis/client"
 import { db } from "@/lib/db"
 
 const referralRatelimit = createRateLimiter({ tokens: 10, windowSeconds: 60, prefix: "ratelimit:referral" })
-import { referralCodes, referrals, referralCredits } from "@/lib/db/schema"
+import { referralCodes, referrals, referralCredits, users } from "@/lib/db/schema"
 import { eq, count, sql } from "drizzle-orm"
 import { customAlphabet } from "nanoid"
 import { logError } from "@/lib/utils/logError"
@@ -73,6 +73,9 @@ export async function GET() {
       .where(eq(referralCredits.userId, userId))
       .limit(1)
 
+    // Payout account status — drives whether the UI shows "Connect a payout account" or "Withdraw".
+    const [account] = await db.select({ status: users.referralPayoutAccountStatus }).from(users).where(eq(users.id, userId))
+
     // Fall back to the canonical site URL so the referral link is ALWAYS absolute + shareable
     // (e.g. https://dorixé.com/?ref=CODE) even when NEXT_PUBLIC_APP_URL isn't set in the env.
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || SITE_URL
@@ -92,6 +95,7 @@ export async function GET() {
         balanceCents: credit?.balance ?? 0,
         lifetimeEarnedCents: credit?.lifetime ?? 0,
       },
+      payoutAccountStatus: account?.status ?? null,
     })
   } catch (err) {
     console.error("[/api/referrals GET]", err)

@@ -70,6 +70,9 @@ export const bookings = pgTable(
     beforePhotoUrls: jsonb("before_photo_urls").$type<string[]>().default([]),
     promoCodeId: uuid("promo_code_id"),  // no FK here to avoid circular dep — enforced in API
     discountAmount: integer("discount_amount").notNull().default(0),
+    // Referral discount balance spent on this booking (separate from promo discountAmount above) —
+    // reversed back to the customer's wallet on cancel, same principle as the promo code rollback.
+    referralCreditAppliedCents: integer("referral_credit_applied_cents").notNull().default(0),
     cancellationReason: text("cancellation_reason"),
     cancelledAt: timestamp("cancelled_at", { withTimezone: true }),
     cancelledBy: text("cancelled_by"),

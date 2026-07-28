@@ -419,6 +419,10 @@ ON CONFLICT (key) DO NOTHING;
 -- booking_id blocked that. Swap it for a composite (booking_id, referral_id) unique index.
 DROP INDEX IF EXISTS ref_commissions_booking_idx;
 CREATE UNIQUE INDEX IF NOT EXISTS ref_commissions_booking_referral_idx ON referral_commissions(booking_id, referral_id);
+
+-- Client referral discount balance spendable at checkout (separate column from the promo-code
+-- discount_amount) + a client's own lightweight Connect account for withdrawing that balance.
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS referral_credit_applied_cents integer NOT NULL DEFAULT 0;
 `
 
 function isValidUrl(url) {

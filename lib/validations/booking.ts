@@ -47,6 +47,9 @@ export const paymentIntentSchema = z.object({
   promoCodeId: z.string().uuid().optional(),
   promoCodeDiscountCents: z.number().int().min(0).optional(),
   addOnIds: z.array(z.string().uuid()).max(20).optional().default([]),
+  // Client's INTENT to spend their referral discount balance — the actual amount is always
+  // recomputed server-side from their real balance, never trusted from the request.
+  applyReferralCredit: z.boolean().optional().default(false),
 })
 
 export type CreateBookingInput = z.infer<typeof createBookingSchema>

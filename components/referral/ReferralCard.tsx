@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { useTranslations } from "next-intl"
-import { Copy, Check, Users, TrendingUp, Gift, Wallet } from "lucide-react"
+import { Copy, Check, Users, TrendingUp, Gift, Wallet, Loader2, Banknote } from "lucide-react"
+import { ReferralPayoutConnect } from "./ReferralPayoutConnect"
 
 interface ReferralStats {
   code: string | null
@@ -10,6 +11,7 @@ interface ReferralStats {
   referralPct?: number
   stats: { total: number; active: number; pending: number; totalEarnedCents: number }
   credit: { balanceCents: number; lifetimeEarnedCents: number }
+  payoutAccountStatus: string | null
 }
 
 function fmt(cents: number) {
@@ -21,14 +23,40 @@ export function ReferralCard() {
   const [data, setData] = useState<ReferralStats | null>(null)
   const [copied, setCopied] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [showConnect, setShowConnect] = useState(false)
+  const [withdrawing, setWithdrawing] = useState(false)
+  const [withdrawMsg, setWithdrawMsg] = useState<{ type: "success" | "error"; text: string } | null>(null)
 
-  useEffect(() => {
-    fetch("/api/referrals")
+  function refetch() {
+    return fetch("/api/referrals")
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => { if (d && d.stats && d.credit) setData(d) })
       .catch(console.error)
-      .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    refetch().finally(() => setLoading(false))
   }, [])
+
+  async function withdraw() {
+    setWithdrawing(true)
+    setWithdrawMsg(null)
+    try {
+      const res = await fetch("/api/referrals/withdraw", { method: "POST" })
+      const d = await res.json()
+      if (!res.ok) {
+        if (d.code === "payout_account_not_ready") { setShowConnect(true); return }
+        setWithdrawMsg({ type: "error", text: d.error ?? t("withdrawFailed") })
+        return
+      }
+      setWithdrawMsg({ type: "success", text: t("withdrawSuccess", { amount: fmt(d.amountCents) }) })
+      await refetch()
+    } catch {
+      setWithdrawMsg({ type: "error", text: t("withdrawFailed") })
+    } finally {
+      setWithdrawing(false)
+    }
+  }
 
   const pct = data?.referralPct ?? 5
 
@@ -87,6 +115,32 @@ export function ReferralCard() {
           </div>
         ))}
       </div>
+
+      {/* Withdraw balance */}
+      {!loading && data && data.credit.balanceCents > 0 && (
+        <div className="px-6 py-4 border-t border-gray-100">
+          {showConnect ? (
+            <div className="space-y-2">
+              <p className="text-xs text-[#6B7280]">{t("payoutConnectPrompt")}</p>
+              <ReferralPayoutConnect onConnected={() => { setShowConnect(false); void refetch() }} />
+            </div>
+          ) : (
+            <button
+              onClick={() => (data.payoutAccountStatus === "active" ? withdraw() : setShowConnect(true))}
+              disabled={withdrawing}
+              className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-[#2D7A5F] bg-[#F4FAF6] hover:bg-[#EAF3EE] border border-[#2D7A5F]/20 rounded-xl py-2.5 transition-colors disabled:opacity-60"
+            >
+              {withdrawing ? <Loader2 size={14} className="animate-spin" /> : <Banknote size={14} />}
+              {data.payoutAccountStatus === "active"
+                ? t("withdrawButton", { amount: fmt(data.credit.balanceCents) })
+                : t("connectToWithdraw")}
+            </button>
+          )}
+          {withdrawMsg && (
+            <p className={`text-xs mt-2 ${withdrawMsg.type === "success" ? "text-[#2D7A5F]" : "text-red-600"}`}>{withdrawMsg.text}</p>
+          )}
+        </div>
+      )}
 
       {/* How it works */}
       <div className="px-6 py-4 border-t border-gray-100 bg-[#FAFAFA]">

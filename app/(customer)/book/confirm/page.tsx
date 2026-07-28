@@ -11,7 +11,7 @@ import { loadStripe } from "@stripe/stripe-js"
 import { Elements } from "@stripe/react-stripe-js"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
 import { getCurrencyForCountry } from "@/lib/utils/locale"
-import { Loader2, CheckCircle2, Leaf, Tag, X, CreditCard } from "lucide-react"
+import { Loader2, CheckCircle2, Leaf, Tag, X, CreditCard, Wallet } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
@@ -45,6 +45,9 @@ export default function BookStep5Page() {
   const [hourlyRateCents, setHourlyRateCents] = useState<number | null>(null)
   const [success, setSuccess] = useState<{ bookingId: string; bookingNumber: string } | null>(null)
   const [addCarbonOffset, setAddCarbonOffset] = useState(false)
+  const [referralBalanceCents, setReferralBalanceCents] = useState(0)
+  const [applyReferralCredit, setApplyReferralCredit] = useState(false)
+  const [referralCreditAppliedCents, setReferralCreditAppliedCents] = useState(0)
   const [promoCode, setPromoCode] = useState("")
   const [promoCodeId, setPromoCodeId] = useState<string | null>(null)
   const [promoDiscountCents, setPromoDiscountCents] = useState(0)
@@ -170,6 +173,10 @@ export default function BookStep5Page() {
     // price, so the preview must run regardless. Gating on categoryId left bid-flow clients on an
     // empty summary with no pay button.
     if (store.selectedProviderId && (store.categoryId || isBidFlow)) fetchPricePreview()
+    // Referral discount balance, if any — same endpoint the referral dashboard card uses.
+    fetch("/api/referrals").then((r) => (r.ok ? r.json() : null)).then((d) => {
+      if (d?.credit?.balanceCents) setReferralBalanceCents(d.credit.balanceCents)
+    }).catch(() => {})
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -289,6 +296,7 @@ export default function BookStep5Page() {
           // Bug 5: pass bid amount so PI uses the accepted price, not the list price
           ...(store.bidAmountCents !== null ? { bidAmountCents: store.bidAmountCents } : {}),
           ...(promoCodeId ? { promoCodeId, promoCodeDiscountCents: promoDiscountCents } : {}),
+          applyReferralCredit,
         }),
       })
       const data = await res.json()
@@ -299,6 +307,7 @@ export default function BookStep5Page() {
       setClientSecret(data.clientSecret)
       setIntentId(data.paymentIntentId)
       setAmounts(data.amounts)
+      setReferralCreditAppliedCents(data.amounts?.referralCreditCents ?? 0)
       if (data.serviceId) setServiceId(data.serviceId) // server-resolved (bid flow without a listing)
       store.setCarbonOffset(addCarbonOffset ? CARBON_OFFSET_CENTS : 0)
       setStep("payment")
@@ -310,12 +319,18 @@ export default function BookStep5Page() {
   }
 
   // Commission is deducted from the cleaner — the customer pays the service price
-  // (after any promo) plus the optional carbon offset. No fee is added on top.
-  // In SUMMARY mode `amounts` is the local preview (base + add-ons, no promo applied) so we
-  // subtract the promo here. In PAYMENT mode `amounts` is the PI response, whose subtotalCents
-  // ALREADY has the promo applied — subtracting again would under-count the total.
+  // (after any promo + referral balance) plus the optional carbon offset. No fee is added on top.
+  // In SUMMARY mode `amounts` is the local preview (base + add-ons, no discounts applied) so we
+  // subtract the promo + referral balance (capped at what's left) here. In PAYMENT mode `amounts`
+  // is the PI response, whose subtotalCents ALREADY has both applied — subtracting again would
+  // under-count the total.
+  const previewReferralCreditCents = applyReferralCredit
+    ? Math.min(referralBalanceCents, Math.max(0, (amounts?.subtotalCents ?? 0) - (promoCodeId ? promoDiscountCents : 0)))
+    : 0
   const previewSubtotal = amounts
-    ? (step === "summary" ? Math.max(0, amounts.subtotalCents - (promoCodeId ? promoDiscountCents : 0)) : amounts.subtotalCents)
+    ? (step === "summary"
+        ? Math.max(0, amounts.subtotalCents - (promoCodeId ? promoDiscountCents : 0) - previewReferralCreditCents)
+        : amounts.subtotalCents)
     : null
   const totalWithOffset = previewSubtotal !== null
     ? previewSubtotal + (addCarbonOffset ? CARBON_OFFSET_CENTS : 0)
@@ -440,6 +455,34 @@ export default function BookStep5Page() {
                 </div>
                 <span className="text-[#6B7280] font-medium">{addCarbonOffset ? formatCurrency(CARBON_OFFSET_CENTS, currency) : "—"}</span>
               </label>
+
+              {/* Referral discount balance toggle — only shown when the client actually has one */}
+              {referralBalanceCents > 0 && (
+                <>
+                  <div className="border-t border-[#E5EBF0] my-2" />
+                  <label className={`flex items-center justify-between cursor-pointer rounded-xl px-3 py-2.5 transition-colors ${applyReferralCredit ? "bg-[#F4FAF6] border border-[#2D7A5F]/30" : "hover:bg-gray-50"}`}>
+                    <div className="flex items-center gap-2.5">
+                      <input
+                        type="checkbox"
+                        checked={applyReferralCredit}
+                        onChange={(e) => setApplyReferralCredit(e.target.checked)}
+                        disabled={step === "payment"}
+                        className="h-4 w-4 accent-[#2D7A5F] rounded"
+                      />
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <Wallet size={13} className="text-[#2D7A5F]" />
+                          <span className="text-[#2B3441] font-medium">{t("useReferralBalance")}</span>
+                        </div>
+                        <p className="text-xs text-[#9CA3AF]">{t("referralBalanceAvailable", { amount: formatCurrency(referralBalanceCents, currency) })}</p>
+                      </div>
+                    </div>
+                    <span className="text-[#2D7A5F] font-semibold">
+                      {applyReferralCredit ? `-${formatCurrency(step === "payment" ? referralCreditAppliedCents : previewReferralCreditCents, currency)}` : "—"}
+                    </span>
+                  </label>
+                </>
+              )}
 
               <div className="border-t border-[#E5EBF0] my-2" />
               <div className="flex justify-between font-bold text-[#2B3441] text-base">

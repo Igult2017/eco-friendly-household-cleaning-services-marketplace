@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { providers, providerServices, users, bids, jobPosts, promoCodes, promoCodeUsages, providerAddons, notifications } from "@/lib/db/schema"
+import { providers, providerServices, users, bids, jobPosts, promoCodes, promoCodeUsages, providerAddons, notifications, referralCredits } from "@/lib/db/schema"
 import { stripe, calculateBookingAmounts } from "@/lib/stripe/client"
 import { getCommissionPct } from "@/lib/platform/settings"
 import { bookingRatelimit } from "@/lib/redis/client"
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
     // promoCodeDiscountCents is intentionally NOT destructured — the discount is recomputed
     // server-side (FIN-003); any client-supplied amount is ignored.
-    const { providerId, serviceId, scheduledAt, durationMinutes, carbonOffsetCents = 0, bidAmountCents, promoCodeId, addOnIds = [] } = parsed.data
+    const { providerId, serviceId, scheduledAt, durationMinutes, carbonOffsetCents = 0, bidAmountCents, promoCodeId, addOnIds = [], applyReferralCredit } = parsed.data
 
     // serviceId is optional ONLY for bid-flow bookings (job posts have no category, and a bid-only
     // cleaner may have no listing) — the accepted bid amount is the price; resolve any active service
@@ -172,7 +172,18 @@ export async function POST(req: Request) {
       }
     }
 
-    const subtotalAfterDiscount = Math.max(0, subtotal - resolvedDiscountCents)
+    const subtotalAfterPromo = Math.max(0, subtotal - resolvedDiscountCents)
+
+    // Referral discount balance: SECURITY — never trust a client-supplied amount, only the boolean
+    // intent to use it. Recompute from the caller's actual wallet balance, capped at what's left of
+    // the subtotal after the promo code. Stacks with a promo code (both are discounts off the price).
+    let referralCreditCents = 0
+    if (applyReferralCredit) {
+      const [wallet] = await db.select({ balance: referralCredits.balanceCents }).from(referralCredits).where(eq(referralCredits.userId, userId))
+      referralCreditCents = Math.min(wallet?.balance ?? 0, subtotalAfterPromo)
+    }
+
+    const subtotalAfterDiscount = Math.max(0, subtotalAfterPromo - referralCreditCents)
     const commissionPct = await getCommissionPct()
     const amounts = calculateBookingAmounts(subtotalAfterDiscount, commissionPct)
     const totalWithOffset = amounts.totalCharged + carbonOffsetCents
@@ -207,6 +218,7 @@ export async function POST(req: Request) {
     if (acceptedBidId) metadata.bid_id = acceptedBidId
     if (promoCodeId) metadata.promo_code_id = promoCodeId
     if (resolvedDiscountCents > 0) metadata.promo_code_discount_cents = String(resolvedDiscountCents)
+    if (referralCreditCents > 0) metadata.referral_credit_cents = String(referralCreditCents)
     if (addOnsTotal > 0) {
       metadata.addon_total_cents = String(addOnsTotal)
       // Stripe caps each metadata value at 500 chars — only store the ids when they fit.
@@ -237,7 +249,7 @@ export async function POST(req: Request) {
       // (final total + promo code) so changing the promo or carbon offset on the same slot
       // creates a NEW PI with the correct amount, while pure network retries of the same
       // request still return the cached PI.
-      { idempotencyKey: `pi-${userId}-${providerId}-${service.id}-${scheduledAt}-${totalWithOffset}-${promoCodeId ?? "none"}-${addonSig}` },
+      { idempotencyKey: `pi-${userId}-${providerId}-${service.id}-${scheduledAt}-${totalWithOffset}-${promoCodeId ?? "none"}-${referralCreditCents}-${addonSig}` },
     )
 
     return NextResponse.json({
@@ -245,7 +257,7 @@ export async function POST(req: Request) {
       paymentIntentId: intent.id,
       currency: chargeCurrency,
       serviceId: service.id, // server-resolved for bid-flow clients that arrived without one
-      amounts: { ...amounts, carbonOffsetCents, totalCharged: totalWithOffset, commissionPct },
+      amounts: { ...amounts, carbonOffsetCents, totalCharged: totalWithOffset, commissionPct, referralCreditCents },
     })
   } catch (err) {
     console.error("[payments/intent POST]", err)

@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { bookings, payments, providers, providerServices, carbonOffsetContributions, promoCodes, promoCodeUsages, bids } from "@/lib/db/schema"
+import { bookings, payments, providers, providerServices, carbonOffsetContributions, promoCodes, promoCodeUsages, bids, referralCredits } from "@/lib/db/schema"
 import type { NewBooking } from "@/lib/db/schema/bookings"
 import { stripe, calculateBookingAmounts } from "@/lib/stripe/client"
 import { getCommissionPct } from "@/lib/platform/settings"
@@ -102,7 +102,10 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
   // Promo code from PI metadata
   const promoCodeId = intent.metadata.promo_code_id ?? null
   const discountCents = intent.metadata.promo_code_discount_cents ? parseInt(intent.metadata.promo_code_discount_cents, 10) : 0
-  const subtotalAfterDiscount = Math.max(0, subtotal - discountCents)
+  // Referral discount balance the customer chose to spend — resolved + capped server-side at PI
+  // creation (see /api/payments/intent), pinned here via metadata like every other price input.
+  const referralCreditCents = intent.metadata.referral_credit_cents ? parseInt(intent.metadata.referral_credit_cents, 10) : 0
+  const subtotalAfterDiscount = Math.max(0, subtotal - discountCents - referralCreditCents)
   // FIN-010: use the commission rate pinned on the PI (set at PI creation) so the stored
   // split matches what Stripe was told, even if an admin changed the rate in between.
   const commissionPct = intent.metadata.commission_pct
@@ -158,6 +161,7 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     completionPhotoUrls: [],
     promoCodeId: promoCodeId ?? undefined,
     discountAmount: discountCents,
+    referralCreditAppliedCents: referralCreditCents,
     requestedFrequency: data.requestedFrequency ?? null,
     requestedDays: data.requestedDays?.length ? data.requestedDays : null,
     cancellationPolicyAcceptedAt: new Date(),
@@ -232,6 +236,18 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
         bookingId: newBooking.id,
         discountAmount: discountCents,
       })
+    }
+
+    if (referralCreditCents > 0) {
+      // Atomic conditional decrement — guards against the balance having changed (e.g. spent by a
+      // concurrent booking) between PI creation and now. 0 rows back means the balance can no longer
+      // cover it; abort the whole booking rather than silently charge the customer more than shown.
+      const [debited] = await tx
+        .update(referralCredits)
+        .set({ balanceCents: sql`referral_credits.balance_cents - ${referralCreditCents}`, updatedAt: new Date() })
+        .where(and(eq(referralCredits.userId, userId), sql`balance_cents >= ${referralCreditCents}`))
+        .returning({ id: referralCredits.id })
+      if (!debited) throw new BookingError(422, "Your referral balance changed. Please review your order and try again.")
     }
 
     return newBooking

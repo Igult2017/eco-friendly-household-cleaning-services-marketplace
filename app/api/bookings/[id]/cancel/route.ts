@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { bookings, payments, providers, promoCodes, promoCodeUsages, carbonOffsetContributions, notifications, bookingCancellationEvents } from "@/lib/db/schema"
+import { bookings, payments, providers, promoCodes, promoCodeUsages, carbonOffsetContributions, notifications, bookingCancellationEvents, referralCredits } from "@/lib/db/schema"
 import { stripe } from "@/lib/stripe/client"
 import { calculateCancellationFeeLive } from "@/lib/utils/refunds"
 import { eq, and, sql } from "drizzle-orm"
@@ -33,6 +33,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         platformFeePercent: bookings.platformFeePercent,
         carbonOffsetAmount: bookings.carbonOffsetAmount,
         promoCodeId: bookings.promoCodeId,
+        referralCreditAppliedCents: bookings.referralCreditAppliedCents,
       })
       .from(bookings)
       .where(eq(bookings.id, bookingId))
@@ -142,6 +143,15 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       }
       // The carbon-offset hold was released (never captured), so the contribution wasn't collected.
       await tx.delete(carbonOffsetContributions).where(eq(carbonOffsetContributions.bookingId, bookingId))
+
+      // Give the spent referral balance back too — same principle as the promo code above: the
+      // service never happened, so the discount the customer "paid for" it with is returned.
+      if (booking.referralCreditAppliedCents > 0) {
+        await tx
+          .update(referralCredits)
+          .set({ balanceCents: sql`referral_credits.balance_cents + ${booking.referralCreditAppliedCents}`, updatedAt: new Date() })
+          .where(eq(referralCredits.userId, booking.customerId))
+      }
     })
 
     // Immutable audit trail — required for dispute resolution, never blocks the cancellation itself.
