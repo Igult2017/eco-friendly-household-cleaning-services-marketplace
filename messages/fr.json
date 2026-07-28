@@ -1257,7 +1257,7 @@
     "saveButtonSaved": "Enregistré !",
     "recurringDiscountLabel": "Réduction pour réservations récurrentes",
     "recurringDiscountSuffix": "% de réduction sur les réservations récurrentes",
-    "recurringDiscountHint": "Les clients qui vous réservent chaque semaine, toutes les deux semaines ou chaque mois bénéficient de cette réduction à chaque ménage. 0 = aucune réduction."
+    "recurringDiscountHint": "DORIXÉ définit désormais ce taux pour toute la plateforme — les clients qui réservent chaque semaine, toutes les deux semaines ou chaque mois bénéficient automatiquement de {pct}% de réduction à chaque ménage. Aucune action requise de votre part."
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "Mes prestations",

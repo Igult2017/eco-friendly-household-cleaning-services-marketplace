@@ -1257,7 +1257,7 @@
     "saveButtonSaved": "Gespeichert!",
     "recurringDiscountLabel": "Rabatt für wiederkehrende Buchungen",
     "recurringDiscountSuffix": "% Rabatt auf wiederkehrende Buchungen",
-    "recurringDiscountHint": "Kund:innen, die Sie wöchentlich, zweiwöchentlich oder monatlich buchen, erhalten diesen Rabatt pro Reinigung. 0 = kein Rabatt."
+    "recurringDiscountHint": "DORIXÉ legt dies jetzt plattformweit fest — Kund:innen, die wöchentlich, zweiwöchentlich oder monatlich buchen, erhalten automatisch {pct}% Rabatt auf jede Reinigung. Sie müssen nichts weiter tun."
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "Meine Leistungen",

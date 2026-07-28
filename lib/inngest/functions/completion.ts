@@ -1,11 +1,12 @@
 import { inngest } from "../client"
 import { db } from "@/lib/db"
-import { bookings, payments, users, notifications, providers } from "@/lib/db/schema"
+import { bookings, payments, users, notifications, providers, recurringSchedules } from "@/lib/db/schema"
 import { stripe } from "@/lib/stripe/client"
 import { resend, FROM } from "@/lib/resend/client"
-import { reviewRequestEmail, reviewReminderEmail } from "@/lib/resend/transactionalEmails"
+import { reviewRequestEmail, reviewReminderEmail, recurringDiscountEmail } from "@/lib/resend/transactionalEmails"
 import { eq, and, sql } from "drizzle-orm"
 import { creditReferralReward } from "@/lib/referrals/rewards"
+import { getRecurringDiscountPct } from "@/lib/platform/settings"
 
 export const onBookingCompleted = inngest.createFunction(
   { id: "booking-completed", retries: 3, triggers: [{ event: "booking/completed" }] },
@@ -141,6 +142,52 @@ export const onBookingCompleted = inngest.createFunction(
         : { skipped: "provider_is_customer_or_unknown" }
 
       return { customerSide, providerSide }
+    })
+
+    // If the client said they want recurring cleaning on this booking and hasn't already set up a
+    // real schedule with this cleaner, nudge them once (in-app + email) toward /recurring/new with
+    // the current admin-set discount rate — the wizard's "recurring" checkbox is just stated intent
+    // until a schedule exists (see [[project_recurring]]).
+    await step.run("recurring-discount-nudge", async () => {
+      const [bk] = await db
+        .select({ requestedFrequency: bookings.requestedFrequency, providerId: bookings.providerId })
+        .from(bookings)
+        .where(eq(bookings.id, bookingId))
+      if (!bk?.requestedFrequency) return { skipped: "no_recurring_interest" }
+
+      const [existingSchedule] = await db
+        .select({ id: recurringSchedules.id })
+        .from(recurringSchedules)
+        .where(and(
+          eq(recurringSchedules.customerId, customerId),
+          eq(recurringSchedules.providerId, bk.providerId),
+          eq(recurringSchedules.status, "active"),
+        ))
+        .limit(1)
+      if (existingSchedule) return { skipped: "schedule_already_exists" }
+
+      const pct = await getRecurringDiscountPct()
+      if (pct <= 0) return { skipped: "no_discount_configured" }
+
+      await db.insert(notifications).values({
+        userId: customerId,
+        type: "recurring_booking_created",
+        title: `Save ${pct}% with recurring cleaning`,
+        body: `You wanted recurring cleaning — set up a repeat schedule now and get ${pct}% off every booking, automatically.`,
+        link: `/recurring/new?bookingId=${bookingId}`,
+        metadata: { variant: "recurring_discount_available", pct: String(pct) },
+      })
+
+      if (customer?.email && customer.emailReminders) {
+        const { subject, html } = recurringDiscountEmail(customer.locale, {
+          name: customer.firstName,
+          pct,
+          setupUrl: `${process.env.NEXT_PUBLIC_APP_URL}/recurring/new?bookingId=${bookingId}`,
+        })
+        await resend.emails.send({ from: FROM, to: customer.email, subject, html })
+      }
+
+      return { notified: true, pct }
     })
 
     await step.sleep("wait-24h", "24 hours")

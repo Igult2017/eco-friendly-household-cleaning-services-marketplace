@@ -18,15 +18,16 @@ type Profile = {
   country: string
   serviceRadiusKm: number
   carbonOffsetEnabled: boolean
-  recurringDiscountPct: number
 }
 
 export default function ProviderProfilePage() {
   const t = useTranslations("providerProviderProfilePage")
   const [profile, setProfile] = useState<Profile>({
     businessName: "", bio: "", city: "", postalCode: "",
-    country: "DE", serviceRadiusKm: 25, carbonOffsetEnabled: false, recurringDiscountPct: 0,
+    country: "DE", serviceRadiusKm: 25, carbonOffsetEnabled: false,
   })
+  // Recurring discount is admin-set platform-wide now (was per-cleaner) — read-only display.
+  const [adminRecurringDiscountPct, setAdminRecurringDiscountPct] = useState(0)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -58,9 +59,9 @@ export default function ProviderProfilePage() {
             country: d.provider.country ?? "DE",
             serviceRadiusKm: d.provider.serviceRadiusKm ?? 25,
             carbonOffsetEnabled: d.provider.carbonOffsetEnabled ?? false,
-            recurringDiscountPct: d.provider.recurringDiscountPct ?? 0,
           })
         }
+        setAdminRecurringDiscountPct(d.adminRecurringDiscountPct ?? 0)
         setLoading(false)
       })
   }, [])
@@ -182,15 +183,10 @@ export default function ProviderProfilePage() {
 
         <div>
           <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">{t("recurringDiscountLabel")}</label>
-          <div className="flex items-center gap-2">
-            <input
-              type="number" min={0} max={50} step={1} value={profile.recurringDiscountPct}
-              onChange={(e) => setProfile((p) => ({ ...p, recurringDiscountPct: Math.max(0, Math.min(50, Number(e.target.value) || 0)) }))}
-              className="w-24 rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]"
-            />
-            <span className="text-sm text-[#6B7280]">{t("recurringDiscountSuffix")}</span>
+          <div className="bg-[#F4FAF6] rounded-xl px-4 py-3">
+            <p className="text-sm font-semibold text-[#2D7A5F]">{adminRecurringDiscountPct} {t("recurringDiscountSuffix")}</p>
+            <p className="text-xs text-[#6B7280] mt-1">{t("recurringDiscountHint", { pct: adminRecurringDiscountPct })}</p>
           </div>
-          <p className="text-xs text-[#6B7280] mt-1">{t("recurringDiscountHint")}</p>
         </div>
 
         {error && <p className="text-sm text-red-500">{error}</p>}

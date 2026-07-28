@@ -10,6 +10,7 @@ import { sendProviderApprovedEmail } from "@/lib/resend/providerApproved"
 import { logError } from "@/lib/utils/logError"
 import { ensureUserRow } from "@/lib/clerk/ensureUser"
 import { sendApprovalSupportWelcome } from "@/lib/support/approvalWelcome"
+import { getRecurringDiscountPct } from "@/lib/platform/settings"
 
 function toSlug(name: string, suffix: string): string {
   return (
@@ -42,7 +43,9 @@ export async function GET() {
       where: eq(providers.userId, userId),
     })
 
-    return NextResponse.json({ provider: provider ?? null })
+    // Recurring discount is now admin-set platform-wide (was a per-cleaner field) — surfaced here
+    // read-only so the profile page can show the cleaner the current rate.
+    return NextResponse.json({ provider: provider ?? null, adminRecurringDiscountPct: await getRecurringDiscountPct() })
   } catch (err) {
     console.error("[providers/profile GET]", err)
     void logError({ message: "[providers/profile GET]", error: err, route: "/api/providers/profile", severity: "error" })
@@ -70,7 +73,6 @@ export async function PATCH(req: Request) {
     if (data.postalCode !== undefined) updateFields.postalCode = data.postalCode
     if (data.country !== undefined) updateFields.country = data.country
     if (data.serviceRadiusKm !== undefined) updateFields.serviceRadiusKm = data.serviceRadiusKm
-    if (data.recurringDiscountPct !== undefined) updateFields.recurringDiscountPct = data.recurringDiscountPct
     if (data.timezone !== undefined) updateFields.timezone = data.timezone
     if (data.ecoLevel !== undefined) updateFields.ecoLevel = data.ecoLevel
     if (data.profilePhotoUrl !== undefined) updateFields.profilePhotoUrl = data.profilePhotoUrl
@@ -176,7 +178,6 @@ export async function PATCH(req: Request) {
       country: data.country,
       serviceRadiusKm: data.serviceRadiusKm ?? 25,
       ecoLevel: data.ecoLevel ?? "basic",
-      recurringDiscountPct: data.recurringDiscountPct ?? 0,
       carbonOffsetEnabled: Boolean(body.carbonOffsetEnabled),
       profilePhotoUrl: data.profilePhotoUrl ?? null,
       latitude: (updateFields.latitude as number | undefined) ?? null,

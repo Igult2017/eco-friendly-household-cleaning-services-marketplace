@@ -1257,7 +1257,7 @@
     "saveButtonSaved": "Zapisano!",
     "recurringDiscountLabel": "Rabat za rezerwacje cykliczne",
     "recurringDiscountSuffix": "% rabatu na rezerwacje cykliczne",
-    "recurringDiscountHint": "Klienci, którzy rezerwują co tydzień, co dwa tygodnie lub co miesiąc, otrzymują ten rabat na każde sprzątanie. 0 = brak rabatu."
+    "recurringDiscountHint": "DORIXÉ ustala teraz tę wartość dla całej platformy — klienci, którzy rezerwują co tydzień, co dwa tygodnie lub co miesiąc, automatycznie otrzymują {pct}% zniżki na każde sprzątanie. Nie musisz nic robić."
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "Moje usługi",

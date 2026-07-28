@@ -4,7 +4,7 @@ import { recurringSchedules, bookings, notifications, providerServices, provider
 import { eq, and, lte, isNotNull } from "drizzle-orm"
 import { redis } from "@/lib/redis/client"
 import { calculateBookingAmounts, stripe } from "@/lib/stripe/client"
-import { getCommissionPct } from "@/lib/platform/settings"
+import { getCommissionPct, getRecurringDiscountPct } from "@/lib/platform/settings"
 import { getCurrencyForCountry } from "@/lib/utils/locale"
 
 async function generateBookingNumber(): Promise<string> {
@@ -102,7 +102,7 @@ export const recurringBookingCron = inngest.createFunction(
           .where(eq(providerServices.id, schedule.serviceId))
 
         const [providerRow] = await db
-          .select({ stripeAccountId: providers.stripeAccountId, country: providers.country, recurringDiscountPct: providers.recurringDiscountPct, isApproved: providers.isApproved, isSuspended: providers.isSuspended })
+          .select({ stripeAccountId: providers.stripeAccountId, country: providers.country, isApproved: providers.isApproved, isSuspended: providers.isSuspended })
           .from(providers)
           .where(eq(providers.id, schedule.providerId))
 
@@ -124,9 +124,11 @@ export const recurringBookingCron = inngest.createFunction(
           return
         }
 
-        // Cleaner-set recurring loyalty discount: applied to every recurring booking.
+        // Admin-set recurring loyalty discount (platform-wide — was previously per-cleaner):
+        // applied to every recurring booking, regardless of which cleaner is assigned.
         const baseSubtotal = service?.basePrice ?? 0
-        const recurringDiscountCents = Math.round(baseSubtotal * (providerRow?.recurringDiscountPct ?? 0) / 100)
+        const recurringDiscountPct = await getRecurringDiscountPct()
+        const recurringDiscountCents = Math.round(baseSubtotal * recurringDiscountPct / 100)
         const subtotal = Math.max(0, baseSubtotal - recurringDiscountCents)
         const commissionPct = await getCommissionPct()
         const amounts = calculateBookingAmounts(subtotal, commissionPct)

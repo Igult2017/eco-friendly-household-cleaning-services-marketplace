@@ -1257,7 +1257,7 @@
     "saveButtonSaved": "Guardado!",
     "recurringDiscountLabel": "Desconto para reservas recorrentes",
     "recurringDiscountSuffix": "% de desconto em reservas recorrentes",
-    "recurringDiscountHint": "Os clientes que o reservam semanalmente, quinzenalmente ou mensalmente recebem este desconto em cada limpeza. 0 = sem desconto."
+    "recurringDiscountHint": "A DORIXÉ define agora este valor para toda a plataforma — os clientes que reservam semanalmente, quinzenalmente ou mensalmente recebem automaticamente {pct}% de desconto em cada limpeza. Não precisas de fazer nada."
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "Os meus serviços",

@@ -1257,7 +1257,7 @@
     "saveButtonSaved": "Saved!",
     "recurringDiscountLabel": "Recurring booking discount",
     "recurringDiscountSuffix": "% off recurring bookings",
-    "recurringDiscountHint": "Clients who book you weekly, bi-weekly or monthly get this discount on each clean. Set to 0 for no discount."
+    "recurringDiscountHint": "DORIXÉ now sets this platform-wide — clients who book weekly, bi-weekly or monthly automatically get {pct}% off every clean. No action needed from you."
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "My Services",

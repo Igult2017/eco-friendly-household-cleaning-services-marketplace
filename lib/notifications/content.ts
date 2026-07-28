@@ -433,6 +433,18 @@ const NOTIF: Record<string, Record<string, S>> = {
     pl: { title: "Prowizje za polecenia naliczone", body: "Twoje prowizje za polecenia z zeszłego miesiąca zostały dopisane do salda." },
     pt: { title: "Ganhos de indicação creditados", body: "As tuas comissões de indicação do mês passado foram creditadas no teu saldo." },
   },
+  // Sent once, right after a booking with a stated recurring-frequency preference completes and no
+  // recurring schedule exists yet for that client+cleaner pair — nudges them to set one up.
+  recurring_discount_available: {
+    en: { title: "Save {pct}% with recurring cleaning", body: "You wanted recurring cleaning — set up a repeat schedule now and get {pct}% off every booking, automatically." },
+    de: { title: "Sparen Sie {pct}% mit wiederkehrender Reinigung", body: "Sie wollten wiederkehrende Reinigung — richten Sie jetzt einen festen Rhythmus ein und erhalten Sie automatisch {pct}% Rabatt auf jede Buchung." },
+    fr: { title: "Économisez {pct}% avec le ménage récurrent", body: "Vous vouliez un ménage récurrent — configurez dès maintenant un rythme régulier et obtenez automatiquement {pct}% de réduction sur chaque réservation." },
+    es: { title: "Ahorra un {pct}% con la limpieza recurrente", body: "Querías limpieza recurrente — configura ahora un horario recurrente y obtén automáticamente un {pct}% de descuento en cada reserva." },
+    it: { title: "Risparmia il {pct}% con la pulizia ricorrente", body: "Volevi la pulizia ricorrente — imposta ora una cadenza fissa e ottieni automaticamente il {pct}% di sconto su ogni prenotazione." },
+    nl: { title: "Bespaar {pct}% met terugkerende schoonmaak", body: "Je wilde terugkerende schoonmaak — stel nu een vast schema in en krijg automatisch {pct}% korting op elke boeking." },
+    pl: { title: "Oszczędź {pct}% dzięki cyklicznemu sprzątaniu", body: "Chciałeś(-aś) cyklicznego sprzątania — ustaw teraz stały harmonogram i automatycznie otrzymuj {pct}% zniżki na każdą rezerwację." },
+    pt: { title: "Poupe {pct}% com limpeza recorrente", body: "Querias limpeza recorrente — configura agora uma agenda recorrente e recebe automaticamente {pct}% de desconto em cada reserva." },
+  },
   // At creation a booking is a REQUEST — the cleaner still has to accept it manually.
   booking_request_sent: {
     en: { title: "Booking request sent", body: "Your booking request was sent to the cleaner. You'll be notified as soon as they accept." },
@@ -517,6 +529,7 @@ const PARAMS: Record<string, string[]> = {
   client_card_saved_wait: [],
   booking_request_sent: [],
   referral_settled: [],
+  recurring_discount_available: ["pct"],
   admin_job_removed: ["title"],
   booking_accepted_pending_payment: [],
 }

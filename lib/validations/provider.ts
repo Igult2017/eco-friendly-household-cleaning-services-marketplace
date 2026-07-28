@@ -24,8 +24,6 @@ export const providerProfileSchema = z.object({
       { message: "Profile photo must be an uploaded image" },
     )
     .optional(),
-  // Cleaner-set loyalty discount applied to their recurring bookings (0–50%).
-  recurringDiscountPct: z.number().int().min(0).max(50).optional(),
   // IANA timezone captured from the cleaner's browser (Intl). Drives availability + time display.
   timezone: z.string().min(1).max(64).optional(),
 })
