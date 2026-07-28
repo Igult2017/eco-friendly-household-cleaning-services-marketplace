@@ -8,6 +8,8 @@ import { resolveAudience } from "@/lib/marketing/audience"
 import type { AudienceFilter, CampaignType, EmailDraft } from "@/lib/marketing/types"
 
 import { welcomeEmail } from "@/lib/resend/emailContent"
+import { sendReferralExplainerEmail } from "@/lib/resend/referralExplainer"
+import { sendReferralExplainerSupportMessage } from "@/lib/support/referralWelcome"
 
 // Welcome email — fired on signup. Transactional (sent to every new user), deduped per user.
 export const onUserWelcome = inngest.createFunction(
@@ -47,6 +49,18 @@ export const onUserWelcome = inngest.createFunction(
         sentAt: res.ok ? new Date() : null,
       }).onConflictDoNothing()
     })
+
+    // Referral-programme explainer — sent once, right AFTER the welcome email above (both roles).
+    // Email + a support-thread message, per spec. Best-effort: never blocks/fails the welcome flow.
+    if (u.role === "customer" || u.role === "provider") {
+      await step.run("referral-explainer-email", async () => {
+        try { await sendReferralExplainerEmail(userId) } catch (e) { console.warn("[user-welcome] referral explainer email failed:", e) }
+      })
+      await step.run("referral-explainer-support", async () => {
+        await sendReferralExplainerSupportMessage(userId)
+      })
+    }
+
     return { sent: res.ok }
   }
 )
