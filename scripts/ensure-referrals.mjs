@@ -388,6 +388,31 @@ INSERT INTO platform_settings (key, value) VALUES
   ('cancel_travel_comp_cents','500'),
   ('cancel_noshow_grace_minutes','15')
 ON CONFLICT (key) DO NOTHING;
+
+-- Referral/discount programme expansion: cleaner→cleaner referrals cap at the invited cleaner's
+-- first 3 completed jobs; client referrals earn a spendable/withdrawable discount balance instead
+-- of cash; the recurring-booking discount moves from a per-cleaner setting to one admin-set rate.
+ALTER TABLE referrals ADD COLUMN IF NOT EXISTS qualifying_orders_count integer NOT NULL DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_payout_account_id varchar(64);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_payout_account_status varchar(32);
+
+DO $$ BEGIN CREATE TYPE referral_payout_status AS ENUM ('pending','paid','failed'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+CREATE TABLE IF NOT EXISTS referral_payouts (
+  id                 UUID                   PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id            TEXT                   NOT NULL REFERENCES users(id),
+  amount_cents       INTEGER                NOT NULL,
+  stripe_transfer_id VARCHAR(64),
+  status             referral_payout_status NOT NULL DEFAULT 'pending',
+  failure_reason     TEXT,
+  created_at         TIMESTAMPTZ            NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS referral_payouts_user_idx ON referral_payouts(user_id);
+
+INSERT INTO platform_settings (key, value) VALUES
+  ('cleaner_peer_referral_pct','10'),
+  ('client_referral_discount_pct','5'),
+  ('recurring_discount_pct','10')
+ON CONFLICT (key) DO NOTHING;
 `
 
 function isValidUrl(url) {

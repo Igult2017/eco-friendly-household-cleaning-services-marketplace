@@ -33,6 +33,11 @@ export const users = pgTable(
     recurringInterest: varchar("recurring_interest", { length: 12 }),
     dualRoleEnabled: boolean("dual_role_enabled").notNull().default(false),
     locale: varchar("locale", { length: 5 }), // detected at onboarding (IP country -> language); used for localized emails
+    // Separate from providers.stripeAccountId (job payouts) — this is a lightweight Connect Express
+    // account any user (typically a client) can create on-demand purely to withdraw a referral
+    // discount balance. Cleaners never need this; they withdraw commissions via providers.stripeAccountId.
+    referralPayoutAccountId: varchar("referral_payout_account_id", { length: 64 }),
+    referralPayoutAccountStatus: varchar("referral_payout_account_status", { length: 32 }),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

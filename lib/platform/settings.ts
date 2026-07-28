@@ -61,6 +61,25 @@ export async function getReferralPct(): Promise<number> {
   return 5
 }
 
+// Cleaner→cleaner referral commission % — paid on the invited cleaner's first 3 completed jobs
+// only (see referrals.qualifyingOrdersCount). Separate rate from the general referral_pct above.
+export async function getCleanerPeerReferralPct(): Promise<number> {
+  return getIntSetting("cleaner_peer_referral_pct", 10, 0, 20)
+}
+
+// Client referral reward %, credited as a spendable/withdrawable discount balance rather than
+// cash (clients don't have Connect job payouts) — applies whether the invited person is a client
+// or a cleaner (based on the OTHER party's own booking-as-customer / job-as-provider).
+export async function getClientReferralDiscountPct(): Promise<number> {
+  return getIntSetting("client_referral_discount_pct", 5, 0, 20)
+}
+
+// Admin-set recurring-booking discount %, replacing the old per-cleaner providers.recurringDiscountPct
+// control — applies uniformly to every recurring occurrence regardless of which cleaner is assigned.
+export async function getRecurringDiscountPct(): Promise<number> {
+  return getIntSetting("recurring_discount_pct", 10, 0, 50)
+}
+
 export type CancellationConfig = {
   tier1Hours: number       // above this = full refund (0% fee)
   tier2Hours: number       // between tier2 and tier1 = "low" fee

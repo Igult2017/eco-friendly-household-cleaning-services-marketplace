@@ -20,6 +20,10 @@ const updateSchema = z.object({
   cancel_fee_late_pct:         z.number().int().min(0).max(100).optional(),
   cancel_travel_comp_cents:    z.number().int().min(0).max(50_000).optional(),
   cancel_noshow_grace_minutes: z.number().int().min(0).max(120).optional(),
+  // Referral/discount programme — see lib/platform/settings.ts.
+  cleaner_peer_referral_pct:    z.number().int().min(0).max(20).optional(),
+  client_referral_discount_pct: z.number().int().min(0).max(20).optional(),
+  recurring_discount_pct:       z.number().int().min(0).max(50).optional(),
 })
 
 type AdminCheckResult = "ok" | "unauthorized" | "forbidden"

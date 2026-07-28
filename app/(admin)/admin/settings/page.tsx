@@ -20,6 +20,9 @@ interface Config {
   cancel_fee_late_pct?:         string
   cancel_travel_comp_cents?:    string
   cancel_noshow_grace_minutes?: string
+  cleaner_peer_referral_pct?:    string
+  client_referral_discount_pct?: string
+  recurring_discount_pct?:       string
 }
 
 export default function AdminSettingsPage() {
@@ -57,6 +60,9 @@ export default function AdminSettingsPage() {
       if (cfg.cancel_fee_late_pct         !== undefined && cfg.cancel_fee_late_pct         !== "") payload.cancel_fee_late_pct         = parseInt(cfg.cancel_fee_late_pct, 10)
       if (cfg.cancel_travel_comp_cents    !== undefined && cfg.cancel_travel_comp_cents    !== "") payload.cancel_travel_comp_cents    = parseInt(cfg.cancel_travel_comp_cents, 10)
       if (cfg.cancel_noshow_grace_minutes !== undefined && cfg.cancel_noshow_grace_minutes !== "") payload.cancel_noshow_grace_minutes = parseInt(cfg.cancel_noshow_grace_minutes, 10)
+      if (cfg.cleaner_peer_referral_pct    !== undefined && cfg.cleaner_peer_referral_pct    !== "") payload.cleaner_peer_referral_pct    = parseInt(cfg.cleaner_peer_referral_pct, 10)
+      if (cfg.client_referral_discount_pct !== undefined && cfg.client_referral_discount_pct !== "") payload.client_referral_discount_pct = parseInt(cfg.client_referral_discount_pct, 10)
+      if (cfg.recurring_discount_pct       !== undefined && cfg.recurring_discount_pct       !== "") payload.recurring_discount_pct       = parseInt(cfg.recurring_discount_pct, 10)
 
       const res = await fetch("/api/admin/settings", {
         method: "PATCH",
@@ -128,24 +134,68 @@ export default function AdminSettingsPage() {
           </div>
         </div>
 
-        {/* Referral */}
+        {/* Referral & discount programme */}
         <div className="px-6 py-5">
           <label className="block text-sm font-semibold text-[#2B3441] mb-1">
-            Referral Commission %
+            Referral &amp; Discount Programme
           </label>
-          <p className="text-xs text-[#6B7280] mb-3">
-            Percentage of each booking value credited to the referrer&apos;s wallet.
+          <p className="text-xs text-[#6B7280] mb-4">
+            Cleaners earn cash commission (paid out via Stripe); clients earn a discount balance
+            (spendable at checkout or withdrawable). All rates are % of booking subtotal.
           </p>
-          <div className="flex items-center gap-3">
-            <input
-              type="number"
-              min={0}
-              max={20}
-              value={cfg.referral_pct ?? "5"}
-              onChange={e => set("referral_pct", e.target.value)}
-              className="w-24 h-10 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]"
-            />
-            <span className="text-sm text-[#6B7280]">% of booking subtotal</span>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+            <div>
+              <label className="block text-xs font-medium text-[#6B7280] mb-1">Cleaner → Client commission %</label>
+              <input
+                type="number"
+                min={0}
+                max={20}
+                value={cfg.referral_pct ?? "5"}
+                onChange={e => set("referral_pct", e.target.value)}
+                className="w-full h-10 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]"
+              />
+              <p className="text-xs text-[#6B7280] mt-1">Cleaner invites a client — paid on every completed booking, ongoing.</p>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-[#6B7280] mb-1">Cleaner → Cleaner commission %</label>
+              <input
+                type="number"
+                min={0}
+                max={20}
+                value={cfg.cleaner_peer_referral_pct ?? "10"}
+                onChange={e => set("cleaner_peer_referral_pct", e.target.value)}
+                className="w-full h-10 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]"
+              />
+              <p className="text-xs text-[#6B7280] mt-1">Cleaner invites a cleaner — only the invited cleaner&apos;s first 3 completed jobs.</p>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-[#6B7280] mb-1">Client referral discount %</label>
+              <input
+                type="number"
+                min={0}
+                max={20}
+                value={cfg.client_referral_discount_pct ?? "5"}
+                onChange={e => set("client_referral_discount_pct", e.target.value)}
+                className="w-full h-10 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]"
+              />
+              <p className="text-xs text-[#6B7280] mt-1">Client invites anyone (client or cleaner) — credited as balance, ongoing.</p>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-[#6B7280] mb-1">Recurring booking discount %</label>
+            <div className="flex items-center gap-3">
+              <input
+                type="number"
+                min={0}
+                max={50}
+                value={cfg.recurring_discount_pct ?? "10"}
+                onChange={e => set("recurring_discount_pct", e.target.value)}
+                className="w-24 h-10 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]"
+              />
+              <span className="text-sm text-[#6B7280]">% off every recurring occurrence, all cleaners (was per-cleaner — now platform-wide)</span>
+            </div>
           </div>
         </div>
 
