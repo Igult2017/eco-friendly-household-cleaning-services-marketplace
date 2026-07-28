@@ -413,6 +413,12 @@ INSERT INTO platform_settings (key, value) VALUES
   ('client_referral_discount_pct','5'),
   ('recurring_discount_pct','10')
 ON CONFLICT (key) DO NOTHING;
+
+-- A completed booking must be able to credit TWO independent referrals (one for the referred
+-- customer, one for the referred cleaner assigned to it) — the old single-column unique index on
+-- booking_id blocked that. Swap it for a composite (booking_id, referral_id) unique index.
+DROP INDEX IF EXISTS ref_commissions_booking_idx;
+CREATE UNIQUE INDEX IF NOT EXISTS ref_commissions_booking_referral_idx ON referral_commissions(booking_id, referral_id);
 `
 
 function isValidUrl(url) {

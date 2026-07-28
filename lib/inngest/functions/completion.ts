@@ -1,11 +1,11 @@
 import { inngest } from "../client"
 import { db } from "@/lib/db"
-import { bookings, payments, users, notifications, providers, referrals, referralCommissions } from "@/lib/db/schema"
+import { bookings, payments, users, notifications, providers } from "@/lib/db/schema"
 import { stripe } from "@/lib/stripe/client"
 import { resend, FROM } from "@/lib/resend/client"
 import { reviewRequestEmail, reviewReminderEmail } from "@/lib/resend/transactionalEmails"
 import { eq, and, sql } from "drizzle-orm"
-import { getReferralPct } from "@/lib/platform/settings"
+import { creditReferralReward } from "@/lib/referrals/rewards"
 
 export const onBookingCompleted = inngest.createFunction(
   { id: "booking-completed", retries: 3, triggers: [{ event: "booking/completed" }] },
@@ -109,68 +109,38 @@ export const onBookingCompleted = inngest.createFunction(
       await resend.emails.send({ from: FROM, to: customer.email, subject, html })
     })
 
-    // Process referral commission — 5% of booking subtotal credited to referrer
-    await step.run("referral-commission", async () => {
+    // Process referral rewards. Two independent trigger sides fire off the SAME completed booking
+    // — the referred person's own natural transaction on it: the customer (covers cleaner→client
+    // cash + client→client discount) and, separately, the assigned cleaner (covers cleaner→cleaner
+    // cash, capped at 3 jobs, + client→cleaner discount). Commission/discount accrues PENDING — the
+    // wallet is NOT touched here. The monthly settlement cron (referralSettlement.ts) moves pending
+    // rewards into the withdrawable balance at month end; the gap doubles as a clawback window.
+    await step.run("referral-rewards", async () => {
       const [booking] = await db
         .select({ subtotalAmount: bookings.subtotalAmount })
         .from(bookings)
         .where(eq(bookings.id, bookingId))
       if (!booking?.subtotalAmount) return { skipped: "no_subtotal" }
 
-      const [referral] = await db
-        .select()
-        .from(referrals)
-        .where(and(eq(referrals.referredId, customerId), eq(referrals.status, "pending")))
-        .limit(1)
+      const [providerRow] = await db.select({ userId: providers.userId }).from(providers).where(eq(providers.id, providerId))
 
-      // Also check already-active referrals for lifetime commissions
-      const [activeReferral] = !referral
-        ? await db
-            .select()
-            .from(referrals)
-            .where(and(eq(referrals.referredId, customerId), eq(referrals.status, "active")))
-            .limit(1)
-        : [undefined]
+      const customerSide = await creditReferralReward({
+        referredUserId: customerId,
+        bookingId,
+        subtotalCents: booking.subtotalAmount,
+        isProviderSide: false,
+      })
 
-      const ref = referral ?? activeReferral
-      if (!ref) return { skipped: "no_referral" }
+      const providerSide = providerRow?.userId && providerRow.userId !== customerId
+        ? await creditReferralReward({
+            referredUserId: providerRow.userId,
+            bookingId,
+            subtotalCents: booking.subtotalAmount,
+            isProviderSide: true,
+          })
+        : { skipped: "provider_is_customer_or_unknown" }
 
-      // Use the admin-configured referral rate (was hardcoded 5%, ignoring the admin setting).
-      const referralPct = await getReferralPct()
-      const commissionCents = Math.round(booking.subtotalAmount * referralPct / 100)
-
-      // Activate on first booking if still pending
-      if (referral) {
-        await db
-          .update(referrals)
-          .set({ status: "active", activatedAt: new Date(), totalCommissionEarnedCents: sql`total_commission_earned_cents + ${commissionCents}` })
-          .where(eq(referrals.id, ref.id))
-      } else {
-        await db
-          .update(referrals)
-          .set({ totalCommissionEarnedCents: sql`total_commission_earned_cents + ${commissionCents}` })
-          .where(eq(referrals.id, ref.id))
-      }
-
-      // Unique constraint on booking_id makes this INSERT idempotent across retries.
-      // Commission accrues as PENDING — the wallet is NOT touched here. The monthly settlement
-      // cron (referralSettlement.ts) moves pending commissions into the withdrawable balance at
-      // the end of each month; the gap doubles as a refund/dispute window for clawbacks.
-      const inserted = await db
-        .insert(referralCommissions)
-        .values({
-          referralId: ref.id,
-          bookingId,
-          referrerId: ref.referrerId,
-          bookingAmountCents: booking.subtotalAmount,
-          commissionCents,
-          status: "pending",
-        })
-        .onConflictDoNothing()
-        .returning({ id: referralCommissions.id })
-
-      if (!inserted.length) return { skipped: "already_credited" }
-      return { commissionCents, referrerId: ref.referrerId, settlement: "monthly" }
+      return { customerSide, providerSide }
     })
 
     await step.sleep("wait-24h", "24 hours")

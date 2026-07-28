@@ -36,11 +36,14 @@ export const referrals = pgTable("referrals", {
   uniqueIndex("referrals_referred_idx").on(t.referredId),
 ])
 
-// One row per qualifying booking — 5% of subtotal credited to referrer
+// One row per (booking, referral) pair — a single completed booking can credit reward TWO
+// different referrals independently: one for the referred CUSTOMER on it, one for the referred
+// CLEANER assigned to it. The unique key is the pair, not bookingId alone, so both can coexist —
+// while still preventing the SAME referral from being double-credited on retries.
 export const referralCommissions = pgTable("referral_commissions", {
   id: uuid("id").primaryKey().defaultRandom(),
   referralId: uuid("referral_id").notNull().references(() => referrals.id),
-  bookingId: uuid("booking_id").notNull().unique().references(() => bookings.id),
+  bookingId: uuid("booking_id").notNull().references(() => bookings.id),
   referrerId: text("referrer_id").notNull().references(() => users.id),
   bookingAmountCents: integer("booking_amount_cents").notNull(),
   commissionCents: integer("commission_cents").notNull(),
@@ -48,7 +51,7 @@ export const referralCommissions = pgTable("referral_commissions", {
   creditedAt: timestamp("credited_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
-  uniqueIndex("ref_commissions_booking_idx").on(t.bookingId),
+  uniqueIndex("ref_commissions_booking_referral_idx").on(t.bookingId, t.referralId),
   index("ref_commissions_referral_idx").on(t.referralId),
   index("ref_commissions_referrer_idx").on(t.referrerId),
 ])
