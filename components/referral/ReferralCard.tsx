@@ -124,10 +124,11 @@ export function ReferralCard() {
         ))}
       </div>
 
-      {/* Withdraw balance */}
-      {!loading && data && data.credit.balanceCents > 0 && (
+      {/* Withdraw balance — stays mounted while a result message is showing, even after a full
+          withdrawal drops the balance to 0, so the success/error text doesn't vanish instantly. */}
+      {!loading && data && (data.credit.balanceCents > 0 || withdrawMsg) && (
         <div className="px-6 py-4 border-t border-gray-100">
-          {showConnect ? (
+          {data.credit.balanceCents === 0 ? null : showConnect ? (
             <div className="space-y-2">
               <p className="text-xs text-[#6B7280]">{t("payoutConnectPrompt")}</p>
               <ReferralPayoutConnect onConnected={() => { setShowConnect(false); void refetch() }} />

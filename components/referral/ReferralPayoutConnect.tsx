@@ -46,10 +46,19 @@ export function ReferralPayoutConnect({ onConnected }: { onConnected?: () => voi
     )
   }
 
+  async function refreshStatus() {
+    // No webhook is wired for this separate account population — live-refresh the stored status
+    // right away so the parent's UI can show "Withdraw" instead of looping back into "Connect".
+    try {
+      await fetch("/api/referrals/connect-status", { method: "POST" })
+    } catch { /* best-effort — the withdraw route re-verifies live anyway */ }
+    onConnected?.()
+  }
+
   return (
     <ConnectComponentsProvider connectInstance={stripeConnectInstance}>
       <ConnectAccountOnboarding
-        onExit={() => onConnected?.()}
+        onExit={refreshStatus}
         collectionOptions={{ fields: "currently_due", futureRequirements: "omit" }}
         fullTermsOfServiceUrl={`${APP_URL}/legal/terms`}
         privacyPolicyUrl={`${APP_URL}/legal/privacy`}

@@ -1,7 +1,7 @@
 import { inngest } from "../client"
 import { db } from "@/lib/db"
 import { referralCommissions, referralCredits, referralPayouts, notifications, users, providers } from "@/lib/db/schema"
-import { and, eq, lt, sql, inArray } from "drizzle-orm"
+import { and, eq, lt, sql } from "drizzle-orm"
 import { stripe } from "@/lib/stripe/client"
 
 // Month-end referral settlement. Commissions accrue as `pending` when bookings complete
@@ -42,19 +42,20 @@ export const settleReferralCommissions = inngest.createFunction(
       })
     })
 
-    if (!perUser.length) return { settled: 0 }
-
     // Cleaner cash commissions are auto-paid out here — fully automated, no admin action. Client
     // discount balances are NOT swept (they choose to spend at checkout or withdraw on demand —
-    // see /api/referrals/withdraw). Sweeps each cleaner's FULL current wallet balance (not just this
-    // month's delta) so a past failed payout gets retried automatically next month too.
+    // see /api/referrals/withdraw). Queries EVERY cleaner with a nonzero wallet balance (not just
+    // referrers who settled something new this run) and sweeps their FULL current balance — so a
+    // past failed transfer, or a balance left over from before the cleaner connected Stripe, is
+    // retried automatically every month regardless of whether new commissions came in. Runs even in
+    // a month with zero new settlements — that's exactly the case a stranded balance needs a retry.
     const payoutResults: { userId: string; paid: boolean; reason?: string }[] = await step.run("auto-payout-cleaners", async () => {
-      const referrerIds = perUser.map(([userId]) => userId)
       const cleanerRows = await db
         .select({ userId: users.id, stripeAccountId: providers.stripeAccountId, stripeAccountStatus: providers.stripeAccountStatus })
-        .from(users)
+        .from(referralCredits)
+        .innerJoin(users, eq(users.id, referralCredits.userId))
         .innerJoin(providers, eq(providers.userId, users.id))
-        .where(and(inArray(users.id, referrerIds), eq(users.role, "provider")))
+        .where(and(eq(users.role, "provider"), sql`${referralCredits.balanceCents} > 0`))
 
       const results: { userId: string; paid: boolean; reason?: string }[] = []
       for (const cleaner of cleanerRows) {
