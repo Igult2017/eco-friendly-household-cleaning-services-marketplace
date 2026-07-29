@@ -3,6 +3,7 @@ import { Playfair_Display, Inter } from "next/font/google"
 import { ClerkProvider } from "@clerk/nextjs"
 import { QueryProvider } from "@/components/providers/QueryProvider"
 import { Toaster } from "@/components/ui/sonner"
+import { InactivityLogoutWatcher } from "@/components/providers/InactivityLogoutWatcher"
 import { JsonLd } from "@/components/seo/JsonLd"
 import { organizationSchema, websiteSchema } from "@/lib/seo/schemas"
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/seo/site"
@@ -108,6 +109,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <QueryProvider>
           {children}
         </QueryProvider>
+        {/* Guarded on publishableKey — this uses Clerk hooks, so it must never render in the
+            ClerkProvider-less fallback path below. */}
+        {publishableKey && <InactivityLogoutWatcher />}
         <Toaster richColors position="top-right" />
       </body>
     </html>
