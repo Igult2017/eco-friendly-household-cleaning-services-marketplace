@@ -85,12 +85,8 @@ export default function BrowseJobsPage() {
           {canBid ? t("heroSubtitleCleaner") : clientCannotBid ? t("heroSubtitleClient") : t("heroSubtitle")}
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          {canBid ? (
-            // Already a cleaner → straight to the bid feed (never show "become a cleaner").
-            <Link href="/provider/jobs" className="inline-flex items-center justify-center rounded-xl bg-[#2D7A5F] hover:bg-[#256349] text-white font-semibold px-6 py-3 transition-colors">
-              {t("viewJobsToBid")}
-            </Link>
-          ) : clientCannotBid ? (
+          {canBid ? null /* Already a cleaner — the job list is right below on this same page, so a
+            button pointing them to a DIFFERENT job board (/provider/jobs) was pure duplication. */ : clientCannotBid ? (
             // Signed-in client → post a job, or become a cleaner to bid (clients can't bid).
             <>
               <Link href="/post-job" className="inline-flex items-center justify-center rounded-xl bg-[#2D7A5F] hover:bg-[#256349] text-white font-semibold px-6 py-3 transition-colors">
@@ -227,10 +223,12 @@ export default function BrowseJobsPage() {
                     <p className="text-xs text-[#9CA3AF]">{t("onlyCleanersBid")}</p>
                   ) : (
                     <>
-                      <p className="text-xs text-[#9CA3AF]">{t("signInAsProvider")}</p>
+                      {/* This branch also covers an already-signed-in, bid-eligible cleaner (canBid) —
+                          "sign in" copy would be wrong for them, so only show it to signed-out visitors. */}
+                      {!canBid && <p className="text-xs text-[#9CA3AF]">{t("signInAsProvider")}</p>}
                       <Link
                         href={isSignedIn === false ? `/sign-in?redirect_url=/provider/jobs/${job.id}` : `/provider/jobs/${job.id}`}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-[#2D7A5F] hover:bg-[#256349] text-white text-sm font-semibold px-4 py-2 transition-colors"
+                        className="ml-auto inline-flex items-center gap-1.5 rounded-xl bg-[#2D7A5F] hover:bg-[#256349] text-white text-sm font-semibold px-4 py-2 transition-colors"
                       >
                         {t("bidOnThisJob")}
                       </Link>
