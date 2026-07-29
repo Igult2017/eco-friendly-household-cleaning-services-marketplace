@@ -1770,7 +1770,15 @@
     "step1": "Comparte tu enlace — quien se registre a través de él queda marcado como tu referido",
     "step2": "Cuando completan su primera reserva, tu referido pasa a estar activo",
     "step3": "Ganas el {pct}% de cada reserva que hagan — se acredita en tu saldo a final de cada mes",
-    "step4": "Usa tu saldo de crédito como descuento en tu próxima reserva"
+    "step4": "Usa tu saldo de crédito como descuento en tu próxima reserva",
+    "subtitleCleaner": "Gana comisión, pagada automáticamente",
+    "subtitleClient": "Gana descuentos que puedes usar o retirar",
+    "stepCleanerPeer": "Invita a un profesional de limpieza — gana un {peerPct}% de comisión por sus primeros {cap} trabajos completados",
+    "stepCleanerClient": "Invita a un cliente — gana un {pct}% de comisión por cada reserva que haga",
+    "stepCleanerPayout": "Las comisiones se acreditan en tu saldo y se pagan automáticamente por Stripe cada mes",
+    "stepClientEarn": "Por cada pedido completado de alguien que invites, ganas un {discountPct}% de descuento",
+    "stepClientCredit": "Tu descuento se acredita automáticamente en el saldo de tu cuenta",
+    "stepClientUse": "Úsalo en tu próxima reserva, o retíralo a tu banco cuando quieras"
   },
   "compUiDialog": {
     "close": "Cerrar"

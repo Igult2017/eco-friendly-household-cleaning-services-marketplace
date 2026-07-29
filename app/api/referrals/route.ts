@@ -10,7 +10,8 @@ import { customAlphabet } from "nanoid"
 import { logError } from "@/lib/utils/logError"
 import { SITE_URL } from "@/lib/seo/site"
 import { ensureUserRow } from "@/lib/clerk/ensureUser"
-import { getReferralPct } from "@/lib/platform/settings"
+import { getReferralPct, getCleanerPeerReferralPct, getClientReferralDiscountPct } from "@/lib/platform/settings"
+import { CLEANER_PEER_REFERRAL_CAP } from "@/lib/referrals/rewards"
 
 // Strict alphanumeric — no `-` or `_` from nanoid's default alphabet.
 // The middleware regex [A-Z0-9]{6,20} must match every generated code.
@@ -74,7 +75,8 @@ export async function GET() {
       .limit(1)
 
     // Payout account status — drives whether the UI shows "Connect a payout account" or "Withdraw".
-    const [account] = await db.select({ status: users.referralPayoutAccountStatus }).from(users).where(eq(users.id, userId))
+    const [account] = await db.select({ status: users.referralPayoutAccountStatus, role: users.role }).from(users).where(eq(users.id, userId))
+    const isCleanerRole = account?.role === "provider"
 
     // Fall back to the canonical site URL so the referral link is ALWAYS absolute + shareable
     // (e.g. https://dorixé.com/?ref=CODE) even when NEXT_PUBLIC_APP_URL isn't set in the env.
@@ -83,8 +85,16 @@ export async function GET() {
     return NextResponse.json({
       code: codeRow?.code ?? null,
       referralUrl: codeRow ? `${appUrl}/?ref=${codeRow.code}` : null,
-      // Admin-configured rate — every referral surface renders THIS, never a hardcoded number.
+      // Reward matrix is role-aware (see lib/referrals/rewards.ts): cleaners earn cash commission —
+      // one rate for referring clients, a separate capped rate for referring other cleaners; clients
+      // earn a discount balance at one flat rate regardless of who they refer. Every referral surface
+      // renders THESE admin-configured rates, never a hardcoded number.
+      isCleanerRole,
+      rewardType: isCleanerRole ? "commission" : "discount",
       referralPct: await getReferralPct(),
+      cleanerPeerReferralPct: isCleanerRole ? await getCleanerPeerReferralPct() : null,
+      cleanerPeerReferralCap: isCleanerRole ? CLEANER_PEER_REFERRAL_CAP : null,
+      clientReferralDiscountPct: isCleanerRole ? null : await getClientReferralDiscountPct(),
       stats: {
         total: Number(stats?.total ?? 0),
         active: Number(stats?.active ?? 0),

@@ -1770,7 +1770,15 @@
     "step1": "Udostępnij swój link — każdy, kto zarejestruje się przez niego, zostaje oznaczony jako Twoje polecenie",
     "step2": "Gdy ukończą pierwszą rezerwację, Twoje polecenie staje się aktywne",
     "step3": "Zarabiasz {pct}% każdej ich rezerwacji — środki trafiają na Twoje saldo na koniec każdego miesiąca",
-    "step4": "Wykorzystaj swoje saldo środków jako rabat na następną rezerwację"
+    "step4": "Wykorzystaj swoje saldo środków jako rabat na następną rezerwację",
+    "subtitleCleaner": "Zarabiaj prowizję, wypłacaną automatycznie",
+    "subtitleClient": "Zdobywaj zniżki, które możesz wykorzystać lub wypłacić",
+    "stepCleanerPeer": "Poleć osobę sprzątającą — zarób {peerPct}% prowizji od jej pierwszych {cap} ukończonych zleceń",
+    "stepCleanerClient": "Poleć klienta — zarób {pct}% prowizji od każdej jego rezerwacji",
+    "stepCleanerPayout": "Prowizje są naliczane na Twoje saldo i automatycznie wypłacane przez Stripe co miesiąc",
+    "stepClientEarn": "Za każde ukończone zamówienie osoby, którą polecisz, zdobywasz {discountPct}% zniżki",
+    "stepClientCredit": "Twoja zniżka jest automatycznie zaliczana na saldo Twojego konta",
+    "stepClientUse": "Wykorzystaj ją przy następnej rezerwacji lub wypłać na konto bankowe w dowolnym momencie"
   },
   "compUiDialog": {
     "close": "Zamknij"

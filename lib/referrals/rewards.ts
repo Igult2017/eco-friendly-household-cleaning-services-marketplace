@@ -3,7 +3,7 @@ import { referrals, referralCommissions, users } from "@/lib/db/schema"
 import { and, eq, sql } from "drizzle-orm"
 import { getReferralPct, getCleanerPeerReferralPct, getClientReferralDiscountPct } from "@/lib/platform/settings"
 
-const CLEANER_PEER_REFERRAL_CAP = 3
+export const CLEANER_PEER_REFERRAL_CAP = 3
 
 export type ReferralRewardResult =
   | { skipped: string }

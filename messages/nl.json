@@ -1770,7 +1770,15 @@
     "step1": "Deel je link — wie zich via deze link aanmeldt, wordt als jouw aanbeveling gemarkeerd",
     "step2": "Zodra ze hun eerste boeking voltooien, wordt je aanbeveling actief",
     "step3": "Je verdient {pct}% van elke boeking die ze maken — aan het einde van elke maand bijgeschreven op je saldo",
-    "step4": "Gebruik je tegoed als korting op je volgende boeking"
+    "step4": "Gebruik je tegoed als korting op je volgende boeking",
+    "subtitleCleaner": "Verdien commissie, automatisch uitbetaald",
+    "subtitleClient": "Verdien kortingen die je kunt gebruiken of opnemen",
+    "stepCleanerPeer": "Verwijs een schoonmaker — verdien {peerPct}% commissie op hun eerste {cap} voltooide klussen",
+    "stepCleanerClient": "Verwijs een klant — verdien {pct}% commissie op elke boeking die ze maken",
+    "stepCleanerPayout": "Commissies worden bijgeschreven op je saldo en elke maand automatisch via Stripe uitbetaald",
+    "stepClientEarn": "Voor elke voltooide bestelling van iemand die je uitnodigt, verdien je {discountPct}% korting",
+    "stepClientCredit": "Je korting wordt automatisch bijgeschreven op je accountsaldo",
+    "stepClientUse": "Gebruik het bij je volgende boeking, of neem het op naar je bank wanneer je wilt"
   },
   "compUiDialog": {
     "close": "Sluiten"

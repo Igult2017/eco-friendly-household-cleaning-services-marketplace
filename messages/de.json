@@ -1770,7 +1770,15 @@
     "step1": "Teile deinen Link — wer sich darüber registriert, wird als deine Empfehlung markiert",
     "step2": "Sobald die erste Buchung abgeschlossen ist, wird deine Empfehlung aktiv",
     "step3": "Du erhältst {pct}% jeder ihrer Buchungen — gutgeschrieben am Ende jedes Monats",
-    "step4": "Nutze dein Guthaben als Rabatt bei deiner nächsten Buchung"
+    "step4": "Nutze dein Guthaben als Rabatt bei deiner nächsten Buchung",
+    "subtitleCleaner": "Verdiene Provision – automatisch ausgezahlt",
+    "subtitleClient": "Verdiene Rabatte, die du nutzen oder auszahlen kannst",
+    "stepCleanerPeer": "Empfiehl eine Reinigungskraft — erhalte {peerPct}% Provision für ihre ersten {cap} abgeschlossenen Aufträge",
+    "stepCleanerClient": "Empfiehl eine:n Kund:in — erhalte {pct}% Provision auf jede ihrer Buchungen",
+    "stepCleanerPayout": "Provisionen werden deinem Guthaben gutgeschrieben und monatlich automatisch per Stripe ausgezahlt",
+    "stepClientEarn": "Für jede abgeschlossene Bestellung einer eingeladenen Person erhältst du {discountPct}% Rabatt",
+    "stepClientCredit": "Dein Rabatt wird automatisch deinem Kontoguthaben gutgeschrieben",
+    "stepClientUse": "Nutze ihn bei deiner nächsten Buchung oder lass ihn dir jederzeit auszahlen"
   },
   "compUiDialog": {
     "close": "Schließen"

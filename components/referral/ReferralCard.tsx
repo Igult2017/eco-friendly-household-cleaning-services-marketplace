@@ -8,7 +8,11 @@ import { ReferralPayoutConnect } from "./ReferralPayoutConnect"
 interface ReferralStats {
   code: string | null
   referralUrl: string | null
+  isCleanerRole?: boolean
   referralPct?: number
+  cleanerPeerReferralPct?: number | null
+  cleanerPeerReferralCap?: number | null
+  clientReferralDiscountPct?: number | null
   stats: { total: number; active: number; pending: number; totalEarnedCents: number }
   credit: { balanceCents: number; lifetimeEarnedCents: number }
   payoutAccountStatus: string | null
@@ -58,7 +62,11 @@ export function ReferralCard() {
     }
   }
 
+  const isCleaner = data?.isCleanerRole ?? false
   const pct = data?.referralPct ?? 5
+  const peerPct = data?.cleanerPeerReferralPct ?? 10
+  const peerCap = data?.cleanerPeerReferralCap ?? 3
+  const discountPct = data?.clientReferralDiscountPct ?? 5
 
   async function copyLink() {
     if (!data?.referralUrl) return
@@ -77,7 +85,7 @@ export function ReferralCard() {
           </div>
           <div>
             <h3 className="font-semibold text-white leading-tight">{t("title")}</h3>
-            <p className="text-xs text-white/60">{t("subtitle", { pct })}</p>
+            <p className="text-xs text-white/60">{isCleaner ? t("subtitleCleaner") : t("subtitleClient")}</p>
           </div>
         </div>
 
@@ -146,12 +154,10 @@ export function ReferralCard() {
       <div className="px-6 py-4 border-t border-gray-100 bg-[#FAFAFA]">
         <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280] mb-3">{t("howItWorks")}</p>
         <ol className="space-y-2">
-          {[
-            t("step1"),
-            t("step2"),
-            t("step3", { pct }),
-            t("step4"),
-          ].map((step, i) => (
+          {(isCleaner
+            ? [t("step1"), t("stepCleanerPeer", { peerPct, cap: peerCap }), t("stepCleanerClient", { pct }), t("stepCleanerPayout")]
+            : [t("step1"), t("stepClientEarn", { discountPct }), t("stepClientCredit"), t("stepClientUse")]
+          ).map((step, i) => (
             <li key={i} className="flex items-start gap-2.5 text-xs text-[#6B7280]">
               <span className="w-4 h-4 rounded-full bg-[#D1F0E0] text-[#2D7A5F] font-bold text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">
                 {i + 1}

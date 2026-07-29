@@ -1770,7 +1770,15 @@
     "step1": "Condividi il tuo link — chiunque si registri tramite esso viene associato come tuo referral",
     "step2": "Quando completano la prima prenotazione, il tuo referral diventa attivo",
     "step3": "Guadagni il {pct}% di ogni loro prenotazione — accreditato sul tuo saldo a fine mese",
-    "step4": "Usa il tuo saldo credito come sconto sulla tua prossima prenotazione"
+    "step4": "Usa il tuo saldo credito come sconto sulla tua prossima prenotazione",
+    "subtitleCleaner": "Guadagna una commissione, pagata automaticamente",
+    "subtitleClient": "Guadagna sconti da usare o prelevare",
+    "stepCleanerPeer": "Invita un addetto — guadagna il {peerPct}% di commissione sui suoi primi {cap} lavori completati",
+    "stepCleanerClient": "Invita un cliente — guadagna il {pct}% di commissione su ogni sua prenotazione",
+    "stepCleanerPayout": "Le commissioni vengono accreditate sul tuo saldo e pagate automaticamente tramite Stripe ogni mese",
+    "stepClientEarn": "Per ogni ordine completato da una persona che inviti, guadagni uno sconto del {discountPct}%",
+    "stepClientCredit": "Il tuo sconto viene accreditato automaticamente sul saldo del tuo account",
+    "stepClientUse": "Usalo alla tua prossima prenotazione, oppure prelevalo sul tuo conto bancario quando vuoi"
   },
   "compUiDialog": {
     "close": "Chiudi"

@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic"
 
 import { db } from "@/lib/db"
-import { referrals, referralCommissions, referralCredits, users } from "@/lib/db/schema"
+import { referrals, referralCredits, users } from "@/lib/db/schema"
 import { eq, desc, count, sum, sql } from "drizzle-orm"
 import { Users, TrendingUp, Wallet, CheckCircle2, Clock, Gift } from "lucide-react"
 
@@ -21,6 +21,7 @@ export default async function AdminReferralsPage() {
     createdAt: Date
     referrerEmail: string | null
     referrerFirst: string | null
+    referrerRole: string | null
   }[] = []
   let totals: { total: number; active: number; pending: number; totalCommission: string | null } | null = null
   let totalCreditCents = 0
@@ -41,6 +42,7 @@ export default async function AdminReferralsPage() {
           createdAt: referrals.createdAt,
           referrerEmail: users.email,
           referrerFirst: users.firstName,
+          referrerRole: users.role,
         })
         .from(referrals)
         .leftJoin(users, eq(referrals.referrerId, users.id))
@@ -102,7 +104,7 @@ export default async function AdminReferralsPage() {
         {[
           { icon: Users,     label: "Total Referrals", value: String(totals?.total ?? 0),           sub: `${totals?.active ?? 0} active` },
           { icon: Clock,     label: "Pending",          value: String(totals?.pending ?? 0),         sub: "first booking not yet made" },
-          { icon: TrendingUp,label: "Total Commission", value: fmt(totalCommissionCents),            sub: "5% of qualifying bookings" },
+          { icon: TrendingUp,label: "Total Rewards",     value: fmt(totalCommissionCents),            sub: "cash + discount, all admin-set rates" },
           { icon: Wallet,    label: "Credits Held",     value: fmt(totalCreditCents),               sub: "across all users" },
         ].map(({ icon: Icon, label, value, sub }) => (
           <div key={label} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
@@ -132,7 +134,7 @@ export default async function AdminReferralsPage() {
           <div className="overflow-x-auto -mx-px"><table className="min-w-full">
             <thead>
               <tr className="bg-[#FAFAFA] border-b border-gray-100">
-                {["Referrer", "Code", "Status", "Commission Earned", "Activated", "Joined"].map((h) => (
+                {["Referrer", "Code", "Reward Type", "Status", "Earned", "Activated", "Joined"].map((h) => (
                   <th key={h} className="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-[#6B7280]">
                     {h}
                   </th>
@@ -163,6 +165,11 @@ export default async function AdminReferralsPage() {
                       <span className="font-mono text-sm font-semibold text-[#2B3441]">{r.code}</span>
                     </td>
                     <td className="px-5 py-4">
+                      <span className={`inline-flex items-center gap-1.5 text-xs font-semibold rounded-full px-2.5 py-1 ${r.referrerRole === "provider" ? "bg-[#EDF5F0] text-[#2D7A5F]" : "bg-blue-50 text-blue-700"}`}>
+                        {r.referrerRole === "provider" ? "Cash" : "Discount"}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4">
                       <span className={`inline-flex items-center gap-1.5 text-xs font-semibold rounded-full px-2.5 py-1 ${cfg.pill}`}>
                         {cfg.icon}
                         <span className="capitalize">{r.status}</span>
@@ -182,7 +189,7 @@ export default async function AdminReferralsPage() {
               })}
               {allReferrals.length === 0 && !errorMsg && (
                 <tr>
-                  <td colSpan={6} className="px-5 py-16 text-center">
+                  <td colSpan={7} className="px-5 py-16 text-center">
                     <div className="flex flex-col items-center gap-2">
                       <div className="w-10 h-10 rounded-xl bg-[#F4FAF6] flex items-center justify-center">
                         <Gift size={18} className="text-[#4CB87A]" />

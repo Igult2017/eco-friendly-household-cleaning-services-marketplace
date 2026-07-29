@@ -1770,7 +1770,15 @@
     "step1": "Share your link — anyone who signs up via it is tagged as your referral",
     "step2": "They complete their first booking — your referral becomes active",
     "step3": "You earn {pct}% of every booking they make — credited to your balance at the end of each month",
-    "step4": "Use your credit balance as a discount on your next booking"
+    "step4": "Use your credit balance as a discount on your next booking",
+    "subtitleCleaner": "Earn cash commission, paid automatically",
+    "subtitleClient": "Earn discounts you can spend or withdraw",
+    "stepCleanerPeer": "Invite a cleaner — earn {peerPct}% commission on their first {cap} completed jobs",
+    "stepCleanerClient": "Invite a client — earn {pct}% commission on every booking they make",
+    "stepCleanerPayout": "Commissions are credited to your balance and paid out automatically via Stripe each month",
+    "stepClientEarn": "For every completed order from someone you invite, you earn a {discountPct}% discount",
+    "stepClientCredit": "Your discount is credited to your account balance automatically",
+    "stepClientUse": "Use it at checkout on your next booking, or withdraw it to your bank any time"
   },
   "compUiDialog": {
     "close": "Close"

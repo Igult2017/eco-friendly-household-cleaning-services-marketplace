@@ -1770,7 +1770,15 @@
     "step1": "Partagez votre lien — toute personne qui s'inscrit via ce lien devient votre filleul",
     "step2": "Dès leur première réservation effectuée, votre filleul devient actif",
     "step3": "Vous gagnez {pct} % de chacune de leurs réservations — crédité sur votre solde à la fin de chaque mois",
-    "step4": "Utilisez votre solde de crédit comme réduction sur votre prochaine réservation"
+    "step4": "Utilisez votre solde de crédit comme réduction sur votre prochaine réservation",
+    "subtitleCleaner": "Gagnez une commission, versée automatiquement",
+    "subtitleClient": "Gagnez des réductions à utiliser ou à retirer",
+    "stepCleanerPeer": "Parrainez un intervenant — gagnez {peerPct}% de commission sur ses {cap} premières missions terminées",
+    "stepCleanerClient": "Parrainez un client — gagnez {pct}% de commission sur chacune de ses réservations",
+    "stepCleanerPayout": "Les commissions sont créditées sur votre solde et versées automatiquement via Stripe chaque mois",
+    "stepClientEarn": "Pour chaque commande terminée par une personne que vous invitez, vous gagnez {discountPct}% de réduction",
+    "stepClientCredit": "Votre réduction est automatiquement créditée sur le solde de votre compte",
+    "stepClientUse": "Utilisez-la lors de votre prochaine réservation, ou retirez-la vers votre banque à tout moment"
   },
   "compUiDialog": {
     "close": "Fermer"
