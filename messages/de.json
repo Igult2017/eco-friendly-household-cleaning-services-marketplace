@@ -647,7 +647,8 @@
     "recurringAutoSetTitle": "Wiederkehrender Rhythmus eingerichtet!",
     "recurringAutoSetText": "Deine Karte wird für künftige Reinigungen automatisch belastet — verwalte oder kündige jederzeit unter Meine Buchungen.",
     "recurringSettingUp": "Dein wiederkehrender Rhythmus wird eingerichtet …",
-    "recurringAutoSetFailed": "Die automatische Abrechnung konnte nicht eingerichtet werden. Richte sie unten manuell ein."
+    "recurringAutoSetFailed": "Die automatische Abrechnung konnte nicht eingerichtet werden. Richte sie unten manuell ein.",
+    "recurringAutoSetPartial": "Einige Ihrer wiederkehrenden Tage konnten nicht automatisch eingerichtet werden. Verwalten oder schließen Sie die Einrichtung unten ab."
   },
   "customerBookExtrasPage": {
     "heading": "Besondere Wünsche?",
@@ -688,10 +689,12 @@
     "fromPrice": "Ab {price}",
     "continueButton": "Weiter — Standort wählen →",
     "preBannerTitle": "Buchung bei {name}",
-    "preBannerHint": "Nur Leistungen, die diese Reinigungskraft anbietet, sind wählbar.",
-    "notOfferedBadge": "Nicht angeboten",
+    "preBannerHint": "Wähle eine beliebige Art der Reinigung — diese Reinigungskraft bespricht die Details mit dir.",
     "changeCleaner": "Reinigungskraft wechseln",
-    "recurringBenefitBanner": "💡 Wähle wiederkehrende Reinigung und spare {pct}% bei deiner 2. und 3. Reinigung — automatisch, ohne Nachteil für die Reinigungskraft."
+    "recurringBenefitBanner": "💡 Wähle wiederkehrende Reinigung und spare {pct}% bei deiner 2. und 3. Reinigung — automatisch, ohne Nachteil für die Reinigungskraft.",
+    "cleaningTypeNoteLabel": "Oder beschreibe, was du brauchst",
+    "cleaningTypeNoteHint": "Optional — für Details, falls keine Kategorie ganz passt.",
+    "cleaningTypeNotePlaceholder": "z. B. Staub nach Renovierung, nur Teppiche, ..."
   },
   "customerBookProvidersPage": {
     "heading": "Wo benötigen Sie eine Reinigung?",
@@ -738,8 +741,8 @@
     "freq_biweekly": "Alle 2 Wochen",
     "freq_monthly": "Monatlich",
     "slotBooked": "Belegt",
-    "recurringDaysLabel": "An welchem Tag?",
-    "recurringDaysHint": "Wähle den Wochentag für die wiederkehrende Reinigung.",
+    "recurringDaysLabel": "An welchen Tagen?",
+    "recurringDaysHint": "Wähle die Wochentage für die wiederkehrende Reinigung.",
     "viewFullCalendar": "Vollständigen Verfügbarkeitskalender anzeigen",
     "hideFullCalendar": "Verfügbarkeitskalender ausblenden"
   },

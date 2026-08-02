@@ -52,7 +52,7 @@ export default function BookStep5Page() {
   const [savedCard, setSavedCard] = useState<{ brand: string; last4: string } | null>(null)
   // Cleaner's IANA tz — needed to compute the recurring schedule's next occurrence correctly.
   const [providerTimezone, setProviderTimezone] = useState("Europe/Amsterdam")
-  const [recurringSetupResult, setRecurringSetupResult] = useState<"pending" | "success" | "failed" | "skipped" | null>(null)
+  const [recurringSetupResult, setRecurringSetupResult] = useState<"pending" | "success" | "partial" | "failed" | "skipped" | null>(null)
 
   // Bid-flow bookings (accepted bid) may have null categoryId or a slug instead of UUID.
   // They always have bidAmountCents set. Loosen the guard accordingly.
@@ -60,6 +60,12 @@ export default function BookStep5Page() {
   // Only concrete cadences (set in step 1 of the wizard) can drive auto-schedule-creation — bid-flow's
   // "recurring" value is stated intent only, with no dayOfWeek the /api/recurring schema requires.
   const isConcreteRecurring = store.frequency === "weekly" || store.frequency === "biweekly" || store.frequency === "monthly"
+  // The category page's freeform note (book/page.tsx) and the extras step's special instructions are
+  // separate store fields precisely so neither overwrites the other — merge them here, at the one
+  // point every booking-creation payload is actually built.
+  const mergedInstructions = [store.cleaningTypeNote, store.specialInstructions].filter(Boolean).join(
+    store.cleaningTypeNote && store.specialInstructions ? " — " : ""
+  )
 
   useEffect(() => {
     const missingBase = !store.selectedProviderId || !store.address
@@ -102,7 +108,7 @@ export default function BookStep5Page() {
           serviceAddress: store.address,
           serviceLatitude: store.latitude ?? undefined,
           serviceLongitude: store.longitude ?? undefined,
-          specialInstructions: store.specialInstructions || undefined,
+          specialInstructions: mergedInstructions || undefined,
           ecoOptions: store.ecoOptions,
           carbonOffsetCents: store.carbonOffsetCents || undefined,
           requestedFrequency: store.frequency !== "one_time" ? store.frequency : undefined,
@@ -125,38 +131,49 @@ export default function BookStep5Page() {
     }
   }
 
-  // Sets up the actual recurring schedule right after the FIRST booking's payment succeeds, using
+  // Sets up the actual recurring schedule(s) right after the FIRST booking's payment succeeds, using
   // data the wizard already collected — the client never fills out a second form. Best-effort: a
   // failure here must never fail the booking itself, which is already paid for and confirmed.
-  async function maybeSetupRecurringSchedule(paymentIntentId: string, svcId: string | null): Promise<"success" | "failed" | "skipped"> {
+  // Each selected weekday becomes its own independent schedule (one POST per day) — "weekly, Tue +
+  // Thu" means cleaned twice a week, each day tracked/rescheduled independently. Attaching the SAME
+  // payment method to each call is safe: Stripe's attach is idempotent (resource_already_exists is
+  // handled server-side), so looping never double-charges or errors on repeat attachment.
+  async function maybeSetupRecurringSchedule(paymentIntentId: string, svcId: string | null): Promise<"success" | "partial" | "failed" | "skipped"> {
     const freq = store.frequency
     if (freq !== "weekly" && freq !== "biweekly" && freq !== "monthly") return "skipped"
     if (!svcId || !store.selectedProviderId || !store.scheduledAt || !store.address) return "skipped"
+    const scheduledDate = new Date(store.scheduledAt)
+    const days = store.recurringDays.length > 0 ? store.recurringDays : [scheduledDate.getDay()]
     try {
-      const scheduledDate = new Date(store.scheduledAt)
-      const dayOfWeek = store.recurringDays[0] ?? scheduledDate.getDay()
       const preferredTime = store.scheduledTimeStr ?? `${String(scheduledDate.getHours()).padStart(2, "0")}:${String(scheduledDate.getMinutes()).padStart(2, "0")}`
       const addr = Object.fromEntries(
         Object.entries(store.address).filter(([, v]) => typeof v === "string" && v)
       ) as Record<string, string>
-      const res = await fetch("/api/recurring", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          providerId: store.selectedProviderId,
-          serviceId: svcId,
-          frequency: freq,
-          dayOfWeek,
-          preferredTime,
-          serviceAddress: addr,
-          ecoOptions: store.ecoOptions,
-          specialInstructions: store.specialInstructions || undefined,
-          paymentIntentId,
-          timezone: providerTimezone,
-          autoRenewConsent: true,
-        }),
-      })
-      return res.ok ? "success" : "failed"
+      const outcomes = await Promise.all(
+        days.map((dayOfWeek) =>
+          fetch("/api/recurring", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              providerId: store.selectedProviderId,
+              serviceId: svcId,
+              frequency: freq,
+              dayOfWeek,
+              preferredTime,
+              serviceAddress: addr,
+              ecoOptions: store.ecoOptions,
+              specialInstructions: mergedInstructions || undefined,
+              paymentIntentId,
+              timezone: providerTimezone,
+              autoRenewConsent: true,
+            }),
+          }).then((res) => res.ok).catch(() => false)
+        )
+      )
+      const successCount = outcomes.filter(Boolean).length
+      if (successCount === days.length) return "success"
+      if (successCount === 0) return "failed"
+      return "partial"
     } catch {
       return "failed"
     }
@@ -270,7 +287,7 @@ export default function BookStep5Page() {
           serviceAddress: store.address,
           serviceLatitude: store.latitude ?? undefined,
           serviceLongitude: store.longitude ?? undefined,
-          specialInstructions: store.specialInstructions || undefined,
+          specialInstructions: mergedInstructions || undefined,
           ecoOptions: store.ecoOptions,
           requestedFrequency: store.frequency !== "one_time" ? store.frequency : undefined,
           requestedDays: store.frequency !== "one_time" && store.recurringDays.length ? store.recurringDays : undefined,
@@ -483,7 +500,7 @@ export default function BookStep5Page() {
                     serviceAddress: store.address!,
                     serviceLatitude: store.latitude ?? undefined,
                     serviceLongitude: store.longitude ?? undefined,
-                    specialInstructions: store.specialInstructions || undefined,
+                    specialInstructions: mergedInstructions || undefined,
                     ecoOptions: store.ecoOptions,
                     carbonOffsetCents: addCarbonOffset ? CARBON_OFFSET_CENTS : undefined,
                     requestedFrequency: store.frequency !== "one_time" ? store.frequency : undefined,

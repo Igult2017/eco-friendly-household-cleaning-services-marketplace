@@ -647,7 +647,8 @@
     "recurringAutoSetTitle": "Recurring schedule set up!",
     "recurringAutoSetText": "Your card will be charged automatically for future cleanings — manage or cancel anytime from My Bookings.",
     "recurringSettingUp": "Setting up your recurring schedule…",
-    "recurringAutoSetFailed": "We couldn't set up automatic billing. Set it up manually below."
+    "recurringAutoSetFailed": "We couldn't set up automatic billing. Set it up manually below.",
+    "recurringAutoSetPartial": "Some of your recurring days couldn't be set up automatically. Manage or finish setup below."
   },
   "customerBookExtrasPage": {
     "heading": "Any special requests?",
@@ -688,10 +689,12 @@
     "fromPrice": "From {price}",
     "continueButton": "Continue — Choose Location →",
     "preBannerTitle": "Booking with {name}",
-    "preBannerHint": "Only services offered by this cleaner can be selected.",
-    "notOfferedBadge": "Not offered",
+    "preBannerHint": "Choose any type of cleaning — this cleaner will confirm the details with you.",
     "changeCleaner": "Change cleaner",
-    "recurringBenefitBanner": "💡 Choose recurring cleaning and save {pct}% on your 2nd and 3rd cleaning — automatically, no cleaner impact."
+    "recurringBenefitBanner": "💡 Choose recurring cleaning and save {pct}% on your 2nd and 3rd cleaning — automatically, no cleaner impact.",
+    "cleaningTypeNoteLabel": "Or describe what you need",
+    "cleaningTypeNoteHint": "Optional — add detail if none of the categories quite fit.",
+    "cleaningTypeNotePlaceholder": "e.g. Post-renovation dust cleanup, carpets only, ..."
   },
   "customerBookProvidersPage": {
     "heading": "Where do you need cleaning?",
@@ -738,8 +741,8 @@
     "freq_biweekly": "Every 2 weeks",
     "freq_monthly": "Monthly",
     "slotBooked": "Booked",
-    "recurringDaysLabel": "Which day?",
-    "recurringDaysHint": "Pick the weekday you want recurring cleaning on.",
+    "recurringDaysLabel": "Which days?",
+    "recurringDaysHint": "Pick the weekdays you want recurring cleaning on.",
     "viewFullCalendar": "View full availability calendar",
     "hideFullCalendar": "Hide availability calendar"
   },

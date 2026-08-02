@@ -647,7 +647,8 @@
     "recurringAutoSetTitle": "Terugkerend ritme ingesteld!",
     "recurringAutoSetText": "Je kaart wordt automatisch belast voor toekomstige schoonmaakbeurten — beheer of zeg op wanneer je wilt via Mijn boekingen.",
     "recurringSettingUp": "Je terugkerende ritme wordt ingesteld…",
-    "recurringAutoSetFailed": "We konden de automatische betaling niet instellen. Stel het hieronder handmatig in."
+    "recurringAutoSetFailed": "We konden de automatische betaling niet instellen. Stel het hieronder handmatig in.",
+    "recurringAutoSetPartial": "Sommige van je terugkerende dagen konden niet automatisch worden ingesteld. Beheer of rond de instelling hieronder af."
   },
   "customerBookExtrasPage": {
     "heading": "Speciale verzoeken?",
@@ -688,10 +689,12 @@
     "fromPrice": "Vanaf {price}",
     "continueButton": "Doorgaan — Locatie kiezen →",
     "preBannerTitle": "Boeking bij {name}",
-    "preBannerHint": "Alleen diensten die deze schoonmaker aanbiedt zijn te kiezen.",
-    "notOfferedBadge": "Niet aangeboden",
+    "preBannerHint": "Kies elk type schoonmaak — deze schoonmaker bespreekt de details met je.",
     "changeCleaner": "Andere schoonmaker",
-    "recurringBenefitBanner": "💡 Kies terugkerende schoonmaak en bespaar {pct}% op je 2e en 3e schoonmaak — automatisch, zonder gevolgen voor de schoonmaker."
+    "recurringBenefitBanner": "💡 Kies terugkerende schoonmaak en bespaar {pct}% op je 2e en 3e schoonmaak — automatisch, zonder gevolgen voor de schoonmaker.",
+    "cleaningTypeNoteLabel": "Of beschrijf wat je nodig hebt",
+    "cleaningTypeNoteHint": "Optioneel — voeg details toe als geen enkele categorie helemaal past.",
+    "cleaningTypeNotePlaceholder": "bijv. Stof na verbouwing, alleen tapijt, ..."
   },
   "customerBookProvidersPage": {
     "heading": "Waar heb je schoonmaak nodig?",
@@ -738,8 +741,8 @@
     "freq_biweekly": "Om de 2 weken",
     "freq_monthly": "Maandelijks",
     "slotBooked": "Bezet",
-    "recurringDaysLabel": "Op welke dag?",
-    "recurringDaysHint": "Kies de weekdag voor de terugkerende schoonmaak.",
+    "recurringDaysLabel": "Op welke dagen?",
+    "recurringDaysHint": "Kies de weekdagen voor de terugkerende schoonmaak.",
     "viewFullCalendar": "Volledige beschikbaarheidskalender bekijken",
     "hideFullCalendar": "Beschikbaarheidskalender verbergen"
   },

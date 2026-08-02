@@ -21,6 +21,10 @@ interface BookingDraft {
   scheduledTimeStr: string | null
   durationMinutes: number
   specialInstructions: string
+  // Freeform "what kind of cleaning do you want" note — supplements the fixed category cards
+  // (book/page.tsx), kept separate from specialInstructions (set later, on the extras step) so
+  // neither field can silently overwrite the other; book/confirm/page.tsx merges both at submit time.
+  cleaningTypeNote: string
   ecoOptions: string[]
   addOnIds: string[]           // selected provider add-on ids
   carbonOffsetCents: number    // 0 | 200 — persisted so 3DS redirect restores it
@@ -53,6 +57,7 @@ interface BookingStore extends BookingDraft {
   setPreselectedProvider: (providerId: string, name: string, country?: string | null) => void
   clearPreselection: () => void
   setSchedule: (date: Date, durationMinutes: number, dateStr?: string, timeStr?: string) => void
+  setCleaningTypeNote: (note: string) => void
   setExtras: (instructions: string, ecoOptions: string[], addOnIds: string[]) => void
   setCarbonOffset: (cents: number) => void
   setFrequency: (frequency: BookingDraft["frequency"]) => void
@@ -78,6 +83,7 @@ const initialState: BookingDraft = {
   scheduledTimeStr: null,
   durationMinutes: 120,
   specialInstructions: "",
+  cleaningTypeNote: "",
   ecoOptions: [],
   addOnIds: [],
   carbonOffsetCents: 0,
@@ -104,6 +110,7 @@ export const useBookingStore = create<BookingStore>()(
         set({ selectedProviderId: null, providerName: null, providerCountry: null, providerPreselected: false }),
       setSchedule: (date, durationMinutes, dateStr, timeStr) =>
         set({ scheduledAt: date.toISOString(), durationMinutes, scheduledDateStr: dateStr ?? null, scheduledTimeStr: timeStr ?? null }),
+      setCleaningTypeNote: (cleaningTypeNote) => set({ cleaningTypeNote }),
       setExtras: (specialInstructions, ecoOptions, addOnIds) =>
         set({ specialInstructions, ecoOptions, addOnIds }),
       setCarbonOffset: (carbonOffsetCents) => set({ carbonOffsetCents }),

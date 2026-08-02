@@ -647,7 +647,8 @@
     "recurringAutoSetTitle": "Récurrence configurée !",
     "recurringAutoSetText": "Votre carte sera débitée automatiquement pour les prochains ménages — gérez ou annulez à tout moment depuis Mes réservations.",
     "recurringSettingUp": "Configuration de votre récurrence…",
-    "recurringAutoSetFailed": "Nous n'avons pas pu configurer le prélèvement automatique. Configurez-le manuellement ci-dessous."
+    "recurringAutoSetFailed": "Nous n'avons pas pu configurer le prélèvement automatique. Configurez-le manuellement ci-dessous.",
+    "recurringAutoSetPartial": "Certains de vos jours récurrents n'ont pas pu être configurés automatiquement. Gérez ou terminez la configuration ci-dessous."
   },
   "customerBookExtrasPage": {
     "heading": "Des demandes particulières ?",
@@ -688,10 +689,12 @@
     "fromPrice": "À partir de {price}",
     "continueButton": "Continuer — Choisir le lieu →",
     "preBannerTitle": "Réservation avec {name}",
-    "preBannerHint": "Seuls les services proposés par cet intervenant sont sélectionnables.",
-    "notOfferedBadge": "Non proposé",
+    "preBannerHint": "Choisissez n'importe quel type de ménage — cet intervenant confirmera les détails avec vous.",
     "changeCleaner": "Changer d'intervenant",
-    "recurringBenefitBanner": "💡 Choisissez le ménage récurrent et économisez {pct}% sur votre 2ᵉ et 3ᵉ ménage — automatiquement, sans impact pour l'intervenant."
+    "recurringBenefitBanner": "💡 Choisissez le ménage récurrent et économisez {pct}% sur votre 2ᵉ et 3ᵉ ménage — automatiquement, sans impact pour l'intervenant.",
+    "cleaningTypeNoteLabel": "Ou décrivez ce dont vous avez besoin",
+    "cleaningTypeNoteHint": "Facultatif — ajoutez des détails si aucune catégorie ne convient tout à fait.",
+    "cleaningTypeNotePlaceholder": "ex. Nettoyage après travaux, moquette uniquement, ..."
   },
   "customerBookProvidersPage": {
     "heading": "Où avez-vous besoin d'un ménage ?",
@@ -738,8 +741,8 @@
     "freq_biweekly": "Toutes les 2 semaines",
     "freq_monthly": "Mensuel",
     "slotBooked": "Réservé",
-    "recurringDaysLabel": "Quel jour ?",
-    "recurringDaysHint": "Choisissez le jour de la semaine pour le ménage récurrent.",
+    "recurringDaysLabel": "Quels jours ?",
+    "recurringDaysHint": "Choisissez les jours de la semaine pour le ménage récurrent.",
     "viewFullCalendar": "Voir le calendrier de disponibilité complet",
     "hideFullCalendar": "Masquer le calendrier de disponibilité"
   },

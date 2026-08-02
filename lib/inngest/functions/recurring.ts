@@ -129,12 +129,22 @@ export const recurringBookingCron = inngest.createFunction(
           return
         }
 
-        // Admin-set recurring loyalty discount (platform-wide — was previously per-cleaner), capped
-        // at this schedule's first 2 occurrences and funded entirely from platform commission — the
-        // cleaner is always paid as if the job were full price (see calculateDiscountedBookingAmounts).
+        // Admin-set recurring loyalty discount (platform-wide — was previously per-cleaner), capped at
+        // the client's first 2 discounted cleanings TOTAL for this client-cleaner relationship — not
+        // per schedule. A client can pick multiple recurring weekdays (e.g. weekly Tue + Thu), each
+        // becoming its own schedule row; without summing across all of them, each day would
+        // independently earn its own 2 discounted occurrences. Funded entirely from platform
+        // commission — the cleaner is always paid as if the job were full price (see
+        // calculateDiscountedBookingAmounts). Sums ALL schedules ever created for the pair (not just
+        // active ones) — past discounted occurrences already happened; cancelling a schedule doesn't
+        // un-spend that budget.
         const baseSubtotal = service?.basePrice ?? 0
         const commissionPct = await getCommissionPct()
-        const discountEligible = schedule.occurrencesCreated < RECURRING_DISCOUNT_OCCURRENCE_CAP
+        const [{ totalOccurrences }] = await db
+          .select({ totalOccurrences: sql<number>`COALESCE(SUM(occurrences_created), 0)` })
+          .from(recurringSchedules)
+          .where(and(eq(recurringSchedules.customerId, schedule.customerId), eq(recurringSchedules.providerId, schedule.providerId)))
+        const discountEligible = Number(totalOccurrences) < RECURRING_DISCOUNT_OCCURRENCE_CAP
         const recurringDiscountPct = discountEligible ? await getRecurringDiscountPct() : 0
         const amounts = calculateDiscountedBookingAmounts(baseSubtotal, commissionPct, recurringDiscountPct)
         // Charge recurring bookings in the cleaner's own currency (US → USD, else EUR).

@@ -45,9 +45,19 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       ? services.filter((s) => s.categoryId === wantedCategoryId || (Array.isArray(s.categoryIds) && s.categoryIds.includes(wantedCategoryId!)))
       : services
 
+    // The wizard never gates category selection by what a cleaner has explicitly listed — a client
+    // can pick any category for any cleaner (a manual note covers the gap). If nothing matches the
+    // requested category, fall back to whatever real service this cleaner DOES have, rather than
+    // dead-ending pricing. Only a cleaner with literally zero active services still returns empty.
+    const result = filtered.length > 0 ? filtered : services
+
     // Surfaced so the booking wizard can set up a recurring schedule (needs the cleaner's tz to
     // compute the next occurrence) without a second round-trip to the availability endpoint.
-    return NextResponse.json({ services: filtered, providerTimezone: provider.timezone ?? "Europe/Amsterdam" })
+    return NextResponse.json({
+      services: result,
+      providerTimezone: provider.timezone ?? "Europe/Amsterdam",
+      categoryMatched: filtered.length > 0,
+    })
   } catch (err) {
     console.error("[providers/[id]/services GET]", err)
     void logError({ message: "[providers/[id]/services GET]", error: err, route: "/api/providers/[id]/services", severity: "error" })

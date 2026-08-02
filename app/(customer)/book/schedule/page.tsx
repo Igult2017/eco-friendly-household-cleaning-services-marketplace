@@ -94,11 +94,13 @@ export default function BookStep3Page() {
     router.push("/book/extras")
   }
 
-  // For a recurring booking with a weekday already picked in step 1, only offer dates that actually
-  // fall on that weekday — the recurring schedule will run on that day every cycle, so showing every
-  // day of the fortnight here (most of which could never be chosen) was pure noise.
-  const recurringWeekday = frequency !== "one_time" && recurringDays.length > 0 ? recurringDays[0] : null
-  const days = getNext14Days().filter((d) => recurringWeekday === null || new Date(d).getDay() === recurringWeekday)
+  // For a recurring booking with weekday(s) already picked in step 1, only offer dates that fall on
+  // ONE of those weekdays — the recurring schedule(s) will run on those days every cycle, so showing
+  // every day of the fortnight here (most of which could never be chosen) was pure noise. Picking a
+  // date here only sets up the FIRST (immediately paid) booking; each other selected weekday gets its
+  // own independent recurring schedule starting from its own next natural occurrence — see
+  // maybeSetupRecurringSchedule in book/confirm/page.tsx.
+  const days = getNext14Days().filter((d) => frequency === "one_time" || recurringDays.length === 0 || recurringDays.includes(new Date(d).getDay()))
   const availableSlots = filterSlots(TIME_SLOTS)
 
   // Grey out slots the cleaner is already booked for, so the client sees conflicts up front (not just

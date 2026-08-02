@@ -647,7 +647,8 @@
     "recurringAutoSetTitle": "Cykl skonfigurowany!",
     "recurringAutoSetText": "Twoja karta będzie automatycznie obciążana za kolejne sprzątania — zarządzaj lub anuluj w dowolnym momencie w Moich rezerwacjach.",
     "recurringSettingUp": "Konfigurowanie Twojego cyklu…",
-    "recurringAutoSetFailed": "Nie udało się skonfigurować automatycznych płatności. Skonfiguruj to ręcznie poniżej."
+    "recurringAutoSetFailed": "Nie udało się skonfigurować automatycznych płatności. Skonfiguruj to ręcznie poniżej.",
+    "recurringAutoSetPartial": "Niektórych z Twoich cyklicznych dni nie udało się skonfigurować automatycznie. Zarządzaj lub dokończ konfigurację poniżej."
   },
   "customerBookExtrasPage": {
     "heading": "Masz specjalne życzenia?",
@@ -688,10 +689,12 @@
     "fromPrice": "Od {price}",
     "continueButton": "Dalej — Wybierz lokalizację →",
     "preBannerTitle": "Rezerwacja u {name}",
-    "preBannerHint": "Można wybrać tylko usługi oferowane przez tę osobę.",
-    "notOfferedBadge": "Niedostępne",
+    "preBannerHint": "Wybierz dowolny rodzaj sprzątania — ta osoba potwierdzi z Tobą szczegóły.",
     "changeCleaner": "Zmień osobę sprzątającą",
-    "recurringBenefitBanner": "💡 Wybierz cykliczne sprzątanie i zaoszczędź {pct}% na 2. i 3. sprzątaniu — automatycznie, bez wpływu na osobę sprzątającą."
+    "recurringBenefitBanner": "💡 Wybierz cykliczne sprzątanie i zaoszczędź {pct}% na 2. i 3. sprzątaniu — automatycznie, bez wpływu na osobę sprzątającą.",
+    "cleaningTypeNoteLabel": "Lub opisz, czego potrzebujesz",
+    "cleaningTypeNoteHint": "Opcjonalnie — dodaj szczegóły, jeśli żadna kategoria nie pasuje idealnie.",
+    "cleaningTypeNotePlaceholder": "np. Sprzątanie po remoncie, tylko dywany, ..."
   },
   "customerBookProvidersPage": {
     "heading": "Gdzie potrzebujesz sprzątania?",
@@ -738,8 +741,8 @@
     "freq_biweekly": "Co 2 tygodnie",
     "freq_monthly": "Co miesiąc",
     "slotBooked": "Zajęte",
-    "recurringDaysLabel": "W jaki dzień?",
-    "recurringDaysHint": "Wybierz dzień tygodnia dla cyklicznego sprzątania.",
+    "recurringDaysLabel": "W jakie dni?",
+    "recurringDaysHint": "Wybierz dni tygodnia dla cyklicznego sprzątania.",
     "viewFullCalendar": "Zobacz pełny kalendarz dostępności",
     "hideFullCalendar": "Ukryj kalendarz dostępności"
   },

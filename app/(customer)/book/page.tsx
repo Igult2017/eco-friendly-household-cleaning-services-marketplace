@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import { useTranslations } from "next-intl"
 import { UserCheck, X, Sparkles } from "lucide-react"
@@ -30,12 +31,10 @@ export default function BookStep1Page() {
   const router = useRouter()
   const {
     setCategory, categoryId, providerPreselected, providerName, selectedProviderId, setPreselectedProvider, clearPreselection,
-    frequency, setFrequency, recurringDays, setRecurringDays,
+    frequency, setFrequency, recurringDays, setRecurringDays, cleaningTypeNote, setCleaningTypeNote,
   } = useBookingStore()
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null)
-  // null = no preselection constraint (normal flow); array = only these slugs are bookable.
-  const [offeredSlugs, setOfferedSlugs] = useState<string[] | null>(null)
-  // While the summary fetch is in flight all cards look enabled — hold Continue until it resolves.
+  // While the pre-selected cleaner's summary fetch is in flight, hold Continue until it resolves.
   const [preLoading, setPreLoading] = useState(false)
   // Marketing copy shown BEFORE any click — the discount rate is fetched but the banner itself
   // doesn't wait on it to be worth showing; only the number is conditional.
@@ -53,20 +52,21 @@ export default function BookStep1Page() {
   }, [])
 
   // Pre-selected cleaner (Book button on browse/profile passes ?providerId=…, or one is already in the
-  // store). Fetch their summary → banner name + which services they offer; the search step is skipped.
+  // store). Fetch their summary → banner name; the search step is skipped. Category selection is
+  // never gated by what this cleaner has listed (see isOffered below), so the summary's
+  // categorySlugs are no longer consulted here.
   useEffect(() => {
     const urlId = new URLSearchParams(window.location.search).get("providerId")
     const targetId = urlId ?? (providerPreselected ? selectedProviderId : null)
-    if (!targetId) { setOfferedSlugs(null); return }
+    if (!targetId) return
     let cancelled = false
     setPreLoading(true)
     fetch(`/api/providers/${targetId}/summary`)
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
         if (cancelled) return
-        if (!d) { if (urlId) clearPreselection(); setOfferedSlugs(null); return }
+        if (!d) { if (urlId) clearPreselection(); return }
         setPreselectedProvider(d.id, d.businessName, d.country ?? null)
-        setOfferedSlugs(d.categorySlugs ?? [])
       })
       .catch(() => {})
       .finally(() => { if (!cancelled) setPreLoading(false) })
@@ -74,7 +74,12 @@ export default function BookStep1Page() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const isOffered = (slug: string) => offeredSlugs === null || offeredSlugs.includes(slug)
+  // Categories are never gated by what a specific cleaner has explicitly listed — a client can pick
+  // any type of cleaning for any chosen cleaner. Pricing still resolves to a real service (the
+  // services API falls back to the cleaner's other active services when none match the picked
+  // category — see app/api/providers/[id]/services/route.ts), and the manual note below covers
+  // anything the fixed categories don't capture.
+  const isOffered = (_slug: string) => true
 
   function handleSelect(slug: string, name: string) {
     if (!isOffered(slug)) return
@@ -82,12 +87,14 @@ export default function BookStep1Page() {
     setCategory(slug, name)
   }
 
-  // Single-day selection — a weekday button REPLACES the pick rather than toggling into a growing
-  // array. recurringDays stays number[] downstream (schema/API unchanged) but the wizard only ever
-  // sends 0 or 1 entries now: multi-day was collected here before but only the first day could ever
-  // be honored by the recurring schedule it feeds, so letting people pick several was pure confusion.
-  function selectDay(d: number) {
-    setRecurringDays([d])
+  // Multi-day selection — each picked weekday becomes its own independent recurring schedule
+  // (see maybeSetupRecurringSchedule in book/confirm/page.tsx), so "weekly, Tue + Thu" means cleaned
+  // twice a week. The welcome-discount cap is enforced once per client-cleaner relationship, not per
+  // day (lib/inngest/functions/recurring.ts), so picking more days doesn't multiply the discount.
+  function toggleDay(d: number) {
+    setRecurringDays(
+      recurringDays.includes(d) ? recurringDays.filter((x) => x !== d) : [...recurringDays, d].sort((a, b) => a - b)
+    )
   }
 
   function handleNext() {
@@ -145,10 +152,10 @@ export default function BookStep1Page() {
                 {WEEKDAYS.map((d) => (
                   <button
                     key={d}
-                    onClick={() => selectDay(d)}
+                    onClick={() => toggleDay(d)}
                     className={cn(
                       "px-3 py-2 rounded-lg text-sm font-medium border-2 transition-all",
-                      recurringDays[0] === d
+                      recurringDays.includes(d)
                         ? "border-[#2D7A5F] bg-[#2D7A5F] text-white"
                         : "border-[#E5EBF0] hover:border-[#4CB87A] text-[#2B3441]"
                     )}
@@ -171,7 +178,7 @@ export default function BookStep1Page() {
             </div>
             <button
               type="button"
-              onClick={() => { clearPreselection(); setOfferedSlugs(null) }}
+              onClick={() => clearPreselection()}
               className="flex shrink-0 items-center gap-1 text-xs font-medium text-[#6B7280] hover:text-[#2B3441] transition-colors"
               aria-label={t("changeCleaner")}
             >
@@ -181,30 +188,36 @@ export default function BookStep1Page() {
         )}
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
-          {SERVICE_CATEGORIES.map((cat) => {
-            const offered = isOffered(cat.slug)
-            return (
+          {SERVICE_CATEGORIES.map((cat) => (
             <button
               key={cat.slug}
               onClick={() => handleSelect(cat.slug, cat.name)}
-              disabled={!offered}
               className={cn(
-                "bg-white rounded-2xl p-4 text-left border-2 transition-all",
-                offered ? "hover:shadow-md hover:border-[#4CB87A]" : "opacity-45 cursor-not-allowed",
-                selectedSlug === cat.slug && offered
-                  ? "border-[#2D7A5F] shadow-md bg-[#F4FAF6]"
-                  : "border-transparent shadow-sm"
+                "bg-white rounded-2xl p-4 text-left border-2 transition-all hover:shadow-md hover:border-[#4CB87A]",
+                selectedSlug === cat.slug ? "border-[#2D7A5F] shadow-md bg-[#F4FAF6]" : "border-transparent shadow-sm"
               )}
             >
               <div className="text-3xl mb-2">{cat.icon}</div>
               <p className="font-semibold text-[#2B3441] text-sm leading-tight">{t(`category_${cat.id}_name`)}</p>
               <p className="text-xs text-[#6B7280] mt-1 leading-tight">{t(`category_${cat.id}_desc`)}</p>
-              <p className="text-xs font-bold text-[#2D7A5F] mt-2">
-                {offered ? t("fromPrice", { price: cat.from }) : t("notOfferedBadge")}
-              </p>
+              <p className="text-xs font-bold text-[#2D7A5F] mt-2">{t("fromPrice", { price: cat.from })}</p>
             </button>
-            )
-          })}
+          ))}
+        </div>
+
+        {/* Manual note — supplements the category cards; doesn't replace them. Feeds into
+            specialInstructions alongside the extras step's own note (book/confirm/page.tsx merges
+            both, neither overwrites the other). */}
+        <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-8">
+          <Label className="text-sm font-semibold text-[#2B3441] mb-1 block">{t("cleaningTypeNoteLabel")}</Label>
+          <p className="text-xs text-[#6B7280] mb-3">{t("cleaningTypeNoteHint")}</p>
+          <Textarea
+            value={cleaningTypeNote}
+            onChange={(e) => setCleaningTypeNote(e.target.value)}
+            placeholder={t("cleaningTypeNotePlaceholder")}
+            rows={3}
+            className="resize-none"
+          />
         </div>
 
         <Button

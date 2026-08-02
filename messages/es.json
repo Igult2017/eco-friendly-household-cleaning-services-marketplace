@@ -647,7 +647,8 @@
     "recurringAutoSetTitle": "¡Plan periódico configurado!",
     "recurringAutoSetText": "Tu tarjeta se cobrará automáticamente en las próximas limpiezas — gestiónalo o cancélalo cuando quieras desde Mis reservas.",
     "recurringSettingUp": "Configurando tu plan periódico…",
-    "recurringAutoSetFailed": "No hemos podido configurar el cobro automático. Configúralo manualmente abajo."
+    "recurringAutoSetFailed": "No hemos podido configurar el cobro automático. Configúralo manualmente abajo.",
+    "recurringAutoSetPartial": "Algunos de tus días recurrentes no se pudieron configurar automáticamente. Gestiónalo o complétalo abajo."
   },
   "customerBookExtrasPage": {
     "heading": "¿Alguna petición especial?",
@@ -688,10 +689,12 @@
     "fromPrice": "Desde {price}",
     "continueButton": "Continuar — Elegir ubicación →",
     "preBannerTitle": "Reserva con {name}",
-    "preBannerHint": "Solo se pueden elegir los servicios que ofrece este profesional.",
-    "notOfferedBadge": "No disponible",
+    "preBannerHint": "Elige cualquier tipo de limpieza — este profesional confirmará los detalles contigo.",
     "changeCleaner": "Cambiar de profesional",
-    "recurringBenefitBanner": "💡 Elige limpieza recurrente y ahorra un {pct}% en tu 2.ª y 3.ª limpieza — automáticamente, sin afectar al profesional."
+    "recurringBenefitBanner": "💡 Elige limpieza recurrente y ahorra un {pct}% en tu 2.ª y 3.ª limpieza — automáticamente, sin afectar al profesional.",
+    "cleaningTypeNoteLabel": "O describe lo que necesitas",
+    "cleaningTypeNoteHint": "Opcional — añade detalles si ninguna categoría encaja del todo.",
+    "cleaningTypeNotePlaceholder": "ej. Limpieza tras reforma, solo alfombras, ..."
   },
   "customerBookProvidersPage": {
     "heading": "¿Dónde necesitas la limpieza?",
@@ -738,8 +741,8 @@
     "freq_biweekly": "Cada 2 semanas",
     "freq_monthly": "Mensual",
     "slotBooked": "Reservado",
-    "recurringDaysLabel": "¿Qué día?",
-    "recurringDaysHint": "Elige el día de la semana para la limpieza recurrente.",
+    "recurringDaysLabel": "¿Qué días?",
+    "recurringDaysHint": "Elige los días de la semana para la limpieza recurrente.",
     "viewFullCalendar": "Ver calendario de disponibilidad completo",
     "hideFullCalendar": "Ocultar calendario de disponibilidad"
   },

@@ -4,7 +4,9 @@ import { useTranslations } from "next-intl"
 import { CheckCircle2, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-type RecurringSetupResult = "pending" | "success" | "failed" | "skipped" | null
+// "partial" = multiple recurring days were picked and only SOME of their schedules were created
+// successfully (e.g. weekly on Tue + Thu, only Tue's schedule went through).
+type RecurringSetupResult = "pending" | "success" | "partial" | "failed" | "skipped" | null
 
 interface Props {
   bookingNumber: string
@@ -40,6 +42,14 @@ export function BookingSuccessScreen({ bookingNumber, frequency, isConcreteRecur
               <Loader2 size={14} className="animate-spin" />
               {t("recurringSettingUp")}
             </div>
+          ) : isConcreteRecurring && recurringSetupResult === "partial" ? (
+            <>
+              <p className="text-sm font-semibold text-[#2B3441] mb-1">{t("recurringAutoSetTitle")}</p>
+              <p className="text-xs text-[#6B7280] mb-3">{t("recurringAutoSetPartial")}</p>
+              <Button onClick={onSetUpRecurring} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white h-9 text-sm">
+                {t("setUpRecurring")}
+              </Button>
+            </>
           ) : (
             <>
               <p className="text-sm font-semibold text-[#2B3441] mb-1">{t("recurringPromptTitle")}</p>
