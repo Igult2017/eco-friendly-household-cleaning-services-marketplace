@@ -32,6 +32,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         basePrice: providerServices.basePrice,
         priceUnit: providerServices.priceUnit,
         minDurationMinutes: providerServices.minDurationMinutes,
+        maxDurationMinutes: providerServices.maxDurationMinutes,
         categoryId: providerServices.categoryId,
         categoryIds: providerServices.categoryIds,
         categorySlug: serviceCategories.slug,

@@ -14,20 +14,19 @@ import { BackButton } from "@/components/ui/BackButton"
 import { ProviderAvailabilityCalendar } from "@/components/booking/ProviderAvailabilityCalendar"
 import { CalendarDays } from "lucide-react"
 
-const DURATION_OPTIONS = [
-  { value: 60, hours: 1 },
-  { value: 120, hours: 2 },
-  { value: 180, hours: 3 },
-  { value: 240, hours: 4 },
-  { value: 360, hours: 6 },
-]
+// Fallback only — used when no service has resolved yet (or the provider has no services and no
+// per-service min/max exists to derive from). Real options are generated from the resolved service's
+// minDurationMinutes/maxDurationMinutes below, so a cleaner who allows longer jobs (e.g. office
+// cleaning) isn't artificially capped at a number that was never a real constraint.
+const DEFAULT_MIN_DURATION = 60
+const DEFAULT_MAX_DURATION = 480 // 8h
 
 const TIME_SLOTS = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"]
 
-function getNext14Days(): string[] {
+function getNextNDays(n: number): string[] {
   const days: string[] = []
   const today = new Date()
-  for (let i = 1; i <= 14; i++) {
+  for (let i = 1; i <= n; i++) {
     const d = new Date(today)
     d.setDate(today.getDate() + i)
     days.push(d.toISOString().split("T")[0])
@@ -35,12 +34,23 @@ function getNext14Days(): string[] {
   return days
 }
 
+// One button per full hour between the service's real min/max — rounds the min UP and the max DOWN
+// to the nearest hour so every offered option is genuinely bookable (never below the provider's
+// stated minimum, never above their stated maximum).
+function buildDurationOptions(minMinutes: number, maxMinutes: number): { value: number; hours: number }[] {
+  const startHour = Math.max(1, Math.ceil(minMinutes / 60))
+  const endHour = Math.max(startHour, Math.floor(maxMinutes / 60))
+  const options: { value: number; hours: number }[] = []
+  for (let h = startHour; h <= endHour; h++) options.push({ value: h * 60, hours: h })
+  return options
+}
+
 export default function BookStep3Page() {
   const t = useTranslations("customerBookSchedulePage")
   const router = useRouter()
   // frequency/recurringDays are read-only here now — they're SET on step 1 (the wizard's first
   // decision), this step just uses the picked weekday to filter which dates make sense to show.
-  const { selectedProviderId, setSchedule, scheduledAt, scheduledDateStr, scheduledTimeStr, durationMinutes, frequency, recurringDays } = useBookingStore()
+  const { selectedProviderId, categoryId, setSchedule, scheduledAt, scheduledDateStr, scheduledTimeStr, durationMinutes, frequency, recurringDays } = useBookingStore()
 
   // scheduledAt is now an ISO string; convert back to local date/time parts for display
   const restoreDate = (iso: string | null) => {
@@ -62,10 +72,34 @@ export default function BookStep3Page() {
   const [availability, setAvailability] = useState<{ available: boolean; timezone?: string; workingHours?: { start: string; end: string }; bookedSlots?: { start: string; end: string | null }[] } | null>(null)
   const [loadingAvail, setLoadingAvail] = useState(false)
   const [showCalendar, setShowCalendar] = useState(false)
+  const [durationBounds, setDurationBounds] = useState({ min: DEFAULT_MIN_DURATION, max: DEFAULT_MAX_DURATION })
 
   useEffect(() => {
     if (!selectedProviderId) { router.replace("/book"); return }
   }, [selectedProviderId, router])
+
+  // Duration options come from the actual resolved service's min/max — not an arbitrary fixed list
+  // (the previous hardcoded 1–6h options had no relationship to what any given cleaner actually
+  // offers, and silently capped out anyone who genuinely needed e.g. 8 hours for a big job).
+  useEffect(() => {
+    if (!selectedProviderId) return
+    fetch(`/api/providers/${selectedProviderId}/services${categoryId ? `?categorySlug=${categoryId}` : ""}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        const service = d?.services?.[0]
+        const min = service?.minDurationMinutes ?? DEFAULT_MIN_DURATION
+        const max = Math.max(min, service?.maxDurationMinutes ?? DEFAULT_MAX_DURATION)
+        setDurationBounds({ min, max })
+        // A duration picked before this resolved (or restored from a previous session) might now
+        // fall outside this service's real range — snap it to the nearest hour actually offered
+        // (buildDurationOptions only ever renders whole-hour buttons), not just the raw min/max.
+        const startHour = Math.max(1, Math.ceil(min / 60))
+        const endHour = Math.max(startHour, Math.floor(max / 60))
+        setSelectedDuration((prev) => Math.min(Math.max(Math.round(prev / 60), startHour), endHour) * 60)
+      })
+      .catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedProviderId, categoryId])
 
   useEffect(() => {
     if (!selectedDate || !selectedProviderId) return
@@ -96,11 +130,16 @@ export default function BookStep3Page() {
 
   // For a recurring booking with weekday(s) already picked in step 1, only offer dates that fall on
   // ONE of those weekdays — the recurring schedule(s) will run on those days every cycle, so showing
-  // every day of the fortnight here (most of which could never be chosen) was pure noise. Picking a
+  // every day of a plain 14-day window (most of which could never be chosen) was pure noise. Picking a
   // date here only sets up the FIRST (immediately paid) booking; each other selected weekday gets its
   // own independent recurring schedule starting from its own next natural occurrence — see
-  // maybeSetupRecurringSchedule in book/confirm/page.tsx.
-  const days = getNext14Days().filter((d) => frequency === "one_time" || recurringDays.length === 0 || recurringDays.includes(new Date(d).getDay()))
+  // maybeSetupRecurringSchedule in book/confirm/page.tsx. A 14-day window filtered to 1-2 specific
+  // weekdays only ever yields 1-2 selectable dates — too few real choices for picking a first cleaning
+  // date — so widen the window to 60 days whenever day-filtering actually applies (a plain one-time
+  // booking still only needs the next 14 days).
+  const isDayFiltered = frequency !== "one_time" && recurringDays.length > 0
+  const days = getNextNDays(isDayFiltered ? 60 : 14).filter((d) => !isDayFiltered || recurringDays.includes(new Date(d).getDay()))
+  const durationOptions = buildDurationOptions(durationBounds.min, durationBounds.max)
   const availableSlots = filterSlots(TIME_SLOTS)
 
   // Grey out slots the cleaner is already booked for, so the client sees conflicts up front (not just
@@ -217,7 +256,7 @@ export default function BookStep3Page() {
         <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-6">
           <Label className="text-sm font-semibold text-[#2B3441] mb-3 block">{t("durationLabel")}</Label>
           <div className="flex flex-wrap gap-2">
-            {DURATION_OPTIONS.map((opt) => (
+            {durationOptions.map((opt) => (
               <button
                 key={opt.value}
                 onClick={() => setSelectedDuration(opt.value)}
