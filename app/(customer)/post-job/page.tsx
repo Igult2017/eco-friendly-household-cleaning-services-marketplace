@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { useTranslations, useLocale } from "next-intl"
 import { Button } from "@/components/ui/button"
@@ -71,17 +71,26 @@ export default function PostJobPage() {
     setForm((prev) => ({ ...prev, [field]: value }))
   }
 
+  // Tracked so handleSubmit can wait on a blur-triggered lookup that's still in flight, instead of
+  // reading `form.serviceLatitude` before it's resolved (the cause of "missing address" firing even
+  // when both fields were filled in, working again on a retry).
+  const geocodePromiseRef = useRef<Promise<{ lat: number; lng: number } | null> | null>(null)
+
   async function geocodeAddress() {
-    if (!form.serviceAddress.city || !form.serviceAddress.postalCode) return
+    if (!form.serviceAddress.city || !form.serviceAddress.postalCode) return null
     setGeocoding(true)
-    try {
-      const geo = await geocodeFlexible(form.serviceAddress)
-      if (geo) {
+    const promise = (async () => {
+      try {
+        const geo = await geocodeFlexible(form.serviceAddress)
+        if (!geo) return null
         setForm((prev) => ({ ...prev, serviceLatitude: geo.lat, serviceLongitude: geo.lng }))
+        return { lat: geo.lat, lng: geo.lng }
+      } finally {
+        setGeocoding(false)
       }
-    } finally {
-      setGeocoding(false)
-    }
+    })()
+    geocodePromiseRef.current = promise
+    return promise
   }
 
   function handleDetect(result: GeoResult) {
@@ -123,7 +132,17 @@ export default function PostJobPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!form.serviceLatitude) { setError(t("errorMissingLocation")); return }
+    // Resolve location before checking: a blur-triggered lookup may still be in flight, or (e.g.
+    // autofill without a blur event) may never have fired at all. Don't trust `form.serviceLatitude`
+    // directly here — setForm from geocodeAddress() won't be reflected in this closure until the next
+    // render, so use the resolved value from the promise itself.
+    let lat = form.serviceLatitude
+    let lng = form.serviceLongitude
+    if (!lat) {
+      const geo = await (geocodePromiseRef.current ?? geocodeAddress())
+      if (geo) { lat = geo.lat; lng = geo.lng }
+    }
+    if (!lat) { setError(t("errorMissingLocation")); return }
     // Time window (standard jobs only — Take Job has no date/time picker, it's ASAP): both ends or
     // neither, and end must be after start.
     const hasStart = jobType === "standard" && !!form.desiredTimeStart
@@ -146,6 +165,8 @@ export default function PostJobPage() {
         body: JSON.stringify({
           ...form,
           jobType,
+          serviceLatitude: lat,
+          serviceLongitude: lng,
           // Normalize messy postal input ("12047 Neukölln" → "12047") — API caps postal at 10 chars.
           serviceAddress: { ...form.serviceAddress, postalCode: extractPostalCode(form.serviceAddress.postalCode) },
           // Single hourly rate → one job total, stored in both bounds (boards collapse equal values).
