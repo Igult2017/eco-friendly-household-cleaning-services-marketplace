@@ -999,7 +999,15 @@
     "errorHoursRequired": "Indiquez les heures estimées pour calculer le total.",
     "hourlyRateLabel": "Montant par heure",
     "continueWithoutCard": "Continuer sans ajouter",
-    "errorRateRequired": "Veuillez indiquer le montant par heure."
+    "errorRateRequired": "Veuillez indiquer le montant par heure.",
+    "recurringBenefitBanner": "💡 Choisissez un ménage récurrent et bénéficiez d'une réduction sur vos 2 prochains ménages — automatiquement, sans impact pour votre ménager/ère.",
+    "modeStandardTitle": "Mission standard",
+    "modeStandardHint": "Les ménagers/ères enchérissent — vous choisissez",
+    "modeTakeJobTitle": "Take Job — urgence",
+    "modeTakeJobHint": "Le premier ménager/ère à l'accepter est assigné instantanément",
+    "takeJobExplainer": "Pas d'enchères. Fixez un prix fixe et une distance maximale — le premier ménager/ère éligible dans ce rayon qui appuie sur « Accepter la mission » est assigné immédiatement. Idéal pour les besoins urgents le jour même.",
+    "radiusTakeJobHint": "Seuls les ménagers/ères dans cette distance, marqués comme disponibles pour les missions instantanées, seront notifiés.",
+    "submitButtonTakeJob": "Publier une mission urgente"
   },
   "customerProfilePage": {
     "title": "Mon profil",
@@ -1131,7 +1139,10 @@
     "totalEarned": "Total gagné",
     "jobsCompleted": "Missions réalisées",
     "avgRating": "Note moyenne",
-    "upcoming": "À venir"
+    "upcoming": "À venir",
+    "instantJobsToggleTitle": "Disponible pour les missions instantanées",
+    "instantJobsToggleHint": "Recevez des alertes pour les missions d'urgence à proximité que vous pouvez accepter instantanément",
+    "instantJobsToggleError": "Impossible de mettre à jour votre disponibilité. Veuillez réessayer."
   },
   "providerProviderEarningsPage": {
     "heading": "Revenus",
@@ -1216,7 +1227,9 @@
     "postedJustNow": "Publiée à l instant",
     "postedHoursAgo": "Publiée il y a {count} h",
     "postedDaysAgo": "Publiée il y a {count} j",
-    "reviewsFromCleaners": "({count} d intervenants)"
+    "reviewsFromCleaners": "({count} d intervenants)",
+    "takeJobBadge": "Urgence",
+    "takeJobOutOfRadius": "En dehors du rayon de {radius} km pour l'accepter"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifications",
@@ -2152,5 +2165,15 @@
     "legendFree": "Libre",
     "legendBooked": "Réservé",
     "legendUnavailable": "Indisponible"
+  },
+  "compBiddingTakeJobButton": {
+    "takeThisJob": "Accepter la mission",
+    "claiming": "Prise en charge…",
+    "genericError": "Une erreur s'est produite. Veuillez réessayer."
+  },
+  "compProviderTakeJobAlerts": {
+    "toastTitle": "🚨 Nouvelle mission urgente à proximité !",
+    "toastBody": "À {city} — soyez le premier à l'accepter",
+    "toastAction": "Voir"
   }
 }

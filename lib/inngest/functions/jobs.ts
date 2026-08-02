@@ -23,13 +23,19 @@ export const onJobPosted = inngest.createFunction(
 
     if (!job) return { skipped: true }
 
-    // Find approved providers whose service area overlaps the job location
+    const isTakeJob = job.jobType === "take_job"
+
+    // Find eligible providers whose service area overlaps the job location. Take Job additionally
+    // requires the provider's own "available for instant jobs" toggle — the whole point is speed, so
+    // broadcasting to everyone who merely COULD serve the area (but hasn't opted into emergencies right
+    // now) would be noisy and misleading.
     const nearbyProviders = await step.run("find-nearby-providers", async () => {
       return findProvidersNearLocation({
         latitude: job.serviceLatitude,
         longitude: job.serviceLongitude,
         radiusKm: job.radiusKm ?? 25,
         limit: 50,
+        requireInstantAvailable: isTakeJob,
       })
     })
 
@@ -48,16 +54,20 @@ export const onJobPosted = inngest.createFunction(
         budgetText = ` · Budget: ${formatCurrencyForCountry(job.budgetMin, country)}–${formatCurrencyForCountry(job.budgetMax, country)}`
       }
 
-      // Batch-insert all notifications in one round-trip instead of N sequential inserts.
+      // Batch-insert all notifications in one round-trip instead of N sequential inserts. Take Job
+      // reuses the same new_job_request type (a metadata.variant flag distinguishes copy/urgency at
+      // render time) rather than a dedicated enum value — it IS still "a new job is available."
       const notifValues = nearby.map((p) => {
         const distance = formatDistance((p.distanceMeters ?? 0) / 1000, p.country || country)
         return {
           userId: p.userId,
           type:   "new_job_request" as const,
-          title:  `New ${category} job in ${city}`,
-          body:   `A customer needs ${category} help in ${city}${budgetText}. They are ${distance} from you — be one of the first to bid!`,
+          title:  isTakeJob ? `🚨 Emergency ${category} job in ${city}` : `New ${category} job in ${city}`,
+          body:   isTakeJob
+            ? `An emergency ${category} job needs a cleaner NOW in ${city}${budgetText}. They are ${distance} from you — first to claim it gets it!`
+            : `A customer needs ${category} help in ${city}${budgetText}. They are ${distance} from you — be one of the first to bid!`,
           link:   "/provider/jobs",
-          metadata: { category, city, distance },
+          metadata: { category, city, distance, variant: isTakeJob ? "take_job" : "standard" },
         }
       })
 
@@ -65,15 +75,22 @@ export const onJobPosted = inngest.createFunction(
         await db.insert(notifications).values(notifValues)
       }
 
-      // Pusher is non-critical — fire all in parallel, ignore failures.
+      // Pusher is non-critical — fire all in parallel, ignore failures. Take Job fires a DISTINCT event
+      // name so client-side realtime listening (a toast) reacts only to emergencies, not every post.
+      const eventName = isTakeJob ? "take-job-available" : "new-job"
       await Promise.all(nearby.map((p) =>
         pusherServer
-          .trigger(`private-provider-${p.id}`, "new-job", {
+          .trigger(`private-provider-${p.id}`, eventName, {
             jobPostId, title: job.title, city, categoryName: category,
           })
           .catch(() => undefined)
       ))
     })
+
+    // Take Job is meant to resolve fast — claimed or manually cancelled by the client, not left to
+    // time out on a 72h timer that doesn't fit an emergency. Normal jobs also don't really expire in
+    // practice (expiresAt defaults ~100 years out), so skipping this for take_job isn't a regression.
+    if (isTakeJob) return { notified: nearbyProviders.length }
 
     // Schedule expiry in 72 hours
     await step.sleep("wait-72h", "72 hours")

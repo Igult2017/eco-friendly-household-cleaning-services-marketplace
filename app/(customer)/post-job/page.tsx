@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useTranslations, useLocale } from "next-intl"
 import { Button } from "@/components/ui/button"
@@ -36,6 +36,20 @@ export default function PostJobPage() {
   const [error, setError] = useState<string | null>(null)
   const [locationValid, setLocationValid] = useState(true)
   const postal = usePostalValidation()
+  // Marketing copy, not conditional on picking recurring — shown upfront so it can actually
+  // influence the choice, same treatment as the direct-booking wizard's banner.
+  const [recurringDiscountPct, setRecurringDiscountPct] = useState<number | null>(null)
+
+  useEffect(() => {
+    fetch("/api/settings/recurring-discount")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (typeof d?.pct === "number") setRecurringDiscountPct(d.pct) })
+      .catch(() => {})
+  }, [])
+
+  // "take_job" = emergency instant-assignment (no bidding, first eligible cleaner to claim it is
+  // assigned immediately) — a completely separate flow from normal jobs, selected up front.
+  const [jobType, setJobType] = useState<"standard" | "take_job">("standard")
 
   const [form, setForm] = useState({
     title: "",
@@ -110,14 +124,16 @@ export default function PostJobPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!form.serviceLatitude) { setError(t("errorMissingLocation")); return }
-    // Time window: both ends or neither, and end must be after start.
-    const hasStart = !!form.desiredTimeStart
-    const hasEnd = !!form.desiredTimeEnd
+    // Time window (standard jobs only — Take Job has no date/time picker, it's ASAP): both ends or
+    // neither, and end must be after start.
+    const hasStart = jobType === "standard" && !!form.desiredTimeStart
+    const hasEnd = jobType === "standard" && !!form.desiredTimeEnd
     if (hasStart !== hasEnd || (hasStart && hasEnd && form.desiredTimeEnd <= form.desiredTimeStart)) {
       setError(t("errorTimeRange")); return
     }
     // Budget is entered PER HOUR (the payment mode in EU + US); the stored budget is the job total
-    // (rate × estimated hours) — what cleaners actually bid against.
+    // (rate × estimated hours) — what cleaners actually bid against (or, for Take Job, the final
+    // fixed price the claiming cleaner accepts as-is).
     // Per-hour amount is MANDATORY — cleaners bid against it, and it powers the ≈/h display.
     if (!form.hourlyRate || !(parseFloat(form.hourlyRate) > 0)) { setError(t("errorRateRequired")); return }
     const hrs = parseFloat(form.estimatedHours)
@@ -129,14 +145,16 @@ export default function PostJobPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          jobType,
           // Normalize messy postal input ("12047 Neukölln" → "12047") — API caps postal at 10 chars.
           serviceAddress: { ...form.serviceAddress, postalCode: extractPostalCode(form.serviceAddress.postalCode) },
           // Single hourly rate → one job total, stored in both bounds (boards collapse equal values).
           budgetMin: form.hourlyRate ? Math.round(parseFloat(form.hourlyRate) * 100 * hrs) : undefined,
           budgetMax: form.hourlyRate ? Math.round(parseFloat(form.hourlyRate) * 100 * hrs) : undefined,
+          desiredDate: jobType === "standard" ? form.desiredDate : undefined,
           desiredTimeRange: hasStart && hasEnd ? { start: form.desiredTimeStart, end: form.desiredTimeEnd } : undefined,
           estimatedHours: form.estimatedHours ? parseFloat(form.estimatedHours) : undefined,
-          recurringFrequency: form.recurringFrequency || undefined,
+          recurringFrequency: jobType === "standard" ? (form.recurringFrequency || undefined) : undefined,
         }),
       })
       if (!res.ok) {
@@ -164,7 +182,7 @@ export default function PostJobPage() {
         </div>
         <div className="flex gap-3">
           <Button onClick={() => router.push("/jobs")} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white">{t("viewMyJobs")}</Button>
-          <Button variant="outline" onClick={() => { setSuccess(false); setForm({ title: "", description: "", hourlyRate: "", desiredDate: "", desiredTimeStart: "", desiredTimeEnd: "", estimatedHours: "2", serviceAddress: { line1: "", city: "", postalCode: "", country: "DE" }, serviceLatitude: 0, serviceLongitude: 0, radiusKm: 25, ecoRequirements: [], recurringFrequency: "" }) }} className="border-[#E5EBF0]">{t("postAnother")}</Button>
+          <Button variant="outline" onClick={() => { setSuccess(false); setJobType("standard"); setForm({ title: "", description: "", hourlyRate: "", desiredDate: "", desiredTimeStart: "", desiredTimeEnd: "", estimatedHours: "2", serviceAddress: { line1: "", city: "", postalCode: "", country: "DE" }, serviceLatitude: 0, serviceLongitude: 0, radiusKm: 25, ecoRequirements: [], recurringFrequency: "" }) }} className="border-[#E5EBF0]">{t("postAnother")}</Button>
         </div>
       </div>
     )
@@ -174,7 +192,39 @@ export default function PostJobPage() {
     <div className="min-h-screen bg-[#F4FAF6] py-10 px-4">
       <div className="max-w-2xl mx-auto">
         <h1 className="font-serif text-2xl font-bold text-[#2B3441] mb-2">{t("pageTitle")}</h1>
-        <p className="text-[#6B7280] mb-8">{t("pageSubtitle")}</p>
+        <p className="text-[#6B7280] mb-6">{t("pageSubtitle")}</p>
+
+        {/* Take Job is a fully separate flow from normal bidding — chosen up front, not a checkbox
+            buried in the form. Selecting it hides scheduling/recurring fields that don't apply. */}
+        <div className="grid grid-cols-2 gap-2 mb-6">
+          <button
+            type="button"
+            onClick={() => setJobType("standard")}
+            className={cn(
+              "rounded-xl border-2 px-4 py-3 text-sm font-semibold transition-all text-left",
+              jobType === "standard" ? "border-[#2D7A5F] bg-[#F4FAF6] text-[#2B3441]" : "border-[#E5EBF0] text-[#6B7280] hover:border-[#4CB87A]"
+            )}
+          >
+            {t("modeStandardTitle")}
+            <p className="text-xs font-normal mt-0.5 opacity-80">{t("modeStandardHint")}</p>
+          </button>
+          <button
+            type="button"
+            onClick={() => setJobType("take_job")}
+            className={cn(
+              "rounded-xl border-2 px-4 py-3 text-sm font-semibold transition-all text-left",
+              jobType === "take_job" ? "border-red-500 bg-red-50 text-red-700" : "border-[#E5EBF0] text-[#6B7280] hover:border-red-300"
+            )}
+          >
+            🚨 {t("modeTakeJobTitle")}
+            <p className="text-xs font-normal mt-0.5 opacity-80">{t("modeTakeJobHint")}</p>
+          </button>
+        </div>
+        {jobType === "take_job" && (
+          <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700 mb-6">
+            {t("takeJobExplainer")}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="bg-white rounded-2xl border border-[#E5EBF0] p-5 space-y-4">
@@ -198,39 +248,50 @@ export default function PostJobPage() {
                 </p>
               )}
             </div>
-            <div>
-              <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("desiredDateLabel")}</Label>
-              <Input type="date" value={form.desiredDate} onChange={(e) => set("desiredDate", e.target.value)} min={localTodayYmd()} />
-              {form.desiredDate && (
-                // Day of week derives from the date — surface it so the poster sees which day this is.
-                <p className="text-xs text-[#2D7A5F] font-medium mt-1">
-                  {new Date(form.desiredDate + "T12:00:00").toLocaleDateString(locale, { weekday: "long" })}
-                </p>
-              )}
-            </div>
+            {jobType === "standard" && (
+              <div>
+                <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("desiredDateLabel")}</Label>
+                <Input type="date" value={form.desiredDate} onChange={(e) => set("desiredDate", e.target.value)} min={localTodayYmd()} />
+                {form.desiredDate && (
+                  // Day of week derives from the date — surface it so the poster sees which day this is.
+                  <p className="text-xs text-[#2D7A5F] font-medium mt-1">
+                    {new Date(form.desiredDate + "T12:00:00").toLocaleDateString(locale, { weekday: "long" })}
+                  </p>
+                )}
+              </div>
+            )}
             <div>
               <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("estimatedHoursLabel")}</Label>
               <Input type="number" min={0.5} max={12} step={0.5} value={form.estimatedHours} onChange={(e) => set("estimatedHours", e.target.value)} required />
               <p className="text-xs text-[#9CA3AF] mt-1">{t("estimatedHoursHint")}</p>
             </div>
-            <div>
-              <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("timeWindowLabel")}</Label>
-              <div className="flex items-center gap-2">
-                <Input type="time" value={form.desiredTimeStart} onChange={(e) => set("desiredTimeStart", e.target.value)} className="flex-1" />
-                <span className="text-[#9CA3AF]">–</span>
-                <Input type="time" value={form.desiredTimeEnd} onChange={(e) => set("desiredTimeEnd", e.target.value)} className="flex-1" />
+            {jobType === "standard" && (
+              <div>
+                <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("timeWindowLabel")}</Label>
+                <div className="flex items-center gap-2">
+                  <Input type="time" value={form.desiredTimeStart} onChange={(e) => set("desiredTimeStart", e.target.value)} className="flex-1" />
+                  <span className="text-[#9CA3AF]">–</span>
+                  <Input type="time" value={form.desiredTimeEnd} onChange={(e) => set("desiredTimeEnd", e.target.value)} className="flex-1" />
+                </div>
+                <p className="text-xs text-[#9CA3AF] mt-1">{t("timeWindowHint")}</p>
               </div>
-              <p className="text-xs text-[#9CA3AF] mt-1">{t("timeWindowHint")}</p>
-            </div>
-            <div>
-              <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("recurringLabel")}</Label>
-              <select value={form.recurringFrequency} onChange={(e) => set("recurringFrequency", e.target.value)}
-                className="flex h-10 w-full rounded-md border border-[#E5EBF0] bg-white px-3 py-2 text-sm focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]">
-                <option value="">{t("recurring_none")}</option>
-                <option value="recurring">{t("recurring_recurring")}</option>
-              </select>
-              <p className="text-xs text-[#9CA3AF] mt-1">{t("recurringHint")}</p>
-            </div>
+            )}
+            {jobType === "standard" && recurringDiscountPct !== null && recurringDiscountPct > 0 && (
+              <div className="rounded-xl bg-[#F4FAF6] border border-[#2D7A5F]/20 px-4 py-3 text-sm text-[#2D7A5F]">
+                {t("recurringBenefitBanner", { pct: recurringDiscountPct })}
+              </div>
+            )}
+            {jobType === "standard" && (
+              <div>
+                <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("recurringLabel")}</Label>
+                <select value={form.recurringFrequency} onChange={(e) => set("recurringFrequency", e.target.value)}
+                  className="flex h-10 w-full rounded-md border border-[#E5EBF0] bg-white px-3 py-2 text-sm focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]">
+                  <option value="">{t("recurring_none")}</option>
+                  <option value="recurring">{t("recurring_recurring")}</option>
+                </select>
+                <p className="text-xs text-[#9CA3AF] mt-1">{t("recurringHint")}</p>
+              </div>
+            )}
           </div>
 
           <div className="bg-white rounded-2xl border border-[#E5EBF0] p-5 space-y-4">
@@ -286,6 +347,7 @@ export default function PostJobPage() {
             <div>
               <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">{t("radiusLabel", { km: form.radiusKm })}</Label>
               <input type="range" min={5} max={100} value={form.radiusKm} onChange={(e) => set("radiusKm", parseInt(e.target.value))} className="w-full accent-[#2D7A5F]" />
+              {jobType === "take_job" && <p className="text-xs text-red-600 font-medium mt-1">{t("radiusTakeJobHint")}</p>}
             </div>
           </div>
 
@@ -306,8 +368,12 @@ export default function PostJobPage() {
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
-          <Button type="submit" disabled={loading || !locationValid} className="w-full h-12 bg-[#2D7A5F] hover:bg-[#235f49] text-white font-semibold">
-            {loading ? <><Loader2 size={16} className="animate-spin mr-2" /> {t("posting")}</> : t("submitButton")}
+          <Button
+            type="submit"
+            disabled={loading || !locationValid}
+            className={cn("w-full h-12 font-semibold text-white", jobType === "take_job" ? "bg-red-600 hover:bg-red-700" : "bg-[#2D7A5F] hover:bg-[#235f49]")}
+          >
+            {loading ? <><Loader2 size={16} className="animate-spin mr-2" /> {t("posting")}</> : jobType === "take_job" ? t("submitButtonTakeJob") : t("submitButton")}
           </Button>
         </form>
       </div>

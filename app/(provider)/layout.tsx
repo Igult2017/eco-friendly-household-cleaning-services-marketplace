@@ -14,6 +14,7 @@ import { RoleSwitchToast } from "@/components/layout/RoleSwitchToast"
 import { ProviderMobileNav } from "@/components/provider/ProviderMobileNav"
 import { ProviderNav } from "@/components/layout/ProviderNav"
 import { stampProviderLastActive } from "@/lib/providers/lastActive"
+import { TakeJobAlerts } from "@/components/provider/TakeJobAlerts"
 
 export default async function ProviderLayout({ children }: { children: React.ReactNode }) {
   const t = await getTranslations("providerLayout")
@@ -73,6 +74,7 @@ export default async function ProviderLayout({ children }: { children: React.Rea
     </div>
     <CookieBanner />
     <RoleSwitchToast />
+    <TakeJobAlerts />
     </NextIntlClientProvider>
   )
 }

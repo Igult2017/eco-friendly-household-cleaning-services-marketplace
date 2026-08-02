@@ -18,6 +18,7 @@ import { ProviderDashboardDisputes }     from "@/components/provider/ProviderDas
 import { ReferralCard }                  from "@/components/referral/ReferralCard"
 import { ProviderApprovalNotice }        from "@/components/provider/ProviderApprovalNotice"
 import { PayoutConnect }                  from "@/components/provider/PayoutConnect"
+import { InstantJobsToggle }              from "@/components/provider/InstantJobsToggle"
 import { ReliabilityCard }                from "@/components/provider/ReliabilityCard"
 import { computeReliability }             from "@/lib/provider/reliability"
 import { formatCurrencyShortForCountry }  from "@/lib/utils/formatCurrency"
@@ -44,6 +45,7 @@ export default async function ProviderDashboardPage() {
       serviceRadiusKm: providers.serviceRadiusKm,
       country: providers.country,
       stripeAccountStatus: providers.stripeAccountStatus,
+      instantJobsAvailable: providers.instantJobsAvailable,
     })
     .from(providers)
     .where(eq(providers.userId, userId))
@@ -236,6 +238,8 @@ export default async function ProviderDashboardPage() {
             </div>
           ))}
         </div>
+
+        <InstantJobsToggle initialValue={provider.instantJobsAvailable} />
 
         <ReliabilityCard reliability={reliability} />
 

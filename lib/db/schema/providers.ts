@@ -80,6 +80,10 @@ export const providers = pgTable(
     galleryUrls: jsonb("gallery_urls").$type<string[]>().default([]),
     // Stamped (throttled, no cron) on every authenticated /provider/* page load — see app/(provider)/layout.tsx.
     lastActiveAt: timestamp("last_active_at", { withTimezone: true }),
+    // Opt-in, defaults false: "I'm free right now for an emergency Take Job claim." Deliberately
+    // separate from the weekly providerAvailability schedule, which only reflects FUTURE booked slots,
+    // not "available this instant" — see lib/bookings/availability.ts's skipWeeklyHours bypass.
+    instantJobsAvailable: boolean("instant_jobs_available").notNull().default(false),
     // Running mean of (this provider's reply timestamp − the other party's prior message timestamp),
     // folded in inline on every message send — see lib/providers/responseTime.ts. Null until the first sample.
     avgResponseTimeMinutes: doublePrecision("avg_response_time_minutes"),

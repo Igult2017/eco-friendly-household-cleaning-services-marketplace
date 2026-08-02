@@ -34,6 +34,11 @@ export const jobPosts = pgTable(
     title: varchar("title", { length: 200 }).notNull(),
     description: text("description").notNull(),
     status: jobStatusEnum("status").notNull().default("open"),
+    // "standard" = normal bidding flow. "take_job" = emergency/instant-assignment — no bidding, first
+    // eligible provider to claim it via /api/jobs/[id]/take is assigned immediately. Plain varchar
+    // (like recurringFrequency below), not a pg enum — the drizzle migration journal is drifted, so a
+    // new enum type would need its own DO-block DDL for zero benefit over app-level zod validation.
+    jobType: varchar("job_type", { length: 12 }).notNull().default("standard"),
     budgetMin: integer("budget_min"),  // cents
     budgetMax: integer("budget_max"),  // cents
     desiredDate: date("desired_date"),

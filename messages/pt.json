@@ -999,7 +999,15 @@
     "errorHoursRequired": "Indica as horas estimadas para calcular o total.",
     "hourlyRateLabel": "Valor por hora",
     "continueWithoutCard": "Continuar sem adicionar",
-    "errorRateRequired": "Indica o valor por hora."
+    "errorRateRequired": "Indica o valor por hora.",
+    "recurringBenefitBanner": "💡 Escolhe limpeza recorrente e recebe as tuas próximas 2 limpezas com desconto — automaticamente, sem custo para o/a profissional.",
+    "modeStandardTitle": "Trabalho padrão",
+    "modeStandardHint": "Os profissionais licitam — tu escolhes",
+    "modeTakeJobTitle": "Take Job — emergência",
+    "modeTakeJobHint": "O primeiro profissional a aceitar é atribuído instantaneamente",
+    "takeJobExplainer": "Sem licitações. Define um preço fixo e uma distância máxima — o primeiro profissional elegível dentro desse raio que tocar em \"Aceitar trabalho\" é atribuído de imediato. Ideal para necessidades urgentes no próprio dia.",
+    "radiusTakeJobHint": "Só serão notificados os profissionais dentro desta distância marcados como disponíveis para trabalhos instantâneos.",
+    "submitButtonTakeJob": "Publicar trabalho urgente"
   },
   "customerProfilePage": {
     "title": "O meu perfil",
@@ -1131,7 +1139,10 @@
     "totalEarned": "Total ganho",
     "jobsCompleted": "Trabalhos concluídos",
     "avgRating": "Avaliação média",
-    "upcoming": "Próximos"
+    "upcoming": "Próximos",
+    "instantJobsToggleTitle": "Disponível para trabalhos instantâneos",
+    "instantJobsToggleHint": "Recebe notificações sobre trabalhos de emergência próximos que podes aceitar instantaneamente",
+    "instantJobsToggleError": "Não foi possível atualizar a tua disponibilidade. Tenta novamente."
   },
   "providerProviderEarningsPage": {
     "heading": "Ganhos",
@@ -1216,7 +1227,9 @@
     "postedJustNow": "Publicado agora mesmo",
     "postedHoursAgo": "Publicado há {count} h",
     "postedDaysAgo": "Publicado há {count} d",
-    "reviewsFromCleaners": "({count} de profissionais)"
+    "reviewsFromCleaners": "({count} de profissionais)",
+    "takeJobBadge": "Emergência",
+    "takeJobOutOfRadius": "Fora do raio de {radius} km para aceitar"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notificações",
@@ -2152,5 +2165,15 @@
     "legendFree": "Livre",
     "legendBooked": "Reservado",
     "legendUnavailable": "Indisponível"
+  },
+  "compBiddingTakeJobButton": {
+    "takeThisJob": "Aceitar trabalho",
+    "claiming": "A aceitar…",
+    "genericError": "Algo correu mal. Tenta novamente."
+  },
+  "compProviderTakeJobAlerts": {
+    "toastTitle": "🚨 Novo trabalho de emergência perto de ti!",
+    "toastBody": "Em {city} — sê o primeiro a aceitar",
+    "toastAction": "Ver"
   }
 }

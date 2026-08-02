@@ -999,7 +999,15 @@
     "errorHoursRequired": "Podaj szacowane godziny, aby obliczyć łączną kwotę.",
     "hourlyRateLabel": "Kwota za godzinę",
     "continueWithoutCard": "Kontynuuj bez dodawania",
-    "errorRateRequired": "Podaj kwotę za godzinę."
+    "errorRateRequired": "Podaj kwotę za godzinę.",
+    "recurringBenefitBanner": "💡 Wybierz cykliczne sprzątanie i otrzymaj zniżkę na kolejne 2 sprzątania — automatycznie, bez wpływu na wynagrodzenie sprzątaczki/sprzątacza.",
+    "modeStandardTitle": "Standardowe zlecenie",
+    "modeStandardHint": "Sprzątaczki/sprzątacze licytują — Ty wybierasz",
+    "modeTakeJobTitle": "Take Job — nagły przypadek",
+    "modeTakeJobHint": "Pierwsza osoba, która je przyjmie, zostaje natychmiast przypisana",
+    "takeJobExplainer": "Bez licytacji. Ustaw stałą cenę i maksymalną odległość — pierwsza uprawniona osoba w tym promieniu, która dotknie \"Przyjmij zlecenie\", zostaje przypisana natychmiast. Idealne dla pilnych potrzeb tego samego dnia.",
+    "radiusTakeJobHint": "Powiadomione zostaną tylko osoby w tej odległości oznaczone jako dostępne do zleceń natychmiastowych.",
+    "submitButtonTakeJob": "Opublikuj pilne zlecenie"
   },
   "customerProfilePage": {
     "title": "Mój profil",
@@ -1131,7 +1139,10 @@
     "totalEarned": "Łączny zarobek",
     "jobsCompleted": "Ukończone zlecenia",
     "avgRating": "Średnia ocena",
-    "upcoming": "Nadchodzące"
+    "upcoming": "Nadchodzące",
+    "instantJobsToggleTitle": "Dostępny/a do zleceń natychmiastowych",
+    "instantJobsToggleHint": "Otrzymuj powiadomienia o pobliskich pilnych zleceniach, które możesz od razu przyjąć",
+    "instantJobsToggleError": "Nie udało się zaktualizować dostępności. Spróbuj ponownie."
   },
   "providerProviderEarningsPage": {
     "heading": "Zarobki",
@@ -1216,7 +1227,9 @@
     "postedJustNow": "Opublikowano przed chwilą",
     "postedHoursAgo": "Opublikowano {count} godz. temu",
     "postedDaysAgo": "Opublikowano {count} dni temu",
-    "reviewsFromCleaners": "({count} od sprzątających)"
+    "reviewsFromCleaners": "({count} od sprzątających)",
+    "takeJobBadge": "Pilne",
+    "takeJobOutOfRadius": "Poza promieniem {radius} km do przyjęcia"
   },
   "providerProviderNotificationsPage": {
     "heading": "Powiadomienia",
@@ -2152,5 +2165,15 @@
     "legendFree": "Wolne",
     "legendBooked": "Zarezerwowane",
     "legendUnavailable": "Niedostępne"
+  },
+  "compBiddingTakeJobButton": {
+    "takeThisJob": "Przyjmij zlecenie",
+    "claiming": "Przejmowanie…",
+    "genericError": "Coś poszło nie tak. Spróbuj ponownie."
+  },
+  "compProviderTakeJobAlerts": {
+    "toastTitle": "🚨 Nowe pilne zlecenie w pobliżu!",
+    "toastBody": "W {city} — bądź pierwszy/a i przyjmij je",
+    "toastAction": "Zobacz"
   }
 }

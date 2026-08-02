@@ -999,7 +999,15 @@
     "errorHoursRequired": "Bitte gib die geschätzten Stunden an, damit der Gesamtbetrag berechnet werden kann.",
     "hourlyRateLabel": "Betrag pro Stunde",
     "continueWithoutCard": "Ohne Hinzufügen fortfahren",
-    "errorRateRequired": "Bitte gib den Betrag pro Stunde an."
+    "errorRateRequired": "Bitte gib den Betrag pro Stunde an.",
+    "recurringBenefitBanner": "💡 Wähle wiederkehrende Reinigung und erhalte deine nächsten 2 Reinigungen vergünstigt — automatisch, ohne Nachteil für deine Reinigungskraft.",
+    "modeStandardTitle": "Standardauftrag",
+    "modeStandardHint": "Reinigungskräfte bieten — du wählst",
+    "modeTakeJobTitle": "Sofortauftrag — Notfall",
+    "modeTakeJobHint": "Erste Reinigungskraft, die zugreift, wird sofort zugewiesen",
+    "takeJobExplainer": "Kein Bieten. Lege einen Festpreis und eine maximale Entfernung fest — die erste passende Reinigungskraft in diesem Radius, die auf „Auftrag übernehmen\" tippt, wird sofort zugewiesen. Ideal für dringende Aufträge am selben Tag.",
+    "radiusTakeJobHint": "Nur Reinigungskräfte innerhalb dieser Entfernung, die sich als für Sofortaufträge verfügbar markiert haben, werden benachrichtigt.",
+    "submitButtonTakeJob": "Notfallauftrag veröffentlichen"
   },
   "customerProfilePage": {
     "title": "Mein Profil",
@@ -1131,7 +1139,10 @@
     "totalEarned": "Gesamtverdienst",
     "jobsCompleted": "Erledigte Aufträge",
     "avgRating": "Durchschn. Bewertung",
-    "upcoming": "Anstehend"
+    "upcoming": "Anstehend",
+    "instantJobsToggleTitle": "Verfügbar für Soforteinsätze",
+    "instantJobsToggleHint": "Werde über nahe Notfallaufträge benachrichtigt, die du sofort übernehmen kannst",
+    "instantJobsToggleError": "Verfügbarkeit konnte nicht aktualisiert werden. Bitte versuche es erneut."
   },
   "providerProviderEarningsPage": {
     "heading": "Einnahmen",
@@ -1216,7 +1227,9 @@
     "postedJustNow": "Gerade eingestellt",
     "postedHoursAgo": "Vor {count} Std. eingestellt",
     "postedDaysAgo": "Vor {count} Tagen eingestellt",
-    "reviewsFromCleaners": "({count} von Reinigungskräften)"
+    "reviewsFromCleaners": "({count} von Reinigungskräften)",
+    "takeJobBadge": "Notfall",
+    "takeJobOutOfRadius": "Außerhalb des {radius} km Übernahme-Radius"
   },
   "providerProviderNotificationsPage": {
     "heading": "Benachrichtigungen",
@@ -2152,5 +2165,15 @@
     "legendFree": "Frei",
     "legendBooked": "Gebucht",
     "legendUnavailable": "Nicht verfügbar"
+  },
+  "compBiddingTakeJobButton": {
+    "takeThisJob": "Auftrag übernehmen",
+    "claiming": "Wird übernommen…",
+    "genericError": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
+  },
+  "compProviderTakeJobAlerts": {
+    "toastTitle": "🚨 Neuer Notfallauftrag in deiner Nähe!",
+    "toastBody": "In {city} — sei die/der Erste, die/der zugreift",
+    "toastAction": "Ansehen"
   }
 }

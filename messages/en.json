@@ -999,7 +999,15 @@
     "errorHoursRequired": "Please set the estimated hours so the total can be calculated.",
     "hourlyRateLabel": "Amount per hour",
     "continueWithoutCard": "Continue without adding",
-    "errorRateRequired": "Please enter the amount you pay per hour."
+    "errorRateRequired": "Please enter the amount you pay per hour.",
+    "recurringBenefitBanner": "💡 Choose recurring cleaning and get your next 2 cleanings at a discounted rate — automatically, at no cost to your cleaner.",
+    "modeStandardTitle": "Standard job",
+    "modeStandardHint": "Cleaners bid — you choose",
+    "modeTakeJobTitle": "Take Job — emergency",
+    "modeTakeJobHint": "First cleaner to claim it, instantly assigned",
+    "takeJobExplainer": "No bidding. Set a fixed price and a max distance — the first eligible cleaner within that radius who taps \"Take This Job\" is assigned immediately. Best for urgent, same-day needs.",
+    "radiusTakeJobHint": "Only cleaners within this distance who are marked available for instant jobs will be notified.",
+    "submitButtonTakeJob": "Post Emergency Job"
   },
   "customerProfilePage": {
     "title": "My Profile",
@@ -1131,7 +1139,10 @@
     "totalEarned": "Total Earned",
     "jobsCompleted": "Jobs Completed",
     "avgRating": "Avg Rating",
-    "upcoming": "Upcoming"
+    "upcoming": "Upcoming",
+    "instantJobsToggleTitle": "Available for instant jobs",
+    "instantJobsToggleHint": "Get notified about nearby emergency jobs you can claim instantly",
+    "instantJobsToggleError": "Couldn't update your availability. Please try again."
   },
   "providerProviderEarningsPage": {
     "heading": "Earnings",
@@ -1216,7 +1227,9 @@
     "postedJustNow": "Posted just now",
     "postedHoursAgo": "Posted {count}h ago",
     "postedDaysAgo": "Posted {count}d ago",
-    "reviewsFromCleaners": "({count} from cleaners)"
+    "reviewsFromCleaners": "({count} from cleaners)",
+    "takeJobBadge": "Emergency",
+    "takeJobOutOfRadius": "Outside the {radius} km claim radius"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifications",
@@ -2152,5 +2165,15 @@
     "legendFree": "Free",
     "legendBooked": "Booked",
     "legendUnavailable": "Unavailable"
+  },
+  "compBiddingTakeJobButton": {
+    "takeThisJob": "Take This Job",
+    "claiming": "Claiming…",
+    "genericError": "Something went wrong. Please try again."
+  },
+  "compProviderTakeJobAlerts": {
+    "toastTitle": "🚨 New emergency job nearby!",
+    "toastBody": "In {city} — be the first to claim it",
+    "toastAction": "View"
   }
 }

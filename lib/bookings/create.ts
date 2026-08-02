@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { bookings, payments, providers, providerServices, carbonOffsetContributions, promoCodes, promoCodeUsages, bids, referralCredits } from "@/lib/db/schema"
+import { bookings, payments, providers, providerServices, carbonOffsetContributions, promoCodes, promoCodeUsages, bids, referralCredits, jobPosts } from "@/lib/db/schema"
 import type { NewBooking } from "@/lib/db/schema/bookings"
 import { stripe, calculateBookingAmounts } from "@/lib/stripe/client"
 import { getCommissionPct } from "@/lib/platform/settings"
@@ -81,14 +81,28 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
   if (!service) await cancel(404, "Service not found")
   if (!provider?.isApproved || provider.isSuspended) await cancel(422, "Provider not available")
 
-  // Enforce the cleaner's availability + blackout dates server-side. The wizard checks client-side,
-  // but the bid flow and direct API calls bypass it, so a booking could land on a blocked day/time.
-  const avail = await checkProviderAvailable(providerId, new Date(scheduledAt))
-  if (!avail.ok) await cancel(409, avail.reason ?? "The cleaner is not available at that time.")
-
   // Bug 5: use bid amount from PI metadata when present (bid-flow bookings)
   const bidAmountCents = intent.metadata.bid_amount_cents ? parseInt(intent.metadata.bid_amount_cents, 10) : null
   const bidId = intent.metadata.bid_id ?? null
+
+  // A Take Job claim already substitutes providers.instantJobsAvailable (checked at claim time in
+  // /api/jobs/[id]/take) for the normal weekly-hours signal — an emergency claimed outside a
+  // provider's usual hours must not then bounce at booking creation. Blackout dates still block
+  // regardless (see checkProviderAvailable's doc comment).
+  let isTakeJobBooking = false
+  if (bidId) {
+    const [originJob] = await db
+      .select({ jobType: jobPosts.jobType })
+      .from(bids)
+      .innerJoin(jobPosts, eq(bids.jobPostId, jobPosts.id))
+      .where(eq(bids.id, bidId))
+    isTakeJobBooking = originJob?.jobType === "take_job"
+  }
+
+  // Enforce the cleaner's availability + blackout dates server-side. The wizard checks client-side,
+  // but the bid flow and direct API calls bypass it, so a booking could land on a blocked day/time.
+  const avail = await checkProviderAvailable(providerId, new Date(scheduledAt), { skipWeeklyHours: isTakeJobBooking })
+  if (!avail.ok) await cancel(409, avail.reason ?? "The cleaner is not available at that time.")
   // Add-ons were summed + validated server-side at PI creation; their total rides in metadata.
   const addOnsTotal = intent.metadata.addon_total_cents ? parseInt(intent.metadata.addon_total_cents, 10) : 0
   // MUST mirror the intent route's pricing exactly: per_hour services charge basePrice × booked hours

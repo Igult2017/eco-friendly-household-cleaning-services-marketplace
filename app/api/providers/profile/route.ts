@@ -77,6 +77,9 @@ export async function PATCH(req: Request) {
     if (data.ecoLevel !== undefined) updateFields.ecoLevel = data.ecoLevel
     if (data.profilePhotoUrl !== undefined) updateFields.profilePhotoUrl = data.profilePhotoUrl
     if ("carbonOffsetEnabled" in body) updateFields.carbonOffsetEnabled = Boolean(body.carbonOffsetEnabled)
+    // "Available for instant jobs" — opt-in toggle for Take Job (emergency) eligibility, separate from
+    // the weekly providerAvailability schedule (see lib/bookings/availability.ts's skipWeeklyHours).
+    if ("instantJobsAvailable" in body) updateFields.instantJobsAvailable = Boolean(body.instantJobsAvailable)
 
     // Single existence check — also feeds address fallback for geocoding + the upsert branch below.
     const [existing] = await db

@@ -437,6 +437,12 @@ ALTER TABLE recurring_schedules ADD COLUMN IF NOT EXISTS occurrences_created int
 ALTER TABLE providers ADD COLUMN IF NOT EXISTS last_active_at timestamptz;
 ALTER TABLE providers ADD COLUMN IF NOT EXISTS avg_response_time_minutes double precision;
 ALTER TABLE providers ADD COLUMN IF NOT EXISTS response_time_sample_count integer NOT NULL DEFAULT 0;
+
+-- "Take Job" instant-assignment job type: emergency jobs skip bidding entirely, first eligible
+-- provider to claim wins. job_type is a plain varchar (see lib/db/schema/jobs.ts comment) so it
+-- needs no enum DDL. instant_jobs_available is the provider's opt-in "free right now" toggle.
+ALTER TABLE job_posts ADD COLUMN IF NOT EXISTS job_type varchar(12) NOT NULL DEFAULT 'standard';
+ALTER TABLE providers ADD COLUMN IF NOT EXISTS instant_jobs_available boolean NOT NULL DEFAULT false;
 `
 
 function isValidUrl(url) {
@@ -465,8 +471,11 @@ async function main() {
     catch (e) { console.warn("[ensure-referrals] client_no_show enum add skipped:", e?.message ?? e) }
     try { await sql.unsafe(`ALTER TYPE booking_status ADD VALUE IF NOT EXISTS 'cleaner_no_show'`) }
     catch (e) { console.warn("[ensure-referrals] cleaner_no_show enum add skipped:", e?.message ?? e) }
+    // New notification_type value for "your Take Job was claimed" — same same-transaction restriction.
+    try { await sql.unsafe(`ALTER TYPE notification_type ADD VALUE IF NOT EXISTS 'job_taken'`) }
+    catch (e) { console.warn("[ensure-referrals] job_taken enum add skipped:", e?.message ?? e) }
     await sql.unsafe(DDL)
-    console.log("[ensure-referrals] referral + customer_reviews + service_categories + platform_settings + job_posts(view_count/geo) + cancellation_policy + recurring_schedules(occurrences) + providers(last_active/response_time) ensured ✓")
+    console.log("[ensure-referrals] referral + customer_reviews + service_categories + platform_settings + job_posts(view_count/geo/job_type) + cancellation_policy + recurring_schedules(occurrences) + providers(last_active/response_time/instant_jobs) ensured ✓")
   } finally {
     await sql.end({ timeout: 5 })
   }

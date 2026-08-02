@@ -60,9 +60,9 @@ async function attachCheapestPrice(list: GeoProvider[]): Promise<GeoProvider[]> 
 // client's point?) instead of one fixed radius around the client.
 async function findProvidersHaversine(params: {
   latitude: number; longitude: number; radiusKm: number
-  categoryId?: string; limit: number; useProviderRadius?: boolean
+  categoryId?: string; limit: number; useProviderRadius?: boolean; requireInstantAvailable?: boolean
 }): Promise<GeoProvider[]> {
-  const { latitude, longitude, radiusKm, categoryId, limit, useProviderRadius } = params
+  const { latitude, longitude, radiusKm, categoryId, limit, useProviderRadius, requireInstantAvailable } = params
   // 1° lat ≈ 111.32 km. Longitude degree shrinks towards poles.
   const boxKm = useProviderRadius ? 150 : radiusKm // box must cover the largest plausible provider radius
   const latDelta = boxKm / 111.32
@@ -92,6 +92,7 @@ async function findProvidersHaversine(params: {
         ${categoryId
           ? sql`AND EXISTS (SELECT 1 FROM provider_services ps WHERE ps.provider_id = p.id AND ps.is_active = true AND (ps.category_id = ${categoryId} OR ps.category_ids @> jsonb_build_array(${categoryId}::text)))`
           : sql``}
+        ${requireInstantAvailable ? sql`AND p.instant_jobs_available = true` : sql``}
     )
     SELECT * FROM distances
     WHERE "distanceMeters" <= ${useProviderRadius ? sql`"serviceRadiusM"` : sql`${radiusKm * 1000}`}
@@ -109,8 +110,10 @@ async function findProvidersHaversine(params: {
 export async function findProvidersNearLocation(params: {
   latitude: number; longitude: number; radiusKm: number
   categoryId?: string; limit?: number; useProviderRadius?: boolean
+  // "Take Job" broadcast only — restrict to providers who've opted into instant/emergency jobs.
+  requireInstantAvailable?: boolean
 }): Promise<GeoProvider[]> {
-  const { latitude, longitude, radiusKm, limit = 20, useProviderRadius } = params
+  const { latitude, longitude, radiusKm, limit = 20, useProviderRadius, requireInstantAvailable } = params
   const categoryId = await resolveCategoryId(params.categoryId)
   const radiusExpr = useProviderRadius
     ? sql`GREATEST(COALESCE(p.service_radius_km, 25), 1) * 1000`
@@ -134,13 +137,14 @@ export async function findProvidersNearLocation(params: {
         ${categoryId
           ? sql`AND EXISTS (SELECT 1 FROM provider_services ps WHERE ps.provider_id = p.id AND ps.is_active = true AND (ps.category_id = ${categoryId} OR ps.category_ids @> jsonb_build_array(${categoryId}::text)))`
           : sql``}
+        ${requireInstantAvailable ? sql`AND p.instant_jobs_available = true` : sql``}
       ORDER BY "distanceMeters" ASC, p.average_rating DESC NULLS LAST
       LIMIT ${limit}
     `)
     providersList = Array.from(result) as unknown as GeoProvider[]
   } catch {
     // PostGIS not installed — fall back to pure-SQL Haversine
-    providersList = await findProvidersHaversine({ latitude, longitude, radiusKm, categoryId, limit, useProviderRadius })
+    providersList = await findProvidersHaversine({ latitude, longitude, radiusKm, categoryId, limit, useProviderRadius, requireInstantAvailable })
   }
   return attachCheapestPrice(providersList)
 }

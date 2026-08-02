@@ -13,16 +13,24 @@ import { zonedDayAndTime } from "@/lib/utils/tz"
  * - A blackout date ALWAYS blocks, regardless of weekly availability.
  *
  * Used by both booking creation and reschedule so the rules can't diverge or be bypassed.
+ *
+ * `skipWeeklyHours`: for bookings that originate from a "Take Job" instant claim. A provider's weekly
+ * schedule reflects their normal FUTURE-booking hours, not "I'm free right now for an emergency" —
+ * that's what providers.instantJobsAvailable is for (checked separately, at claim time). Without this
+ * bypass, a provider who correctly claimed an emergency outside their normal hours would have the
+ * booking rejected right after "instant assignment." Blackout dates still block regardless — a
+ * provider who's marked a hard day off shouldn't be claimable even with the toggle on.
  */
 export async function checkProviderAvailable(
   providerId: string,
   start: Date,
+  opts: { skipWeeklyHours?: boolean } = {},
 ): Promise<{ ok: boolean; reason?: string }> {
   const [prov] = await db.select({ timezone: providers.timezone }).from(providers).where(eq(providers.id, providerId))
   const tz = prov?.timezone || "Europe/Berlin"
   const { dayOfWeek, hhmm } = zonedDayAndTime(start, tz)
 
-  const slots = await db
+  const slots = opts.skipWeeklyHours ? [] : await db
     .select({ dayOfWeek: providerAvailability.dayOfWeek, startTime: providerAvailability.startTime, endTime: providerAvailability.endTime })
     .from(providerAvailability)
     .where(and(eq(providerAvailability.providerId, providerId), eq(providerAvailability.isActive, true)))

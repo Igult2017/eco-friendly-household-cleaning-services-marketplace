@@ -999,7 +999,15 @@
     "errorHoursRequired": "Vul de geschatte uren in zodat het totaal berekend kan worden.",
     "hourlyRateLabel": "Bedrag per uur",
     "continueWithoutCard": "Doorgaan zonder toevoegen",
-    "errorRateRequired": "Vul het bedrag per uur in."
+    "errorRateRequired": "Vul het bedrag per uur in.",
+    "recurringBenefitBanner": "💡 Kies terugkerende schoonmaak en krijg je volgende 2 schoonmaakbeurten met korting — automatisch, zonder gevolgen voor je schoonmaker.",
+    "modeStandardTitle": "Standaardklus",
+    "modeStandardHint": "Schoonmakers bieden — jij kiest",
+    "modeTakeJobTitle": "Take Job — noodgeval",
+    "modeTakeJobHint": "De eerste schoonmaker die 'm claimt, wordt direct toegewezen",
+    "takeJobExplainer": "Geen biedingen. Stel een vaste prijs en een maximale afstand in — de eerste geschikte schoonmaker binnen die straal die op \"Klus overnemen\" tikt, wordt direct toegewezen. Ideaal voor dringende klussen dezelfde dag.",
+    "radiusTakeJobHint": "Alleen schoonmakers binnen deze afstand die zich beschikbaar hebben gemeld voor instant-klussen worden op de hoogte gebracht.",
+    "submitButtonTakeJob": "Noodklus plaatsen"
   },
   "customerProfilePage": {
     "title": "Mijn profiel",
@@ -1131,7 +1139,10 @@
     "totalEarned": "Totaal verdiend",
     "jobsCompleted": "Voltooide klussen",
     "avgRating": "Gem. beoordeling",
-    "upcoming": "Aankomend"
+    "upcoming": "Aankomend",
+    "instantJobsToggleTitle": "Beschikbaar voor instant-klussen",
+    "instantJobsToggleHint": "Ontvang meldingen over noodklussen in de buurt die je direct kunt overnemen",
+    "instantJobsToggleError": "Kon je beschikbaarheid niet bijwerken. Probeer het opnieuw."
   },
   "providerProviderEarningsPage": {
     "heading": "Inkomsten",
@@ -1216,7 +1227,9 @@
     "postedJustNow": "Zojuist geplaatst",
     "postedHoursAgo": "{count} u geleden geplaatst",
     "postedDaysAgo": "{count} d geleden geplaatst",
-    "reviewsFromCleaners": "({count} van schoonmakers)"
+    "reviewsFromCleaners": "({count} van schoonmakers)",
+    "takeJobBadge": "Noodgeval",
+    "takeJobOutOfRadius": "Buiten de {radius} km straal om te claimen"
   },
   "providerProviderNotificationsPage": {
     "heading": "Meldingen",
@@ -2152,5 +2165,15 @@
     "legendFree": "Vrij",
     "legendBooked": "Geboekt",
     "legendUnavailable": "Niet beschikbaar"
+  },
+  "compBiddingTakeJobButton": {
+    "takeThisJob": "Klus overnemen",
+    "claiming": "Bezig met overnemen…",
+    "genericError": "Er is iets misgegaan. Probeer het opnieuw."
+  },
+  "compProviderTakeJobAlerts": {
+    "toastTitle": "🚨 Nieuwe noodklus in de buurt!",
+    "toastBody": "In {city} — wees de eerste die 'm claimt",
+    "toastAction": "Bekijken"
   }
 }

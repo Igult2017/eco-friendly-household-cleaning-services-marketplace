@@ -13,12 +13,14 @@ import { Loader2, MapPin, Clock, Euro, CheckCircle2, Repeat } from "lucide-react
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { InlineQuickMessage } from "@/components/messaging/InlineQuickMessage"
+import { TakeJobButton } from "@/components/bidding/TakeJobButton"
 
 interface JobPost {
   id: string
   title: string
   description: string
   status: string
+  jobType: string
   budgetMin: number | null
   budgetMax: number | null
   desiredDate: string | null
@@ -159,11 +161,16 @@ export default function ProviderJobsPage() {
               const alreadyBid = job.alreadyBid || submitted.has(job.id)
               const isOpen = bidding === job.id
 
+              const isTakeJob = job.jobType === "take_job"
+
               return (
-                <div key={job.id} id={`job-${job.id}`} className="bg-white rounded-2xl border border-[#E5EBF0] shadow-sm overflow-hidden">
+                <div key={job.id} id={`job-${job.id}`} className={cn("bg-white rounded-2xl shadow-sm overflow-hidden", isTakeJob ? "border-2 border-red-300" : "border border-[#E5EBF0]")}>
                   <div className="p-5">
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div>
+                        {isTakeJob && (
+                          <Badge className="bg-red-100 text-red-700 text-xs mb-1.5 font-semibold">🚨 {t("takeJobBadge")}</Badge>
+                        )}
                         {/* Upwork-style: the title opens the full job detail (complete description + bid form). */}
                         <h2 className="font-semibold text-[#2B3441]">
                           <Link href={`/provider/jobs/${job.id}`} className="hover:text-[#2D7A5F] hover:underline transition-colors">{job.title}</Link>
@@ -186,7 +193,8 @@ export default function ProviderJobsPage() {
                               : <>{formatCurrencyForCountry(job.budgetMin, job.serviceAddress.country ?? "DE", "en-GB")} – {formatCurrencyForCountry(job.budgetMax, job.serviceAddress.country ?? "DE", "en-GB")}</>}
                           </p>
                         ) : null}
-                        <p className="text-xs text-[#9CA3AF] mt-1">{t("bidCount", { count: job.bids.length })}</p>
+                        {/* Take Job has no bidding — a "0 bids" counter would be confusing noise. */}
+                        {!isTakeJob && <p className="text-xs text-[#9CA3AF] mt-1">{t("bidCount", { count: job.bids.length })}</p>}
                       </div>
                     </div>
 
@@ -236,6 +244,11 @@ export default function ProviderJobsPage() {
                     ) : job.own ? (
                       // Upwork model: your own posting is visible but never biddable.
                       <p className="text-sm text-[#9CA3AF]">{t("ownJobNotice")}</p>
+                    ) : isTakeJob ? (
+                      // No bidding, no form — first eligible cleaner to tap this is assigned instantly.
+                      job.withinRadius
+                        ? <TakeJobButton jobId={job.id} />
+                        : <p className="text-sm text-[#9CA3AF]">{t("takeJobOutOfRadius", { radius: job.radiusKm })}</p>
                     ) : (
                       <Button
                         onClick={() => { setError(null); setBidding(isOpen ? null : job.id) }}
@@ -246,7 +259,7 @@ export default function ProviderJobsPage() {
                     )}
                   </div>
 
-                  {isOpen && !job.wonByMe && !alreadyBid && !job.own && !job.withinRadius && (
+                  {isOpen && !job.wonByMe && !alreadyBid && !job.own && !isTakeJob && !job.withinRadius && (
                     // Visible but out of the client's requested radius — explain instead of a form.
                     <div className="border-t border-[#F4FAF6] bg-amber-50 p-5">
                       <p className="text-sm text-amber-800">
@@ -255,7 +268,7 @@ export default function ProviderJobsPage() {
                     </div>
                   )}
 
-                  {isOpen && !job.wonByMe && !alreadyBid && !job.own && job.withinRadius && (
+                  {isOpen && !job.wonByMe && !alreadyBid && !job.own && !isTakeJob && job.withinRadius && (
                     <div className="border-t border-[#F4FAF6] bg-[#F4FAF6] p-5 space-y-3">
                       <h3 className="font-semibold text-sm text-[#2B3441]">{t("yourBid")}</h3>
                       {/* Competition transparency: how crowded is this job — and is there an easier one? */}

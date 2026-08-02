@@ -194,7 +194,7 @@ export default function AdminSettingsPage() {
                 onChange={e => set("recurring_discount_pct", e.target.value)}
                 className="w-24 h-10 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]"
               />
-              <span className="text-sm text-[#6B7280]">% off every recurring occurrence, all cleaners (was per-cleaner — now platform-wide)</span>
+              <span className="text-sm text-[#6B7280]">% off the client's 2nd and 3rd cleaning on a recurring schedule, all cleaners (was per-cleaner — now platform-wide)</span>
             </div>
           </div>
         </div>

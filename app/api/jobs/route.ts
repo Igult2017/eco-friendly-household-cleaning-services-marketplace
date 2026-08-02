@@ -40,9 +40,18 @@ const createJobSchema = z.object({
   // back-compat with existing rows.
   recurringFrequency: z.enum(["recurring", "weekly", "biweekly", "monthly"]).optional(),
   estimatedHours: z.number().min(0.5).max(12).optional(),
+  // "standard" = normal bidding. "take_job" = emergency instant-assignment (see /api/jobs/[id]/take) —
+  // no negotiation, so the client's single price IS the price, and it's never recurring.
+  jobType: z.enum(["standard", "take_job"]).default("standard"),
 }).refine(
   (d) => !d.budgetMin || !d.budgetMax || d.budgetMax >= d.budgetMin,
   { message: "budgetMax must be >= budgetMin", path: ["budgetMax"] },
+).refine(
+  (d) => d.jobType !== "take_job" || d.budgetMin === d.budgetMax,
+  { message: "Take Job requires a single fixed price (budgetMin must equal budgetMax)", path: ["budgetMax"] },
+).refine(
+  (d) => d.jobType !== "take_job" || !d.recurringFrequency,
+  { message: "Take Job cannot be recurring", path: ["recurringFrequency"] },
 )
 
 export async function POST(req: Request) {
@@ -113,6 +122,7 @@ export async function POST(req: Request) {
       ecoRequirements: data.ecoRequirements,
       recurringFrequency: data.recurringFrequency ?? null,
       estimatedDurationMinutes: data.estimatedHours ? Math.round(data.estimatedHours * 60) : null,
+      jobType: data.jobType,
       expiresAt,
       status: "open",
       postedIp: getClientIp(req),
@@ -231,7 +241,7 @@ export async function GET(req: Request) {
         // H3: project only board-safe fields. customerId, exact serviceLatitude/Longitude,
         // categoryId and acceptedBidId are deliberately NOT selected.
         columns: {
-          id: true, title: true, description: true, status: true,
+          id: true, title: true, description: true, status: true, jobType: true,
           budgetMin: true, budgetMax: true, desiredDate: true, desiredTimeRange: true,
           radiusKm: true, ecoRequirements: true, recurringFrequency: true, estimatedDurationMinutes: true, viewCount: true, expiresAt: true, createdAt: true,
           serviceAddress: true, // reduced to coarse locality below

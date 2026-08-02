@@ -34,6 +34,7 @@ export const notificationTypeEnum = pgEnum("notification_type", [
   "booking_rescheduled",
   "booking_started",
   "recurring_booking_created",
+  "job_taken",
 ])
 
 export const notifications = pgTable(
