@@ -232,7 +232,14 @@
     "fromPrice": "Od {price}",
     "bookNow": "Zarezerwuj teraz",
     "servicesHeading": "Usługi",
-    "reviewsHeading": "Opinie"
+    "reviewsHeading": "Opinie",
+    "availabilityHeading": "Dostępność",
+    "responseTime_under1h": "Zwykle odpowiada w ciągu godziny",
+    "responseTime_under3h": "Zwykle odpowiada w ciągu kilku godzin",
+    "responseTime_sameDay": "Zwykle odpowiada w ciągu dnia",
+    "responseTime_within2days": "Zwykle odpowiada w ciągu 2 dni",
+    "responseTime_slower": "Czas odpowiedzi bywa różny",
+    "lastActive": "Ostatnio aktywny {time}"
   },
   "sustainability": {
     "metaTitle": "Wpływ na środowisko — DORIXÉ",
@@ -635,7 +642,12 @@
     "payoutFallbackTitle": "Zapisz kartę, aby zabezpieczyć tę rezerwację",
     "payoutFallbackBody": "Ta osoba sprzątająca wciąż konfiguruje wypłaty, więc płatność nie może jeszcze zostać autoryzowana — to nie dotyczy Twojej karty. Zapisz ją teraz: rezerwacja zostanie utworzona, nic nie zostanie pobrane przed zakończeniem pracy, a płatność nastąpi automatycznie po potwierdzeniu przez oboje.",
     "confirmBookingRequest": "Potwierdź prośbę o rezerwację",
-    "useDifferentCard": "Użyj innej karty"
+    "useDifferentCard": "Użyj innej karty",
+    "autoRenewConsentLabel": "Upoważniam DORIXÉ do automatycznego obciążania mojej zapisanej karty za każde przyszłe sprzątanie, do czasu anulowania tego cyklu.",
+    "recurringAutoSetTitle": "Cykl skonfigurowany!",
+    "recurringAutoSetText": "Twoja karta będzie automatycznie obciążana za kolejne sprzątania — zarządzaj lub anuluj w dowolnym momencie w Moich rezerwacjach.",
+    "recurringSettingUp": "Konfigurowanie Twojego cyklu…",
+    "recurringAutoSetFailed": "Nie udało się skonfigurować automatycznych płatności. Skonfiguruj to ręcznie poniżej."
   },
   "customerBookExtrasPage": {
     "heading": "Masz specjalne życzenia?",
@@ -678,7 +690,8 @@
     "preBannerTitle": "Rezerwacja u {name}",
     "preBannerHint": "Można wybrać tylko usługi oferowane przez tę osobę.",
     "notOfferedBadge": "Niedostępne",
-    "changeCleaner": "Zmień osobę sprzątającą"
+    "changeCleaner": "Zmień osobę sprzątającą",
+    "recurringBenefitBanner": "💡 Wybierz cykliczne sprzątanie i zaoszczędź {pct}% na 2. i 3. sprzątaniu — automatycznie, bez wpływu na osobę sprzątającą."
   },
   "customerBookProvidersPage": {
     "heading": "Gdzie potrzebujesz sprzątania?",
@@ -725,8 +738,10 @@
     "freq_biweekly": "Co 2 tygodnie",
     "freq_monthly": "Co miesiąc",
     "slotBooked": "Zajęte",
-    "recurringDaysLabel": "W jakie dni?",
-    "recurringDaysHint": "Wybierz dni tygodnia dla cyklicznego sprzątania."
+    "recurringDaysLabel": "W jaki dzień?",
+    "recurringDaysHint": "Wybierz dzień tygodnia dla cyklicznego sprzątania.",
+    "viewFullCalendar": "Zobacz pełny kalendarz dostępności",
+    "hideFullCalendar": "Ukryj kalendarz dostępności"
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Nie udało się załadować rezerwacji",
@@ -1394,7 +1409,8 @@
     "from": "Od",
     "jobsDone": "{count, plural, one {# zlecenie wykonane} few {# zlecenia wykonane} many {# zleceń wykonanych} other {# zlecenia wykonane}}",
     "selected": "✓ Wybrano",
-    "selectProvider": "Wybierz wykonawcę"
+    "selectProvider": "Wybierz wykonawcę",
+    "recentlyActive": "Aktywny w ciągu ostatnich 24 godzin"
   },
   "compBookingRecurringScheduleCard": {
     "withBusiness": "z {businessName}",
@@ -2131,5 +2147,10 @@
   },
   "compBackButton": {
     "back": "Wstecz"
+  },
+  "compProviderAvailabilityCalendar": {
+    "legendFree": "Wolne",
+    "legendBooked": "Zarezerwowane",
+    "legendUnavailable": "Niedostępne"
   }
 }

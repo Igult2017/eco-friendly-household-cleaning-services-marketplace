@@ -423,6 +423,20 @@ CREATE UNIQUE INDEX IF NOT EXISTS ref_commissions_booking_referral_idx ON referr
 -- Client referral discount balance spendable at checkout (separate column from the promo-code
 -- discount_amount) + a client's own lightweight Connect account for withdrawing that balance.
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS referral_credit_applied_cents integer NOT NULL DEFAULT 0;
+
+-- Recurring-cleaning discount now caps at the schedule's first 2 occurrences (client's 2nd/3rd
+-- cleaning overall) instead of applying forever — this counter tracks how many this schedule has
+-- generated so far. Also funded entirely from platform commission now, never the cleaner's payout
+-- (see calculateDiscountedBookingAmounts in lib/stripe/client.ts).
+ALTER TABLE recurring_schedules ADD COLUMN IF NOT EXISTS occurrences_created integer NOT NULL DEFAULT 0;
+
+-- Client-visible responsiveness signals on a cleaner's profile: last time they were active on the
+-- platform (throttled stamp on /provider/* page loads, no cron) and a running-mean reply time
+-- (folded in inline on every message send, no cron) — see app/(provider)/layout.tsx and
+-- lib/providers/responseTime.ts.
+ALTER TABLE providers ADD COLUMN IF NOT EXISTS last_active_at timestamptz;
+ALTER TABLE providers ADD COLUMN IF NOT EXISTS avg_response_time_minutes double precision;
+ALTER TABLE providers ADD COLUMN IF NOT EXISTS response_time_sample_count integer NOT NULL DEFAULT 0;
 `
 
 function isValidUrl(url) {
@@ -452,7 +466,7 @@ async function main() {
     try { await sql.unsafe(`ALTER TYPE booking_status ADD VALUE IF NOT EXISTS 'cleaner_no_show'`) }
     catch (e) { console.warn("[ensure-referrals] cleaner_no_show enum add skipped:", e?.message ?? e) }
     await sql.unsafe(DDL)
-    console.log("[ensure-referrals] referral + customer_reviews + service_categories + platform_settings + job_posts(view_count/geo) + cancellation_policy ensured ✓")
+    console.log("[ensure-referrals] referral + customer_reviews + service_categories + platform_settings + job_posts(view_count/geo) + cancellation_policy + recurring_schedules(occurrences) + providers(last_active/response_time) ensured ✓")
   } finally {
     await sql.end({ timeout: 5 })
   }

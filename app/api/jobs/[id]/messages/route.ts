@@ -9,6 +9,7 @@ import { eq, and, asc, ne } from "drizzle-orm"
 import { pusherServer } from "@/lib/pusher/server"
 import { isUuid } from "@/lib/utils/uuid"
 import { logError } from "@/lib/utils/logError"
+import { recordProviderResponseIfApplicable } from "@/lib/providers/responseTime"
 
 type RouteContext = { params: Promise<{ id: string }> }
 
@@ -86,6 +87,15 @@ export async function POST(req: Request, { params }: RouteContext) {
       .insert(messages)
       .values({ jobPostId: id, senderId: userId, body: parsed.data.body })
       .returning()
+
+    // Best-effort — never let response-time bookkeeping block sending a message.
+    void recordProviderResponseIfApplicable({
+      threadColumn: "jobPostId",
+      threadId: id,
+      senderIsProvider: !access.isCustomer,
+      providerUserId: access.providerUserId,
+      newMessageCreatedAt: newMessage.createdAt,
+    }).catch(() => {})
 
     const recipientId = access.isCustomer ? access.providerUserId : access.job.customerId
     await db.insert(notifications).values({

@@ -232,7 +232,14 @@
     "fromPrice": "Vanaf {price}",
     "bookNow": "Nu boeken",
     "servicesHeading": "Diensten",
-    "reviewsHeading": "Beoordelingen"
+    "reviewsHeading": "Beoordelingen",
+    "availabilityHeading": "Beschikbaarheid",
+    "responseTime_under1h": "Reageert meestal binnen een uur",
+    "responseTime_under3h": "Reageert meestal binnen een paar uur",
+    "responseTime_sameDay": "Reageert meestal binnen een dag",
+    "responseTime_within2days": "Reageert meestal binnen 2 dagen",
+    "responseTime_slower": "Reactietijd varieert",
+    "lastActive": "Laatst actief {time}"
   },
   "sustainability": {
     "metaTitle": "Duurzaamheidsimpact — DORIXÉ",
@@ -635,7 +642,12 @@
     "payoutFallbackTitle": "Sla je kaart op om deze boeking veilig te stellen",
     "payoutFallbackBody": "Deze schoonmaker is de uitbetaling nog aan het instellen, dus de betaling kan nog niet worden geautoriseerd — dat staat los van je kaart. Sla hem nu op: je boeking wordt aangemaakt, er wordt niets afgeschreven voordat het werk klaar is en de betaling volgt automatisch nadat jullie beiden de voltooiing bevestigen.",
     "confirmBookingRequest": "Boekingsaanvraag bevestigen",
-    "useDifferentCard": "Andere kaart gebruiken"
+    "useDifferentCard": "Andere kaart gebruiken",
+    "autoRenewConsentLabel": "Ik machtig DORIXÉ om mijn opgeslagen kaart automatisch te belasten voor elke toekomstige schoonmaak totdat ik dit ritme opzeg.",
+    "recurringAutoSetTitle": "Terugkerend ritme ingesteld!",
+    "recurringAutoSetText": "Je kaart wordt automatisch belast voor toekomstige schoonmaakbeurten — beheer of zeg op wanneer je wilt via Mijn boekingen.",
+    "recurringSettingUp": "Je terugkerende ritme wordt ingesteld…",
+    "recurringAutoSetFailed": "We konden de automatische betaling niet instellen. Stel het hieronder handmatig in."
   },
   "customerBookExtrasPage": {
     "heading": "Speciale verzoeken?",
@@ -678,7 +690,8 @@
     "preBannerTitle": "Boeking bij {name}",
     "preBannerHint": "Alleen diensten die deze schoonmaker aanbiedt zijn te kiezen.",
     "notOfferedBadge": "Niet aangeboden",
-    "changeCleaner": "Andere schoonmaker"
+    "changeCleaner": "Andere schoonmaker",
+    "recurringBenefitBanner": "💡 Kies terugkerende schoonmaak en bespaar {pct}% op je 2e en 3e schoonmaak — automatisch, zonder gevolgen voor de schoonmaker."
   },
   "customerBookProvidersPage": {
     "heading": "Waar heb je schoonmaak nodig?",
@@ -725,8 +738,10 @@
     "freq_biweekly": "Om de 2 weken",
     "freq_monthly": "Maandelijks",
     "slotBooked": "Bezet",
-    "recurringDaysLabel": "Op welke dagen?",
-    "recurringDaysHint": "Kies de weekdagen voor de terugkerende schoonmaak."
+    "recurringDaysLabel": "Op welke dag?",
+    "recurringDaysHint": "Kies de weekdag voor de terugkerende schoonmaak.",
+    "viewFullCalendar": "Volledige beschikbaarheidskalender bekijken",
+    "hideFullCalendar": "Beschikbaarheidskalender verbergen"
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Boeking kon niet worden geladen",
@@ -1394,7 +1409,8 @@
     "from": "Vanaf",
     "jobsDone": "{count, plural, one {# klus voltooid} other {# klussen voltooid}}",
     "selected": "✓ Geselecteerd",
-    "selectProvider": "Kies aanbieder"
+    "selectProvider": "Kies aanbieder",
+    "recentlyActive": "Actief in de afgelopen 24 uur"
   },
   "compBookingRecurringScheduleCard": {
     "withBusiness": "met {businessName}",
@@ -2131,5 +2147,10 @@
   },
   "compBackButton": {
     "back": "Terug"
+  },
+  "compProviderAvailabilityCalendar": {
+    "legendFree": "Vrij",
+    "legendBooked": "Geboekt",
+    "legendUnavailable": "Niet beschikbaar"
   }
 }

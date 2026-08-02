@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { calculateBookingAmounts } from "@/lib/stripe/client"
+import { calculateBookingAmounts, calculateDiscountedBookingAmounts } from "@/lib/stripe/client"
 
 describe("calculateBookingAmounts", () => {
   it("deducts the platform commission from the provider payout (customer pays the rate)", () => {
@@ -27,5 +27,45 @@ describe("calculateBookingAmounts", () => {
   it("platform fee + provider payout = total charged", () => {
     const r = calculateBookingAmounts(8_750)
     expect(r.platformFee + r.providerPayout).toBe(r.totalCharged)
+  })
+})
+
+describe("calculateDiscountedBookingAmounts", () => {
+  it("funds a normal discount entirely from platform commission — provider payout is untouched", () => {
+    // €100 service, 15% commission, 10% recurring discount
+    const full = calculateBookingAmounts(10_000, 15)
+    const r = calculateDiscountedBookingAmounts(10_000, 15, 10)
+    expect(r.discountCents).toBe(1_000)              // 10% of €100
+    expect(r.totalCharged).toBe(9_000)                // customer pays €90
+    expect(r.platformFee).toBe(500)                   // €15 commission - €10 discount
+    expect(r.providerPayout).toBe(full.providerPayout) // cleaner still gets exactly the full-price payout
+    expect(r.providerPayout).toBe(8_500)
+  })
+
+  it("clamps the discount at the full commission — never goes negative, cleaner still unaffected", () => {
+    // A discount rate so high it would exceed the entire €15 commission on a €100 job.
+    const r = calculateDiscountedBookingAmounts(10_000, 15, 50) // raw discount would be €50
+    expect(r.discountCents).toBe(1_500)  // clamped to the full commission, not the raw 5,000
+    expect(r.platformFee).toBe(0)        // platform's cut floors at zero, never negative
+    expect(r.providerPayout).toBe(8_500) // cleaner is still paid as if this were a full-price job
+    expect(r.totalCharged).toBe(8_500)   // customer charge floors at exactly the cleaner's payout
+  })
+
+  it("zero discount behaves identically to the undiscounted calculation", () => {
+    const full = calculateBookingAmounts(7_500, 15)
+    const r = calculateDiscountedBookingAmounts(7_500, 15, 0)
+    expect(r.discountCents).toBe(0)
+    expect(r.totalCharged).toBe(full.totalCharged)
+    expect(r.platformFee).toBe(full.platformFee)
+    expect(r.providerPayout).toBe(full.providerPayout)
+  })
+
+  it("platform fee + provider payout always sums back to total charged, discounted or not", () => {
+    for (const [subtotal, commissionPct, discountPct] of [[10_000, 15, 10], [10_000, 15, 50], [3_333, 20, 33], [500, 10, 100]] as const) {
+      const r = calculateDiscountedBookingAmounts(subtotal, commissionPct, discountPct)
+      expect(r.platformFee + r.providerPayout).toBe(r.totalCharged)
+      expect(r.platformFee).toBeGreaterThanOrEqual(0)
+      expect(r.totalCharged).toBeGreaterThanOrEqual(r.providerPayout)
+    }
   })
 })

@@ -5,9 +5,10 @@ import { useBookingStore } from "@/stores/bookingStore"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { useTranslations } from "next-intl"
-import { UserCheck, X } from "lucide-react"
+import { UserCheck, X, Sparkles } from "lucide-react"
 
 const SERVICE_CATEGORIES = [
   { id: "regular", slug: "regular-cleaning", icon: "🌿", name: "Regular Cleaning", from: "€29" },
@@ -20,19 +21,36 @@ const SERVICE_CATEGORIES = [
   { id: "windows", slug: "window-cleaning", icon: "🪟", name: "Window Cleaning", from: "€39" },
 ]
 
+const FREQUENCY_OPTIONS = ["one_time", "weekly", "biweekly", "monthly"] as const
+const WEEKDAYS = [1, 2, 3, 4, 5, 6, 0]
+
 export default function BookStep1Page() {
   const t = useTranslations("customerBookPage")
+  const tSchedule = useTranslations("customerBookSchedulePage")
   const router = useRouter()
-  const { setCategory, categoryId, providerPreselected, providerName, selectedProviderId, setPreselectedProvider, clearPreselection } = useBookingStore()
+  const {
+    setCategory, categoryId, providerPreselected, providerName, selectedProviderId, setPreselectedProvider, clearPreselection,
+    frequency, setFrequency, recurringDays, setRecurringDays,
+  } = useBookingStore()
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null)
   // null = no preselection constraint (normal flow); array = only these slugs are bookable.
   const [offeredSlugs, setOfferedSlugs] = useState<string[] | null>(null)
   // While the summary fetch is in flight all cards look enabled — hold Continue until it resolves.
   const [preLoading, setPreLoading] = useState(false)
+  // Marketing copy shown BEFORE any click — the discount rate is fetched but the banner itself
+  // doesn't wait on it to be worth showing; only the number is conditional.
+  const [discountPct, setDiscountPct] = useState<number | null>(null)
 
   useEffect(() => {
     if (categoryId) setSelectedSlug(categoryId)
   }, [categoryId])
+
+  useEffect(() => {
+    fetch("/api/settings/recurring-discount")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (d?.pct) setDiscountPct(d.pct) })
+      .catch(() => {})
+  }, [])
 
   // Pre-selected cleaner (Book button on browse/profile passes ?providerId=…, or one is already in the
   // store). Fetch their summary → banner name + which services they offer; the search step is skipped.
@@ -64,6 +82,14 @@ export default function BookStep1Page() {
     setCategory(slug, name)
   }
 
+  // Single-day selection — a weekday button REPLACES the pick rather than toggling into a growing
+  // array. recurringDays stays number[] downstream (schema/API unchanged) but the wizard only ever
+  // sends 0 or 1 entries now: multi-day was collected here before but only the first day could ever
+  // be honored by the recurring schedule it feeds, so letting people pick several was pure confusion.
+  function selectDay(d: number) {
+    setRecurringDays([d])
+  }
+
   function handleNext() {
     if (!selectedSlug || !isOffered(selectedSlug)) return
     router.push("/book/providers")
@@ -77,7 +103,64 @@ export default function BookStep1Page() {
         <h1 className="font-serif text-3xl font-bold text-[#2B3441] text-center mb-2">
           {t("heading")}
         </h1>
-        <p className="text-center text-[#6B7280] mb-8">{t("subheading")}</p>
+        <p className="text-center text-[#6B7280] mb-6">{t("subheading")}</p>
+
+        {/* Recurring discount — shown unconditionally, before the client has picked anything, since
+            this is meant to sell the option rather than just confirm a choice already made. */}
+        {discountPct !== null && discountPct > 0 && (
+          <div className="mb-6 flex items-start gap-3 rounded-2xl border border-[#2D7A5F]/25 bg-gradient-to-br from-[#EDF5F0] to-[#F4FAF6] px-4 py-3.5">
+            <Sparkles size={18} className="shrink-0 text-[#2D7A5F] mt-0.5" />
+            <p className="text-sm text-[#2B3441] leading-relaxed">
+              {t("recurringBenefitBanner", { pct: discountPct })}
+            </p>
+          </div>
+        )}
+
+        {/* Frequency — the first DECISION on the page, ahead of what service/cleaner is picked. */}
+        <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-6">
+          <Label className="text-sm font-semibold text-[#2B3441] mb-1 block">{tSchedule("frequencyLabel")}</Label>
+          <p className="text-xs text-[#6B7280] mb-3">{tSchedule("frequencyHint")}</p>
+          <div className="flex flex-wrap gap-2">
+            {FREQUENCY_OPTIONS.map((f) => (
+              <button
+                key={f}
+                onClick={() => setFrequency(f)}
+                className={cn(
+                  "px-4 py-2 rounded-lg text-sm font-medium border-2 transition-all",
+                  frequency === f
+                    ? "border-[#2D7A5F] bg-[#2D7A5F] text-white"
+                    : "border-[#E5EBF0] hover:border-[#4CB87A] text-[#2B3441]"
+                )}
+              >
+                {tSchedule(`freq_${f}`)}
+              </button>
+            ))}
+          </div>
+
+          {frequency !== "one_time" && (
+            <div className="mt-4 border-t border-[#E5EBF0] pt-4">
+              <Label className="text-sm font-semibold text-[#2B3441] mb-1 block">{tSchedule("recurringDaysLabel")}</Label>
+              <p className="text-xs text-[#6B7280] mb-3">{tSchedule("recurringDaysHint")}</p>
+              <div className="flex flex-wrap gap-2">
+                {WEEKDAYS.map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => selectDay(d)}
+                    className={cn(
+                      "px-3 py-2 rounded-lg text-sm font-medium border-2 transition-all",
+                      recurringDays[0] === d
+                        ? "border-[#2D7A5F] bg-[#2D7A5F] text-white"
+                        : "border-[#E5EBF0] hover:border-[#4CB87A] text-[#2B3441]"
+                    )}
+                  >
+                    {/* 2024-01-07 is a Sunday — offset by d for a locale-aware weekday name. */}
+                    {new Date(Date.UTC(2024, 0, 7 + d)).toLocaleDateString(undefined, { weekday: "short", timeZone: "UTC" })}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
 
         {providerPreselected && providerName && (
           <div className="mb-6 flex items-center gap-3 rounded-xl border border-[#2D7A5F]/25 bg-[#EDF5F0] px-4 py-3">

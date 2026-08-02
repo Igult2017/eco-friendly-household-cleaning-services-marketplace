@@ -2,29 +2,20 @@
 
 import { WizardProgress } from "@/components/booking/WizardProgress"
 import { StripePaymentForm } from "@/components/booking/StripePaymentForm"
-import { AddCardForm } from "@/components/customer/AddCardForm"
+import { BookingSuccessScreen } from "@/components/booking/confirm/BookingSuccessScreen"
+import { OrderSummaryCard } from "@/components/booking/confirm/OrderSummaryCard"
+import { PayoutFallbackCard } from "@/components/booking/confirm/PayoutFallbackCard"
 import { useBookingStore } from "@/stores/bookingStore"
 import { useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { loadStripe } from "@stripe/stripe-js"
 import { Elements } from "@stripe/react-stripe-js"
-import { formatCurrency } from "@/lib/utils/formatCurrency"
 import { getCurrencyForCountry } from "@/lib/utils/locale"
-import { Loader2, CheckCircle2, Leaf, Tag, X, CreditCard, Wallet } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
-
-const CATEGORY_SERVICE_KEYS: Record<string, string> = {
-  "regular-cleaning": "categoryRegularCleaning",
-  "deep-cleaning": "categoryDeepCleaning",
-  "move-in-out": "categoryMoveInOut",
-  "office-cleaning": "categoryOfficeCleaning",
-  "laundry": "categoryLaundry",
-  "window-cleaning": "categoryWindowCleaning",
-}
 
 const CARBON_OFFSET_CENTS = 200
 
@@ -59,10 +50,16 @@ export default function BookStep5Page() {
   const [payoutFallback, setPayoutFallback] = useState(false)
   const [saveCardSecret, setSaveCardSecret] = useState<string | null>(null)
   const [savedCard, setSavedCard] = useState<{ brand: string; last4: string } | null>(null)
+  // Cleaner's IANA tz — needed to compute the recurring schedule's next occurrence correctly.
+  const [providerTimezone, setProviderTimezone] = useState("Europe/Amsterdam")
+  const [recurringSetupResult, setRecurringSetupResult] = useState<"pending" | "success" | "failed" | "skipped" | null>(null)
 
   // Bid-flow bookings (accepted bid) may have null categoryId or a slug instead of UUID.
   // They always have bidAmountCents set. Loosen the guard accordingly.
   const isBidFlow = store.bidAmountCents !== null
+  // Only concrete cadences (set in step 1 of the wizard) can drive auto-schedule-creation — bid-flow's
+  // "recurring" value is stated intent only, with no dayOfWeek the /api/recurring schema requires.
+  const isConcreteRecurring = store.frequency === "weekly" || store.frequency === "biweekly" || store.frequency === "monthly"
 
   useEffect(() => {
     const missingBase = !store.selectedProviderId || !store.address
@@ -116,10 +113,52 @@ export default function BookStep5Page() {
       const data = await res.json()
       if (!res.ok) { setError(data.error ?? t("errorBookingFailedSupport")); return }
       setSuccess({ bookingId: data.bookingId, bookingNumber: data.bookingNumber })
+      // Best-effort, non-blocking: the success screen above never waits on this.
+      if (isConcreteRecurring && store.acceptedAutoRenewConsent) {
+        setRecurringSetupResult("pending")
+        void maybeSetupRecurringSchedule(piId, service?.id ?? serviceId).then(setRecurringSetupResult)
+      }
     } catch {
       setError(t("errorCompleteBookingSupport"))
     } finally {
       setLoading(false)
+    }
+  }
+
+  // Sets up the actual recurring schedule right after the FIRST booking's payment succeeds, using
+  // data the wizard already collected — the client never fills out a second form. Best-effort: a
+  // failure here must never fail the booking itself, which is already paid for and confirmed.
+  async function maybeSetupRecurringSchedule(paymentIntentId: string, svcId: string | null): Promise<"success" | "failed" | "skipped"> {
+    const freq = store.frequency
+    if (freq !== "weekly" && freq !== "biweekly" && freq !== "monthly") return "skipped"
+    if (!svcId || !store.selectedProviderId || !store.scheduledAt || !store.address) return "skipped"
+    try {
+      const scheduledDate = new Date(store.scheduledAt)
+      const dayOfWeek = store.recurringDays[0] ?? scheduledDate.getDay()
+      const preferredTime = store.scheduledTimeStr ?? `${String(scheduledDate.getHours()).padStart(2, "0")}:${String(scheduledDate.getMinutes()).padStart(2, "0")}`
+      const addr = Object.fromEntries(
+        Object.entries(store.address).filter(([, v]) => typeof v === "string" && v)
+      ) as Record<string, string>
+      const res = await fetch("/api/recurring", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          providerId: store.selectedProviderId,
+          serviceId: svcId,
+          frequency: freq,
+          dayOfWeek,
+          preferredTime,
+          serviceAddress: addr,
+          ecoOptions: store.ecoOptions,
+          specialInstructions: store.specialInstructions || undefined,
+          paymentIntentId,
+          timezone: providerTimezone,
+          autoRenewConsent: true,
+        }),
+      })
+      return res.ok ? "success" : "failed"
+    } catch {
+      return "failed"
     }
   }
 
@@ -135,6 +174,7 @@ export default function BookStep5Page() {
       // summary (job posts have no category, and bid-only cleaners may have no listed services).
       if (!service && store.bidAmountCents === null) { setError(t("errorProviderNoService")); return }
       if (service) setServiceId(service.id)
+      if (svcData.providerTimezone) setProviderTimezone(svcData.providerTimezone)
       // Per-hour transparency: show the client exactly what they pay per hour on the summary.
       if (service && store.bidAmountCents === null && service.priceUnit === "per_hour") setHourlyRateCents(service.basePrice)
       // Sum any selected add-ons so the preview total matches what the PI will charge.
@@ -338,28 +378,14 @@ export default function BookStep5Page() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-[#F4FAF6] py-20 px-4 flex flex-col items-center justify-center">
-        <div className="w-16 h-16 bg-[#D1F0E0] rounded-full flex items-center justify-center mb-6">
-          <CheckCircle2 size={40} className="text-[#2D7A5F]" />
-        </div>
-        <h1 className="font-serif text-3xl font-bold text-[#2B3441] text-center mb-2">{t("bookingConfirmedTitle")}</h1>
-        <p className="text-[#6B7280] text-center mb-2">{t("bookingNumberLabel")} <strong className="text-[#2B3441]">{success.bookingNumber}</strong></p>
-        <p className="text-sm text-[#6B7280] text-center mb-6 max-w-sm">
-          {t("confirmationEmailNote")}
-        </p>
-        {store.frequency !== "one_time" && (
-          <div className="mb-6 max-w-sm w-full rounded-xl border border-[#2D7A5F]/20 bg-[#EDF5F0] px-5 py-4 text-center">
-            <p className="text-sm font-semibold text-[#2B3441] mb-1">{t("recurringPromptTitle")}</p>
-            <p className="text-xs text-[#6B7280] mb-3">{t("recurringPromptText")}</p>
-            <Button onClick={() => { const id = success.bookingId; store.reset(); router.push(`/recurring/new?bookingId=${id}`) }} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white h-9 text-sm">
-              {t("setUpRecurring")}
-            </Button>
-          </div>
-        )}
-        <Button onClick={() => { store.reset(); router.push("/dashboard") }} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white px-8 h-11">
-          {t("goToMyBookings")}
-        </Button>
-      </div>
+      <BookingSuccessScreen
+        bookingNumber={success.bookingNumber}
+        frequency={store.frequency}
+        isConcreteRecurring={isConcreteRecurring}
+        recurringSetupResult={recurringSetupResult}
+        onSetUpRecurring={() => { const id = success.bookingId; store.reset(); router.push(`/recurring/new?bookingId=${id}`) }}
+        onGoToBookings={() => { store.reset(); router.push("/dashboard") }}
+      />
     )
   }
 
@@ -371,149 +397,35 @@ export default function BookStep5Page() {
         <h1 className="font-serif text-3xl font-bold text-[#2B3441] text-center mb-2">{t("reviewAndPayTitle")}</h1>
         <p className="text-center text-[#6B7280] mb-8">{t("reviewAndPaySubtitle")}</p>
 
-        {/* Order summary — always visible */}
-        <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-4">
-          <h2 className="font-semibold text-[#2B3441] mb-4">{t("orderSummary")}</h2>
-          {loading && !amounts ? (
-            <div className="flex items-center justify-center py-6 gap-3">
-              <Loader2 size={18} className="animate-spin text-[#2D7A5F]" />
-              <span className="text-sm text-[#6B7280]">{t("loadingPricing")}</span>
-            </div>
-          ) : amounts ? (
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between text-[#6B7280]">
-                <span>{CATEGORY_SERVICE_KEYS[store.categoryId ?? ""] ? t(CATEGORY_SERVICE_KEYS[store.categoryId ?? ""]) : t("defaultCleaningService")}</span>
-                <span>{formatCurrency(amounts.subtotalCents, currency)}</span>
-              </div>
-              {/* Per-hour breakdown — the client always sees the amount they pay per hour. */}
-              {hourlyRateCents !== null && (
-                <p className="text-xs text-[#9CA3AF] -mt-1">
-                  {t("rateBreakdown", { rate: formatCurrency(hourlyRateCents, currency), hours: store.durationMinutes % 60 === 0 ? String(store.durationMinutes / 60) : (store.durationMinutes / 60).toFixed(1) })}
-                </p>
-              )}
-
-              {/* Promo code input */}
-              {step === "summary" && (
-                <>
-                  <div className="border-t border-[#E5EBF0] my-2" />
-                  {promoCodeId ? (
-                    <div className="flex items-center justify-between rounded-xl bg-[#F4FAF6] border border-[#2D7A5F]/30 px-3 py-2.5">
-                      <div className="flex items-center gap-2">
-                        <Tag size={13} className="text-[#2D7A5F]" />
-                        <span className="text-[#2B3441] font-medium">{promoLabel}</span>
-                        <span className="text-xs text-[#2D7A5F]">{t("promoApplied")}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#2D7A5F] font-semibold">-{formatCurrency(promoDiscountCents, currency)}</span>
-                        <button onClick={removePromoCode} className="text-[#9CA3AF] hover:text-[#6B7280]" aria-label={t("removePromoAria")}>
-                          <X size={14} />
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder={t("promoPlaceholder")}
-                        value={promoCode}
-                        onChange={(e) => { setPromoCode(e.target.value); setPromoError(null) }}
-                        onKeyDown={(e) => e.key === "Enter" && applyPromoCode()}
-                        className="h-9 text-sm border-[#E5EBF0] focus-visible:ring-[#2D7A5F]"
-                      />
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={applyPromoCode}
-                        disabled={promoLoading || !promoCode.trim()}
-                        className="h-9 px-4 border-[#2D7A5F] text-[#2D7A5F] hover:bg-[#F4FAF6] shrink-0"
-                      >
-                        {promoLoading ? <Loader2 size={14} className="animate-spin" /> : t("apply")}
-                      </Button>
-                    </div>
-                  )}
-                  {promoError && <p className="text-red-500 text-xs">{promoError}</p>}
-                </>
-              )}
-
-              {/* Carbon offset toggle */}
-              <div className="border-t border-[#E5EBF0] my-2" />
-              <label className={`flex items-center justify-between cursor-pointer rounded-xl px-3 py-2.5 transition-colors ${addCarbonOffset ? "bg-[#F4FAF6] border border-[#2D7A5F]/30" : "hover:bg-gray-50"}`}>
-                <div className="flex items-center gap-2.5">
-                  <input
-                    type="checkbox"
-                    checked={addCarbonOffset}
-                    onChange={(e) => setAddCarbonOffset(e.target.checked)}
-                    disabled={step === "payment"}
-                    className="h-4 w-4 accent-[#2D7A5F] rounded"
-                  />
-                  <div>
-                    <div className="flex items-center gap-1.5">
-                      <Leaf size={13} className="text-[#2D7A5F]" />
-                      <span className="text-[#2B3441] font-medium">{t("carbonOffset")}</span>
-                    </div>
-                    <p className="text-xs text-[#9CA3AF]">{t("carbonOffsetDescription")}</p>
-                  </div>
-                </div>
-                <span className="text-[#6B7280] font-medium">{addCarbonOffset ? formatCurrency(CARBON_OFFSET_CENTS, currency) : "—"}</span>
-              </label>
-
-              {/* Referral discount balance toggle — only shown when the client actually has one */}
-              {referralBalanceCents > 0 && (
-                <>
-                  <div className="border-t border-[#E5EBF0] my-2" />
-                  <label className={`flex items-center justify-between cursor-pointer rounded-xl px-3 py-2.5 transition-colors ${applyReferralCredit ? "bg-[#F4FAF6] border border-[#2D7A5F]/30" : "hover:bg-gray-50"}`}>
-                    <div className="flex items-center gap-2.5">
-                      <input
-                        type="checkbox"
-                        checked={applyReferralCredit}
-                        onChange={(e) => setApplyReferralCredit(e.target.checked)}
-                        disabled={step === "payment"}
-                        className="h-4 w-4 accent-[#2D7A5F] rounded"
-                      />
-                      <div>
-                        <div className="flex items-center gap-1.5">
-                          <Wallet size={13} className="text-[#2D7A5F]" />
-                          <span className="text-[#2B3441] font-medium">{t("useReferralBalance")}</span>
-                        </div>
-                        <p className="text-xs text-[#9CA3AF]">{t("referralBalanceAvailable", { amount: formatCurrency(referralBalanceCents, currency) })}</p>
-                      </div>
-                    </div>
-                    <span className="text-[#2D7A5F] font-semibold">
-                      {applyReferralCredit ? `-${formatCurrency(step === "payment" ? referralCreditAppliedCents : previewReferralCreditCents, currency)}` : "—"}
-                    </span>
-                  </label>
-                </>
-              )}
-
-              <div className="border-t border-[#E5EBF0] my-2" />
-              <div className="flex justify-between font-bold text-[#2B3441] text-base">
-                <span>{t("totalChargedToday")}</span>
-                <span className="text-[#2D7A5F]">{formatCurrency(totalWithOffset ?? amounts.totalCharged, currency)}</span>
-              </div>
-              <p className="text-xs text-[#9CA3AF]">{t("preAuthNote")}</p>
-
-              {step === "summary" && (
-                <>
-                  <div className="border-t border-[#E5EBF0] my-2" />
-                  <label className="flex items-start gap-2.5 cursor-pointer pt-1">
-                    <input
-                      type="checkbox"
-                      checked={store.acceptedCancellationPolicy}
-                      onChange={(e) => store.setAcceptedCancellationPolicy(e.target.checked)}
-                      className="mt-0.5 h-4 w-4 accent-[#2D7A5F] rounded shrink-0"
-                    />
-                    <span className="text-xs text-[#6B7280] leading-relaxed">
-                      {t.rich("acceptCancellationPolicy", {
-                        link: (chunks) => (
-                          <a href="/legal/terms#cancellation-policy" target="_blank" className="text-[#2D7A5F] underline">{chunks}</a>
-                        ),
-                      })}
-                    </span>
-                  </label>
-                </>
-              )}
-            </div>
-          ) : null}
-        </div>
+        <OrderSummaryCard
+          currency={currency}
+          loading={loading}
+          amounts={amounts}
+          hourlyRateCents={hourlyRateCents}
+          step={step}
+          isConcreteRecurring={isConcreteRecurring}
+          totalWithOffset={totalWithOffset}
+          promo={{
+            code: promoCode,
+            setCode: setPromoCode,
+            codeId: promoCodeId,
+            label: promoLabel,
+            discountCents: promoDiscountCents,
+            loading: promoLoading,
+            error: promoError,
+            setError: setPromoError,
+            apply: applyPromoCode,
+            remove: removePromoCode,
+          }}
+          carbonOffset={{ enabled: addCarbonOffset, setEnabled: setAddCarbonOffset, cents: CARBON_OFFSET_CENTS }}
+          referral={{
+            balanceCents: referralBalanceCents,
+            apply: applyReferralCredit,
+            setApply: setApplyReferralCredit,
+            appliedCents: referralCreditAppliedCents,
+            previewCents: previewReferralCreditCents,
+          }}
+        />
 
         {error && (
           <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
@@ -521,31 +433,14 @@ export default function BookStep5Page() {
 
         {/* Payout-fallback: cleaner's payout account isn't ready — save/confirm the card + book. */}
         {step === "summary" && payoutFallback && (
-          <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-6 space-y-3">
-            <p className="text-sm font-semibold text-[#2B3441]">{t("payoutFallbackTitle")}</p>
-            <p className="text-xs text-[#6B7280]">{t("payoutFallbackBody")}</p>
-            {savedCard ? (
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 rounded-lg border border-[#E5EBF0] bg-[#F4FAF6] px-3 py-2.5 text-sm text-[#2B3441]">
-                  <CreditCard size={16} className="text-[#2D7A5F]" />
-                  <span className="capitalize">{savedCard.brand}</span>
-                  <span>•••• {savedCard.last4}</span>
-                </div>
-                <Button onClick={bookWithoutCard} disabled={loading} className="w-full h-11 bg-[#2D7A5F] hover:bg-[#235f49] text-white font-semibold">
-                  {loading ? <><Loader2 size={16} className="animate-spin mr-2" />{t("preparingPayment")}</> : t("confirmBookingRequest")}
-                </Button>
-                <button type="button" onClick={() => void loadNewCardForm()} disabled={loading} className="w-full text-center text-xs text-[#6B7280] underline hover:text-[#2B3441] transition-colors">
-                  {t("useDifferentCard")}
-                </button>
-              </div>
-            ) : saveCardSecret ? (
-              <Elements stripe={stripePromise} options={{ clientSecret: saveCardSecret, appearance: { theme: "stripe", variables: { colorPrimary: "#2D7A5F" } } }}>
-                <AddCardForm onDone={() => { void bookWithoutCard() }} onCancel={() => setPayoutFallback(false)} />
-              </Elements>
-            ) : (
-              <div className="flex justify-center py-3"><Loader2 size={18} className="animate-spin text-[#2D7A5F]" /></div>
-            )}
-          </div>
+          <PayoutFallbackCard
+            loading={loading}
+            savedCard={savedCard}
+            saveCardSecret={saveCardSecret}
+            onBookWithoutCard={() => void bookWithoutCard()}
+            onLoadNewCardForm={() => void loadNewCardForm()}
+            onCancel={() => setPayoutFallback(false)}
+          />
         )}
 
         {/* Step: summary → show proceed button */}
@@ -553,12 +448,14 @@ export default function BookStep5Page() {
           <div className="space-y-3 mb-6">
             <Button
               onClick={proceedToPayment}
-              disabled={loading || !store.acceptedCancellationPolicy}
+              disabled={loading || !store.acceptedCancellationPolicy || (isConcreteRecurring && !store.acceptedAutoRenewConsent)}
               className="w-full h-12 bg-[#2D7A5F] hover:bg-[#235f49] text-white font-semibold text-base"
             >
               {loading ? <><Loader2 size={18} className="animate-spin mr-2" />{t("preparingPayment")}</> : t("continueToPayment")}
             </Button>
-            {/* No-card path: booking is created without a hold; the cleaner is warned. */}
+            {/* No-card path: booking is created without a hold; the cleaner is warned. Auto-renew
+                consent isn't required here — with no card on file, no schedule can be auto-created
+                either way, so a recurring client just falls back to the manual setup prompt below. */}
             <Button
               variant="outline"
               onClick={bookWithoutCard}
@@ -593,7 +490,13 @@ export default function BookStep5Page() {
                     requestedDays: store.frequency !== "one_time" && store.recurringDays.length ? store.recurringDays : undefined,
                     acceptedCancellationPolicy: store.acceptedCancellationPolicy,
                   }}
-                  onSuccess={(id, num) => setSuccess({ bookingId: id, bookingNumber: num })}
+                  onSuccess={(id, num) => {
+                    setSuccess({ bookingId: id, bookingNumber: num })
+                    if (isConcreteRecurring && store.acceptedAutoRenewConsent && intentId) {
+                      setRecurringSetupResult("pending")
+                      void maybeSetupRecurringSchedule(intentId, serviceId).then(setRecurringSetupResult)
+                    }
+                  }}
                 />
               </Elements>
             ) : (

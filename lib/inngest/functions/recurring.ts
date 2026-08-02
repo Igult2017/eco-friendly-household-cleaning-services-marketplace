@@ -1,9 +1,14 @@
 import { inngest } from "../client"
 import { db } from "@/lib/db"
 import { recurringSchedules, bookings, notifications, providerServices, providers, users, payments } from "@/lib/db/schema"
-import { eq, and, lte, isNotNull } from "drizzle-orm"
+import { eq, and, lte, isNotNull, sql } from "drizzle-orm"
 import { redis } from "@/lib/redis/client"
-import { calculateBookingAmounts, stripe } from "@/lib/stripe/client"
+import { calculateDiscountedBookingAmounts, stripe } from "@/lib/stripe/client"
+
+// The recurring discount only applies to a schedule's first N occurrences (the client's 2nd and
+// 3rd cleaning overall, counting their first ad-hoc booking as #1) — after that it reverts to
+// full price. Not admin-configurable: this is a fixed onboarding incentive, not an ongoing rate.
+const RECURRING_DISCOUNT_OCCURRENCE_CAP = 2
 import { getCommissionPct, getRecurringDiscountPct } from "@/lib/platform/settings"
 import { getCurrencyForCountry } from "@/lib/utils/locale"
 
@@ -124,14 +129,14 @@ export const recurringBookingCron = inngest.createFunction(
           return
         }
 
-        // Admin-set recurring loyalty discount (platform-wide — was previously per-cleaner):
-        // applied to every recurring booking, regardless of which cleaner is assigned.
+        // Admin-set recurring loyalty discount (platform-wide — was previously per-cleaner), capped
+        // at this schedule's first 2 occurrences and funded entirely from platform commission — the
+        // cleaner is always paid as if the job were full price (see calculateDiscountedBookingAmounts).
         const baseSubtotal = service?.basePrice ?? 0
-        const recurringDiscountPct = await getRecurringDiscountPct()
-        const recurringDiscountCents = Math.round(baseSubtotal * recurringDiscountPct / 100)
-        const subtotal = Math.max(0, baseSubtotal - recurringDiscountCents)
         const commissionPct = await getCommissionPct()
-        const amounts = calculateBookingAmounts(subtotal, commissionPct)
+        const discountEligible = schedule.occurrencesCreated < RECURRING_DISCOUNT_OCCURRENCE_CAP
+        const recurringDiscountPct = discountEligible ? await getRecurringDiscountPct() : 0
+        const amounts = calculateDiscountedBookingAmounts(baseSubtotal, commissionPct, recurringDiscountPct)
         // Charge recurring bookings in the cleaner's own currency (US → USD, else EUR).
         const chargeCurrency = getCurrencyForCountry(providerRow.country).toLowerCase()
         const bookingNumber = await generateBookingNumber()
@@ -157,7 +162,7 @@ export const recurringBookingCron = inngest.createFunction(
             totalAmount: amounts.totalCharged,
             providerPayout: amounts.providerPayout,
             carbonOffsetAmount: 0,
-            discountAmount: recurringDiscountCents,
+            discountAmount: amounts.discountCents,
             completionPhotoUrls: [],
           })
           .returning({ id: bookings.id })
@@ -236,7 +241,10 @@ export const recurringBookingCron = inngest.createFunction(
 
         const nextDate = addFrequencyInTZ(scheduledAt, schedule.frequency, schedule.timezone)
         await db.update(recurringSchedules)
-          .set({ nextBookingAt: nextDate, updatedAt: new Date() })
+          // Counts against the discount cap regardless of payment outcome — the occurrence itself
+          // happened/was attempted on schedule; only the "existing booking" and "provider skipped"
+          // paths above (which never reach here) don't represent a real occurrence.
+          .set({ nextBookingAt: nextDate, occurrencesCreated: sql`occurrences_created + 1`, updatedAt: new Date() })
           .where(eq(recurringSchedules.id, schedule.id))
 
         if (!paymentFailed) {

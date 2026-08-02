@@ -11,7 +11,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     const categorySlug = searchParams.get("categorySlug")
 
     const [provider] = await db
-      .select({ id: providers.id })
+      .select({ id: providers.id, timezone: providers.timezone })
       .from(providers)
       .where(and(eq(providers.id, id), eq(providers.isApproved, true), eq(providers.isSuspended, false)))
 
@@ -45,7 +45,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       ? services.filter((s) => s.categoryId === wantedCategoryId || (Array.isArray(s.categoryIds) && s.categoryIds.includes(wantedCategoryId!)))
       : services
 
-    return NextResponse.json({ services: filtered })
+    // Surfaced so the booking wizard can set up a recurring schedule (needs the cleaner's tz to
+    // compute the next occurrence) without a second round-trip to the availability endpoint.
+    return NextResponse.json({ services: filtered, providerTimezone: provider.timezone ?? "Europe/Amsterdam" })
   } catch (err) {
     console.error("[providers/[id]/services GET]", err)
     void logError({ message: "[providers/[id]/services GET]", error: err, route: "/api/providers/[id]/services", severity: "error" })

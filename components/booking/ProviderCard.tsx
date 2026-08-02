@@ -25,6 +25,9 @@ export function ProviderCard({ provider, onSelect, selected }: Props) {
   const t = useTranslations("compBookingProviderCard")
   const distKm = (provider.distanceMeters / 1000).toFixed(1)
   const ecoLabel = provider.ecoLevel.replace("_", " ").replace(/\b\w/g, (c) => c.toUpperCase())
+  // Real signal (providers.last_active_at, stamped on every /provider/* page load) — replaces the
+  // unconditional fake presence dot this card used to show.
+  const isRecentlyActive = !!provider.lastActiveAt && Date.now() - new Date(provider.lastActiveAt).getTime() < 24 * 60 * 60 * 1000
 
   return (
     <div
@@ -48,7 +51,14 @@ export function ProviderCard({ provider, onSelect, selected }: Props) {
               {provider.businessName[0]}
             </div>
           )}
-          <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-400 border-2 border-white rounded-full" />
+          {isRecentlyActive && (
+            <span
+              role="status"
+              aria-label={t("recentlyActive")}
+              title={t("recentlyActive")}
+              className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-400 border-2 border-white rounded-full"
+            />
+          )}
         </div>
 
         <div className="flex-1 min-w-0">

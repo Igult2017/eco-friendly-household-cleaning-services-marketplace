@@ -26,6 +26,7 @@ export interface GeoProvider {
   isApproved: boolean; verificationStatus?: string | null; distanceMeters: number
   // Cheapest active service — surfaced on result cards as a "from" price.
   serviceBasePrice?: number | null; priceUnit?: string | null
+  lastActiveAt?: string | Date | null
 }
 
 // Attach each provider's cheapest active service price (one extra query, no
@@ -76,7 +77,7 @@ async function findProvidersHaversine(params: {
         p.average_rating AS "averageRating", p.total_reviews AS "totalReviews",
         p.total_jobs_completed AS "totalJobsCompleted",
         p.profile_photo_url AS "profilePhotoUrl", p.is_approved AS "isApproved",
-        p.verification_status AS "verificationStatus",
+        p.verification_status AS "verificationStatus", p.last_active_at AS "lastActiveAt",
         GREATEST(COALESCE(p.service_radius_km, 25), 1) * 1000 AS "serviceRadiusM",
         6371000 * 2 * ASIN(SQRT(
           POWER(SIN(RADIANS((p.latitude - ${latitude}) / 2)), 2) +
@@ -124,7 +125,7 @@ export async function findProvidersNearLocation(params: {
         p.average_rating AS "averageRating", p.total_reviews AS "totalReviews",
         p.total_jobs_completed AS "totalJobsCompleted",
         p.profile_photo_url AS "profilePhotoUrl", p.is_approved AS "isApproved",
-        p.verification_status AS "verificationStatus",
+        p.verification_status AS "verificationStatus", p.last_active_at AS "lastActiveAt",
         ST_Distance(p.location, ST_SetSRID(ST_MakePoint(${longitude}, ${latitude}), 4326)::geography)
           AS "distanceMeters"
       FROM providers p

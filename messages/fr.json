@@ -232,7 +232,14 @@
     "fromPrice": "À partir de {price}",
     "bookNow": "Réserver",
     "servicesHeading": "Services",
-    "reviewsHeading": "Avis"
+    "reviewsHeading": "Avis",
+    "availabilityHeading": "Disponibilité",
+    "responseTime_under1h": "Répond généralement en moins d'une heure",
+    "responseTime_under3h": "Répond généralement en quelques heures",
+    "responseTime_sameDay": "Répond généralement en une journée",
+    "responseTime_within2days": "Répond généralement en 2 jours",
+    "responseTime_slower": "Le temps de réponse varie",
+    "lastActive": "Dernière activité {time}"
   },
   "sustainability": {
     "metaTitle": "Impact écologique — DORIXÉ",
@@ -635,7 +642,12 @@
     "payoutFallbackTitle": "Enregistrez votre carte pour sécuriser cette réservation",
     "payoutFallbackBody": "Cet intervenant finalise encore la configuration de ses versements, le paiement ne peut donc pas encore être autorisé — cela ne concerne pas votre carte. Enregistrez-la maintenant : votre réservation est créée, rien n est débité avant la fin du travail, et le paiement est prélevé automatiquement après votre double confirmation.",
     "confirmBookingRequest": "Confirmer la demande de réservation",
-    "useDifferentCard": "Utiliser une autre carte"
+    "useDifferentCard": "Utiliser une autre carte",
+    "autoRenewConsentLabel": "J'autorise DORIXÉ à débiter automatiquement ma carte enregistrée pour chaque ménage futur jusqu'à l'annulation de ce rythme.",
+    "recurringAutoSetTitle": "Récurrence configurée !",
+    "recurringAutoSetText": "Votre carte sera débitée automatiquement pour les prochains ménages — gérez ou annulez à tout moment depuis Mes réservations.",
+    "recurringSettingUp": "Configuration de votre récurrence…",
+    "recurringAutoSetFailed": "Nous n'avons pas pu configurer le prélèvement automatique. Configurez-le manuellement ci-dessous."
   },
   "customerBookExtrasPage": {
     "heading": "Des demandes particulières ?",
@@ -678,7 +690,8 @@
     "preBannerTitle": "Réservation avec {name}",
     "preBannerHint": "Seuls les services proposés par cet intervenant sont sélectionnables.",
     "notOfferedBadge": "Non proposé",
-    "changeCleaner": "Changer d'intervenant"
+    "changeCleaner": "Changer d'intervenant",
+    "recurringBenefitBanner": "💡 Choisissez le ménage récurrent et économisez {pct}% sur votre 2ᵉ et 3ᵉ ménage — automatiquement, sans impact pour l'intervenant."
   },
   "customerBookProvidersPage": {
     "heading": "Où avez-vous besoin d'un ménage ?",
@@ -725,8 +738,10 @@
     "freq_biweekly": "Toutes les 2 semaines",
     "freq_monthly": "Mensuel",
     "slotBooked": "Réservé",
-    "recurringDaysLabel": "Quels jours ?",
-    "recurringDaysHint": "Choisissez les jours de la semaine pour le ménage récurrent."
+    "recurringDaysLabel": "Quel jour ?",
+    "recurringDaysHint": "Choisissez le jour de la semaine pour le ménage récurrent.",
+    "viewFullCalendar": "Voir le calendrier de disponibilité complet",
+    "hideFullCalendar": "Masquer le calendrier de disponibilité"
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Échec du chargement de la réservation",
@@ -1394,7 +1409,8 @@
     "from": "À partir de",
     "jobsDone": "{count, plural, one {# mission réalisée} other {# missions réalisées}}",
     "selected": "✓ Sélectionné",
-    "selectProvider": "Choisir ce prestataire"
+    "selectProvider": "Choisir ce prestataire",
+    "recentlyActive": "Actif au cours des dernières 24 heures"
   },
   "compBookingRecurringScheduleCard": {
     "withBusiness": "avec {businessName}",
@@ -2131,5 +2147,10 @@
   },
   "compBackButton": {
     "back": "Retour"
+  },
+  "compProviderAvailabilityCalendar": {
+    "legendFree": "Libre",
+    "legendBooked": "Réservé",
+    "legendUnavailable": "Indisponible"
   }
 }

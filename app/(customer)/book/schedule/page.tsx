@@ -11,6 +11,8 @@ import { cn } from "@/lib/utils"
 import { useTranslations } from "next-intl"
 import { zonedTimeToUtc } from "@/lib/utils/tz"
 import { BackButton } from "@/components/ui/BackButton"
+import { ProviderAvailabilityCalendar } from "@/components/booking/ProviderAvailabilityCalendar"
+import { CalendarDays } from "lucide-react"
 
 const DURATION_OPTIONS = [
   { value: 60, hours: 1 },
@@ -21,8 +23,6 @@ const DURATION_OPTIONS = [
 ]
 
 const TIME_SLOTS = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"]
-
-const FREQUENCY_OPTIONS = ["one_time", "weekly", "biweekly", "monthly"] as const
 
 function getNext14Days(): string[] {
   const days: string[] = []
@@ -38,7 +38,9 @@ function getNext14Days(): string[] {
 export default function BookStep3Page() {
   const t = useTranslations("customerBookSchedulePage")
   const router = useRouter()
-  const { selectedProviderId, setSchedule, scheduledAt, scheduledDateStr, scheduledTimeStr, durationMinutes, frequency, setFrequency, recurringDays, setRecurringDays } = useBookingStore()
+  // frequency/recurringDays are read-only here now — they're SET on step 1 (the wizard's first
+  // decision), this step just uses the picked weekday to filter which dates make sense to show.
+  const { selectedProviderId, setSchedule, scheduledAt, scheduledDateStr, scheduledTimeStr, durationMinutes, frequency, recurringDays } = useBookingStore()
 
   // scheduledAt is now an ISO string; convert back to local date/time parts for display
   const restoreDate = (iso: string | null) => {
@@ -59,26 +61,11 @@ export default function BookStep3Page() {
   const [selectedDuration, setSelectedDuration] = useState(durationMinutes)
   const [availability, setAvailability] = useState<{ available: boolean; timezone?: string; workingHours?: { start: string; end: string }; bookedSlots?: { start: string; end: string | null }[] } | null>(null)
   const [loadingAvail, setLoadingAvail] = useState(false)
+  const [showCalendar, setShowCalendar] = useState(false)
 
   useEffect(() => {
     if (!selectedProviderId) { router.replace("/book"); return }
   }, [selectedProviderId, router])
-
-  // Pre-fill the cadence from the client's stated profile preference (once per session) so a "I want
-  // weekly cleaning" preference flows into the booking — they can still change it here.
-  useEffect(() => {
-    if (frequency !== "one_time") return
-    if (typeof window !== "undefined" && sessionStorage.getItem("recurringPrefApplied")) return
-    fetch("/api/customers/profile")
-      .then((r) => r.json())
-      .then((d) => {
-        const pref = d?.user?.recurringInterest
-        if (typeof window !== "undefined") sessionStorage.setItem("recurringPrefApplied", "1")
-        if (pref && pref !== "none" && pref !== "one_time") setFrequency(pref)
-      })
-      .catch(() => {})
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   useEffect(() => {
     if (!selectedDate || !selectedProviderId) return
@@ -107,7 +94,11 @@ export default function BookStep3Page() {
     router.push("/book/extras")
   }
 
-  const days = getNext14Days()
+  // For a recurring booking with a weekday already picked in step 1, only offer dates that actually
+  // fall on that weekday — the recurring schedule will run on that day every cycle, so showing every
+  // day of the fortnight here (most of which could never be chosen) was pure noise.
+  const recurringWeekday = frequency !== "one_time" && recurringDays.length > 0 ? recurringDays[0] : null
+  const days = getNext14Days().filter((d) => recurringWeekday === null || new Date(d).getDay() === recurringWeekday)
   const availableSlots = filterSlots(TIME_SLOTS)
 
   // Grey out slots the cleaner is already booked for, so the client sees conflicts up front (not just
@@ -139,6 +130,22 @@ export default function BookStep3Page() {
           {t("heading")}
         </h1>
         <p className="text-center text-[#6B7280] mb-8">{t("subheading")}</p>
+
+        {/* Read-only "is this cleaner free or booked, and on which dates" view — the strip below
+            stays the actual selection UI; this is broader context, so it's opt-in, not always on. */}
+        <button
+          type="button"
+          onClick={() => setShowCalendar((v) => !v)}
+          className="flex items-center gap-1.5 text-sm font-medium text-[#2D7A5F] hover:underline mb-4"
+        >
+          <CalendarDays size={15} />
+          {showCalendar ? t("hideFullCalendar") : t("viewFullCalendar")}
+        </button>
+        {showCalendar && selectedProviderId && (
+          <div className="mb-4">
+            <ProviderAvailabilityCalendar providerId={selectedProviderId} />
+          </div>
+        )}
 
         <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-4">
           <Label className="text-sm font-semibold text-[#2B3441] mb-3 block">{t("selectDateLabel")}</Label>
@@ -223,51 +230,6 @@ export default function BookStep3Page() {
               </button>
             ))}
           </div>
-        </div>
-
-        <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-6">
-          <Label className="text-sm font-semibold text-[#2B3441] mb-1 block">{t("frequencyLabel")}</Label>
-          <p className="text-xs text-[#6B7280] mb-3">{t("frequencyHint")}</p>
-          <div className="flex flex-wrap gap-2">
-            {FREQUENCY_OPTIONS.map((f) => (
-              <button
-                key={f}
-                onClick={() => setFrequency(f)}
-                className={cn(
-                  "px-4 py-2 rounded-lg text-sm font-medium border-2 transition-all",
-                  frequency === f
-                    ? "border-[#2D7A5F] bg-[#2D7A5F] text-white"
-                    : "border-[#E5EBF0] hover:border-[#4CB87A] text-[#2B3441]"
-                )}
-              >
-                {t(`freq_${f}`)}
-              </button>
-            ))}
-          </div>
-
-          {frequency !== "one_time" && (
-            <div className="mt-4 border-t border-[#E5EBF0] pt-4">
-              <Label className="text-sm font-semibold text-[#2B3441] mb-1 block">{t("recurringDaysLabel")}</Label>
-              <p className="text-xs text-[#6B7280] mb-3">{t("recurringDaysHint")}</p>
-              <div className="flex flex-wrap gap-2">
-                {[1, 2, 3, 4, 5, 6, 0].map((d) => (
-                  <button
-                    key={d}
-                    onClick={() => setRecurringDays(recurringDays.includes(d) ? recurringDays.filter((x) => x !== d) : [...recurringDays, d])}
-                    className={cn(
-                      "px-3 py-2 rounded-lg text-sm font-medium border-2 transition-all",
-                      recurringDays.includes(d)
-                        ? "border-[#2D7A5F] bg-[#2D7A5F] text-white"
-                        : "border-[#E5EBF0] hover:border-[#4CB87A] text-[#2B3441]"
-                    )}
-                  >
-                    {/* 2024-01-07 is a Sunday — offset by d for a locale-aware weekday name. */}
-                    {new Date(Date.UTC(2024, 0, 7 + d)).toLocaleDateString(undefined, { weekday: "short", timeZone: "UTC" })}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
         <div className="flex gap-3">

@@ -23,3 +23,24 @@ export function calculateBookingAmounts(subtotalCents: number, pct: number = PLA
   const providerPayout = subtotalCents - platformFee // cleaner nets the rate minus commission
   return { subtotalCents, platformFee, totalCharged, providerPayout }
 }
+
+/** Like calculateBookingAmounts, but for a discount that must come ENTIRELY out of the platform's
+ * own commission — never the cleaner's payout (e.g. the recurring-cleaning discount on a client's
+ * 2nd/3rd cleaning). The cleaner is always paid exactly what they'd get on a full-price job of this
+ * size; the discount is subtracted from platformFee instead, clamped so it can never push the fee
+ * (or the customer's charge) below zero. subtotalCents stays the UNDISCOUNTED service price — it's
+ * what the cleaner's payout is computed from — while totalCharged is the discounted amount the
+ * customer actually pays. platformFee + providerPayout always sums back to totalCharged, which is
+ * what a Stripe destination charge (application_fee_amount + implicit transfer) requires to balance. */
+export function calculateDiscountedBookingAmounts(subtotalCents: number, commissionPct: number, discountPct: number) {
+  const full = calculateBookingAmounts(subtotalCents, commissionPct)
+  const rawDiscountCents = Math.round(subtotalCents * (discountPct / 100))
+  const discountCents = Math.max(0, Math.min(rawDiscountCents, full.platformFee))
+  return {
+    subtotalCents,
+    totalCharged: subtotalCents - discountCents,
+    platformFee: full.platformFee - discountCents,
+    providerPayout: full.providerPayout, // unchanged — the discount never reduces the cleaner's cut
+    discountCents,
+  }
+}

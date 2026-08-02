@@ -29,7 +29,7 @@ interface BookingDraft {
   frequency: "one_time" | "recurring" | "weekly" | "biweekly" | "monthly"
   recurringDays: number[]         // 0=Sun..6=Sat — which weekdays the client wants repeat service on
   acceptedCancellationPolicy: boolean // persisted so a 3DS redirect-and-return doesn't lose consent
-  step: 1 | 2 | 3 | 4 | 5
+  acceptedAutoRenewConsent: boolean   // required when frequency !== one_time — same 3DS-survival reason
 }
 
 interface BidFlowData {
@@ -57,8 +57,8 @@ interface BookingStore extends BookingDraft {
   setCarbonOffset: (cents: number) => void
   setFrequency: (frequency: BookingDraft["frequency"]) => void
   setRecurringDays: (days: number[]) => void
-  setStep: (step: BookingDraft["step"]) => void
   setAcceptedCancellationPolicy: (accepted: boolean) => void
+  setAcceptedAutoRenewConsent: (accepted: boolean) => void
   setBidFlow: (data: BidFlowData) => void  // pre-populate all wizard fields from accepted bid
   reset: () => void
 }
@@ -85,7 +85,7 @@ const initialState: BookingDraft = {
   frequency: "one_time",
   recurringDays: [],
   acceptedCancellationPolicy: false,
-  step: 1,
+  acceptedAutoRenewConsent: false,
 }
 
 export const useBookingStore = create<BookingStore>()(
@@ -94,23 +94,23 @@ export const useBookingStore = create<BookingStore>()(
       ...initialState,
       // Wizard setters clear any leftover bid draft — a persisted bidAmountCents from an old accepted
       // bid otherwise poisons the price of every later wizard/preselected booking.
-      setCategory: (id, name) => set({ categoryId: id, categoryName: name, bidAmountCents: null, step: 2 }),
+      setCategory: (id, name) => set({ categoryId: id, categoryName: name, bidAmountCents: null }),
       setAddress: (address, latitude, longitude) => set({ address, latitude, longitude }),
       setProvider: (selectedProviderId, providerCountry = null) =>
-        set({ selectedProviderId, providerCountry, providerPreselected: false, providerName: null, bidAmountCents: null, step: 3 }),
+        set({ selectedProviderId, providerCountry, providerPreselected: false, providerName: null, bidAmountCents: null }),
       setPreselectedProvider: (selectedProviderId, providerName, providerCountry = null) =>
         set({ selectedProviderId, providerName, providerCountry, providerPreselected: true, bidAmountCents: null }),
       clearPreselection: () =>
         set({ selectedProviderId: null, providerName: null, providerCountry: null, providerPreselected: false }),
       setSchedule: (date, durationMinutes, dateStr, timeStr) =>
-        set({ scheduledAt: date.toISOString(), durationMinutes, scheduledDateStr: dateStr ?? null, scheduledTimeStr: timeStr ?? null, step: 4 }),
+        set({ scheduledAt: date.toISOString(), durationMinutes, scheduledDateStr: dateStr ?? null, scheduledTimeStr: timeStr ?? null }),
       setExtras: (specialInstructions, ecoOptions, addOnIds) =>
-        set({ specialInstructions, ecoOptions, addOnIds, step: 5 }),
+        set({ specialInstructions, ecoOptions, addOnIds }),
       setCarbonOffset: (carbonOffsetCents) => set({ carbonOffsetCents }),
       setFrequency: (frequency) => set({ frequency }),
       setRecurringDays: (recurringDays) => set({ recurringDays }),
-      setStep: (step) => set({ step }),
       setAcceptedCancellationPolicy: (acceptedCancellationPolicy) => set({ acceptedCancellationPolicy }),
+      setAcceptedAutoRenewConsent: (acceptedAutoRenewConsent) => set({ acceptedAutoRenewConsent }),
       setBidFlow: (data) =>
         set({
           selectedProviderId: data.providerId,
@@ -128,7 +128,7 @@ export const useBookingStore = create<BookingStore>()(
           )
             ? (data.requestedFrequency as BookingDraft["frequency"])
             : "one_time",
-          step: 5,
+          acceptedAutoRenewConsent: false, // never inherit stale consent into a fresh bid-flow booking
         }),
       reset: () => set(initialState),
     }),

@@ -232,7 +232,14 @@
     "fromPrice": "Ab {price}",
     "bookNow": "Jetzt buchen",
     "servicesHeading": "Leistungen",
-    "reviewsHeading": "Bewertungen"
+    "reviewsHeading": "Bewertungen",
+    "availabilityHeading": "Verfügbarkeit",
+    "responseTime_under1h": "Antwortet meist innerhalb einer Stunde",
+    "responseTime_under3h": "Antwortet meist innerhalb weniger Stunden",
+    "responseTime_sameDay": "Antwortet meist innerhalb eines Tages",
+    "responseTime_within2days": "Antwortet meist innerhalb von 2 Tagen",
+    "responseTime_slower": "Antwortzeit variiert",
+    "lastActive": "Zuletzt aktiv {time}"
   },
   "sustainability": {
     "metaTitle": "Nachhaltigkeit & Wirkung — DORIXÉ",
@@ -635,7 +642,12 @@
     "payoutFallbackTitle": "Speichere deine Karte, um diese Buchung zu sichern",
     "payoutFallbackBody": "Diese Reinigungskraft richtet ihre Auszahlung noch ein, daher kann die Zahlung noch nicht autorisiert werden — deine Karte betrifft das nicht. Speichere sie jetzt: Deine Buchung wird erstellt, vor Abschluss der Arbeit wird nichts abgebucht, und die Zahlung erfolgt automatisch, nachdem ihr beide den Abschluss bestätigt habt.",
     "confirmBookingRequest": "Buchungsanfrage bestätigen",
-    "useDifferentCard": "Andere Karte verwenden"
+    "useDifferentCard": "Andere Karte verwenden",
+    "autoRenewConsentLabel": "Ich autorisiere DORIXÉ, meine hinterlegte Karte für jede künftige Reinigung automatisch zu belasten, bis ich diesen Rhythmus kündige.",
+    "recurringAutoSetTitle": "Wiederkehrender Rhythmus eingerichtet!",
+    "recurringAutoSetText": "Deine Karte wird für künftige Reinigungen automatisch belastet — verwalte oder kündige jederzeit unter Meine Buchungen.",
+    "recurringSettingUp": "Dein wiederkehrender Rhythmus wird eingerichtet …",
+    "recurringAutoSetFailed": "Die automatische Abrechnung konnte nicht eingerichtet werden. Richte sie unten manuell ein."
   },
   "customerBookExtrasPage": {
     "heading": "Besondere Wünsche?",
@@ -678,7 +690,8 @@
     "preBannerTitle": "Buchung bei {name}",
     "preBannerHint": "Nur Leistungen, die diese Reinigungskraft anbietet, sind wählbar.",
     "notOfferedBadge": "Nicht angeboten",
-    "changeCleaner": "Reinigungskraft wechseln"
+    "changeCleaner": "Reinigungskraft wechseln",
+    "recurringBenefitBanner": "💡 Wähle wiederkehrende Reinigung und spare {pct}% bei deiner 2. und 3. Reinigung — automatisch, ohne Nachteil für die Reinigungskraft."
   },
   "customerBookProvidersPage": {
     "heading": "Wo benötigen Sie eine Reinigung?",
@@ -725,8 +738,10 @@
     "freq_biweekly": "Alle 2 Wochen",
     "freq_monthly": "Monatlich",
     "slotBooked": "Belegt",
-    "recurringDaysLabel": "An welchen Tagen?",
-    "recurringDaysHint": "Wähle die Wochentage für die wiederkehrende Reinigung."
+    "recurringDaysLabel": "An welchem Tag?",
+    "recurringDaysHint": "Wähle den Wochentag für die wiederkehrende Reinigung.",
+    "viewFullCalendar": "Vollständigen Verfügbarkeitskalender anzeigen",
+    "hideFullCalendar": "Verfügbarkeitskalender ausblenden"
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Buchung konnte nicht geladen werden",
@@ -1394,7 +1409,8 @@
     "from": "Ab",
     "jobsDone": "{count, plural, one {# Auftrag erledigt} other {# Aufträge erledigt}}",
     "selected": "✓ Ausgewählt",
-    "selectProvider": "Anbieter auswählen"
+    "selectProvider": "Anbieter auswählen",
+    "recentlyActive": "In den letzten 24 Stunden aktiv"
   },
   "compBookingRecurringScheduleCard": {
     "withBusiness": "mit {businessName}",
@@ -2131,5 +2147,10 @@
   },
   "compBackButton": {
     "back": "Zurück"
+  },
+  "compProviderAvailabilityCalendar": {
+    "legendFree": "Frei",
+    "legendBooked": "Gebucht",
+    "legendUnavailable": "Nicht verfügbar"
   }
 }

@@ -13,6 +13,7 @@ import { CookieBanner } from "@/components/gdpr/CookieBanner"
 import { RoleSwitchToast } from "@/components/layout/RoleSwitchToast"
 import { ProviderMobileNav } from "@/components/provider/ProviderMobileNav"
 import { ProviderNav } from "@/components/layout/ProviderNav"
+import { stampProviderLastActive } from "@/lib/providers/lastActive"
 
 export default async function ProviderLayout({ children }: { children: React.ReactNode }) {
   const t = await getTranslations("providerLayout")
@@ -36,6 +37,8 @@ export default async function ProviderLayout({ children }: { children: React.Rea
   }
 
   const showSwitcher = isDual && primaryRole !== "admin"
+  // Best-effort, throttled inside — never blocks rendering the page.
+  void stampProviderLastActive(user.id).catch(() => {})
 
   return (
     <NextIntlClientProvider>

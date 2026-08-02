@@ -17,13 +17,17 @@ const createSchema = z.object({
   serviceAddress: z.record(z.string(), z.string()),
   ecoOptions: z.array(z.string()).max(10).optional(),
   specialInstructions: z.string().max(1000).optional(),
-  paymentMethodId: z.string().startsWith("pm_"),
+  paymentMethodId: z.string().startsWith("pm_").optional(),
+  // Alternative to paymentMethodId — the wizard's just-completed booking PaymentIntent. The payment
+  // method actually used for that charge is resolved server-side from it (setup_future_usage saved
+  // it), so the wizard can set up the schedule without separately asking which card to reuse.
+  paymentIntentId: z.string().startsWith("pi_").optional(),
   timezone: z.string().min(1).max(100).default("Europe/Amsterdam"),
   // The customer MUST affirmatively authorize recurring auto-charge before a schedule is created
   // (US Click-to-Cancel / state auto-renewal laws + EU). Anything other than true fails validation,
   // so a future recurring-setup UI cannot create a schedule without showing + capturing consent.
   autoRenewConsent: z.literal(true),
-})
+}).refine((d) => d.paymentMethodId || d.paymentIntentId, { message: "paymentMethodId or paymentIntentId is required" })
 
 function nextOccurrenceUTC(dayOfWeek: number, preferredTime: string, timezone: string): Date {
   const [hours, minutes] = preferredTime.split(":").map(Number)
@@ -128,8 +132,25 @@ export async function POST(req: NextRequest) {
 
     const {
       providerId, serviceId, frequency, dayOfWeek, preferredTime,
-      serviceAddress, ecoOptions, specialInstructions, paymentMethodId, timezone,
+      serviceAddress, ecoOptions, specialInstructions, timezone,
     } = parsed.data
+
+    let paymentMethodId = parsed.data.paymentMethodId
+    if (!paymentMethodId && parsed.data.paymentIntentId) {
+      const pi = await stripe.paymentIntents.retrieve(parsed.data.paymentIntentId)
+      // Ownership check — never resolve a payment method off someone ELSE's PaymentIntent.
+      if (pi.metadata?.clerk_customer_id !== userId) {
+        return NextResponse.json({ error: "That booking doesn't belong to you." }, { status: 403 })
+      }
+      const pm = typeof pi.payment_method === "string" ? pi.payment_method : pi.payment_method?.id
+      if (!pm) {
+        return NextResponse.json({ error: "Couldn't find a saved payment method on that booking." }, { status: 422 })
+      }
+      paymentMethodId = pm
+    }
+    if (!paymentMethodId) {
+      return NextResponse.json({ error: "paymentMethodId or paymentIntentId is required" }, { status: 422 })
+    }
 
     const [provider] = await db
       .select({ id: providers.id, isApproved: providers.isApproved, isSuspended: providers.isSuspended })

@@ -232,7 +232,14 @@
     "fromPrice": "From {price}",
     "bookNow": "Book now",
     "servicesHeading": "Services",
-    "reviewsHeading": "Reviews"
+    "reviewsHeading": "Reviews",
+    "availabilityHeading": "Availability",
+    "responseTime_under1h": "Usually responds within an hour",
+    "responseTime_under3h": "Usually responds within a few hours",
+    "responseTime_sameDay": "Usually responds within a day",
+    "responseTime_within2days": "Usually responds within 2 days",
+    "responseTime_slower": "Response time varies",
+    "lastActive": "Last active {time}"
   },
   "sustainability": {
     "metaTitle": "Sustainability Impact — DORIXÉ",
@@ -635,7 +642,12 @@
     "payoutFallbackTitle": "Save your card to secure this booking",
     "payoutFallbackBody": "This cleaner is still finishing their payout setup, so the payment cannot be authorized yet — but that does not affect your card. Save it now: your booking is created, nothing is charged before the work is done, and payment is collected automatically after you both confirm completion.",
     "confirmBookingRequest": "Confirm booking request",
-    "useDifferentCard": "Use a different card"
+    "useDifferentCard": "Use a different card",
+    "autoRenewConsentLabel": "I authorize DORIXÉ to automatically charge my saved card for each future cleaning until I cancel this schedule.",
+    "recurringAutoSetTitle": "Recurring schedule set up!",
+    "recurringAutoSetText": "Your card will be charged automatically for future cleanings — manage or cancel anytime from My Bookings.",
+    "recurringSettingUp": "Setting up your recurring schedule…",
+    "recurringAutoSetFailed": "We couldn't set up automatic billing. Set it up manually below."
   },
   "customerBookExtrasPage": {
     "heading": "Any special requests?",
@@ -678,7 +690,8 @@
     "preBannerTitle": "Booking with {name}",
     "preBannerHint": "Only services offered by this cleaner can be selected.",
     "notOfferedBadge": "Not offered",
-    "changeCleaner": "Change cleaner"
+    "changeCleaner": "Change cleaner",
+    "recurringBenefitBanner": "💡 Choose recurring cleaning and save {pct}% on your 2nd and 3rd cleaning — automatically, no cleaner impact."
   },
   "customerBookProvidersPage": {
     "heading": "Where do you need cleaning?",
@@ -725,8 +738,10 @@
     "freq_biweekly": "Every 2 weeks",
     "freq_monthly": "Monthly",
     "slotBooked": "Booked",
-    "recurringDaysLabel": "On which days?",
-    "recurringDaysHint": "Pick the weekdays you want the recurring cleaning on."
+    "recurringDaysLabel": "Which day?",
+    "recurringDaysHint": "Pick the weekday you want recurring cleaning on.",
+    "viewFullCalendar": "View full availability calendar",
+    "hideFullCalendar": "Hide availability calendar"
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Failed to load booking",
@@ -1394,7 +1409,8 @@
     "from": "From",
     "jobsDone": "{count, plural, one {# job done} other {# jobs done}}",
     "selected": "✓ Selected",
-    "selectProvider": "Select Cleaner"
+    "selectProvider": "Select Cleaner",
+    "recentlyActive": "Active in the last 24 hours"
   },
   "compBookingRecurringScheduleCard": {
     "withBusiness": "with {businessName}",
@@ -2131,5 +2147,10 @@
   },
   "compBackButton": {
     "back": "Back"
+  },
+  "compProviderAvailabilityCalendar": {
+    "legendFree": "Free",
+    "legendBooked": "Booked",
+    "legendUnavailable": "Unavailable"
   }
 }

@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, varchar, smallint, pgEnum, timestamp, jsonb, check, index } from "drizzle-orm/pg-core"
+import { pgTable, uuid, text, varchar, smallint, integer, pgEnum, timestamp, jsonb, check, index } from "drizzle-orm/pg-core"
 import { users } from "./users"
 import { providers } from "./providers"
 import { providerServices } from "./services"
@@ -24,6 +24,10 @@ export const recurringSchedules = pgTable("recurring_schedules", {
   // Timestamp of the customer's affirmative consent to recurring auto-charge (US auto-renewal laws /
   // Click-to-Cancel + EU). The create API requires explicit consent before a schedule can be created.
   autoRenewConsentAt: timestamp("auto_renew_consent_at", { withTimezone: true }),
+  // How many occurrences THIS schedule has generated so far — the recurring discount only applies
+  // while this is < 2 (the client's 2nd and 3rd cleaning overall, counting their first ad-hoc
+  // booking as #1). Incremented once per booking actually created, whether or not payment succeeds.
+  occurrencesCreated: integer("occurrences_created").notNull().default(0),
   nextBookingAt: timestamp("next_booking_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

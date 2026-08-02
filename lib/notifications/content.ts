@@ -436,14 +436,14 @@ const NOTIF: Record<string, Record<string, S>> = {
   // Sent once, right after a booking with a stated recurring-frequency preference completes and no
   // recurring schedule exists yet for that client+cleaner pair — nudges them to set one up.
   recurring_discount_available: {
-    en: { title: "Save {pct}% with recurring cleaning", body: "You wanted recurring cleaning — set up a repeat schedule now and get {pct}% off every booking, automatically." },
-    de: { title: "Sparen Sie {pct}% mit wiederkehrender Reinigung", body: "Sie wollten wiederkehrende Reinigung — richten Sie jetzt einen festen Rhythmus ein und erhalten Sie automatisch {pct}% Rabatt auf jede Buchung." },
-    fr: { title: "Économisez {pct}% avec le ménage récurrent", body: "Vous vouliez un ménage récurrent — configurez dès maintenant un rythme régulier et obtenez automatiquement {pct}% de réduction sur chaque réservation." },
-    es: { title: "Ahorra un {pct}% con la limpieza recurrente", body: "Querías limpieza recurrente — configura ahora un horario recurrente y obtén automáticamente un {pct}% de descuento en cada reserva." },
-    it: { title: "Risparmia il {pct}% con la pulizia ricorrente", body: "Volevi la pulizia ricorrente — imposta ora una cadenza fissa e ottieni automaticamente il {pct}% di sconto su ogni prenotazione." },
-    nl: { title: "Bespaar {pct}% met terugkerende schoonmaak", body: "Je wilde terugkerende schoonmaak — stel nu een vast schema in en krijg automatisch {pct}% korting op elke boeking." },
-    pl: { title: "Oszczędź {pct}% dzięki cyklicznemu sprzątaniu", body: "Chciałeś(-aś) cyklicznego sprzątania — ustaw teraz stały harmonogram i automatycznie otrzymuj {pct}% zniżki na każdą rezerwację." },
-    pt: { title: "Poupe {pct}% com limpeza recorrente", body: "Querias limpeza recorrente — configura agora uma agenda recorrente e recebe automaticamente {pct}% de desconto em cada reserva." },
+    en: { title: "Save {pct}% on your next 2 cleanings", body: "You wanted recurring cleaning — set up a repeat schedule now and get {pct}% off your 2nd and 3rd cleaning, automatically, on us." },
+    de: { title: "Sparen Sie {pct}% bei Ihrer 2. und 3. Reinigung", body: "Sie wollten wiederkehrende Reinigung — richten Sie jetzt einen festen Rhythmus ein und erhalten Sie automatisch {pct}% Rabatt auf Ihre 2. und 3. Reinigung, zulasten von DORIXÉ." },
+    fr: { title: "Économisez {pct}% sur votre 2ᵉ et 3ᵉ ménage", body: "Vous vouliez un ménage récurrent — configurez dès maintenant un rythme régulier et obtenez automatiquement {pct}% de réduction sur votre 2ᵉ et 3ᵉ ménage, à la charge de DORIXÉ." },
+    es: { title: "Ahorra un {pct}% en tu 2.ª y 3.ª limpieza", body: "Querías limpieza recurrente — configura ahora un horario recurrente y obtén automáticamente un {pct}% de descuento en tu 2.ª y 3.ª limpieza, a cargo de DORIXÉ." },
+    it: { title: "Risparmia il {pct}% sulla 2ª e 3ª pulizia", body: "Volevi la pulizia ricorrente — imposta ora una cadenza fissa e ottieni automaticamente il {pct}% di sconto sulla tua 2ª e 3ª pulizia, a carico di DORIXÉ." },
+    nl: { title: "Bespaar {pct}% op je 2e en 3e schoonmaak", body: "Je wilde terugkerende schoonmaak — stel nu een vast schema in en krijg automatisch {pct}% korting op je 2e en 3e schoonmaak, voor rekening van DORIXÉ." },
+    pl: { title: "Oszczędź {pct}% przy 2. i 3. sprzątaniu", body: "Chciałeś(-aś) cyklicznego sprzątania — ustaw teraz stały harmonogram i automatycznie otrzymaj {pct}% zniżki na 2. i 3. sprzątanie, kosztem DORIXÉ." },
+    pt: { title: "Poupa {pct}% na 2.ª e 3.ª limpeza", body: "Querias limpeza recorrente — configura agora uma agenda recorrente e recebe automaticamente {pct}% de desconto na tua 2.ª e 3.ª limpeza, a cargo da DORIXÉ." },
   },
   // At creation a booking is a REQUEST — the cleaner still has to accept it manually.
   booking_request_sent: {

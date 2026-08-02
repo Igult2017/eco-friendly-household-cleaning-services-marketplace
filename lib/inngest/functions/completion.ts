@@ -172,8 +172,8 @@ export const onBookingCompleted = inngest.createFunction(
       await db.insert(notifications).values({
         userId: customerId,
         type: "recurring_booking_created",
-        title: `Save ${pct}% with recurring cleaning`,
-        body: `You wanted recurring cleaning — set up a repeat schedule now and get ${pct}% off every booking, automatically.`,
+        title: `Save ${pct}% on your next 2 cleanings`,
+        body: `You wanted recurring cleaning — set up a repeat schedule now and get ${pct}% off your 2nd and 3rd cleaning, automatically, on us.`,
         link: `/recurring/new?bookingId=${bookingId}`,
         metadata: { variant: "recurring_discount_available", pct: String(pct) },
       })

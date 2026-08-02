@@ -6,6 +6,7 @@ import { notifications, messages } from "@/lib/db/schema"
 import { eq, asc, and, ne } from "drizzle-orm"
 import { pusherServer } from "@/lib/pusher/server"
 import { logError } from "@/lib/utils/logError"
+import { recordProviderResponseIfApplicable } from "@/lib/providers/responseTime"
 
 type RouteContext = { params: Promise<{ id: string }> }
 
@@ -88,7 +89,7 @@ export async function POST(req: Request, { params }: RouteContext) {
     const access = await getBookingAndVerifyAccess(bookingId, userId)
     if (!access) return NextResponse.json({ error: "Not found" }, { status: 404 })
 
-    const { booking, provider, isCustomer } = access
+    const { booking, provider, isCustomer, isProvider } = access
 
     const parsed = sendMessageSchema.safeParse(await req.json().catch(() => ({})))
     if (!parsed.success) {
@@ -101,6 +102,15 @@ export async function POST(req: Request, { params }: RouteContext) {
       .insert(messages)
       .values({ bookingId, senderId: userId, body })
       .returning()
+
+    // Best-effort — never let response-time bookkeeping block sending a message.
+    void recordProviderResponseIfApplicable({
+      threadColumn: "bookingId",
+      threadId: bookingId,
+      senderIsProvider: isProvider,
+      providerUserId: userId,
+      newMessageCreatedAt: newMessage.createdAt,
+    }).catch(() => {})
 
     // Determine recipient — provider link uses the /provider/ prefix route
     const recipientId = isCustomer ? provider!.userId : booking.customerId

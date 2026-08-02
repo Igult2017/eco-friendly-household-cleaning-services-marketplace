@@ -232,7 +232,14 @@
     "fromPrice": "A partir de {price}",
     "bookNow": "Reservar agora",
     "servicesHeading": "Serviços",
-    "reviewsHeading": "Avaliações"
+    "reviewsHeading": "Avaliações",
+    "availabilityHeading": "Disponibilidade",
+    "responseTime_under1h": "Normalmente responde em menos de uma hora",
+    "responseTime_under3h": "Normalmente responde em poucas horas",
+    "responseTime_sameDay": "Normalmente responde num dia",
+    "responseTime_within2days": "Normalmente responde em 2 dias",
+    "responseTime_slower": "O tempo de resposta varia",
+    "lastActive": "Última atividade {time}"
   },
   "sustainability": {
     "metaTitle": "Impacto sustentável — DORIXÉ",
@@ -635,7 +642,12 @@
     "payoutFallbackTitle": "Guarda o teu cartão para garantir esta reserva",
     "payoutFallbackBody": "Este profissional ainda está a concluir a configuração de pagamentos, pelo que o pagamento ainda não pode ser autorizado — isso não afeta o teu cartão. Guarda-o agora: a reserva é criada, nada é cobrado antes de o trabalho estar concluído e o pagamento é feito automaticamente após ambos confirmarem a conclusão.",
     "confirmBookingRequest": "Confirmar pedido de reserva",
-    "useDifferentCard": "Usar outro cartão"
+    "useDifferentCard": "Usar outro cartão",
+    "autoRenewConsentLabel": "Autorizo a DORIXÉ a cobrar automaticamente o meu cartão guardado por cada limpeza futura até cancelar esta recorrência.",
+    "recurringAutoSetTitle": "Recorrência configurada!",
+    "recurringAutoSetText": "O seu cartão será cobrado automaticamente nas próximas limpezas — pode gerir ou cancelar quando quiser em As Minhas Reservas.",
+    "recurringSettingUp": "A configurar a sua recorrência…",
+    "recurringAutoSetFailed": "Não conseguimos configurar a cobrança automática. Configure-a manualmente abaixo."
   },
   "customerBookExtrasPage": {
     "heading": "Algum pedido especial?",
@@ -678,7 +690,8 @@
     "preBannerTitle": "Reserva com {name}",
     "preBannerHint": "Só podes escolher serviços oferecidos por este profissional.",
     "notOfferedBadge": "Não oferecido",
-    "changeCleaner": "Mudar de profissional"
+    "changeCleaner": "Mudar de profissional",
+    "recurringBenefitBanner": "💡 Escolhe limpeza recorrente e poupa {pct}% na 2.ª e 3.ª limpeza — automaticamente, sem impacto para o profissional."
   },
   "customerBookProvidersPage": {
     "heading": "Onde precisa de limpeza?",
@@ -725,8 +738,10 @@
     "freq_biweekly": "A cada 2 semanas",
     "freq_monthly": "Mensal",
     "slotBooked": "Reservado",
-    "recurringDaysLabel": "Em que dias?",
-    "recurringDaysHint": "Escolhe os dias da semana para a limpeza recorrente."
+    "recurringDaysLabel": "Em que dia?",
+    "recurringDaysHint": "Escolhe o dia da semana para a limpeza recorrente.",
+    "viewFullCalendar": "Ver calendário de disponibilidade completo",
+    "hideFullCalendar": "Ocultar calendário de disponibilidade"
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Falha ao carregar a reserva",
@@ -1394,7 +1409,8 @@
     "from": "A partir de",
     "jobsDone": "{count, plural, one {# trabalho concluído} other {# trabalhos concluídos}}",
     "selected": "✓ Selecionado",
-    "selectProvider": "Escolher profissional"
+    "selectProvider": "Escolher profissional",
+    "recentlyActive": "Ativo nas últimas 24 horas"
   },
   "compBookingRecurringScheduleCard": {
     "withBusiness": "com {businessName}",
@@ -2131,5 +2147,10 @@
   },
   "compBackButton": {
     "back": "Voltar"
+  },
+  "compProviderAvailabilityCalendar": {
+    "legendFree": "Livre",
+    "legendBooked": "Reservado",
+    "legendUnavailable": "Indisponível"
   }
 }

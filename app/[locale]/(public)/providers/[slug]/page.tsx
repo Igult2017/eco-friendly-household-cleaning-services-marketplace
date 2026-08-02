@@ -7,9 +7,12 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import type { Metadata } from "next"
 import { formatCurrencyShort, priceUnitSuffix } from "@/lib/utils/formatCurrency"
-import { getTranslations } from "next-intl/server"
+import { getTranslations, getLocale } from "next-intl/server"
 import { JsonLd } from "@/components/seo/JsonLd"
 import { providerSchema, breadcrumbSchema } from "@/lib/seo/schemas"
+import { ProviderAvailabilityCalendar } from "@/components/booking/ProviderAvailabilityCalendar"
+import { formatRelativeTime } from "@/lib/utils/formatDate"
+import { responseTimeBucket } from "@/lib/utils/responseTimeLabel"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   try {
@@ -25,6 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function ProviderProfilePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const t = await getTranslations("providerProfile")
+  const locale = await getLocale()
 
   let provider, owner, services, recentReviews
   try {
@@ -46,6 +50,9 @@ export default async function ProviderProfilePage({ params }: { params: Promise<
         isSuspended: providers.isSuspended,
         userId: providers.userId,
         verificationStatus: providers.verificationStatus,
+        lastActiveAt: providers.lastActiveAt,
+        avgResponseTimeMinutes: providers.avgResponseTimeMinutes,
+        responseTimeSampleCount: providers.responseTimeSampleCount,
       })
       .from(providers)
       .where(eq(providers.slug, slug))
@@ -137,6 +144,17 @@ export default async function ProviderProfilePage({ params }: { params: Promise<
             <span className="text-sm text-[#6B7280]">({t("reviewsCount", { count: provider.totalReviews })})</span>
             <span className="text-sm text-[#6B7280]">{t("jobsDone", { count: provider.totalJobsCompleted })}</span>
           </div>
+          {/* Responsiveness signals — only shown once there's real data, never a guess for a new cleaner. */}
+          {(provider.responseTimeSampleCount > 0 || provider.lastActiveAt) && (
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-xs text-[#6B7280]">
+              {provider.responseTimeSampleCount > 0 && provider.avgResponseTimeMinutes != null && (
+                <span>{t(`responseTime_${responseTimeBucket(provider.avgResponseTimeMinutes)}`)}</span>
+              )}
+              {provider.lastActiveAt && (
+                <span>{t("lastActive", { time: formatRelativeTime(provider.lastActiveAt, locale) })}</span>
+              )}
+            </div>
+          )}
           {fromPrice != null && (
             <p className="mt-2 text-base font-bold text-[#2D7A5F]">
               {t("fromPrice", { price: formatCurrencyShort(fromPrice) })}
@@ -175,6 +193,12 @@ export default async function ProviderProfilePage({ params }: { params: Promise<
           </div>
         </section>
       )}
+
+      {/* Availability — "is this cleaner free or booked, and on which dates" at a glance. */}
+      <section>
+        <h2 className="font-serif text-2xl font-bold text-[#2B3441] mb-4">{t("availabilityHeading")}</h2>
+        <ProviderAvailabilityCalendar providerId={provider.id} />
+      </section>
 
       {/* Reviews */}
       {recentReviews.length > 0 && (

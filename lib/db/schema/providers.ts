@@ -78,6 +78,12 @@ export const providers = pgTable(
     totalJobsCompleted: integer("total_jobs_completed").notNull().default(0),
     profilePhotoUrl: text("profile_photo_url"),
     galleryUrls: jsonb("gallery_urls").$type<string[]>().default([]),
+    // Stamped (throttled, no cron) on every authenticated /provider/* page load — see app/(provider)/layout.tsx.
+    lastActiveAt: timestamp("last_active_at", { withTimezone: true }),
+    // Running mean of (this provider's reply timestamp − the other party's prior message timestamp),
+    // folded in inline on every message send — see lib/providers/responseTime.ts. Null until the first sample.
+    avgResponseTimeMinutes: doublePrecision("avg_response_time_minutes"),
+    responseTimeSampleCount: integer("response_time_sample_count").notNull().default(0),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
