@@ -23,7 +23,7 @@ const CLIENT_NAMESPACES = new Set<string>([
   "compNotificationsNotificationBell", "compNotificationsMarkAllReadButton",
   "compReviewsRateCustomer", "compProviderPricing", "compProviderAddons",
   "compMessagingMessageThread", "compBiddingAcceptBidButton",
-  "browseJobs",
+  "browseJobs", "compProviderAvailabilityCalendar", "providerCalendarPage",
 ])
 import { CookieBanner } from "@/components/gdpr/CookieBanner"
 import { LocaleDetector } from "@/components/i18n/LocaleDetector"
