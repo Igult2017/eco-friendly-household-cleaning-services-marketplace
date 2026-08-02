@@ -1006,11 +1006,11 @@
     "recurringBenefitBanner": "💡 Wähle wiederkehrende Reinigung und erhalte deine nächsten 2 Reinigungen vergünstigt — automatisch, ohne Nachteil für deine Reinigungskraft.",
     "modeStandardTitle": "Standardauftrag",
     "modeStandardHint": "Reinigungskräfte bieten — du wählst",
-    "modeTakeJobTitle": "Sofortauftrag — Notfall",
+    "modeTakeJobTitle": "Sofortauftrag — dringend",
     "modeTakeJobHint": "Erste Reinigungskraft, die zugreift, wird sofort zugewiesen",
     "takeJobExplainer": "Kein Bieten. Lege einen Festpreis und eine maximale Entfernung fest — die erste passende Reinigungskraft in diesem Radius, die auf „Auftrag übernehmen\" tippt, wird sofort zugewiesen. Ideal für dringende Aufträge am selben Tag.",
     "radiusTakeJobHint": "Nur Reinigungskräfte innerhalb dieser Entfernung, die sich als für Sofortaufträge verfügbar markiert haben, werden benachrichtigt.",
-    "submitButtonTakeJob": "Notfallauftrag veröffentlichen"
+    "submitButtonTakeJob": "Dringenden Auftrag veröffentlichen"
   },
   "customerProfilePage": {
     "title": "Mein Profil",
@@ -1144,7 +1144,7 @@
     "avgRating": "Durchschn. Bewertung",
     "upcoming": "Anstehend",
     "instantJobsToggleTitle": "Verfügbar für Soforteinsätze",
-    "instantJobsToggleHint": "Werde über nahe Notfallaufträge benachrichtigt, die du sofort übernehmen kannst",
+    "instantJobsToggleHint": "Werde über nahe dringende Aufträge benachrichtigt, die du sofort übernehmen kannst",
     "instantJobsToggleError": "Verfügbarkeit konnte nicht aktualisiert werden. Bitte versuche es erneut."
   },
   "providerProviderEarningsPage": {
@@ -1231,7 +1231,7 @@
     "postedHoursAgo": "Vor {count} Std. eingestellt",
     "postedDaysAgo": "Vor {count} Tagen eingestellt",
     "reviewsFromCleaners": "({count} von Reinigungskräften)",
-    "takeJobBadge": "Notfall",
+    "takeJobBadge": "Dringend",
     "takeJobOutOfRadius": "Außerhalb des {radius} km Übernahme-Radius"
   },
   "providerProviderNotificationsPage": {
@@ -2175,7 +2175,7 @@
     "genericError": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
   },
   "compProviderTakeJobAlerts": {
-    "toastTitle": "🚨 Neuer Notfallauftrag in deiner Nähe!",
+    "toastTitle": "🚨 Neuer dringender Auftrag in deiner Nähe!",
     "toastBody": "In {city} — sei die/der Erste, die/der zugreift",
     "toastAction": "Ansehen"
   }

@@ -1006,11 +1006,11 @@
     "recurringBenefitBanner": "💡 Choose recurring cleaning and get your next 2 cleanings at a discounted rate — automatically, at no cost to your cleaner.",
     "modeStandardTitle": "Standard job",
     "modeStandardHint": "Cleaners bid — you choose",
-    "modeTakeJobTitle": "Take Job — emergency",
+    "modeTakeJobTitle": "Take Job — urgent",
     "modeTakeJobHint": "First cleaner to claim it, instantly assigned",
     "takeJobExplainer": "No bidding. Set a fixed price and a max distance — the first eligible cleaner within that radius who taps \"Take This Job\" is assigned immediately. Best for urgent, same-day needs.",
     "radiusTakeJobHint": "Only cleaners within this distance who are marked available for instant jobs will be notified.",
-    "submitButtonTakeJob": "Post Emergency Job"
+    "submitButtonTakeJob": "Post Urgent Job"
   },
   "customerProfilePage": {
     "title": "My Profile",
@@ -1144,7 +1144,7 @@
     "avgRating": "Avg Rating",
     "upcoming": "Upcoming",
     "instantJobsToggleTitle": "Available for instant jobs",
-    "instantJobsToggleHint": "Get notified about nearby emergency jobs you can claim instantly",
+    "instantJobsToggleHint": "Get notified about nearby urgent jobs you can claim instantly",
     "instantJobsToggleError": "Couldn't update your availability. Please try again."
   },
   "providerProviderEarningsPage": {
@@ -1231,7 +1231,7 @@
     "postedHoursAgo": "Posted {count}h ago",
     "postedDaysAgo": "Posted {count}d ago",
     "reviewsFromCleaners": "({count} from cleaners)",
-    "takeJobBadge": "Emergency",
+    "takeJobBadge": "Urgent",
     "takeJobOutOfRadius": "Outside the {radius} km claim radius"
   },
   "providerProviderNotificationsPage": {
@@ -2175,7 +2175,7 @@
     "genericError": "Something went wrong. Please try again."
   },
   "compProviderTakeJobAlerts": {
-    "toastTitle": "🚨 New emergency job nearby!",
+    "toastTitle": "🚨 New urgent job nearby!",
     "toastBody": "In {city} — be the first to claim it",
     "toastAction": "View"
   }

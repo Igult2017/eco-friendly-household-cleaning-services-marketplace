@@ -1006,7 +1006,7 @@
     "recurringBenefitBanner": "💡 Choisissez un ménage récurrent et bénéficiez d'une réduction sur vos 2 prochains ménages — automatiquement, sans impact pour votre ménager/ère.",
     "modeStandardTitle": "Mission standard",
     "modeStandardHint": "Les ménagers/ères enchérissent — vous choisissez",
-    "modeTakeJobTitle": "Take Job — urgence",
+    "modeTakeJobTitle": "Take Job — urgent",
     "modeTakeJobHint": "Le premier ménager/ère à l'accepter est assigné instantanément",
     "takeJobExplainer": "Pas d'enchères. Fixez un prix fixe et une distance maximale — le premier ménager/ère éligible dans ce rayon qui appuie sur « Accepter la mission » est assigné immédiatement. Idéal pour les besoins urgents le jour même.",
     "radiusTakeJobHint": "Seuls les ménagers/ères dans cette distance, marqués comme disponibles pour les missions instantanées, seront notifiés.",
@@ -1144,7 +1144,7 @@
     "avgRating": "Note moyenne",
     "upcoming": "À venir",
     "instantJobsToggleTitle": "Disponible pour les missions instantanées",
-    "instantJobsToggleHint": "Recevez des alertes pour les missions d'urgence à proximité que vous pouvez accepter instantanément",
+    "instantJobsToggleHint": "Recevez des alertes pour les missions urgentes à proximité que vous pouvez accepter instantanément",
     "instantJobsToggleError": "Impossible de mettre à jour votre disponibilité. Veuillez réessayer."
   },
   "providerProviderEarningsPage": {
@@ -1231,7 +1231,7 @@
     "postedHoursAgo": "Publiée il y a {count} h",
     "postedDaysAgo": "Publiée il y a {count} j",
     "reviewsFromCleaners": "({count} d intervenants)",
-    "takeJobBadge": "Urgence",
+    "takeJobBadge": "Urgent",
     "takeJobOutOfRadius": "En dehors du rayon de {radius} km pour l'accepter"
   },
   "providerProviderNotificationsPage": {

@@ -1006,7 +1006,7 @@
     "recurringBenefitBanner": "💡 Wybierz cykliczne sprzątanie i otrzymaj zniżkę na kolejne 2 sprzątania — automatycznie, bez wpływu na wynagrodzenie sprzątaczki/sprzątacza.",
     "modeStandardTitle": "Standardowe zlecenie",
     "modeStandardHint": "Sprzątaczki/sprzątacze licytują — Ty wybierasz",
-    "modeTakeJobTitle": "Take Job — nagły przypadek",
+    "modeTakeJobTitle": "Take Job — pilne",
     "modeTakeJobHint": "Pierwsza osoba, która je przyjmie, zostaje natychmiast przypisana",
     "takeJobExplainer": "Bez licytacji. Ustaw stałą cenę i maksymalną odległość — pierwsza uprawniona osoba w tym promieniu, która dotknie \"Przyjmij zlecenie\", zostaje przypisana natychmiast. Idealne dla pilnych potrzeb tego samego dnia.",
     "radiusTakeJobHint": "Powiadomione zostaną tylko osoby w tej odległości oznaczone jako dostępne do zleceń natychmiastowych.",
