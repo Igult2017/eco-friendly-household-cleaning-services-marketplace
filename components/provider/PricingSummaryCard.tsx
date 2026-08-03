@@ -10,7 +10,7 @@ type Svc = {
   id: string
   name: string
   categoryName: string | null
-  basePrice: number
+  basePrice: number | null // null = "ask on booking"
   priceUnit: string
   isActive: boolean
 }
@@ -72,8 +72,14 @@ export function PricingSummaryCard() {
                 {s.categoryName && <p className="text-xs text-[#6B7280]">{s.categoryName}</p>}
               </div>
               <p className="shrink-0 text-sm font-bold text-[#2D7A5F]">
-                {formatCurrencyShort(s.basePrice)}
-                <span className="text-[11px] font-medium text-[#6B7280]">{priceUnitSuffix[s.priceUnit] ?? ""}</span>
+                {s.basePrice == null ? (
+                  t("askOnBooking")
+                ) : (
+                  <>
+                    {formatCurrencyShort(s.basePrice)}
+                    <span className="text-[11px] font-medium text-[#6B7280]">{priceUnitSuffix[s.priceUnit] ?? ""}</span>
+                  </>
+                )}
               </p>
             </li>
           ))}

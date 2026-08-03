@@ -45,7 +45,7 @@ export const providerServices = pgTable(
     customCategories: jsonb("custom_categories").$type<string[]>().default([]),
     name: varchar("name", { length: 200 }).notNull(),
     description: text("description"),
-    basePrice: integer("base_price").notNull(), // euro cents
+    basePrice: integer("base_price"), // euro cents; null = "ask on booking" (no fixed price)
     priceUnit: varchar("price_unit", { length: 20 }).notNull().default("per_job"), // per_job | per_hour | per_sqft
     minDurationMinutes: integer("min_duration_minutes").notNull().default(60),
     maxDurationMinutes: integer("max_duration_minutes"),

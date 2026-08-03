@@ -231,6 +231,8 @@
     "jobsDone": "{count, plural, one {# klus voltooid} other {# klussen voltooid}}",
     "fromPrice": "Vanaf {price}",
     "bookNow": "Nu boeken",
+    "priceOnRequest": "Prijs op aanvraag",
+    "requestQuote": "Plaats een klus voor een offerte",
     "servicesHeading": "Diensten",
     "reviewsHeading": "Beoordelingen",
     "availabilityHeading": "Beschikbaarheid",
@@ -1302,6 +1304,9 @@
     "serviceNameLabel": "Naam van de dienst *",
     "serviceNamePlaceholder": "bijv. Grondige reiniging — appartement met 2 slaapkamers",
     "priceLabel": "Prijs (€) *",
+    "askOnBookingLabel": "Prijs op aanvraag (geen vaste prijs)",
+    "askOnBookingHint": "Stel nu geen prijs in — klanten kunnen deze dienst niet direct boeken, maar je kunt hem wel vermelden en een prijs noemen zodra ze contact opnemen.",
+    "askOnBookingBadge": "Prijs op aanvraag",
     "pricingUnitLabel": "Prijseenheid",
     "priceUnitPerJob": "Per klus",
     "priceUnitPerHour": "Per uur",
@@ -1839,7 +1844,8 @@
     "description": "Stel je uurtarief (of prijs per klus) in voor elke dienst die je aanbiedt — klanten boeken en betalen op basis van deze tarieven.",
     "empty": "Je hebt nog geen tarieven ingesteld. Klanten kunnen je pas boeken als je minstens één dienst met een tarief toevoegt.",
     "setButton": "Stel je uurtarief in",
-    "manageButton": "Beheren"
+    "manageButton": "Beheren",
+    "askOnBooking": "Prijs op aanvraag"
   },
   "homeWhatsIncluded": {
     "heading": "Wat is inbegrepen",

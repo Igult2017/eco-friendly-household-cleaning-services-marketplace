@@ -231,6 +231,8 @@
     "jobsDone": "{count, plural, one {# mission réalisée} other {# missions réalisées}}",
     "fromPrice": "À partir de {price}",
     "bookNow": "Réserver",
+    "priceOnRequest": "Prix sur demande",
+    "requestQuote": "Publier une mission pour obtenir un devis",
     "servicesHeading": "Services",
     "reviewsHeading": "Avis",
     "availabilityHeading": "Disponibilité",
@@ -1302,6 +1304,9 @@
     "serviceNameLabel": "Nom de la prestation *",
     "serviceNamePlaceholder": "ex. Nettoyage en profondeur — appartement 2 chambres",
     "priceLabel": "Prix (€) *",
+    "askOnBookingLabel": "Prix sur demande (pas de tarif fixe)",
+    "askOnBookingHint": "Ne fixez pas de prix maintenant — les clients ne pourront pas réserver ce service instantanément, mais vous pouvez quand même le proposer et indiquer un prix quand ils vous contactent.",
+    "askOnBookingBadge": "Prix sur demande",
     "pricingUnitLabel": "Unité de tarification",
     "priceUnitPerJob": "Par prestation",
     "priceUnitPerHour": "Par heure",
@@ -1839,7 +1844,8 @@
     "description": "Définissez votre tarif horaire (ou par prestation) pour chaque service proposé — les clients réservent et paient selon ces tarifs.",
     "empty": "Vous n'avez pas encore défini de tarifs. Les clients ne peuvent pas vous réserver tant que vous n'avez pas ajouté au moins un service avec un tarif.",
     "setButton": "Définir le tarif horaire",
-    "manageButton": "Gérer"
+    "manageButton": "Gérer",
+    "askOnBooking": "Prix sur demande"
   },
   "homeWhatsIncluded": {
     "heading": "Ce qui est inclus",

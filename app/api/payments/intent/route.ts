@@ -132,12 +132,19 @@ export async function POST(req: Request) {
       validAddOnIds = rows.map((r) => r.id)
     }
 
+    // "Ask on booking" services (basePrice null) have no fixed number to charge — only a problem for
+    // a direct (non-bid) booking, since a bid-flow one supplies its own amount via bidAmountCents.
+    if (bidAmountCents == null && service.basePrice == null) {
+      return NextResponse.json({ error: "This service has no fixed price — contact the cleaner or post a job to get a quote." }, { status: 422 })
+    }
+    const servicePrice = service.basePrice ?? 0
+
     // Hourly services charge basePrice × booked hours (per-hour is the payment mode in EU + US) —
     // previously the duration selector was ignored and 6h cost the same as 1h. Accepted bids are a
     // total for the whole job and flat-priced services stay as-is.
     const baseAmount =
       bidAmountCents ??
-      (service.priceUnit === "per_hour" ? Math.round((service.basePrice * durationMinutes) / 60) : service.basePrice)
+      (service.priceUnit === "per_hour" ? Math.round((servicePrice * durationMinutes) / 60) : servicePrice)
     const subtotal = baseAmount + addOnsTotal
 
     // Resolve promo discount: prefer the pre-computed promoCodeDiscountCents from the client,

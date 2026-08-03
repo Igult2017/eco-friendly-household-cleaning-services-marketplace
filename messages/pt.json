@@ -231,6 +231,8 @@
     "jobsDone": "{count, plural, one {# trabalho concluído} other {# trabalhos concluídos}}",
     "fromPrice": "A partir de {price}",
     "bookNow": "Reservar agora",
+    "priceOnRequest": "Preço a combinar",
+    "requestQuote": "Publica um trabalho para receber um orçamento",
     "servicesHeading": "Serviços",
     "reviewsHeading": "Avaliações",
     "availabilityHeading": "Disponibilidade",
@@ -1302,6 +1304,9 @@
     "serviceNameLabel": "Nome do serviço *",
     "serviceNamePlaceholder": "ex. Limpeza profunda — apartamento de 2 quartos",
     "priceLabel": "Preço (€) *",
+    "askOnBookingLabel": "Preço a combinar (sem preço fixo)",
+    "askOnBookingHint": "Não defines um preço agora — os clientes não podem reservar este serviço de imediato, mas podes na mesma listá-lo e indicar um preço quando entrarem em contacto.",
+    "askOnBookingBadge": "Preço a combinar",
     "pricingUnitLabel": "Unidade de preço",
     "priceUnitPerJob": "Por serviço",
     "priceUnitPerHour": "Por hora",
@@ -1839,7 +1844,8 @@
     "description": "Defina a sua tarifa horária (ou por serviço) para cada serviço que oferece — os clientes reservam e pagam com base nestas tarifas.",
     "empty": "Ainda não definiu preços. Os clientes não o podem reservar até adicionar pelo menos um serviço com tarifa.",
     "setButton": "Definir tarifa horária",
-    "manageButton": "Gerir"
+    "manageButton": "Gerir",
+    "askOnBooking": "Preço a combinar"
   },
   "homeWhatsIncluded": {
     "heading": "O que está incluído",

@@ -91,7 +91,7 @@ export function providerSchema(p: {
   averageRating: number | null
   totalReviews: number
   profilePhotoUrl: string | null
-  services: { name: string; description: string | null; basePrice: number; priceUnit: string }[]
+  services: { name: string; description: string | null; basePrice: number | null; priceUnit: string }[]
   reviews: { rating: number; title: string | null; body: string | null; createdAt: Date }[]
 }): Json {
   const url = absoluteUrl(`/providers/${p.slug}`)
@@ -105,10 +105,11 @@ export function providerSchema(p: {
     image: p.profilePhotoUrl ?? absoluteUrl("/logo.png"),
     priceRange: "€€",
     ...(p.city ? { address: { "@type": "PostalAddress", addressLocality: p.city, addressCountry: p.country ?? undefined } } : {}),
+    // "Ask on booking" services (basePrice null) have no fixed number to report — omit price/
+    // priceCurrency entirely rather than emit an invalid "NaN" into this structured data.
     makesOffer: p.services.map((s) => ({
       "@type": "Offer",
-      priceCurrency: "EUR",
-      price: (s.basePrice / 100).toFixed(2),
+      ...(s.basePrice != null ? { priceCurrency: "EUR", price: (s.basePrice / 100).toFixed(2) } : {}),
       itemOffered: { "@type": "Service", name: s.name, description: s.description ?? undefined },
     })),
   }

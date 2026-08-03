@@ -25,7 +25,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       wantedCategoryId = cat?.id ?? null
     }
 
-    const services = await db
+    const rawServices = await db
       .select({
         id: providerServices.id,
         name: providerServices.name,
@@ -41,6 +41,11 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       .from(providerServices)
       .leftJoin(serviceCategories, eq(providerServices.categoryId, serviceCategories.id))
       .where(and(eq(providerServices.providerId, id), eq(providerServices.isActive, true)))
+
+    // "Ask on booking" services (basePrice null) have no fixed number to charge — the direct/instant
+    // booking wizard can't offer them at all, so they're excluded here rather than reaching the
+    // pricing math downstream with a null and producing NaN.
+    const services = rawServices.filter((s) => s.basePrice != null)
 
     const filtered = wantedCategoryId
       ? services.filter((s) => s.categoryId === wantedCategoryId || (Array.isArray(s.categoryIds) && s.categoryIds.includes(wantedCategoryId!)))

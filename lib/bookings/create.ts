@@ -83,6 +83,14 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
 
   // Bug 5: use bid amount from PI metadata when present (bid-flow bookings)
   const bidAmountCents = intent.metadata.bid_amount_cents ? parseInt(intent.metadata.bid_amount_cents, 10) : null
+
+  // Defense in depth: /api/providers/[id]/services already excludes "ask on booking" (no fixed
+  // price) services from the direct-booking picker, but a bid-flow booking supplies its own price
+  // via bidAmountCents regardless of the service's basePrice — only a direct (non-bid) booking
+  // actually needs the service's own price, so only that path is blocked here.
+  if (bidAmountCents == null && service!.basePrice == null) {
+    await cancel(422, "This service has no fixed price — contact the cleaner or post a job to get a quote.")
+  }
   const bidId = intent.metadata.bid_id ?? null
 
   // A Take Job claim already substitutes providers.instantJobsAvailable (checked at claim time in
@@ -108,9 +116,12 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
   // MUST mirror the intent route's pricing exactly: per_hour services charge basePrice × booked hours
   // (bids are whole-job totals). A flat re-derivation here made the totalCharged check below cancel
   // the payment for every hourly booking that wasn't exactly 60 minutes.
+  // servicePrice is guaranteed non-null here: the guard above already rejected the only case where
+  // it wouldn't be (a direct, non-bid booking against an "ask on booking" service).
+  const servicePrice = service!.basePrice ?? 0
   const baseAmount =
     bidAmountCents ??
-    (service!.priceUnit === "per_hour" ? Math.round((service!.basePrice * durationMinutes) / 60) : service!.basePrice)
+    (service!.priceUnit === "per_hour" ? Math.round((servicePrice * durationMinutes) / 60) : servicePrice)
   const subtotal = baseAmount + addOnsTotal
 
   // Promo code from PI metadata

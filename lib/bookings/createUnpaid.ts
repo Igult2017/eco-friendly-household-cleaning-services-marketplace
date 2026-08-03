@@ -1,7 +1,7 @@
 import { db } from "@/lib/db"
 import { bookings, providers, providerServices, bids, jobPosts, notifications, users } from "@/lib/db/schema"
 import type { NewBooking } from "@/lib/db/schema/bookings"
-import { and, eq, isNull, desc, inArray, lt, gt } from "drizzle-orm"
+import { and, eq, isNull, isNotNull, desc, inArray, lt, gt } from "drizzle-orm"
 import { inngest } from "@/lib/inngest/client"
 import { calculateBookingAmounts, stripe } from "@/lib/stripe/client"
 import { getCommissionPct } from "@/lib/platform/settings"
@@ -39,17 +39,26 @@ export async function createUnpaidBooking(userId: string, data: CreateBookingInp
         .where(and(eq(providerServices.id, serviceId), eq(providerServices.providerId, providerId), eq(providerServices.isActive, true)))
     : [undefined]
   if (!service) {
+    // Fallback pick when no serviceId resolves — must still be a priced service, since without an
+    // accepted bid (checked below) there's nothing else to derive an amount from.
     ;[service] = await db
       .select({ id: providerServices.id, basePrice: providerServices.basePrice, priceUnit: providerServices.priceUnit })
       .from(providerServices)
-      .where(and(eq(providerServices.providerId, providerId), eq(providerServices.isActive, true)))
+      .where(and(eq(providerServices.providerId, providerId), eq(providerServices.isActive, true), isNotNull(providerServices.basePrice)))
       .limit(1)
   }
   if (!service) throw new BookingError(422, "This cleaner hasn't finished setting up their services yet.")
 
+  // Defense in depth: an accepted bid always supplies its own amount regardless of the service's own
+  // price, but a direct (non-bid) booking against an explicitly-chosen "ask on booking" service has
+  // no fixed number to charge — reject clearly instead of inserting a NaN into an integer column.
+  if (!acceptedBid && service.basePrice == null) {
+    throw new BookingError(422, "This service has no fixed price — contact the cleaner or post a job to get a quote.")
+  }
+  const servicePrice = service.basePrice ?? 0
   const subtotal =
     acceptedBid?.amount ??
-    (service.priceUnit === "per_hour" ? Math.round((service.basePrice * durationMinutes) / 60) : service.basePrice)
+    (service.priceUnit === "per_hour" ? Math.round((servicePrice * durationMinutes) / 60) : servicePrice)
   const commissionPct = await getCommissionPct()
   const amounts = calculateBookingAmounts(subtotal, commissionPct)
 

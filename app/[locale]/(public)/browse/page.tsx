@@ -74,6 +74,9 @@ async function getProviders(filters: { city?: string; ecoLevel?: string; minRati
     const hourly = new Map<string, number>()
     const cheapest = new Map<string, { price: number; unit: string }>()
     for (const s of svc) {
+      // "Ask on booking" services (basePrice null) have no number to compare — skip, otherwise they'd
+      // wrongly look like a €0 "cheapest" rate.
+      if (s.basePrice == null) continue
       if (s.priceUnit === "per_hour") {
         const h = hourly.get(s.providerId)
         if (h == null || s.basePrice < h) hourly.set(s.providerId, s.basePrice)

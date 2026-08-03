@@ -231,6 +231,8 @@
     "jobsDone": "{count, plural, one {# wykonane zlecenie} few {# wykonane zlecenia} many {# wykonanych zleceń} other {# wykonanych zleceń}}",
     "fromPrice": "Od {price}",
     "bookNow": "Zarezerwuj teraz",
+    "priceOnRequest": "Cena do uzgodnienia",
+    "requestQuote": "Opublikuj zlecenie, aby otrzymać wycenę",
     "servicesHeading": "Usługi",
     "reviewsHeading": "Opinie",
     "availabilityHeading": "Dostępność",
@@ -1302,6 +1304,9 @@
     "serviceNameLabel": "Nazwa usługi *",
     "serviceNamePlaceholder": "np. Sprzątanie gruntowne — mieszkanie 2-pokojowe",
     "priceLabel": "Cena (€) *",
+    "askOnBookingLabel": "Cena do uzgodnienia (brak stałej ceny)",
+    "askOnBookingHint": "Nie ustawiaj teraz ceny — klienci nie będą mogli zarezerwować tej usługi od razu, ale nadal możesz ją wystawić i podać cenę, gdy się skontaktują.",
+    "askOnBookingBadge": "Cena do uzgodnienia",
     "pricingUnitLabel": "Jednostka ceny",
     "priceUnitPerJob": "Za usługę",
     "priceUnitPerHour": "Za godzinę",
@@ -1839,7 +1844,8 @@
     "description": "Ustaw stawkę godzinową (lub za usługę) dla każdej oferowanej usługi — klienci rezerwują i płacą według tych stawek.",
     "empty": "Nie ustawiłeś jeszcze żadnych stawek. Klienci nie mogą Cię zarezerwować, dopóki nie dodasz co najmniej jednej usługi ze stawką.",
     "setButton": "Ustaw stawkę godzinową",
-    "manageButton": "Zarządzaj"
+    "manageButton": "Zarządzaj",
+    "askOnBooking": "Cena do uzgodnienia"
   },
   "homeWhatsIncluded": {
     "heading": "Co jest w cenie",

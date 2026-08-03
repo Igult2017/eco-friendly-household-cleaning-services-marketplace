@@ -15,7 +15,7 @@ type Service = {
   customCategories: string[] | null
   name: string
   description: string | null
-  basePrice: number
+  basePrice: number | null // null = "ask on booking", no fixed price — excluded from instant booking
   priceUnit: string
   minDurationMinutes: number
   isActive: boolean
@@ -29,7 +29,7 @@ const PRICE_UNITS = [
   { value: "per_job", labelKey: "priceUnitPerJob" },
 ]
 
-const EMPTY_FORM = { name: "", description: "", basePrice: "", priceUnit: "per_hour", minDurationMinutes: "60" }
+const EMPTY_FORM = { name: "", description: "", basePrice: "", priceUnit: "per_hour", minDurationMinutes: "60", askOnBooking: false }
 
 export default function ProviderServicesPage() {
   const t = useTranslations("providerProviderProfileServicesPage")
@@ -55,9 +55,13 @@ export default function ProviderServicesPage() {
   useEffect(() => { reload() }, [])
 
   const addService = async () => {
-    if (catIds.length === 0 || !form.name || !form.basePrice) { setError(t("errorRequiredFields")); return }
-    const price = Math.round(Number(form.basePrice) * 100)
-    if (price < 100) { setError(t("errorMinPrice")); return }
+    if (catIds.length === 0 || !form.name) { setError(t("errorRequiredFields")); return }
+    let price: number | null = null
+    if (!form.askOnBooking) {
+      if (!form.basePrice) { setError(t("errorRequiredFields")); return }
+      price = Math.round(Number(form.basePrice) * 100)
+      if (price < 100) { setError(t("errorMinPrice")); return }
+    }
     setAdding(true)
     setError(null)
     const res = await fetch("/api/provider/services", {
@@ -175,15 +179,28 @@ export default function ProviderServicesPage() {
                 className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none"
               />
             </div>
-            <div>
-              <label className="block text-xs font-semibold text-[#2B3441] mb-1.5">{t("priceLabel")}</label>
-              <input
-                type="number" min="1" step="0.5" value={form.basePrice}
-                onChange={(e) => setForm((f) => ({ ...f, basePrice: e.target.value }))}
-                placeholder="0.00"
-                className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none"
-              />
+            <div className="col-span-2">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox" checked={form.askOnBooking}
+                  onChange={(e) => setForm((f) => ({ ...f, askOnBooking: e.target.checked, basePrice: e.target.checked ? "" : f.basePrice }))}
+                  className="h-4 w-4 accent-[#2D7A5F]"
+                />
+                <span className="text-xs font-semibold text-[#2B3441]">{t("askOnBookingLabel")}</span>
+              </label>
+              <p className="text-xs text-[#6B7280] mt-1">{t("askOnBookingHint")}</p>
             </div>
+            {!form.askOnBooking && (
+              <div>
+                <label className="block text-xs font-semibold text-[#2B3441] mb-1.5">{t("priceLabel")}</label>
+                <input
+                  type="number" min="1" step="0.5" value={form.basePrice}
+                  onChange={(e) => setForm((f) => ({ ...f, basePrice: e.target.value }))}
+                  placeholder="0.00"
+                  className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none"
+                />
+              </div>
+            )}
             <div>
               <label className="block text-xs font-semibold text-[#2B3441] mb-1.5">{t("pricingUnitLabel")}</label>
               <select
@@ -246,7 +263,9 @@ export default function ProviderServicesPage() {
                   <p className="text-xs text-[#6B7280] mt-1">{t("durationMinutes", { minutes: s.minDurationMinutes })} · {(() => { const u = PRICE_UNITS.find((u) => u.value === s.priceUnit); return u ? t(u.labelKey) : "" })()}</p>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="font-bold text-[#2D7A5F]">€{((s.basePrice ?? 0) / 100).toFixed(2)}</p>
+                  <p className="font-bold text-[#2D7A5F]">
+                    {s.basePrice == null ? t("askOnBookingBadge") : `€${(s.basePrice / 100).toFixed(2)}`}
+                  </p>
                 </div>
                 <button onClick={() => remove(s.id)} className="p-2 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors">
                   <Trash2 className="h-4 w-4" />

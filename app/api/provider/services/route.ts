@@ -13,7 +13,8 @@ const serviceSchema = z.object({
   customCategories: z.array(z.string().trim().min(1).max(60)).max(8).default([]),
   name: z.string().min(2).max(200),
   description: z.string().max(1000).optional(),
-  basePrice: z.number().int().min(100),
+  // null = "ask on booking" — no fixed price, excluded from instant/direct booking.
+  basePrice: z.number().int().min(100).nullable(),
   priceUnit: z.enum(["per_job", "per_hour", "per_sqft"]),
   minDurationMinutes: z.number().int().min(30).max(480),
 })

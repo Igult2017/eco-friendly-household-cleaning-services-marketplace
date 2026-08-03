@@ -443,6 +443,10 @@ ALTER TABLE providers ADD COLUMN IF NOT EXISTS response_time_sample_count intege
 -- needs no enum DDL. instant_jobs_available is the provider's opt-in "free right now" toggle.
 ALTER TABLE job_posts ADD COLUMN IF NOT EXISTS job_type varchar(12) NOT NULL DEFAULT 'standard';
 ALTER TABLE providers ADD COLUMN IF NOT EXISTS instant_jobs_available boolean NOT NULL DEFAULT false;
+
+-- A service can be listed with no fixed price ("ask on booking") instead of always requiring one —
+-- excluded from instant/direct booking's service picker; see lib/bookings/create.ts's guard.
+ALTER TABLE provider_services ALTER COLUMN base_price DROP NOT NULL;
 `
 
 function isValidUrl(url) {

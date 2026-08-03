@@ -45,6 +45,10 @@ async function attachCheapestPrice(list: GeoProvider[]): Promise<GeoProvider[]> 
 
   const cheapest = new Map<string, { price: number; unit: string }>()
   for (const s of svc) {
+    // "Ask on booking" services (basePrice null) have no number to compare — skip them, otherwise
+    // JS coerces null < number to a comparison against 0 and wrongly makes an unpriced service look
+    // like the cheapest option.
+    if (s.basePrice == null) continue
     const cur = cheapest.get(s.providerId)
     if (!cur || s.basePrice < cur.price) cheapest.set(s.providerId, { price: s.basePrice, unit: s.priceUnit })
   }

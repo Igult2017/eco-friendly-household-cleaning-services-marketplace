@@ -82,10 +82,15 @@ export default async function ProviderProfilePage({ params }: { params: Promise<
   services = services ?? []
   recentReviews = recentReviews ?? []
 
-  // "From" price = cheapest active service (matches browse + book cards).
+  // "From" price = cheapest active service (matches browse + book cards). "Ask on booking" services
+  // (basePrice null) are excluded from this — otherwise Math.min coerces null to 0 and wrongly shows
+  // the cleaner as free. hasBookableService drives whether "Book Now" makes sense at all: instant
+  // booking has no fixed price to charge for an ask-on-booking-only provider.
   const activeServices = services.filter((s) => s.isActive)
-  const fromPrice = activeServices.length ? Math.min(...activeServices.map((s) => s.basePrice)) : null
-  const fromUnit = fromPrice != null ? activeServices.find((s) => s.basePrice === fromPrice)?.priceUnit ?? null : null
+  const pricedServices = activeServices.filter((s) => s.basePrice != null)
+  const hasBookableService = pricedServices.length > 0
+  const fromPrice = pricedServices.length ? Math.min(...pricedServices.map((s) => s.basePrice!)) : null
+  const fromUnit = fromPrice != null ? pricedServices.find((s) => s.basePrice === fromPrice)?.priceUnit ?? null : null
 
   const ecoColors: Record<string, string> = {
     basic: "bg-gray-100 text-gray-600",
@@ -155,20 +160,33 @@ export default async function ProviderProfilePage({ params }: { params: Promise<
               )}
             </div>
           )}
-          {fromPrice != null && (
+          {fromPrice != null ? (
             <p className="mt-2 text-base font-bold text-[#2D7A5F]">
               {t("fromPrice", { price: formatCurrencyShort(fromPrice) })}
               <span className="text-xs font-medium text-[#6B7280]">{priceUnitSuffix[fromUnit ?? "per_job"] ?? ""}</span>
             </p>
-          )}
+          ) : activeServices.length > 0 ? (
+            <p className="mt-2 text-base font-bold text-[#2D7A5F]">{t("priceOnRequest")}</p>
+          ) : null}
           {provider.bio && <p className="text-sm text-[#6B7280] mt-3 max-w-xl leading-relaxed">{provider.bio}</p>}
         </div>
-        <Link
-          href={`/book?providerId=${provider.id}`}
-          className="shrink-0 rounded-xl bg-[#2D7A5F] px-6 py-3 text-sm font-semibold text-white hover:bg-[#256349] transition-colors"
-        >
-          {t("bookNow")}
-        </Link>
+        {hasBookableService ? (
+          <Link
+            href={`/book?providerId=${provider.id}`}
+            className="shrink-0 rounded-xl bg-[#2D7A5F] px-6 py-3 text-sm font-semibold text-white hover:bg-[#256349] transition-colors"
+          >
+            {t("bookNow")}
+          </Link>
+        ) : (
+          // No priced service to instantly book — the only "get a real price" path today is posting
+          // a job and letting cleaners (including this one) bid, since there's no direct-message CTA.
+          <Link
+            href="/post-job"
+            className="shrink-0 rounded-xl bg-[#2D7A5F] px-6 py-3 text-sm font-semibold text-white hover:bg-[#256349] transition-colors"
+          >
+            {t("requestQuote")}
+          </Link>
+        )}
       </div>
 
       {/* Services */}
@@ -184,8 +202,14 @@ export default async function ProviderProfilePage({ params }: { params: Promise<
                     {s.description && <p className="text-sm text-[#6B7280] mt-1 leading-relaxed">{s.description}</p>}
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="font-bold text-[#2D7A5F]">€{((s.basePrice ?? 0) / 100).toFixed(0)}</p>
-                    <p className="text-xs text-[#6B7280]">/{s.priceUnit?.replace("per_", "") ?? "job"}</p>
+                    {s.basePrice == null ? (
+                      <p className="font-bold text-[#2D7A5F]">{t("priceOnRequest")}</p>
+                    ) : (
+                      <>
+                        <p className="font-bold text-[#2D7A5F]">€{(s.basePrice / 100).toFixed(0)}</p>
+                        <p className="text-xs text-[#6B7280]">/{s.priceUnit?.replace("per_", "") ?? "job"}</p>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
