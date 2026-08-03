@@ -13,6 +13,7 @@ import { zonedTimeToUtc } from "@/lib/utils/tz"
 import { BackButton } from "@/components/ui/BackButton"
 import { ProviderAvailabilityCalendar } from "@/components/booking/ProviderAvailabilityCalendar"
 import { CalendarDays } from "lucide-react"
+import { FieldError } from "@/components/ui/FieldError"
 
 // Fallback only — used when no service has resolved yet (or the provider has no services and no
 // per-service min/max exists to derive from). Real options are generated from the resolved service's
@@ -73,6 +74,7 @@ export default function BookStep3Page() {
   const [loadingAvail, setLoadingAvail] = useState(false)
   const [showCalendar, setShowCalendar] = useState(false)
   const [durationBounds, setDurationBounds] = useState({ min: DEFAULT_MIN_DURATION, max: DEFAULT_MAX_DURATION })
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
   useEffect(() => {
     if (!selectedProviderId) { router.replace("/book"); return }
@@ -117,7 +119,8 @@ export default function BookStep3Page() {
   }
 
   function handleNext() {
-    if (!selectedDate || !selectedTime) return
+    if (!selectedDate) { setFieldErrors({ date: t("errorSelectDate") }); return }
+    if (!selectedTime || availability?.available === false) { setFieldErrors({ time: t("errorSelectTime") }); return }
     // Interpret the picked time in the CLEANER's timezone (slots are shown in their working hours),
     // not the client's browser timezone — otherwise a cross-tz client books the wrong instant.
     const tz = availability?.timezone
@@ -188,7 +191,12 @@ export default function BookStep3Page() {
           </div>
         )}
 
-        <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-4">
+        <div
+          className={cn(
+            "bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-4",
+            fieldErrors.date && "ring-1 ring-red-400"
+          )}
+        >
           <Label className="text-sm font-semibold text-[#2B3441] mb-3 block">{t("selectDateLabel")}</Label>
           <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
             {days.map((d) => {
@@ -199,7 +207,7 @@ export default function BookStep3Page() {
               return (
                 <button
                   key={d}
-                  onClick={() => { setSelectedDate(d); setSelectedTime(null) }}
+                  onClick={() => { setSelectedDate(d); setSelectedTime(null); setFieldErrors({}) }}
                   className={cn(
                     "flex-shrink-0 flex flex-col items-center justify-center w-14 h-16 rounded-xl border-2 text-sm transition-all",
                     selectedDate === d
@@ -214,10 +222,16 @@ export default function BookStep3Page() {
               )
             })}
           </div>
+          <FieldError msg={fieldErrors.date} />
         </div>
 
         {selectedDate && (
-          <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-4">
+          <div
+            className={cn(
+              "bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-4",
+              fieldErrors.time && "ring-1 ring-red-400"
+            )}
+          >
             <Label className="text-sm font-semibold text-[#2B3441] mb-3 flex items-center gap-2">
               <Clock size={15} /> {t("selectTimeLabel")}
               {loadingAvail && <Loader2 size={14} className="animate-spin text-[#2D7A5F]" />}
@@ -232,7 +246,7 @@ export default function BookStep3Page() {
                     <button
                       key={slot}
                       disabled={loadingAvail || isBooked}
-                      onClick={() => !isBooked && setSelectedTime(slot)}
+                      onClick={() => { if (!isBooked) { setSelectedTime(slot); setFieldErrors({}) } }}
                       title={isBooked ? t("slotBooked") : undefined}
                       className={cn(
                         "py-2 rounded-lg text-sm font-medium border-2 transition-all",
@@ -250,6 +264,7 @@ export default function BookStep3Page() {
                 })}
               </div>
             )}
+            <FieldError msg={fieldErrors.time} />
           </div>
         )}
 
@@ -279,7 +294,6 @@ export default function BookStep3Page() {
           </Button>
           <Button
             onClick={handleNext}
-            disabled={!selectedDate || !selectedTime || availability?.available === false}
             className="flex-1 h-11 bg-[#2D7A5F] hover:bg-[#235f49] text-white"
           >
             {t("continue")}

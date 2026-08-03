@@ -696,7 +696,8 @@
     "recurringBenefitBanner": "💡 Wybierz cykliczne sprzątanie i zaoszczędź {pct}% na 2. i 3. sprzątaniu — automatycznie, bez wpływu na osobę sprzątającą.",
     "cleaningTypeNoteLabel": "Lub opisz, czego potrzebujesz",
     "cleaningTypeNoteHint": "Opcjonalnie — dodaj szczegóły, jeśli żadna kategoria nie pasuje idealnie.",
-    "cleaningTypeNotePlaceholder": "np. Sprzątanie po remoncie, tylko dywany, ..."
+    "cleaningTypeNotePlaceholder": "np. Sprzątanie po remoncie, tylko dywany, ...",
+    "errorSelectCategory": "Wybierz rodzaj sprzątania."
   },
   "customerBookProvidersPage": {
     "heading": "Gdzie potrzebujesz sprzątania?",
@@ -746,7 +747,9 @@
     "recurringDaysLabel": "W jakie dni?",
     "recurringDaysHint": "Wybierz dni tygodnia dla cyklicznego sprzątania.",
     "viewFullCalendar": "Zobacz pełny kalendarz dostępności",
-    "hideFullCalendar": "Ukryj kalendarz dostępności"
+    "hideFullCalendar": "Ukryj kalendarz dostępności",
+    "errorSelectDate": "Wybierz datę.",
+    "errorSelectTime": "Wybierz godzinę."
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Nie udało się załadować rezerwacji",

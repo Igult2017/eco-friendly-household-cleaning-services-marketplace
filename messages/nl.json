@@ -696,7 +696,8 @@
     "recurringBenefitBanner": "💡 Kies terugkerende schoonmaak en bespaar {pct}% op je 2e en 3e schoonmaak — automatisch, zonder gevolgen voor de schoonmaker.",
     "cleaningTypeNoteLabel": "Of beschrijf wat je nodig hebt",
     "cleaningTypeNoteHint": "Optioneel — voeg details toe als geen enkele categorie helemaal past.",
-    "cleaningTypeNotePlaceholder": "bijv. Stof na verbouwing, alleen tapijt, ..."
+    "cleaningTypeNotePlaceholder": "bijv. Stof na verbouwing, alleen tapijt, ...",
+    "errorSelectCategory": "Kies een type schoonmaak."
   },
   "customerBookProvidersPage": {
     "heading": "Waar heb je schoonmaak nodig?",
@@ -746,7 +747,9 @@
     "recurringDaysLabel": "Op welke dagen?",
     "recurringDaysHint": "Kies de weekdagen voor de terugkerende schoonmaak.",
     "viewFullCalendar": "Volledige beschikbaarheidskalender bekijken",
-    "hideFullCalendar": "Beschikbaarheidskalender verbergen"
+    "hideFullCalendar": "Beschikbaarheidskalender verbergen",
+    "errorSelectDate": "Selecteer een datum.",
+    "errorSelectTime": "Selecteer een tijd."
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Boeking kon niet worden geladen",

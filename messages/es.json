@@ -696,7 +696,8 @@
     "recurringBenefitBanner": "💡 Elige limpieza recurrente y ahorra un {pct}% en tu 2.ª y 3.ª limpieza — automáticamente, sin afectar al profesional.",
     "cleaningTypeNoteLabel": "O describe lo que necesitas",
     "cleaningTypeNoteHint": "Opcional — añade detalles si ninguna categoría encaja del todo.",
-    "cleaningTypeNotePlaceholder": "ej. Limpieza tras reforma, solo alfombras, ..."
+    "cleaningTypeNotePlaceholder": "ej. Limpieza tras reforma, solo alfombras, ...",
+    "errorSelectCategory": "Por favor, elige un tipo de limpieza."
   },
   "customerBookProvidersPage": {
     "heading": "¿Dónde necesitas la limpieza?",
@@ -746,7 +747,9 @@
     "recurringDaysLabel": "¿Qué días?",
     "recurringDaysHint": "Elige los días de la semana para la limpieza recurrente.",
     "viewFullCalendar": "Ver calendario de disponibilidad completo",
-    "hideFullCalendar": "Ocultar calendario de disponibilidad"
+    "hideFullCalendar": "Ocultar calendario de disponibilidad",
+    "errorSelectDate": "Por favor, selecciona una fecha.",
+    "errorSelectTime": "Por favor, selecciona una hora."
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "No se pudo cargar la reserva",

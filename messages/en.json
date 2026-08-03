@@ -696,7 +696,8 @@
     "recurringBenefitBanner": "💡 Choose recurring cleaning and save {pct}% on your 2nd and 3rd cleaning — automatically, no cleaner impact.",
     "cleaningTypeNoteLabel": "Or describe what you need",
     "cleaningTypeNoteHint": "Optional — add detail if none of the categories quite fit.",
-    "cleaningTypeNotePlaceholder": "e.g. Post-renovation dust cleanup, carpets only, ..."
+    "cleaningTypeNotePlaceholder": "e.g. Post-renovation dust cleanup, carpets only, ...",
+    "errorSelectCategory": "Please choose a type of cleaning."
   },
   "customerBookProvidersPage": {
     "heading": "Where do you need cleaning?",
@@ -746,7 +747,9 @@
     "recurringDaysLabel": "Which days?",
     "recurringDaysHint": "Pick the weekdays you want recurring cleaning on.",
     "viewFullCalendar": "View full availability calendar",
-    "hideFullCalendar": "Hide availability calendar"
+    "hideFullCalendar": "Hide availability calendar",
+    "errorSelectDate": "Please select a date.",
+    "errorSelectTime": "Please select a time."
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Failed to load booking",

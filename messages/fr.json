@@ -696,7 +696,8 @@
     "recurringBenefitBanner": "💡 Choisissez le ménage récurrent et économisez {pct}% sur votre 2ᵉ et 3ᵉ ménage — automatiquement, sans impact pour l'intervenant.",
     "cleaningTypeNoteLabel": "Ou décrivez ce dont vous avez besoin",
     "cleaningTypeNoteHint": "Facultatif — ajoutez des détails si aucune catégorie ne convient tout à fait.",
-    "cleaningTypeNotePlaceholder": "ex. Nettoyage après travaux, moquette uniquement, ..."
+    "cleaningTypeNotePlaceholder": "ex. Nettoyage après travaux, moquette uniquement, ...",
+    "errorSelectCategory": "Veuillez choisir un type de nettoyage."
   },
   "customerBookProvidersPage": {
     "heading": "Où avez-vous besoin d'un ménage ?",
@@ -746,7 +747,9 @@
     "recurringDaysLabel": "Quels jours ?",
     "recurringDaysHint": "Choisissez les jours de la semaine pour le ménage récurrent.",
     "viewFullCalendar": "Voir le calendrier de disponibilité complet",
-    "hideFullCalendar": "Masquer le calendrier de disponibilité"
+    "hideFullCalendar": "Masquer le calendrier de disponibilité",
+    "errorSelectDate": "Veuillez sélectionner une date.",
+    "errorSelectTime": "Veuillez sélectionner une heure."
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Échec du chargement de la réservation",

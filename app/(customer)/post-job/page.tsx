@@ -18,6 +18,7 @@ import { CountryField } from "@/components/location/CountryField"
 import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
 import { localTodayYmd } from "@/lib/utils/formatDate"
 import { SaveCardPrompt } from "@/components/customer/SaveCardPrompt"
+import { FieldError } from "@/components/ui/FieldError"
 
 const ECO_OPTIONS = ["Eco-certified products only", "No single-use plastics", "Fragrance-free", "Energy-saving methods"]
 const ECO_OPTION_KEYS: Record<string, string> = {
@@ -25,13 +26,6 @@ const ECO_OPTION_KEYS: Record<string, string> = {
   "No single-use plastics": "ecoOptionNoPlastics",
   "Fragrance-free": "ecoOptionFragranceFree",
   "Energy-saving methods": "ecoOptionEnergySaving",
-}
-
-// Renders directly under the input it belongs to, instead of one generic banner at the bottom of
-// the form — so a mistake is obvious at the field that caused it.
-function FieldError({ msg }: { msg?: string }) {
-  if (!msg) return null
-  return <p className="text-xs text-red-500 mt-1">{msg}</p>
 }
 
 export default function PostJobPage() {

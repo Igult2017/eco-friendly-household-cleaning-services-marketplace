@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import { useTranslations } from "next-intl"
 import { UserCheck, X, Sparkles } from "lucide-react"
+import { FieldError } from "@/components/ui/FieldError"
 
 const SERVICE_CATEGORIES = [
   { id: "regular", slug: "regular-cleaning", icon: "🌿", name: "Regular Cleaning", from: "€29" },
@@ -36,6 +37,7 @@ export default function BookStep1Page() {
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null)
   // While the pre-selected cleaner's summary fetch is in flight, hold Continue until it resolves.
   const [preLoading, setPreLoading] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   // Marketing copy shown BEFORE any click — the discount rate is fetched but the banner itself
   // doesn't wait on it to be worth showing; only the number is conditional.
   const [discountPct, setDiscountPct] = useState<number | null>(null)
@@ -85,6 +87,7 @@ export default function BookStep1Page() {
     if (!isOffered(slug)) return
     setSelectedSlug(slug)
     setCategory(slug, name)
+    if (fieldErrors.category) setFieldErrors({})
   }
 
   // Multi-day selection — each picked weekday becomes its own independent recurring schedule
@@ -98,7 +101,10 @@ export default function BookStep1Page() {
   }
 
   function handleNext() {
-    if (!selectedSlug || !isOffered(selectedSlug)) return
+    if (!selectedSlug || !isOffered(selectedSlug)) {
+      setFieldErrors({ category: t("errorSelectCategory") })
+      return
+    }
     router.push("/book/providers")
   }
 
@@ -187,7 +193,12 @@ export default function BookStep1Page() {
           </div>
         )}
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
+        <div
+          className={cn(
+            "grid grid-cols-2 sm:grid-cols-3 gap-3 mb-1 rounded-2xl",
+            fieldErrors.category && "ring-1 ring-red-400"
+          )}
+        >
           {SERVICE_CATEGORIES.map((cat) => (
             <button
               key={cat.slug}
@@ -203,6 +214,9 @@ export default function BookStep1Page() {
               <p className="text-xs font-bold text-[#2D7A5F] mt-2">{t("fromPrice", { price: cat.from })}</p>
             </button>
           ))}
+        </div>
+        <div className="mb-8">
+          <FieldError msg={fieldErrors.category} />
         </div>
 
         {/* Manual note — supplements the category cards; doesn't replace them. Feeds into
@@ -222,7 +236,7 @@ export default function BookStep1Page() {
 
         <Button
           onClick={handleNext}
-          disabled={preLoading || !selectedSlug || !isOffered(selectedSlug)}
+          disabled={preLoading}
           className="w-full h-12 bg-[#2D7A5F] hover:bg-[#235f49] text-white font-semibold text-base"
         >
           {t("continueButton")}

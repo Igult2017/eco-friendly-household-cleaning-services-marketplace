@@ -696,7 +696,8 @@
     "recurringBenefitBanner": "💡 Scegli la pulizia ricorrente e risparmia il {pct}% sulla 2ª e 3ª pulizia — automaticamente, senza alcun impatto sull'addetto.",
     "cleaningTypeNoteLabel": "Oppure descrivi cosa ti serve",
     "cleaningTypeNoteHint": "Facoltativo — aggiungi dettagli se nessuna categoria si adatta del tutto.",
-    "cleaningTypeNotePlaceholder": "es. Pulizia post-ristrutturazione, solo tappeti, ..."
+    "cleaningTypeNotePlaceholder": "es. Pulizia post-ristrutturazione, solo tappeti, ...",
+    "errorSelectCategory": "Seleziona un tipo di pulizia."
   },
   "customerBookProvidersPage": {
     "heading": "Dove ti serve la pulizia?",
@@ -746,7 +747,9 @@
     "recurringDaysLabel": "In quali giorni?",
     "recurringDaysHint": "Scegli i giorni della settimana per la pulizia ricorrente.",
     "viewFullCalendar": "Vedi il calendario di disponibilità completo",
-    "hideFullCalendar": "Nascondi il calendario di disponibilità"
+    "hideFullCalendar": "Nascondi il calendario di disponibilità",
+    "errorSelectDate": "Seleziona una data.",
+    "errorSelectTime": "Seleziona un orario."
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Impossibile caricare la prenotazione",

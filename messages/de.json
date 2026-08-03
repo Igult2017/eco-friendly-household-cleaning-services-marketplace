@@ -696,7 +696,8 @@
     "recurringBenefitBanner": "💡 Wähle wiederkehrende Reinigung und spare {pct}% bei deiner 2. und 3. Reinigung — automatisch, ohne Nachteil für die Reinigungskraft.",
     "cleaningTypeNoteLabel": "Oder beschreibe, was du brauchst",
     "cleaningTypeNoteHint": "Optional — für Details, falls keine Kategorie ganz passt.",
-    "cleaningTypeNotePlaceholder": "z. B. Staub nach Renovierung, nur Teppiche, ..."
+    "cleaningTypeNotePlaceholder": "z. B. Staub nach Renovierung, nur Teppiche, ...",
+    "errorSelectCategory": "Bitte wählen Sie eine Art der Reinigung."
   },
   "customerBookProvidersPage": {
     "heading": "Wo benötigen Sie eine Reinigung?",
@@ -746,7 +747,9 @@
     "recurringDaysLabel": "An welchen Tagen?",
     "recurringDaysHint": "Wähle die Wochentage für die wiederkehrende Reinigung.",
     "viewFullCalendar": "Vollständigen Verfügbarkeitskalender anzeigen",
-    "hideFullCalendar": "Verfügbarkeitskalender ausblenden"
+    "hideFullCalendar": "Verfügbarkeitskalender ausblenden",
+    "errorSelectDate": "Bitte wählen Sie ein Datum.",
+    "errorSelectTime": "Bitte wählen Sie eine Uhrzeit."
   },
   "customerBookingsIdCancelPage": {
     "errorLoadBooking": "Buchung konnte nicht geladen werden",
