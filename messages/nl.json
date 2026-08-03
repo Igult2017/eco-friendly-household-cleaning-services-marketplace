@@ -1287,10 +1287,7 @@
     "carbonOffsetDescription": "Klanten toestaan een bijdrage voor CO2-compensatie toe te voegen bij het afrekenen",
     "saveButton": "Wijzigingen opslaan",
     "saveButtonSaving": "Opslaan...",
-    "saveButtonSaved": "Opgeslagen!",
-    "recurringDiscountLabel": "Korting voor terugkerende boekingen",
-    "recurringDiscountSuffix": "% korting op terugkerende boekingen",
-    "recurringDiscountHint": "DORIXÉ stelt dit nu platformbreed in — klanten die wekelijks, tweewekelijks of maandelijks boeken, krijgen automatisch {pct}% korting op elke schoonmaak. Je hoeft zelf niets te doen."
+    "saveButtonSaved": "Opgeslagen!"
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "Mijn diensten",

@@ -10,7 +10,6 @@ import { sendProviderApprovedEmail } from "@/lib/resend/providerApproved"
 import { logError } from "@/lib/utils/logError"
 import { ensureUserRow } from "@/lib/clerk/ensureUser"
 import { sendApprovalSupportWelcome } from "@/lib/support/approvalWelcome"
-import { getRecurringDiscountPct } from "@/lib/platform/settings"
 
 function toSlug(name: string, suffix: string): string {
   return (
@@ -43,9 +42,7 @@ export async function GET() {
       where: eq(providers.userId, userId),
     })
 
-    // Recurring discount is now admin-set platform-wide (was a per-cleaner field) — surfaced here
-    // read-only so the profile page can show the cleaner the current rate.
-    return NextResponse.json({ provider: provider ?? null, adminRecurringDiscountPct: await getRecurringDiscountPct() })
+    return NextResponse.json({ provider: provider ?? null })
   } catch (err) {
     console.error("[providers/profile GET]", err)
     void logError({ message: "[providers/profile GET]", error: err, route: "/api/providers/profile", severity: "error" })

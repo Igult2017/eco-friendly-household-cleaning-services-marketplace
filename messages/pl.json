@@ -1287,10 +1287,7 @@
     "carbonOffsetDescription": "Pozwól klientom dodać wkład na kompensację emisji CO2 przy płatności",
     "saveButton": "Zapisz zmiany",
     "saveButtonSaving": "Zapisywanie...",
-    "saveButtonSaved": "Zapisano!",
-    "recurringDiscountLabel": "Rabat za rezerwacje cykliczne",
-    "recurringDiscountSuffix": "% rabatu na rezerwacje cykliczne",
-    "recurringDiscountHint": "DORIXÉ ustala teraz tę wartość dla całej platformy — klienci, którzy rezerwują co tydzień, co dwa tygodnie lub co miesiąc, automatycznie otrzymują {pct}% zniżki na każde sprzątanie. Nie musisz nic robić."
+    "saveButtonSaved": "Zapisano!"
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "Moje usługi",

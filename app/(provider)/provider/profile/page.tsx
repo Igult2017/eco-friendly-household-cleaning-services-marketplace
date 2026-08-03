@@ -26,8 +26,6 @@ export default function ProviderProfilePage() {
     businessName: "", bio: "", city: "", postalCode: "",
     country: "DE", serviceRadiusKm: 25, carbonOffsetEnabled: false,
   })
-  // Recurring discount is admin-set platform-wide now (was per-cleaner) — read-only display.
-  const [adminRecurringDiscountPct, setAdminRecurringDiscountPct] = useState(0)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -61,7 +59,6 @@ export default function ProviderProfilePage() {
             carbonOffsetEnabled: d.provider.carbonOffsetEnabled ?? false,
           })
         }
-        setAdminRecurringDiscountPct(d.adminRecurringDiscountPct ?? 0)
         setLoading(false)
       })
   }, [])
@@ -180,14 +177,6 @@ export default function ProviderProfilePage() {
             <p className="text-xs text-[#6B7280]">{t("carbonOffsetDescription")}</p>
           </div>
         </label>
-
-        <div>
-          <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">{t("recurringDiscountLabel")}</label>
-          <div className="bg-[#F4FAF6] rounded-xl px-4 py-3">
-            <p className="text-sm font-semibold text-[#2D7A5F]">{adminRecurringDiscountPct} {t("recurringDiscountSuffix")}</p>
-            <p className="text-xs text-[#6B7280] mt-1">{t("recurringDiscountHint", { pct: adminRecurringDiscountPct })}</p>
-          </div>
-        </div>
 
         {error && <p className="text-sm text-red-500">{error}</p>}
         <button onClick={save} disabled={saving || !locationValid}

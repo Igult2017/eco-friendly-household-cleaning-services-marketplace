@@ -1287,10 +1287,7 @@
     "carbonOffsetDescription": "Kunden erlauben, an der Kasse einen Beitrag zum CO2-Ausgleich hinzuzufügen",
     "saveButton": "Änderungen speichern",
     "saveButtonSaving": "Wird gespeichert...",
-    "saveButtonSaved": "Gespeichert!",
-    "recurringDiscountLabel": "Rabatt für wiederkehrende Buchungen",
-    "recurringDiscountSuffix": "% Rabatt auf wiederkehrende Buchungen",
-    "recurringDiscountHint": "DORIXÉ legt dies jetzt plattformweit fest — Kund:innen, die wöchentlich, zweiwöchentlich oder monatlich buchen, erhalten automatisch {pct}% Rabatt auf jede Reinigung. Sie müssen nichts weiter tun."
+    "saveButtonSaved": "Gespeichert!"
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "Meine Leistungen",

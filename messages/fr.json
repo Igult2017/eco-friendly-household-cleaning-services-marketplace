@@ -1287,10 +1287,7 @@
     "carbonOffsetDescription": "Permettre aux clients d'ajouter une contribution de compensation carbone au paiement",
     "saveButton": "Enregistrer les modifications",
     "saveButtonSaving": "Enregistrement...",
-    "saveButtonSaved": "Enregistré !",
-    "recurringDiscountLabel": "Réduction pour réservations récurrentes",
-    "recurringDiscountSuffix": "% de réduction sur les réservations récurrentes",
-    "recurringDiscountHint": "DORIXÉ définit désormais ce taux pour toute la plateforme — les clients qui réservent chaque semaine, toutes les deux semaines ou chaque mois bénéficient automatiquement de {pct}% de réduction à chaque ménage. Aucune action requise de votre part."
+    "saveButtonSaved": "Enregistré !"
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "Mes prestations",

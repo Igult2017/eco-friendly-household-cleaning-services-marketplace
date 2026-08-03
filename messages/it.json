@@ -1287,10 +1287,7 @@
     "carbonOffsetDescription": "Consenti ai clienti di aggiungere un contributo per la compensazione del carbonio al momento del pagamento",
     "saveButton": "Salva modifiche",
     "saveButtonSaving": "Salvataggio...",
-    "saveButtonSaved": "Salvato!",
-    "recurringDiscountLabel": "Sconto per prenotazioni ricorrenti",
-    "recurringDiscountSuffix": "% di sconto sulle prenotazioni ricorrenti",
-    "recurringDiscountHint": "DORIXÉ ora imposta questo valore per l'intera piattaforma — i clienti che prenotano ogni settimana, ogni due settimane o ogni mese ricevono automaticamente il {pct}% di sconto su ogni pulizia. Non devi fare nulla."
+    "saveButtonSaved": "Salvato!"
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "I miei servizi",
