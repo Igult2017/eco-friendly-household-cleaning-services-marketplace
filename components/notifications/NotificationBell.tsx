@@ -31,7 +31,7 @@ export function NotificationBell() {
 
   useEffect(() => {
     load()
-    const t = setInterval(load, 30_000)
+    const t = setInterval(load, 10_000)
     // Stay in sync with the navs: whatever marks notifications read anywhere refreshes the bell too.
     window.addEventListener(UNREAD_EVENT, load)
     return () => { clearInterval(t); window.removeEventListener(UNREAD_EVENT, load) }
