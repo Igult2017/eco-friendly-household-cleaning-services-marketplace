@@ -898,6 +898,7 @@
     "waitingForBids": "Oczekiwanie na oferty — wygasa {date}",
     "bidsReceived": "{count, plural, one {Otrzymano # ofertę} few {Otrzymano # oferty} many {Otrzymano # ofert} other {Otrzymano # ofert}}",
     "messageCleaner": "Napisz do osoby sprzątającej",
+    "paymentOutstanding": "To zlecenie zostało przyjęte — dokończ płatność, aby je potwierdzić.",
     "hideChat": "Ukryj czat",
     "overdueBy": "Zaległe o {days} dzień/dni — przedłuż datę, aby dalej otrzymywać oferty",
     "waitingForBidsShort": "Oczekiwanie na oferty…",
@@ -1004,6 +1005,7 @@
     "continueWithoutCard": "Kontynuuj bez dodawania",
     "errorRateRequired": "Podaj kwotę za godzinę.",
     "recurringBenefitBanner": "💡 Wybierz cykliczne sprzątanie i otrzymaj zniżkę na kolejne 2 sprzątania — automatycznie, bez wpływu na wynagrodzenie sprzątaczki/sprzątacza.",
+    "recurringBenefitBannerTakeJob": "💡 Potrzebujesz takiego sprzątania częściej? Skonfiguruj osobno cykliczne sprzątanie i otrzymaj zniżkę na kolejne 2 sprzątania — automatycznie, bez wpływu na wynagrodzenie sprzątaczki/sprzątacza.",
     "modeStandardTitle": "Standardowe zlecenie",
     "modeStandardHint": "Sprzątaczki/sprzątacze licytują — Ty wybierasz",
     "modeTakeJobTitle": "Take Job — pilne",
@@ -1232,6 +1234,7 @@
     "postedDaysAgo": "Opublikowano {count} dni temu",
     "reviewsFromCleaners": "({count} od sprzątających)",
     "takeJobBadge": "Pilne",
+    "noPaymentMethodBadge": "Brak metody płatności",
     "takeJobOutOfRadius": "Poza promieniem {radius} km do przyjęcia"
   },
   "providerProviderNotificationsPage": {
@@ -2126,7 +2129,7 @@
   },
   "compSaveCardPrompt": {
     "title": "Dodaj dane płatności (zalecane)",
-    "body": "Osoby sprzątające przyjmują tylko oferty klientów z metodą płatności. Dodanie karty NIC nie kosztuje — płatność następuje dopiero po pracy i potwierdzeniu przez oboje.",
+    "body": "Osoby sprzątające chętniej składają oferty lub przyjmują zlecenia od klientów, którzy już mają zapisaną metodę płatności — to daje im gwarancję, że rzeczywiście otrzymają zapłatę. Dodanie karty NIC nie kosztuje — płatność następuje dopiero po pracy i potwierdzeniu przez oboje.",
     "addCard": "Dodaj dane płatności",
     "saved": "Metoda płatności zapisana — osoby sprzątające mogą teraz przyjmować Twoje oferty."
   },
@@ -2169,6 +2172,7 @@
   "compBiddingTakeJobButton": {
     "takeThisJob": "Przyjmij zlecenie",
     "claiming": "Przejmowanie…",
+    "claimed": "Przyjęte!",
     "genericError": "Coś poszło nie tak. Spróbuj ponownie."
   },
   "compProviderTakeJobAlerts": {

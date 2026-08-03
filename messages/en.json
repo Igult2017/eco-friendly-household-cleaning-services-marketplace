@@ -898,6 +898,7 @@
     "waitingForBids": "Waiting for bids — expires {date}",
     "bidsReceived": "{count, plural, one {# Bid Received} other {# Bids Received}}",
     "messageCleaner": "Message your cleaner",
+    "paymentOutstanding": "This job has been claimed — complete payment to confirm it.",
     "hideChat": "Hide chat",
     "overdueBy": "Overdue by {days} day(s) — extend the date to keep attracting bids",
     "waitingForBidsShort": "Waiting for bids…",
@@ -1004,6 +1005,7 @@
     "continueWithoutCard": "Continue without adding",
     "errorRateRequired": "Please enter the amount you pay per hour.",
     "recurringBenefitBanner": "💡 Choose recurring cleaning and get your next 2 cleanings at a discounted rate — automatically, at no cost to your cleaner.",
+    "recurringBenefitBannerTakeJob": "💡 Need this kind of cleaning often? Set up recurring cleaning separately and get your next 2 cleanings at a discounted rate — automatically, at no cost to your cleaner.",
     "modeStandardTitle": "Standard job",
     "modeStandardHint": "Cleaners bid — you choose",
     "modeTakeJobTitle": "Take Job — urgent",
@@ -1232,6 +1234,7 @@
     "postedDaysAgo": "Posted {count}d ago",
     "reviewsFromCleaners": "({count} from cleaners)",
     "takeJobBadge": "Urgent",
+    "noPaymentMethodBadge": "No payment method yet",
     "takeJobOutOfRadius": "Outside the {radius} km claim radius"
   },
   "providerProviderNotificationsPage": {
@@ -2126,7 +2129,7 @@
   },
   "compSaveCardPrompt": {
     "title": "Add payment details (recommended)",
-    "body": "Cleaners only accept offers from clients with a payment method on file. Adding a card does NOT charge you — payment is only collected after the work is done and you both confirm.",
+    "body": "Cleaners are more likely to bid on or take jobs from clients who already have a payment method on file — it guarantees they'll actually get paid. Adding a card does NOT charge you — payment is only collected after the work is done and you both confirm.",
     "addCard": "Add payment details",
     "saved": "Payment method saved — cleaners can now accept your offers."
   },
@@ -2169,6 +2172,7 @@
   "compBiddingTakeJobButton": {
     "takeThisJob": "Take This Job",
     "claiming": "Claiming…",
+    "claimed": "Claimed!",
     "genericError": "Something went wrong. Please try again."
   },
   "compProviderTakeJobAlerts": {

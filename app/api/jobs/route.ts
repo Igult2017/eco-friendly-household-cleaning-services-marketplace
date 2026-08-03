@@ -13,6 +13,7 @@ import { formatDistance } from "@/lib/utils/locale"
 import { z } from "zod"
 import { logError } from "@/lib/utils/logError"
 import { ensureUserRow } from "@/lib/clerk/ensureUser"
+import { stripe } from "@/lib/stripe/client"
 
 const createJobSchema = z.object({
   title: z.string().min(5).max(200),
@@ -225,6 +226,28 @@ export async function GET(req: Request) {
         }),
       )
 
+      // Whether each job's client has a real, usable payment method — surfaced to cleaners as a
+      // "no payment method yet" badge so they can factor payment risk into bidding or taking a job.
+      // Only computed for open/bidding jobs (geoRows); an already-won/assigned job isn't a bidding
+      // decision anymore, so it's left out of this and defaults to no badge below.
+      const distinctCustomerIds = [...new Set(geoRows.map((r) => r.customerId))]
+      const customerUsers = distinctCustomerIds.length
+        ? await db.select({ id: users.id, stripeCustomerId: users.stripeCustomerId }).from(users).where(inArray(users.id, distinctCustomerIds))
+        : []
+      const hasPaymentMethodByUser = new Map<string, boolean>()
+      await Promise.all(
+        customerUsers.map(async (u) => {
+          if (!u.stripeCustomerId) { hasPaymentMethodByUser.set(u.id, false); return }
+          try {
+            const pms = await stripe.paymentMethods.list({ customer: u.stripeCustomerId, type: "card", limit: 1 })
+            hasPaymentMethodByUser.set(u.id, pms.data.length > 0)
+          } catch {
+            hasPaymentMethodByUser.set(u.id, false)
+          }
+        }),
+      )
+      const hasPaymentMethodByJob = new Map(geoRows.map((r) => [r.id, hasPaymentMethodByUser.get(r.customerId) ?? false]))
+
       const nearbyIds = [...new Set([...geoRows.map((r) => r.id), ...wonIds])]
 
       // Which of these jobs this cleaner already bid on — the UI's session-local "submitted" state
@@ -259,6 +282,7 @@ export async function GET(req: Request) {
           ...(meta.get(j.id) ?? { own: false, withinRadius: false, distanceLabel: null }),
           alreadyBid: myBidJobIds.has(j.id),
           wonByMe: wonIds.has(j.id),
+          hasPaymentMethod: hasPaymentMethodByJob.get(j.id) ?? true,
         }))
         // Won jobs first (client chat lives there), then biddable-nearby, then the rest; own last.
         .sort((a: any, b: any) => {

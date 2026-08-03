@@ -898,6 +898,7 @@
     "waitingForBids": "Warten auf Angebote — läuft ab am {date}",
     "bidsReceived": "{count, plural, one {# Angebot erhalten} other {# Angebote erhalten}}",
     "messageCleaner": "Nachricht an deine Reinigungskraft",
+    "paymentOutstanding": "Dieser Auftrag wurde übernommen — schließe die Zahlung ab, um ihn zu bestätigen.",
     "hideChat": "Chat ausblenden",
     "overdueBy": "{days} Tag(e) überfällig — verlängere das Datum, um weiter Angebote zu erhalten",
     "waitingForBidsShort": "Warten auf Angebote…",
@@ -1004,6 +1005,7 @@
     "continueWithoutCard": "Ohne Hinzufügen fortfahren",
     "errorRateRequired": "Bitte gib den Betrag pro Stunde an.",
     "recurringBenefitBanner": "💡 Wähle wiederkehrende Reinigung und erhalte deine nächsten 2 Reinigungen vergünstigt — automatisch, ohne Nachteil für deine Reinigungskraft.",
+    "recurringBenefitBannerTakeJob": "💡 Brauchst du diese Art von Reinigung öfter? Richte separat eine wiederkehrende Reinigung ein und erhalte deine nächsten 2 Reinigungen vergünstigt — automatisch, ohne Nachteil für deine Reinigungskraft.",
     "modeStandardTitle": "Standardauftrag",
     "modeStandardHint": "Reinigungskräfte bieten — du wählst",
     "modeTakeJobTitle": "Sofortauftrag — dringend",
@@ -1232,6 +1234,7 @@
     "postedDaysAgo": "Vor {count} Tagen eingestellt",
     "reviewsFromCleaners": "({count} von Reinigungskräften)",
     "takeJobBadge": "Dringend",
+    "noPaymentMethodBadge": "Noch keine Zahlungsmethode",
     "takeJobOutOfRadius": "Außerhalb des {radius} km Übernahme-Radius"
   },
   "providerProviderNotificationsPage": {
@@ -2126,7 +2129,7 @@
   },
   "compSaveCardPrompt": {
     "title": "Zahlungsdaten hinzufügen (empfohlen)",
-    "body": "Reinigungskräfte nehmen nur Angebote von Kunden mit hinterlegter Zahlungsmethode an. Das Hinzufügen kostet nichts — bezahlt wird erst nach erledigter Arbeit und beidseitiger Bestätigung.",
+    "body": "Reinigungskräfte bewerben oder entscheiden sich eher für Aufträge von Kund:innen, die bereits eine Zahlungsmethode hinterlegt haben — das garantiert ihnen, tatsächlich bezahlt zu werden. Das Hinzufügen kostet nichts — bezahlt wird erst nach erledigter Arbeit und beidseitiger Bestätigung.",
     "addCard": "Zahlungsdaten hinzufügen",
     "saved": "Zahlungsmethode gespeichert — Reinigungskräfte können deine Angebote jetzt annehmen."
   },
@@ -2169,6 +2172,7 @@
   "compBiddingTakeJobButton": {
     "takeThisJob": "Auftrag übernehmen",
     "claiming": "Wird übernommen…",
+    "claimed": "Übernommen!",
     "genericError": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
   },
   "compProviderTakeJobAlerts": {

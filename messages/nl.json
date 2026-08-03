@@ -898,6 +898,7 @@
     "waitingForBids": "Wachten op biedingen — verloopt op {date}",
     "bidsReceived": "{count, plural, one {# bieding ontvangen} other {# biedingen ontvangen}}",
     "messageCleaner": "Stuur je schoonmaker een bericht",
+    "paymentOutstanding": "Deze klus is overgenomen — rond de betaling af om te bevestigen.",
     "hideChat": "Chat verbergen",
     "overdueBy": "{days} dag(en) over tijd — verleng de datum om biedingen te blijven ontvangen",
     "waitingForBidsShort": "Wachten op biedingen…",
@@ -1004,6 +1005,7 @@
     "continueWithoutCard": "Doorgaan zonder toevoegen",
     "errorRateRequired": "Vul het bedrag per uur in.",
     "recurringBenefitBanner": "💡 Kies terugkerende schoonmaak en krijg je volgende 2 schoonmaakbeurten met korting — automatisch, zonder gevolgen voor je schoonmaker.",
+    "recurringBenefitBannerTakeJob": "💡 Heb je dit soort schoonmaak vaak nodig? Stel apart terugkerende schoonmaak in en krijg je volgende 2 schoonmaakbeurten met korting — automatisch, zonder gevolgen voor je schoonmaker.",
     "modeStandardTitle": "Standaardklus",
     "modeStandardHint": "Schoonmakers bieden — jij kiest",
     "modeTakeJobTitle": "Take Job — dringend",
@@ -1232,6 +1234,7 @@
     "postedDaysAgo": "{count} d geleden geplaatst",
     "reviewsFromCleaners": "({count} van schoonmakers)",
     "takeJobBadge": "Dringend",
+    "noPaymentMethodBadge": "Nog geen betaalmethode",
     "takeJobOutOfRadius": "Buiten de {radius} km straal om te claimen"
   },
   "providerProviderNotificationsPage": {
@@ -2126,7 +2129,7 @@
   },
   "compSaveCardPrompt": {
     "title": "Betaalgegevens toevoegen (aanbevolen)",
-    "body": "Schoonmakers accepteren alleen aanbiedingen van klanten met een betaalmethode. Een kaart toevoegen kost niets — er wordt pas betaald na het werk en jullie beider bevestiging.",
+    "body": "Schoonmakers bieden vaker op, of nemen vaker klussen aan, van klanten die al een betaalmethode hebben toegevoegd — dat garandeert dat ze ook echt betaald worden. Een kaart toevoegen kost niets — er wordt pas betaald na het werk en jullie beider bevestiging.",
     "addCard": "Betaalgegevens toevoegen",
     "saved": "Betaalmethode opgeslagen — schoonmakers kunnen je aanbiedingen nu accepteren."
   },
@@ -2169,6 +2172,7 @@
   "compBiddingTakeJobButton": {
     "takeThisJob": "Klus overnemen",
     "claiming": "Bezig met overnemen…",
+    "claimed": "Overgenomen!",
     "genericError": "Er is iets misgegaan. Probeer het opnieuw."
   },
   "compProviderTakeJobAlerts": {

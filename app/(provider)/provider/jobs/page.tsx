@@ -32,6 +32,7 @@ interface JobPost {
   distanceLabel: string | null
   alreadyBid: boolean
   wonByMe: boolean
+  hasPaymentMethod: boolean
   serviceAddress: { line1: string; city: string; postalCode: string; country: string | null }
   ecoRequirements: string[]
   recurringFrequency: string | null
@@ -169,7 +170,10 @@ export default function ProviderJobsPage() {
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div>
                         {isTakeJob && (
-                          <Badge className="bg-red-100 text-red-700 text-xs mb-1.5 font-semibold">🚨 {t("takeJobBadge")}</Badge>
+                          <Badge className="bg-red-100 text-red-700 text-xs mb-1.5 font-semibold mr-1.5">🚨 {t("takeJobBadge")}</Badge>
+                        )}
+                        {!job.hasPaymentMethod && (
+                          <Badge className="bg-amber-100 text-amber-800 text-xs mb-1.5 font-semibold">{t("noPaymentMethodBadge")}</Badge>
                         )}
                         {/* Upwork-style: the title opens the full job detail (complete description + bid form). */}
                         <h2 className="font-semibold text-[#2B3441]">

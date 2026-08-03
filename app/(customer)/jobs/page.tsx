@@ -325,6 +325,11 @@ export default function CustomerJobsPage() {
               const bidCount = job.bids.length
               const isOpen = expanded.has(job.id)
               const hasBids = bidCount > 0
+              // Payment not yet completed for the winning bid — surfaced unconditionally below (not
+              // just inside the "View Bids" accordion) since a Take Job claim never went through a
+              // bid the client placed themselves; they'd have no reason to think to expand "bids".
+              const acceptedBid = job.bids.find((b) => b.status === "accepted")
+              const needsPayment = job.status === "assigned" && !!acceptedBid && !acceptedBid.bookingId
 
               return (
                 <div key={job.id} className="bg-white rounded-2xl border border-[#E5EBF0] shadow-sm overflow-hidden">
@@ -426,6 +431,15 @@ export default function CustomerJobsPage() {
                             {t("deleteJob")}
                           </button>
                         )}
+                      </div>
+                    )}
+
+                    {/* Payment still outstanding for the winning bid — shown directly on the card,
+                        unmissable, rather than requiring the client to expand "View Bids" first. */}
+                    {needsPayment && (
+                      <div className="mt-3 flex items-center gap-3 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3">
+                        <p className="flex-1 text-xs font-medium text-amber-800">{t("paymentOutstanding")}</p>
+                        <CompleteBookingButton jobId={job.id} bookingId={acceptedBid!.bookingId} />
                       </div>
                     )}
 

@@ -143,7 +143,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         type: "job_taken",
         title: "Your emergency job was claimed!",
         body: `${provider.businessName} claimed "${job.title}" for ${amountLabel}. Complete payment to confirm.`,
-        link: `/jobs/${jobPostId}`,
+        // /jobs/[id] has no real per-job detail page (it just redirects to /jobs) — link straight
+        // to the list, where the "payment outstanding" banner now surfaces this job unmissably.
+        link: `/jobs`,
         metadata: { name: provider.businessName, amount: amountLabel, title: job.title },
       })
       await pusherServer

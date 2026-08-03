@@ -898,6 +898,7 @@
     "waitingForBids": "Esperando ofertas — caduca el {date}",
     "bidsReceived": "{count, plural, one {# oferta recibida} other {# ofertas recibidas}}",
     "messageCleaner": "Escribe a tu profesional",
+    "paymentOutstanding": "Este trabajo ha sido reclamado — completa el pago para confirmarlo.",
     "hideChat": "Ocultar chat",
     "overdueBy": "Atrasado {days} día(s): amplía la fecha para seguir recibiendo ofertas",
     "waitingForBidsShort": "Esperando ofertas…",
@@ -1004,6 +1005,7 @@
     "continueWithoutCard": "Continuar sin añadir",
     "errorRateRequired": "Introduce el importe por hora.",
     "recurringBenefitBanner": "💡 Elige limpieza recurrente y consigue tus próximas 2 limpiezas con descuento — automáticamente, sin coste para tu limpiador/a.",
+    "recurringBenefitBannerTakeJob": "💡 ¿Necesitas este tipo de limpieza a menudo? Configura la limpieza recurrente por separado y consigue tus próximas 2 limpiezas con descuento — automáticamente, sin coste para tu limpiador/a.",
     "modeStandardTitle": "Trabajo estándar",
     "modeStandardHint": "Los limpiadores pujan — tú eliges",
     "modeTakeJobTitle": "Take Job — urgente",
@@ -1232,6 +1234,7 @@
     "postedDaysAgo": "Publicado hace {count} d",
     "reviewsFromCleaners": "({count} de profesionales)",
     "takeJobBadge": "Urgente",
+    "noPaymentMethodBadge": "Sin método de pago aún",
     "takeJobOutOfRadius": "Fuera del radio de {radius} km para reclamar"
   },
   "providerProviderNotificationsPage": {
@@ -2126,7 +2129,7 @@
   },
   "compSaveCardPrompt": {
     "title": "Añadir datos de pago (recomendado)",
-    "body": "Los profesionales solo aceptan ofertas de clientes con método de pago registrado. Añadir una tarjeta NO te cobra nada: el pago solo se realiza tras el trabajo y la confirmación de ambos.",
+    "body": "Los profesionales tienen más probabilidades de pujar o aceptar trabajos de clientes que ya tienen un método de pago registrado — les garantiza que realmente van a cobrar. Añadir una tarjeta NO te cobra nada: el pago solo se realiza tras el trabajo y la confirmación de ambos.",
     "addCard": "Añadir datos de pago",
     "saved": "Método de pago guardado: los profesionales ya pueden aceptar tus ofertas."
   },
@@ -2169,6 +2172,7 @@
   "compBiddingTakeJobButton": {
     "takeThisJob": "Aceptar trabajo",
     "claiming": "Reclamando…",
+    "claimed": "¡Reclamado!",
     "genericError": "Algo salió mal. Inténtalo de nuevo."
   },
   "compProviderTakeJobAlerts": {

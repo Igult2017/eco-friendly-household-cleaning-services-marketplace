@@ -1,26 +1,24 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
-import { Loader2, Zap } from "lucide-react"
-import { useBookingStore } from "@/stores/bookingStore"
+import { Loader2, Zap, CheckCircle2 } from "lucide-react"
 
 interface Props {
   jobId: string
 }
 
-// Instant claim for a "Take Job" (emergency) post — no bid form, no negotiation. First tap wins;
-// mirrors AcceptBidButton.tsx's post-success handling since /api/jobs/[id]/take returns the same
-// bidFlow shape the normal accept-bid route does.
+// Instant claim for a "Take Job" (emergency) post — no bid form, no negotiation. First tap wins.
+// The CLEANER clicks this, not the client, so there's nothing to redirect to here — payment is the
+// CLIENT's step, surfaced directly on their own /jobs page (see CompleteBookingButton there). This
+// used to copy AcceptBidButton.tsx's post-success redirect to /book/confirm, which was wrong: that
+// only makes sense when the caller IS the payer, which is never true for a claim.
 export function TakeJobButton({ jobId }: Props) {
   const t = useTranslations("compBiddingTakeJobButton")
-  const router = useRouter()
-  const setBidFlow = useBookingStore((s) => s.setBidFlow)
-  const reset = useBookingStore((s) => s.reset)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [claimed, setClaimed] = useState(false)
 
   async function handleTake() {
     setLoading(true)
@@ -29,17 +27,20 @@ export function TakeJobButton({ jobId }: Props) {
       const res = await fetch(`/api/jobs/${jobId}/take`, { method: "POST" })
       const data = await res.json()
       if (!res.ok) { setError(data.error ?? t("genericError")); return }
-
-      if (data.bidFlow) {
-        reset()
-        setBidFlow(data.bidFlow)
-      }
-      router.push(data.redirectTo ?? "/dashboard")
+      setClaimed(true)
     } catch {
       setError(t("genericError"))
     } finally {
       setLoading(false)
     }
+  }
+
+  if (claimed) {
+    return (
+      <div className="flex items-center gap-1.5 text-sm font-semibold text-[#2D7A5F]">
+        <CheckCircle2 size={16} /> {t("claimed")}
+      </div>
+    )
   }
 
   return (

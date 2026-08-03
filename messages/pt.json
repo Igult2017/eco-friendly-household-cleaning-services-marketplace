@@ -898,6 +898,7 @@
     "waitingForBids": "À espera de propostas — expira em {date}",
     "bidsReceived": "{count, plural, one {# proposta recebida} other {# propostas recebidas}}",
     "messageCleaner": "Enviar mensagem ao teu profissional",
+    "paymentOutstanding": "Este trabalho foi aceite — conclui o pagamento para o confirmar.",
     "hideChat": "Ocultar conversa",
     "overdueBy": "Atrasado {days} dia(s) — prolonga a data para continuar a receber propostas",
     "waitingForBidsShort": "À espera de propostas…",
@@ -1004,6 +1005,7 @@
     "continueWithoutCard": "Continuar sem adicionar",
     "errorRateRequired": "Indica o valor por hora.",
     "recurringBenefitBanner": "💡 Escolhe limpeza recorrente e recebe as tuas próximas 2 limpezas com desconto — automaticamente, sem custo para o/a profissional.",
+    "recurringBenefitBannerTakeJob": "💡 Precisas deste tipo de limpeza com frequência? Configura a limpeza recorrente separadamente e recebe as tuas próximas 2 limpezas com desconto — automaticamente, sem custo para o/a profissional.",
     "modeStandardTitle": "Trabalho padrão",
     "modeStandardHint": "Os profissionais licitam — tu escolhes",
     "modeTakeJobTitle": "Take Job — urgente",
@@ -1232,6 +1234,7 @@
     "postedDaysAgo": "Publicado há {count} d",
     "reviewsFromCleaners": "({count} de profissionais)",
     "takeJobBadge": "Urgente",
+    "noPaymentMethodBadge": "Ainda sem método de pagamento",
     "takeJobOutOfRadius": "Fora do raio de {radius} km para aceitar"
   },
   "providerProviderNotificationsPage": {
@@ -2126,7 +2129,7 @@
   },
   "compSaveCardPrompt": {
     "title": "Adicionar dados de pagamento (recomendado)",
-    "body": "Os profissionais só aceitam ofertas de clientes com método de pagamento registado. Adicionar um cartão NÃO cobra nada — o pagamento só acontece após o trabalho e a confirmação de ambos.",
+    "body": "Os profissionais têm mais tendência a candidatar-se ou a aceitar trabalhos de clientes que já têm um método de pagamento registado — garante que vão mesmo receber. Adicionar um cartão NÃO cobra nada — o pagamento só acontece após o trabalho e a confirmação de ambos.",
     "addCard": "Adicionar dados de pagamento",
     "saved": "Método de pagamento guardado — os profissionais já podem aceitar as tuas ofertas."
   },
@@ -2169,6 +2172,7 @@
   "compBiddingTakeJobButton": {
     "takeThisJob": "Aceitar trabalho",
     "claiming": "A aceitar…",
+    "claimed": "Aceite!",
     "genericError": "Algo correu mal. Tenta novamente."
   },
   "compProviderTakeJobAlerts": {

@@ -898,6 +898,7 @@
     "waitingForBids": "In attesa di offerte — scade il {date}",
     "bidsReceived": "{count, plural, one {# offerta ricevuta} other {# offerte ricevute}}",
     "messageCleaner": "Scrivi al tuo addetto",
+    "paymentOutstanding": "Questo lavoro è stato accettato — completa il pagamento per confermarlo.",
     "hideChat": "Nascondi chat",
     "overdueBy": "In ritardo di {days} giorno/i — estendi la data per continuare a ricevere offerte",
     "waitingForBidsShort": "In attesa di offerte…",
@@ -1004,6 +1005,7 @@
     "continueWithoutCard": "Continua senza aggiungere",
     "errorRateRequired": "Inserisci l'importo all'ora.",
     "recurringBenefitBanner": "💡 Scegli la pulizia ricorrente e ottieni le tue prossime 2 pulizie scontate — automaticamente, senza costi per chi pulisce.",
+    "recurringBenefitBannerTakeJob": "💡 Hai bisogno di questo tipo di pulizia spesso? Configura la pulizia ricorrente separatamente e ottieni le tue prossime 2 pulizie scontate — automaticamente, senza costi per chi pulisce.",
     "modeStandardTitle": "Lavoro standard",
     "modeStandardHint": "Le collaboratrici fanno offerte — scegli tu",
     "modeTakeJobTitle": "Take Job — urgente",
@@ -1232,6 +1234,7 @@
     "postedDaysAgo": "Pubblicato {count} g fa",
     "reviewsFromCleaners": "({count} da addetti)",
     "takeJobBadge": "Urgente",
+    "noPaymentMethodBadge": "Nessun metodo di pagamento",
     "takeJobOutOfRadius": "Fuori dal raggio di {radius} km per l'accettazione"
   },
   "providerProviderNotificationsPage": {
@@ -2126,7 +2129,7 @@
   },
   "compSaveCardPrompt": {
     "title": "Aggiungi i dati di pagamento (consigliato)",
-    "body": "Gli addetti accettano solo offerte da clienti con un metodo di pagamento registrato. Aggiungere una carta NON ti addebita nulla — il pagamento avviene solo a lavoro finito e dopo la conferma di entrambi.",
+    "body": "Gli addetti sono più propensi a fare un'offerta o accettare lavori da clienti che hanno già un metodo di pagamento registrato — questo garantisce loro di essere effettivamente pagati. Aggiungere una carta NON ti addebita nulla — il pagamento avviene solo a lavoro finito e dopo la conferma di entrambi.",
     "addCard": "Aggiungi dati di pagamento",
     "saved": "Metodo di pagamento salvato — gli addetti possono ora accettare le tue offerte."
   },
@@ -2169,6 +2172,7 @@
   "compBiddingTakeJobButton": {
     "takeThisJob": "Accetta lavoro",
     "claiming": "Accettazione…",
+    "claimed": "Accettato!",
     "genericError": "Qualcosa è andato storto. Riprova."
   },
   "compProviderTakeJobAlerts": {

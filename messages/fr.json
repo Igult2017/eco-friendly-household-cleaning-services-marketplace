@@ -898,6 +898,7 @@
     "waitingForBids": "En attente d'offres — expire le {date}",
     "bidsReceived": "{count, plural, one {# offre reçue} other {# offres reçues}}",
     "messageCleaner": "Écrire à votre intervenant",
+    "paymentOutstanding": "Cette mission a été acceptée — finalisez le paiement pour la confirmer.",
     "hideChat": "Masquer la discussion",
     "overdueBy": "En retard de {days} jour(s) — prolongez la date pour continuer à recevoir des offres",
     "waitingForBidsShort": "En attente d'offres…",
@@ -1004,6 +1005,7 @@
     "continueWithoutCard": "Continuer sans ajouter",
     "errorRateRequired": "Veuillez indiquer le montant par heure.",
     "recurringBenefitBanner": "💡 Choisissez un ménage récurrent et bénéficiez d'une réduction sur vos 2 prochains ménages — automatiquement, sans impact pour votre ménager/ère.",
+    "recurringBenefitBannerTakeJob": "💡 Besoin de ce type de ménage souvent ? Configurez un ménage récurrent séparément et bénéficiez d'une réduction sur vos 2 prochains ménages — automatiquement, sans impact pour votre ménager/ère.",
     "modeStandardTitle": "Mission standard",
     "modeStandardHint": "Les ménagers/ères enchérissent — vous choisissez",
     "modeTakeJobTitle": "Take Job — urgent",
@@ -1232,6 +1234,7 @@
     "postedDaysAgo": "Publiée il y a {count} j",
     "reviewsFromCleaners": "({count} d intervenants)",
     "takeJobBadge": "Urgent",
+    "noPaymentMethodBadge": "Pas encore de moyen de paiement",
     "takeJobOutOfRadius": "En dehors du rayon de {radius} km pour l'accepter"
   },
   "providerProviderNotificationsPage": {
@@ -2126,7 +2129,7 @@
   },
   "compSaveCardPrompt": {
     "title": "Ajouter un moyen de paiement (recommandé)",
-    "body": "Les intervenants n acceptent que les offres de clients avec un moyen de paiement enregistré. L ajouter ne vous débite pas — le paiement n est prélevé qu après le travail et votre double confirmation.",
+    "body": "Les intervenants sont plus enclins à soumissionner ou à accepter les missions de clients ayant déjà un moyen de paiement enregistré — cela leur garantit d être vraiment payés. L ajouter ne vous débite pas — le paiement n est prélevé qu après le travail et votre double confirmation.",
     "addCard": "Ajouter un moyen de paiement",
     "saved": "Moyen de paiement enregistré — les intervenants peuvent désormais accepter vos offres."
   },
@@ -2169,6 +2172,7 @@
   "compBiddingTakeJobButton": {
     "takeThisJob": "Accepter la mission",
     "claiming": "Prise en charge…",
+    "claimed": "Prise en charge !",
     "genericError": "Une erreur s'est produite. Veuillez réessayer."
   },
   "compProviderTakeJobAlerts": {

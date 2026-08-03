@@ -26,6 +26,13 @@ const ECO_OPTION_KEYS: Record<string, string> = {
   "Energy-saving methods": "ecoOptionEnergySaving",
 }
 
+// Renders directly under the input it belongs to, instead of one generic banner at the bottom of
+// the form — so a mistake is obvious at the field that caused it.
+function FieldError({ msg }: { msg?: string }) {
+  if (!msg) return null
+  return <p className="text-xs text-red-500 mt-1">{msg}</p>
+}
+
 export default function PostJobPage() {
   const t = useTranslations("customerPostjobPage")
   const locale = useLocale()
@@ -34,7 +41,14 @@ export default function PostJobPage() {
   const [success, setSuccess] = useState(false)
   const [geocoding, setGeocoding] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // Per-field messages so a mistake shows up right under the box that caused it, instead of one
+  // generic banner the user has to hunt for the cause of. `error` stays for page-level failures
+  // (network, or anything the server flags that doesn't map to a specific input below).
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [locationValid, setLocationValid] = useState(true)
+  // Payment method is now part of creating the order itself (both job types), not a follow-up
+  // ask after posting — dismissing it here just hides the card, no navigation needed mid-form.
+  const [cardPromptDismissed, setCardPromptDismissed] = useState(false)
   const postal = usePostalValidation()
   // Marketing copy, not conditional on picking recurring — shown upfront so it can actually
   // influence the choice, same treatment as the direct-booking wizard's banner.
@@ -116,22 +130,48 @@ export default function PostJobPage() {
     }))
   }
 
-  function extractError(payload: unknown): string {
-    if (typeof payload === "string") return payload
+  // Maps the API's Zod field-error paths (e.g. "serviceAddress.city") onto the local keys the form
+  // actually renders error text under — so a server-side catch shows up in the same place a
+  // client-side one would, rather than everything getting flattened into one banner.
+  function mapFieldErrorPath(path: string): string | null {
+    if (path.startsWith("serviceAddress.")) return "location"
+    if (path === "desiredTimeRange" || path.startsWith("desiredTimeRange.")) return "desiredTimeRange"
+    if (path === "budgetMin" || path === "budgetMax") return "hourlyRate"
+    if (path === "estimatedHours") return "estimatedHours"
+    if (path === "title") return "title"
+    if (path === "description") return "description"
+    return null
+  }
+
+  function applyErrorResponse(payload: unknown) {
+    if (typeof payload === "string") { setError(payload); return }
     if (payload && typeof payload === "object") {
       const p = payload as Record<string, unknown>
-      const formErrs = Array.isArray(p.formErrors) ? p.formErrors : []
-      const fieldErrs = p.fieldErrors && typeof p.fieldErrors === "object"
-        ? Object.values(p.fieldErrors as Record<string, string[]>).flat()
-        : []
-      const all = [...formErrs, ...fieldErrs].filter(Boolean)
-      if (all.length) return all.join(" · ")
+      const formErrs = Array.isArray(p.formErrors) ? (p.formErrors as string[]) : []
+      if (p.fieldErrors && typeof p.fieldErrors === "object") {
+        const mapped: Record<string, string> = {}
+        const unmapped: string[] = []
+        for (const [path, messages] of Object.entries(p.fieldErrors as Record<string, string[]>)) {
+          const msg = messages[0]
+          if (!msg) continue
+          const key = mapFieldErrorPath(path)
+          if (key) mapped[key] = msg
+          else unmapped.push(msg)
+        }
+        setFieldErrors(mapped)
+        const rest = [...formErrs, ...unmapped].filter(Boolean)
+        setError(rest.length ? rest.join(" · ") : null)
+        return
+      }
+      if (formErrs.length) { setError(formErrs.filter(Boolean).join(" · ")); return }
     }
-    return t("errorGeneric")
+    setError(t("errorGeneric"))
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    setFieldErrors({})
+    setError(null)
     // Resolve location before checking: a blur-triggered lookup may still be in flight, or (e.g.
     // autofill without a blur event) may never have fired at all. Don't trust `form.serviceLatitude`
     // directly here — setForm from geocodeAddress() won't be reflected in this closure until the next
@@ -142,22 +182,22 @@ export default function PostJobPage() {
       const geo = await (geocodePromiseRef.current ?? geocodeAddress())
       if (geo) { lat = geo.lat; lng = geo.lng }
     }
-    if (!lat) { setError(t("errorMissingLocation")); return }
+    if (!lat) { setFieldErrors({ location: t("errorMissingLocation") }); return }
     // Time window (standard jobs only — Take Job has no date/time picker, it's ASAP): both ends or
     // neither, and end must be after start.
     const hasStart = jobType === "standard" && !!form.desiredTimeStart
     const hasEnd = jobType === "standard" && !!form.desiredTimeEnd
     if (hasStart !== hasEnd || (hasStart && hasEnd && form.desiredTimeEnd <= form.desiredTimeStart)) {
-      setError(t("errorTimeRange")); return
+      setFieldErrors({ desiredTimeRange: t("errorTimeRange") }); return
     }
     // Budget is entered PER HOUR (the payment mode in EU + US); the stored budget is the job total
     // (rate × estimated hours) — what cleaners actually bid against (or, for Take Job, the final
     // fixed price the claiming cleaner accepts as-is).
     // Per-hour amount is MANDATORY — cleaners bid against it, and it powers the ≈/h display.
-    if (!form.hourlyRate || !(parseFloat(form.hourlyRate) > 0)) { setError(t("errorRateRequired")); return }
+    if (!form.hourlyRate || !(parseFloat(form.hourlyRate) > 0)) { setFieldErrors({ hourlyRate: t("errorRateRequired") }); return }
     const hrs = parseFloat(form.estimatedHours)
-    if (!(hrs > 0)) { setError(t("errorHoursRequired")); return }
-    setLoading(true); setError(null)
+    if (!(hrs > 0)) { setFieldErrors({ estimatedHours: t("errorHoursRequired") }); return }
+    setLoading(true)
     try {
       const res = await fetch("/api/jobs", {
         method: "POST",
@@ -180,7 +220,7 @@ export default function PostJobPage() {
       })
       if (!res.ok) {
         const d = await res.json()
-        setError(extractError(d.error))
+        applyErrorResponse(d.error)
         return
       }
       setSuccess(true)
@@ -197,10 +237,6 @@ export default function PostJobPage() {
         </div>
         <h1 className="font-serif text-2xl font-bold text-[#2B3441] text-center mb-2">{t("successTitle")}</h1>
         <p className="text-[#6B7280] text-center mb-6 max-w-sm">{t("successDescription")}</p>
-        {/* Cleaners only accept offers from clients with a payment method — prompt now (no charge). */}
-        <div className="mb-6 w-full flex justify-center">
-          <SaveCardPrompt onSkip={() => router.push("/jobs")} skipLabel={t("continueWithoutCard")} />
-        </div>
         <div className="flex gap-3">
           <Button onClick={() => router.push("/jobs")} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white">{t("viewMyJobs")}</Button>
           <Button variant="outline" onClick={() => { setSuccess(false); setJobType("standard"); setForm({ title: "", description: "", hourlyRate: "", desiredDate: "", desiredTimeStart: "", desiredTimeEnd: "", estimatedHours: "2", serviceAddress: { line1: "", city: "", postalCode: "", country: "DE" }, serviceLatitude: 0, serviceLongitude: 0, radiusKm: 25, ecoRequirements: [], recurringFrequency: "" }) }} className="border-[#E5EBF0]">{t("postAnother")}</Button>
@@ -251,15 +287,20 @@ export default function PostJobPage() {
           <div className="bg-white rounded-2xl border border-[#E5EBF0] p-5 space-y-4">
             <div>
               <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("jobTitleLabel")}</Label>
-              <Input value={form.title} onChange={(e) => set("title", e.target.value)} placeholder={t("jobTitlePlaceholder")} required minLength={5} />
+              <Input value={form.title} onChange={(e) => set("title", e.target.value)} placeholder={t("jobTitlePlaceholder")} required minLength={5}
+                className={cn(fieldErrors.title && "border-red-400 ring-1 ring-red-400")} />
+              <FieldError msg={fieldErrors.title} />
             </div>
             <div>
               <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("descriptionLabel")}</Label>
-              <Textarea value={form.description} onChange={(e) => set("description", e.target.value)} placeholder={t("descriptionPlaceholder")} rows={4} required minLength={20} className="resize-none" />
+              <Textarea value={form.description} onChange={(e) => set("description", e.target.value)} placeholder={t("descriptionPlaceholder")} rows={4} required minLength={20}
+                className={cn("resize-none", fieldErrors.description && "border-red-400 ring-1 ring-red-400")} />
+              <FieldError msg={fieldErrors.description} />
             </div>
             <div>
               <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("hourlyRateLabel")}</Label>
-              <Input type="number" value={form.hourlyRate} onChange={(e) => set("hourlyRate", e.target.value)} placeholder="25" min={1} step="0.5" required />
+              <Input type="number" value={form.hourlyRate} onChange={(e) => set("hourlyRate", e.target.value)} placeholder="25" min={1} step="0.5" required
+                className={cn(fieldErrors.hourlyRate && "border-red-400 ring-1 ring-red-400")} />
               {form.hourlyRate && parseFloat(form.estimatedHours) > 0 && (
                 <p className="text-xs text-[#2D7A5F] font-medium mt-1">
                   {t("budgetTotalHint", {
@@ -268,6 +309,7 @@ export default function PostJobPage() {
                   })}
                 </p>
               )}
+              <FieldError msg={fieldErrors.hourlyRate} />
             </div>
             {jobType === "standard" && (
               <div>
@@ -283,23 +325,32 @@ export default function PostJobPage() {
             )}
             <div>
               <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("estimatedHoursLabel")}</Label>
-              <Input type="number" min={0.5} max={12} step={0.5} value={form.estimatedHours} onChange={(e) => set("estimatedHours", e.target.value)} required />
+              <Input type="number" min={0.5} max={12} step={0.5} value={form.estimatedHours} onChange={(e) => set("estimatedHours", e.target.value)} required
+                className={cn(fieldErrors.estimatedHours && "border-red-400 ring-1 ring-red-400")} />
               <p className="text-xs text-[#9CA3AF] mt-1">{t("estimatedHoursHint")}</p>
+              <FieldError msg={fieldErrors.estimatedHours} />
             </div>
             {jobType === "standard" && (
               <div>
                 <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("timeWindowLabel")}</Label>
                 <div className="flex items-center gap-2">
-                  <Input type="time" value={form.desiredTimeStart} onChange={(e) => set("desiredTimeStart", e.target.value)} className="flex-1" />
+                  <Input type="time" value={form.desiredTimeStart} onChange={(e) => set("desiredTimeStart", e.target.value)}
+                    className={cn("flex-1", fieldErrors.desiredTimeRange && "border-red-400 ring-1 ring-red-400")} />
                   <span className="text-[#9CA3AF]">–</span>
-                  <Input type="time" value={form.desiredTimeEnd} onChange={(e) => set("desiredTimeEnd", e.target.value)} className="flex-1" />
+                  <Input type="time" value={form.desiredTimeEnd} onChange={(e) => set("desiredTimeEnd", e.target.value)}
+                    className={cn("flex-1", fieldErrors.desiredTimeRange && "border-red-400 ring-1 ring-red-400")} />
                 </div>
                 <p className="text-xs text-[#9CA3AF] mt-1">{t("timeWindowHint")}</p>
+                <FieldError msg={fieldErrors.desiredTimeRange} />
               </div>
             )}
-            {jobType === "standard" && recurringDiscountPct !== null && recurringDiscountPct > 0 && (
+            {recurringDiscountPct !== null && recurringDiscountPct > 0 && (
               <div className="rounded-xl bg-[#F4FAF6] border border-[#2D7A5F]/20 px-4 py-3 text-sm text-[#2D7A5F]">
-                {t("recurringBenefitBanner", { pct: recurringDiscountPct })}
+                {/* Take Job can't itself be recurring (it's a same-day, one-off request) — this is
+                    cross-promoting the separate recurring option, not offering to make THIS job recurring. */}
+                {jobType === "standard"
+                  ? t("recurringBenefitBanner", { pct: recurringDiscountPct })
+                  : t("recurringBenefitBannerTakeJob", { pct: recurringDiscountPct })}
               </div>
             )}
             {jobType === "standard" && (
@@ -330,16 +381,21 @@ export default function PostJobPage() {
                 <Input value={form.serviceAddress.city}
                   onChange={(e) => setForm((p) => ({ ...p, serviceAddress: { ...p.serviceAddress, city: e.target.value } }))}
                   placeholder="Berlin" required
-                  onBlur={() => { geocodeAddress(); validatePostal() }} />
+                  onBlur={() => { geocodeAddress(); validatePostal() }}
+                  className={cn(fieldErrors.location && "border-red-400 ring-1 ring-red-400")} />
               </div>
               <div>
                 <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">{t("postalCodeLabel")}</Label>
                 <Input value={form.serviceAddress.postalCode}
                   onChange={(e) => setForm((p) => ({ ...p, serviceAddress: { ...p.serviceAddress, postalCode: e.target.value } }))}
                   placeholder="10115" required
-                  onBlur={() => { geocodeAddress(); validatePostal() }} />
+                  onBlur={() => { geocodeAddress(); validatePostal() }}
+                  className={cn(fieldErrors.location && "border-red-400 ring-1 ring-red-400")} />
               </div>
             </div>
+            {/* Composite error — city + postal are checked together, so the message sits right below
+                both rather than pointing at just one of the two. */}
+            <FieldError msg={fieldErrors.location} />
             <div>
               <Label className="text-sm font-medium text-[#2B3441] mb-1.5 block">{t("countryLabel")}</Label>
               <CountryField
@@ -386,6 +442,14 @@ export default function PostJobPage() {
               ))}
             </div>
           </div>
+
+          {/* Payment method is part of placing the order itself, for both standard and Take Job
+              posts — not a follow-up ask after the job already exists. */}
+          {!cardPromptDismissed && (
+            <div className="flex justify-center">
+              <SaveCardPrompt onSkip={() => setCardPromptDismissed(true)} skipLabel={t("continueWithoutCard")} />
+            </div>
+          )}
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
