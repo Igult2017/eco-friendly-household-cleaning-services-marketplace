@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
       if (byEmail && byEmail.id !== userId) {
         await db
           .update(users)
-          .set({ email: `migrated.${byEmail.id}@dorixe.invalid`, isActive: false, updatedAt: new Date() })
+          .set({ email: `migrated.${byEmail.id}@dorixe.invalid`, isActive: false, deletedAt: new Date(), updatedAt: new Date() })
           .where(eq(users.id, byEmail.id))
         // The old (dead) account may have an approved provider listing — suspend it so it can't
         // stay publicly bookable pointing at an unreachable user. The new account re-onboards fresh.

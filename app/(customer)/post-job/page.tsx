@@ -2,12 +2,13 @@
 
 import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { useTranslations, useLocale } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Loader2, CheckCircle2, MapPin, AlertTriangle } from "lucide-react"
+import { Loader2, CheckCircle2, MapPin, AlertTriangle, ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { LocationDetectButton } from "@/components/location/LocationDetectButton"
 import { usePostalValidation } from "@/hooks/usePostalValidation"
@@ -345,13 +346,23 @@ export default function PostJobPage() {
               </div>
             )}
             {recurringDiscountPct !== null && recurringDiscountPct > 0 && (
-              <div className="rounded-xl bg-[#F4FAF6] border border-[#2D7A5F]/20 px-4 py-3 text-sm text-[#2D7A5F]">
-                {/* Take Job can't itself be recurring (it's a same-day, one-off request) — this is
-                    cross-promoting the separate recurring option, not offering to make THIS job recurring. */}
-                {jobType === "standard"
-                  ? t("recurringBenefitBanner", { pct: recurringDiscountPct })
-                  : t("recurringBenefitBannerTakeJob", { pct: recurringDiscountPct })}
-              </div>
+              jobType === "standard" ? (
+                <div className="rounded-xl bg-[#F4FAF6] border border-[#2D7A5F]/20 px-4 py-3 text-sm text-[#2D7A5F]">
+                  {t("recurringBenefitBanner", { pct: recurringDiscountPct })}
+                </div>
+              ) : (
+                // Take Job can't itself be recurring (it's a same-day, one-off request) — but someone
+                // who needs urgent cleaning today may well want it on a regular schedule going
+                // forward, so this links straight to the booking wizard (the only place a recurring
+                // schedule actually gets set up) instead of leaving it as inert text.
+                <Link
+                  href="/book"
+                  className="flex items-center justify-between gap-2 rounded-xl bg-[#F4FAF6] border border-[#2D7A5F]/20 px-4 py-3 text-sm text-[#2D7A5F] hover:border-[#2D7A5F]/40 transition-colors"
+                >
+                  <span>{t("recurringBenefitBannerTakeJob", { pct: recurringDiscountPct })}</span>
+                  <ArrowRight size={16} className="shrink-0" />
+                </Link>
+              )
             )}
             {jobType === "standard" && (
               <div>
