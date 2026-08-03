@@ -80,11 +80,21 @@ export function Navbar() {
   // on EVERY public page — not just discoverable once already inside the dashboard. Previously
   // "Post a Job" wasn't in the public nav at all, and "Browse Jobs" was a plain link easy to miss
   // among six others.
-  const primaryAction = effectiveRole === "customer"
+  //
+  // BUG FIX: while Clerk's useUser() is still resolving (isLoaded === false, right after page load),
+  // `role` is undefined, so this used to fall through to `null` and render NOTHING in this slot —
+  // a real dead click-zone. A user reloading and clicking from muscle memory before that resolves
+  // (usually well under a second, longer on a slow connection) would click empty space and see no
+  // response, exactly matching "sometimes doesn't respond to clicks." Default optimistically to the
+  // customer action (the common case for this button) while loading, instead of rendering nothing —
+  // once isLoaded flips true this corrects to the real role, including null for admin/affiliate.
+  const primaryAction = !isLoaded
     ? { href: "/post-job", label: t("postJob"), Icon: Plus }
-    : effectiveRole === "provider"
-      ? { href: "/provider/jobs", label: t("browseJobs"), Icon: Search }
-      : null
+    : effectiveRole === "customer"
+      ? { href: "/post-job", label: t("postJob"), Icon: Plus }
+      : effectiveRole === "provider"
+        ? { href: "/provider/jobs", label: t("browseJobs"), Icon: Search }
+        : null
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#E5EDE9]">
