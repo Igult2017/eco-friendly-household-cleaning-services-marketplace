@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { InlineQuickMessage } from "@/components/messaging/InlineQuickMessage"
 import { TakeJobButton } from "@/components/bidding/TakeJobButton"
+import { usePusherChannel } from "@/hooks/usePusherChannel"
 
 interface JobPost {
   id: string
@@ -53,6 +54,7 @@ export default function ProviderJobsPage() {
   const [acceptedPolicy, setAcceptedPolicy] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [releasing, setReleasing] = useState<string | null>(null)
 
   useEffect(() => {
     fetch("/api/jobs?forProvider=true")
@@ -60,6 +62,27 @@ export default function ProviderJobsPage() {
       .then((d) => { setJobs(d.jobs ?? []); setReason(d.reason ?? null) })
       .finally(() => setLoading(false))
   }, [])
+
+  // LIVE removal: the instant any cleaner claims/wins a job, every other cleaner currently on this
+  // board drops that card immediately instead of only on their next reload or a failed claim attempt.
+  usePusherChannel("job-board", {
+    "job-claimed": (data) => {
+      const jobPostId = (data as { jobPostId?: string })?.jobPostId
+      if (jobPostId) setJobs((prev) => prev.filter((j) => j.id !== jobPostId))
+    },
+  })
+
+  async function releaseJob(jobId: string) {
+    if (!window.confirm(t("releaseJobConfirm"))) return
+    setReleasing(jobId)
+    try {
+      const r = await fetch(`/api/jobs/${jobId}/cancel`, { method: "POST" })
+      if (r.ok) setJobs((prev) => prev.filter((j) => j.id !== jobId))
+      else alert((await r.json().catch(() => ({}))).error ?? t("releaseJobFailed"))
+    } finally {
+      setReleasing(null)
+    }
+  }
 
   function extractError(payload: unknown): string {
     if (typeof payload === "string") return payload
@@ -235,12 +258,22 @@ export default function ProviderJobsPage() {
                     )}
 
                     {job.wonByMe ? (
-                      <InlineQuickMessage
-                        endpoint={`/api/jobs/${job.id}/messages`}
-                        chatHref={`/provider/jobs/${job.id}/messages`}
-                        label={t("wonChat")}
-                        variant="primary"
-                      />
+                      <div className="space-y-2">
+                        <InlineQuickMessage
+                          endpoint={`/api/jobs/${job.id}/messages`}
+                          chatHref={`/provider/jobs/${job.id}/messages`}
+                          label={t("wonChat")}
+                          variant="primary"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => releaseJob(job.id)}
+                          disabled={releasing === job.id}
+                          className="text-xs font-medium text-red-600 hover:underline disabled:opacity-50"
+                        >
+                          {t("releaseJobButton")}
+                        </button>
+                      </div>
                     ) : alreadyBid ? (
                       <div className="flex items-center gap-2 text-sm text-[#2D7A5F] font-medium">
                         <CheckCircle2 size={16} /> {t("bidSubmittedSuccess")}

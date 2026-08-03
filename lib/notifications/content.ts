@@ -489,6 +489,28 @@ const NOTIF: Record<string, Record<string, S>> = {
     pl: { title: "Zlecenie przydzielone innej osobie", body: "„{title}” przydzielono innej osobie sprzątającej. Nie poddawaj się — nowe zlecenia pojawiają się cały czas. Licytuj dalej!" },
     pt: { title: "Trabalho atribuído a outro profissional", body: "“{title}” foi atribuído a outro profissional. Não pares — são publicados novos trabalhos a toda a hora. Continua a enviar propostas!" },
   },
+  // Client backed out of a claimed/accepted job before paying — sent to the cleaner.
+  job_cancel_by_client: {
+    en: { title: "Job cancelled", body: "The client cancelled “{title}” before payment. No charge was made." },
+    de: { title: "Auftrag storniert", body: "Der Kunde hat „{title}“ vor der Zahlung storniert. Es wurde nichts berechnet." },
+    fr: { title: "Mission annulée", body: "Le client a annulé « {title} » avant le paiement. Aucun montant n'a été prélevé." },
+    es: { title: "Trabajo cancelado", body: "El cliente canceló «{title}» antes del pago. No se realizó ningún cargo." },
+    it: { title: "Lavoro annullato", body: "Il cliente ha annullato “{title}” prima del pagamento. Non è stato addebitato nulla." },
+    nl: { title: "Klus geannuleerd", body: "De klant heeft “{title}” geannuleerd vóór de betaling. Er is niets in rekening gebracht." },
+    pl: { title: "Zlecenie anulowane", body: "Klient anulował „{title}” przed płatnością. Nie pobrano żadnej opłaty." },
+    pt: { title: "Trabalho cancelado", body: "O cliente cancelou “{title}” antes do pagamento. Não foi feita qualquer cobrança." },
+  },
+  // Cleaner released a job they'd already claimed/won, before payment — sent to the client.
+  job_release_by_provider: {
+    en: { title: "Cleaner released this job", body: "Your cleaner is no longer able to do “{title}”. It's back on the board for another cleaner to claim." },
+    de: { title: "Reinigungskraft hat den Auftrag freigegeben", body: "Deine Reinigungskraft kann „{title}“ nicht mehr übernehmen. Der Auftrag ist wieder für andere Reinigungskräfte verfügbar." },
+    fr: { title: "L'intervenant a libéré la mission", body: "Votre intervenant ne peut plus assurer « {title} ». La mission est de nouveau disponible pour un autre intervenant." },
+    es: { title: "El profesional liberó el trabajo", body: "Tu profesional ya no puede hacer «{title}». Vuelve a estar disponible para que otro profesional lo tome." },
+    it: { title: "L'addetto ha rilasciato il lavoro", body: "Il tuo addetto non può più occuparsi di “{title}”. È di nuovo disponibile per un altro addetto." },
+    nl: { title: "Schoonmaker heeft de klus vrijgegeven", body: "Je schoonmaker kan “{title}” niet meer uitvoeren. De klus is weer beschikbaar voor een andere schoonmaker." },
+    pl: { title: "Osoba sprzątająca zwolniła zlecenie", body: "Twoja osoba sprzątająca nie może już wykonać „{title}”. Zlecenie jest ponownie dostępne dla innej osoby." },
+    pt: { title: "O profissional libertou o trabalho", body: "O teu profissional já não pode realizar “{title}”. Está novamente disponível para outro profissional aceitar." },
+  },
   // Cleaner rejected a fresh booking with a stated reason; the hold was fully released.
   booking_rejected: {
     en: { title: "Booking declined", body: "Your cleaner can't take the booking scheduled for {datetime}. Reason: {reason}. Your payment hold was fully released." },
@@ -525,6 +547,8 @@ const PARAMS: Record<string, string[]> = {
   booking_rejected: ["datetime", "reason"],
   support_reply: ["message"],
   bid_lost_assigned: ["title"],
+  job_cancel_by_client: ["title"],
+  job_release_by_provider: ["title"],
   booking_card_on_file: [],
   client_card_saved_wait: [],
   booking_request_sent: [],

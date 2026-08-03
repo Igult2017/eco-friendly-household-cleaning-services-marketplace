@@ -266,6 +266,7 @@ export default function CustomerJobsPage() {
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
+  const [cancelling, setCancelling] = useState<string | null>(null)
 
   function load() {
     fetch("/api/jobs")
@@ -278,6 +279,18 @@ export default function CustomerJobsPage() {
   // LIVE bids: the bid API pushes "new-bid" on the client's private channel — refetch instantly so a
   // fresh bid appears without waiting for the notification bell's poll.
   usePusherChannel(user ? `private-customer-${user.id}` : "", { "new-bid": () => load() })
+
+  async function cancelJob(jobId: string) {
+    if (!window.confirm(t("cancelJobConfirm"))) return
+    setCancelling(jobId)
+    try {
+      const r = await fetch(`/api/jobs/${jobId}/cancel`, { method: "POST" })
+      if (r.ok) load()
+      else alert((await r.json().catch(() => ({}))).error ?? t("cancelJobFailed"))
+    } finally {
+      setCancelling(null)
+    }
+  }
 
   function toggleBids(jobId: string) {
     setExpanded((prev) => {
@@ -439,6 +452,14 @@ export default function CustomerJobsPage() {
                     {needsPayment && (
                       <div className="mt-3 flex items-center gap-3 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3">
                         <p className="flex-1 text-xs font-medium text-amber-800">{t("paymentOutstanding")}</p>
+                        <button
+                          type="button"
+                          onClick={() => cancelJob(job.id)}
+                          disabled={cancelling === job.id}
+                          className="text-xs font-medium text-red-600 hover:underline disabled:opacity-50"
+                        >
+                          {t("cancelJobButton")}
+                        </button>
                         <CompleteBookingButton jobId={job.id} bookingId={acceptedBid!.bookingId} />
                       </div>
                     )}

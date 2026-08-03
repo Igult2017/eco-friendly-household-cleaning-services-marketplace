@@ -9,6 +9,7 @@ import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
 import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
 import { zonedTimeToUtc } from "@/lib/utils/tz"
 import { logError } from "@/lib/utils/logError"
+import { pusherServer } from "@/lib/pusher/server"
 
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string; bidId: string }> }) {
   try {
@@ -101,6 +102,10 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
     if (lostRace) {
       return NextResponse.json({ error: "This job is no longer accepting bids" }, { status: 409 })
     }
+
+    // Board-wide, non-private broadcast: any cleaner currently looking at the job board removes
+    // this card instantly (same as the Take Job claim path) instead of only on their next reload.
+    await pusherServer.trigger("job-board", "job-claimed", { jobPostId }).catch(() => undefined)
 
     // Tell every losing bidder the job went to someone else — and to keep bidding on other offers.
     if (losers.length > 0) {

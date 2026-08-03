@@ -155,6 +155,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       console.warn("[jobs take] client notification failed:", e)
     }
 
+    // Board-wide, non-private broadcast: any cleaner currently looking at the job board removes
+    // this card instantly instead of finding out only when they try to claim it and get a 409.
+    await pusherServer.trigger("job-board", "job-claimed", { jobPostId }).catch(() => undefined)
+
     try {
       await db.insert(notifications).values({
         userId: provider.userId,
