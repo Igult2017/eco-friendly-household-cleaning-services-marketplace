@@ -61,7 +61,10 @@ export async function POST(req: Request) {
 
       case "account.updated": {
         const account = event.data.object as Stripe.Account
-        const status = account.charges_enabled ? "active" : account.details_submitted ? "pending" : "incomplete"
+        // payouts_enabled, not charges_enabled — mirrors lib/stripe/connect.ts's getConnectAccountStatus.
+        // Connected accounts only request "transfers", never "card_payments", so charges_enabled would
+        // never turn true here either.
+        const status = account.payouts_enabled ? "active" : account.details_submitted ? "pending" : "incomplete"
         await db.update(providers).set({ stripeAccountStatus: status }).where(eq(providers.stripeAccountId, account.id))
         break
       }

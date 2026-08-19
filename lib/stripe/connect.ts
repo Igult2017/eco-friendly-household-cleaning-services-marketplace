@@ -13,14 +13,26 @@ export async function createConnectAccount(params: {
       type: "express",
       country: params.country,
       email: params.email,
+      // Only "transfers" — the connected account only ever RECEIVES the destination-charge split
+      // and pays it out to a bank; it never accepts a card payment directly (the customer's card is
+      // always charged on the platform's own account, see app/api/payments/intent/route.ts). Asking
+      // for "card_payments" anyway made Stripe treat cleaners as online merchants and demand a
+      // business website during onboarding — dropping it removes that ask entirely.
       capabilities: {
-        card_payments: { requested: true },
         transfers: { requested: true },
       },
       business_type: "individual",
+      // Belt-and-suspenders alongside dropping card_payments: a service-industry MCC + a plain
+      // description mean nothing should ever prompt for a website, even on an edge case.
+      business_profile: {
+        mcc: "7349", // Cleaning and Maintenance, Janitorial Services
+        product_description: "Eco-friendly home and office cleaning services",
+      },
       settings: {
         payouts: {
-          schedule: { interval: "daily" },
+          // Stripe requires an explicit day when interval is "weekly" — Monday matches the existing
+          // ledger-summary cron (lib/inngest/functions/payouts.ts runs 0 2 * * 1, also Monday).
+          schedule: { interval: "weekly", weekly_anchor: "monday" },
         },
       },
     },
@@ -50,5 +62,8 @@ export async function createAccountSession(accountId: string) {
  * without depending on the webhook being configured in the Stripe Dashboard. */
 export async function getConnectAccountStatus(accountId: string): Promise<"active" | "pending" | "incomplete"> {
   const account = await stripe.accounts.retrieve(accountId)
-  return account.charges_enabled ? "active" : account.details_submitted ? "pending" : "incomplete"
+  // payouts_enabled, not charges_enabled — the account only has the "transfers" capability, never
+  // "card_payments", so charges_enabled would never turn true and every cleaner would be stuck on
+  // "pending" forever. payouts_enabled is Stripe's own signal for "this account can actually be paid".
+  return account.payouts_enabled ? "active" : account.details_submitted ? "pending" : "incomplete"
 }
