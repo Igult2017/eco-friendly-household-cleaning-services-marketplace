@@ -7,8 +7,26 @@ import Link from "next/link"
 import type { Metadata } from "next"
 import { getTranslations } from "next-intl/server"
 import { formatCurrencyShort, priceUnitSuffix } from "@/lib/utils/formatCurrency"
+import { formatDistance } from "@/lib/utils/locale"
 import { BrowseNearMe } from "@/components/browse/BrowseNearMe"
 import { findProvidersNearLocation } from "@/lib/db/queries/geo"
+
+const DISTANCE_OPTIONS = [5, 10, 25, 50, 100]
+
+// Cheapest-price filtering happens AFTER the initial fetch (see attachCheapestPrice/getProviders
+// below), so a narrow price range can quietly under-fill the page by cutting into results that were
+// already capped before the price filter ran. Fetch more candidates whenever a price filter is active.
+function resultLimit(hasPriceFilter: boolean) {
+  return hasPriceFilter ? 100 : 48
+}
+
+function inPriceRange(priceFrom: number | null, minPrice?: string, maxPrice?: string): boolean {
+  if (!minPrice && !maxPrice) return true
+  if (priceFrom == null) return false // "ask on booking" can't be range-checked — exclude when filtering by price
+  const min = minPrice ? parseFloat(minPrice) * 100 : -Infinity
+  const max = maxPrice ? parseFloat(maxPrice) * 100 : Infinity
+  return priceFrom >= min && priceFrom <= max
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("browse")
@@ -25,7 +43,7 @@ const ecoLabelColors: Record<string, string> = {
   zero_impact: "bg-[#2D7A5F]/10 text-[#2D7A5F]",
 }
 
-async function getProviders(filters: { city?: string; ecoLevel?: string; minRating?: string }) {
+async function getProviders(filters: { city?: string; ecoLevel?: string; minRating?: string; minPrice?: string; maxPrice?: string }) {
   const conditions: Parameters<typeof and>[0][] = [eq(providers.isApproved, true), eq(providers.isSuspended, false)]
 
   if (filters.city) conditions.push(ilike(providers.city, "%" + filters.city + "%"))
@@ -34,6 +52,7 @@ async function getProviders(filters: { city?: string; ecoLevel?: string; minRati
     const r = parseFloat(filters.minRating)
     if (!isNaN(r)) conditions.push(gte(providers.averageRating, r))
   }
+  const hasPriceFilter = !!(filters.minPrice || filters.maxPrice)
 
   try {
     const rows = await db
@@ -54,7 +73,7 @@ async function getProviders(filters: { city?: string; ecoLevel?: string; minRati
       .from(providers)
       .where(and(...conditions))
       .orderBy(desc(providers.averageRating))
-      .limit(48)
+      .limit(resultLimit(hasPriceFilter))
 
     if (rows.length === 0) return []
 
@@ -86,38 +105,48 @@ async function getProviders(filters: { city?: string; ecoLevel?: string; minRati
     }
 
     // priceFrom is still computed for DISPLAY on each card (cheapest hourly rate, else cheapest service).
+    // distanceMeters is explicitly undefined here (no coordinate to measure from in directory mode) —
+    // keeps this branch's shape consistent with the geo branch's so the card renderer can treat both uniformly.
     const result = rows.map((r) => {
       const chosen = hourly.has(r.id)
         ? { price: hourly.get(r.id)!, unit: "per_hour" }
         : cheapest.get(r.id) ?? null
-      return { ...r, priceFrom: chosen?.price ?? null, priceUnit: chosen?.unit ?? null }
+      return { ...r, priceFrom: chosen?.price ?? null, priceUnit: chosen?.unit ?? null, distanceMeters: undefined as number | undefined }
     })
-    return result
+    return hasPriceFilter ? result.filter((r) => inPriceRange(r.priceFrom, filters.minPrice, filters.maxPrice)) : result
   } catch {
     return []
   }
 }
 
-export default async function BrowsePage({ searchParams }: { searchParams: Promise<{ city?: string; ecoLevel?: string; minRating?: string; lat?: string; lng?: string }> }) {
-  const { city, ecoLevel, minRating, lat, lng } = await searchParams
+export default async function BrowsePage({ searchParams }: { searchParams: Promise<{ city?: string; ecoLevel?: string; minRating?: string; lat?: string; lng?: string; minPrice?: string; maxPrice?: string; maxDistanceKm?: string }> }) {
+  const { city, ecoLevel, minRating, lat, lng, minPrice, maxPrice, maxDistanceKm } = await searchParams
   const latN = lat ? parseFloat(lat) : NaN
   const lngN = lng ? parseFloat(lng) : NaN
   const geoActive = Number.isFinite(latN) && Number.isFinite(lngN)
+  const hasPriceFilter = !!(minPrice || maxPrice)
+  const maxDistanceN = maxDistanceKm ? parseFloat(maxDistanceKm) : NaN
+  const hasDistanceFilter = geoActive && Number.isFinite(maxDistanceN)
 
   // With coordinates: only cleaners whose OWN service radius covers the client's location — a client
   // can only book someone who actually serves their address. Without: plain directory (SEO/browsing).
   let providerList
   if (geoActive) {
-    const geo = await findProvidersNearLocation({ latitude: latN, longitude: lngN, radiusKm: 150, useProviderRadius: true, limit: 48 })
+    const geo = await findProvidersNearLocation({
+      latitude: latN, longitude: lngN, radiusKm: 150, useProviderRadius: true,
+      limit: resultLimit(hasPriceFilter),
+      maxClientRadiusKm: hasDistanceFilter ? maxDistanceN : undefined,
+    })
     const minR = minRating ? parseFloat(minRating) : NaN
     providerList = geo
       .filter((p) => (!ecoLevel || p.ecoLevel === ecoLevel) && (!Number.isFinite(minR) || (p.averageRating ?? 0) >= minR))
       .map((p) => ({ ...p, verificationStatus: p.verificationStatus ?? null, priceFrom: p.serviceBasePrice ?? null, priceUnit: p.priceUnit ?? null }))
+      .filter((p) => inPriceRange(p.priceFrom, minPrice, maxPrice))
   } else {
-    providerList = await getProviders({ city, ecoLevel, minRating })
+    providerList = await getProviders({ city, ecoLevel, minRating, minPrice, maxPrice })
   }
   const t = await getTranslations("browse")
-  const hasFilters = !!(city || ecoLevel || minRating)
+  const hasFilters = !!(city || ecoLevel || minRating || minPrice || maxPrice || hasDistanceFilter)
 
   const ecoLabelText: Record<string, string> = {
     basic: t("ecoBasic"),
@@ -129,6 +158,11 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
   return (
     <div className="max-w-7xl mx-auto py-10 px-4">
       <form method="GET" action="/browse" className="mb-6 flex flex-wrap items-end gap-3">
+        {/* Preserves the current location across a plain filter-form submit — without these, picking
+            a new filter while in "near me" mode would silently drop lat/lng and fall back to the
+            plain directory (the same gap BrowseNearMe's own button had). */}
+        {geoActive && <input type="hidden" name="lat" value={lat} />}
+        {geoActive && <input type="hidden" name="lng" value={lng} />}
         <div>
           <label className="mb-1 block text-xs text-[#6B7280]">{t("cityLabel")}</label>
           <input name="city" defaultValue={city ?? ""} placeholder={t("cityPlaceholder")} className="rounded-lg border border-[#E5EBF0] px-3 py-2 text-sm" />
@@ -152,6 +186,24 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
             <option value="4.5">{t("rating45")}</option>
           </select>
         </div>
+        <div>
+          <label className="mb-1 block text-xs text-[#6B7280]">{t("priceRangeLabel")}</label>
+          <div className="flex items-center gap-1.5">
+            <input type="number" name="minPrice" min={0} step="1" defaultValue={minPrice ?? ""} placeholder={t("minPricePlaceholder")}
+              className="w-20 rounded-lg border border-[#E5EBF0] px-2 py-2 text-sm" />
+            <span className="text-[#9CA3AF]">–</span>
+            <input type="number" name="maxPrice" min={0} step="1" defaultValue={maxPrice ?? ""} placeholder={t("maxPricePlaceholder")}
+              className="w-20 rounded-lg border border-[#E5EBF0] px-2 py-2 text-sm" />
+          </div>
+        </div>
+        <div>
+          <label className="mb-1 block text-xs text-[#6B7280]">{t("distanceLabel")}</label>
+          <select name="maxDistanceKm" defaultValue={maxDistanceKm ?? ""} disabled={!geoActive}
+            className="rounded-lg border border-[#E5EBF0] px-3 py-2 text-sm disabled:opacity-50" title={!geoActive ? t("distanceNeedsLocation") : undefined}>
+            <option value="">{t("anyOption")}</option>
+            {DISTANCE_OPTIONS.map((km) => <option key={km} value={km}>{t("withinKm", { km })}</option>)}
+          </select>
+        </div>
         <button type="submit" className="rounded-lg bg-[#2D7A5F] px-4 py-2 text-sm font-semibold text-white">{t("filterButton")}</button>
         {hasFilters && (
           <a href="/browse" className="rounded-lg border border-[#E5EBF0] px-4 py-2 text-sm text-[#6B7280]">{t("clearButton")}</a>
@@ -161,7 +213,12 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
         <h1 className="font-serif text-4xl font-bold text-[#2B3441]">{t("heading")}</h1>
         <div className="mt-2 flex flex-wrap items-center gap-3">
           <p className="text-[#6B7280]">{hasFilters ? t("resultsFiltered", { count: providerList.length }) : t("resultsAvailable", { count: providerList.length })}</p>
-          <BrowseNearMe activeCity={city ?? null} geoActive={geoActive} labels={{ detecting: t("nearDetecting"), nearYou: t("nearYouChip") }} />
+          <BrowseNearMe
+            activeCity={city ?? null}
+            geoActive={geoActive}
+            labels={{ detecting: t("nearDetecting"), nearYou: t("nearYouChip") }}
+            otherFilters={{ ecoLevel, minRating, minPrice, maxPrice, maxDistanceKm }}
+          />
         </div>
       </div>
 
@@ -199,7 +256,10 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
                     )}
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-[#2B3441] truncate">{p.businessName}</p>
-                      <p className="text-xs text-[#6B7280]">{p.city}, {p.country}</p>
+                      <p className="text-xs text-[#6B7280]">
+                        {p.city}, {p.country}
+                        {typeof p.distanceMeters === "number" && ` · ${formatDistance(p.distanceMeters / 1000, p.country)}`}
+                      </p>
                     </div>
                   </div>
 

@@ -12,13 +12,26 @@ type Labels = { detecting: string; nearYou: string }
 // Location-first browse: when the page opens with no location, silently try browser geolocation and
 // reload the list gated to cleaners who actually SERVE the visitor's coordinates (each cleaner's own
 // service radius). Attempted once per session (sessionStorage guard); the manual button always works.
-export function BrowseNearMe({ activeCity, geoActive, labels }: { activeCity: string | null; geoActive?: boolean; labels: Labels }) {
+export function BrowseNearMe({
+  activeCity, geoActive, labels, otherFilters,
+}: {
+  activeCity: string | null
+  geoActive?: boolean
+  labels: Labels
+  // Every other active filter (ecoLevel, minRating, minPrice, maxPrice, maxDistanceKm) — carried
+  // forward into the location URL so switching into "near me" mode doesn't silently reset them.
+  otherFilters?: Record<string, string | undefined>
+}) {
   const router = useRouter()
   const [detecting, setDetecting] = useState(false)
 
   function applyLocation(lat: number, lng: number, city: string) {
-    const cityQ = city ? `&city=${encodeURIComponent(city)}` : ""
-    router.replace(`/browse?lat=${lat.toFixed(5)}&lng=${lng.toFixed(5)}${cityQ}`)
+    const params = new URLSearchParams()
+    params.set("lat", lat.toFixed(5))
+    params.set("lng", lng.toFixed(5))
+    if (city) params.set("city", city)
+    for (const [k, v] of Object.entries(otherFilters ?? {})) if (v) params.set(k, v)
+    router.replace(`/browse?${params.toString()}`)
   }
 
   useEffect(() => {
