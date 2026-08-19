@@ -14,7 +14,7 @@ export function AddCleanerRoleForm() {
   const router = useRouter()
   const [fields, setFields] = useState({
     businessName: "", bio: "", city: "", postalCode: "",
-    country: "DE", serviceRadiusKm: "25", ecoLevel: "basic",
+    country: "", serviceRadiusKm: "25", ecoLevel: "basic",
   })
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState<string | null>(null)
@@ -28,6 +28,7 @@ export function AddCleanerRoleForm() {
     && fields.bio.trim().length >= 20
     && fields.city.trim().length >= 2
     && fields.postalCode.trim().length >= 3
+    && fields.country.trim().length === 2
     && locationValid
 
   async function handleSubmit(e: React.FormEvent) {

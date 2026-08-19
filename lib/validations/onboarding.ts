@@ -15,7 +15,7 @@ const providerSchema = base.extend({
   bio: z.string().min(20, "Tell us more — minimum 20 characters").max(800),
   city: z.string().min(2, "Required").max(100),
   postalCode: z.string().min(3, "Required").max(20),
-  country: z.string().length(2).default("DE"),
+  country: z.string().length(2, "Please select your country"),
   serviceRadiusKm: z.number().int().min(1).max(100).default(25),
   ecoLevel: z.enum(["basic", "certified", "premium", "zero_impact"]).default("basic"),
 })

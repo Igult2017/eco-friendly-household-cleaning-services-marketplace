@@ -32,7 +32,7 @@ export function OnboardingForm({ defaultFirstName = "", defaultLastName = "", de
   const [gdpr, setGdpr] = useState(false)
   const [providerData, setProviderData] = useState({
     businessName: "", bio: "", city: "", postalCode: "",
-    country: "DE", serviceRadiusKm: "25", ecoLevel: "basic",
+    country: "", serviceRadiusKm: "25", ecoLevel: "basic",
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -63,6 +63,7 @@ export function OnboardingForm({ defaultFirstName = "", defaultLastName = "", de
       if (providerData.bio.trim().length < 20) missing.push(t("missingBio"))
       if (providerData.city.trim().length < 2) missing.push(t("missingCity"))
       if (providerData.postalCode.trim().length < 3) missing.push(t("missingPostal"))
+      if (providerData.country.trim().length !== 2) missing.push(t("missingCountry"))
     }
     if (!gdpr) missing.push(t("missingGdpr"))
     return missing

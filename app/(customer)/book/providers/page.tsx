@@ -27,7 +27,7 @@ export default function BookStep2Page() {
   // goes straight to scheduling; the search + re-pick UI is skipped entirely.
   const preselected = providerPreselected && !!selectedProviderId
 
-  const [address, setAddressForm] = useState<Address>({ line1: "", city: "", postalCode: "", country: providerCountry || "DE" })
+  const [address, setAddressForm] = useState<Address>({ line1: "", city: "", postalCode: "", country: providerCountry || "" })
   const [providers, setProviders] = useState<GeoProvider[]>([])
   const [searching, setSearching] = useState(false)
   const [searched, setSearched] = useState(false)
@@ -54,7 +54,7 @@ export default function BookStep2Page() {
   }
 
   function handleDetect(result: GeoResult) {
-    setAddressForm({ line1: result.line1, city: result.city, postalCode: result.postalCode, country: result.country || "DE" })
+    setAddressForm({ line1: result.line1, city: result.city, postalCode: result.postalCode, country: result.country || "" })
     latRef.current = result.lat
     lngRef.current = result.lng
     if (!preselected) searchProviders(result.lat, result.lng)
@@ -64,6 +64,10 @@ export default function BookStep2Page() {
   async function handlePreselectedContinue() {
     if (!address.postalCode || !address.city) {
       setError(t("errorMissingCityPostal"))
+      return
+    }
+    if (address.country.length !== 2) {
+      setError(t("errorMissingCountry"))
       return
     }
     setSearching(true)
@@ -92,6 +96,10 @@ export default function BookStep2Page() {
   const geocodeAndSearch = useCallback(async () => {
     if (!address.postalCode || !address.city) {
       setError(t("errorMissingCityPostal"))
+      return
+    }
+    if (address.country.length !== 2) {
+      setError(t("errorMissingCountry"))
       return
     }
     setSearching(true)

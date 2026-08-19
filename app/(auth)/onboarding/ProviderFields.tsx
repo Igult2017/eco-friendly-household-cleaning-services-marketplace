@@ -109,7 +109,7 @@ export function ProviderFields({ values, onChange, onValidChange }: Props) {
         <div>
           <Label className="text-[#2B3441] text-sm font-medium mb-1.5 block">{t("countryLabel")}</Label>
           <Select value={values.country} onValueChange={v => { if (v) onChange("country", v) }}>
-            <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-full"><SelectValue placeholder={t("countryPlaceholder")} /></SelectTrigger>
             <SelectContent>
               {EU_COUNTRIES.map(([code, name]) => <SelectItem key={code} value={code}>{name}</SelectItem>)}
             </SelectContent>

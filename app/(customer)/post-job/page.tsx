@@ -75,7 +75,7 @@ export default function PostJobPage() {
     desiredTimeStart: "",
     desiredTimeEnd: "",
     estimatedHours: "2",
-    serviceAddress: { line1: "", city: "", postalCode: "", country: "DE" },
+    serviceAddress: { line1: "", city: "", postalCode: "", country: "" },
     serviceLatitude: 0,
     serviceLongitude: 0,
     radiusKm: 25,
@@ -136,6 +136,7 @@ export default function PostJobPage() {
   // actually renders error text under — so a server-side catch shows up in the same place a
   // client-side one would, rather than everything getting flattened into one banner.
   function mapFieldErrorPath(path: string): string | null {
+    if (path === "serviceAddress.country") return "country"
     if (path.startsWith("serviceAddress.")) return "location"
     if (path === "desiredTimeRange" || path.startsWith("desiredTimeRange.")) return "desiredTimeRange"
     if (path === "budgetMin" || path === "budgetMax" || path === "hourlyRate") return "hourlyRate"
@@ -185,6 +186,10 @@ export default function PostJobPage() {
       if (geo) { lat = geo.lat; lng = geo.lng }
     }
     if (!lat) { setFieldErrors({ location: t("errorMissingLocation") }); return }
+    // Country must be a deliberate choice — it was silently defaulting to Germany before, which fed
+    // straight into currency/formatting for this address (see the same fix on the cleaner-onboarding
+    // side for why a silent country default is a real bug, not cosmetic).
+    if (form.serviceAddress.country.length !== 2) { setFieldErrors({ country: t("errorMissingCountry") }); return }
     // Time window (standard jobs only — Take Job has no date/time picker, it's ASAP): both ends or
     // neither, and end must be after start.
     const hasStart = jobType === "standard" && !!form.desiredTimeStart
@@ -248,7 +253,7 @@ export default function PostJobPage() {
         <p className="text-[#6B7280] text-center mb-6 max-w-sm">{t("successDescription")}</p>
         <div className="flex gap-3">
           <Button onClick={() => router.push("/jobs")} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white">{t("viewMyJobs")}</Button>
-          <Button variant="outline" onClick={() => { setSuccess(false); setJobType("standard"); setForm({ title: "", description: "", hourlyRate: "", desiredDate: "", desiredTimeStart: "", desiredTimeEnd: "", estimatedHours: "2", serviceAddress: { line1: "", city: "", postalCode: "", country: "DE" }, serviceLatitude: 0, serviceLongitude: 0, radiusKm: 25, ecoRequirements: [], recurringFrequency: "" }) }} className="border-[#E5EBF0]">{t("postAnother")}</Button>
+          <Button variant="outline" onClick={() => { setSuccess(false); setJobType("standard"); setForm({ title: "", description: "", hourlyRate: "", desiredDate: "", desiredTimeStart: "", desiredTimeEnd: "", estimatedHours: "2", serviceAddress: { line1: "", city: "", postalCode: "", country: "" }, serviceLatitude: 0, serviceLongitude: 0, radiusKm: 25, ecoRequirements: [], recurringFrequency: "" }) }} className="border-[#E5EBF0]">{t("postAnother")}</Button>
         </div>
       </div>
     )
@@ -423,9 +428,10 @@ export default function PostJobPage() {
               <CountryField
                 id="postjob-country"
                 code={form.serviceAddress.country}
-                onCode={(c) => setForm((p) => ({ ...p, serviceAddress: { ...p.serviceAddress, country: c } }))}
+                onCode={(c) => { setForm((p) => ({ ...p, serviceAddress: { ...p.serviceAddress, country: c } })); if (fieldErrors.country) setFieldErrors((e) => ({ ...e, country: "" })) }}
                 invalidText={t("countryInvalid")}
               />
+              <FieldError msg={fieldErrors.country} />
             </div>
             {postal.postalError && (
               <div className="flex items-start gap-2 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-800">
