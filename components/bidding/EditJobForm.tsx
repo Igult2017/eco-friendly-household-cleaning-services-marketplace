@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
@@ -9,6 +9,22 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Loader2 } from "lucide-react"
 import { localTodayYmd } from "@/lib/utils/formatDate"
+import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
+
+// Pulls the first useful message out of either a plain string error or the
+// { fieldErrors: { key: [msg] } } shape other job routes return, instead of always
+// falling back to a generic message when the server sends back something specific.
+function extractError(payload: unknown, fallback: string): string {
+  if (typeof payload === "string") return payload
+  if (payload && typeof payload === "object") {
+    const p = payload as Record<string, unknown>
+    if (p.fieldErrors && typeof p.fieldErrors === "object") {
+      const first = Object.values(p.fieldErrors as Record<string, string[]>).flat()[0]
+      if (first) return first
+    }
+  }
+  return fallback
+}
 
 interface Initial {
   title: string
@@ -22,13 +38,21 @@ interface Initial {
 }
 
 // Edit a posted job. Full edit until bids arrive; with bids only the desired date is changeable.
-export function EditJobForm({ jobId, initial, hasBids }: { jobId: string; initial: Initial; hasBids: boolean }) {
+export function EditJobForm({ jobId, initial, hasBids, country }: { jobId: string; initial: Initial; hasBids: boolean; country: string }) {
   const t = useTranslations("customerJobEditPage")
   const tp = useTranslations("customerPostjobPage")
   const router = useRouter()
   const [form, setForm] = useState(initial)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
+  const [minHourlyRateCents, setMinHourlyRateCents] = useState(1500)
+
+  useEffect(() => {
+    fetch("/api/settings/min-hourly-rate")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (typeof d?.cents === "number") setMinHourlyRateCents(d.cents) })
+      .catch(() => {})
+  }, [])
 
   const set = (k: keyof Initial, v: string) => setForm((p) => ({ ...p, [k]: v }))
   const lock = hasBids // everything except the date
@@ -36,6 +60,11 @@ export function EditJobForm({ jobId, initial, hasBids }: { jobId: string; initia
   async function save() {
     setSaving(true)
     setError("")
+    if (!lock && form.hourlyRate && Math.round(parseFloat(form.hourlyRate) * 100) < minHourlyRateCents) {
+      setError(tp("errorRateBelowMinimum", { min: formatCurrencyForCountry(minHourlyRateCents, country) }))
+      setSaving(false)
+      return
+    }
     try {
       const body: Record<string, unknown> = { desiredDate: form.desiredDate || undefined }
       if (!lock) {
@@ -47,7 +76,7 @@ export function EditJobForm({ jobId, initial, hasBids }: { jobId: string; initia
         body.desiredTimeRange = form.timeStart && form.timeEnd ? { start: form.timeStart, end: form.timeEnd } : null
       }
       const r = await fetch(`/api/jobs/${jobId}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
-      if (!r.ok) { const d = await r.json().catch(() => ({})); setError(typeof d.error === "string" ? d.error : t("errorGeneric")); return }
+      if (!r.ok) { const d = await r.json().catch(() => ({})); setError(extractError(d.error, t("errorGeneric"))); return }
       router.push("/jobs")
       router.refresh()
     } catch { setError(t("errorGeneric")) } finally { setSaving(false) }
@@ -69,7 +98,8 @@ export function EditJobForm({ jobId, initial, hasBids }: { jobId: string; initia
         <div className="grid grid-cols-2 gap-3">
           <div>
             <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{tp("hourlyRateLabel")}</Label>
-            <Input type="number" min={1} step="0.5" value={form.hourlyRate} onChange={(e) => set("hourlyRate", e.target.value)} disabled={lock} />
+            <Input type="number" min={minHourlyRateCents / 100} step="0.5" value={form.hourlyRate} onChange={(e) => set("hourlyRate", e.target.value)} disabled={lock} />
+            {!lock && <p className="text-xs text-[#9CA3AF] mt-1">{tp("hourlyRateMinimumHint", { min: formatCurrencyForCountry(minHourlyRateCents, country) })}</p>}
           </div>
           <div>
             <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{tp("estimatedHoursLabel")}</Label>

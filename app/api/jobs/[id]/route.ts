@@ -6,6 +6,7 @@ import { jobPosts, bids } from "@/lib/db/schema"
 import { eq, and, sql, inArray } from "drizzle-orm"
 import { isUuid } from "@/lib/utils/uuid"
 import { logError } from "@/lib/utils/logError"
+import { getMinHourlyRateCents } from "@/lib/platform/settings"
 
 const editSchema = z.object({
   title: z.string().min(5).max(200).optional(),
@@ -77,6 +78,16 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     const hasBids = Number(n) > 0
     if (hasBids && (data.title !== undefined || data.description !== undefined || data.hourlyRate !== undefined || data.estimatedHours !== undefined || data.recurringFrequency !== undefined || data.desiredTimeRange !== undefined)) {
       return NextResponse.json({ error: "Bids have already arrived — only the desired date can be changed." }, { status: 422 })
+    }
+
+    if (data.hourlyRate !== undefined) {
+      const minHourlyRateCents = await getMinHourlyRateCents()
+      if (Math.round(data.hourlyRate * 100) < minHourlyRateCents) {
+        return NextResponse.json(
+          { error: { fieldErrors: { hourlyRate: [`Hourly rate must be at least ${(minHourlyRateCents / 100).toFixed(2)} per hour.`] } } },
+          { status: 422 },
+        )
+      }
     }
 
     const updates: Record<string, unknown> = { updatedAt: new Date() }

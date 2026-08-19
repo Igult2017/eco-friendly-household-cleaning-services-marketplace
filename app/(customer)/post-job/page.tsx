@@ -48,11 +48,18 @@ export default function PostJobPage() {
   // Marketing copy, not conditional on picking recurring — shown upfront so it can actually
   // influence the choice, same treatment as the direct-booking wizard's banner.
   const [recurringDiscountPct, setRecurringDiscountPct] = useState<number | null>(null)
+  // Admin-configurable wage floor (lib/platform/settings.ts getMinHourlyRateCents) — 1500 (€15) is
+  // just the initial guess shown before the live value loads; the server is the real source of truth.
+  const [minHourlyRateCents, setMinHourlyRateCents] = useState(1500)
 
   useEffect(() => {
     fetch("/api/settings/recurring-discount")
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => { if (typeof d?.pct === "number") setRecurringDiscountPct(d.pct) })
+      .catch(() => {})
+    fetch("/api/settings/min-hourly-rate")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (typeof d?.cents === "number") setMinHourlyRateCents(d.cents) })
       .catch(() => {})
   }, [])
 
@@ -131,7 +138,7 @@ export default function PostJobPage() {
   function mapFieldErrorPath(path: string): string | null {
     if (path.startsWith("serviceAddress.")) return "location"
     if (path === "desiredTimeRange" || path.startsWith("desiredTimeRange.")) return "desiredTimeRange"
-    if (path === "budgetMin" || path === "budgetMax") return "hourlyRate"
+    if (path === "budgetMin" || path === "budgetMax" || path === "hourlyRate") return "hourlyRate"
     if (path === "estimatedHours") return "estimatedHours"
     if (path === "title") return "title"
     if (path === "description") return "description"
@@ -190,6 +197,10 @@ export default function PostJobPage() {
     // fixed price the claiming cleaner accepts as-is).
     // Per-hour amount is MANDATORY — cleaners bid against it, and it powers the ≈/h display.
     if (!form.hourlyRate || !(parseFloat(form.hourlyRate) > 0)) { setFieldErrors({ hourlyRate: t("errorRateRequired") }); return }
+    if (Math.round(parseFloat(form.hourlyRate) * 100) < minHourlyRateCents) {
+      setFieldErrors({ hourlyRate: t("errorRateBelowMinimum", { min: formatCurrencyForCountry(minHourlyRateCents, form.serviceAddress.country) }) })
+      return
+    }
     const hrs = parseFloat(form.estimatedHours)
     if (!(hrs > 0)) { setFieldErrors({ estimatedHours: t("errorHoursRequired") }); return }
     setLoading(true)
@@ -207,6 +218,9 @@ export default function PostJobPage() {
           // Single hourly rate → one job total, stored in both bounds (boards collapse equal values).
           budgetMin: form.hourlyRate ? Math.round(parseFloat(form.hourlyRate) * 100 * hrs) : undefined,
           budgetMax: form.hourlyRate ? Math.round(parseFloat(form.hourlyRate) * 100 * hrs) : undefined,
+          // Sent explicitly (not just reverse-derived from budgetMin÷hours) so the server's wage-floor
+          // check compares against the real rate, not a rounded-and-divided approximation.
+          hourlyRate: parseFloat(form.hourlyRate),
           desiredDate: jobType === "standard" ? form.desiredDate : undefined,
           desiredTimeRange: hasStart && hasEnd ? { start: form.desiredTimeStart, end: form.desiredTimeEnd } : undefined,
           estimatedHours: form.estimatedHours ? parseFloat(form.estimatedHours) : undefined,
@@ -294,8 +308,11 @@ export default function PostJobPage() {
             </div>
             <div>
               <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("hourlyRateLabel")}</Label>
-              <Input type="number" value={form.hourlyRate} onChange={(e) => set("hourlyRate", e.target.value)} placeholder="25" min={1} step="0.5" required
+              <Input type="number" value={form.hourlyRate} onChange={(e) => set("hourlyRate", e.target.value)} placeholder="25" min={minHourlyRateCents / 100} step="0.5" required
                 className={cn(fieldErrors.hourlyRate && "border-red-400 ring-1 ring-red-400")} />
+              <p className="text-xs text-[#9CA3AF] mt-1">
+                {t("hourlyRateMinimumHint", { min: formatCurrencyForCountry(minHourlyRateCents, form.serviceAddress.country) })}
+              </p>
               {form.hourlyRate && parseFloat(form.estimatedHours) > 0 && (
                 <p className="text-xs text-[#2D7A5F] font-medium mt-1">
                   {t("budgetTotalHint", {

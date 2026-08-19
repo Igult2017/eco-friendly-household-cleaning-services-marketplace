@@ -23,6 +23,7 @@ interface Config {
   cleaner_peer_referral_pct?:    string
   client_referral_discount_pct?: string
   recurring_discount_pct?:       string
+  min_hourly_rate_cents?:        string
 }
 
 export default function AdminSettingsPage() {
@@ -63,6 +64,7 @@ export default function AdminSettingsPage() {
       if (cfg.cleaner_peer_referral_pct    !== undefined && cfg.cleaner_peer_referral_pct    !== "") payload.cleaner_peer_referral_pct    = parseInt(cfg.cleaner_peer_referral_pct, 10)
       if (cfg.client_referral_discount_pct !== undefined && cfg.client_referral_discount_pct !== "") payload.client_referral_discount_pct = parseInt(cfg.client_referral_discount_pct, 10)
       if (cfg.recurring_discount_pct       !== undefined && cfg.recurring_discount_pct       !== "") payload.recurring_discount_pct       = parseInt(cfg.recurring_discount_pct, 10)
+      if (cfg.min_hourly_rate_cents        !== undefined && cfg.min_hourly_rate_cents        !== "") payload.min_hourly_rate_cents        = parseInt(cfg.min_hourly_rate_cents, 10)
 
       const res = await fetch("/api/admin/settings", {
         method: "PATCH",
@@ -131,6 +133,29 @@ export default function AdminSettingsPage() {
             <p>Customer pays <span className="font-semibold">€100</span> (nothing added)</p>
             <p>Platform commission <span className="font-semibold text-[#2D7A5F]">€{parseInt(cfg.commission_pct ?? "15")}</span> ({cfg.commission_pct ?? 15}%)</p>
             <p>Cleaner receives <span className="font-semibold">€{100 - parseInt(cfg.commission_pct ?? "15")}</span></p>
+          </div>
+        </div>
+
+        {/* Minimum wage floor */}
+        <div className="px-6 py-5">
+          <label className="block text-sm font-semibold text-[#2B3441] mb-1">
+            Minimum Hourly Rate (€ cents)
+          </label>
+          <p className="text-xs text-[#6B7280] mb-3">
+            Applies wherever an hourly rate is set on either side of the marketplace — a client
+            posting a job, or a cleaner listing a per-hour service. Neither can go below this.
+            One flat number for both the EUR and USD markets (same as travel compensation above).
+          </p>
+          <div className="flex items-center gap-3">
+            <input
+              type="number"
+              min={0}
+              max={100000}
+              value={cfg.min_hourly_rate_cents ?? "1500"}
+              onChange={e => set("min_hourly_rate_cents", e.target.value)}
+              className="w-32 h-10 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]"
+            />
+            <span className="text-sm text-[#6B7280]">1500 = €15.00/hr</span>
           </div>
         </div>
 

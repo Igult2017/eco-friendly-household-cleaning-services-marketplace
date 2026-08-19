@@ -24,6 +24,8 @@ const updateSchema = z.object({
   cleaner_peer_referral_pct:    z.number().int().min(0).max(20).optional(),
   client_referral_discount_pct: z.number().int().min(0).max(20).optional(),
   recurring_discount_pct:       z.number().int().min(0).max(50).optional(),
+  // Minimum hourly wage floor — see lib/platform/settings.ts getMinHourlyRateCents().
+  min_hourly_rate_cents: z.number().int().min(0).max(100_000).optional(),
 })
 
 type AdminCheckResult = "ok" | "unauthorized" | "forbidden"

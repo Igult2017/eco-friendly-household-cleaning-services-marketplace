@@ -80,6 +80,15 @@ export async function getRecurringDiscountPct(): Promise<number> {
   return getIntSetting("recurring_discount_pct", 10, 0, 50)
 }
 
+// Admin-set minimum hourly wage floor, in cents. Applies to any hourly rate set on either side of
+// the marketplace — a client's job-post rate and a cleaner's own per-hour service rate both
+// determine what a cleaner ends up earning per hour, so both are checked against this same number.
+// One flat figure for both the EUR and USD markets (no currency-aware setting exists anywhere in
+// this app yet — see cancel_travel_comp_cents for the same precedent).
+export async function getMinHourlyRateCents(): Promise<number> {
+  return getIntSetting("min_hourly_rate_cents", 1500, 0, 100_000)
+}
+
 export type CancellationConfig = {
   tier1Hours: number       // above this = full refund (0% fee)
   tier2Hours: number       // between tier2 and tier1 = "low" fee

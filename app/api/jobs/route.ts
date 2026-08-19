@@ -14,6 +14,7 @@ import { z } from "zod"
 import { logError } from "@/lib/utils/logError"
 import { ensureUserRow } from "@/lib/clerk/ensureUser"
 import { stripe } from "@/lib/stripe/client"
+import { getMinHourlyRateCents } from "@/lib/platform/settings"
 
 const createJobSchema = z.object({
   title: z.string().min(5).max(200),
@@ -22,6 +23,10 @@ const createJobSchema = z.object({
   // Required: the per-hour amount (×hours = these totals) is mandatory when posting.
   budgetMin: z.number().int().min(100),
   budgetMax: z.number().int().min(100),
+  // Whole currency units per hour — sent explicitly (not just derived from budgetMin÷hours) so the
+  // minimum-wage floor (checked in the handler, live from platform_settings) can be enforced directly
+  // against the actual rate rather than reverse-derived from a possibly-rounded total.
+  hourlyRate: z.number().min(1).max(1000),
   desiredDate: z.string().optional(),
   desiredTimeRange: z
     .object({ start: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/), end: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/) })
@@ -97,6 +102,15 @@ export async function POST(req: Request) {
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
     const data = parsed.data
+
+    const minHourlyRateCents = await getMinHourlyRateCents()
+    if (Math.round(data.hourlyRate * 100) < minHourlyRateCents) {
+      return NextResponse.json(
+        { error: { fieldErrors: { hourlyRate: [`Hourly rate must be at least ${(minHourlyRateCents / 100).toFixed(2)} per hour.`] } } },
+        { status: 422 },
+      )
+    }
+
     // Job posts do NOT auto-expire — they stay on the board until the customer accepts a cleaner
     // (status → assigned) or cancels. expires_at is NOT NULL and is read by the bid/feed paths, so
     // we set it ~100 years out, i.e. effectively "never".

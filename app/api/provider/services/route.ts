@@ -5,6 +5,7 @@ import { providers, providerServices, serviceCategories } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
 import { z } from "zod"
 import { logError } from "@/lib/utils/logError"
+import { getMinHourlyRateCents } from "@/lib/platform/settings"
 
 const serviceSchema = z.object({
   // At least one built-in category (so clients can find this service); the first is the primary.
@@ -76,6 +77,17 @@ export async function POST(req: Request) {
     const validIds = new Set(validCats.map((c) => c.id))
     if (!d.categoryIds.every((id) => validIds.has(id))) {
       return NextResponse.json({ error: "One or more selected categories are invalid" }, { status: 400 })
+    }
+    // Wage floor only makes sense for an actual hourly rate — a flat per-job or per-sqft price
+    // isn't a wage, so it's left alone (see lib/platform/settings.ts getMinHourlyRateCents()).
+    if (d.priceUnit === "per_hour" && d.basePrice !== null) {
+      const minHourlyRateCents = await getMinHourlyRateCents()
+      if (d.basePrice < minHourlyRateCents) {
+        return NextResponse.json(
+          { error: { fieldErrors: { basePrice: [`Hourly rate must be at least ${(minHourlyRateCents / 100).toFixed(2)} per hour.`] } } },
+          { status: 422 },
+        )
+      }
     }
     const [service] = await db.insert(providerServices).values({
       providerId: provider.id,

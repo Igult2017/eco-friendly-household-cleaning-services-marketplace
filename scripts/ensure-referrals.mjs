@@ -414,6 +414,12 @@ INSERT INTO platform_settings (key, value) VALUES
   ('recurring_discount_pct','10')
 ON CONFLICT (key) DO NOTHING;
 
+-- Minimum hourly wage floor (cents) — applies to a client's job-post rate AND a cleaner's own
+-- per-hour service rate. 1500 = €15.00/hr.
+INSERT INTO platform_settings (key, value) VALUES
+  ('min_hourly_rate_cents','1500')
+ON CONFLICT (key) DO NOTHING;
+
 -- A completed booking must be able to credit TWO independent referrals (one for the referred
 -- customer, one for the referred cleaner assigned to it) — the old single-column unique index on
 -- booking_id blocked that. Swap it for a composite (booking_id, referral_id) unique index.

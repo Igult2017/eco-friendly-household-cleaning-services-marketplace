@@ -20,7 +20,7 @@ export default async function EditJobPage({ params }: { params: Promise<{ id: st
       id: jobPosts.id, status: jobPosts.status, title: jobPosts.title, description: jobPosts.description,
       budgetMax: jobPosts.budgetMax, estimatedDurationMinutes: jobPosts.estimatedDurationMinutes,
       desiredDate: jobPosts.desiredDate, desiredTimeRange: jobPosts.desiredTimeRange,
-      recurringFrequency: jobPosts.recurringFrequency,
+      recurringFrequency: jobPosts.recurringFrequency, serviceAddress: jobPosts.serviceAddress,
     })
     .from(jobPosts)
     .where(and(eq(jobPosts.id, id), eq(jobPosts.customerId, userId)))
@@ -41,6 +41,7 @@ export default async function EditJobPage({ params }: { params: Promise<{ id: st
         <EditJobForm
           jobId={job.id}
           hasBids={hasBids}
+          country={job.serviceAddress?.country ?? "DE"}
           initial={{
             title: job.title,
             description: job.description,

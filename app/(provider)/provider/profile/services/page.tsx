@@ -44,6 +44,7 @@ export default function ProviderServicesPage() {
   const [customInput, setCustomInput] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [hasProfile, setHasProfile] = useState(true)
+  const [minHourlyRateCents, setMinHourlyRateCents] = useState(1500)
 
   const reload = () => {
     setLoading(true)
@@ -53,6 +54,12 @@ export default function ProviderServicesPage() {
   }
 
   useEffect(() => { reload() }, [])
+  useEffect(() => {
+    fetch("/api/settings/min-hourly-rate")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (typeof d?.cents === "number") setMinHourlyRateCents(d.cents) })
+      .catch(() => {})
+  }, [])
 
   const addService = async () => {
     if (catIds.length === 0 || !form.name) { setError(t("errorRequiredFields")); return }
@@ -61,6 +68,10 @@ export default function ProviderServicesPage() {
       if (!form.basePrice) { setError(t("errorRequiredFields")); return }
       price = Math.round(Number(form.basePrice) * 100)
       if (price < 100) { setError(t("errorMinPrice")); return }
+      if (form.priceUnit === "per_hour" && price < minHourlyRateCents) {
+        setError(t("errorBelowHourlyMinimum", { min: (minHourlyRateCents / 100).toFixed(2) }))
+        return
+      }
     }
     setAdding(true)
     setError(null)
@@ -69,7 +80,13 @@ export default function ProviderServicesPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...form, categoryIds: catIds, customCategories: customCats, basePrice: price, minDurationMinutes: Number(form.minDurationMinutes) }),
     })
-    if (!res.ok) { const d = await res.json(); setError(d.error?.formErrors?.[0] ?? t("errorAddFailed")) }
+    if (!res.ok) {
+      const d = await res.json()
+      const fieldMsg = d.error?.fieldErrors && typeof d.error.fieldErrors === "object"
+        ? (Object.values(d.error.fieldErrors as Record<string, string[]>).flat()[0] as string | undefined)
+        : undefined
+      setError(fieldMsg ?? d.error?.formErrors?.[0] ?? t("errorAddFailed"))
+    }
     else { resetForm(); setShowForm(false) }
     setAdding(false)
     reload()
@@ -194,11 +211,14 @@ export default function ProviderServicesPage() {
               <div>
                 <label className="block text-xs font-semibold text-[#2B3441] mb-1.5">{t("priceLabel")}</label>
                 <input
-                  type="number" min="1" step="0.5" value={form.basePrice}
+                  type="number" min={form.priceUnit === "per_hour" ? minHourlyRateCents / 100 : 1} step="0.5" value={form.basePrice}
                   onChange={(e) => setForm((f) => ({ ...f, basePrice: e.target.value }))}
                   placeholder="0.00"
                   className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none"
                 />
+                {form.priceUnit === "per_hour" && (
+                  <p className="text-xs text-[#6B7280] mt-1">{t("hourlyMinimumHint", { min: (minHourlyRateCents / 100).toFixed(2) })}</p>
+                )}
               </div>
             )}
             <div>
