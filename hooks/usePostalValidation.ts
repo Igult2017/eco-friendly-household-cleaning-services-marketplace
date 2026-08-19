@@ -25,7 +25,19 @@ export function usePostalValidation() {
     setState(s => ({ ...s, validating: true }))
 
     try {
-      const { valid, canonicalCity } = await validatePostalCity(postalCode, country, typedCity)
+      const { valid, canonicalCity, countryMismatch } = await validatePostalCity(postalCode, country, typedCity)
+
+      // Strongest signal available that the wrong country was picked — surfaced as a visible
+      // warning (matching the city-mismatch message below), never a submit-blocker: `valid` stays
+      // true here since Nominatim's coverage is incomplete, not proof the address is wrong.
+      if (countryMismatch) {
+        setState({
+          postalError: `We couldn't find postal code "${postalCode}" in the country you selected — double-check you picked the right one.`,
+          canonicalCity: null,
+          validating: false,
+        })
+        return true
+      }
 
       if (!valid && canonicalCity) {
         const msg = typedCity

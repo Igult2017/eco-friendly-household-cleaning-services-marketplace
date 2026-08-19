@@ -15,6 +15,13 @@ export interface GeoResult {
 export interface PostalValidation {
   valid: boolean
   canonicalCity: string
+  // Nominatim found NO record at all of this postal code under the selected country — the
+  // strongest signal available that the wrong country was picked (stronger than a city-name
+  // mismatch, which at least found SOME record). Deliberately does NOT flip `valid` to false —
+  // Nominatim's coverage is incomplete, so treating "no record found" as a hard failure would
+  // risk blocking a real cleaner with a genuinely correct but less-common address. This just lets
+  // the caller show a warning instead of staying silent.
+  countryMismatch?: boolean
 }
 
 function parseCity(addr: Record<string, string>): string {
@@ -97,7 +104,7 @@ export async function validatePostalCity(
   if (!res.ok) return { valid: true, canonicalCity: "" }
 
   const data = await res.json()
-  if (!data[0]?.address) return { valid: true, canonicalCity: "" }
+  if (!data[0]?.address) return { valid: true, canonicalCity: "", countryMismatch: true }
 
   const canonicalCity = parseCity(data[0].address)
   if (!canonicalCity || !typedCity) return { valid: true, canonicalCity }
