@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { useTranslations, useLocale } from "next-intl"
 import { loadConnectAndInitialize, type StripeConnectInstance } from "@stripe/connect-js"
 import { ConnectComponentsProvider, ConnectAccountOnboarding } from "@stripe/react-connect-js"
@@ -22,21 +22,29 @@ export function StripeConnectEmbed({ onConnected }: { onConnected?: () => void }
   const [error, setError] = useState<string | null>(null)
   const [verifyingStep, setVerifyingStep] = useState(false)
 
-  const stripeConnectInstance = useMemo<StripeConnectInstance | null>(() => {
+  const [stripeConnectInstance, setStripeConnectInstance] = useState<StripeConnectInstance | null>(null)
+
+  // Browser-only setup, deliberately in useEffect (never useMemo): this fetches a relative URL,
+  // which only resolves against "this page's own address" in an actual browser. Running it during
+  // the server-side render pass (which useMemo does, but useEffect never does) crashed with
+  // "Failed to parse URL from /api/stripe/connect/account" on every page load — Stripe's own
+  // ConnectJS already expects/tolerates being loaded during SSR, but our fetch call doesn't.
+  useEffect(() => {
     try {
-      return loadConnectAndInitialize({
-        publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
-        locale,
-        fetchClientSecret: async () => {
-          const res = await fetch("/api/stripe/connect/account", { method: "POST" })
-          if (!res.ok) throw new Error("Failed to create Stripe Connect session")
-          const { clientSecret } = await res.json()
-          return clientSecret as string
-        },
-      })
+      setStripeConnectInstance(
+        loadConnectAndInitialize({
+          publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
+          locale,
+          fetchClientSecret: async () => {
+            const res = await fetch("/api/stripe/connect/account", { method: "POST" })
+            if (!res.ok) throw new Error("Failed to create Stripe Connect session")
+            const { clientSecret } = await res.json()
+            return clientSecret as string
+          },
+        }),
+      )
     } catch {
       setError(t("connectError"))
-      return null
     }
   }, [t, locale])
 
@@ -47,11 +55,21 @@ export function StripeConnectEmbed({ onConnected }: { onConnected?: () => void }
     onConnected?.()
   }
 
-  if (error || !stripeConnectInstance) {
+  if (error) {
     return (
       <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-4 py-3">
         <AlertCircle className="w-4 h-4 flex-shrink-0" />
-        {error ?? t("connectError")}
+        {error}
+      </div>
+    )
+  }
+
+  // Brief, genuine loading window while the browser-only setup effect above runs — not an error,
+  // just hasn't finished yet.
+  if (!stripeConnectInstance) {
+    return (
+      <div className="flex items-center justify-center py-6">
+        <Loader2 className="w-5 h-5 animate-spin text-[#2D7A5F]" />
       </div>
     )
   }
