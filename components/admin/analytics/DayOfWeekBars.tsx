@@ -7,9 +7,10 @@ interface DowRow {
 
 interface Props {
   data: DowRow[]
+  windowLabel: string
 }
 
-export function DayOfWeekBars({ data }: Props) {
+export function DayOfWeekBars({ data, windowLabel }: Props) {
   const max = Math.max(...data.map((d) => d.views), 1)
 
   return (
@@ -17,7 +18,7 @@ export function DayOfWeekBars({ data }: Props) {
       <div className="flex items-center gap-2 px-6 py-4 border-b border-gray-100">
         <CalendarDays className="h-4 w-4 text-[#2D7A5F]" />
         <h2 className="text-sm font-semibold text-[#2B3441]">Traffic by Day of Week</h2>
-        <span className="ml-auto text-xs text-[#6B7280]">Aggregated · 30 days</span>
+        <span className="ml-auto text-xs text-[#6B7280]">Aggregated · {windowLabel}</span>
       </div>
       <div className="flex items-end gap-2 px-6 py-6 h-44">
         {data.map(({ name, views }) => {

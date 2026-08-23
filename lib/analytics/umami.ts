@@ -66,7 +66,20 @@ async function umamiGet<T>(path: string): Promise<T | null> {
   }
 }
 
-const DAYS = 30
+export type AnalyticsRange = "day" | "week" | "month"
+
+// Each view needs a request window sized for its own granularity — Umami silently returns much
+// coarser buckets than asked for if the window is too wide for the requested unit (confirmed live:
+// a 365-day "day" request came back as 3 monthly buckets with no error). "week" isn't a unit Umami
+// accepts at all (confirmed live: flat 400 "Invalid unit"), so week view fetches daily data over a
+// wider window and computeTrendSeries() below sums it into 7-day blocks itself.
+function rangeWindow(range: AnalyticsRange) {
+  const end = Date.now()
+  const DAY_MS = 24 * 60 * 60 * 1000
+  if (range === "week") return { start: end - 90 * DAY_MS, end, unit: "day" as const }
+  if (range === "month") return { start: end - 365 * DAY_MS, end, unit: "month" as const }
+  return { start: end - 30 * DAY_MS, end, unit: "day" as const }
+}
 
 // Umami's /stats shape varies by version: older returns { pageviews: {value,prev} },
 // newer returns flat { pageviews: 8, ..., comparison: { pageviews: 0 } }. Normalize
@@ -93,19 +106,19 @@ function normalizeStats(raw: Record<string, unknown> | null): UmamiStats | null 
   }
 }
 
-export async function getAnalytics() {
-  const end = Date.now()
-  const start = end - DAYS * 24 * 60 * 60 * 1000
+export async function getAnalytics(range: AnalyticsRange = "day") {
+  const { start, end, unit } = rangeWindow(range)
   const qs = `startAt=${start}&endAt=${end}`
   const [statsRaw, countries, referrers, pages, pageviews] = await Promise.all([
     umamiGet<Record<string, unknown>>(`/websites/${WEBSITE_ID}/stats?${qs}`),
     umamiGet<UmamiMetric[]>(`/websites/${WEBSITE_ID}/metrics?type=country&${qs}&limit=20`),
     umamiGet<UmamiMetric[]>(`/websites/${WEBSITE_ID}/metrics?type=referrer&${qs}&limit=100`),
     umamiGet<UmamiMetric[]>(`/websites/${WEBSITE_ID}/metrics?type=path&${qs}&limit=20`),
-    umamiGet<UmamiPageviews>(`/websites/${WEBSITE_ID}/pageviews?${qs}&unit=day&timezone=Europe%2FBerlin`),
+    umamiGet<UmamiPageviews>(`/websites/${WEBSITE_ID}/pageviews?${qs}&unit=${unit}&timezone=Europe%2FBerlin`),
   ])
   return {
     configured: !!(USERNAME && PASSWORD && WEBSITE_ID),
+    range,
     stats: normalizeStats(statsRaw),
     countries,
     referrers,
@@ -172,6 +185,50 @@ export function computeDayOfWeek(series: Array<{ x: string; y: number }>) {
     totals[dow] += y
   }
   return DOW_LABELS.map((name, i) => ({ name, views: totals[i] }))
+}
+
+const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+/**
+ * Turn a Umami daily/monthly pageview series into {name, views} bars for the selected range.
+ * "week" isn't a unit Umami accepts, so its series arrives as daily points here and gets summed
+ * into Monday-start 7-day blocks; "day" and "month" series already arrive at the right
+ * granularity and just need a readable label.
+ */
+export function computeTrendSeries(range: AnalyticsRange, series: Array<{ x: string; y: number }>) {
+  if (range === "week") {
+    const weeks = new Map<string, { start: Date; views: number }>()
+    for (const { x, y } of series) {
+      const date = new Date(x)
+      const day = date.getDay()
+      const monday = new Date(date)
+      monday.setDate(date.getDate() + (day === 0 ? -6 : 1 - day))
+      monday.setHours(0, 0, 0, 0)
+      const key = monday.toISOString().slice(0, 10)
+      const existing = weeks.get(key)
+      if (existing) existing.views += y
+      else weeks.set(key, { start: monday, views: y })
+    }
+    return Array.from(weeks.values())
+      .sort((a, b) => a.start.getTime() - b.start.getTime())
+      .map(({ start, views }) => {
+        const end = new Date(start)
+        end.setDate(start.getDate() + 6)
+        const startLabel = `${MONTH_LABELS[start.getMonth()]} ${start.getDate()}`
+        const endLabel = start.getMonth() === end.getMonth() ? `${end.getDate()}` : `${MONTH_LABELS[end.getMonth()]} ${end.getDate()}`
+        return { name: `${startLabel}–${endLabel}`, views }
+      })
+  }
+  if (range === "month") {
+    return series.map(({ x, y }) => {
+      const d = new Date(x)
+      return { name: `${MONTH_LABELS[d.getMonth()]} ${d.getFullYear()}`, views: y }
+    })
+  }
+  return series.map(({ x, y }) => {
+    const d = new Date(x)
+    return { name: `${MONTH_LABELS[d.getMonth()]} ${d.getDate()}`, views: y }
+  })
 }
 
 /** Map ISO 3166-1 alpha-2 code to human-readable country name (Node Intl). */

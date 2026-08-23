@@ -3,9 +3,10 @@ import type { UmamiMetric } from "@/lib/analytics/umami"
 
 interface Props {
   pages: UmamiMetric[]
+  windowLabel: string
 }
 
-export function PagesTable({ pages }: Props) {
+export function PagesTable({ pages, windowLabel }: Props) {
   const max = pages[0]?.y || 1
 
   return (
@@ -13,7 +14,7 @@ export function PagesTable({ pages }: Props) {
       <div className="flex items-center gap-2 px-6 py-4 border-b border-gray-100">
         <FileText className="h-4 w-4 text-[#2D7A5F]" />
         <h2 className="text-sm font-semibold text-[#2B3441]">Top Pages</h2>
-        <span className="ml-auto text-xs text-[#6B7280]">Last 30 days</span>
+        <span className="ml-auto text-xs text-[#6B7280]">{windowLabel}</span>
       </div>
       {pages.length === 0 ? (
         <p className="px-6 py-8 text-center text-sm text-[#6B7280]">No page data yet</p>
