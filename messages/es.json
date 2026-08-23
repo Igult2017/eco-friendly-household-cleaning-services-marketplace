@@ -1166,7 +1166,12 @@
     "avgRating": "Valoración media",
     "upcoming": "Próximos",
     "instantJobsToggleTitle": "Disponible para trabajos instantáneos",
-    "instantJobsToggleHint": "Recibe avisos de trabajos urgentes cercanos que puedes aceptar al instante",
+    "instantJobsToggleOnBadge": "ACTIVADO",
+    "instantJobsToggleOffBadge": "DESACTIVADO",
+    "instantJobsToggleHintOn": "Activado — recibirás avisos de trabajos urgentes cercanos que puedes aceptar al instante.",
+    "instantJobsToggleHintOff": "Desactivado — actívalo para recibir avisos de trabajos urgentes cercanos que puedes aceptar al instante.",
+    "instantJobsToggleSuccessOn": "Ya estás disponible para trabajos instantáneos.",
+    "instantJobsToggleSuccessOff": "Ya no estás disponible para trabajos instantáneos.",
     "instantJobsToggleError": "No se pudo actualizar tu disponibilidad. Inténtalo de nuevo."
   },
   "providerProviderEarningsPage": {

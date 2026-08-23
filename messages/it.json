@@ -1166,7 +1166,12 @@
     "avgRating": "Valutazione media",
     "upcoming": "In programma",
     "instantJobsToggleTitle": "Disponibile per lavori istantanei",
-    "instantJobsToggleHint": "Ricevi notifiche sui lavori urgenti vicini che puoi accettare all'istante",
+    "instantJobsToggleOnBadge": "ATTIVO",
+    "instantJobsToggleOffBadge": "DISATTIVO",
+    "instantJobsToggleHintOn": "Attivo — riceverai notifiche sui lavori urgenti vicini che puoi accettare all'istante.",
+    "instantJobsToggleHintOff": "Disattivo — attivalo per ricevere notifiche sui lavori urgenti vicini che puoi accettare all'istante.",
+    "instantJobsToggleSuccessOn": "Ora sei disponibile per lavori istantanei.",
+    "instantJobsToggleSuccessOff": "Non sei più disponibile per lavori istantanei.",
     "instantJobsToggleError": "Impossibile aggiornare la tua disponibilità. Riprova."
   },
   "providerProviderEarningsPage": {

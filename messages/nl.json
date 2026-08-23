@@ -1166,7 +1166,12 @@
     "avgRating": "Gem. beoordeling",
     "upcoming": "Aankomend",
     "instantJobsToggleTitle": "Beschikbaar voor instant-klussen",
-    "instantJobsToggleHint": "Ontvang meldingen over dringende klussen in de buurt die je direct kunt overnemen",
+    "instantJobsToggleOnBadge": "AAN",
+    "instantJobsToggleOffBadge": "UIT",
+    "instantJobsToggleHintOn": "Aan — je ontvangt meldingen over dringende klussen in de buurt die je direct kunt overnemen.",
+    "instantJobsToggleHintOff": "Uit — zet dit aan om meldingen te ontvangen over dringende klussen in de buurt die je direct kunt overnemen.",
+    "instantJobsToggleSuccessOn": "Je bent nu beschikbaar voor instant-klussen.",
+    "instantJobsToggleSuccessOff": "Je bent niet meer beschikbaar voor instant-klussen.",
     "instantJobsToggleError": "Kon je beschikbaarheid niet bijwerken. Probeer het opnieuw."
   },
   "providerProviderEarningsPage": {

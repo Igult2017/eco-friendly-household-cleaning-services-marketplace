@@ -1166,7 +1166,12 @@
     "avgRating": "Note moyenne",
     "upcoming": "À venir",
     "instantJobsToggleTitle": "Disponible pour les missions instantanées",
-    "instantJobsToggleHint": "Recevez des alertes pour les missions urgentes à proximité que vous pouvez accepter instantanément",
+    "instantJobsToggleOnBadge": "ACTIVÉ",
+    "instantJobsToggleOffBadge": "DÉSACTIVÉ",
+    "instantJobsToggleHintOn": "Activé — vous recevrez des alertes pour les missions urgentes à proximité que vous pouvez accepter instantanément.",
+    "instantJobsToggleHintOff": "Désactivé — activez cette option pour recevoir des alertes pour les missions urgentes à proximité que vous pouvez accepter instantanément.",
+    "instantJobsToggleSuccessOn": "Vous êtes maintenant disponible pour les missions instantanées.",
+    "instantJobsToggleSuccessOff": "Vous n'êtes plus disponible pour les missions instantanées.",
     "instantJobsToggleError": "Impossible de mettre à jour votre disponibilité. Veuillez réessayer."
   },
   "providerProviderEarningsPage": {

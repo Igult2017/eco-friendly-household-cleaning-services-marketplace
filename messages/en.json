@@ -1166,7 +1166,12 @@
     "avgRating": "Avg Rating",
     "upcoming": "Upcoming",
     "instantJobsToggleTitle": "Available for instant jobs",
-    "instantJobsToggleHint": "Get notified about nearby urgent jobs you can claim instantly",
+    "instantJobsToggleOnBadge": "ON",
+    "instantJobsToggleOffBadge": "OFF",
+    "instantJobsToggleHintOn": "On — you'll be notified about nearby urgent jobs you can claim instantly.",
+    "instantJobsToggleHintOff": "Off — turn this on to get notified about nearby urgent jobs you can claim instantly.",
+    "instantJobsToggleSuccessOn": "You're now available for instant jobs.",
+    "instantJobsToggleSuccessOff": "You're no longer available for instant jobs.",
     "instantJobsToggleError": "Couldn't update your availability. Please try again."
   },
   "providerProviderEarningsPage": {

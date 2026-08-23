@@ -1166,7 +1166,12 @@
     "avgRating": "Średnia ocena",
     "upcoming": "Nadchodzące",
     "instantJobsToggleTitle": "Dostępny/a do zleceń natychmiastowych",
-    "instantJobsToggleHint": "Otrzymuj powiadomienia o pobliskich pilnych zleceniach, które możesz od razu przyjąć",
+    "instantJobsToggleOnBadge": "WŁ.",
+    "instantJobsToggleOffBadge": "WYŁ.",
+    "instantJobsToggleHintOn": "Włączone — będziesz otrzymywać powiadomienia o pobliskich pilnych zleceniach, które możesz od razu przyjąć.",
+    "instantJobsToggleHintOff": "Wyłączone — włącz, aby otrzymywać powiadomienia o pobliskich pilnych zleceniach, które możesz od razu przyjąć.",
+    "instantJobsToggleSuccessOn": "Jesteś teraz dostępny/a do zleceń natychmiastowych.",
+    "instantJobsToggleSuccessOff": "Nie jesteś już dostępny/a do zleceń natychmiastowych.",
     "instantJobsToggleError": "Nie udało się zaktualizować dostępności. Spróbuj ponownie."
   },
   "providerProviderEarningsPage": {

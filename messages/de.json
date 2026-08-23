@@ -1166,7 +1166,12 @@
     "avgRating": "Durchschn. Bewertung",
     "upcoming": "Anstehend",
     "instantJobsToggleTitle": "Verfügbar für Soforteinsätze",
-    "instantJobsToggleHint": "Werde über nahe dringende Aufträge benachrichtigt, die du sofort übernehmen kannst",
+    "instantJobsToggleOnBadge": "AN",
+    "instantJobsToggleOffBadge": "AUS",
+    "instantJobsToggleHintOn": "An — du wirst über nahe dringende Aufträge benachrichtigt, die du sofort übernehmen kannst.",
+    "instantJobsToggleHintOff": "Aus — schalte dies ein, um über nahe dringende Aufträge benachrichtigt zu werden, die du sofort übernehmen kannst.",
+    "instantJobsToggleSuccessOn": "Du bist jetzt für Soforteinsätze verfügbar.",
+    "instantJobsToggleSuccessOff": "Du bist nicht mehr für Soforteinsätze verfügbar.",
     "instantJobsToggleError": "Verfügbarkeit konnte nicht aktualisiert werden. Bitte versuche es erneut."
   },
   "providerProviderEarningsPage": {
