@@ -101,7 +101,7 @@ export async function getAnalytics() {
     umamiGet<Record<string, unknown>>(`/websites/${WEBSITE_ID}/stats?${qs}`),
     umamiGet<UmamiMetric[]>(`/websites/${WEBSITE_ID}/metrics?type=country&${qs}&limit=20`),
     umamiGet<UmamiMetric[]>(`/websites/${WEBSITE_ID}/metrics?type=referrer&${qs}&limit=100`),
-    umamiGet<UmamiMetric[]>(`/websites/${WEBSITE_ID}/metrics?type=url&${qs}&limit=20`),
+    umamiGet<UmamiMetric[]>(`/websites/${WEBSITE_ID}/metrics?type=path&${qs}&limit=20`),
     umamiGet<UmamiPageviews>(`/websites/${WEBSITE_ID}/pageviews?${qs}&unit=day&timezone=Europe%2FBerlin`),
   ])
   return {
