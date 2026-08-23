@@ -1647,6 +1647,20 @@
     "cantDoCleaner": "Pode explorar trabalhos, licitar e gerir as suas reservas de limpeza. Aqui não pode reservar profissionais nem publicar trabalhos — volte à sua conta de cliente para isso.",
     "cantDoCustomer": "Pode reservar profissionais e publicar trabalhos. Aqui não pode licitar nem gerir trabalhos de limpeza — volte à sua conta de profissional para isso."
   },
+  "compLayoutAccessDeniedToast": {
+    "adminTitle": "Apenas administradores",
+    "adminBody": "Esta página está disponível apenas para administradores.",
+    "affiliateTitle": "Apenas parceiros",
+    "affiliateBody": "Esta página está disponível apenas para parceiros DORIXÉ.",
+    "providerTitle": "Apenas profissionais",
+    "providerBody": "Esta página está disponível apenas para contas de profissional.",
+    "customerTitle": "Apenas clientes",
+    "customerBody": "Esta página está disponível apenas para contas de cliente.",
+    "providerSwitchTitle": "Esta é a tua conta de profissional",
+    "providerSwitchBody": "Estás atualmente a navegar como cliente. Muda para a tua conta de profissional para ver esta página.",
+    "customerSwitchTitle": "Esta é a tua conta de cliente",
+    "customerSwitchBody": "Estás atualmente a navegar como profissional. Muda para a tua conta de cliente para ver esta página."
+  },
   "compLocationLocationDetectButton": {
     "detecting": "A detetar localização…",
     "detected": "Localização detetada ✓",

@@ -1647,6 +1647,20 @@
     "cantDoCleaner": "Sie können Aufträge durchsuchen, Gebote abgeben und Ihre Reinigungsbuchungen verwalten. Hier können Sie keine Reinigungskräfte buchen oder Aufträge erstellen — wechseln Sie dazu zurück zu Ihrem Kundenkonto.",
     "cantDoCustomer": "Sie können Reinigungskräfte buchen und Aufträge erstellen. Hier können Sie keine Gebote abgeben oder Reinigungsarbeit verwalten — wechseln Sie dazu zurück zu Ihrem Reinigungskonto."
   },
+  "compLayoutAccessDeniedToast": {
+    "adminTitle": "Nur für Administratoren",
+    "adminBody": "Diese Seite ist nur für Administratoren verfügbar.",
+    "affiliateTitle": "Nur für Partner",
+    "affiliateBody": "Diese Seite ist nur für DORIXÉ-Partner verfügbar.",
+    "providerTitle": "Nur für Reinigungskräfte",
+    "providerBody": "Diese Seite ist nur für Reinigungskraft-Konten verfügbar.",
+    "customerTitle": "Nur für Kunden",
+    "customerBody": "Diese Seite ist nur für Kundenkonten verfügbar.",
+    "providerSwitchTitle": "Das ist dein Reinigungskraft-Konto",
+    "providerSwitchBody": "Du bist gerade als Kunde unterwegs. Wechsle zu deinem Reinigungskraft-Konto, um diese Seite zu sehen.",
+    "customerSwitchTitle": "Das ist dein Kundenkonto",
+    "customerSwitchBody": "Du bist gerade als Reinigungskraft unterwegs. Wechsle zu deinem Kundenkonto, um diese Seite zu sehen."
+  },
   "compLocationLocationDetectButton": {
     "detecting": "Standort wird ermittelt…",
     "detected": "Standort erkannt ✓",

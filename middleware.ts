@@ -166,7 +166,11 @@ const clerkHandler = clerkMiddleware(async (auth, req) => {
       // Clerk API unreachable — fall through to the redirect below
     }
   }
-  if (isAdminRoute(req) && role !== "admin") return NextResponse.redirect(new URL("/", base))
+  if (isAdminRoute(req) && role !== "admin") {
+    const url = new URL("/", base)
+    url.searchParams.set("denied", "admin")
+    return NextResponse.redirect(url)
+  }
 
   // Admin bypasses all further role-based route restrictions (can view provider/customer UIs)
   if (role === "admin") {
@@ -195,9 +199,21 @@ const clerkHandler = clerkMiddleware(async (auth, req) => {
     effectiveRole = activeRoleCookie
   }
 
-  if (isAffiliateRoute(req) && effectiveRole !== "affiliate") return NextResponse.redirect(new URL("/", base))
-  if (isProviderRoute(req) && effectiveRole !== "provider") return NextResponse.redirect(new URL("/", base))
-  if (isCustomerOnlyRoute(req) && effectiveRole !== "customer") return NextResponse.redirect(new URL("/", base))
+  if (isAffiliateRoute(req) && effectiveRole !== "affiliate") {
+    const url = new URL("/", base)
+    url.searchParams.set("denied", "affiliate")
+    return NextResponse.redirect(url)
+  }
+  if (isProviderRoute(req) && effectiveRole !== "provider") {
+    const url = new URL("/", base)
+    url.searchParams.set("denied", "provider")
+    return NextResponse.redirect(url)
+  }
+  if (isCustomerOnlyRoute(req) && effectiveRole !== "customer") {
+    const url = new URL("/", base)
+    url.searchParams.set("denied", "customer")
+    return NextResponse.redirect(url)
+  }
 
   const res = NextResponse.next()
   if (shouldRefreshCookie) setCookieOnResponse(res, userId, role)

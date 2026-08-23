@@ -8,8 +8,10 @@ import { getTranslations } from "next-intl/server"
 import { NextIntlClientProvider } from "next-intl"
 import { NotificationBell } from "@/components/notifications/NotificationBell"
 import { RoleSwitcher } from "@/components/layout/RoleSwitcher"
+import { Suspense } from "react"
 import { CookieBanner } from "@/components/gdpr/CookieBanner"
 import { RoleSwitchToast } from "@/components/layout/RoleSwitchToast"
+import { AccessDeniedToast } from "@/components/layout/AccessDeniedToast"
 import { CustomerMobileNav } from "@/components/customer/CustomerMobileNav"
 import { CustomerNav } from "@/components/layout/CustomerNav"
 
@@ -30,8 +32,8 @@ export default async function CustomerLayout({ children }: { children: React.Rea
     const cookieStore = await cookies()
     const activeRole = isDual ? cookieStore.get("dorix_active_role")?.value : undefined
     const effectiveRole = activeRole ?? primaryRole
-    if (effectiveRole === "provider") redirect("/provider/dashboard")
-    if (effectiveRole && effectiveRole !== "customer") redirect("/")
+    if (effectiveRole === "provider") redirect("/provider/dashboard?denied=customer-switch")
+    if (effectiveRole && effectiveRole !== "customer") redirect("/?denied=customer")
   }
 
   const showSwitcher = isDual || primaryRole === "admin"
@@ -61,6 +63,9 @@ export default async function CustomerLayout({ children }: { children: React.Rea
     </div>
     <CookieBanner />
     <RoleSwitchToast />
+    <Suspense fallback={null}>
+      <AccessDeniedToast />
+    </Suspense>
     </NextIntlClientProvider>
   )
 }

@@ -1647,6 +1647,20 @@
     "cantDoCleaner": "Puedes explorar trabajos, hacer ofertas y gestionar tus reservas de limpieza. Aquí no puedes reservar limpiadores ni publicar trabajos — vuelve a tu cuenta de cliente para eso.",
     "cantDoCustomer": "Puedes reservar limpiadores y publicar trabajos. Aquí no puedes hacer ofertas ni gestionar el trabajo de limpieza — vuelve a tu cuenta de limpiador para eso."
   },
+  "compLayoutAccessDeniedToast": {
+    "adminTitle": "Solo administradores",
+    "adminBody": "Esa página solo está disponible para administradores.",
+    "affiliateTitle": "Solo socios",
+    "affiliateBody": "Esa página solo está disponible para socios de DORIXÉ.",
+    "providerTitle": "Solo limpiadores",
+    "providerBody": "Esa página solo está disponible para cuentas de limpiador.",
+    "customerTitle": "Solo clientes",
+    "customerBody": "Esa página solo está disponible para cuentas de cliente.",
+    "providerSwitchTitle": "Esa es tu cuenta de limpiador",
+    "providerSwitchBody": "Ahora mismo estás navegando como cliente. Cambia a tu cuenta de limpiador para ver esa página.",
+    "customerSwitchTitle": "Esa es tu cuenta de cliente",
+    "customerSwitchBody": "Ahora mismo estás navegando como limpiador. Cambia a tu cuenta de cliente para ver esa página."
+  },
   "compLocationLocationDetectButton": {
     "detecting": "Detectando ubicación…",
     "detected": "Ubicación detectada ✓",

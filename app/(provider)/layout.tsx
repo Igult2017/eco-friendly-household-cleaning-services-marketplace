@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { auth, currentUser } from "@clerk/nextjs/server"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
@@ -11,6 +12,7 @@ import { getTranslations } from "next-intl/server"
 import { NextIntlClientProvider } from "next-intl"
 import { CookieBanner } from "@/components/gdpr/CookieBanner"
 import { RoleSwitchToast } from "@/components/layout/RoleSwitchToast"
+import { AccessDeniedToast } from "@/components/layout/AccessDeniedToast"
 import { ProviderMobileNav } from "@/components/provider/ProviderMobileNav"
 import { ProviderNav } from "@/components/layout/ProviderNav"
 import { stampProviderLastActive } from "@/lib/providers/lastActive"
@@ -33,8 +35,8 @@ export default async function ProviderLayout({ children }: { children: React.Rea
     const cookieStore = await cookies()
     const activeRole = isDual ? cookieStore.get("dorix_active_role")?.value : undefined
     const effectiveRole = activeRole ?? primaryRole
-    if (effectiveRole === "customer") redirect("/dashboard")
-    if (effectiveRole && effectiveRole !== "provider") redirect("/")
+    if (effectiveRole === "customer") redirect("/dashboard?denied=provider-switch")
+    if (effectiveRole && effectiveRole !== "provider") redirect("/?denied=provider")
   }
 
   const showSwitcher = isDual && primaryRole !== "admin"
@@ -74,6 +76,9 @@ export default async function ProviderLayout({ children }: { children: React.Rea
     </div>
     <CookieBanner />
     <RoleSwitchToast />
+    <Suspense fallback={null}>
+      <AccessDeniedToast />
+    </Suspense>
     <TakeJobAlerts />
     </NextIntlClientProvider>
   )

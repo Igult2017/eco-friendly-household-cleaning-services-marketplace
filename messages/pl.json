@@ -1647,6 +1647,20 @@
     "cantDoCleaner": "Możesz przeglądać zlecenia, składać oferty i zarządzać swoimi rezerwacjami. Tutaj nie możesz rezerwować sprzątaczy ani publikować zleceń — przełącz się na konto klienta, aby to zrobić.",
     "cantDoCustomer": "Możesz rezerwować sprzątaczy i publikować zlecenia. Tutaj nie możesz składać ofert ani zarządzać pracą — przełącz się na konto sprzątacza, aby to zrobić."
   },
+  "compLayoutAccessDeniedToast": {
+    "adminTitle": "Tylko dla administratorów",
+    "adminBody": "Ta strona jest dostępna tylko dla administratorów.",
+    "affiliateTitle": "Tylko dla partnerów",
+    "affiliateBody": "Ta strona jest dostępna tylko dla partnerów DORIXÉ.",
+    "providerTitle": "Tylko dla sprzątaczy",
+    "providerBody": "Ta strona jest dostępna tylko dla kont sprzątacza.",
+    "customerTitle": "Tylko dla klientów",
+    "customerBody": "Ta strona jest dostępna tylko dla kont klienta.",
+    "providerSwitchTitle": "To Twoje konto sprzątacza",
+    "providerSwitchBody": "Obecnie przeglądasz jako klient. Przełącz się na konto sprzątacza, aby zobaczyć tę stronę.",
+    "customerSwitchTitle": "To Twoje konto klienta",
+    "customerSwitchBody": "Obecnie przeglądasz jako sprzątacz. Przełącz się na konto klienta, aby zobaczyć tę stronę."
+  },
   "compLocationLocationDetectButton": {
     "detecting": "Wykrywanie lokalizacji…",
     "detected": "Wykryto lokalizację ✓",

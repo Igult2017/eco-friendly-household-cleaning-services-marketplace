@@ -1647,6 +1647,20 @@
     "cantDoCleaner": "You can browse jobs, place bids and manage your cleaning bookings. You can’t book cleaners or post jobs here — switch back to your Client account for that.",
     "cantDoCustomer": "You can book cleaners and post jobs. You can’t place bids or manage cleaning work here — switch back to your Cleaner account for that."
   },
+  "compLayoutAccessDeniedToast": {
+    "adminTitle": "Admins only",
+    "adminBody": "That page is only available to administrators.",
+    "affiliateTitle": "Partners only",
+    "affiliateBody": "That page is only available to DORIXÉ partners.",
+    "providerTitle": "Cleaners only",
+    "providerBody": "That page is only available to cleaner accounts.",
+    "customerTitle": "Clients only",
+    "customerBody": "That page is only available to client accounts.",
+    "providerSwitchTitle": "That's your Cleaner account",
+    "providerSwitchBody": "You're currently browsing as a Client. Switch to your Cleaner account to see that page.",
+    "customerSwitchTitle": "That's your Client account",
+    "customerSwitchBody": "You're currently browsing as a Cleaner. Switch to your Client account to see that page."
+  },
   "compLocationLocationDetectButton": {
     "detecting": "Detecting location…",
     "detected": "Location detected ✓",

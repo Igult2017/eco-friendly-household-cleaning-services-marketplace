@@ -1647,6 +1647,20 @@
     "cantDoCleaner": "Vous pouvez parcourir les missions, soumissionner et gérer vos prestations. Vous ne pouvez pas réserver d’intervenants ni publier d’offres ici — revenez à votre compte client pour cela.",
     "cantDoCustomer": "Vous pouvez réserver des intervenants et publier des offres. Vous ne pouvez pas soumissionner ni gérer de prestations ici — revenez à votre compte intervenant pour cela."
   },
+  "compLayoutAccessDeniedToast": {
+    "adminTitle": "Réservé aux administrateurs",
+    "adminBody": "Cette page est réservée aux administrateurs.",
+    "affiliateTitle": "Réservé aux partenaires",
+    "affiliateBody": "Cette page est réservée aux partenaires DORIXÉ.",
+    "providerTitle": "Réservé aux intervenants",
+    "providerBody": "Cette page est réservée aux comptes intervenant.",
+    "customerTitle": "Réservé aux clients",
+    "customerBody": "Cette page est réservée aux comptes client.",
+    "providerSwitchTitle": "C'est votre compte intervenant",
+    "providerSwitchBody": "Vous naviguez actuellement en tant que client. Passez à votre compte intervenant pour voir cette page.",
+    "customerSwitchTitle": "C'est votre compte client",
+    "customerSwitchBody": "Vous naviguez actuellement en tant qu'intervenant. Passez à votre compte client pour voir cette page."
+  },
   "compLocationLocationDetectButton": {
     "detecting": "Localisation en cours…",
     "detected": "Position détectée ✓",

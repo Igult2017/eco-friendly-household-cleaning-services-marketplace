@@ -1647,6 +1647,20 @@
     "cantDoCleaner": "Je kunt klussen bekijken, bieden en je schoonmaakboekingen beheren. Je kunt hier geen schoonmakers boeken of klussen plaatsen — schakel daarvoor terug naar je klantaccount.",
     "cantDoCustomer": "Je kunt schoonmakers boeken en klussen plaatsen. Je kunt hier niet bieden of schoonmaakwerk beheren — schakel daarvoor terug naar je schoonmaakaccount."
   },
+  "compLayoutAccessDeniedToast": {
+    "adminTitle": "Alleen voor beheerders",
+    "adminBody": "Deze pagina is alleen beschikbaar voor beheerders.",
+    "affiliateTitle": "Alleen voor partners",
+    "affiliateBody": "Deze pagina is alleen beschikbaar voor DORIXÉ-partners.",
+    "providerTitle": "Alleen voor schoonmakers",
+    "providerBody": "Deze pagina is alleen beschikbaar voor schoonmaakaccounts.",
+    "customerTitle": "Alleen voor klanten",
+    "customerBody": "Deze pagina is alleen beschikbaar voor klantaccounts.",
+    "providerSwitchTitle": "Dit is je schoonmaakaccount",
+    "providerSwitchBody": "Je bladert nu als klant. Schakel over naar je schoonmaakaccount om deze pagina te zien.",
+    "customerSwitchTitle": "Dit is je klantaccount",
+    "customerSwitchBody": "Je bladert nu als schoonmaker. Schakel over naar je klantaccount om deze pagina te zien."
+  },
   "compLocationLocationDetectButton": {
     "detecting": "Locatie wordt bepaald…",
     "detected": "Locatie gevonden ✓",

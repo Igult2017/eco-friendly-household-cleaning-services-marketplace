@@ -12,7 +12,7 @@ import { isLocale } from "@/i18n/config"
 // client component that calls useTranslations("X"), add "X" here.
 const CLIENT_NAMESPACES = new Set<string>([
   "nav", "compGdprCookieBanner", "compUiDialog", "compUiSheet", "compUiLanguagePopup", "globalerror",
-  "compLayoutAdminCleanerSwitch", "compLayoutRoleSwitcher", "compLayoutEnableCustomerRoleButton",
+  "compLayoutAdminCleanerSwitch", "compLayoutRoleSwitcher", "compLayoutEnableCustomerRoleButton", "compLayoutAccessDeniedToast",
   "compLayoutAddCleanerRoleForm", "authOnboardingProviderFields", "roleBadge", "approvalNotice",
   "compBookingProviderCard", "compLocationLocationDetectButton", "compReferralReferralCard",
   "compBlogShareButtons", "compBlogBlogComments", "compBlogBlogEditor", "compBlogBlogEditorToolbar",
@@ -25,9 +25,11 @@ const CLIENT_NAMESPACES = new Set<string>([
   "compMessagingMessageThread", "compBiddingAcceptBidButton",
   "browseJobs", "compProviderAvailabilityCalendar", "providerCalendarPage",
 ])
+import { Suspense } from "react"
 import { CookieBanner } from "@/components/gdpr/CookieBanner"
 import { LocaleDetector } from "@/components/i18n/LocaleDetector"
 import { HtmlLang } from "@/components/i18n/HtmlLang"
+import { AccessDeniedToast } from "@/components/layout/AccessDeniedToast"
 
 // Prerender one variant of every public page per locale (the switch that makes them static).
 export function generateStaticParams() {
@@ -58,6 +60,11 @@ export default async function LocaleLayout({
       {children}
       <CookieBanner />
       <LocaleDetector />
+      {/* useSearchParams() requires a Suspense boundary — without it this would force the whole
+          static, per-locale-prerendered subtree into dynamic rendering. */}
+      <Suspense fallback={null}>
+        <AccessDeniedToast />
+      </Suspense>
     </NextIntlClientProvider>
   )
 }
