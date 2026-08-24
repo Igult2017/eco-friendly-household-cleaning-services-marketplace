@@ -5,11 +5,11 @@ import { ProviderCard } from "@/components/booking/ProviderCard"
 import { useBookingStore } from "@/stores/bookingStore"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { useState, useCallback, useRef } from "react"
+import { useState, useCallback, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Loader2, MapPin, Search, UserCheck } from "lucide-react"
+import { Loader2, MapPin, Search, UserCheck, Sparkles } from "lucide-react"
 import type { GeoProvider } from "@/lib/db/queries/geo"
 import type { Address } from "@/types"
 import { LocationDetectButton } from "@/components/location/LocationDetectButton"
@@ -20,6 +20,9 @@ import { BackButton } from "@/components/ui/BackButton"
 
 export default function BookStep2Page() {
   const t = useTranslations("customerBookProvidersPage")
+  // Reuses the exact banner already shown on step 1 (customerBookPage) — same live number, same
+  // wording, no new translation strings needed across the 8 locales.
+  const tBook = useTranslations("customerBookPage")
   const router = useRouter()
   const { setAddress, setProvider, selectedProviderId, categoryId, providerPreselected, providerName, providerCountry, clearPreselection } = useBookingStore()
 
@@ -35,6 +38,14 @@ export default function BookStep2Page() {
   const [error, setError] = useState<string | null>(null)
   const latRef = useRef<number | null>(null)
   const lngRef = useRef<number | null>(null)
+  const [discountPct, setDiscountPct] = useState<number | null>(null)
+
+  useEffect(() => {
+    fetch("/api/settings/recurring-discount")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (typeof d?.pct === "number") setDiscountPct(d.pct) })
+      .catch(() => {})
+  }, [])
 
   async function searchProviders(lat: number, lng: number) {
     setSearching(true)
@@ -155,6 +166,15 @@ export default function BookStep2Page() {
           {preselected && providerName ? t("preHeading", { name: providerName }) : t("heading")}
         </h1>
         <p className="text-center text-[#6B7280] mb-8">{preselected ? t("preSubheading") : t("subheading")}</p>
+
+        {discountPct !== null && discountPct > 0 && (
+          <div className="mb-6 flex items-start gap-3 rounded-2xl border border-[#2D7A5F]/25 bg-gradient-to-br from-[#EDF5F0] to-[#F4FAF6] px-4 py-3.5">
+            <Sparkles size={18} className="shrink-0 text-[#2D7A5F] mt-0.5" />
+            <p className="text-sm text-[#2B3441] leading-relaxed">
+              {tBook("recurringBenefitBanner", { pct: discountPct })}
+            </p>
+          </div>
+        )}
 
         {preselected && providerName && (
           <div className="mb-4 flex items-center gap-3 rounded-xl border border-[#2D7A5F]/25 bg-[#EDF5F0] px-4 py-3">
