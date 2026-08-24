@@ -27,16 +27,18 @@ export default async function CustomerLayout({ children }: { children: React.Rea
   const isDual      = liveMeta?.dualRole === true
   const primaryRole = jwtMeta?.role ?? liveMeta?.role ?? "customer"
 
-  // Admin: allowed through without redirect (they can browse customer views)
-  if (primaryRole !== "admin") {
-    const cookieStore = await cookies()
-    const activeRole = isDual ? cookieStore.get("dorix_active_role")?.value : undefined
-    const effectiveRole = activeRole ?? primaryRole
-    if (effectiveRole === "provider") redirect("/provider/dashboard?denied=customer-switch")
-    if (effectiveRole && effectiveRole !== "customer") redirect("/?denied=customer")
-  }
+  // Admin has exactly two views (admin, cleaner) — never client. Middleware already blocks
+  // this route for admin; this redirect is a second, independent check in case this layout is
+  // ever reached another way.
+  if (primaryRole === "admin") redirect("/admin/dashboard?denied=customer")
 
-  const showSwitcher = isDual || primaryRole === "admin"
+  const cookieStore = await cookies()
+  const activeRole = isDual ? cookieStore.get("dorix_active_role")?.value : undefined
+  const effectiveRole = activeRole ?? primaryRole
+  if (effectiveRole === "provider") redirect("/provider/dashboard?denied=customer-switch")
+  if (effectiveRole && effectiveRole !== "customer") redirect("/?denied=customer")
+
+  const showSwitcher = isDual
 
   return (
     <NextIntlClientProvider>

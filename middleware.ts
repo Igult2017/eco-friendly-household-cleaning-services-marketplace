@@ -172,8 +172,16 @@ const clerkHandler = clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(url)
   }
 
-  // Admin bypasses all further role-based route restrictions (can view provider/customer UIs)
+  // Admin bypasses provider-route restrictions (can view "My Cleaner Account"), but NOT
+  // customer-route restrictions — the admin account model has exactly two views: admin and
+  // cleaner, never client. Redirect an admin hitting a customer-only route the same way any
+  // other non-customer role gets redirected below.
   if (role === "admin") {
+    if (isCustomerOnlyRoute(req)) {
+      const url = new URL("/admin/dashboard", base)
+      url.searchParams.set("denied", "customer")
+      return NextResponse.redirect(url)
+    }
     const res = NextResponse.next()
     if (shouldRefreshCookie) setCookieOnResponse(res, userId, role)
     return res

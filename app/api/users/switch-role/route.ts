@@ -35,6 +35,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "targetRole must be 'customer' or 'provider'" }, { status: 400 })
     }
 
+    // Admin has exactly two views (admin, cleaner) — never client, even via a direct call to
+    // this endpoint bypassing the UI button (which only ever asks for "provider" anyway).
+    if (primaryRole === "admin" && targetRole !== "provider") {
+      return NextResponse.json({ error: "Admins can only switch to the cleaner view" }, { status: 403 })
+    }
+
     const redirectTo = targetRole === "provider" ? "/provider/dashboard" : "/dashboard"
 
     const res = NextResponse.json({ success: true, redirectTo })
