@@ -12,6 +12,7 @@ import { notifications } from "./notifications"
 import { ecoCertifications, providerIdentityVerifications } from "./eco"
 import { blogPosts, blogComments } from "./blog"
 import { bookingCancellationEvents } from "./bookingCancellationEvents"
+import { paymentEvents } from "./paymentEvents"
 
 export const usersRelations = relations(users, ({ many }) => ({
   bookings: many(bookings, { relationName: "customerBookings" }),
@@ -55,6 +56,11 @@ export const bookingsRelations = relations(bookings, ({ one, many }) => ({
 export const bookingCancellationEventsRelations = relations(bookingCancellationEvents, ({ one }) => ({
   booking: one(bookings, { fields: [bookingCancellationEvents.bookingId], references: [bookings.id] }),
   actor: one(users, { fields: [bookingCancellationEvents.actorUserId], references: [users.id] }),
+}))
+
+export const paymentEventsRelations = relations(paymentEvents, ({ one }) => ({
+  booking: one(bookings, { fields: [paymentEvents.bookingId], references: [bookings.id] }),
+  user: one(users, { fields: [paymentEvents.userId], references: [users.id] }),
 }))
 
 export const jobPostsRelations = relations(jobPosts, ({ one, many }) => ({

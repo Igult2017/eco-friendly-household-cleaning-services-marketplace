@@ -1726,6 +1726,15 @@
     "kycDisclaimer": "You'll be asked to verify your identity through Stripe. This is a financial regulation (KYC) requirement — it does not mean you need an existing Stripe account; this creates one for you.",
     "kycStepMessage": "Stripe is verifying your identity now. This step is required by financial regulations (KYC) — you do not need a pre-existing Stripe account to continue."
   },
+  "compOnboardingClientPaymentStep": {
+    "title": "Add a payment method",
+    "description": "Save a card now so booking your first cleaning is one step faster. Entirely optional — you can add one later at checkout instead.",
+    "benefitFasterBooking": "Skip re-entering card details at checkout",
+    "benefitNoReentry": "One card works for every future booking",
+    "benefitSecure": "Stored securely by Stripe, never on our servers",
+    "skip": "Skip for now",
+    "footnote": "You can add a card later — the first time you book, or from your dashboard."
+  },
   "compProviderProviderDashboardBids": {
     "emptyTitle": "No bids yet",
     "emptyDescription": "Browse open jobs and submit your first bid.",

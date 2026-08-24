@@ -1726,6 +1726,15 @@
     "kycDisclaimer": "Sie werden gebeten, Ihre Identität über Stripe zu bestätigen. Dies ist eine gesetzliche Anforderung (KYC) — Sie benötigen dafür kein bestehendes Stripe-Konto; es wird für Sie erstellt.",
     "kycStepMessage": "Stripe überprüft jetzt Ihre Identität. Dieser Schritt ist gesetzlich vorgeschrieben (KYC) — Sie benötigen kein bestehendes Stripe-Konto, um fortzufahren."
   },
+  "compOnboardingClientPaymentStep": {
+    "title": "Zahlungsmethode hinzufügen",
+    "description": "Speichere jetzt eine Karte, damit deine erste Buchung schneller geht. Völlig optional — du kannst später beim Bezahlen eine hinzufügen.",
+    "benefitFasterBooking": "Kartendaten beim Bezahlen nicht erneut eingeben",
+    "benefitNoReentry": "Eine Karte für alle zukünftigen Buchungen",
+    "benefitSecure": "Sicher gespeichert bei Stripe, nie auf unseren Servern",
+    "skip": "Vorerst überspringen",
+    "footnote": "Du kannst später eine Karte hinzufügen — bei deiner ersten Buchung oder über dein Dashboard."
+  },
   "compProviderProviderDashboardBids": {
     "emptyTitle": "Noch keine Angebote",
     "emptyDescription": "Durchsuche offene Aufträge und gib dein erstes Angebot ab.",

@@ -199,6 +199,7 @@ export async function POST(req: NextRequest) {
     const redirect =
       data.role === "provider" ? "/onboarding/payout"
       : data.role === "affiliate" ? "/partner/dashboard"
+      : data.role === "customer" ? "/onboarding/payment"
       : "/dashboard"
     const res = NextResponse.json({ success: true, redirect })
     res.cookies.set(ROLE_COOKIE, `${userId}:${data.role}`, {

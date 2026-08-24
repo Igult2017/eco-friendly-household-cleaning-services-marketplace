@@ -18,6 +18,9 @@ const statusStyles: Record<string, string> = {
   approved: "bg-green-100 text-green-700",
   pending: "bg-amber-100 text-amber-700",
   suspended: "bg-red-100 text-red-700",
+  succeeded: "bg-green-100 text-green-700",
+  failed: "bg-red-100 text-red-700",
+  authorized: "bg-cyan-100 text-cyan-700",
 }
 
 export function StatusBadge({ status }: { status: string }) {

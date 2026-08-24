@@ -11,7 +11,9 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 
 // Post-action prompt: save a card (SetupIntent — NO charge) or continue without. Shown after posting
 // a job so bidding cleaners know a payment method is on file. Renders nothing if a card already is.
-export function SaveCardPrompt({ onSkip, skipLabel }: { onSkip: () => void; skipLabel: string }) {
+// onSaved is optional — the onboarding step uses it to know when this step's goal is reached
+// (either a card was just added, or one already existed), so it can move on automatically.
+export function SaveCardPrompt({ onSkip, skipLabel, onSaved }: { onSkip: () => void; skipLabel: string; onSaved?: () => void }) {
   const t = useTranslations("compSaveCardPrompt")
   const [state, setState] = useState<"loading" | "prompt" | "form" | "saved" | "hidden">("loading")
   const [clientSecret, setClientSecret] = useState<string | null>(null)
@@ -19,8 +21,13 @@ export function SaveCardPrompt({ onSkip, skipLabel }: { onSkip: () => void; skip
   useEffect(() => {
     fetch("/api/payments/methods")
       .then((r) => r.json())
-      .then((d) => setState((d.cards ?? []).length > 0 ? "hidden" : "prompt"))
+      .then((d) => {
+        const hasCard = (d.cards ?? []).length > 0
+        setState(hasCard ? "hidden" : "prompt")
+        if (hasCard) onSaved?.()
+      })
       .catch(() => setState("prompt"))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function startForm() {
@@ -57,7 +64,7 @@ export function SaveCardPrompt({ onSkip, skipLabel }: { onSkip: () => void; skip
       )}
       {state === "form" && clientSecret && (
         <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: "stripe", variables: { colorPrimary: "#2D7A5F" } } }}>
-          <AddCardForm onDone={() => setState("saved")} onCancel={() => setState("prompt")} />
+          <AddCardForm onDone={() => { setState("saved"); onSaved?.() }} onCancel={() => setState("prompt")} />
         </Elements>
       )}
     </div>

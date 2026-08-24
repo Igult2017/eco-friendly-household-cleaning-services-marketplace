@@ -8,6 +8,7 @@ import { redis } from "@/lib/redis/client"
 import { eq, and, sql, inArray, lt, gt, isNull } from "drizzle-orm"
 import type { CreateBookingInput } from "@/lib/validations/booking"
 import { checkProviderAvailable } from "@/lib/bookings/availability"
+import { recordPaymentEvent } from "@/lib/payments/ledger"
 
 export async function generateBookingNumber(): Promise<string> {
   let seq: number
@@ -297,6 +298,11 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
   try {
     await inngest.send({ name: "booking/created", data: { bookingId: result.id, customerId: userId, providerId } })
   } catch {}
+
+  await recordPaymentEvent({
+    bookingId: result.id, userId, kind: "authorized",
+    amountCents: intent.amount, stripeObjectId: paymentIntentId, status: "authorized",
+  })
 
   return { bookingId: result.id, bookingNumber: result.bookingNumber }
 }

@@ -1726,6 +1726,15 @@
     "kycDisclaimer": "Ser-lhe-á pedido que verifique a sua identidade através da Stripe. Este é um requisito regulamentar (KYC) — não significa que precise de já ter uma conta Stripe; esta é criada para si.",
     "kycStepMessage": "A Stripe está agora a verificar a sua identidade. Este passo é exigido pela regulamentação financeira (KYC) — não precisa de uma conta Stripe pré-existente para continuar."
   },
+  "compOnboardingClientPaymentStep": {
+    "title": "Adicionar um método de pagamento",
+    "description": "Guarde já um cartão para tornar a sua primeira marcação mais rápida. Totalmente opcional — também pode adicionar um mais tarde no pagamento.",
+    "benefitFasterBooking": "Evite inserir novamente os dados do cartão no pagamento",
+    "benefitNoReentry": "Um único cartão para todas as suas próximas marcações",
+    "benefitSecure": "Guardado com segurança pela Stripe, nunca nos nossos servidores",
+    "skip": "Ignorar por agora",
+    "footnote": "Pode adicionar um cartão mais tarde — na sua primeira marcação ou a partir do seu painel."
+  },
   "compProviderProviderDashboardBids": {
     "emptyTitle": "Ainda não há propostas",
     "emptyDescription": "Explore os trabalhos disponíveis e envie a sua primeira proposta.",

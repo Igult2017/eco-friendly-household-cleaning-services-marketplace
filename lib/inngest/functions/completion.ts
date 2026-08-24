@@ -1,12 +1,14 @@
 import { inngest } from "../client"
 import { db } from "@/lib/db"
-import { bookings, payments, users, notifications, providers, recurringSchedules } from "@/lib/db/schema"
+import { bookings, payments, users, notifications, providers, recurringSchedules, paymentEvents } from "@/lib/db/schema"
 import { stripe } from "@/lib/stripe/client"
 import { resend, FROM } from "@/lib/resend/client"
 import { reviewRequestEmail, reviewReminderEmail, recurringDiscountEmail } from "@/lib/resend/transactionalEmails"
 import { eq, and, sql } from "drizzle-orm"
 import { creditReferralReward } from "@/lib/referrals/rewards"
 import { getRecurringDiscountPct } from "@/lib/platform/settings"
+import { recordPaymentEvent } from "@/lib/payments/ledger"
+import { alertAdmins } from "@/lib/notifications/adminAlert"
 
 export const onBookingCompleted = inngest.createFunction(
   { id: "booking-completed", retries: 3, triggers: [{ event: "booking/completed" }] },
@@ -44,17 +46,40 @@ export const onBookingCompleted = inngest.createFunction(
         const dest = pi.transfer_data?.destination
         const destId = typeof dest === "string" ? dest : dest?.id
         if (!pmId || !custId || !destId) return null
-        return stripe.paymentIntents.create({
-          amount: pi.amount - penalty,
-          currency: pi.currency,
-          customer: custId,
-          payment_method: pmId,
-          confirm: true,
-          off_session: true,
-          application_fee_amount: pi.application_fee_amount ?? undefined,
-          transfer_data: { destination: destId },
-          metadata: pi.metadata,
-        }, { idempotencyKey: `offsession-capture-${bookingId}` })
+        try {
+          return await stripe.paymentIntents.create({
+            amount: pi.amount - penalty,
+            currency: pi.currency,
+            customer: custId,
+            payment_method: pmId,
+            confirm: true,
+            off_session: true,
+            application_fee_amount: pi.application_fee_amount ?? undefined,
+            transfer_data: { destination: destId },
+            metadata: pi.metadata,
+          }, { idempotencyKey: `offsession-capture-${bookingId}` })
+        } catch (err) {
+          // Without this, a failed recharge here threw silently — the hourly capture sweeper
+          // (sweeper.ts) keeps retrying forever, but nobody was ever told. Record every attempt;
+          // alert admins only once per booking so a persistently bad card doesn't spam the inbox
+          // every hour.
+          const message = err instanceof Error ? err.message : "Recharge failed"
+          await recordPaymentEvent({
+            bookingId, userId: customerId, kind: "payout_failed", amountCents: pi.amount - penalty,
+            stripeObjectId: paymentIntentId, status: "failed", metadata: { reason: message },
+          })
+          const priorFailures = await db.select({ id: paymentEvents.id }).from(paymentEvents)
+            .where(and(eq(paymentEvents.bookingId, bookingId), eq(paymentEvents.kind, "payout_failed")))
+            .limit(2)
+          if (priorFailures.length <= 1) {
+            await alertAdmins(
+              "⚠️ A booking's payment could not be recharged",
+              `The 7-day card hold on booking ${bookingId} expired and the automatic re-charge failed: ${message}. The cleaner has not been paid. This will keep retrying hourly — check the customer's payment method.`,
+              "/admin/payments/history",
+            )
+          }
+          throw err // preserve existing behavior: step fails, sweeper.ts retries hourly
+        }
       }
       return null
     })
@@ -68,6 +93,11 @@ export const onBookingCompleted = inngest.createFunction(
         .update(payments)
         .set({ status: "captured", capturedAmount: captureResult.amount_received ?? captureResult.amount, capturedAt: new Date(), stripePaymentIntentId: captureResult.id })
         .where(eq(payments.bookingId, bookingId))
+      await recordPaymentEvent({
+        bookingId, userId: customerId, kind: "captured",
+        amountCents: captureResult.amount_received ?? captureResult.amount,
+        stripeObjectId: captureResult.id, status: "succeeded",
+      })
     })
 
     await step.run("update-booking", async () => {

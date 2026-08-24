@@ -1726,6 +1726,15 @@
     "kycDisclaimer": "Je wordt gevraagd je identiteit te verifiëren via Stripe. Dit is een wettelijke vereiste (KYC) — het betekent niet dat je al een Stripe-account moet hebben; dit wordt voor je aangemaakt.",
     "kycStepMessage": "Stripe verifieert nu je identiteit. Deze stap is wettelijk verplicht (KYC) — je hebt geen bestaand Stripe-account nodig om door te gaan."
   },
+  "compOnboardingClientPaymentStep": {
+    "title": "Betaalmethode toevoegen",
+    "description": "Sla nu een kaart op zodat je eerste boeking sneller gaat. Volledig optioneel — je kunt er ook later een toevoegen bij het afrekenen.",
+    "benefitFasterBooking": "Kaartgegevens niet opnieuw invoeren bij het afrekenen",
+    "benefitNoReentry": "Eén kaart voor al je toekomstige boekingen",
+    "benefitSecure": "Veilig opgeslagen bij Stripe, nooit op onze servers",
+    "skip": "Voorlopig overslaan",
+    "footnote": "Je kunt later een kaart toevoegen — bij je eerste boeking of via je dashboard."
+  },
   "compProviderProviderDashboardBids": {
     "emptyTitle": "Nog geen biedingen",
     "emptyDescription": "Bekijk openstaande klussen en doe je eerste bod.",

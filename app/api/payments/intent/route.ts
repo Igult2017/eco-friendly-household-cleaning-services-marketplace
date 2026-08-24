@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { providers, providerServices, users, bids, jobPosts, promoCodes, promoCodeUsages, providerAddons, notifications, referralCredits } from "@/lib/db/schema"
 import { stripe, calculateBookingAmounts } from "@/lib/stripe/client"
+import { getOrCreateStripeCustomer } from "@/lib/stripe/getOrCreateCustomer"
 import { getCommissionPct } from "@/lib/platform/settings"
 import { bookingRatelimit } from "@/lib/redis/client"
 import { paymentIntentSchema } from "@/lib/validations/booking"
@@ -24,7 +25,7 @@ export async function POST(req: Request) {
     }
 
     const [caller] = await db
-      .select({ role: users.role, email: users.email, firstName: users.firstName, lastName: users.lastName })
+      .select({ role: users.role })
       .from(users)
       .where(eq(users.id, userId))
     if (!caller) return NextResponse.json({ error: "User not found" }, { status: 404 })
@@ -198,18 +199,9 @@ export async function POST(req: Request) {
     // price the customer sees. Stripe wants a lowercase code.
     const chargeCurrency = getCurrencyForCountry(provider.country).toLowerCase()
 
-    let stripeCustomerId: string | undefined
-    const existing = await stripe.customers.search({ query: `metadata['clerk_id']:'${userId}'`, limit: 1 })
-    if (existing.data[0]) {
-      stripeCustomerId = existing.data[0].id
-    } else {
-      const fullName = [caller.firstName, caller.lastName].filter(Boolean).join(" ") || undefined
-      const created = await stripe.customers.create(
-        { email: caller.email ?? undefined, name: fullName, metadata: { clerk_id: userId } },
-        { idempotencyKey: `cus-create-${userId}` },
-      )
-      stripeCustomerId = created.id
-    }
+    // Shared with the onboarding/save-a-card flow (app/api/payments/setup-intent) so a card saved
+    // there is found here instead of silently creating a second, separate Stripe customer.
+    const stripeCustomerId = await getOrCreateStripeCustomer(userId)
 
     const metadata: Record<string, string> = {
       clerk_customer_id: userId,

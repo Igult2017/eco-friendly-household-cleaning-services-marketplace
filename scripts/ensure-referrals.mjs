@@ -453,6 +453,24 @@ ALTER TABLE providers ADD COLUMN IF NOT EXISTS instant_jobs_available boolean NO
 -- A service can be listed with no fixed price ("ask on booking") instead of always requiring one —
 -- excluded from instant/direct booking's service picker; see lib/bookings/create.ts's guard.
 ALTER TABLE provider_services ALTER COLUMN base_price DROP NOT NULL;
+
+-- Append-only payment history: one row per real money movement (authorized/captured/refunded/
+-- transferred/payout). See lib/payments/ledger.ts recordPaymentEvent().
+DO $$ BEGIN CREATE TYPE payment_event_kind AS ENUM ('authorized','captured','refunded','transferred','payout_succeeded','payout_failed'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+CREATE TABLE IF NOT EXISTS payment_events (
+  id                UUID                PRIMARY KEY DEFAULT gen_random_uuid(),
+  booking_id        UUID                REFERENCES bookings(id),
+  user_id           TEXT                REFERENCES users(id),
+  kind              payment_event_kind  NOT NULL,
+  amount_cents      INTEGER             NOT NULL,
+  stripe_object_id  VARCHAR(128),
+  status            VARCHAR(32)         NOT NULL,
+  metadata          JSONB,
+  created_at        TIMESTAMPTZ         NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS payment_events_booking_idx     ON payment_events(booking_id);
+CREATE INDEX IF NOT EXISTS payment_events_user_idx        ON payment_events(user_id);
+CREATE INDEX IF NOT EXISTS payment_events_created_at_idx  ON payment_events(created_at);
 `
 
 function isValidUrl(url) {
@@ -484,8 +502,10 @@ async function main() {
     // New notification_type value for "your Take Job was claimed" — same same-transaction restriction.
     try { await sql.unsafe(`ALTER TYPE notification_type ADD VALUE IF NOT EXISTS 'job_taken'`) }
     catch (e) { console.warn("[ensure-referrals] job_taken enum add skipped:", e?.message ?? e) }
+    try { await sql.unsafe(`ALTER TYPE notification_type ADD VALUE IF NOT EXISTS 'payment_automation_failed'`) }
+    catch (e) { console.warn("[ensure-referrals] payment_automation_failed enum add skipped:", e?.message ?? e) }
     await sql.unsafe(DDL)
-    console.log("[ensure-referrals] referral + customer_reviews + service_categories + platform_settings + job_posts(view_count/geo/job_type) + cancellation_policy + recurring_schedules(occurrences) + providers(last_active/response_time/instant_jobs) ensured ✓")
+    console.log("[ensure-referrals] referral + customer_reviews + service_categories + platform_settings + job_posts(view_count/geo/job_type) + cancellation_policy + recurring_schedules(occurrences) + providers(last_active/response_time/instant_jobs) + payment_events ensured ✓")
   } finally {
     await sql.end({ timeout: 5 })
   }

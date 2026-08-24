@@ -25,6 +25,7 @@ import {
   ShoppingBag,
   Settings,
   X,
+  History,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -39,6 +40,7 @@ const nav = [
   { label: "Customers", href: "/admin/customers", icon: Users },
   { label: "Payments", href: "/admin/payments", icon: Wallet },
   { label: "Payouts",  href: "/admin/payouts",  icon: Banknote },
+  { label: "Payment History", href: "/admin/payments/history", icon: History },
   { label: "Reviews", href: "/admin/reviews", icon: Star },
   { label: "Eco", href: "/admin/eco", icon: Leaf },
   { label: "Errors", href: "/admin/errors", icon: Bug },

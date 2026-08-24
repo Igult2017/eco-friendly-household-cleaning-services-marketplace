@@ -1726,6 +1726,15 @@
     "kycDisclaimer": "Zostaniesz poproszony o zweryfikowanie tożsamości za pośrednictwem Stripe. Jest to wymóg regulacyjny (KYC) — nie oznacza to, że musisz już posiadać konto Stripe; zostanie ono dla Ciebie utworzone.",
     "kycStepMessage": "Stripe weryfikuje teraz Twoją tożsamość. Ten krok jest wymagany przez przepisy finansowe (KYC) — nie potrzebujesz istniejącego konta Stripe, aby kontynuować."
   },
+  "compOnboardingClientPaymentStep": {
+    "title": "Dodaj metodę płatności",
+    "description": "Zapisz teraz kartę, aby Twoja pierwsza rezerwacja przebiegła szybciej. Całkowicie opcjonalne — możesz też dodać kartę później podczas płatności.",
+    "benefitFasterBooking": "Nie wpisuj ponownie danych karty przy płatności",
+    "benefitNoReentry": "Jedna karta do wszystkich przyszłych rezerwacji",
+    "benefitSecure": "Bezpiecznie przechowywana przez Stripe, nigdy na naszych serwerach",
+    "skip": "Pomiń na razie",
+    "footnote": "Kartę możesz dodać później — przy pierwszej rezerwacji lub w panelu."
+  },
   "compProviderProviderDashboardBids": {
     "emptyTitle": "Brak ofert",
     "emptyDescription": "Przeglądaj dostępne zlecenia i złóż swoją pierwszą ofertę.",
