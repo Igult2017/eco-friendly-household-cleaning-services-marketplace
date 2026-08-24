@@ -543,7 +543,9 @@
     "subtitle": "Tipps, Ratgeber und nachhaltige Einblicke vom DORIXÉ-Team.",
     "allCategories": "Alle",
     "emptyTitle": "Noch keine Artikel",
-    "emptyMessage": "Schau bald wieder vorbei!"
+    "emptyMessage": "Schau bald wieder vorbei!",
+    "loadMore": "Weitere Artikel laden",
+    "loadingMore": "Wird geladen…"
   },
   "authOnboardingLayout": {
     "back": "Zurück"

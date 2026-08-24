@@ -78,7 +78,14 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
         {post.coverImageUrl && (
           <div className="relative w-full h-64 sm:h-80 rounded-2xl overflow-hidden mb-8">
-            <Image src={post.coverImageUrl} alt={post.title} fill className="object-cover" priority unoptimized={post.coverImageUrl.includes("/api/files")} />
+            <Image
+              src={post.coverImageUrl.includes("/api/files") ? post.coverImageUrl.replace(/^https?:\/\/[^/]+/, "") : post.coverImageUrl}
+              alt={post.title}
+              fill
+              className="object-cover"
+              priority
+              sizes="(min-width: 640px) 720px, 100vw"
+            />
           </div>
         )}
 

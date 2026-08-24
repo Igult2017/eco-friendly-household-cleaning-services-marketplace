@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic"
+export const runtime = "nodejs"
 
 import { NextRequest, NextResponse } from "next/server"
 import { auth, clerkClient } from "@clerk/nextjs/server"
@@ -102,16 +103,44 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ key
     if (!allowed) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
+  let signed: string
   try {
-    const signed = await generatePresignedDownloadUrl(objectKey)
-    return new NextResponse(null, {
-      status: 302,
-      headers: {
-        Location: signed,
-        "Cache-Control": isPublicAsset ? "public, max-age=600" : "private, max-age=60",
-      },
-    })
+    signed = await generatePresignedDownloadUrl(objectKey)
   } catch {
     return NextResponse.json({ error: "Not found" }, { status: 404 })
+  }
+
+  if (!isPublicAsset) {
+    return new NextResponse(null, {
+      status: 302,
+      headers: { Location: signed, "Cache-Control": "private, max-age=60" },
+    })
+  }
+
+  // Public asset: fetch and return the bytes directly instead of redirecting. Next's image
+  // optimizer (and any same-origin fetcher) needs a direct 200 response with the picture in it —
+  // it will not follow a redirect for what it thinks is one of our own pages (confirmed live:
+  // /_next/image against a redirecting URL comes back "internal response is invalid"). Buffering
+  // instead of piping the response through means a failed upstream fetch fails cleanly with an
+  // error, rather than sending the browser a half-downloaded picture.
+  try {
+    const upstream = await fetch(signed)
+    if (!upstream.ok) {
+      return NextResponse.json({ error: "Not found" }, { status: upstream.status === 404 ? 404 : 502 })
+    }
+    const bytes = await upstream.arrayBuffer()
+    return new NextResponse(bytes, {
+      status: 200,
+      headers: {
+        "Content-Type": upstream.headers.get("content-type") ?? "application/octet-stream",
+        "Content-Length": String(bytes.byteLength),
+        // Object keys are `{folder}/{userId}/{nanoid}.{ext}` — a new upload always gets a new
+        // key, so the file behind a given key never changes. Safe to cache indefinitely.
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
+    })
+  } catch (err) {
+    console.error("[api/files GET] upstream fetch failed:", err)
+    return NextResponse.json({ error: "Not found" }, { status: 502 })
   }
 }

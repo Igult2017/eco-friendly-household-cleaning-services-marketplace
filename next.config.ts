@@ -30,6 +30,9 @@ const nextConfig: NextConfig = {
   // TypeScript pass OOM-killing the resource-limited VPS build container.
   typescript: { ignoreBuildErrors: true },
   images: {
+    // /api/files keys are content-immutable (a new upload always gets a new key), so the
+    // optimizer's own cached copy is safe to keep for a year instead of the 60s default.
+    minimumCacheTTL: 31536000,
     remotePatterns: [
       { protocol: "https", hostname: "*.r2.cloudflarestorage.com" },
       { protocol: "https", hostname: "*.cloudflare.com" },

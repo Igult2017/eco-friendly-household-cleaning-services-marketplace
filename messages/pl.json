@@ -543,7 +543,9 @@
     "subtitle": "Porady, poradniki i ekologiczne inspiracje od zespołu DORIXÉ.",
     "allCategories": "Wszystkie",
     "emptyTitle": "Brak artykułów",
-    "emptyMessage": "Zajrzyj wkrótce!"
+    "emptyMessage": "Zajrzyj wkrótce!",
+    "loadMore": "Załaduj więcej artykułów",
+    "loadingMore": "Ładowanie…"
   },
   "authOnboardingLayout": {
     "back": "Wstecz"

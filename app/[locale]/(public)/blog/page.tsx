@@ -1,10 +1,9 @@
 export const dynamic = "force-dynamic"
 
 import type { Metadata } from "next"
-import { db } from "@/lib/db"
-import { blogPosts } from "@/lib/db/schema"
-import { eq, desc } from "drizzle-orm"
-import { BlogPostCard } from "@/components/blog/BlogPostCard"
+import { getPublishedPosts, getBlogCategories } from "@/lib/db/queries/blog"
+import { BLOG_PAGE_SIZE } from "@/lib/blog/constants"
+import { BlogPostsList } from "@/components/blog/BlogPostsList"
 import { Rss } from "lucide-react"
 import { getTranslations } from "next-intl/server"
 
@@ -16,31 +15,18 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-async function getPosts(category?: string) {
-  return db.query.blogPosts.findMany({
-    where: category
-      ? (t, { and: a, eq: e }) => a(e(t.status, "published"), e(t.category, category))
-      : (t, { eq: e }) => e(t.status, "published"),
-    with: { author: { columns: { firstName: true, lastName: true } } },
-    orderBy: [desc(blogPosts.publishedAt)],
-  })
-}
-
-async function getCategories() {
-  const rows = await db
-    .select({ category: blogPosts.category })
-    .from(blogPosts)
-    .where(eq(blogPosts.status, "published"))
-  return [...new Set(rows.map((r) => r.category).filter(Boolean))] as string[]
-}
-
 export default async function BlogPage({
   searchParams,
 }: {
   searchParams: Promise<{ category?: string }>
 }) {
   const { category } = await searchParams
-  const [posts, categories] = await Promise.all([getPosts(category), getCategories()])
+  const [rows, categories] = await Promise.all([
+    getPublishedPosts({ category, limit: BLOG_PAGE_SIZE + 1, offset: 0 }),
+    getBlogCategories(),
+  ])
+  const posts = rows.slice(0, BLOG_PAGE_SIZE)
+  const hasMore = rows.length > BLOG_PAGE_SIZE
   const t = await getTranslations("blog")
 
   return (
@@ -85,11 +71,7 @@ export default async function BlogPage({
             <p className="text-sm">{t("emptyMessage")}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((post) => (
-              <BlogPostCard key={post.id} post={post} />
-            ))}
-          </div>
+          <BlogPostsList initialPosts={posts} initialHasMore={hasMore} category={category} />
         )}
       </div>
     </div>

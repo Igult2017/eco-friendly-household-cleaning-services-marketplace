@@ -543,7 +543,9 @@
     "subtitle": "Tips, guides and eco insights from the DORIXÉ team.",
     "allCategories": "All",
     "emptyTitle": "No articles yet",
-    "emptyMessage": "Check back soon!"
+    "emptyMessage": "Check back soon!",
+    "loadMore": "Load more articles",
+    "loadingMore": "Loading…"
   },
   "authOnboardingLayout": {
     "back": "Back"

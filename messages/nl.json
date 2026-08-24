@@ -543,7 +543,9 @@
     "subtitle": "Tips, gidsen en duurzame inzichten van het DORIXÉ-team.",
     "allCategories": "Alle",
     "emptyTitle": "Nog geen artikelen",
-    "emptyMessage": "Kom snel weer terug!"
+    "emptyMessage": "Kom snel weer terug!",
+    "loadMore": "Meer artikelen laden",
+    "loadingMore": "Laden…"
   },
   "authOnboardingLayout": {
     "back": "Terug"

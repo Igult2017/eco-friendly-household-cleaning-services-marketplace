@@ -543,7 +543,9 @@
     "subtitle": "Conseils, guides et idées écologiques de l'équipe DORIXÉ.",
     "allCategories": "Tout",
     "emptyTitle": "Pas encore d'articles",
-    "emptyMessage": "Revenez bientôt !"
+    "emptyMessage": "Revenez bientôt !",
+    "loadMore": "Charger plus d'articles",
+    "loadingMore": "Chargement…"
   },
   "authOnboardingLayout": {
     "back": "Retour"

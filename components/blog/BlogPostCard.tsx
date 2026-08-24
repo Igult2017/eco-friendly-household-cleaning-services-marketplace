@@ -1,9 +1,12 @@
+"use client"
+
 import Link from "next/link"
 import Image from "next/image"
 import { Clock, Tag } from "lucide-react"
-import { getTranslations } from "next-intl/server"
+import { useTranslations } from "next-intl"
 
-type Post = {
+export type BlogPostCardPost = {
+  id: string
   slug: string
   title: string
   excerpt: string | null
@@ -20,8 +23,15 @@ function formatDate(d: Date | string | null) {
   return new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
 }
 
-export async function BlogPostCard({ post }: { post: Post }) {
-  const t = await getTranslations("compBlogBlogPostCard")
+// Absolute /api/files URLs need the origin stripped before <Image> will treat them as a local
+// picture — a "/"-prefixed src skips the remotePatterns allow-list entirely, so this needs no
+// next.config.ts change. Anything else (e.g. an Unsplash URL) is already allow-listed, left as-is.
+function toImageSrc(url: string) {
+  return url.includes("/api/files") ? url.replace(/^https?:\/\/[^/]+/, "") : url
+}
+
+export function BlogPostCard({ post }: { post: BlogPostCardPost }) {
+  const t = useTranslations("compBlogBlogPostCard")
   const authorName =
     post.authorName?.trim() ||
     [post.author?.firstName, post.author?.lastName].filter(Boolean).join(" ") ||
@@ -31,11 +41,11 @@ export async function BlogPostCard({ post }: { post: Post }) {
       {post.coverImageUrl ? (
         <div className="relative h-48 w-full overflow-hidden">
           <Image
-            src={post.coverImageUrl}
+            src={toImageSrc(post.coverImageUrl)}
             alt={post.title}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-300"
-            unoptimized={post.coverImageUrl.includes("/api/files")}
+            sizes="(min-width: 1024px) 347px, (min-width: 640px) 50vw, 100vw"
           />
         </div>
       ) : (
