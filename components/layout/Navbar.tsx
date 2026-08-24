@@ -2,7 +2,7 @@
 
 import { Link } from "@/i18n/navigation"
 import NextLink from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { LogoImage } from "@/components/layout/LogoImage"
 import { useEffect, useState } from "react"
 import * as Sentry from "@sentry/nextjs"
@@ -34,6 +34,7 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeRole, setActiveRole] = useState<string | undefined>(undefined)
   const router = useRouter()
+  const pathname = usePathname()
   const { isLoaded, isSignedIn, user } = useUser()
   const t = useTranslations("nav")
   const role = (isLoaded ? user?.publicMetadata?.role : undefined) as string | undefined
@@ -65,7 +66,12 @@ export function Navbar() {
       try { Sentry.captureException(err) } catch { /* ignore Sentry failures */ }
       setActiveRole(undefined)
     }
-  }, [isLoaded, user, role])
+    // pathname is intentionally included: switching roles redirects to a new page
+    // (/dashboard or /provider/dashboard) but doesn't change isLoaded/user/role, so without this
+    // the navbar's dashboard link, nav item visibility, and primary action button stayed stuck on
+    // the pre-switch role until something unrelated (a hard refresh, a Clerk session refresh)
+    // happened to re-run this effect.
+  }, [isLoaded, user, role, pathname])
 
   const href = dashboardHref(effectiveRole)
   const label = effectiveRole === "provider"
