@@ -94,11 +94,25 @@ export default function BookStep1Page() {
   // (see maybeSetupRecurringSchedule in book/confirm/page.tsx), so "weekly, Tue + Thu" means cleaned
   // twice a week. The welcome-discount cap is enforced once per client-cleaner relationship, not per
   // day (lib/inngest/functions/recurring.ts), so picking more days doesn't multiply the discount.
+  // Monthly is single-day only: the weekday here just locates the FIRST cleaning (e.g. "next
+  // Wednesday") — every month after that repeats on that same calendar date, not on a weekday
+  // (addFrequencyInTZ in lib/inngest/functions/recurring.ts). Multiple days would create multiple
+  // independent monthly schedules, which isn't what "monthly" means.
   function toggleDay(d: number) {
+    if (frequency === "monthly") { setRecurringDays([d]); return }
     setRecurringDays(
       recurringDays.includes(d) ? recurringDays.filter((x) => x !== d) : [...recurringDays, d].sort((a, b) => a - b)
     )
   }
+
+  // If days were picked while on Weekly/Biweekly and the client then switches to Monthly, trim to
+  // one — otherwise the confirm step would silently create several independent monthly schedules.
+  useEffect(() => {
+    if (frequency === "monthly" && recurringDays.length > 1) {
+      setRecurringDays([recurringDays[0]])
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [frequency])
 
   function handleNext() {
     if (!selectedSlug || !isOffered(selectedSlug)) {
@@ -152,8 +166,12 @@ export default function BookStep1Page() {
 
           {frequency !== "one_time" && (
             <div className="mt-4 border-t border-[#E5EBF0] pt-4">
-              <Label className="text-sm font-semibold text-[#2B3441] mb-1 block">{tSchedule("recurringDaysLabel")}</Label>
-              <p className="text-xs text-[#6B7280] mb-3">{tSchedule("recurringDaysHint")}</p>
+              <Label className="text-sm font-semibold text-[#2B3441] mb-1 block">
+                {frequency === "monthly" ? tSchedule("recurringDayLabelMonthly") : tSchedule("recurringDaysLabel")}
+              </Label>
+              <p className="text-xs text-[#6B7280] mb-3">
+                {frequency === "monthly" ? tSchedule("recurringDaysHintMonthly") : tSchedule("recurringDaysHint")}
+              </p>
               <div className="flex flex-wrap gap-2">
                 {WEEKDAYS.map((d) => (
                   <button

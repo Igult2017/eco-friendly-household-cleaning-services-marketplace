@@ -87,6 +87,9 @@ export function RecurringSetupForm(props: Props) {
             <select value={dayOfWeek} onChange={(e) => setDayOfWeek(Number(e.target.value))} className={selectClass}>
               {DAYS.map((d, i) => <option key={d} value={i}>{t(d)}</option>)}
             </select>
+            {frequency === "monthly" && (
+              <p className="mt-1.5 text-xs text-[#6B7280]">{t("dayHintMonthly")}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">{t("timeLabel")}</label>

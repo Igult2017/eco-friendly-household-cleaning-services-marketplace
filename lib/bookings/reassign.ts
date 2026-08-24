@@ -98,12 +98,12 @@ export async function attemptReassign(bookingId: string): Promise<{ ok: boolean;
     return { ok: false, reason: "charge_failed" }
   }
   if (newPi.status !== "requires_capture") {
-    try { await stripe.paymentIntents.cancel(newPi.id, { idempotencyKey: `cancel-${newPi.id}` }) } catch {}
+    try { await stripe.paymentIntents.cancel(newPi.id, undefined, { idempotencyKey: `cancel-${newPi.id}` }) } catch {}
     return { ok: false, reason: "not_authorized" }
   }
 
   // 2) Release the old hold + cancel the original.
-  try { await stripe.paymentIntents.cancel(pay.pi, { idempotencyKey: `cancel-${pay.pi}` }) } catch {}
+  try { await stripe.paymentIntents.cancel(pay.pi, undefined, { idempotencyKey: `cancel-${pay.pi}` }) } catch {}
   await db.update(bookings).set({ status: "cancelled", cancellationReason: "Overdue — reassigned to another cleaner", cancelledAt: new Date(), cancelledBy: "system" }).where(eq(bookings.id, bookingId))
   await db.update(payments).set({ status: "cancelled" }).where(eq(payments.bookingId, bookingId))
 

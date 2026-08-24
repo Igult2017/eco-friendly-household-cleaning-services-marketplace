@@ -57,7 +57,7 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
   }
 
   const cancel = async (status: number, msg: string): Promise<never> => {
-    try { await stripe.paymentIntents.cancel(paymentIntentId, { idempotencyKey: `cancel-${paymentIntentId}` }) } catch {}
+    try { await stripe.paymentIntents.cancel(paymentIntentId, undefined, { idempotencyKey: `cancel-${paymentIntentId}` }) } catch {}
     throw new BookingError(status, msg)
   }
 
@@ -290,7 +290,7 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     // Any other failure after the hold was placed (promo limit, bid already booked, …) → release the
     // hold so the customer's money isn't stranded, then surface the error.
     if (err instanceof BookingError) {
-      try { await stripe.paymentIntents.cancel(paymentIntentId, { idempotencyKey: `cancel-${paymentIntentId}` }) } catch {}
+      try { await stripe.paymentIntents.cancel(paymentIntentId, undefined, { idempotencyKey: `cancel-${paymentIntentId}` }) } catch {}
     }
     throw err
   }
