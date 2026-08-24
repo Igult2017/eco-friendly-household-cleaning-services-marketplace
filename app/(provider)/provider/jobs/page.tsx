@@ -103,8 +103,10 @@ export default function ProviderJobsPage() {
   }
 
   async function submitBid(jobId: string) {
-    const amountEuros = parseFloat(bidForm.amount)
-    if (!bidForm.amount || isNaN(amountEuros) || amountEuros < 1) {
+    // Every box here is optional — a blank price isn't an error, the server fills it in from the
+    // cleaner's own listed rate for this job's category (see app/api/jobs/[id]/bids/route.ts).
+    const amountEuros = bidForm.amount ? parseFloat(bidForm.amount) : NaN
+    if (bidForm.amount && (isNaN(amountEuros) || amountEuros < 1)) {
       setError(t("invalidBidAmount"))
       return
     }
@@ -118,7 +120,7 @@ export default function ProviderJobsPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: Math.round(amountEuros * 100),
+          amount: bidForm.amount ? Math.round(amountEuros * 100) : undefined,
           message: bidForm.message || undefined,
           // A cleared field parses to NaN → JSON null → zod rejects with a cryptic error. Omit instead.
           estimatedDurationMinutes: Number.isFinite(parseInt(bidForm.estimatedDurationMinutes)) ? parseInt(bidForm.estimatedDurationMinutes) : undefined,
@@ -347,7 +349,8 @@ export default function ProviderJobsPage() {
                       <div className="grid grid-cols-2 gap-3">
                         <div>
                           <Label className="text-xs font-medium text-[#2B3441] mb-1 block">{t("yourPriceLabel")}</Label>
-                          <Input type="number" value={bidForm.amount} onChange={(e) => setBidForm((p) => ({ ...p, amount: e.target.value }))} placeholder="75" min={1} className="bg-white" />
+                          <Input type="number" value={bidForm.amount} onChange={(e) => setBidForm((p) => ({ ...p, amount: e.target.value }))} placeholder={t("yourPriceAutoPlaceholder")} min={1} className="bg-white" />
+                          <p className="text-[11px] text-[#9CA3AF] mt-1">{t("yourPriceAutoHint")}</p>
                         </div>
                         <div>
                           <Label className="text-xs font-medium text-[#2B3441] mb-1 block">{t("durationLabel")}</Label>

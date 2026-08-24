@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { bids, jobPosts, providers, notifications, users } from "@/lib/db/schema"
+import { bids, jobPosts, providers, providerServices, notifications, users } from "@/lib/db/schema"
 import { sql } from "drizzle-orm"
 import { resend, FROM } from "@/lib/resend/client"
 import { newBidEmail } from "@/lib/resend/transactionalEmails"
@@ -17,7 +17,9 @@ import { logError } from "@/lib/utils/logError"
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 const bidSchema = z.object({
-  amount: z.number().int().min(100),
+  // Optional — a blank bid amount is filled in server-side from the cleaner's own listed rate
+  // (see the auto-price fallback below), so a bid can be submitted with none of the boxes filled.
+  amount: z.number().int().min(100).optional(),
   message: z.string().max(1000).optional(),
   estimatedDurationMinutes: z.number().int().min(30).max(480).optional(),
   proposedDate: z.string().optional(),
@@ -55,7 +57,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     if (!provider) return NextResponse.json({ error: "Not an approved provider" }, { status: 403 })
 
     const [job] = await db
-      .select({ id: jobPosts.id, title: jobPosts.title, status: jobPosts.status, customerId: jobPosts.customerId, expiresAt: jobPosts.expiresAt, postedIp: jobPosts.postedIp, serviceLatitude: jobPosts.serviceLatitude, serviceLongitude: jobPosts.serviceLongitude, radiusKm: jobPosts.radiusKm, serviceAddress: jobPosts.serviceAddress })
+      .select({ id: jobPosts.id, title: jobPosts.title, status: jobPosts.status, customerId: jobPosts.customerId, categoryId: jobPosts.categoryId, expiresAt: jobPosts.expiresAt, postedIp: jobPosts.postedIp, serviceLatitude: jobPosts.serviceLatitude, serviceLongitude: jobPosts.serviceLongitude, radiusKm: jobPosts.radiusKm, serviceAddress: jobPosts.serviceAddress })
       .from(jobPosts)
       .where(eq(jobPosts.id, jobPostId))
 
@@ -100,12 +102,41 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     if (existing) return NextResponse.json({ error: "You have already submitted a bid for this job" }, { status: 409 })
 
     const data = parsed.data
+    const durationMinutes = data.estimatedDurationMinutes ?? 120
+
+    // Every box on the bid form is optional, including the price — fill it in from the cleaner's
+    // own listed rate for this job's category instead of forcing them to type one every time.
+    let autoAmount: number | undefined
+    if (data.amount === undefined) {
+      const myServices = await db
+        .select({ basePrice: providerServices.basePrice, priceUnit: providerServices.priceUnit, categoryIds: providerServices.categoryIds })
+        .from(providerServices)
+        .where(and(eq(providerServices.providerId, provider.id), eq(providerServices.isActive, true)))
+      const priced = myServices.filter((s) => s.basePrice != null)
+      const categoryMatch = job.categoryId
+        ? priced.find((s) => Array.isArray(s.categoryIds) && (s.categoryIds as string[]).includes(job.categoryId as string))
+        : undefined
+      const best = categoryMatch ?? priced[0]
+      if (best?.basePrice != null) {
+        autoAmount = best.priceUnit === "per_hour" ? Math.round((best.basePrice * durationMinutes) / 60) : best.basePrice
+      }
+    }
+    const amount = data.amount ?? autoAmount
+    if (amount === undefined) {
+      return NextResponse.json(
+        { error: { fieldErrors: { amount: ["Enter your price, or add a priced service to your profile so it can be filled in automatically."] } } },
+        { status: 422 },
+      )
+    }
+
     const insertData: NewBid = {
       jobPostId,
       providerId: provider.id,
-      amount: data.amount,
+      amount,
       message: data.message ?? null,
-      estimatedDurationMinutes: data.estimatedDurationMinutes ?? null,
+      // Stored resolved (not left null when omitted) so the record matches whatever duration the
+      // price was actually calculated against.
+      estimatedDurationMinutes: durationMinutes,
       proposedDate: data.proposedDate ?? null,
       proposedTimeStart: data.proposedTimeStart ?? null,
       status: "pending",
@@ -119,7 +150,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     }
 
     // Bid amounts are in the CLEANER's currency (EUR/USD by their country) — never hardcode €.
-    const amountLabel = formatCurrencyForCountry(data.amount, provider.country || "DE")
+    const amountLabel = formatCurrencyForCountry(amount, provider.country || "DE")
     await db.insert(notifications).values({
       userId: job.customerId,
       type: "bid_received",
@@ -138,7 +169,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         bidId: newBid.id,
         jobPostId,
         providerName: provider.businessName,
-        amount: data.amount,
+        amount,
       })
     } catch {}
 

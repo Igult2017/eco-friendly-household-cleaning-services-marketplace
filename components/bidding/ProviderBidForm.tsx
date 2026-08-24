@@ -32,8 +32,10 @@ export function ProviderBidForm({ jobId, onSubmitted }: { jobId: string; onSubmi
   }
 
   async function submit() {
-    const amountUnits = parseFloat(form.amount)
-    if (!form.amount || isNaN(amountUnits) || amountUnits < 1) {
+    // Every box here is optional — a blank price isn't an error, the server fills it in from the
+    // cleaner's own listed rate for this job's category (see app/api/jobs/[id]/bids/route.ts).
+    const amountUnits = form.amount ? parseFloat(form.amount) : NaN
+    if (form.amount && (isNaN(amountUnits) || amountUnits < 1)) {
       setError(t("invalidBidAmount"))
       return
     }
@@ -47,7 +49,7 @@ export function ProviderBidForm({ jobId, onSubmitted }: { jobId: string; onSubmi
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: Math.round(amountUnits * 100),
+          amount: form.amount ? Math.round(amountUnits * 100) : undefined,
           message: form.message || undefined,
           estimatedDurationMinutes: Number.isFinite(parseInt(form.estimatedDurationMinutes)) ? parseInt(form.estimatedDurationMinutes) : undefined,
           proposedDate: form.proposedDate || undefined,
@@ -71,7 +73,8 @@ export function ProviderBidForm({ jobId, onSubmitted }: { jobId: string; onSubmi
       <div className="grid grid-cols-2 gap-3">
         <div>
           <Label className="text-xs font-medium text-[#2B3441] mb-1 block">{t("yourPriceLabel")}</Label>
-          <Input type="number" value={form.amount} onChange={(e) => setForm((p) => ({ ...p, amount: e.target.value }))} placeholder="75" min={1} className="bg-white" />
+          <Input type="number" value={form.amount} onChange={(e) => setForm((p) => ({ ...p, amount: e.target.value }))} placeholder={t("yourPriceAutoPlaceholder")} min={1} className="bg-white" />
+          <p className="text-[11px] text-[#9CA3AF] mt-1">{t("yourPriceAutoHint")}</p>
         </div>
         <div>
           <Label className="text-xs font-medium text-[#2B3441] mb-1 block">{t("durationLabel")}</Label>
