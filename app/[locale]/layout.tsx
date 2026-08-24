@@ -16,6 +16,7 @@ const CLIENT_NAMESPACES = new Set<string>([
   "compLayoutAddCleanerRoleForm", "authOnboardingProviderFields", "roleBadge", "approvalNotice",
   "compBookingProviderCard", "compLocationLocationDetectButton", "compReferralReferralCard",
   "compBlogShareButtons", "compBlogBlogComments", "compBlogBlogEditor", "compBlogBlogEditorToolbar",
+  "compBlogBlogPostCard", "blog",
   "compBookingProviderBookingActions", "compBookingBeforePhotoUpload", "compBookingRecurringScheduleCard",
   "compBookingRecurringToggle", "compBookingRescheduleForm", "compBookingRescheduleModal",
   "compBookingWizardProgress", "compBookingStripePaymentForm",
