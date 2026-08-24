@@ -471,6 +471,15 @@ CREATE TABLE IF NOT EXISTS payment_events (
 CREATE INDEX IF NOT EXISTS payment_events_booking_idx     ON payment_events(booking_id);
 CREATE INDEX IF NOT EXISTS payment_events_user_idx        ON payment_events(user_id);
 CREATE INDEX IF NOT EXISTS payment_events_created_at_idx  ON payment_events(created_at);
+
+-- Lets the hourly job-assignment sweep find a job stuck "assigned" with no real booking ever
+-- created (e.g. the client abandoned payment) and free it automatically.
+ALTER TABLE job_posts ADD COLUMN IF NOT EXISTS assigned_at timestamptz;
+
+-- Dead column: never read anywhere in the app — the real payout schedule is hardcoded per-account
+-- at Stripe Connect account creation (lib/stripe/connect.ts), not configurable per-cleaner. Kept
+-- this column around was misleading, implying a setting that doesn't actually do anything.
+ALTER TABLE providers DROP COLUMN IF EXISTS payout_schedule;
 `
 
 function isValidUrl(url) {

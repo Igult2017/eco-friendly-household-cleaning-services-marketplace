@@ -66,7 +66,10 @@ export const weeklyPayoutRun = inngest.createFunction(
       data: { providerId, periodStart: periodStartStr, periodEnd: periodEndStr },
     }))
 
-    if (events.length > 0) await inngest.send(events)
+    // Wrapped in step.run so it's memoized — a function-level retry replays the cached result
+    // instead of re-sending these events, closing a narrow race where a duplicate-fired event could
+    // beat the first invocation's own payoutId write and create two ledger rows for the same period.
+    if (events.length > 0) await step.run("send-provider-payout-events", async () => inngest.send(events))
 
     return { processed: events.length, periodStart: periodStartStr, periodEnd: periodEndStr }
   }

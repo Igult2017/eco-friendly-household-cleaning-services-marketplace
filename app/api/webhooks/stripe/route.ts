@@ -3,9 +3,12 @@ import { stripe } from "@/lib/stripe/client"
 import { redis } from "@/lib/redis/client"
 import { db } from "@/lib/db"
 import { payments, providers, notifications, bookings, disputes, users } from "@/lib/db/schema"
+import { clawbackReferralCommission } from "@/lib/referrals/clawback"
 import { eq } from "drizzle-orm"
 import type Stripe from "stripe"
 import { logError } from "@/lib/utils/logError"
+import { recordPaymentEvent } from "@/lib/payments/ledger"
+import { alertAdmins } from "@/lib/notifications/adminAlert"
 
 export async function POST(req: Request) {
   const headersList = await headers()
@@ -146,6 +149,103 @@ export async function POST(req: Request) {
               )
             }
           }
+        }
+        break
+      }
+
+      case "charge.dispute.closed": {
+        // Stripe/the bank can resolve a chargeback on its own, without anyone going through
+        // /admin/disputes/[id]/resolve — previously this app had no way to find out, so the
+        // booking stayed stuck "disputed" forever and a referral commission already paid on it
+        // never got clawed back. Never re-issue a refund here — Stripe already moved the money
+        // automatically on a loss; this only reflects that reality in our own records.
+        const closedDispute = event.data.object as Stripe.Dispute
+        const closedPiId = typeof closedDispute.payment_intent === "string"
+          ? closedDispute.payment_intent
+          : closedDispute.payment_intent?.id
+        if (closedPiId) {
+          const [payment] = await db
+            .select({ bookingId: payments.bookingId, customerId: payments.customerId })
+            .from(payments)
+            .where(eq(payments.stripePaymentIntentId, closedPiId))
+          if (payment?.bookingId) {
+            const [existingDispute] = await db
+              .select({ id: disputes.id, status: disputes.status })
+              .from(disputes)
+              .where(eq(disputes.bookingId, payment.bookingId))
+            // A human already resolved this through the admin flow — don't override that decision.
+            const alreadyResolved = existingDispute && ["resolved_customer", "resolved_provider", "closed"].includes(existingDispute.status)
+            if (!alreadyResolved) {
+              const won = closedDispute.status === "won" // platform/cleaner kept the money
+              if (won) {
+                await db.update(bookings).set({ status: "completed" }).where(eq(bookings.id, payment.bookingId))
+                if (existingDispute) {
+                  await db.update(disputes).set({
+                    status: "resolved_provider", resolvedAt: new Date(),
+                    resolution: "Stripe resolved the bank chargeback in the cleaner's favor — no funds were reversed.",
+                  }).where(eq(disputes.id, existingDispute.id))
+                }
+              } else {
+                await db.update(payments).set({ refundedAmount: closedDispute.amount, status: "refunded" }).where(eq(payments.bookingId, payment.bookingId))
+                await db.update(bookings).set({ status: "refunded" }).where(eq(bookings.id, payment.bookingId))
+                if (existingDispute) {
+                  await db.update(disputes).set({
+                    status: "resolved_customer", resolvedAt: new Date(),
+                    resolution: "Stripe resolved the bank chargeback in the customer's favor; funds were withdrawn automatically.",
+                  }).where(eq(disputes.id, existingDispute.id))
+                }
+                await clawbackReferralCommission(payment.bookingId)
+              }
+              await alertAdmins(
+                won ? "A chargeback resolved in the cleaner's favor" : "⚠️ A chargeback resolved against DORIXÉ — funds were withdrawn",
+                `Stripe closed the chargeback on booking ${payment.bookingId} as "${closedDispute.status}" without going through the admin dispute flow. Records have been updated to match.`,
+                "/admin/disputes",
+              )
+            }
+          }
+        }
+        break
+      }
+
+      // Connect events (fired against a cleaner's connected account, not the platform account) —
+      // this app previously had no way to learn whether a real bank transfer actually succeeded
+      // or failed after everything on DORIXÉ's own side already went through. Requires the Stripe
+      // Dashboard webhook endpoint to have "Listen to events on Connected accounts" turned on;
+      // that's a Stripe configuration setting, not something this code can verify or control.
+      case "payout.paid":
+      case "payout.failed": {
+        const payout = event.data.object as Stripe.Payout
+        const connectedAccountId = event.account
+        if (!connectedAccountId) break
+        const [prov] = await db
+          .select({ id: providers.id, userId: providers.userId, businessName: providers.businessName })
+          .from(providers)
+          .where(eq(providers.stripeAccountId, connectedAccountId))
+        if (!prov) break
+
+        const succeeded = event.type === "payout.paid"
+        await recordPaymentEvent({
+          userId: prov.userId,
+          kind: succeeded ? "payout_succeeded" : "payout_failed",
+          amountCents: payout.amount,
+          stripeObjectId: payout.id,
+          status: succeeded ? "succeeded" : "failed",
+          metadata: succeeded ? {} : { reason: payout.failure_message ?? payout.failure_code ?? "unknown" },
+        })
+
+        if (!succeeded) {
+          await db.insert(notifications).values({
+            userId: prov.userId,
+            type: "payment_automation_failed",
+            title: "Your bank payout failed",
+            body: `Stripe couldn't send €${(payout.amount / 100).toFixed(2)} to your bank account (${payout.failure_message ?? "reason not given"}). Check your bank details in Earnings and reconnect if needed.`,
+            link: "/provider/earnings",
+          })
+          await alertAdmins(
+            "⚠️ A cleaner's bank payout failed",
+            `Stripe's real bank transfer to ${prov.businessName ?? prov.id} failed after everything on our side succeeded: ${payout.failure_message ?? payout.failure_code ?? "unknown reason"}.`,
+            "/admin/payments/history",
+          )
         }
         break
       }

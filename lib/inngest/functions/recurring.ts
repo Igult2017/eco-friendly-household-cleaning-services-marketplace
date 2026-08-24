@@ -11,6 +11,7 @@ import { calculateDiscountedBookingAmounts, stripe } from "@/lib/stripe/client"
 const RECURRING_DISCOUNT_OCCURRENCE_CAP = 2
 import { getCommissionPct, getRecurringDiscountPct } from "@/lib/platform/settings"
 import { getCurrencyForCountry } from "@/lib/utils/locale"
+import { logError } from "@/lib/utils/logError"
 
 async function generateBookingNumber(): Promise<string> {
   const seq = await redis.incr("booking:seq")
@@ -215,14 +216,23 @@ export const recurringBookingCron = inngest.createFunction(
                 currency: chargeCurrency,
               })
             } catch (err: unknown) {
-              // FIN-006: an off-session charge can fail (declined/expired/insufficient funds).
-              // Don't leave a phantom unpaid booking the cleaner might act on — cancel it and
-              // tell the customer to update their card. The schedule still advances so a fixed
-              // card is retried next cycle.
+              // An off-session charge can fail for more than one reason — a genuinely declined/
+              // expired card, OR the card is fine but Stripe requires a fresh 3D-Secure check that
+              // can't happen without the customer present. Cancelling outright used to treat both
+              // the same way and lose the booking either way. Instead: move it to pending_payment
+              // (the same status createUnpaidBooking already uses for "needs a payment method") and
+              // point the customer at the real, already-built on-session recovery page — Stripe's
+              // own PaymentElement there naturally handles a 3DS challenge when it's actually
+              // needed, and a genuinely bad card just gets a clean re-entry. The schedule still
+              // advances either way so a fixed card is retried next cycle regardless.
               console.error("[recurring-cron] Off-session payment failed:", (err as Error).message)
+              void logError({
+                message: "[recurring-cron] off-session payment failed", error: err,
+                severity: "error", context: { bookingId: newBooking.id, scheduleId: schedule.id },
+              })
               paymentFailed = true
               await db.update(bookings)
-                .set({ status: "cancelled", cancellationReason: "Recurring payment failed", cancelledAt: new Date() })
+                .set({ status: "pending_payment" })
                 .where(eq(bookings.id, newBooking.id))
             }
           }
@@ -234,9 +244,9 @@ export const recurringBookingCron = inngest.createFunction(
             ? {
                 userId: schedule.customerId,
                 type: "recurring_booking_created",
-                title: "Recurring booking payment failed",
-                body: `We couldn't charge your saved card for the booking on ${notifBody}. Please update your payment method to keep your recurring schedule active.`,
-                link: `/dashboard`,
+                title: "Action needed: secure payment for your next cleaning",
+                body: `We couldn't automatically charge your saved card for the booking on ${notifBody}. Add or confirm a payment method to keep this booking — your recurring schedule stays active either way.`,
+                link: `/bookings/${newBooking.id}/pay`,
                 metadata: { variant: "recurring_payment_failed", datetime: notifBody },
               }
             : {

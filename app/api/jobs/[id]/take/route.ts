@@ -33,6 +33,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         isApproved: providers.isApproved, isSuspended: providers.isSuspended,
         instantJobsAvailable: providers.instantJobsAvailable,
         latitude: providers.latitude, longitude: providers.longitude, country: providers.country,
+        stripeAccountStatus: providers.stripeAccountStatus,
       })
       .from(providers)
       .where(eq(providers.userId, userId))
@@ -42,6 +43,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     }
     if (!provider.instantJobsAvailable) {
       return NextResponse.json({ error: 'Turn on "Available for instant jobs" to claim emergency jobs.' }, { status: 403 })
+    }
+    // Without this, the claim locks the job and rejects every other cleaner, but payment-intent
+    // creation refuses this provider — only the CLIENT would ever find that out, on an emergency
+    // job where a fast fallback to another cleaner matters most. Same fix as the bid-accept route.
+    if (provider.stripeAccountStatus !== "active") {
+      return NextResponse.json({ error: "Finish setting up how you get paid before claiming instant jobs." }, { status: 422 })
     }
 
     const [job] = await db
@@ -115,7 +122,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         .returning({ id: bids.id })
       newBidId = inserted.id
 
-      await tx.update(jobPosts).set({ status: "assigned", acceptedBidId: inserted.id }).where(eq(jobPosts.id, jobPostId))
+      await tx.update(jobPosts).set({ status: "assigned", acceptedBidId: inserted.id, assignedAt: new Date() }).where(eq(jobPosts.id, jobPostId))
     })
 
     if (lostRace || !newBidId) {

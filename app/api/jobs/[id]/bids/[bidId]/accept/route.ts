@@ -57,13 +57,18 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
 
     // Re-validate the bidder is still an active cleaner — they may have been suspended/unapproved
     // since bidding. Accepting otherwise locks the job to "assigned", rejects every other bid, and
-    // dead-ends (payment-intent creation refuses a suspended/unapproved provider).
+    // dead-ends (payment-intent creation refuses a suspended/unapproved provider). Same reasoning
+    // extends to payout readiness: without it, payment-intent creation refuses the cleaner too, but
+    // only the CLIENT would ever find that out, after every other bidder is already rejected.
     const [bidder] = await db
-      .select({ isApproved: providers.isApproved, isSuspended: providers.isSuspended })
+      .select({ isApproved: providers.isApproved, isSuspended: providers.isSuspended, stripeAccountStatus: providers.stripeAccountStatus })
       .from(providers)
       .where(eq(providers.id, bid.providerId))
     if (!bidder || !bidder.isApproved || bidder.isSuspended) {
       return NextResponse.json({ error: "This cleaner is no longer available. Please choose another bid." }, { status: 422 })
+    }
+    if (bidder.stripeAccountStatus !== "active") {
+      return NextResponse.json({ error: "This cleaner hasn't finished setting up how they get paid yet. Please choose another bid, or ask them to finish payout setup first." }, { status: 422 })
     }
 
     // Losing bidders (captured BEFORE the transaction flips them to rejected) — notified below so
@@ -96,7 +101,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
         .update(bids)
         .set({ status: "rejected" })
         .where(and(eq(bids.jobPostId, jobPostId), ne(bids.id, bidId), eq(bids.status, "pending")))
-      await tx.update(jobPosts).set({ status: "assigned", acceptedBidId: bidId }).where(eq(jobPosts.id, jobPostId))
+      await tx.update(jobPosts).set({ status: "assigned", acceptedBidId: bidId, assignedAt: new Date() }).where(eq(jobPosts.id, jobPostId))
     })
 
     if (lostRace) {

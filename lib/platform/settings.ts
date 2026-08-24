@@ -67,9 +67,12 @@ export async function getCleanerPeerReferralPct(): Promise<number> {
   return getIntSetting("cleaner_peer_referral_pct", 10, 0, 20)
 }
 
-// Client referral reward %, credited as a spendable/withdrawable discount balance rather than
-// cash (clients don't have Connect job payouts) — applies whether the invited person is a client
-// or a cleaner (based on the OTHER party's own booking-as-customer / job-as-provider).
+// Client referral reward %, credited to a spendable balance that a client can either apply as a
+// discount at checkout OR withdraw as real cash — clients DO have their own lightweight Connect
+// payout account for this (users.referralPayoutAccountId, separate from a cleaner's job-payout
+// account — see app/api/referrals/withdraw/route.ts, which has no role restriction). Applies
+// whether the invited person is a client or a cleaner (based on the OTHER party's own
+// booking-as-customer / job-as-provider).
 export async function getClientReferralDiscountPct(): Promise<number> {
   return getIntSetting("client_referral_discount_pct", 5, 0, 20)
 }

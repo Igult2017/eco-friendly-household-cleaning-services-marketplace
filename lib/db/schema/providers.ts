@@ -29,11 +29,6 @@ export const verificationStatusEnum = pgEnum("verification_status", [
   "requires_resubmission",
 ])
 
-export const payoutScheduleEnum = pgEnum("payout_schedule", [
-  "weekly",
-  "biweekly",
-  "monthly",
-])
 
 export const providers = pgTable(
   "providers",
@@ -69,7 +64,6 @@ export const providers = pgTable(
       .default("not_started"),
     stripeAccountId: varchar("stripe_account_id", { length: 64 }),
     stripeAccountStatus: varchar("stripe_account_status", { length: 32 }),
-    payoutSchedule: payoutScheduleEnum("payout_schedule").notNull().default("weekly"),
     isApproved: boolean("is_approved").notNull().default(false),
     isSuspended: boolean("is_suspended").notNull().default(false),
     suspendedReason: text("suspended_reason"),

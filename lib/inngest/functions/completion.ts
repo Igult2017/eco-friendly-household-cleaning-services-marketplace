@@ -9,6 +9,7 @@ import { creditReferralReward } from "@/lib/referrals/rewards"
 import { getRecurringDiscountPct } from "@/lib/platform/settings"
 import { recordPaymentEvent } from "@/lib/payments/ledger"
 import { alertAdmins } from "@/lib/notifications/adminAlert"
+import { logError } from "@/lib/utils/logError"
 
 export const onBookingCompleted = inngest.createFunction(
   { id: "booking-completed", retries: 3, triggers: [{ event: "booking/completed" }] },
@@ -64,6 +65,10 @@ export const onBookingCompleted = inngest.createFunction(
           // alert admins only once per booking so a persistently bad card doesn't spam the inbox
           // every hour.
           const message = err instanceof Error ? err.message : "Recharge failed"
+          void logError({
+            message: "[completion.ts] lapsed-hold recharge failed", error: err,
+            severity: "critical", context: { bookingId, paymentIntentId },
+          })
           await recordPaymentEvent({
             bookingId, userId: customerId, kind: "payout_failed", amountCents: pi.amount - penalty,
             stripeObjectId: paymentIntentId, status: "failed", metadata: { reason: message },
@@ -77,6 +82,17 @@ export const onBookingCompleted = inngest.createFunction(
               `The 7-day card hold on booking ${bookingId} expired and the automatic re-charge failed: ${message}. The cleaner has not been paid. This will keep retrying hourly — check the customer's payment method.`,
               "/admin/payments/history",
             )
+            // Only the customer can actually fix this (a genuinely bad card, or one that needs a
+            // fresh 3D-Secure check) — send them to the same real on-session recovery page used for
+            // a no-card booking. Once per booking, same reasoning as the admin alert above. Booking
+            // status stays pending_capture (unchanged) — the sweeper picks up a successful re-pay.
+            await db.insert(notifications).values({
+              userId: customerId, type: "payment_received" as const,
+              title: "Action needed: your cleaning payment couldn't be collected",
+              body: "Your card hold for a completed cleaning expired and we couldn't automatically re-charge it. Please confirm your payment method so your cleaner can be paid.",
+              link: `/bookings/${bookingId}/pay`,
+              metadata: { variant: "capture_recharge_failed" },
+            })
           }
           throw err // preserve existing behavior: step fails, sweeper.ts retries hourly
         }

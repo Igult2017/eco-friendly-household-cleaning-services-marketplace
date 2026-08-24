@@ -64,6 +64,10 @@ export const jobPosts = pgTable(
     // Expected hours of work (stored as minutes) — lets cleaners compute an hourly bid from the budget.
     estimatedDurationMinutes: integer("estimated_duration_minutes"),
     acceptedBidId: uuid("accepted_bid_id"),
+    // Set the moment a bid is accepted / a Take Job claim wins — lets the hourly sweep
+    // (jobAssignmentSweeper) find a job stuck "assigned" with no real booking ever created (e.g. the
+    // client abandoned payment) and free it, instead of it staying locked forever.
+    assignedAt: timestamp("assigned_at", { withTimezone: true }),
     // Poster's client IP — self-bid fraud prevention (hide/block the poster's own jobs even from a
     // second account on the same connection).
     postedIp: varchar("posted_ip", { length: 64 }),

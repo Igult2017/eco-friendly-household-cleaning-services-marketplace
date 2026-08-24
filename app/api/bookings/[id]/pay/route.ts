@@ -8,9 +8,17 @@ import { getCurrencyForCountry } from "@/lib/utils/locale"
 import { isUuid } from "@/lib/utils/uuid"
 import { logError } from "@/lib/utils/logError"
 
-// Attach a payment method to a booking made WITHOUT one (status pending_payment).
+// Attach/re-attach a payment method to a booking that needs one. Two cases reach here:
+// - pending_payment: booking made WITHOUT a card at all (createUnpaidBooking).
+// - pending_capture: the job is already done, but the original hold expired and the automatic
+//   off-session recharge failed (lib/inngest/functions/completion.ts) — same recovery mechanism,
+//   reused rather than building a second one, since an ON-SESSION retry here handles both "the
+//   card was genuinely declined" and "the card needed a fresh 3D-Secure check" the same way Stripe
+//   already handles it on this page (PaymentElement + confirmPayment naturally prompts for it).
 // POST  → creates the manual-capture hold (card saved for off-session capture) and returns clientSecret.
-// PATCH → after the client confirms the card, verifies the PI and flips the booking to payment_authorized.
+// PATCH → after the client confirms the card, verifies the PI and reconciles the booking/payment rows.
+const PAYABLE_STATUSES = ["pending_payment", "pending_capture"] as const
+
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { userId } = await auth()
@@ -27,7 +35,9 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       .from(bookings)
       .where(and(eq(bookings.id, id), eq(bookings.customerId, userId)))
     if (!b) return NextResponse.json({ error: "Booking not found" }, { status: 404 })
-    if (b.status !== "pending_payment") return NextResponse.json({ error: "This booking already has a payment method." }, { status: 422 })
+    if (!PAYABLE_STATUSES.includes(b.status as typeof PAYABLE_STATUSES[number])) {
+      return NextResponse.json({ error: "This booking already has a payment method." }, { status: 422 })
+    }
 
     const [prov] = await db
       .select({ stripeAccountId: providers.stripeAccountId, stripeAccountStatus: providers.stripeAccountStatus, country: providers.country })
@@ -80,9 +90,12 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     const { paymentIntentId } = (await req.json().catch(() => ({}))) as { paymentIntentId?: string }
     if (!paymentIntentId) return NextResponse.json({ error: "paymentIntentId required" }, { status: 400 })
 
-    // Idempotent: already attached → done.
-    const [existing] = await db.select({ id: payments.id }).from(payments).where(eq(payments.bookingId, id))
-    if (existing) return NextResponse.json({ success: true })
+    // Idempotent only for a genuine repeat of the SAME confirmed PI. A recovery re-payment
+    // (pending_capture — the original hold lapsed and the automatic recharge failed) reaches here
+    // with an EXISTING payments row still pointing at the old, now-dead PaymentIntent — that row
+    // must be updated to the new one, not skipped as "already done".
+    const [existing] = await db.select({ id: payments.id, stripePaymentIntentId: payments.stripePaymentIntentId }).from(payments).where(eq(payments.bookingId, id))
+    if (existing?.stripePaymentIntentId === paymentIntentId) return NextResponse.json({ success: true })
 
     const [b] = await db
       .select({ status: bookings.status, providerId: bookings.providerId })
@@ -96,22 +109,42 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       return NextResponse.json({ error: "Intent mismatch" }, { status: 403 })
     }
 
-    await db.insert(payments).values({
-      bookingId: id, customerId: userId, stripePaymentIntentId: pi.id,
+    const paymentValues = {
+      customerId: userId, stripePaymentIntentId: pi.id,
       stripeCustomerId: typeof pi.customer === "string" ? pi.customer : (pi.customer?.id ?? null),
-      status: "authorized", amount: pi.amount, capturedAmount: 0, refundedAmount: 0,
-      currency: pi.currency, idempotencyKey: pi.id,
-    })
-    await db.update(bookings).set({ status: "payment_authorized" }).where(and(eq(bookings.id, id), eq(bookings.status, "pending_payment")))
+      status: "authorized" as const, amount: pi.amount, capturedAmount: 0, refundedAmount: 0,
+      currency: pi.currency,
+    }
+    if (existing) {
+      await db.update(payments).set(paymentValues).where(eq(payments.id, existing.id))
+    } else {
+      await db.insert(payments).values({ bookingId: id, ...paymentValues, idempotencyKey: pi.id })
+    }
+    // pending_payment (no card at all) → payment_authorized, the normal next step. pending_capture
+    // (recovering a lapsed, failed-to-recharge hold) stays pending_capture unchanged — the job is
+    // already done in real life; the hourly capture sweeper picks up this fresh, valid PI on its
+    // own next run and captures it, exactly like a normal lapsed-hold recovery.
+    if (b.status === "pending_payment") {
+      await db.update(bookings).set({ status: "payment_authorized" }).where(and(eq(bookings.id, id), eq(bookings.status, "pending_payment")))
+    }
 
-    // Tell the cleaner the order is now safe to take.
+    // Tell the cleaner. Different message depending on which case this was: a brand-new order now
+    // safe to take, vs. an already-completed job whose payment just needed to be re-secured.
     const [pv] = await db.select({ userId: providers.userId }).from(providers).where(eq(providers.id, b.providerId))
     if (pv) {
-      await db.insert(notifications).values({
-        userId: pv.userId, type: "booking_confirmed",
-        title: "Payment method added", body: "The client added their payment method — payment is secured and will be collected automatically after you both confirm completion. You can take the order.",
-        link: "/provider/bookings", metadata: { variant: "client_added_payment" },
-      })
+      await db.insert(notifications).values(
+        b.status === "pending_payment"
+          ? {
+              userId: pv.userId, type: "booking_confirmed" as const,
+              title: "Payment method added", body: "The client added their payment method — payment is secured and will be collected automatically after you both confirm completion. You can take the order.",
+              link: "/provider/bookings", metadata: { variant: "client_added_payment" },
+            }
+          : {
+              userId: pv.userId, type: "payment_received" as const,
+              title: "Payment secured", body: "The client re-secured payment for a completed job — you'll be paid automatically the next time payouts run.",
+              link: "/provider/earnings", metadata: { variant: "client_recovered_payment" },
+            },
+      )
     }
     return NextResponse.json({ success: true })
   } catch (err) {

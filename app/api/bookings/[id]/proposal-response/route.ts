@@ -88,10 +88,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         return NextResponse.json({ error: "Your card could not authorize the new amount. Please check your payment method and try again." }, { status: 402 })
       }
       if (newPi.status !== "requires_capture") {
-        try { await stripe.paymentIntents.cancel(newPi.id) } catch {}
+        try { await stripe.paymentIntents.cancel(newPi.id, { idempotencyKey: `cancel-${newPi.id}` }) } catch {}
         return NextResponse.json({ error: "Your card could not authorize the new amount. Please check your payment method and try again." }, { status: 402 })
       }
-      try { await stripe.paymentIntents.cancel(pay.pi) } catch {}
+      try { await stripe.paymentIntents.cancel(pay.pi, { idempotencyKey: `cancel-${pay.pi}` }) } catch {}
 
       await db.update(payments).set({ stripePaymentIntentId: newPi.id, amount: newSubtotal + offset }).where(eq(payments.bookingId, bookingId))
       Object.assign(updates, { subtotalAmount: newSubtotal, platformFeeAmount: fee, totalAmount: newSubtotal, providerPayout: newSubtotal - fee })

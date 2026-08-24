@@ -14,6 +14,7 @@ import { captureSweeper } from "@/lib/inngest/functions/sweeper"
 import { onAwaitingConfirmation } from "@/lib/inngest/functions/awaitingConfirmation"
 import { bookingOverdueSweep } from "@/lib/inngest/functions/overdue"
 import { settleReferralCommissions } from "@/lib/inngest/functions/referralSettlement"
+import { jobAssignmentSweeper } from "@/lib/inngest/functions/jobSweeper"
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -34,5 +35,6 @@ export const { GET, POST, PUT } = serve({
     onAwaitingConfirmation,
     bookingOverdueSweep,
     settleReferralCommissions,
+    jobAssignmentSweeper,
   ],
 })

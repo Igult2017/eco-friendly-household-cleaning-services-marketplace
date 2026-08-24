@@ -13,7 +13,9 @@ export function PayoutConnect({ status }: { status: string | null }) {
   const t = useTranslations("compOnboardingProviderPayoutStep")
   const router = useRouter()
 
-  const active = status === "active" || status === "charges_enabled"
+  // stripeAccountStatus is only ever "active" | "pending" | "incomplete" (see lib/stripe/connect.ts
+  // getConnectAccountStatus) — "charges_enabled" was never a real value this could hold.
+  const active = status === "active"
 
   if (active) {
     return (
