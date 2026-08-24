@@ -35,7 +35,11 @@ export async function GET(req: Request) {
       return NextResponse.json({ providers: cached, cached: true })
     }
 
-    const providers = await findProvidersNearLocation({ latitude: lat, longitude: lng, radiusKm, categoryId })
+    // useProviderRadius: true — gate each cleaner by THEIR OWN service_radius_km, not a fixed
+    // circle around the client. Without this, a cleaner who deliberately set a wider travel
+    // distance than the client's fixed search radius was silently excluded even though they'd
+    // genuinely serve that location, producing false "no cleaner in your area" results.
+    const providers = await findProvidersNearLocation({ latitude: lat, longitude: lng, radiusKm, categoryId, useProviderRadius: true })
 
     await redis.setex(cacheKey, 300, JSON.stringify(providers)) // 5-min cache
 

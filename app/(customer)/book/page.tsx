@@ -211,7 +211,13 @@ export default function BookStep1Page() {
               <div className="text-3xl mb-2">{cat.icon}</div>
               <p className="font-semibold text-[#2B3441] text-sm leading-tight">{t(`category_${cat.id}_name`)}</p>
               <p className="text-xs text-[#6B7280] mt-1 leading-tight">{t(`category_${cat.id}_desc`)}</p>
-              <p className="text-xs font-bold text-[#2D7A5F] mt-2">{t("fromPrice", { price: cat.from })}</p>
+              {/* A cleaner is already picked at this point (providerPreselected) — this "From €X" is a
+                  fixed marketing figure, not that cleaner's real price, so showing it here would be
+                  showing the wrong number, not just a redundant one. Their real, per-service price
+                  resolves later (see isOffered comment above / providers/[id]/services). */}
+              {!providerPreselected && (
+                <p className="text-xs font-bold text-[#2D7A5F] mt-2">{t("fromPrice", { price: cat.from })}</p>
+              )}
             </button>
           ))}
         </div>
