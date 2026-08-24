@@ -59,6 +59,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         serviceLatitude: jobPosts.serviceLatitude, serviceLongitude: jobPosts.serviceLongitude,
         radiusKm: jobPosts.radiusKm, budgetMin: jobPosts.budgetMin,
         estimatedDurationMinutes: jobPosts.estimatedDurationMinutes,
+        recurringFrequency: jobPosts.recurringFrequency,
       })
       .from(jobPosts)
       .where(eq(jobPosts.id, jobPostId))
@@ -197,7 +198,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         durationMinutes: job.estimatedDurationMinutes ?? 120,
         bidAmountCents: job.budgetMin,
         providerCountry: provider.country ?? null,
-        requestedFrequency: null, // Take Job is never recurring
+        // This instance is always same-day, but the client may have said they want it on a regular
+        // schedule going forward — carry that through the same as a standard bid-accepted booking.
+        requestedFrequency: job.recurringFrequency ?? null,
       },
     })
   } catch (err) {

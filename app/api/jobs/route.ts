@@ -42,12 +42,13 @@ const createJobSchema = z.object({
   serviceLongitude: z.number().min(-180).max(180),
   radiusKm: z.number().int().min(1).max(100).default(25),
   ecoRequirements: z.array(z.string().max(100)).max(10).default([]),
-  // "recurring" = cadence unspecified (form asks only one-time vs recurrent); cadence values kept for
-  // back-compat with existing rows.
+  // "recurring" (cadence unspecified) is kept only for back-compat with rows saved before the form
+  // asked for a specific cadence — new posts always send weekly/biweekly/monthly or omit the field.
   recurringFrequency: z.enum(["recurring", "weekly", "biweekly", "monthly"]).optional(),
   estimatedHours: z.number().min(0.5).max(12).optional(),
   // "standard" = normal bidding. "take_job" = emergency instant-assignment (see /api/jobs/[id]/take) —
-  // no negotiation, so the client's single price IS the price, and it's never recurring.
+  // no negotiation, so the client's single price IS the price. This one instance is always same-day,
+  // but the client can still say they want it on a regular schedule going forward (recurringFrequency).
   jobType: z.enum(["standard", "take_job"]).default("standard"),
 }).refine(
   (d) => !d.budgetMin || !d.budgetMax || d.budgetMax >= d.budgetMin,
@@ -55,10 +56,12 @@ const createJobSchema = z.object({
 ).refine(
   (d) => d.jobType !== "take_job" || d.budgetMin === d.budgetMax,
   { message: "Take Job requires a single fixed price (budgetMin must equal budgetMax)", path: ["budgetMax"] },
-).refine(
-  (d) => d.jobType !== "take_job" || !d.recurringFrequency,
-  { message: "Take Job cannot be recurring", path: ["recurringFrequency"] },
 )
+// Take Job itself is always a same-day, single instance — but the client can still SAY they want
+// this kind of cleaning on a regular schedule going forward, same as a standard post. The actual
+// schedule only gets set up later, once a specific cleaner is known (see the post-completion
+// recurring nudge in lib/inngest/functions/completion.ts) — recurringFrequency here is only ever a
+// stated intent, identically for both job types, so there's no technical reason to block it.
 
 export async function POST(req: Request) {
   try {

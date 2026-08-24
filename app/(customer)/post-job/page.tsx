@@ -2,13 +2,12 @@
 
 import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
 import { useTranslations, useLocale } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Loader2, CheckCircle2, MapPin, AlertTriangle, ArrowRight } from "lucide-react"
+import { Loader2, CheckCircle2, MapPin, AlertTriangle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { LocationDetectButton } from "@/components/location/LocationDetectButton"
 import { usePostalValidation } from "@/hooks/usePostalValidation"
@@ -30,6 +29,9 @@ const ECO_OPTION_KEYS: Record<string, string> = {
 
 export default function PostJobPage() {
   const t = useTranslations("customerPostjobPage")
+  // Reuses the wizard's own weekly/biweekly/monthly labels — same real options, no new translation
+  // strings needed across the 8 locales.
+  const tSchedule = useTranslations("customerBookSchedulePage")
   const locale = useLocale()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
@@ -229,7 +231,7 @@ export default function PostJobPage() {
           desiredDate: jobType === "standard" ? form.desiredDate : undefined,
           desiredTimeRange: hasStart && hasEnd ? { start: form.desiredTimeStart, end: form.desiredTimeEnd } : undefined,
           estimatedHours: form.estimatedHours ? parseFloat(form.estimatedHours) : undefined,
-          recurringFrequency: jobType === "standard" ? (form.recurringFrequency || undefined) : undefined,
+          recurringFrequency: form.recurringFrequency || undefined,
         }),
       })
       if (!res.ok) {
@@ -362,35 +364,28 @@ export default function PostJobPage() {
               </div>
             )}
             {recurringDiscountPct !== null && recurringDiscountPct > 0 && (
-              jobType === "standard" ? (
-                <div className="rounded-xl bg-[#F4FAF6] border border-[#2D7A5F]/20 px-4 py-3 text-sm text-[#2D7A5F]">
-                  {t("recurringBenefitBanner", { pct: recurringDiscountPct })}
-                </div>
-              ) : (
-                // Take Job can't itself be recurring (it's a same-day, one-off request) — but someone
-                // who needs urgent cleaning today may well want it on a regular schedule going
-                // forward, so this links straight to the booking wizard (the only place a recurring
-                // schedule actually gets set up) instead of leaving it as inert text.
-                <Link
-                  href="/book"
-                  className="flex items-center justify-between gap-2 rounded-xl bg-[#F4FAF6] border border-[#2D7A5F]/20 px-4 py-3 text-sm text-[#2D7A5F] hover:border-[#2D7A5F]/40 transition-colors"
-                >
-                  <span>{t("recurringBenefitBannerTakeJob", { pct: recurringDiscountPct })}</span>
-                  <ArrowRight size={16} className="shrink-0" />
-                </Link>
-              )
-            )}
-            {jobType === "standard" && (
-              <div>
-                <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("recurringLabel")}</Label>
-                <select value={form.recurringFrequency} onChange={(e) => set("recurringFrequency", e.target.value)}
-                  className="flex h-10 w-full rounded-md border border-[#E5EBF0] bg-white px-3 py-2 text-sm focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]">
-                  <option value="">{t("recurring_none")}</option>
-                  <option value="recurring">{t("recurring_recurring")}</option>
-                </select>
-                <p className="text-xs text-[#9CA3AF] mt-1">{t("recurringHint")}</p>
+              <div className="rounded-xl bg-[#F4FAF6] border border-[#2D7A5F]/20 px-4 py-3 text-sm text-[#2D7A5F]">
+                {jobType === "standard"
+                  ? t("recurringBenefitBanner", { pct: recurringDiscountPct })
+                  : t("recurringBenefitBannerTakeJob", { pct: recurringDiscountPct })}
               </div>
             )}
+            <div>
+              <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("recurringLabel")}</Label>
+              {/* This instance is always same-day/one-off (Take Job can't itself be scheduled ahead),
+                  but the client can still say they want this kind of cleaning on a regular schedule
+                  going forward — same stated-intent field as a standard post, shown to cleaners on
+                  the job board, and picked up by the post-completion recurring nudge once a specific
+                  cleaner is known (see lib/inngest/functions/completion.ts). */}
+              <select value={form.recurringFrequency} onChange={(e) => set("recurringFrequency", e.target.value)}
+                className="flex h-10 w-full rounded-md border border-[#E5EBF0] bg-white px-3 py-2 text-sm focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]">
+                <option value="">{t("recurring_none")}</option>
+                <option value="weekly">{tSchedule("freq_weekly")}</option>
+                <option value="biweekly">{tSchedule("freq_biweekly")}</option>
+                <option value="monthly">{tSchedule("freq_monthly")}</option>
+              </select>
+              <p className="text-xs text-[#9CA3AF] mt-1">{t("recurringHint")}</p>
+            </div>
           </div>
 
           <div className="bg-white rounded-2xl border border-[#E5EBF0] p-5 space-y-4">
