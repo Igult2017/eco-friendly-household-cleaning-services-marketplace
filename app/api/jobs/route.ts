@@ -94,7 +94,7 @@ export async function POST(req: Request) {
         allowed = (clerkUser.publicMetadata as { dualRole?: boolean })?.dualRole === true
       } catch { /* Clerk unavailable — fall through to Forbidden, fail-closed */ }
     }
-    if (!allowed) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    if (!allowed) return NextResponse.json({ error: "Only clients can post jobs. If you also have a client account, switch to it first." }, { status: 403 })
     if (!(await ensureUserRow(userId))) return NextResponse.json({ error: "Could not link your account. Please reload and try again." }, { status: 500 })
 
     const body = await req.json().catch(() => ({}))

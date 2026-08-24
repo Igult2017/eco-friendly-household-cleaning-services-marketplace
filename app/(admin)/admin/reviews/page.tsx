@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import { toast } from "sonner"
 import { Loader2, Eye, EyeOff, Flag, CheckCircle2 } from "lucide-react"
 
 type ReviewRow = {
@@ -33,12 +34,17 @@ export default function AdminReviewsPage() {
 
   async function patch(id: string, body: Record<string, unknown>) {
     setActioning(id)
-    await fetch(`/api/admin/reviews/${id}`, {
+    const res = await fetch(`/api/admin/reviews/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     })
     setActioning(null)
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}))
+      toast.error(d.error ?? "Couldn't update this review")
+      return
+    }
     reload()
   }
 

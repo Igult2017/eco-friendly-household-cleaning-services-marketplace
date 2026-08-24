@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Pencil, Trash2, Globe, EyeOff } from "lucide-react"
@@ -28,7 +29,11 @@ export function AdminBlogList({ initialPosts }: { initialPosts: Post[] }) {
     setBusy(id)
     const res = await fetch(`/api/admin/blog/${id}/publish`, { method: "PATCH" })
     setBusy(null)
-    if (!res.ok) return
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}))
+      toast.error(d.error ?? "Couldn't change the publish status")
+      return
+    }
     const { published } = await res.json()
     setPosts((p) =>
       p.map((post) =>
@@ -42,8 +47,13 @@ export function AdminBlogList({ initialPosts }: { initialPosts: Post[] }) {
   async function deletePost(id: string) {
     if (!confirm("Delete this article? This cannot be undone.")) return
     setBusy(id)
-    await fetch(`/api/admin/blog/${id}`, { method: "DELETE" })
+    const res = await fetch(`/api/admin/blog/${id}`, { method: "DELETE" })
     setBusy(null)
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}))
+      toast.error(d.error ?? "Couldn't delete this article")
+      return
+    }
     setPosts((p) => p.filter((post) => post.id !== id))
   }
 

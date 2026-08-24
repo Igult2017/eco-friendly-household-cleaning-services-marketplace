@@ -1132,7 +1132,8 @@
     "rateClientFailed": "Could not save your review. Please try again.",
     "acceptRequestPayment": "Accept & request payment method",
     "requestPaymentSending": "Sending…",
-    "requestPaymentSent": "Client notified — waiting for their payment method"
+    "requestPaymentSent": "Client notified — waiting for their payment method",
+    "requestPaymentFailed": "Couldn't send the payment request. Please try again."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Failed to mark as complete",
@@ -1240,6 +1241,7 @@
     "releaseJobButton": "Can't make it? Release this job",
     "releaseJobConfirm": "Release this job? The client will be notified and it'll go back on the board for another cleaner.",
     "releaseJobFailed": "Could not release the job.",
+    "clientInfoUnavailable": "Client details aren't available for this job right now.",
     "hideChat": "Hide chat",
     "overdueChip": "Overdue · {days}d",
     "firstBidNote": "No bids yet — you would be the first. Great odds!",
@@ -1363,7 +1365,8 @@
     "responsePlaceholder": "Write a professional, friendly response... (min. 10 characters)",
     "cancel": "Cancel",
     "saving": "Saving…",
-    "postResponse": "Post response"
+    "postResponse": "Post response",
+    "respondFailed": "Couldn't post your response. Please try again."
   },
   "providerSchedulePage": {
     "title": "Schedule",
@@ -1451,7 +1454,8 @@
     "markComplete": "Mark Complete",
     "confirmBooking": "Confirm Booking",
     "startCleaning": "Start Cleaning",
-    "processing": "Processing…"
+    "processing": "Processing…",
+    "actionFailed": "That didn't go through. Please try again."
   },
   "compBookingProviderCard": {
     "distanceAway": "{distance} km away",

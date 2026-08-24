@@ -1132,7 +1132,8 @@
     "rateClientFailed": "Bewertung konnte nicht gespeichert werden. Bitte erneut versuchen.",
     "acceptRequestPayment": "Annehmen & Zahlungsmethode anfordern",
     "requestPaymentSending": "Wird gesendet…",
-    "requestPaymentSent": "Kunde benachrichtigt — warte auf die Zahlungsmethode"
+    "requestPaymentSent": "Kunde benachrichtigt — warte auf die Zahlungsmethode",
+    "requestPaymentFailed": "Die Zahlungsanfrage konnte nicht gesendet werden. Bitte versuche es erneut."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Als abgeschlossen markieren fehlgeschlagen",
@@ -1240,6 +1241,7 @@
     "releaseJobButton": "Kannst du nicht? Auftrag freigeben",
     "releaseJobConfirm": "Diesen Auftrag freigeben? Der Kunde wird benachrichtigt und der Auftrag geht zurück an andere Reinigungskräfte.",
     "releaseJobFailed": "Der Auftrag konnte nicht freigegeben werden.",
+    "clientInfoUnavailable": "Kundendetails sind für diesen Auftrag momentan nicht verfügbar.",
     "hideChat": "Chat ausblenden",
     "overdueChip": "Überfällig · {days} T.",
     "firstBidNote": "Noch keine Angebote — du wärst das erste. Beste Chancen!",
@@ -1363,7 +1365,8 @@
     "responsePlaceholder": "Schreibe eine professionelle, freundliche Antwort... (mind. 10 Zeichen)",
     "cancel": "Abbrechen",
     "saving": "Wird gespeichert…",
-    "postResponse": "Antwort veröffentlichen"
+    "postResponse": "Antwort veröffentlichen",
+    "respondFailed": "Deine Antwort konnte nicht veröffentlicht werden. Bitte versuche es erneut."
   },
   "providerSchedulePage": {
     "title": "Zeitplan",
@@ -1451,7 +1454,8 @@
     "markComplete": "Als erledigt markieren",
     "confirmBooking": "Buchung bestätigen",
     "startCleaning": "Reinigung starten",
-    "processing": "Wird verarbeitet…"
+    "processing": "Wird verarbeitet…",
+    "actionFailed": "Das hat nicht funktioniert. Bitte versuche es erneut."
   },
   "compBookingProviderCard": {
     "distanceAway": "{distance} km entfernt",

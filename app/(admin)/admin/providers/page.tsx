@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import { toast } from "sonner"
 import { StatusBadge } from "@/components/admin/StatusBadge"
 import { DeleteCleanerDialog } from "@/components/admin/DeleteCleanerDialog"
 import { PauseCircle, PlayCircle, Loader2, Check, X } from "lucide-react"
@@ -61,12 +62,18 @@ async function fetchProviders(status: TabType): Promise<ProviderRow[]> {
   return data.providers ?? []
 }
 
-async function takeAction(providerId: string, action: string) {
-  await fetch(`/api/admin/providers/${providerId}/approve`, {
+async function takeAction(providerId: string, action: string): Promise<boolean> {
+  const res = await fetch(`/api/admin/providers/${providerId}/approve`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ action }),
   })
+  if (!res.ok) {
+    const d = await res.json().catch(() => ({}))
+    toast.error(d.error ?? `Couldn't ${action} this cleaner`)
+    return false
+  }
+  return true
 }
 
 export default function AdminProvidersPage() {
@@ -86,6 +93,8 @@ export default function AdminProvidersPage() {
     setActioning(id)
     await takeAction(id, action)
     setActioning(null)
+    // Reload either way — a failed action makes no server-side change, so re-fetching is
+    // harmless; the toast inside takeAction() is what tells the admin whether it worked.
     reload()
   }
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useTranslations } from "next-intl"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -78,7 +79,10 @@ export default function ProviderJobsPage() {
     try {
       const r = await fetch(`/api/jobs/${jobId}/cancel`, { method: "POST" })
       if (r.ok) setJobs((prev) => prev.filter((j) => j.id !== jobId))
-      else alert((await r.json().catch(() => ({}))).error ?? t("releaseJobFailed"))
+      else {
+        const d = await r.json().catch(() => ({}))
+        toast.error(typeof d.error === "string" ? d.error : t("releaseJobFailed"))
+      }
     } finally {
       setReleasing(null)
     }

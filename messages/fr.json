@@ -1132,7 +1132,8 @@
     "rateClientFailed": "Impossible d enregistrer votre avis. Veuillez réessayer.",
     "acceptRequestPayment": "Accepter et demander un moyen de paiement",
     "requestPaymentSending": "Envoi…",
-    "requestPaymentSent": "Client averti — en attente de son moyen de paiement"
+    "requestPaymentSent": "Client averti — en attente de son moyen de paiement",
+    "requestPaymentFailed": "Impossible d'envoyer la demande de paiement. Veuillez réessayer."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Échec du marquage comme terminé",
@@ -1240,6 +1241,7 @@
     "releaseJobButton": "Empêchement ? Libérer cette mission",
     "releaseJobConfirm": "Libérer cette mission ? Le client sera prévenu et elle redeviendra disponible pour un autre intervenant.",
     "releaseJobFailed": "Impossible de libérer la mission.",
+    "clientInfoUnavailable": "Les informations du client ne sont pas disponibles pour ce job actuellement.",
     "hideChat": "Masquer la discussion",
     "overdueChip": "En retard · {days} j",
     "firstBidNote": "Aucune offre pour l instant — vous seriez le premier. Excellentes chances !",
@@ -1363,7 +1365,8 @@
     "responsePlaceholder": "Rédigez une réponse professionnelle et conviviale... (min. 10 caractères)",
     "cancel": "Annuler",
     "saving": "Enregistrement…",
-    "postResponse": "Publier la réponse"
+    "postResponse": "Publier la réponse",
+    "respondFailed": "Impossible de publier votre réponse. Veuillez réessayer."
   },
   "providerSchedulePage": {
     "title": "Planning",
@@ -1451,7 +1454,8 @@
     "markComplete": "Marquer comme terminé",
     "confirmBooking": "Confirmer la réservation",
     "startCleaning": "Commencer le ménage",
-    "processing": "Traitement…"
+    "processing": "Traitement…",
+    "actionFailed": "Cela n'a pas fonctionné. Veuillez réessayer."
   },
   "compBookingProviderCard": {
     "distanceAway": "à {distance} km",

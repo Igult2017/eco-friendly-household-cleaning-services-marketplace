@@ -1132,7 +1132,8 @@
     "rateClientFailed": "No se pudo guardar la valoración. Inténtalo de nuevo.",
     "acceptRequestPayment": "Aceptar y pedir método de pago",
     "requestPaymentSending": "Enviando…",
-    "requestPaymentSent": "Cliente avisado: esperando su método de pago"
+    "requestPaymentSent": "Cliente avisado: esperando su método de pago",
+    "requestPaymentFailed": "No se pudo enviar la solicitud de pago. Inténtalo de nuevo."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "No se pudo marcar como completado",
@@ -1240,6 +1241,7 @@
     "releaseJobButton": "¿No puedes? Liberar este trabajo",
     "releaseJobConfirm": "¿Liberar este trabajo? Se notificará al cliente y volverá a estar disponible para otro profesional.",
     "releaseJobFailed": "No se pudo liberar el trabajo.",
+    "clientInfoUnavailable": "Los datos del cliente no están disponibles para este trabajo ahora mismo.",
     "hideChat": "Ocultar chat",
     "overdueChip": "Atrasado · {days} d",
     "firstBidNote": "Aún no hay ofertas: serías el primero. ¡Grandes posibilidades!",
@@ -1363,7 +1365,8 @@
     "responsePlaceholder": "Escribe una respuesta profesional y amable... (mín. 10 caracteres)",
     "cancel": "Cancelar",
     "saving": "Guardando…",
-    "postResponse": "Publicar respuesta"
+    "postResponse": "Publicar respuesta",
+    "respondFailed": "No se pudo publicar tu respuesta. Inténtalo de nuevo."
   },
   "providerSchedulePage": {
     "title": "Horario",
@@ -1451,7 +1454,8 @@
     "markComplete": "Marcar como completado",
     "confirmBooking": "Confirmar reserva",
     "startCleaning": "Iniciar limpieza",
-    "processing": "Procesando…"
+    "processing": "Procesando…",
+    "actionFailed": "Eso no se pudo completar. Inténtalo de nuevo."
   },
   "compBookingProviderCard": {
     "distanceAway": "a {distance} km",

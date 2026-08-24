@@ -2,6 +2,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
+import { toast } from "sonner"
 
 interface Props {
   bookingId: string
@@ -43,8 +44,8 @@ export function ProviderBookingActions({ bookingId, status }: Props) {
     try {
       const res = await fetch(action.endpoint, { method: "POST" })
       if (!res.ok) {
-        const data = await res.json()
-        alert(data.error)
+        const data = await res.json().catch(() => ({}))
+        toast.error(typeof data.error === "string" ? data.error : t("actionFailed"))
         return
       }
       router.refresh()

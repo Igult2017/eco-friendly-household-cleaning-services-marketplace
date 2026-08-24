@@ -1132,7 +1132,8 @@
     "rateClientFailed": "Nie udało się zapisać opinii. Spróbuj ponownie.",
     "acceptRequestPayment": "Przyjmij i poproś o metodę płatności",
     "requestPaymentSending": "Wysyłanie…",
-    "requestPaymentSent": "Klient powiadomiony — oczekiwanie na metodę płatności"
+    "requestPaymentSent": "Klient powiadomiony — oczekiwanie na metodę płatności",
+    "requestPaymentFailed": "Nie udało się wysłać prośby o płatność. Spróbuj ponownie."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Nie udało się oznaczyć jako ukończone",
@@ -1240,6 +1241,7 @@
     "releaseJobButton": "Nie możesz? Zwolnij to zlecenie",
     "releaseJobConfirm": "Zwolnić to zlecenie? Klient zostanie powiadomiony, a zlecenie wróci na tablicę dla innej osoby.",
     "releaseJobFailed": "Nie udało się zwolnić zlecenia.",
+    "clientInfoUnavailable": "Dane klienta nie są teraz dostępne dla tego zlecenia.",
     "hideChat": "Ukryj czat",
     "overdueChip": "Zaległe · {days} dn.",
     "firstBidNote": "Brak ofert — Twoja byłaby pierwsza. Świetne szanse!",
@@ -1363,7 +1365,8 @@
     "responsePlaceholder": "Napisz profesjonalną, przyjazną odpowiedź... (min. 10 znaków)",
     "cancel": "Anuluj",
     "saving": "Zapisywanie…",
-    "postResponse": "Opublikuj odpowiedź"
+    "postResponse": "Opublikuj odpowiedź",
+    "respondFailed": "Nie udało się opublikować odpowiedzi. Spróbuj ponownie."
   },
   "providerSchedulePage": {
     "title": "Harmonogram",
@@ -1451,7 +1454,8 @@
     "markComplete": "Oznacz jako ukończone",
     "confirmBooking": "Potwierdź rezerwację",
     "startCleaning": "Rozpocznij sprzątanie",
-    "processing": "Przetwarzanie…"
+    "processing": "Przetwarzanie…",
+    "actionFailed": "To się nie powiodło. Spróbuj ponownie."
   },
   "compBookingProviderCard": {
     "distanceAway": "{distance} km stąd",

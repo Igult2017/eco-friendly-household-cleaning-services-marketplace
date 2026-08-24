@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Loader2, CalendarClock, MapPin, FileText, Repeat, Hourglass } from "lucide-react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
+import { toast } from "sonner"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
 import { BookingRespondActions } from "@/components/booking/BookingRespondActions"
 import { RateClientCard } from "@/components/provider/RateClientCard"
@@ -58,7 +59,12 @@ export default function ProviderBookingsPage() {
     setRequesting(bookingId)
     try {
       const res = await fetch(`/api/bookings/${bookingId}/request-payment`, { method: "POST" })
-      if (res.ok) setRequestedIds((prev) => new Set([...prev, bookingId]))
+      if (res.ok) {
+        setRequestedIds((prev) => new Set([...prev, bookingId]))
+        return
+      }
+      const d = await res.json().catch(() => ({}))
+      toast.error(typeof d.error === "string" ? d.error : t("requestPaymentFailed"))
     } finally {
       setRequesting(null)
     }

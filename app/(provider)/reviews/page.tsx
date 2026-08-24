@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
+import { toast } from "sonner"
 import { Loader2, MessageSquare } from "lucide-react"
 import { BackButton } from "@/components/ui/BackButton"
 
@@ -30,15 +31,20 @@ export default function ProviderReviewsPage() {
   const submitResponse = async (reviewId: string) => {
     if (responseText.length < 10) return
     setSaving(true)
-    await fetch(`/api/reviews/${reviewId}/respond`, {
+    const res = await fetch(`/api/reviews/${reviewId}/respond`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ response: responseText }),
     })
+    setSaving(false)
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}))
+      toast.error(typeof d.error === "string" ? d.error : t("respondFailed"))
+      return
+    }
     setReviews((prev) => prev.map((r) => r.id === reviewId ? { ...r, providerResponse: responseText } : r))
     setResponding(null)
     setResponseText("")
-    setSaving(false)
   }
 
   return (

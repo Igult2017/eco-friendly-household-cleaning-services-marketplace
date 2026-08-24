@@ -1132,7 +1132,8 @@
     "rateClientFailed": "Beoordeling kon niet worden opgeslagen. Probeer opnieuw.",
     "acceptRequestPayment": "Accepteren & betaalmethode vragen",
     "requestPaymentSending": "Versturen…",
-    "requestPaymentSent": "Klant geïnformeerd — wachten op betaalmethode"
+    "requestPaymentSent": "Klant geïnformeerd — wachten op betaalmethode",
+    "requestPaymentFailed": "Het betalingsverzoek kon niet worden verzonden. Probeer het opnieuw."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Markeren als voltooid mislukt",
@@ -1240,6 +1241,7 @@
     "releaseJobButton": "Kan het niet? Klus vrijgeven",
     "releaseJobConfirm": "Deze klus vrijgeven? De klant wordt op de hoogte gebracht en de klus komt weer beschikbaar voor een andere schoonmaker.",
     "releaseJobFailed": "Kon de klus niet vrijgeven.",
+    "clientInfoUnavailable": "Klantgegevens zijn momenteel niet beschikbaar voor deze klus.",
     "hideChat": "Chat verbergen",
     "overdueChip": "Over tijd · {days} d",
     "firstBidNote": "Nog geen biedingen — jij zou de eerste zijn. Grote kans!",
@@ -1363,7 +1365,8 @@
     "responsePlaceholder": "Schrijf een professionele, vriendelijke reactie... (min. 10 tekens)",
     "cancel": "Annuleren",
     "saving": "Opslaan…",
-    "postResponse": "Reactie plaatsen"
+    "postResponse": "Reactie plaatsen",
+    "respondFailed": "Je reactie kon niet worden geplaatst. Probeer het opnieuw."
   },
   "providerSchedulePage": {
     "title": "Planning",
@@ -1451,7 +1454,8 @@
     "markComplete": "Markeer als voltooid",
     "confirmBooking": "Boeking bevestigen",
     "startCleaning": "Schoonmaak starten",
-    "processing": "Bezig…"
+    "processing": "Bezig…",
+    "actionFailed": "Dat is niet gelukt. Probeer het opnieuw."
   },
   "compBookingProviderCard": {
     "distanceAway": "{distance} km verderop",

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import { toast } from "sonner"
 import { StatusBadge } from "@/components/admin/StatusBadge"
 import { Loader2, Scale } from "lucide-react"
 
@@ -52,7 +53,10 @@ export default function AdminDisputesPage() {
       setSelected(null)
       setForm({ outcome: "resolved_customer", resolution: "", refundPercent: 0 })
       reload()
+      return
     }
+    const d = await res.json().catch(() => ({}))
+    toast.error(d.error ?? "Couldn't resolve this dispute — nothing was charged or refunded")
   }
 
   const filters: FilterType[] = ["open", "escalated", "all"]

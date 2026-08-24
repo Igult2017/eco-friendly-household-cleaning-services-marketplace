@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import { toast } from "sonner"
 import { StatusBadge } from "@/components/admin/StatusBadge"
 import { Loader2, ChevronLeft, ChevronRight } from "lucide-react"
 
@@ -48,7 +49,7 @@ export default function AdminBookingsPage() {
     setReleasing(id)
     try {
       const r = await fetch(`/api/admin/bookings/${id}/release`, { method: "POST" })
-      if (!r.ok) { const d = await r.json().catch(() => ({})); alert(d.error ?? "Release failed") }
+      if (!r.ok) { const d = await r.json().catch(() => ({})); toast.error(d.error ?? "Release failed") }
       reload()
     } finally { setReleasing(null) }
   }

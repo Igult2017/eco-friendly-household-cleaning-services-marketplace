@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 import { Loader2, ToggleLeft, ToggleRight, Trash2 } from "lucide-react"
 import type { PromoCode } from "@/lib/db/schema"
 
@@ -25,11 +26,16 @@ export function PromoCodeTable({ codes }: Props) {
   async function toggleActive(id: string, current: boolean) {
     setToggling(id)
     try {
-      await fetch(`/api/admin/promo-codes/${id}`, {
+      const res = await fetch(`/api/admin/promo-codes/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isActive: !current }),
       })
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}))
+        toast.error(d.error ?? "Couldn't update this promo code")
+        return
+      }
       router.refresh()
     } finally {
       setToggling(null)
@@ -40,7 +46,12 @@ export function PromoCodeTable({ codes }: Props) {
     if (!confirm(`Delete promo code "${code}"? This cannot be undone.`)) return
     setDeleting(id)
     try {
-      await fetch(`/api/admin/promo-codes/${id}`, { method: "DELETE" })
+      const res = await fetch(`/api/admin/promo-codes/${id}`, { method: "DELETE" })
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}))
+        toast.error(d.error ?? "Couldn't delete this promo code")
+        return
+      }
       router.refresh()
     } finally {
       setDeleting(null)

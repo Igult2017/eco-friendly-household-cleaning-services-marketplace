@@ -21,14 +21,28 @@ interface ClientInfo {
 export function JobClientPanel({ jobId }: { jobId: string }) {
   const t = useTranslations("providerProviderJobsPage")
   const [info, setInfo] = useState<ClientInfo | null>(null)
+  // Only a real permission problem (401/403 — e.g. a dual-role account currently switched to
+  // client mode) gets a visible message. A 404/500 stays silent like before: that's missing data
+  // or a transient error, not something about the viewer's role.
+  const [denied, setDenied] = useState(false)
 
   useEffect(() => {
     fetch(`/api/jobs/${jobId}/client`)
-      .then((r) => (r.ok ? r.json() : null))
+      .then((r) => {
+        if (r.status === 401 || r.status === 403) { setDenied(true); return null }
+        return r.ok ? r.json() : null
+      })
       .then((d) => { if (d && typeof d.jobsPosted === "number") setInfo(d) })
       .catch(() => {})
   }, [jobId])
 
+  if (denied) {
+    return (
+      <div className="rounded-xl border border-[#E5EBF0] bg-[#FAFCFB] p-4">
+        <p className="text-xs text-[#6B7280]">{t("clientInfoUnavailable")}</p>
+      </div>
+    )
+  }
   if (!info) return null
 
   const memberYear = info.memberSince ? new Date(info.memberSince).getFullYear() : null
