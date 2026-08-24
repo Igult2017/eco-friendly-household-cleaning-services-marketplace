@@ -3,6 +3,7 @@ import NextLink from "next/link"
 import { Leaf } from "lucide-react"
 import { getTranslations } from "next-intl/server"
 import { CookieSettingsButton } from "@/components/gdpr/CookieSettingsButton"
+import { SOCIAL_LINKS } from "@/components/layout/SocialIcons"
 
 const SECTIONS = [
   {
@@ -56,6 +57,20 @@ export async function Footer() {
               {t("taglineLine1")}<br />
               {t("taglineLine2")}
             </p>
+            <div className="flex items-center gap-4 mt-4">
+              {SOCIAL_LINKS.map(({ key, label, href, Icon }) => (
+                <a
+                  key={key}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="text-white/50 hover:text-white transition-colors"
+                >
+                  <Icon className="w-[18px] h-[18px]" />
+                </a>
+              ))}
+            </div>
           </div>
           {SECTIONS.map(({ key, links }) => (
             <div key={key}>
