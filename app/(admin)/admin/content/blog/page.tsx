@@ -6,6 +6,7 @@ import { desc } from "drizzle-orm"
 import Link from "next/link"
 import { PlusCircle } from "lucide-react"
 import { AdminBlogList } from "@/components/admin/blog/AdminBlogList"
+import { getBlogPostViews } from "@/lib/analytics/umami"
 
 async function getPosts() {
   return db.query.blogPosts.findMany({
@@ -15,7 +16,8 @@ async function getPosts() {
 }
 
 export default async function AdminBlogPage() {
-  const posts = await getPosts()
+  const [posts, views] = await Promise.all([getPosts(), getBlogPostViews()])
+  const postsWithViews = posts.map((post) => ({ ...post, views: views.get(post.slug) ?? 0 }))
 
   return (
     <div className="space-y-6">
@@ -31,7 +33,7 @@ export default async function AdminBlogPage() {
           <PlusCircle size={16} /> New article
         </Link>
       </div>
-      <AdminBlogList initialPosts={posts} />
+      <AdminBlogList initialPosts={postsWithViews} />
     </div>
   )
 }

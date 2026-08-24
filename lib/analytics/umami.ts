@@ -231,6 +231,39 @@ export function computeTrendSeries(range: AnalyticsRange, series: Array<{ x: str
   })
 }
 
+// Every locale except the default ("en") gets a URL prefix (localePrefix: "as-needed" in
+// i18n/routing.ts) — a visit to the same English-only article can land in Umami as either
+// /blog/slug (English) or /de/blog/slug, /fr/blog/slug, etc. (a non-English visitor, even though
+// the article itself has no translation), so the prefix has to be stripped before matching or
+// those visits silently don't count.
+const LOCALE_PREFIXES = ["de", "fr", "es", "it", "nl", "pl", "pt"]
+
+/**
+ * Total pageviews per blog post slug, summed across every locale-prefixed variant of its URL.
+ * Asks Umami for far more rows than the top-pages widget does (`limit=20` there is fine for "what
+ * are the biggest pages on the whole site"; this needs every article, not just whichever ones
+ * happen to be in the overall top 20).
+ */
+export async function getBlogPostViews(): Promise<Map<string, number>> {
+  const end = Date.now()
+  const start = end - 365 * 24 * 60 * 60 * 1000 // a full year — articles published earlier in
+  // this project shouldn't drop out of the count just because they're older than 30/90 days.
+  const paths = await umamiGet<UmamiMetric[]>(
+    `/websites/${WEBSITE_ID}/metrics?type=path&startAt=${start}&endAt=${end}&limit=1000`,
+  )
+  const views = new Map<string, number>()
+  if (!paths) return views
+  for (const { x: path, y } of paths) {
+    if (!path) continue
+    const segments = path.split("/").filter(Boolean) // ["de","blog","my-slug"] or ["blog","my-slug"]
+    const unprefixed = LOCALE_PREFIXES.includes(segments[0]) ? segments.slice(1) : segments
+    if (unprefixed[0] !== "blog" || !unprefixed[1]) continue
+    const slug = unprefixed[1]
+    views.set(slug, (views.get(slug) ?? 0) + y)
+  }
+  return views
+}
+
 /** Map ISO 3166-1 alpha-2 code to human-readable country name (Node Intl). */
 export function countryName(code: string) {
   try {

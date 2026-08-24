@@ -5,7 +5,7 @@ import Link from "next/link"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Pencil, Trash2, Globe, EyeOff } from "lucide-react"
+import { Pencil, Trash2, Globe, EyeOff, Eye } from "lucide-react"
 
 type Post = {
   id: string
@@ -14,6 +14,7 @@ type Post = {
   status: "draft" | "published"
   publishedAt: Date | string | null
   author: { firstName: string | null; lastName: string | null } | null
+  views: number
 }
 
 function fmt(d: Date | string | null) {
@@ -66,6 +67,7 @@ export function AdminBlogList({ initialPosts }: { initialPosts: Post[] }) {
             <th className="text-left px-4 py-3 font-semibold text-[#2B3441]">Status</th>
             <th className="text-left px-4 py-3 font-semibold text-[#2B3441]">Author</th>
             <th className="text-left px-4 py-3 font-semibold text-[#2B3441]">Published</th>
+            <th className="text-left px-4 py-3 font-semibold text-[#2B3441]">Views</th>
             <th className="text-right px-5 py-3 font-semibold text-[#2B3441]">Actions</th>
           </tr>
         </thead>
@@ -94,6 +96,12 @@ export function AdminBlogList({ initialPosts }: { initialPosts: Post[] }) {
                 </td>
                 <td className="px-4 py-3 text-[#6B7280]">{authorName}</td>
                 <td className="px-4 py-3 text-[#6B7280]">{fmt(post.publishedAt)}</td>
+                <td className="px-4 py-3 text-[#6B7280]">
+                  <span className="inline-flex items-center gap-1">
+                    <Eye size={12} />
+                    {post.views.toLocaleString()}
+                  </span>
+                </td>
                 <td className="px-5 py-3 text-right">
                   <div className="flex items-center gap-1 justify-end">
                     <Button
@@ -126,7 +134,7 @@ export function AdminBlogList({ initialPosts }: { initialPosts: Post[] }) {
           })}
           {posts.length === 0 && (
             <tr>
-              <td colSpan={5} className="px-5 py-12 text-center text-[#9CA3AF]">
+              <td colSpan={6} className="px-5 py-12 text-center text-[#9CA3AF]">
                 No articles yet. Create your first one!
               </td>
             </tr>
