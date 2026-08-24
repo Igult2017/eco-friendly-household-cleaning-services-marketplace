@@ -33,10 +33,13 @@ export default async function CustomerBookingsPage() {
 
   const reviewedBookingIds = reviewedRows.map((r) => r.bookingId)
   const list = allBookings as Array<{ status: string; scheduledAt: Date | string }>
+  // pending_payment needs the client's action right now (add a payment method) — it belongs with
+  // the actionable bookings, not filed away with completed/cancelled/refunded history where it's
+  // easy to miss the very thing blocking the cleaner from taking the job.
   const upcoming = list
-    .filter((b) => ["payment_authorized", "confirmed", "in_progress", "pending_capture"].includes(b.status))
+    .filter((b) => ["pending_payment", "payment_authorized", "confirmed", "in_progress", "pending_capture"].includes(b.status))
     .sort((a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime())
-  const past = list.filter((b) => ["completed", "cancelled", "disputed", "refunded", "pending_payment"].includes(b.status))
+  const past = list.filter((b) => ["completed", "cancelled", "disputed", "refunded"].includes(b.status))
 
   return (
     <div className="space-y-6 max-w-3xl">

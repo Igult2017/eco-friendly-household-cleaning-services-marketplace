@@ -31,6 +31,7 @@ export async function DashboardBookings({
   const t = await getTranslations("compCustomerDashboardBookings")
 
   const STATUS: Record<string, { label: string; color: string }> = {
+    pending_payment:    { label: t("statusAwaitingPayment"), color: "bg-amber-100 text-amber-700" },
     payment_authorized: { label: t("statusConfirmed"), color: "bg-blue-100 text-blue-700" },
     confirmed:          { label: t("statusConfirmed"), color: "bg-blue-100 text-blue-700" },
     in_progress:        { label: t("statusInProgress"), color: "bg-[#D1F0E0] text-[#2D7A5F]" },

@@ -1568,6 +1568,7 @@
     "statusConfirmed": "Bevestigd",
     "statusInProgress": "Bezig",
     "statusFinishingUp": "Wordt afgerond",
+    "statusAwaitingPayment": "Wacht op betaalmethode",
     "statusCompleted": "Voltooid",
     "statusCancelled": "Geannuleerd",
     "statusDisputed": "Betwist",

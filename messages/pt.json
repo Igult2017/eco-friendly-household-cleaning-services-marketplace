@@ -1568,6 +1568,7 @@
     "statusConfirmed": "Confirmada",
     "statusInProgress": "Em andamento",
     "statusFinishingUp": "A finalizar",
+    "statusAwaitingPayment": "A aguardar método de pagamento",
     "statusCompleted": "Concluída",
     "statusCancelled": "Cancelada",
     "statusDisputed": "Em disputa",
