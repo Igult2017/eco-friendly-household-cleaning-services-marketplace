@@ -1,8 +1,8 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { bids, jobPosts, providers, notifications, serviceCategories } from "@/lib/db/schema"
-import { eq } from "drizzle-orm"
+import { bids, jobPosts, providers, providerServices, notifications, serviceCategories } from "@/lib/db/schema"
+import { eq, and } from "drizzle-orm"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
 import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
 import { getClientIp } from "@/lib/utils/ip"
@@ -57,7 +57,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         customerId: jobPosts.customerId, categoryId: jobPosts.categoryId, postedIp: jobPosts.postedIp,
         serviceAddress: jobPosts.serviceAddress,
         serviceLatitude: jobPosts.serviceLatitude, serviceLongitude: jobPosts.serviceLongitude,
-        radiusKm: jobPosts.radiusKm, budgetMin: jobPosts.budgetMin,
+        radiusKm: jobPosts.radiusKm, budgetMin: jobPosts.budgetMin, budgetMax: jobPosts.budgetMax,
         estimatedDurationMinutes: jobPosts.estimatedDurationMinutes,
         recurringFrequency: jobPosts.recurringFrequency,
       })
@@ -90,6 +90,29 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       }
     }
 
+    // With a real price range (budgetMax > budgetMin), the claiming cleaner's own listed rate
+    // decides the actual price — pulled to the nearest end if it falls outside the client's range.
+    // A single fixed price (the common case) skips all of this: min===max, so clamping is a no-op
+    // and claimAmount is exactly what it always was.
+    let claimAmount = job.budgetMin!
+    const rangeMax = job.budgetMax ?? job.budgetMin!
+    if (rangeMax > job.budgetMin!) {
+      const durationMinutes = job.estimatedDurationMinutes ?? 120
+      const myServices = await db
+        .select({ basePrice: providerServices.basePrice, priceUnit: providerServices.priceUnit, categoryIds: providerServices.categoryIds })
+        .from(providerServices)
+        .where(and(eq(providerServices.providerId, provider.id), eq(providerServices.isActive, true)))
+      const priced = myServices.filter((s) => s.basePrice != null)
+      const categoryMatch = job.categoryId
+        ? priced.find((s) => Array.isArray(s.categoryIds) && (s.categoryIds as string[]).includes(job.categoryId as string))
+        : undefined
+      const best = categoryMatch ?? priced[0]
+      const ownRate = best?.basePrice != null
+        ? (best.priceUnit === "per_hour" ? Math.round((best.basePrice * durationMinutes) / 60) : best.basePrice)
+        : Math.round((job.budgetMin! + rangeMax) / 2) // no priced service on file — split the difference
+      claimAmount = Math.min(Math.max(ownRate, job.budgetMin!), rangeMax)
+    }
+
     // Atomic claim: SELECT...FOR UPDATE + status re-check inside a transaction. BUG-011 lesson (from
     // the bid-accept route) applies here too — never call tx.rollback() on a lost race, it throws and
     // the outer catch turns it into a 500. Return early instead; that just commits a harmless no-op.
@@ -115,7 +138,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         .values({
           jobPostId,
           providerId: provider.id,
-          amount: job.budgetMin!,
+          amount: claimAmount,
           status: "accepted",
           estimatedDurationMinutes: job.estimatedDurationMinutes,
           cancellationPolicyAcceptedAt: new Date(),
@@ -141,7 +164,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       categoryName = cat?.name ?? null
     }
 
-    const amountLabel = formatCurrencyForCountry(job.budgetMin, provider.country || "DE")
+    const amountLabel = formatCurrencyForCountry(claimAmount, provider.country || "DE")
 
     // The claim itself IS the "acceptance" — this notification is the only signal the client gets,
     // there's no approval step for them to take.
@@ -157,7 +180,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         metadata: { name: provider.businessName, amount: amountLabel, title: job.title },
       })
       await pusherServer
-        .trigger(`private-customer-${job.customerId}`, "job-taken", { jobPostId, providerName: provider.businessName, amount: job.budgetMin })
+        .trigger(`private-customer-${job.customerId}`, "job-taken", { jobPostId, providerName: provider.businessName, amount: claimAmount })
         .catch(() => undefined)
     } catch (e) {
       console.warn("[jobs take] client notification failed:", e)
@@ -196,7 +219,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         serviceLongitude: job.serviceLongitude,
         scheduledAt,
         durationMinutes: job.estimatedDurationMinutes ?? 120,
-        bidAmountCents: job.budgetMin,
+        bidAmountCents: claimAmount,
         providerCountry: provider.country ?? null,
         // This instance is always same-day, but the client may have said they want it on a regular
         // schedule going forward — carry that through the same as a standard bid-accepted booking.

@@ -11,6 +11,7 @@ type Svc = {
   name: string
   categoryName: string | null
   basePrice: number | null // null = "ask on booking"
+  basePriceMax: number | null // optional upper end of a range ("€20-25/hour"); null = no range
   priceUnit: string
   isActive: boolean
 }
@@ -77,6 +78,7 @@ export function PricingSummaryCard() {
                 ) : (
                   <>
                     {formatCurrencyShort(s.basePrice)}
+                    {s.basePriceMax && s.basePriceMax > s.basePrice && <>–{formatCurrencyShort(s.basePriceMax)}</>}
                     <span className="text-[11px] font-medium text-[#6B7280]">{priceUnitSuffix[s.priceUnit] ?? ""}</span>
                   </>
                 )}

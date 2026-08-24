@@ -16,9 +16,15 @@ const serviceSchema = z.object({
   description: z.string().max(1000).optional(),
   // null = "ask on booking" — no fixed price, excluded from instant/direct booking.
   basePrice: z.number().int().min(100).nullable(),
+  // Optional upper end of a price range ("€20-25/hour") — null/omitted means no range, just
+  // basePrice as a single fixed rate. Only meaningful for priceUnit "per_hour".
+  basePriceMax: z.number().int().min(100).nullable().optional(),
   priceUnit: z.enum(["per_job", "per_hour", "per_sqft"]),
   minDurationMinutes: z.number().int().min(30).max(480),
-})
+}).refine(
+  (d) => d.basePriceMax == null || d.basePrice == null || d.basePriceMax >= d.basePrice,
+  { message: "The maximum can't be lower than the minimum.", path: ["basePriceMax"] },
+)
 
 export async function GET() {
   try {
@@ -42,6 +48,7 @@ export async function GET() {
         name: providerServices.name,
         description: providerServices.description,
         basePrice: providerServices.basePrice,
+        basePriceMax: providerServices.basePriceMax,
         priceUnit: providerServices.priceUnit,
         minDurationMinutes: providerServices.minDurationMinutes,
         isActive: providerServices.isActive,
@@ -88,6 +95,12 @@ export async function POST(req: Request) {
           { status: 422 },
         )
       }
+      if (d.basePriceMax != null && d.basePriceMax < minHourlyRateCents) {
+        return NextResponse.json(
+          { error: { fieldErrors: { basePriceMax: [`Hourly rate must be at least ${(minHourlyRateCents / 100).toFixed(2)} per hour.`] } } },
+          { status: 422 },
+        )
+      }
     }
     const [service] = await db.insert(providerServices).values({
       providerId: provider.id,
@@ -97,6 +110,9 @@ export async function POST(req: Request) {
       name: d.name,
       description: d.description ?? null,
       basePrice: d.basePrice,
+      // A range only makes sense alongside an actual price and hourly billing — never persist a
+      // stray max when there's no base price to pair it with, or the unit isn't per-hour.
+      basePriceMax: d.priceUnit === "per_hour" && d.basePrice != null ? (d.basePriceMax ?? null) : null,
       priceUnit: d.priceUnit,
       minDurationMinutes: d.minDurationMinutes,
       ecoProductsUsed: [],

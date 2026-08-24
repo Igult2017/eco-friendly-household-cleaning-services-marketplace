@@ -53,10 +53,10 @@ const createJobSchema = z.object({
 }).refine(
   (d) => !d.budgetMin || !d.budgetMax || d.budgetMax >= d.budgetMin,
   { message: "budgetMax must be >= budgetMin", path: ["budgetMax"] },
-).refine(
-  (d) => d.jobType !== "take_job" || d.budgetMin === d.budgetMax,
-  { message: "Take Job requires a single fixed price (budgetMin must equal budgetMax)", path: ["budgetMax"] },
 )
+// Take Job's min/max is a real range now, same as a standard post — the claiming cleaner's own
+// rate decides the actual price within it (or the range midpoint, if they have none on file); see
+// the resolution logic in app/api/jobs/[id]/take/route.ts.
 // Take Job itself is always a same-day, single instance — but the client can still SAY they want
 // this kind of cleaning on a regular schedule going forward, same as a standard post. The actual
 // schedule only gets set up later, once a specific cleaner is known (see the post-completion

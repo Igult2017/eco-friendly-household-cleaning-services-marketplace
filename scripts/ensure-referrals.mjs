@@ -480,6 +480,10 @@ ALTER TABLE job_posts ADD COLUMN IF NOT EXISTS assigned_at timestamptz;
 -- at Stripe Connect account creation (lib/stripe/connect.ts), not configurable per-cleaner. Kept
 -- this column around was misleading, implying a setting that doesn't actually do anything.
 ALTER TABLE providers DROP COLUMN IF EXISTS payout_schedule;
+
+-- Optional upper end of a cleaner's per-hour price range ("€20-25/hour"). NULL = no range, just
+-- base_price as a single fixed rate — nothing changes for a cleaner who never sets one.
+ALTER TABLE provider_services ADD COLUMN IF NOT EXISTS base_price_max integer;
 `
 
 function isValidUrl(url) {

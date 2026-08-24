@@ -46,6 +46,9 @@ export const providerServices = pgTable(
     name: varchar("name", { length: 200 }).notNull(),
     description: text("description"),
     basePrice: integer("base_price"), // euro cents; null = "ask on booking" (no fixed price)
+    // Optional upper end of a price range ("€20–25/hour") — null means no range, just basePrice as
+    // a single fixed rate. Only meaningful alongside priceUnit "per_hour" (see the services page).
+    basePriceMax: integer("base_price_max"),
     priceUnit: varchar("price_unit", { length: 20 }).notNull().default("per_job"), // per_job | per_hour | per_sqft
     minDurationMinutes: integer("min_duration_minutes").notNull().default(60),
     maxDurationMinutes: integer("max_duration_minutes"),

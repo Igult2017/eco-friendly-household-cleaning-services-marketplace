@@ -57,6 +57,7 @@ export default function ProviderJobDetailPage() {
   const country = job.serviceAddress.country ?? "DE"
   const mins = job.estimatedDurationMinutes
   const hourly = job.budgetMin && mins ? Math.round((job.budgetMin * 60) / mins) : null
+  const hourlyMax = job.budgetMax && job.budgetMax !== job.budgetMin && mins ? Math.round((job.budgetMax * 60) / mins) : null
   const alreadyBid = job.alreadyBid || submitted
   const hoursLabel = mins ? (mins % 60 === 0 ? String(mins / 60) : (mins / 60).toFixed(1)) : null
   const ageH = Math.floor((Date.now() - new Date(job.createdAt).getTime()) / 3_600_000)
@@ -79,7 +80,13 @@ export default function ProviderJobDetailPage() {
             <div className="text-right shrink-0">
               {hourly ? (
                 <>
-                  <p className="font-bold text-[#2D7A5F] text-2xl">{t("perHour", { amount: formatCurrencyForCountry(hourly, country, "en-GB") })}</p>
+                  <p className="font-bold text-[#2D7A5F] text-2xl">
+                    {t("perHour", {
+                      amount: hourlyMax
+                        ? `${formatCurrencyForCountry(hourly, country, "en-GB")} – ${formatCurrencyForCountry(hourlyMax, country, "en-GB")}`
+                        : formatCurrencyForCountry(hourly, country, "en-GB"),
+                    })}
+                  </p>
                   {job.budgetMin ? <p className="text-xs text-[#6B7280]">{t("totalApprox", { amount: formatCurrencyForCountry(job.budgetMin, country, "en-GB") })}</p> : null}
                 </>
               ) : job.budgetMin ? (

@@ -211,11 +211,17 @@ export default function ProviderJobsPage() {
                         {job.category && <Badge className="bg-[#D1F0E0] text-[#2D7A5F] text-xs mt-1">{job.category.name}</Badge>}
                       </div>
                       <div className="text-right flex-shrink-0">
-                        {/* Per-hour rate is THE price (payment mode in EU + US); total is secondary. */}
+                        {/* Per-hour rate is THE price (payment mode in EU + US); total is secondary.
+                            A range shows as "€X – €Y/hr" when min and max differ, a single figure
+                            when the client left the job at one fixed rate. */}
                         {job.budgetMin && job.estimatedDurationMinutes ? (
                           <>
                             <p className="font-bold text-[#2D7A5F] text-base">
-                              {t("perHour", { amount: formatCurrencyForCountry(Math.round((job.budgetMin * 60) / job.estimatedDurationMinutes), job.serviceAddress.country ?? "DE", "en-GB") })}
+                              {t("perHour", {
+                                amount: job.budgetMax && job.budgetMax !== job.budgetMin
+                                  ? `${formatCurrencyForCountry(Math.round((job.budgetMin * 60) / job.estimatedDurationMinutes), job.serviceAddress.country ?? "DE", "en-GB")} – ${formatCurrencyForCountry(Math.round((job.budgetMax * 60) / job.estimatedDurationMinutes), job.serviceAddress.country ?? "DE", "en-GB")}`
+                                  : formatCurrencyForCountry(Math.round((job.budgetMin * 60) / job.estimatedDurationMinutes), job.serviceAddress.country ?? "DE", "en-GB"),
+                              })}
                             </p>
                             <p className="text-[11px] text-[#6B7280]">{t("totalApprox", { amount: formatCurrencyForCountry(job.budgetMin, job.serviceAddress.country ?? "DE", "en-GB") })}</p>
                           </>
