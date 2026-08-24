@@ -2109,6 +2109,8 @@
     "back": "Terug",
     "reasonTooShort": "Geef een korte reden (minimaal 5 tekens).",
     "suggestNothing": "Stel een nieuwe tijd, een nieuw tarief of beide voor.",
+    "rateBelowMinimum": "Het minimumbedrag per uur is € {min}.",
+    "rateMinimumHint": "Minimaal € {min}/uur.",
     "genericError": "Er ging iets mis. Probeer opnieuw."
   },
   "compBookingProposalBanner": {

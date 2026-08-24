@@ -5,11 +5,14 @@ import { db } from "@/lib/db"
 import { bookings, providers, notifications } from "@/lib/db/schema"
 import { and, eq, inArray } from "drizzle-orm"
 import { logError } from "@/lib/utils/logError"
+import { getMinHourlyRateCents } from "@/lib/platform/settings"
 
 const schema = z
   .object({
     scheduledAt: z.string().datetime().refine((v) => new Date(v) > new Date(), { message: "must be in the future" }).optional(),
     durationMinutes: z.number().int().min(30).max(480).optional(),
+    // .min(100) is only a basic sanity floor — zod can't read the admin-configurable minimum
+    // (lib/platform/settings.ts getMinHourlyRateCents) inline, so that's checked separately below.
     hourlyCents: z.number().int().min(100).max(100_000).optional(),
     message: z.string().max(500).optional(),
   })
@@ -25,6 +28,16 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     const parsed = schema.safeParse(await req.json().catch(() => ({})))
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+
+    if (parsed.data.hourlyCents !== undefined) {
+      const minHourlyRateCents = await getMinHourlyRateCents()
+      if (parsed.data.hourlyCents < minHourlyRateCents) {
+        return NextResponse.json(
+          { error: { fieldErrors: { hourlyCents: [`Hourly rate must be at least ${(minHourlyRateCents / 100).toFixed(2)} per hour.`] } } },
+          { status: 422 },
+        )
+      }
+    }
 
     const [prov] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, userId))
     if (!prov) return NextResponse.json({ error: "Forbidden" }, { status: 403 })

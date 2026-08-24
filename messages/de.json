@@ -2109,6 +2109,8 @@
     "back": "Zurück",
     "reasonTooShort": "Bitte gib einen kurzen Grund an (mind. 5 Zeichen).",
     "suggestNothing": "Schlage eine neue Zeit, einen neuen Satz oder beides vor.",
+    "rateBelowMinimum": "Der Mindestbetrag pro Stunde beträgt {min} €.",
+    "rateMinimumHint": "Mindestens {min} €/Stunde.",
     "genericError": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
   },
   "compBookingProposalBanner": {

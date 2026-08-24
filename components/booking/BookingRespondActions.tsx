@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useTranslations } from "next-intl"
 import { Loader2, Check, PencilLine, X } from "lucide-react"
 
@@ -16,6 +16,16 @@ export function BookingRespondActions({ bookingId, onDone }: { bookingId: string
   const [hourly, setHourly] = useState("")
   const [message, setMessage] = useState("")
   const [reason, setReason] = useState("")
+  // Admin-configurable wage floor (lib/platform/settings.ts getMinHourlyRateCents) — 1500 (€15) is
+  // just the initial guess shown before the live value loads; the server is the real source of truth.
+  const [minHourlyRateCents, setMinHourlyRateCents] = useState(1500)
+
+  useEffect(() => {
+    fetch("/api/settings/min-hourly-rate")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (typeof d?.cents === "number") setMinHourlyRateCents(d.cents) })
+      .catch(() => {})
+  }, [])
 
   async function post(url: string, body: unknown) {
     setBusy(true)
@@ -37,6 +47,10 @@ export function BookingRespondActions({ bookingId, onDone }: { bookingId: string
     const hourlyCents = hourly ? Math.round(parseFloat(hourly) * 100) : undefined
     const scheduledAt = date && time ? new Date(`${date}T${time}:00`).toISOString() : undefined
     if (!hourlyCents && !scheduledAt) { setError(t("suggestNothing")); return }
+    if (hourlyCents && hourlyCents < minHourlyRateCents) {
+      setError(t("rateBelowMinimum", { min: (minHourlyRateCents / 100).toFixed(2) }))
+      return
+    }
     post(`/api/bookings/${bookingId}/propose`, { scheduledAt, hourlyCents, message: message.trim() || undefined })
   }
 
@@ -50,7 +64,16 @@ export function BookingRespondActions({ bookingId, onDone }: { bookingId: string
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)} min={new Date().toISOString().split("T")[0]} className={inputCls} aria-label={t("newDate")} />
           <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} aria-label={t("newTime")} />
         </div>
-        <input type="number" min="1" step="0.5" value={hourly} onChange={(e) => setHourly(e.target.value)} placeholder={t("newRatePlaceholder")} className={`${inputCls} w-full`} />
+        <input
+          type="number"
+          min={minHourlyRateCents / 100}
+          step="0.5"
+          value={hourly}
+          onChange={(e) => setHourly(e.target.value)}
+          placeholder={t("newRatePlaceholder")}
+          className={`${inputCls} w-full`}
+        />
+        <p className="text-xs text-[#9CA3AF]">{t("rateMinimumHint", { min: (minHourlyRateCents / 100).toFixed(2) })}</p>
         <textarea rows={2} value={message} onChange={(e) => setMessage(e.target.value)} placeholder={t("messagePlaceholder")} className={`${inputCls} w-full resize-none`} />
         {error && <p className="text-xs text-red-500">{error}</p>}
         <div className="flex gap-2">

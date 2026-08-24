@@ -2109,6 +2109,8 @@
     "back": "Back",
     "reasonTooShort": "Please give a short reason (at least 5 characters).",
     "suggestNothing": "Suggest a new time, a new rate, or both.",
+    "rateBelowMinimum": "The minimum hourly rate is €{min}.",
+    "rateMinimumHint": "Minimum €{min}/hour.",
     "genericError": "Something went wrong. Please try again."
   },
   "compBookingProposalBanner": {

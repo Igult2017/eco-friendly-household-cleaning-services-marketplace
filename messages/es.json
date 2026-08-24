@@ -2109,6 +2109,8 @@
     "back": "Atrás",
     "reasonTooShort": "Indica un motivo breve (mínimo 5 caracteres).",
     "suggestNothing": "Sugiere una nueva hora, una nueva tarifa o ambas.",
+    "rateBelowMinimum": "El importe mínimo por hora es {min} €.",
+    "rateMinimumHint": "Mínimo {min} €/hora.",
     "genericError": "Algo salió mal. Inténtalo de nuevo."
   },
   "compBookingProposalBanner": {
