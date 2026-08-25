@@ -1219,7 +1219,7 @@
     "yourBid": "Jouw bod",
     "yourPriceLabel": "Jouw prijs (€)",
     "yourPriceAutoPlaceholder": "Automatisch ingevuld vanuit je profiel",
-    "yourPriceAutoHint": "Laat leeg om je eigen tarief voor dit soort klus te gebruiken.",
+    "yourPriceAutoHint": "Laat leeg om je eigen tarief te gebruiken — of, als je er geen hebt ingesteld, de vraagprijs van de klant.",
     "durationLabel": "Duur (min, optioneel)",
     "proposedDateLabel": "Voorgestelde datum (optioneel)",
     "messageLabel": "Bericht aan de klant (optioneel)",

@@ -1219,7 +1219,7 @@
     "yourBid": "La tua offerta",
     "yourPriceLabel": "Il tuo prezzo (€)",
     "yourPriceAutoPlaceholder": "Compilato automaticamente dal tuo profilo",
-    "yourPriceAutoHint": "Lascia vuoto per usare la tua tariffa per questo tipo di lavoro.",
+    "yourPriceAutoHint": "Lascia vuoto per usare la tua tariffa oppure, se non ne hai una impostata, il prezzo richiesto dal cliente.",
     "durationLabel": "Durata (min, facoltativo)",
     "proposedDateLabel": "Data proposta (facoltativo)",
     "messageLabel": "Messaggio al cliente (facoltativo)",

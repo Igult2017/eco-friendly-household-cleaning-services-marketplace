@@ -1219,7 +1219,7 @@
     "yourBid": "Votre offre",
     "yourPriceLabel": "Votre prix (€)",
     "yourPriceAutoPlaceholder": "Rempli automatiquement depuis votre profil",
-    "yourPriceAutoHint": "Laissez vide pour utiliser votre propre tarif pour ce type de mission.",
+    "yourPriceAutoHint": "Laissez vide pour utiliser votre propre tarif ou, si vous n'en avez pas défini, le prix demandé par le client.",
     "durationLabel": "Durée (min, facultatif)",
     "proposedDateLabel": "Date proposée (facultatif)",
     "messageLabel": "Message au client (facultatif)",

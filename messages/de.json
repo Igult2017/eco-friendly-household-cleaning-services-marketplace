@@ -1219,7 +1219,7 @@
     "yourBid": "Ihr Angebot",
     "yourPriceLabel": "Ihr Preis (€)",
     "yourPriceAutoPlaceholder": "Automatisch aus deinem Profil",
-    "yourPriceAutoHint": "Leer lassen, um deinen eigenen Satz für diese Art von Auftrag zu verwenden.",
+    "yourPriceAutoHint": "Leer lassen, um deinen eigenen Satz zu verwenden — oder, falls keiner hinterlegt ist, den vom Kunden gewünschten Preis.",
     "durationLabel": "Dauer (Min., optional)",
     "proposedDateLabel": "Vorgeschlagenes Datum (optional)",
     "messageLabel": "Nachricht an den Kunden (optional)",

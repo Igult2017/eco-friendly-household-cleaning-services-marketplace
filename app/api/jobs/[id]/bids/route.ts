@@ -57,7 +57,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     if (!provider) return NextResponse.json({ error: "Not an approved provider" }, { status: 403 })
 
     const [job] = await db
-      .select({ id: jobPosts.id, title: jobPosts.title, status: jobPosts.status, customerId: jobPosts.customerId, categoryId: jobPosts.categoryId, expiresAt: jobPosts.expiresAt, postedIp: jobPosts.postedIp, serviceLatitude: jobPosts.serviceLatitude, serviceLongitude: jobPosts.serviceLongitude, radiusKm: jobPosts.radiusKm, serviceAddress: jobPosts.serviceAddress })
+      .select({ id: jobPosts.id, title: jobPosts.title, status: jobPosts.status, customerId: jobPosts.customerId, categoryId: jobPosts.categoryId, expiresAt: jobPosts.expiresAt, postedIp: jobPosts.postedIp, serviceLatitude: jobPosts.serviceLatitude, serviceLongitude: jobPosts.serviceLongitude, radiusKm: jobPosts.radiusKm, serviceAddress: jobPosts.serviceAddress, budgetMin: jobPosts.budgetMin })
       .from(jobPosts)
       .where(eq(jobPosts.id, jobPostId))
 
@@ -121,10 +121,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         autoAmount = best.priceUnit === "per_hour" ? Math.round((best.basePrice * durationMinutes) / 60) : best.basePrice
       }
     }
-    const amount = data.amount ?? autoAmount
+    // Still nothing (no rate entered, no priced service to fill it in from)? Fall back to the
+    // client's own posted minimum for this job — a bid is always submittable, and the client still
+    // reviews and can decline/negotiate before it becomes a real booking, unlike a Take Job claim.
+    const amount = data.amount ?? autoAmount ?? job.budgetMin ?? undefined
     if (amount === undefined) {
       return NextResponse.json(
-        { error: { fieldErrors: { amount: ["Enter your price, or add a priced service to your profile so it can be filled in automatically."] } } },
+        { error: { fieldErrors: { amount: ["Couldn't determine a price for this bid — please enter one."] } } },
         { status: 422 },
       )
     }

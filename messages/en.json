@@ -1219,7 +1219,7 @@
     "yourBid": "Your Bid",
     "yourPriceLabel": "Your price (€)",
     "yourPriceAutoPlaceholder": "Auto-filled from your profile",
-    "yourPriceAutoHint": "Leave blank to use your own rate for this type of job.",
+    "yourPriceAutoHint": "Leave blank to use your own rate — or, if you haven't set one, the client's asking price.",
     "durationLabel": "Duration (mins, optional)",
     "proposedDateLabel": "Proposed date (optional)",
     "messageLabel": "Message to client (optional)",
