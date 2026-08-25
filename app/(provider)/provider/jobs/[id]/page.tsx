@@ -10,6 +10,9 @@ import { Loader2, MapPin, Clock, CheckCircle2, Repeat, Users } from "lucide-reac
 import { ProviderBidForm } from "@/components/bidding/ProviderBidForm"
 import { JobClientPanel } from "@/components/bidding/JobClientPanel"
 
+// 2024-01-07 is a Sunday — offset by day number for a locale-aware short weekday name.
+const dayName = (d: number) => new Date(Date.UTC(2024, 0, 7 + d)).toLocaleDateString(undefined, { weekday: "short", timeZone: "UTC" })
+
 interface JobPost {
   id: string; title: string; description: string; status: string
   budgetMin: number | null; budgetMax: number | null
@@ -18,7 +21,7 @@ interface JobPost {
   own: boolean; withinRadius: boolean; distanceLabel: string | null
   alreadyBid: boolean; wonByMe: boolean
   serviceAddress: { line1: string; city: string; postalCode: string; country: string | null }
-  ecoRequirements: string[]; recurringFrequency: string | null
+  ecoRequirements: string[]; recurringFrequency: string | null; recurringDays: number[] | null
   createdAt: string
   category: { name: string } | null
   bids: { id: string; providerId: string; status: string }[]
@@ -110,6 +113,7 @@ export default function ProviderJobDetailPage() {
               <span className="flex items-center gap-1 rounded-full bg-[#D1F0E0] px-2 py-0.5 font-medium text-[#2D7A5F]">
                 <Repeat size={12} />{t("recurringLabel")}
                 {["weekly", "biweekly", "monthly"].includes(job.recurringFrequency) && <> · {t(`recurring_${job.recurringFrequency}`)}</>}
+                {job.recurringDays && job.recurringDays.length > 0 && <> ({job.recurringDays.map(dayName).join(", ")})</>}
               </span>
             )}
           </div>

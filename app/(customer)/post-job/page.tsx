@@ -19,6 +19,7 @@ import { localTodayYmd } from "@/lib/utils/formatDate"
 import { SaveCardPrompt } from "@/components/customer/SaveCardPrompt"
 import { FieldError } from "@/components/ui/FieldError"
 
+const WEEKDAYS = [1, 2, 3, 4, 5, 6, 0]
 const ECO_OPTIONS = ["Eco-certified products only", "No single-use plastics", "Fragrance-free", "Energy-saving methods"]
 const ECO_OPTION_KEYS: Record<string, string> = {
   "Eco-certified products only": "ecoOptionCertified",
@@ -84,11 +85,33 @@ export default function PostJobPage() {
     radiusKm: 25,
     ecoRequirements: [] as string[],
     recurringFrequency: "",
+    recurringDays: [] as number[],
   })
 
   function set(field: string, value: any) {
     setForm((prev) => ({ ...prev, [field]: value }))
   }
+
+  // Same day-picker rule as the direct-booking wizard (/book): Monthly is single-day (it just
+  // locates the first cleaning — see recurringDaysHintMonthly), Weekly/Biweekly allow several.
+  function toggleRecurringDay(d: number) {
+    setForm((prev) => {
+      if (prev.recurringFrequency === "monthly") return { ...prev, recurringDays: [d] }
+      const days = prev.recurringDays.includes(d) ? prev.recurringDays.filter((x) => x !== d) : [...prev.recurringDays, d].sort((a, b) => a - b)
+      return { ...prev, recurringDays: days }
+    })
+  }
+
+  // Switching to Monthly after picking multiple days (or picking none) trims/keeps state sane;
+  // switching frequency back to "none" clears the days so a stale pick doesn't linger unseen.
+  useEffect(() => {
+    if (form.recurringFrequency === "monthly" && form.recurringDays.length > 1) {
+      setForm((prev) => ({ ...prev, recurringDays: [prev.recurringDays[0]] }))
+    } else if (!form.recurringFrequency && form.recurringDays.length > 0) {
+      setForm((prev) => ({ ...prev, recurringDays: [] }))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.recurringFrequency])
 
   // Tracked so handleSubmit can wait on a blur-triggered lookup that's still in flight, instead of
   // reading `form.serviceLatitude` before it's resolved (the cause of "missing address" firing even
@@ -241,6 +264,7 @@ export default function PostJobPage() {
           desiredTimeRange: hasStart && hasEnd ? { start: form.desiredTimeStart, end: form.desiredTimeEnd } : undefined,
           estimatedHours: form.estimatedHours ? parseFloat(form.estimatedHours) : undefined,
           recurringFrequency: form.recurringFrequency || undefined,
+          recurringDays: form.recurringFrequency && form.recurringDays.length ? form.recurringDays : undefined,
         }),
       })
       if (!res.ok) {
@@ -264,7 +288,7 @@ export default function PostJobPage() {
         <p className="text-[#6B7280] text-center mb-6 max-w-sm">{t("successDescription")}</p>
         <div className="flex gap-3">
           <Button onClick={() => router.push("/jobs")} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white">{t("viewMyJobs")}</Button>
-          <Button variant="outline" onClick={() => { setSuccess(false); setJobType("standard"); setForm({ title: "", description: "", hourlyRateMin: "", hourlyRateMax: "", desiredDate: "", desiredTimeStart: "", desiredTimeEnd: "", estimatedHours: "2", serviceAddress: { line1: "", city: "", postalCode: "", country: "" }, serviceLatitude: 0, serviceLongitude: 0, radiusKm: 25, ecoRequirements: [], recurringFrequency: "" }) }} className="border-[#E5EBF0]">{t("postAnother")}</Button>
+          <Button variant="outline" onClick={() => { setSuccess(false); setJobType("standard"); setForm({ title: "", description: "", hourlyRateMin: "", hourlyRateMax: "", desiredDate: "", desiredTimeStart: "", desiredTimeEnd: "", estimatedHours: "2", serviceAddress: { line1: "", city: "", postalCode: "", country: "" }, serviceLatitude: 0, serviceLongitude: 0, radiusKm: 25, ecoRequirements: [], recurringFrequency: "", recurringDays: [] }) }} className="border-[#E5EBF0]">{t("postAnother")}</Button>
         </div>
       </div>
     )
@@ -409,6 +433,33 @@ export default function PostJobPage() {
                 <option value="monthly">{tSchedule("freq_monthly")}</option>
               </select>
               <p className="text-xs text-[#9CA3AF] mt-1">{t("recurringHint")}</p>
+              {form.recurringFrequency && (
+                <div className="mt-3 border-t border-[#E5EBF0] pt-3">
+                  <Label className="text-xs font-semibold text-[#2B3441] mb-1 block">
+                    {form.recurringFrequency === "monthly" ? tSchedule("recurringDayLabelMonthly") : tSchedule("recurringDaysLabel")}
+                  </Label>
+                  <p className="text-xs text-[#9CA3AF] mb-2">
+                    {form.recurringFrequency === "monthly" ? tSchedule("recurringDaysHintMonthly") : tSchedule("recurringDaysHint")}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {WEEKDAYS.map((d) => (
+                      <button
+                        key={d}
+                        type="button"
+                        onClick={() => toggleRecurringDay(d)}
+                        className={cn(
+                          "px-3 py-1.5 rounded-lg text-sm font-medium border-2 transition-all",
+                          form.recurringDays.includes(d)
+                            ? "border-[#2D7A5F] bg-[#2D7A5F] text-white"
+                            : "border-[#E5EBF0] hover:border-[#4CB87A] text-[#2B3441]"
+                        )}
+                      >
+                        {new Date(Date.UTC(2024, 0, 7 + d)).toLocaleDateString(locale, { weekday: "short", timeZone: "UTC" })}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

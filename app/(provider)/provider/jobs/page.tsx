@@ -17,6 +17,9 @@ import { InlineQuickMessage } from "@/components/messaging/InlineQuickMessage"
 import { TakeJobButton } from "@/components/bidding/TakeJobButton"
 import { usePusherChannel } from "@/hooks/usePusherChannel"
 
+// 2024-01-07 is a Sunday — offset by day number for a locale-aware short weekday name.
+const dayName = (d: number) => new Date(Date.UTC(2024, 0, 7 + d)).toLocaleDateString(undefined, { weekday: "short", timeZone: "UTC" })
+
 interface JobPost {
   id: string
   title: string
@@ -38,6 +41,7 @@ interface JobPost {
   serviceAddress: { line1: string; city: string; postalCode: string; country: string | null }
   ecoRequirements: string[]
   recurringFrequency: string | null
+  recurringDays: number[] | null
   expiresAt: string
   createdAt: string
   category: { name: string } | null
@@ -257,6 +261,7 @@ export default function ProviderJobsPage() {
                         <span className="flex items-center gap-1 bg-[#D1F0E0] text-[#2D7A5F] font-medium px-2 py-0.5 rounded-full">
                           <Repeat size={12} />{t("recurringLabel")}
                           {["weekly", "biweekly", "monthly"].includes(job.recurringFrequency) && <> · {t(`recurring_${job.recurringFrequency}`)}</>}
+                          {job.recurringDays && job.recurringDays.length > 0 && <> ({job.recurringDays.map(dayName).join(", ")})</>}
                         </span>
                       )}
                     </div>

@@ -33,6 +33,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
         serviceLongitude: jobPosts.serviceLongitude,
         desiredDate: jobPosts.desiredDate,
         recurringFrequency: jobPosts.recurringFrequency,
+        recurringDays: jobPosts.recurringDays,
       })
       .from(jobPosts)
       .where(and(eq(jobPosts.id, jobPostId), eq(jobPosts.customerId, userId)))
@@ -210,6 +211,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
         providerCountry: provider?.country ?? null,
         // Carry the job's recurring intent into the booking (was silently dropped at this handoff).
         requestedFrequency: job.recurringFrequency ?? null,
+        requestedDays: (job.recurringDays as number[] | null)?.length ? job.recurringDays : undefined,
       },
     })
   } catch (err) {

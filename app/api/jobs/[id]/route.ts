@@ -19,7 +19,8 @@ const editSchema = z.object({
     .optional(),
   estimatedHours: z.number().min(0.5).max(12).optional(),
   hourlyRate: z.number().min(1).max(1000).optional(), // whole currency units per hour
-  recurringFrequency: z.enum(["recurring", "weekly", "biweekly", "monthly"]).nullable().optional(),
+  recurringFrequency: z.enum(["weekly", "biweekly", "monthly"]).nullable().optional(),
+  recurringDays: z.array(z.number().int().min(0).max(6)).max(7).nullable().optional(),
 })
 
 // Client deletes their own job — allowed ONLY while it has no bids at all and isn't assigned.
@@ -76,7 +77,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
     const [{ n }] = await db.select({ n: sql<number>`count(*)` }).from(bids).where(and(eq(bids.jobPostId, id), inArray(bids.status, ["pending", "accepted"])))
     const hasBids = Number(n) > 0
-    if (hasBids && (data.title !== undefined || data.description !== undefined || data.hourlyRate !== undefined || data.estimatedHours !== undefined || data.recurringFrequency !== undefined || data.desiredTimeRange !== undefined)) {
+    if (hasBids && (data.title !== undefined || data.description !== undefined || data.hourlyRate !== undefined || data.estimatedHours !== undefined || data.recurringFrequency !== undefined || data.recurringDays !== undefined || data.desiredTimeRange !== undefined)) {
       return NextResponse.json({ error: "Bids have already arrived — only the desired date can be changed." }, { status: 422 })
     }
 
@@ -97,6 +98,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     if (data.desiredTimeRange !== undefined) updates.desiredTimeRange = data.desiredTimeRange
     if (data.estimatedHours !== undefined) updates.estimatedDurationMinutes = Math.round(data.estimatedHours * 60)
     if (data.recurringFrequency !== undefined) updates.recurringFrequency = data.recurringFrequency
+    if (data.recurringDays !== undefined) updates.recurringDays = data.recurringDays ?? []
     if (data.hourlyRate !== undefined) {
       const hours = data.estimatedHours ?? (job.estimatedDurationMinutes ? job.estimatedDurationMinutes / 60 : 2)
       const total = Math.round(data.hourlyRate * 100 * hours)

@@ -42,9 +42,10 @@ const createJobSchema = z.object({
   serviceLongitude: z.number().min(-180).max(180),
   radiusKm: z.number().int().min(1).max(100).default(25),
   ecoRequirements: z.array(z.string().max(100)).max(10).default([]),
-  // "recurring" (cadence unspecified) is kept only for back-compat with rows saved before the form
-  // asked for a specific cadence — new posts always send weekly/biweekly/monthly or omit the field.
-  recurringFrequency: z.enum(["recurring", "weekly", "biweekly", "monthly"]).optional(),
+  recurringFrequency: z.enum(["weekly", "biweekly", "monthly"]).optional(),
+  // Weekday(s) picked alongside recurringFrequency (0=Sun..6=Sat) — ignored unless a frequency is
+  // also set. Monthly is meant to be a single day; the form enforces that, this just stores it.
+  recurringDays: z.array(z.number().int().min(0).max(6)).max(7).optional(),
   estimatedHours: z.number().min(0.5).max(12).optional(),
   // "standard" = normal bidding. "take_job" = emergency instant-assignment (see /api/jobs/[id]/take) —
   // no negotiation, so the client's single price IS the price. This one instance is always same-day,
@@ -139,6 +140,7 @@ export async function POST(req: Request) {
       radiusKm: data.radiusKm,
       ecoRequirements: data.ecoRequirements,
       recurringFrequency: data.recurringFrequency ?? null,
+      recurringDays: data.recurringFrequency ? (data.recurringDays ?? []) : [],
       estimatedDurationMinutes: data.estimatedHours ? Math.round(data.estimatedHours * 60) : null,
       jobType: data.jobType,
       expiresAt,
@@ -283,7 +285,7 @@ export async function GET(req: Request) {
         columns: {
           id: true, title: true, description: true, status: true, jobType: true,
           budgetMin: true, budgetMax: true, desiredDate: true, desiredTimeRange: true,
-          radiusKm: true, ecoRequirements: true, recurringFrequency: true, estimatedDurationMinutes: true, viewCount: true, expiresAt: true, createdAt: true,
+          radiusKm: true, ecoRequirements: true, recurringFrequency: true, recurringDays: true, estimatedDurationMinutes: true, viewCount: true, expiresAt: true, createdAt: true,
           serviceAddress: true, // reduced to coarse locality below
         },
         with: { category: { columns: { name: true, slug: true } }, bids: { columns: { id: true, status: true, providerId: true } } },

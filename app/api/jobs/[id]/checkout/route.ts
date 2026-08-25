@@ -24,7 +24,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
         acceptedBidId: jobPosts.acceptedBidId, categoryId: jobPosts.categoryId,
         serviceAddress: jobPosts.serviceAddress, serviceLatitude: jobPosts.serviceLatitude,
         serviceLongitude: jobPosts.serviceLongitude, desiredDate: jobPosts.desiredDate,
-        recurringFrequency: jobPosts.recurringFrequency,
+        recurringFrequency: jobPosts.recurringFrequency, recurringDays: jobPosts.recurringDays,
       })
       .from(jobPosts)
       .where(and(eq(jobPosts.id, jobPostId), eq(jobPosts.customerId, userId)))
@@ -87,6 +87,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
         bidAmountCents: bid.amount,
         providerCountry: provider?.country ?? null,
         requestedFrequency: job.recurringFrequency ?? null,
+        requestedDays: (job.recurringDays as number[] | null)?.length ? job.recurringDays : undefined,
       },
     })
   } catch (err) {

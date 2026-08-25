@@ -60,6 +60,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         radiusKm: jobPosts.radiusKm, budgetMin: jobPosts.budgetMin, budgetMax: jobPosts.budgetMax,
         estimatedDurationMinutes: jobPosts.estimatedDurationMinutes,
         recurringFrequency: jobPosts.recurringFrequency,
+        recurringDays: jobPosts.recurringDays,
       })
       .from(jobPosts)
       .where(eq(jobPosts.id, jobPostId))
@@ -224,6 +225,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         // This instance is always same-day, but the client may have said they want it on a regular
         // schedule going forward — carry that through the same as a standard bid-accepted booking.
         requestedFrequency: job.recurringFrequency ?? null,
+        requestedDays: (job.recurringDays as number[] | null)?.length ? job.recurringDays : undefined,
       },
     })
   } catch (err) {

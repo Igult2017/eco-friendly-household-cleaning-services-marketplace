@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -10,6 +10,9 @@ import { Label } from "@/components/ui/label"
 import { Loader2 } from "lucide-react"
 import { localTodayYmd } from "@/lib/utils/formatDate"
 import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
+import { cn } from "@/lib/utils"
+
+const WEEKDAYS = [1, 2, 3, 4, 5, 6, 0]
 
 // Pulls the first useful message out of either a plain string error or the
 // { fieldErrors: { key: [msg] } } shape other job routes return, instead of always
@@ -35,17 +38,38 @@ interface Initial {
   timeStart: string
   timeEnd: string
   recurringFrequency: string
+  recurringDays: number[]
 }
 
 // Edit a posted job. Full edit until bids arrive; with bids only the desired date is changeable.
 export function EditJobForm({ jobId, initial, hasBids, country }: { jobId: string; initial: Initial; hasBids: boolean; country: string }) {
   const t = useTranslations("customerJobEditPage")
   const tp = useTranslations("customerPostjobPage")
+  const tSchedule = useTranslations("customerBookSchedulePage")
+  const locale = useLocale()
   const router = useRouter()
   const [form, setForm] = useState(initial)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
   const [minHourlyRateCents, setMinHourlyRateCents] = useState(1500)
+
+  // Same rule as the posting form and the direct-booking wizard: Monthly is single-day.
+  function toggleDay(d: number) {
+    setForm((prev) => {
+      if (prev.recurringFrequency === "monthly") return { ...prev, recurringDays: [d] }
+      const days = prev.recurringDays.includes(d) ? prev.recurringDays.filter((x) => x !== d) : [...prev.recurringDays, d].sort((a, b) => a - b)
+      return { ...prev, recurringDays: days }
+    })
+  }
+
+  useEffect(() => {
+    if (form.recurringFrequency === "monthly" && form.recurringDays.length > 1) {
+      setForm((prev) => ({ ...prev, recurringDays: [prev.recurringDays[0]] }))
+    } else if (!form.recurringFrequency && form.recurringDays.length > 0) {
+      setForm((prev) => ({ ...prev, recurringDays: [] }))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.recurringFrequency])
 
   useEffect(() => {
     fetch("/api/settings/min-hourly-rate")
@@ -73,6 +97,7 @@ export function EditJobForm({ jobId, initial, hasBids, country }: { jobId: strin
         if (form.hourlyRate) body.hourlyRate = parseFloat(form.hourlyRate)
         if (form.estimatedHours) body.estimatedHours = parseFloat(form.estimatedHours)
         body.recurringFrequency = form.recurringFrequency || null
+        body.recurringDays = form.recurringFrequency && form.recurringDays.length ? form.recurringDays : null
         body.desiredTimeRange = form.timeStart && form.timeEnd ? { start: form.timeStart, end: form.timeEnd } : null
       }
       const r = await fetch(`/api/jobs/${jobId}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
@@ -124,8 +149,38 @@ export function EditJobForm({ jobId, initial, hasBids, country }: { jobId: strin
           <select value={form.recurringFrequency} onChange={(e) => set("recurringFrequency", e.target.value)} disabled={lock}
             className="flex h-10 w-full rounded-md border border-[#E5EBF0] bg-white px-3 py-2 text-sm disabled:opacity-50 focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]">
             <option value="">{tp("recurring_none")}</option>
-            <option value="recurring">{tp("recurring_recurring")}</option>
+            <option value="weekly">{tSchedule("freq_weekly")}</option>
+            <option value="biweekly">{tSchedule("freq_biweekly")}</option>
+            <option value="monthly">{tSchedule("freq_monthly")}</option>
           </select>
+          {form.recurringFrequency && (
+            <div className="mt-3 border-t border-[#E5EBF0] pt-3">
+              <Label className="text-xs font-semibold text-[#2B3441] mb-1 block">
+                {form.recurringFrequency === "monthly" ? tSchedule("recurringDayLabelMonthly") : tSchedule("recurringDaysLabel")}
+              </Label>
+              <p className="text-xs text-[#9CA3AF] mb-2">
+                {form.recurringFrequency === "monthly" ? tSchedule("recurringDaysHintMonthly") : tSchedule("recurringDaysHint")}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {WEEKDAYS.map((d) => (
+                  <button
+                    key={d}
+                    type="button"
+                    disabled={lock}
+                    onClick={() => toggleDay(d)}
+                    className={cn(
+                      "px-3 py-1.5 rounded-lg text-sm font-medium border-2 transition-all disabled:opacity-50",
+                      form.recurringDays.includes(d)
+                        ? "border-[#2D7A5F] bg-[#2D7A5F] text-white"
+                        : "border-[#E5EBF0] hover:border-[#4CB87A] text-[#2B3441]"
+                    )}
+                  >
+                    {new Date(Date.UTC(2024, 0, 7 + d)).toLocaleDateString(locale, { weekday: "short", timeZone: "UTC" })}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

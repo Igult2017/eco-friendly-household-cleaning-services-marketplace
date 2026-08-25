@@ -61,6 +61,9 @@ export const jobPosts = pgTable(
     // Recurring cadence the client wants (weekly|biweekly|monthly), null = one-time. Shown to cleaners
     // on the job board so they know it's repeat work before bidding.
     recurringFrequency: varchar("recurring_frequency", { length: 12 }),
+    // Weekday(s) the client wants it on (0=Sun..6=Sat) — stated intent, same as recurringFrequency;
+    // carried into a booking's requestedDays once a bid is accepted / a Take Job is claimed.
+    recurringDays: jsonb("recurring_days").$type<number[]>().default([]),
     // Expected hours of work (stored as minutes) — lets cleaners compute an hourly bid from the budget.
     estimatedDurationMinutes: integer("estimated_duration_minutes"),
     acceptedBidId: uuid("accepted_bid_id"),
