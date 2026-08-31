@@ -86,6 +86,7 @@ CREATE TABLE IF NOT EXISTS support_messages (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS support_messages_user_idx ON support_messages(user_id);
+ALTER TABLE support_messages ADD COLUMN IF NOT EXISTS metadata jsonb;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS requested_frequency varchar(12);
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS requested_days jsonb;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS pending_proposal jsonb;

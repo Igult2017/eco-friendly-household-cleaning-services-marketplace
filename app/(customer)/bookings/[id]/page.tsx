@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { redirect, notFound } from "next/navigation"
 import { db } from "@/lib/db"
-import { bookings, payments, providers, providerServices, users } from "@/lib/db/schema"
+import { bookings, payments, providers, providerServices, users, disputes } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
 import { getTranslations } from "next-intl/server"
 import Link from "next/link"
@@ -12,6 +12,7 @@ import { ConfirmCompletionButton } from "@/components/customer/ConfirmCompletion
 import { ProposalBanner } from "@/components/booking/ProposalBanner"
 import { ProposeChangeTrigger } from "@/components/booking/ProposeChangeTrigger"
 import { NoShowReport } from "@/components/booking/NoShowReport"
+import { disputeReasonLabelKey } from "@/lib/constants/disputeReasons"
 
 export const dynamic = "force-dynamic"
 
@@ -33,6 +34,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
 
   const t = await getTranslations("customerBookingsIdPage")
   const tr = await getTranslations("customerReceiptPage")
+  const td = await getTranslations("customerBookingsIdDisputePage")
   const { id } = await params
 
   const [booking] = await db
@@ -75,12 +77,20 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
     .from(payments)
     .where(eq(payments.bookingId, id))
 
+  // Captured but never shown back anywhere before tonight — only the bare "Disputed" status badge.
+  const [dispute] = await db
+    .select({ reason: disputes.reason, description: disputes.description, status: disputes.status, resolution: disputes.resolution })
+    .from(disputes)
+    .where(eq(disputes.bookingId, id))
+
   const cfg = STATUS_CONFIG[booking.status] ?? STATUS_CONFIG.confirmed
   const StatusIcon = cfg.icon
 
   const canCancel = ["payment_authorized", "confirmed"].includes(booking.status)
   const canProposeChange = ["payment_authorized", "confirmed"].includes(booking.status) && !booking.pendingProposal
-  const canDispute = booking.status === "completed"
+  // Matches what the server itself allows (app/api/disputes/route.ts) — a disagreement about
+  // whether/when the job should happen doesn't have to wait until after it's done.
+  const canDispute = ["payment_authorized", "confirmed", "in_progress", "pending_capture", "completed"].includes(booking.status)
   const canReview = booking.status === "completed"
   const canConfirm = booking.status === "pending_capture" && !!booking.providerCompletedAt && !booking.clientConfirmedAt
   const canReportNoShow = ["payment_authorized", "confirmed", "in_progress"].includes(booking.status)
@@ -202,6 +212,21 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
         <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5">
           <h2 className="font-semibold text-[#2B3441] mb-2">{t("cancellationReasonTitle")}</h2>
           <p className="text-sm text-[#6B7280] leading-relaxed">{booking.cancellationReason}</p>
+        </div>
+      )}
+
+      {/* Same gap as above, for a dispute — captured but never shown back before tonight, only the
+          bare "Disputed" status word. */}
+      {dispute && (
+        <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 space-y-2">
+          <h2 className="font-semibold text-[#2B3441]">{td("detailTitle")}</h2>
+          <p className="text-sm font-medium text-[#2B3441]">{td(disputeReasonLabelKey(dispute.reason))}</p>
+          <p className="text-sm text-[#6B7280] leading-relaxed">{dispute.description}</p>
+          {dispute.resolution && (
+            <p className="text-sm text-[#2D7A5F] font-medium pt-2 border-t border-[#E5EBF0]">
+              {td("resolutionLabel")}: {dispute.resolution}
+            </p>
+          )}
         </div>
       )}
 

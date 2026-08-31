@@ -783,6 +783,8 @@
     "confirmCancellation": "Annulering bevestigen"
   },
   "customerBookingsIdDisputePage": {
+    "detailTitle": "Geschil",
+    "resolutionLabel": "Hoe het is opgelost",
     "title": "Een geschil openen",
     "subtitle": "We beoordelen en lossen het binnen 72 uur op",
     "beforeYouContinueLabel": "Voordat u doorgaat:",
@@ -794,6 +796,7 @@
     "reasonPropertyDamage": "Eigendom is beschadigd",
     "reasonWrongPrice": "Verkeerde prijs in rekening gebracht",
     "reasonEcoNonCompliance": "Eco-eisen niet nageleefd",
+    "reasonSchedulingDisagreement": "Geen overeenstemming over de planning",
     "reasonOther": "Anders",
     "describeIssueLabel": "Beschrijf het probleem",
     "describeIssueHint": "(min. 20 tekens)",
@@ -803,6 +806,38 @@
     "openDispute": "Geschil openen",
     "validationSelectReasonAndDescribe": "Selecteer een reden en beschrijf het probleem in minstens 20 tekens.",
     "errorFailedToOpenDispute": "Geschil openen mislukt."
+  },
+  "providerBookingsIdDisputePage": {
+    "detailTitle": "Geschil",
+    "resolutionLabel": "Hoe het is opgelost",
+    "title": "Een geschil openen",
+    "subtitle": "We beoordelen en lossen het binnen 72 uur op",
+    "beforeYouContinueLabel": "Voordat u doorgaat:",
+    "beforeYouContinueText": "een geschil is een laatste redmiddel. Neem indien mogelijk eerst contact op met uw klant om het probleem rechtstreeks op te lossen.",
+    "reasonLabel": "Reden voor het geschil",
+    "reasonServiceNotPerformed": "Dienst kon niet worden uitgevoerd",
+    "reasonPoorQuality": "Kwaliteit van de dienst wordt betwist",
+    "reasonNoShow": "Klant was niet aanwezig of bereikbaar",
+    "reasonPropertyDamage": "Eigendom is beschadigd",
+    "reasonWrongPrice": "Verkeerde prijs in rekening gebracht",
+    "reasonEcoNonCompliance": "Eco-eisen niet nageleefd",
+    "reasonSchedulingDisagreement": "Geen overeenstemming over de planning",
+    "reasonOther": "Anders",
+    "describeIssueLabel": "Beschrijf het probleem",
+    "describeIssueHint": "(min. 20 tekens)",
+    "describeIssuePlaceholder": "Beschrijf in detail wat er is gebeurd...",
+    "cancel": "Annuleren",
+    "submitting": "Verzenden…",
+    "openDispute": "Geschil openen",
+    "validationSelectReasonAndDescribe": "Selecteer een reden en beschrijf het probleem in minstens 20 tekens.",
+    "errorFailedToOpenDispute": "Geschil openen mislukt."
+  },
+  "providerBookingsIdPage": {
+    "backToBookings": "← Terug naar boekingen",
+    "bookingDetailsTitle": "Boekingsgegevens",
+    "untilTime": "tot {time}",
+    "payoutInfo": "Je wordt uitbetaald zodra de klant bevestigt dat de klus is afgerond.",
+    "messageClient": "Bericht naar klant"
   },
   "customerBookingsIdMessagesPage": {
     "backToBooking": "Terug naar boeking",
@@ -1082,6 +1117,7 @@
     "title": "Mijn boekingen",
     "subtitle": "Alle aan jou toegewezen opdrachten",
     "tabAll": "Alle",
+    "tabOnHold": "In de wacht",
     "statusConfirmed": "Bevestigd",
     "statusInProgress": "Bezig",
     "statusCompleted": "Voltooid",
@@ -1639,6 +1675,7 @@
     "inputPlaceholder": "Typ een bericht… (Enter om te versturen)",
     "sendButtonLabel": "Bericht versturen",
     "sendFailed": "Bericht verzenden mislukt",
+    "aboutBooking": "Re: boeking {number}",
     "genericError": "Er is iets misgegaan. Probeer het opnieuw."
   },
   "compNotificationsMarkAllReadButton": {
@@ -1722,6 +1759,38 @@
     "openedOn": "Geopend op {date}",
     "resolvedSuffix": " · Opgelost op {date}",
     "allResolved": "Alle geschillen opgelost"
+  },
+  "compProviderProviderDashboardOnHold": {
+    "heading": "In de wacht",
+    "viewAll": "Alles bekijken →",
+    "emptyTitle": "Niets in de wacht",
+    "emptyDescription": "Geschillen en onbeantwoorde wijzigingsverzoeken verschijnen hier.",
+    "forCustomer": "voor {name}",
+    "defaultCustomer": "Klant",
+    "defaultService": "Schoonmaak",
+    "disputed": "Geschil",
+    "pendingProposal": "Wacht op reactie"
+  },
+  "compProviderProviderDashboardCompleted": {
+    "heading": "Afgerond",
+    "viewAll": "Alles bekijken →",
+    "emptyTitle": "Nog geen afgeronde klussen",
+    "emptyDescription": "Klussen die je afrondt verschijnen hier.",
+    "forCustomer": "voor {name}",
+    "defaultCustomer": "Klant",
+    "defaultService": "Schoonmaak"
+  },
+  "compProviderProviderDashboardCancelled": {
+    "heading": "Geannuleerd & niet verschenen",
+    "viewAll": "Alles bekijken →",
+    "emptyTitle": "Geen annuleringen",
+    "emptyDescription": "Geannuleerde klussen en no-shows verschijnen hier.",
+    "forCustomer": "voor {name}",
+    "defaultCustomer": "Klant",
+    "defaultService": "Schoonmaak",
+    "statusCancelled": "Geannuleerd",
+    "statusClientNoShow": "Klant niet verschenen",
+    "statusCleanerNoShow": "Je bent gemarkeerd als niet verschenen"
   },
   "compProviderProviderDashboardEarnings": {
     "title": "Inkomsten",

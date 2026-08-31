@@ -7,10 +7,13 @@ import { useTranslations } from "next-intl"
 import { AlertTriangle, Loader2 } from "lucide-react"
 import { DISPUTE_REASONS } from "@/lib/constants/disputeReasons"
 
+// Cleaner's side of the same dispute mechanism the client already has — posts to the same shared
+// /api/disputes, which already accepts either role on an active (not just completed) booking; this
+// page was the only missing piece.
 export default function OpenDisputePage({ params }: { params: Promise<{ id: string }> }) {
   const { id: bookingId } = use(params)
   const router = useRouter()
-  const t = useTranslations("customerBookingsIdDisputePage")
+  const t = useTranslations("providerBookingsIdDisputePage")
   const [isPending, startTransition] = useTransition()
 
   const [reason, setReason] = useState("")
@@ -30,7 +33,7 @@ export default function OpenDisputePage({ params }: { params: Promise<{ id: stri
         body: JSON.stringify({ bookingId, reason, description, evidenceUrls: [] }),
       })
       if (res.ok) {
-        router.push("/dashboard")
+        router.push(`/provider/bookings/${bookingId}`)
       } else {
         const d = await res.json()
         setError(d.error ?? t("errorFailedToOpenDispute"))

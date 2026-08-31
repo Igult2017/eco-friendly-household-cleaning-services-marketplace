@@ -52,7 +52,13 @@ const STATUS_LABEL: Record<string, { labelKey: string; color: string }> = {
   cleaner_no_show:    { labelKey: "statusCleanerNoShow", color: "bg-red-100 text-red-700" },
 }
 
-const TABS = ["all", "payment_authorized", "in_progress", "completed", "cancelled"]
+const TABS = ["all", "payment_authorized", "in_progress", "on_hold", "completed", "cancelled"]
+
+// "On hold" isn't a real status — it's a disagreement blocking agreement on WHEN (a pending
+// reschedule/rate proposal sitting unanswered) or WHETHER (an open dispute) the job goes ahead.
+function isOnHold(b: Booking) {
+  return b.status === "disputed" || !!b.pendingProposal
+}
 
 export default function ProviderBookingsPage() {
   const t = useTranslations("providerProviderBookingsPage")
@@ -89,7 +95,7 @@ export default function ProviderBookingsPage() {
   }
   useEffect(() => { load() }, [])
 
-  const visible = tab === "all" ? bookings : bookings.filter((b) => b.status === tab)
+  const visible = tab === "all" ? bookings : tab === "on_hold" ? bookings.filter(isOnHold) : bookings.filter((b) => b.status === tab)
 
   return (
     <div className="max-w-4xl space-y-6">
@@ -108,7 +114,7 @@ export default function ProviderBookingsPage() {
               tab === tabKey ? "bg-[#2D7A5F] text-white" : "bg-white text-[#6B7280] border border-gray-200 hover:border-[#2D7A5F] hover:text-[#2D7A5F]"
             }`}
           >
-            {tabKey === "all" ? t("tabAll") : STATUS_LABEL[tabKey]?.labelKey ? t(STATUS_LABEL[tabKey].labelKey) : tabKey}
+            {tabKey === "all" ? t("tabAll") : tabKey === "on_hold" ? t("tabOnHold") : STATUS_LABEL[tabKey]?.labelKey ? t(STATUS_LABEL[tabKey].labelKey) : tabKey}
           </button>
         ))}
       </div>

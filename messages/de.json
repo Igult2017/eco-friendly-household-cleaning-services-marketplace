@@ -783,6 +783,8 @@
     "confirmCancellation": "Stornierung bestätigen"
   },
   "customerBookingsIdDisputePage": {
+    "detailTitle": "Reklamation",
+    "resolutionLabel": "So wurde sie gelöst",
     "title": "Eine Reklamation eröffnen",
     "subtitle": "Wir prüfen und klären Ihr Anliegen innerhalb von 72 Stunden",
     "beforeYouContinueLabel": "Bevor Sie fortfahren:",
@@ -794,6 +796,7 @@
     "reasonPropertyDamage": "Eigentum wurde beschädigt",
     "reasonWrongPrice": "Falscher Preis berechnet",
     "reasonEcoNonCompliance": "Öko-Anforderungen nicht eingehalten",
+    "reasonSchedulingDisagreement": "Keine Einigung über den Termin",
     "reasonOther": "Sonstiges",
     "describeIssueLabel": "Beschreiben Sie das Problem",
     "describeIssueHint": "(mind. 20 Zeichen)",
@@ -803,6 +806,38 @@
     "openDispute": "Reklamation eröffnen",
     "validationSelectReasonAndDescribe": "Bitte wählen Sie einen Grund aus und beschreiben Sie das Problem mit mindestens 20 Zeichen.",
     "errorFailedToOpenDispute": "Reklamation konnte nicht eröffnet werden."
+  },
+  "providerBookingsIdDisputePage": {
+    "detailTitle": "Reklamation",
+    "resolutionLabel": "So wurde sie gelöst",
+    "title": "Eine Reklamation eröffnen",
+    "subtitle": "Wir prüfen und klären Ihr Anliegen innerhalb von 72 Stunden",
+    "beforeYouContinueLabel": "Bevor Sie fortfahren:",
+    "beforeYouContinueText": "Reklamationen sind das letzte Mittel. Wenn möglich, kontaktieren Sie bitte zuerst Ihren Kunden, um das Problem direkt zu lösen.",
+    "reasonLabel": "Grund der Reklamation",
+    "reasonServiceNotPerformed": "Leistung konnte nicht erbracht werden",
+    "reasonPoorQuality": "Qualität der Leistung ist strittig",
+    "reasonNoShow": "Kunde war nicht anwesend oder erreichbar",
+    "reasonPropertyDamage": "Eigentum wurde beschädigt",
+    "reasonWrongPrice": "Falscher Preis berechnet",
+    "reasonEcoNonCompliance": "Öko-Anforderungen nicht eingehalten",
+    "reasonSchedulingDisagreement": "Keine Einigung über den Termin",
+    "reasonOther": "Sonstiges",
+    "describeIssueLabel": "Beschreiben Sie das Problem",
+    "describeIssueHint": "(mind. 20 Zeichen)",
+    "describeIssuePlaceholder": "Bitte beschreiben Sie ausführlich, was passiert ist ...",
+    "cancel": "Abbrechen",
+    "submitting": "Wird gesendet …",
+    "openDispute": "Reklamation eröffnen",
+    "validationSelectReasonAndDescribe": "Bitte wählen Sie einen Grund aus und beschreiben Sie das Problem mit mindestens 20 Zeichen.",
+    "errorFailedToOpenDispute": "Reklamation konnte nicht eröffnet werden."
+  },
+  "providerBookingsIdPage": {
+    "backToBookings": "← Zurück zu den Buchungen",
+    "bookingDetailsTitle": "Buchungsdetails",
+    "untilTime": "bis {time}",
+    "payoutInfo": "Du wirst ausgezahlt, sobald der Kunde bestätigt, dass der Auftrag abgeschlossen ist.",
+    "messageClient": "Kunde kontaktieren"
   },
   "customerBookingsIdMessagesPage": {
     "backToBooking": "Zurück zur Buchung",
@@ -1082,6 +1117,7 @@
     "title": "Meine Buchungen",
     "subtitle": "Alle dir zugewiesenen Aufträge",
     "tabAll": "Alle",
+    "tabOnHold": "Pausiert",
     "statusConfirmed": "Bestätigt",
     "statusInProgress": "In Bearbeitung",
     "statusCompleted": "Abgeschlossen",
@@ -1639,6 +1675,7 @@
     "inputPlaceholder": "Nachricht schreiben… (Enter zum Senden)",
     "sendButtonLabel": "Nachricht senden",
     "sendFailed": "Nachricht konnte nicht gesendet werden",
+    "aboutBooking": "Bezüglich Buchung {number}",
     "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
   },
   "compNotificationsMarkAllReadButton": {
@@ -1722,6 +1759,38 @@
     "openedOn": "Eröffnet {date}",
     "resolvedSuffix": " · Gelöst {date}",
     "allResolved": "Alle Streitfälle gelöst"
+  },
+  "compProviderProviderDashboardOnHold": {
+    "heading": "Pausiert",
+    "viewAll": "Alle anzeigen →",
+    "emptyTitle": "Nichts pausiert",
+    "emptyDescription": "Streitfälle und unbeantwortete Änderungsanfragen erscheinen hier.",
+    "forCustomer": "für {name}",
+    "defaultCustomer": "Kunde",
+    "defaultService": "Reinigung",
+    "disputed": "Streitfall",
+    "pendingProposal": "Antwort ausstehend"
+  },
+  "compProviderProviderDashboardCompleted": {
+    "heading": "Abgeschlossen",
+    "viewAll": "Alle anzeigen →",
+    "emptyTitle": "Noch keine abgeschlossenen Aufträge",
+    "emptyDescription": "Erledigte Aufträge erscheinen hier.",
+    "forCustomer": "für {name}",
+    "defaultCustomer": "Kunde",
+    "defaultService": "Reinigung"
+  },
+  "compProviderProviderDashboardCancelled": {
+    "heading": "Storniert & Nichterscheinen",
+    "viewAll": "Alle anzeigen →",
+    "emptyTitle": "Keine Stornierungen",
+    "emptyDescription": "Stornierte Aufträge und Nichterscheinen erscheinen hier.",
+    "forCustomer": "für {name}",
+    "defaultCustomer": "Kunde",
+    "defaultService": "Reinigung",
+    "statusCancelled": "Storniert",
+    "statusClientNoShow": "Kunde nicht erschienen",
+    "statusCleanerNoShow": "Du wurdest als nicht erschienen markiert"
   },
   "compProviderProviderDashboardEarnings": {
     "title": "Einnahmen",

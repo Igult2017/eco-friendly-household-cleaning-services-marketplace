@@ -12,6 +12,8 @@ interface Message {
   body: string
   createdAt: string
   isRead: boolean
+  // Support-thread messages only: which booking (if any) the sender was asking about.
+  metadata?: { bookingId?: string; bookingNumber?: string } | null
 }
 
 interface Props {
@@ -158,6 +160,11 @@ export function MessageThread({ bookingId, currentUserId, endpoint, channel, rea
                 className={`flex ${isOwn ? "justify-end" : "justify-start"} mb-1`}
               >
                 <div className="max-w-[75%]">
+                  {msg.metadata?.bookingNumber && (
+                    <p className={`mb-0.5 text-[10px] font-medium text-[#9CA3AF] ${isOwn ? "text-right" : "text-left"}`}>
+                      {t("aboutBooking", { number: msg.metadata.bookingNumber })}
+                    </p>
+                  )}
                   <div
                     className={
                       isOwn

@@ -5,7 +5,7 @@ import { redirect } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { db } from "@/lib/db"
 import { bookings, providers, bids, notifications, payouts, reviews, disputes, jobPosts } from "@/lib/db/schema"
-import { eq, desc, asc, and, sql, inArray } from "drizzle-orm"
+import { eq, desc, asc, and, or, sql, inArray, isNotNull } from "drizzle-orm"
 import { findJobsNearProvider } from "@/lib/db/queries/geo"
 import { CalendarDays, CheckCircle2, Star, TrendingUp, AlertCircle } from "lucide-react"
 import { ProviderDashboardSchedule }     from "@/components/provider/ProviderDashboardSchedule"
@@ -15,6 +15,9 @@ import { ProviderDashboardEarnings }     from "@/components/provider/ProviderDas
 import { ProviderDashboardNearbyJobs }   from "@/components/provider/ProviderDashboardNearbyJobs"
 import { ProviderDashboardRating }       from "@/components/provider/ProviderDashboardRating"
 import { ProviderDashboardDisputes }     from "@/components/provider/ProviderDashboardDisputes"
+import { ProviderDashboardCompleted }    from "@/components/provider/ProviderDashboardCompleted"
+import { ProviderDashboardCancelled }    from "@/components/provider/ProviderDashboardCancelled"
+import { ProviderDashboardOnHold }       from "@/components/provider/ProviderDashboardOnHold"
 import { ReferralCard }                  from "@/components/referral/ReferralCard"
 import { ProviderApprovalNotice }        from "@/components/provider/ProviderApprovalNotice"
 import { PayoutConnect }                  from "@/components/provider/PayoutConnect"
@@ -64,6 +67,9 @@ export default async function ProviderDashboardPage() {
     recentReviews,
     providerDisputes,
     nearbyJobs,
+    completedBookings,
+    cancelledBookings,
+    onHoldBookings,
   ] = await Promise.all([
     // 1. Upcoming bookings
     db.query.bookings.findMany({
@@ -118,6 +124,7 @@ export default async function ProviderDashboardPage() {
     // 7. Disputes linked to this provider via bookings
     db.select({
       id: disputes.id,
+      bookingId: disputes.bookingId,
       status: disputes.status,
       reason: disputes.reason,
       description: disputes.description,
@@ -153,6 +160,31 @@ export default async function ProviderDashboardPage() {
         distanceMeters: nearby.find((n) => n.jobPostId === j.id)?.distanceMeters ?? 0,
       }))
     })(),
+
+    // 9. Recently completed bookings
+    db.query.bookings.findMany({
+      where: (b, { and: a, eq: eqFn }) => a(eqFn(b.providerId, pid), eqFn(b.status, "completed")),
+      with: { customer: { columns: { firstName: true, lastName: true } }, service: { columns: { name: true } } },
+      orderBy: [desc(bookings.scheduledAt)],
+      limit: 5,
+    }).catch(() => [] as never[]),
+
+    // 10. Recently cancelled / no-show bookings
+    db.query.bookings.findMany({
+      where: (b, { and: a, inArray: inArr }) => a(eq(b.providerId, pid), inArr(b.status, ["cancelled", "client_no_show", "cleaner_no_show"])),
+      with: { customer: { columns: { firstName: true, lastName: true } }, service: { columns: { name: true } } },
+      orderBy: [desc(bookings.cancelledAt)],
+      limit: 5,
+    }).catch(() => [] as never[]),
+
+    // 11. "On hold" — a disagreement blocking agreement on WHEN (unanswered proposal) or WHETHER
+    // (open dispute) the job goes ahead. Computed, not a real status.
+    db.query.bookings.findMany({
+      where: (b, { and: a }) => a(eq(b.providerId, pid), or(eq(b.status, "disputed"), isNotNull(b.pendingProposal))),
+      with: { customer: { columns: { firstName: true, lastName: true } }, service: { columns: { name: true } } },
+      orderBy: [desc(bookings.updatedAt)],
+      limit: 5,
+    }).catch(() => [] as never[]),
   ])
 
   const totalEarnings = Number(earningsRows[0]?.total ?? 0)
@@ -257,6 +289,9 @@ export default async function ProviderDashboardPage() {
             reviews={recentReviews as any}
           />
           <ProviderDashboardBids bids={recentBids as any} />
+          <ProviderDashboardOnHold bookings={onHoldBookings as any} />
+          <ProviderDashboardCompleted bookings={completedBookings as any} />
+          <ProviderDashboardCancelled bookings={cancelledBookings as any} />
           <ProviderDashboardEarnings
             totalEarnings={totalEarnings}
             pendingPayout={pendingPayout}

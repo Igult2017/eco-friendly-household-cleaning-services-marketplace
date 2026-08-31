@@ -783,6 +783,8 @@
     "confirmCancellation": "Potwierdź anulowanie"
   },
   "customerBookingsIdDisputePage": {
+    "detailTitle": "Reklamacja",
+    "resolutionLabel": "Jak została rozwiązana",
     "title": "Zgłoś reklamację",
     "subtitle": "Rozpatrzymy i rozwiążemy sprawę w ciągu 72 godzin",
     "beforeYouContinueLabel": "Zanim przejdziesz dalej:",
@@ -794,6 +796,7 @@
     "reasonPropertyDamage": "Mienie zostało uszkodzone",
     "reasonWrongPrice": "Naliczono niewłaściwą cenę",
     "reasonEcoNonCompliance": "Nie spełniono wymagań ekologicznych",
+    "reasonSchedulingDisagreement": "Brak porozumienia co do terminu",
     "reasonOther": "Inny",
     "describeIssueLabel": "Opisz problem",
     "describeIssueHint": "(min. 20 znaków)",
@@ -803,6 +806,38 @@
     "openDispute": "Zgłoś reklamację",
     "validationSelectReasonAndDescribe": "Wybierz powód i opisz problem, używając co najmniej 20 znaków.",
     "errorFailedToOpenDispute": "Nie udało się zgłosić reklamacji."
+  },
+  "providerBookingsIdDisputePage": {
+    "detailTitle": "Reklamacja",
+    "resolutionLabel": "Jak została rozwiązana",
+    "title": "Zgłoś reklamację",
+    "subtitle": "Rozpatrzymy i rozwiążemy sprawę w ciągu 72 godzin",
+    "beforeYouContinueLabel": "Zanim przejdziesz dalej:",
+    "beforeYouContinueText": "reklamacja to ostateczność. Jeśli to możliwe, najpierw skontaktuj się z klientem, aby rozwiązać problem bezpośrednio.",
+    "reasonLabel": "Powód reklamacji",
+    "reasonServiceNotPerformed": "Usługi nie udało się wykonać",
+    "reasonPoorQuality": "Jakość usługi jest sporna",
+    "reasonNoShow": "Klienta nie było na miejscu lub nie odpowiadał",
+    "reasonPropertyDamage": "Mienie zostało uszkodzone",
+    "reasonWrongPrice": "Naliczono niewłaściwą cenę",
+    "reasonEcoNonCompliance": "Nie spełniono wymagań ekologicznych",
+    "reasonSchedulingDisagreement": "Brak porozumienia co do terminu",
+    "reasonOther": "Inny",
+    "describeIssueLabel": "Opisz problem",
+    "describeIssueHint": "(min. 20 znaków)",
+    "describeIssuePlaceholder": "Opisz szczegółowo, co się wydarzyło...",
+    "cancel": "Anuluj",
+    "submitting": "Wysyłanie…",
+    "openDispute": "Zgłoś reklamację",
+    "validationSelectReasonAndDescribe": "Wybierz powód i opisz problem, używając co najmniej 20 znaków.",
+    "errorFailedToOpenDispute": "Nie udało się zgłosić reklamacji."
+  },
+  "providerBookingsIdPage": {
+    "backToBookings": "← Wróć do rezerwacji",
+    "bookingDetailsTitle": "Szczegóły rezerwacji",
+    "untilTime": "do {time}",
+    "payoutInfo": "Wypłatę otrzymasz, gdy klient potwierdzi wykonanie zlecenia.",
+    "messageClient": "Napisz do klienta"
   },
   "customerBookingsIdMessagesPage": {
     "backToBooking": "Powrót do rezerwacji",
@@ -1082,6 +1117,7 @@
     "title": "Moje rezerwacje",
     "subtitle": "Wszystkie zlecenia przypisane do Ciebie",
     "tabAll": "Wszystkie",
+    "tabOnHold": "Wstrzymane",
     "statusConfirmed": "Potwierdzona",
     "statusInProgress": "W trakcie",
     "statusCompleted": "Zakończona",
@@ -1639,6 +1675,7 @@
     "inputPlaceholder": "Napisz wiadomość… (Enter, aby wysłać)",
     "sendButtonLabel": "Wyślij wiadomość",
     "sendFailed": "Nie udało się wysłać wiadomości",
+    "aboutBooking": "Dot. rezerwacji {number}",
     "genericError": "Coś poszło nie tak. Spróbuj ponownie."
   },
   "compNotificationsMarkAllReadButton": {
@@ -1722,6 +1759,38 @@
     "openedOn": "Otwarto {date}",
     "resolvedSuffix": " · Rozstrzygnięto {date}",
     "allResolved": "Wszystkie spory rozstrzygnięte"
+  },
+  "compProviderProviderDashboardOnHold": {
+    "heading": "Wstrzymane",
+    "viewAll": "Zobacz wszystkie →",
+    "emptyTitle": "Nic nie jest wstrzymane",
+    "emptyDescription": "Spory i nieodpowiedziane prośby o zmianę pojawią się tutaj.",
+    "forCustomer": "dla {name}",
+    "defaultCustomer": "Klient",
+    "defaultService": "Sprzątanie",
+    "disputed": "Spór",
+    "pendingProposal": "Oczekuje na odpowiedź"
+  },
+  "compProviderProviderDashboardCompleted": {
+    "heading": "Zakończone",
+    "viewAll": "Zobacz wszystkie →",
+    "emptyTitle": "Brak zakończonych zleceń",
+    "emptyDescription": "Zlecenia, które ukończysz, pojawią się tutaj.",
+    "forCustomer": "dla {name}",
+    "defaultCustomer": "Klient",
+    "defaultService": "Sprzątanie"
+  },
+  "compProviderProviderDashboardCancelled": {
+    "heading": "Anulowane i nieobecności",
+    "viewAll": "Zobacz wszystkie →",
+    "emptyTitle": "Brak anulowań",
+    "emptyDescription": "Anulowane zlecenia i nieobecności pojawią się tutaj.",
+    "forCustomer": "dla {name}",
+    "defaultCustomer": "Klient",
+    "defaultService": "Sprzątanie",
+    "statusCancelled": "Anulowane",
+    "statusClientNoShow": "Klient się nie pojawił",
+    "statusCleanerNoShow": "Zostałeś oznaczony jako nieobecny"
   },
   "compProviderProviderDashboardEarnings": {
     "title": "Zarobki",

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Loader2, XCircle } from "lucide-react"
 
@@ -9,8 +10,11 @@ import { Loader2, XCircle } from "lucide-react"
 // cancel endpoint the client's dedicated cancel page uses, so refund/fee logic only ever lives in
 // one place. The server decides whether a reason is required (inside the late-cancellation window,
 // live-configured by admin) — this just surfaces that error inline instead of duplicating the rule.
+// Server-rendered pages don't need onDone (router.refresh() re-runs them); the provider list is
+// client-state-driven and passes its own reload function instead, same split as NoShowReport.
 export function CancelBookingReport({ bookingId, onDone }: { bookingId: string; onDone?: () => void }) {
   const t = useTranslations("compBookingCancelReport")
+  const router = useRouter()
   const [open, setOpen] = useState(false)
   const [reason, setReason] = useState("")
   const [busy, setBusy] = useState(false)
@@ -31,7 +35,7 @@ export function CancelBookingReport({ bookingId, onDone }: { bookingId: string; 
         setError(fieldMsg ?? (typeof d.error === "string" ? d.error : t("genericError")))
         return
       }
-      onDone?.()
+      onDone ? onDone() : router.refresh()
     } catch { setError(t("genericError")) } finally { setBusy(false) }
   }
 

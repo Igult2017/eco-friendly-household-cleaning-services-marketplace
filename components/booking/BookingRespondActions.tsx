@@ -1,18 +1,25 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Loader2, Check, PencilLine, X } from "lucide-react"
 import { ProposeChangeForm } from "./ProposeChangeForm"
 
 // Cleaner's response bar on a NEW booking: accept as-is, counter-offer (new date/time and/or hourly
-// rate + message), or reject with a reason (full release of the client's hold).
-export function BookingRespondActions({ bookingId, onDone }: { bookingId: string; onDone: () => void }) {
+// rate + message), or reject with a reason (full release of the client's hold). onDone is optional —
+// server-rendered pages don't need it (router.refresh() is enough), but the client-state-driven
+// provider list passes its own reload function instead, same split as the other booking-action
+// components (NoShowReport, CancelBookingReport, ProposeChangeTrigger, ProposalBanner).
+export function BookingRespondActions({ bookingId, onDone }: { bookingId: string; onDone?: () => void }) {
   const t = useTranslations("compBookingRespondActions")
+  const router = useRouter()
   const [mode, setMode] = useState<"idle" | "suggest" | "reject">("idle")
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState("")
   const [reason, setReason] = useState("")
+
+  const done = () => (onDone ? onDone() : router.refresh())
 
   async function post(url: string, body: unknown) {
     setBusy(true)
@@ -20,7 +27,7 @@ export function BookingRespondActions({ bookingId, onDone }: { bookingId: string
     try {
       const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
       if (!r.ok) { const d = await r.json().catch(() => ({})); setError(typeof d.error === "string" ? d.error : t("genericError")); return false }
-      onDone()
+      done()
       return true
     } catch { setError(t("genericError")); return false } finally { setBusy(false) }
   }
@@ -34,7 +41,7 @@ export function BookingRespondActions({ bookingId, onDone }: { bookingId: string
   const inputCls = "rounded-lg border border-[#E5EBF0] px-3 py-2 text-sm focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]"
 
   if (mode === "suggest") {
-    return <ProposeChangeForm bookingId={bookingId} onDone={onDone} onCancel={() => setMode("idle")} allowRateChange />
+    return <ProposeChangeForm bookingId={bookingId} onDone={done} onCancel={() => setMode("idle")} allowRateChange />
   }
 
   if (mode === "reject") {

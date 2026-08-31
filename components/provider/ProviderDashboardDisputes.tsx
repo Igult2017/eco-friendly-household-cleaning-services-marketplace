@@ -15,6 +15,7 @@ const STATUS_CFG: Record<string, { labelKey: string; cls: string }> = {
 
 type DisputeRow = {
   id: string
+  bookingId: string
   status: string
   reason: string
   description: string
@@ -62,7 +63,11 @@ export async function ProviderDashboardDisputes({ disputes }: { disputes: Disput
           const cfg = STATUS_CFG[d.status] ?? STATUS_CFG.closed
           const isActive = ["open", "under_review", "escalated"].includes(d.status)
           return (
-            <div key={d.id} className={cn("px-5 py-4", isActive && "bg-red-50/40")}>
+            <Link
+              key={d.id}
+              href={`/provider/bookings/${d.bookingId}`}
+              className={cn("block px-5 py-4 transition-colors hover:bg-[#F4FAF6]", isActive && "bg-red-50/40")}
+            >
               <div className="flex items-start justify-between gap-3 mb-1.5">
                 <p className="text-sm font-medium text-[#2B3441]">{d.reason}</p>
                 <Badge className={cn("text-xs flex-shrink-0", cfg.cls)}>{t(cfg.labelKey)}</Badge>
@@ -75,7 +80,7 @@ export async function ProviderDashboardDisputes({ disputes }: { disputes: Disput
                 {t("openedOn", { date: formatShort(d.createdAt) })}
                 {d.resolvedAt ? t("resolvedSuffix", { date: formatShort(d.resolvedAt) }) : ""}
               </p>
-            </div>
+            </Link>
           )
         })}
       </div>

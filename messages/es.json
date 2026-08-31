@@ -783,6 +783,8 @@
     "confirmCancellation": "Confirmar cancelación"
   },
   "customerBookingsIdDisputePage": {
+    "detailTitle": "Reclamación",
+    "resolutionLabel": "Cómo se resolvió",
     "title": "Abrir una reclamación",
     "subtitle": "Revisaremos y resolveremos tu caso en un plazo de 72 horas",
     "beforeYouContinueLabel": "Antes de continuar:",
@@ -794,6 +796,7 @@
     "reasonPropertyDamage": "Se dañó la propiedad",
     "reasonWrongPrice": "Se cobró un precio incorrecto",
     "reasonEcoNonCompliance": "No se cumplieron los requisitos ecológicos",
+    "reasonSchedulingDisagreement": "No hay acuerdo sobre el horario",
     "reasonOther": "Otro",
     "describeIssueLabel": "Describe el problema",
     "describeIssueHint": "(mín. 20 caracteres)",
@@ -803,6 +806,38 @@
     "openDispute": "Abrir reclamación",
     "validationSelectReasonAndDescribe": "Selecciona un motivo y describe el problema con al menos 20 caracteres.",
     "errorFailedToOpenDispute": "No se pudo abrir la reclamación."
+  },
+  "providerBookingsIdDisputePage": {
+    "detailTitle": "Reclamación",
+    "resolutionLabel": "Cómo se resolvió",
+    "title": "Abrir una reclamación",
+    "subtitle": "Revisaremos y resolveremos tu caso en un plazo de 72 horas",
+    "beforeYouContinueLabel": "Antes de continuar:",
+    "beforeYouContinueText": "las reclamaciones son un último recurso. Si es posible, contacta primero con tu cliente para resolver el problema directamente.",
+    "reasonLabel": "Motivo de la reclamación",
+    "reasonServiceNotPerformed": "El servicio no pudo realizarse",
+    "reasonPoorQuality": "La calidad del servicio está en disputa",
+    "reasonNoShow": "El cliente no estaba presente ni localizable",
+    "reasonPropertyDamage": "Se dañó la propiedad",
+    "reasonWrongPrice": "Se cobró un precio incorrecto",
+    "reasonEcoNonCompliance": "No se cumplieron los requisitos ecológicos",
+    "reasonSchedulingDisagreement": "No hay acuerdo sobre el horario",
+    "reasonOther": "Otro",
+    "describeIssueLabel": "Describe el problema",
+    "describeIssueHint": "(mín. 20 caracteres)",
+    "describeIssuePlaceholder": "Por favor, describe en detalle lo que ocurrió...",
+    "cancel": "Cancelar",
+    "submitting": "Enviando…",
+    "openDispute": "Abrir reclamación",
+    "validationSelectReasonAndDescribe": "Selecciona un motivo y describe el problema con al menos 20 caracteres.",
+    "errorFailedToOpenDispute": "No se pudo abrir la reclamación."
+  },
+  "providerBookingsIdPage": {
+    "backToBookings": "← Volver a las reservas",
+    "bookingDetailsTitle": "Detalles de la reserva",
+    "untilTime": "hasta las {time}",
+    "payoutInfo": "Recibirás el pago en cuanto el cliente confirme que el trabajo está terminado.",
+    "messageClient": "Enviar mensaje al cliente"
   },
   "customerBookingsIdMessagesPage": {
     "backToBooking": "Volver a la reserva",
@@ -1082,6 +1117,7 @@
     "title": "Mis reservas",
     "subtitle": "Todos los trabajos asignados a ti",
     "tabAll": "Todas",
+    "tabOnHold": "En espera",
     "statusConfirmed": "Confirmada",
     "statusInProgress": "En curso",
     "statusCompleted": "Completada",
@@ -1639,6 +1675,7 @@
     "inputPlaceholder": "Escribe un mensaje… (Intro para enviar)",
     "sendButtonLabel": "Enviar mensaje",
     "sendFailed": "No se pudo enviar el mensaje",
+    "aboutBooking": "Re: reserva {number}",
     "genericError": "Algo salió mal. Por favor, inténtalo de nuevo."
   },
   "compNotificationsMarkAllReadButton": {
@@ -1722,6 +1759,38 @@
     "openedOn": "Abierta el {date}",
     "resolvedSuffix": " · Resuelta el {date}",
     "allResolved": "Todas las disputas resueltas"
+  },
+  "compProviderProviderDashboardOnHold": {
+    "heading": "En espera",
+    "viewAll": "Ver todo →",
+    "emptyTitle": "Nada en espera",
+    "emptyDescription": "Las disputas y las solicitudes de cambio sin responder aparecerán aquí.",
+    "forCustomer": "para {name}",
+    "defaultCustomer": "Cliente",
+    "defaultService": "Limpieza",
+    "disputed": "En disputa",
+    "pendingProposal": "Esperando respuesta"
+  },
+  "compProviderProviderDashboardCompleted": {
+    "heading": "Completados",
+    "viewAll": "Ver todo →",
+    "emptyTitle": "Aún no hay trabajos completados",
+    "emptyDescription": "Los trabajos que termines aparecerán aquí.",
+    "forCustomer": "para {name}",
+    "defaultCustomer": "Cliente",
+    "defaultService": "Limpieza"
+  },
+  "compProviderProviderDashboardCancelled": {
+    "heading": "Cancelados y ausencias",
+    "viewAll": "Ver todo →",
+    "emptyTitle": "Sin cancelaciones",
+    "emptyDescription": "Los trabajos cancelados y las ausencias aparecerán aquí.",
+    "forCustomer": "para {name}",
+    "defaultCustomer": "Cliente",
+    "defaultService": "Limpieza",
+    "statusCancelled": "Cancelado",
+    "statusClientNoShow": "Cliente ausente",
+    "statusCleanerNoShow": "Se te marcó como ausente"
   },
   "compProviderProviderDashboardEarnings": {
     "title": "Ingresos",

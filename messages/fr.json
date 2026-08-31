@@ -783,6 +783,8 @@
     "confirmCancellation": "Confirmer l'annulation"
   },
   "customerBookingsIdDisputePage": {
+    "detailTitle": "Litige",
+    "resolutionLabel": "Comment il a été résolu",
     "title": "Ouvrir un litige",
     "subtitle": "Nous examinerons et résoudrons votre demande sous 72 heures",
     "beforeYouContinueLabel": "Avant de continuer :",
@@ -794,6 +796,7 @@
     "reasonPropertyDamage": "Le logement a été endommagé",
     "reasonWrongPrice": "Prix facturé incorrect",
     "reasonEcoNonCompliance": "Exigences écologiques non respectées",
+    "reasonSchedulingDisagreement": "Désaccord sur l'horaire",
     "reasonOther": "Autre",
     "describeIssueLabel": "Décrivez le problème",
     "describeIssueHint": "(20 caractères min.)",
@@ -803,6 +806,38 @@
     "openDispute": "Ouvrir un litige",
     "validationSelectReasonAndDescribe": "Veuillez sélectionner un motif et décrire le problème en au moins 20 caractères.",
     "errorFailedToOpenDispute": "Échec de l'ouverture du litige."
+  },
+  "providerBookingsIdDisputePage": {
+    "detailTitle": "Litige",
+    "resolutionLabel": "Comment il a été résolu",
+    "title": "Ouvrir un litige",
+    "subtitle": "Nous examinerons et résoudrons votre demande sous 72 heures",
+    "beforeYouContinueLabel": "Avant de continuer :",
+    "beforeYouContinueText": "les litiges sont un dernier recours. Si possible, contactez d'abord votre client pour résoudre le problème directement.",
+    "reasonLabel": "Motif du litige",
+    "reasonServiceNotPerformed": "La prestation n'a pas pu être effectuée",
+    "reasonPoorQuality": "La qualité de la prestation est contestée",
+    "reasonNoShow": "Le client était absent ou injoignable",
+    "reasonPropertyDamage": "Le logement a été endommagé",
+    "reasonWrongPrice": "Prix facturé incorrect",
+    "reasonEcoNonCompliance": "Exigences écologiques non respectées",
+    "reasonSchedulingDisagreement": "Désaccord sur l'horaire",
+    "reasonOther": "Autre",
+    "describeIssueLabel": "Décrivez le problème",
+    "describeIssueHint": "(20 caractères min.)",
+    "describeIssuePlaceholder": "Veuillez décrire en détail ce qui s'est passé...",
+    "cancel": "Annuler",
+    "submitting": "Envoi en cours…",
+    "openDispute": "Ouvrir un litige",
+    "validationSelectReasonAndDescribe": "Veuillez sélectionner un motif et décrire le problème en au moins 20 caractères.",
+    "errorFailedToOpenDispute": "Échec de l'ouverture du litige."
+  },
+  "providerBookingsIdPage": {
+    "backToBookings": "← Retour aux réservations",
+    "bookingDetailsTitle": "Détails de la réservation",
+    "untilTime": "jusqu'à {time}",
+    "payoutInfo": "Vous êtes payé une fois que le client confirme que la mission est terminée.",
+    "messageClient": "Contacter le client"
   },
   "customerBookingsIdMessagesPage": {
     "backToBooking": "Retour à la réservation",
@@ -1082,6 +1117,7 @@
     "title": "Mes réservations",
     "subtitle": "Toutes les missions qui vous sont attribuées",
     "tabAll": "Toutes",
+    "tabOnHold": "En attente",
     "statusConfirmed": "Confirmée",
     "statusInProgress": "En cours",
     "statusCompleted": "Terminée",
@@ -1639,6 +1675,7 @@
     "inputPlaceholder": "Écrivez un message… (Entrée pour envoyer)",
     "sendButtonLabel": "Envoyer le message",
     "sendFailed": "Échec de l'envoi du message",
+    "aboutBooking": "Re : réservation {number}",
     "genericError": "Une erreur s'est produite. Veuillez réessayer."
   },
   "compNotificationsMarkAllReadButton": {
@@ -1722,6 +1759,38 @@
     "openedOn": "Ouvert le {date}",
     "resolvedSuffix": " · Résolu le {date}",
     "allResolved": "Tous les litiges résolus"
+  },
+  "compProviderProviderDashboardOnHold": {
+    "heading": "En attente",
+    "viewAll": "Tout voir →",
+    "emptyTitle": "Rien en attente",
+    "emptyDescription": "Les litiges et demandes de changement sans réponse apparaîtront ici.",
+    "forCustomer": "pour {name}",
+    "defaultCustomer": "Client",
+    "defaultService": "Ménage",
+    "disputed": "Litige",
+    "pendingProposal": "Réponse en attente"
+  },
+  "compProviderProviderDashboardCompleted": {
+    "heading": "Terminées",
+    "viewAll": "Tout voir →",
+    "emptyTitle": "Aucune mission terminée pour l'instant",
+    "emptyDescription": "Les missions que vous terminez apparaîtront ici.",
+    "forCustomer": "pour {name}",
+    "defaultCustomer": "Client",
+    "defaultService": "Ménage"
+  },
+  "compProviderProviderDashboardCancelled": {
+    "heading": "Annulées et absences",
+    "viewAll": "Tout voir →",
+    "emptyTitle": "Aucune annulation",
+    "emptyDescription": "Les missions annulées et les absences apparaîtront ici.",
+    "forCustomer": "pour {name}",
+    "defaultCustomer": "Client",
+    "defaultService": "Ménage",
+    "statusCancelled": "Annulée",
+    "statusClientNoShow": "Client absent",
+    "statusCleanerNoShow": "Vous avez été marqué absent"
   },
   "compProviderProviderDashboardEarnings": {
     "title": "Revenus",

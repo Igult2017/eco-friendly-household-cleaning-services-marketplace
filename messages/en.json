@@ -783,6 +783,8 @@
     "confirmCancellation": "Confirm Cancellation"
   },
   "customerBookingsIdDisputePage": {
+    "detailTitle": "Dispute",
+    "resolutionLabel": "How it was resolved",
     "title": "Open a Dispute",
     "subtitle": "We will review and resolve within 72 hours",
     "beforeYouContinueLabel": "Before you continue:",
@@ -794,6 +796,7 @@
     "reasonPropertyDamage": "Property was damaged",
     "reasonWrongPrice": "Wrong price charged",
     "reasonEcoNonCompliance": "Eco requirements not followed",
+    "reasonSchedulingDisagreement": "Can't agree on the schedule",
     "reasonOther": "Other",
     "describeIssueLabel": "Describe the issue",
     "describeIssueHint": "(min. 20 characters)",
@@ -803,6 +806,38 @@
     "openDispute": "Open Dispute",
     "validationSelectReasonAndDescribe": "Please select a reason and describe the issue in at least 20 characters.",
     "errorFailedToOpenDispute": "Failed to open dispute."
+  },
+  "providerBookingsIdDisputePage": {
+    "detailTitle": "Dispute",
+    "resolutionLabel": "How it was resolved",
+    "title": "Open a Dispute",
+    "subtitle": "We will review and resolve within 72 hours",
+    "beforeYouContinueLabel": "Before you continue:",
+    "beforeYouContinueText": "disputes are a last resort. If possible, please message your client first to resolve the issue directly.",
+    "reasonLabel": "Reason for dispute",
+    "reasonServiceNotPerformed": "Service could not be performed",
+    "reasonPoorQuality": "Quality of service is disputed",
+    "reasonNoShow": "Client was not there or reachable",
+    "reasonPropertyDamage": "Property damage is disputed",
+    "reasonWrongPrice": "Wrong price charged",
+    "reasonEcoNonCompliance": "Eco requirements not followed",
+    "reasonSchedulingDisagreement": "Can't agree on the schedule",
+    "reasonOther": "Other",
+    "describeIssueLabel": "Describe the issue",
+    "describeIssueHint": "(min. 20 characters)",
+    "describeIssuePlaceholder": "Please describe what happened in detail...",
+    "cancel": "Cancel",
+    "submitting": "Submitting…",
+    "openDispute": "Open Dispute",
+    "validationSelectReasonAndDescribe": "Please select a reason and describe the issue in at least 20 characters.",
+    "errorFailedToOpenDispute": "Failed to open dispute."
+  },
+  "providerBookingsIdPage": {
+    "backToBookings": "← Back to bookings",
+    "bookingDetailsTitle": "Booking Details",
+    "untilTime": "until {time}",
+    "payoutInfo": "You're paid out once the client confirms the job is complete.",
+    "messageClient": "Message the client"
   },
   "customerBookingsIdMessagesPage": {
     "backToBooking": "Back to booking",
@@ -1082,6 +1117,7 @@
     "title": "My Bookings",
     "subtitle": "All jobs assigned to you",
     "tabAll": "All",
+    "tabOnHold": "On Hold",
     "statusConfirmed": "Confirmed",
     "statusInProgress": "In Progress",
     "statusCompleted": "Completed",
@@ -1639,6 +1675,7 @@
     "inputPlaceholder": "Type a message… (Enter to send)",
     "sendButtonLabel": "Send message",
     "sendFailed": "Failed to send message",
+    "aboutBooking": "Re: booking {number}",
     "genericError": "Something went wrong. Please try again."
   },
   "compNotificationsMarkAllReadButton": {
@@ -1722,6 +1759,38 @@
     "openedOn": "Opened {date}",
     "resolvedSuffix": " · Resolved {date}",
     "allResolved": "All disputes resolved"
+  },
+  "compProviderProviderDashboardOnHold": {
+    "heading": "On Hold",
+    "viewAll": "View all →",
+    "emptyTitle": "Nothing on hold",
+    "emptyDescription": "Disputes and unanswered change requests will show up here.",
+    "forCustomer": "for {name}",
+    "defaultCustomer": "Client",
+    "defaultService": "Cleaning",
+    "disputed": "Disputed",
+    "pendingProposal": "Awaiting response"
+  },
+  "compProviderProviderDashboardCompleted": {
+    "heading": "Completed",
+    "viewAll": "View all →",
+    "emptyTitle": "No completed jobs yet",
+    "emptyDescription": "Jobs you finish will appear here.",
+    "forCustomer": "for {name}",
+    "defaultCustomer": "Client",
+    "defaultService": "Cleaning"
+  },
+  "compProviderProviderDashboardCancelled": {
+    "heading": "Cancelled & No-shows",
+    "viewAll": "View all →",
+    "emptyTitle": "No cancellations",
+    "emptyDescription": "Cancelled and no-show jobs will appear here.",
+    "forCustomer": "for {name}",
+    "defaultCustomer": "Client",
+    "defaultService": "Cleaning",
+    "statusCancelled": "Cancelled",
+    "statusClientNoShow": "Client no-show",
+    "statusCleanerNoShow": "You were marked a no-show"
   },
   "compProviderProviderDashboardEarnings": {
     "title": "Earnings",
