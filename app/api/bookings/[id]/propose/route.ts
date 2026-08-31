@@ -17,9 +17,14 @@ const schema = z
     message: z.string().max(500).optional(),
   })
   .refine((d) => d.scheduledAt || d.hourlyCents, { message: "propose a new time and/or a new hourly rate" })
+  // A reason is required specifically when a new date/time is being proposed.
+  .refine((d) => !d.scheduledAt || (d.message && d.message.trim().length >= 5), {
+    message: "a reason is required when proposing a new time", path: ["message"],
+  })
 
-// Cleaner counter-offers on a fresh booking: a different time and/or hourly rate. Nothing changes
-// until the CLIENT accepts (proposal-response route) — the original hold stays untouched.
+// Either party proposes a change — a client can only ever propose a new date/time (they don't set
+// the cleaner's price), a cleaner can also counter-offer the rate. Nothing changes until the OTHER
+// party accepts (proposal-response route) — the original hold stays untouched.
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { userId } = await auth()
@@ -28,6 +33,26 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     const parsed = schema.safeParse(await req.json().catch(() => ({})))
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+
+    const [b] = await db
+      .select({ id: bookings.id, customerId: bookings.customerId, providerId: bookings.providerId, scheduledAt: bookings.scheduledAt })
+      .from(bookings)
+      .where(and(eq(bookings.id, bookingId), inArray(bookings.status, ["payment_authorized", "confirmed"])))
+    if (!b) return NextResponse.json({ error: "Booking not found or not open for changes" }, { status: 404 })
+
+    const [prov] = await db.select({ id: providers.id, userId: providers.userId }).from(providers).where(eq(providers.id, b.providerId))
+
+    let proposedBy: "client" | "provider"
+    if (b.customerId === userId) {
+      proposedBy = "client"
+      if (parsed.data.hourlyCents !== undefined) {
+        return NextResponse.json({ error: { fieldErrors: { hourlyCents: ["Only the cleaner can propose a new rate."] } } }, { status: 403 })
+      }
+    } else if (prov?.userId === userId) {
+      proposedBy = "provider"
+    } else {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
 
     if (parsed.data.hourlyCents !== undefined) {
       const minHourlyRateCents = await getMinHourlyRateCents()
@@ -39,28 +64,31 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       }
     }
 
-    const [prov] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, userId))
-    if (!prov) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
-
-    const [b] = await db
-      .select({ id: bookings.id, customerId: bookings.customerId, scheduledAt: bookings.scheduledAt })
-      .from(bookings)
-      .where(and(eq(bookings.id, bookingId), eq(bookings.providerId, prov.id), inArray(bookings.status, ["payment_authorized", "confirmed"])))
-    if (!b) return NextResponse.json({ error: "Booking not found or not open for changes" }, { status: 404 })
-
     await db
       .update(bookings)
-      .set({ pendingProposal: { ...parsed.data, proposedAt: new Date().toISOString() }, updatedAt: new Date() })
+      .set({ pendingProposal: { ...parsed.data, proposedAt: new Date().toISOString(), proposedBy }, updatedAt: new Date() })
       .where(eq(bookings.id, bookingId))
 
-    await db.insert(notifications).values({
-      userId: b.customerId,
-      type: "booking_rescheduled",
-      title: "Your cleaner suggests changes",
-      body: "Your cleaner suggested changes to your booking. Review and accept or decline.",
-      link: `/bookings/${bookingId}`,
-      metadata: { variant: "booking_proposal" },
-    })
+    // Notify whichever party did NOT propose.
+    if (proposedBy === "provider") {
+      await db.insert(notifications).values({
+        userId: b.customerId,
+        type: "booking_rescheduled",
+        title: "Your cleaner suggests changes",
+        body: "Your cleaner suggested changes to your booking. Review and accept or decline.",
+        link: `/bookings/${bookingId}`,
+        metadata: { variant: "booking_proposal" },
+      })
+    } else if (prov) {
+      await db.insert(notifications).values({
+        userId: prov.userId,
+        type: "booking_rescheduled",
+        title: "Your client suggests a new time",
+        body: "Your client suggested a new date/time for this booking. Review and accept or decline.",
+        link: "/provider/bookings",
+        metadata: { variant: "booking_proposal" },
+      })
+    }
 
     return NextResponse.json({ success: true })
   } catch (err) {

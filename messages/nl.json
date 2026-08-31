@@ -157,9 +157,9 @@
     "cityPlaceholder": "Amsterdam",
     "ecoLevelLabel": "Eco-niveau",
     "minRatingLabel": "Min. beoordeling",
-    "priceRangeLabel": "Prijsbereik",
-    "minPricePlaceholder": "Min.",
-    "maxPricePlaceholder": "Max.",
+    "priceRangeLabel": "Prijs (€/uur)",
+    "minPricePlaceholder": "Min",
+    "maxPricePlaceholder": "Max",
     "distanceLabel": "Afstand",
     "distanceNeedsLocation": "Detecteer eerst je locatie (\"Bij mij in de buurt\") om op afstand te filteren.",
     "withinKm": "Binnen {km} km",
@@ -182,9 +182,6 @@
     "priceFrom": "Vanaf",
     "viewButton": "Bekijken",
     "bookButton": "Boeken",
-    "priceRangeLabel": "Prijs (€/uur)",
-    "minPricePlaceholder": "Min",
-    "maxPricePlaceholder": "Max",
     "priceOnRequest": "Prijs op aanvraag",
     "nearDetecting": "Schoonmakers bij jou in de buurt zoeken…",
     "nearYouChip": "In de buurt van {city}",
@@ -774,11 +771,13 @@
     "labelScheduled": "Gepland:",
     "labelAmountCharged": "In rekening gebracht bedrag:",
     "refundPolicyTitle": "Terugbetalingsbeleid",
-    "refundFull": "Volledige terugbetaling (100%) — meer dan 48 uur van tevoren",
-    "refundPartial": "Gedeeltelijke terugbetaling (50%) — 24–48 uur van tevoren",
-    "refundNone": "Geen terugbetaling — minder dan 24 uur van tevoren",
+    "refundFull": "Volledige terugbetaling (100%) — meer dan {hours} uur van tevoren",
+    "refundPartial": "Gedeeltelijke terugbetaling — er geldt een annuleringskosten zo dicht bij de afspraak",
+    "refundNone": "Geen terugbetaling — minder dan {hours} uur voor de afspraak",
     "youWillReceive": "Je ontvangt: {amount}",
     "reasonPlaceholder": "Reden voor annulering (optioneel)",
+    "reasonPlaceholderRequired": "Reden voor annulering (verplicht zo dicht bij de afspraak)",
+    "errorReasonRequired": "Geef een reden op (minstens 10 tekens) — deze boeking staat binnenkort gepland.",
     "keepBooking": "Boeking behouden",
     "cancelling": "Bezig met annuleren…",
     "confirmCancellation": "Annulering bevestigen"
@@ -833,17 +832,13 @@
     "preAuthorised": "Vooraf geautoriseerd — afgeschreven na afronding",
     "leaveReview": "Beoordeling achterlaten",
     "openDispute": "Geschil openen",
-    "reschedule": "Opnieuw plannen",
     "cancelBooking": "Boeking annuleren",
     "messageCleaner": "Bericht je schoonmaker",
     "confirmCompletion": "Voltooiing bevestigen",
     "confirmInfo": "De betaling wordt pas aan je schoonmaker vrijgegeven nadat jullie allebei de klus als voltooid hebben gemarkeerd.",
-    "statusAwaitingConfirmation": "Wacht op je bevestiging"
-  },
-  "customerBookingsIdReschedulePage": {
-    "backToBooking": "Terug naar boeking",
-    "title": "Boeking verzetten",
-    "defaultServiceName": "Schoonmaakservice"
+    "statusAwaitingConfirmation": "Wacht op je bevestiging",
+    "waitingForCleanerResponse": "Wachten tot je schoonmaker je voorgestelde wijziging accepteert of afwijst.",
+    "cancellationReasonTitle": "Opgegeven reden"
   },
   "customerBookingsIdReviewPage": {
     "errorSelectOverallRating": "Selecteer een algemene beoordeling",
@@ -1071,24 +1066,6 @@
     "paused": "Gepauzeerd",
     "cancelled": "Geannuleerd"
   },
-  "providerBookingsIdCompletePage": {
-    "errorMarkComplete": "Markeren als voltooid mislukt",
-    "errorGeneric": "Er is iets misgegaan. Probeer het opnieuw.",
-    "doneTitle": "Klus gemarkeerd als voltooid!",
-    "doneDescription": "De betaling wordt geïnd. Je verdiensten worden direct uitbetaald en verschijnen in je volgende verdienstenoverzicht.",
-    "backToDashboard": "Terug naar dashboard",
-    "title": "Klus als voltooid markeren",
-    "subtitle": "Upload foto's van het uitgevoerde werk om de boeking te bevestigen.",
-    "completionPhotosLabel": "Voltooiingsfoto's (optioneel, max. 5)",
-    "photoAlt": "Voltooiingsfoto",
-    "removePhotoAriaLabel": "Foto verwijderen",
-    "addPhoto": "Foto toevoegen",
-    "trustNote": "Foto's helpen vertrouwen op te bouwen en beschermen tegen geschillen.",
-    "cancel": "Annuleren",
-    "uploading": "Uploaden...",
-    "completing": "Voltooien...",
-    "confirmComplete": "Voltooiing bevestigen"
-  },
   "providerLayout": {
     "dashboard": "Dashboard",
     "findJobs": "Klussen vinden",
@@ -1111,6 +1088,10 @@
     "statusCancelled": "Geannuleerd",
     "statusDisputed": "Betwist",
     "statusRefunded": "Terugbetaald",
+    "statusFinishingUp": "Wordt afgerond",
+    "statusClientNoShow": "Klant niet verschenen",
+    "statusCleanerNoShow": "Je bent gemeld als niet verschenen",
+    "cancellationReasonLabel": "Opgegeven reden",
     "emptyState": "Geen boekingen gevonden.",
     "defaultServiceName": "Schoonmaakservice",
     "customerLabel": "Klant: {name}",
@@ -1455,12 +1436,13 @@
     "errorSavePhotos": "Foto's konden niet worden opgeslagen",
     "errorUploadFailed": "Uploaden mislukt. Probeer het opnieuw."
   },
-  "compBookingProviderBookingActions": {
-    "markComplete": "Markeer als voltooid",
-    "confirmBooking": "Boeking bevestigen",
-    "startCleaning": "Schoonmaak starten",
-    "processing": "Bezig…",
-    "actionFailed": "Dat is niet gelukt. Probeer het opnieuw."
+  "compBookingCancelReport": {
+    "cancelBooking": "Boeking annuleren",
+    "cancelWarning": "Dit annuleert de boeking. Afhankelijk van hoe dichtbij de afspraak is, kunnen kosten in rekening worden gebracht — de klant wordt hoe dan ook op de hoogte gesteld.",
+    "reasonPlaceholder": "Waarom annuleer je?",
+    "confirmCancel": "Annulering bevestigen",
+    "dismiss": "Toch niet",
+    "genericError": "Er is iets misgegaan. Probeer het opnieuw."
   },
   "compBookingProviderCard": {
     "distanceAway": "{distance} km verderop",
@@ -1500,37 +1482,6 @@
     "dayThursday": "Donderdag",
     "dayFriday": "Vrijdag",
     "daySaturday": "Zaterdag"
-  },
-  "compBookingRescheduleForm": {
-    "errorSelectDateTime": "Selecteer een datum en tijd.",
-    "errorRescheduleFailed": "Verzetten mislukt",
-    "errorGeneric": "Er is iets misgegaan. Probeer het opnieuw.",
-    "successTitle": "Boeking verzet",
-    "successMessage": "Je boeking is succesvol verzet.",
-    "viewBooking": "Boeking bekijken",
-    "currentSchedule": "Huidige planning:",
-    "newDate": "Nieuwe datum",
-    "newTime": "Nieuwe tijd",
-    "duration": "Duur",
-    "durationHours": "{count, plural, one {# uur} other {# uur}}",
-    "goBack": "Terug",
-    "rescheduling": "Bezig met verzetten…",
-    "confirmReschedule": "Verzetten bevestigen"
-  },
-  "compBookingRescheduleModal": {
-    "closeAriaLabel": "Sluiten",
-    "title": "Boeking opnieuw plannen",
-    "currentScheduleLabel": "Huidige planning:",
-    "newDateLabel": "Nieuwe datum",
-    "newTimeLabel": "Nieuwe tijd",
-    "durationLabel": "Duur",
-    "durationOption": "{count, plural, one {# uur} other {# uur}}",
-    "cancelButton": "Annuleren",
-    "submitButton": "Opnieuw plannen",
-    "submitting": "Opnieuw plannen…",
-    "errorSelectDateTime": "Selecteer een datum en tijd.",
-    "errorRescheduleFailed": "Opnieuw plannen mislukt",
-    "errorGeneric": "Er is iets misgegaan. Probeer het opnieuw."
   },
   "compBookingStripePaymentForm": {
     "paymentFailed": "Betaling mislukt",
@@ -1574,6 +1525,8 @@
     "statusCancelled": "Geannuleerd",
     "statusDisputed": "Betwist",
     "statusRefunded": "Terugbetaald",
+    "statusClientNoShow": "Klant niet verschenen",
+    "statusCleanerNoShow": "Schoonmaker niet verschenen",
     "viewAll": "Alles bekijken"
   },
   "compCustomerDashboardJobs": {
@@ -2123,6 +2076,8 @@
     "back": "Terug",
     "reasonTooShort": "Geef een korte reden (minimaal 5 tekens).",
     "suggestNothing": "Stel een nieuwe tijd, een nieuw tarief of beide voor.",
+    "reasonRequiredForChange": "Geef een korte reden voor de wijziging (minstens 5 tekens).",
+    "proposeChangeButton": "Nieuwe tijd voorstellen",
     "rateBelowMinimum": "Het minimumbedrag per uur is € {min}.",
     "rateMinimumHint": "Minimaal € {min}/uur.",
     "genericError": "Er ging iets mis. Probeer opnieuw."

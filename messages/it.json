@@ -157,7 +157,7 @@
     "cityPlaceholder": "Amsterdam",
     "ecoLevelLabel": "Livello eco",
     "minRatingLabel": "Valutazione minima",
-    "priceRangeLabel": "Fascia di prezzo",
+    "priceRangeLabel": "Prezzo (€/h)",
     "minPricePlaceholder": "Min",
     "maxPricePlaceholder": "Max",
     "distanceLabel": "Distanza",
@@ -182,9 +182,6 @@
     "priceFrom": "Da",
     "viewButton": "Vedi",
     "bookButton": "Prenota",
-    "priceRangeLabel": "Prezzo (€/h)",
-    "minPricePlaceholder": "Min",
-    "maxPricePlaceholder": "Max",
     "priceOnRequest": "Prezzo su richiesta",
     "nearDetecting": "Ricerca di addetti vicino a te…",
     "nearYouChip": "Vicino a {city}",
@@ -774,11 +771,13 @@
     "labelScheduled": "Programmata:",
     "labelAmountCharged": "Importo addebitato:",
     "refundPolicyTitle": "Politica di rimborso",
-    "refundFull": "Rimborso totale (100%) — più di 48 ore di preavviso",
-    "refundPartial": "Rimborso parziale (50%) — 24–48 ore di preavviso",
-    "refundNone": "Nessun rimborso — meno di 24 ore di preavviso",
+    "refundFull": "Rimborso totale (100%) — più di {hours} ore di preavviso",
+    "refundPartial": "Rimborso parziale — a questa vicinanza all'appuntamento si applica una penale di annullamento",
+    "refundNone": "Nessun rimborso — meno di {hours} ore prima dell'appuntamento",
     "youWillReceive": "Riceverai: {amount}",
     "reasonPlaceholder": "Motivo dell'annullamento (facoltativo)",
+    "reasonPlaceholderRequired": "Motivo dell'annullamento (obbligatorio a questa vicinanza all'appuntamento)",
+    "errorReasonRequired": "Indica un motivo (almeno 10 caratteri) — questa prenotazione è vicina.",
     "keepBooking": "Mantieni prenotazione",
     "cancelling": "Annullamento…",
     "confirmCancellation": "Conferma annullamento"
@@ -833,17 +832,13 @@
     "preAuthorised": "Pre-autorizzato — addebitato al completamento",
     "leaveReview": "Lascia una recensione",
     "openDispute": "Apri una contestazione",
-    "reschedule": "Riprogramma",
     "cancelBooking": "Annulla prenotazione",
     "messageCleaner": "Contatta l addetto",
     "confirmCompletion": "Conferma completamento",
     "confirmInfo": "Il pagamento viene rilasciato al tuo addetto solo dopo che entrambi avete contrassegnato il lavoro come completato.",
-    "statusAwaitingConfirmation": "In attesa della tua conferma"
-  },
-  "customerBookingsIdReschedulePage": {
-    "backToBooking": "Torna alla prenotazione",
-    "title": "Riprogramma prenotazione",
-    "defaultServiceName": "Servizio di pulizia"
+    "statusAwaitingConfirmation": "In attesa della tua conferma",
+    "waitingForCleanerResponse": "In attesa che il tuo addetto accetti o rifiuti la modifica proposta.",
+    "cancellationReasonTitle": "Motivo indicato"
   },
   "customerBookingsIdReviewPage": {
     "errorSelectOverallRating": "Seleziona una valutazione complessiva",
@@ -1071,24 +1066,6 @@
     "paused": "In pausa",
     "cancelled": "Annullato"
   },
-  "providerBookingsIdCompletePage": {
-    "errorMarkComplete": "Impossibile contrassegnare come completato",
-    "errorGeneric": "Qualcosa è andato storto. Riprova.",
-    "doneTitle": "Lavoro contrassegnato come completato!",
-    "doneDescription": "Il pagamento è in fase di addebito. I tuoi guadagni vengono pagati all'istante e compariranno nel tuo prossimo riepilogo guadagni.",
-    "backToDashboard": "Torna alla dashboard",
-    "title": "Contrassegna lavoro come completato",
-    "subtitle": "Carica le foto del lavoro svolto per confermare la prenotazione.",
-    "completionPhotosLabel": "Foto di completamento (facoltative, max 5)",
-    "photoAlt": "Foto di completamento",
-    "removePhotoAriaLabel": "Rimuovi foto",
-    "addPhoto": "Aggiungi foto",
-    "trustNote": "Le foto aiutano a creare fiducia e proteggono dalle controversie.",
-    "cancel": "Annulla",
-    "uploading": "Caricamento...",
-    "completing": "Completamento...",
-    "confirmComplete": "Conferma completamento"
-  },
   "providerLayout": {
     "dashboard": "Dashboard",
     "findJobs": "Trova lavori",
@@ -1111,6 +1088,10 @@
     "statusCancelled": "Annullata",
     "statusDisputed": "Contestata",
     "statusRefunded": "Rimborsata",
+    "statusFinishingUp": "In conclusione",
+    "statusClientNoShow": "Cliente assente",
+    "statusCleanerNoShow": "Sei stato segnalato come assente",
+    "cancellationReasonLabel": "Motivo indicato",
     "emptyState": "Nessuna prenotazione trovata.",
     "defaultServiceName": "Servizio di pulizia",
     "customerLabel": "Cliente: {name}",
@@ -1455,12 +1436,13 @@
     "errorSavePhotos": "Impossibile salvare le foto",
     "errorUploadFailed": "Caricamento non riuscito. Riprova."
   },
-  "compBookingProviderBookingActions": {
-    "markComplete": "Segna come completato",
-    "confirmBooking": "Conferma prenotazione",
-    "startCleaning": "Inizia pulizia",
-    "processing": "Elaborazione…",
-    "actionFailed": "Non è andato a buon fine. Riprova."
+  "compBookingCancelReport": {
+    "cancelBooking": "Annulla prenotazione",
+    "cancelWarning": "Questo annulla la prenotazione. A seconda della vicinanza all'appuntamento, potrebbe applicarsi una penale — il cliente verrà comunque avvisato.",
+    "reasonPlaceholder": "Perché stai annullando?",
+    "confirmCancel": "Conferma annullamento",
+    "dismiss": "Lascia stare",
+    "genericError": "Qualcosa è andato storto. Riprova."
   },
   "compBookingProviderCard": {
     "distanceAway": "a {distance} km",
@@ -1500,37 +1482,6 @@
     "dayThursday": "Giovedì",
     "dayFriday": "Venerdì",
     "daySaturday": "Sabato"
-  },
-  "compBookingRescheduleForm": {
-    "errorSelectDateTime": "Seleziona una data e un orario.",
-    "errorRescheduleFailed": "Riprogrammazione non riuscita",
-    "errorGeneric": "Qualcosa è andato storto. Riprova.",
-    "successTitle": "Prenotazione riprogrammata",
-    "successMessage": "La tua prenotazione è stata riprogrammata con successo.",
-    "viewBooking": "Visualizza prenotazione",
-    "currentSchedule": "Orario attuale:",
-    "newDate": "Nuova data",
-    "newTime": "Nuovo orario",
-    "duration": "Durata",
-    "durationHours": "{count, plural, one {# ora} other {# ore}}",
-    "goBack": "Indietro",
-    "rescheduling": "Riprogrammazione…",
-    "confirmReschedule": "Conferma riprogrammazione"
-  },
-  "compBookingRescheduleModal": {
-    "closeAriaLabel": "Chiudi",
-    "title": "Riprogramma la prenotazione",
-    "currentScheduleLabel": "Orario attuale:",
-    "newDateLabel": "Nuova data",
-    "newTimeLabel": "Nuovo orario",
-    "durationLabel": "Durata",
-    "durationOption": "{count, plural, one {# ora} other {# ore}}",
-    "cancelButton": "Annulla",
-    "submitButton": "Riprogramma",
-    "submitting": "Riprogrammazione…",
-    "errorSelectDateTime": "Seleziona una data e un orario.",
-    "errorRescheduleFailed": "Riprogrammazione non riuscita",
-    "errorGeneric": "Qualcosa è andato storto. Riprova."
   },
   "compBookingStripePaymentForm": {
     "paymentFailed": "Pagamento non riuscito",
@@ -1574,6 +1525,8 @@
     "statusCancelled": "Annullata",
     "statusDisputed": "Contestata",
     "statusRefunded": "Rimborsata",
+    "statusClientNoShow": "Cliente assente",
+    "statusCleanerNoShow": "Addetto assente",
     "viewAll": "Vedi tutto"
   },
   "compCustomerDashboardJobs": {
@@ -2123,6 +2076,8 @@
     "back": "Indietro",
     "reasonTooShort": "Indica un breve motivo (almeno 5 caratteri).",
     "suggestNothing": "Suggerisci un nuovo orario, una nuova tariffa o entrambi.",
+    "reasonRequiredForChange": "Indica un breve motivo per la modifica (almeno 5 caratteri).",
+    "proposeChangeButton": "Proponi un nuovo orario",
     "rateBelowMinimum": "L'importo minimo all'ora è {min} €.",
     "rateMinimumHint": "Minimo {min} €/ora.",
     "genericError": "Qualcosa è andato storto. Riprova."

@@ -20,12 +20,27 @@ interface BookingInfo {
 
 interface RefundInfo { refundPercent: number; refundAmount: number }
 
-function calcRefundPercent(scheduledAt: string): number {
-  const hours = (new Date(scheduledAt).getTime() - Date.now()) / 3_600_000
-  if (hours > 48) return 100
-  if (hours > 24) return 50
-  return 0
+interface CancellationConfig {
+  tier1Hours: number
+  tier2Hours: number
+  tier3Hours: number
+  feeLowPct: number
+  feeMediumPct: number
+  feeLatePct: number
 }
+
+// Mirrors the same tiers /api/bookings/[id]/cancel actually applies (lib/utils/refunds.ts) — fed by
+// the live, admin-configurable numbers fetched below, not a guessed breakpoint, so this preview can
+// never say something different from what actually happens when Confirm is pressed.
+function calcRefundPercent(scheduledAt: string, cfg: CancellationConfig): number {
+  const hours = (new Date(scheduledAt).getTime() - Date.now()) / 3_600_000
+  if (hours > cfg.tier1Hours) return 100
+  if (hours > cfg.tier2Hours) return 100 - cfg.feeLowPct
+  if (hours > cfg.tier3Hours) return 100 - cfg.feeMediumPct
+  return 100 - cfg.feeLatePct
+}
+
+const DEFAULT_CONFIG: CancellationConfig = { tier1Hours: 24, tier2Hours: 6, tier3Hours: 2, feeLowPct: 10, feeMediumPct: 30, feeLatePct: 100 }
 
 export default function CancelBookingPage() {
   const t = useTranslations("customerBookingsIdCancelPage")
@@ -37,6 +52,7 @@ export default function CancelBookingPage() {
   const [reason, setReason] = useState("")
   const [done, setDone] = useState<RefundInfo | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [cfg, setCfg] = useState<CancellationConfig>(DEFAULT_CONFIG)
 
   useEffect(() => {
     fetch(`/api/bookings/${id}`)
@@ -44,9 +60,19 @@ export default function CancelBookingPage() {
       .then((d) => { if (d.booking) setBooking(d.booking) })
       .catch(() => setError(t("errorLoadBooking")))
       .finally(() => setLoading(false))
+    fetch("/api/settings/cancellation-config")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (d) setCfg(d) })
+      .catch(() => {})
   }, [id, t])
 
   async function handleCancel() {
+    // Same rule the server enforces: outside the free-cancel window, a reason is required. Checked
+    // here too so the client doesn't have to make a round-trip just to find that out.
+    if (booking && calcRefundPercent(booking.scheduledAt, cfg) < 100 && reason.trim().length < 10) {
+      setError(t("errorReasonRequired"))
+      return
+    }
     setCancelling(true)
     setError(null)
     try {
@@ -89,8 +115,11 @@ export default function CancelBookingPage() {
     </div>
   )
 
-  const refundPct = calcRefundPercent(booking.scheduledAt)
+  const refundPct = calcRefundPercent(booking.scheduledAt, cfg)
   const refundAmt = Math.round(booking.totalAmount * refundPct / 100)
+  // Full / partial / none — the exact percent varies by admin config, but the messaging only needs
+  // to know which of the three bands it falls in.
+  const tier = refundPct === 100 ? "full" : refundPct === 0 ? "none" : "partial"
 
   return (
     <div className="min-h-screen bg-[#F4FAF6] py-10 px-4">
@@ -108,18 +137,18 @@ export default function CancelBookingPage() {
           <p><span className="text-[#6B7280]">{t("labelAmountCharged")}</span> {formatCurrency(booking.totalAmount)}</p>
         </div>
 
-        <div className={`rounded-2xl border p-4 mb-6 text-sm ${refundPct === 100 ? "bg-[#F4FAF6] border-[#2D7A5F]/30" : refundPct === 50 ? "bg-amber-50 border-amber-200" : "bg-red-50 border-red-200"}`}>
+        <div className={`rounded-2xl border p-4 mb-6 text-sm ${tier === "full" ? "bg-[#F4FAF6] border-[#2D7A5F]/30" : tier === "partial" ? "bg-amber-50 border-amber-200" : "bg-red-50 border-red-200"}`}>
           <p className="font-semibold mb-1">{t("refundPolicyTitle")}</p>
-          <p>{refundPct === 100 && t("refundFull")}</p>
-          <p>{refundPct === 50 && t("refundPartial")}</p>
-          <p>{refundPct === 0 && t("refundNone")}</p>
+          <p>{tier === "full" && t("refundFull", { hours: cfg.tier1Hours })}</p>
+          <p>{tier === "partial" && t("refundPartial")}</p>
+          <p>{tier === "none" && t("refundNone", { hours: cfg.tier3Hours })}</p>
           {refundAmt > 0 && <p className="mt-2 font-medium">{t("youWillReceive", { amount: formatCurrency(refundAmt) })}</p>}
         </div>
 
         <textarea
           value={reason}
           onChange={(e) => setReason(e.target.value)}
-          placeholder={t("reasonPlaceholder")}
+          placeholder={tier === "full" ? t("reasonPlaceholder") : t("reasonPlaceholderRequired")}
           rows={3}
           className="w-full rounded-xl border border-[#E5EBF0] p-3 text-sm text-[#2B3441] placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]/30 mb-4"
         />

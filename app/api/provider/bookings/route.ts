@@ -38,6 +38,7 @@ export async function GET(req: Request) {
         requestedFrequency: bookings.requestedFrequency,
         requestedDays: bookings.requestedDays,
         pendingProposal: bookings.pendingProposal,
+        cancellationReason: bookings.cancellationReason,
         createdAt: bookings.createdAt,
         customerName: users.firstName,
         customerEmail: users.email,

@@ -40,6 +40,8 @@ export async function DashboardBookings({
     cancelled:          { label: t("statusCancelled"), color: "bg-red-100 text-red-700" },
     disputed:           { label: t("statusDisputed"), color: "bg-orange-100 text-orange-700" },
     refunded:           { label: t("statusRefunded"), color: "bg-gray-100 text-gray-600" },
+    client_no_show:     { label: t("statusClientNoShow"), color: "bg-red-100 text-red-700" },
+    cleaner_no_show:    { label: t("statusCleanerNoShow"), color: "bg-red-100 text-red-700" },
   }
 
   const rows = [...upcoming, ...past].slice(0, limit)

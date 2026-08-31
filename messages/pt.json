@@ -157,9 +157,9 @@
     "cityPlaceholder": "Amesterdão",
     "ecoLevelLabel": "Nível eco",
     "minRatingLabel": "Avaliação mínima",
-    "priceRangeLabel": "Faixa de preço",
-    "minPricePlaceholder": "Mín.",
-    "maxPricePlaceholder": "Máx.",
+    "priceRangeLabel": "Preço (€/h)",
+    "minPricePlaceholder": "Mín",
+    "maxPricePlaceholder": "Máx",
     "distanceLabel": "Distância",
     "distanceNeedsLocation": "Deteta primeiro a tua localização (\"Perto de mim\") para filtrar por distância.",
     "withinKm": "Num raio de {km} km",
@@ -182,9 +182,6 @@
     "priceFrom": "A partir de",
     "viewButton": "Ver",
     "bookButton": "Reservar",
-    "priceRangeLabel": "Preço (€/h)",
-    "minPricePlaceholder": "Mín",
-    "maxPricePlaceholder": "Máx",
     "priceOnRequest": "Preço sob consulta",
     "nearDetecting": "A procurar profissionais perto de ti…",
     "nearYouChip": "Perto de {city}",
@@ -774,11 +771,13 @@
     "labelScheduled": "Agendada:",
     "labelAmountCharged": "Valor cobrado:",
     "refundPolicyTitle": "Política de reembolso",
-    "refundFull": "Reembolso total (100%) — mais de 48 horas de antecedência",
-    "refundPartial": "Reembolso parcial (50%) — 24 a 48 horas de antecedência",
-    "refundNone": "Sem reembolso — menos de 24 horas de antecedência",
+    "refundFull": "Reembolso total (100%) — mais de {hours} horas de antecedência",
+    "refundPartial": "Reembolso parcial — aplica-se uma taxa de cancelamento tão perto do horário marcado",
+    "refundNone": "Sem reembolso — a menos de {hours} horas do horário marcado",
     "youWillReceive": "Você receberá: {amount}",
     "reasonPlaceholder": "Motivo do cancelamento (opcional)",
+    "reasonPlaceholderRequired": "Motivo do cancelamento (obrigatório tão perto do horário marcado)",
+    "errorReasonRequired": "Indique um motivo (pelo menos 10 caracteres) — esta reserva está prestes a começar.",
     "keepBooking": "Manter reserva",
     "cancelling": "Cancelando…",
     "confirmCancellation": "Confirmar cancelamento"
@@ -833,17 +832,13 @@
     "preAuthorised": "Pré-autorizado — cobrado após a conclusão",
     "leaveReview": "Deixar uma avaliação",
     "openDispute": "Abrir uma disputa",
-    "reschedule": "Reagendar",
     "cancelBooking": "Cancelar reserva",
     "messageCleaner": "Contactar o seu profissional",
     "confirmCompletion": "Confirmar conclusão",
     "confirmInfo": "O pagamento só é libertado ao seu profissional depois de ambos marcarem o trabalho como concluído.",
-    "statusAwaitingConfirmation": "A aguardar a sua confirmação"
-  },
-  "customerBookingsIdReschedulePage": {
-    "backToBooking": "Voltar à reserva",
-    "title": "Reagendar reserva",
-    "defaultServiceName": "Serviço de limpeza"
+    "statusAwaitingConfirmation": "A aguardar a sua confirmação",
+    "waitingForCleanerResponse": "A aguardar que o teu profissional aceite ou recuse a alteração sugerida.",
+    "cancellationReasonTitle": "Motivo indicado"
   },
   "customerBookingsIdReviewPage": {
     "errorSelectOverallRating": "Selecione uma avaliação geral",
@@ -1071,24 +1066,6 @@
     "paused": "Em pausa",
     "cancelled": "Cancelado"
   },
-  "providerBookingsIdCompletePage": {
-    "errorMarkComplete": "Falha ao marcar como concluído",
-    "errorGeneric": "Algo correu mal. Tente novamente.",
-    "doneTitle": "Trabalho marcado como concluído!",
-    "doneDescription": "O pagamento está a ser cobrado. Os seus ganhos são pagos instantaneamente e aparecerão no seu próximo resumo de ganhos.",
-    "backToDashboard": "Voltar ao painel",
-    "title": "Marcar trabalho como concluído",
-    "subtitle": "Carregue fotografias do trabalho realizado para confirmar a reserva.",
-    "completionPhotosLabel": "Fotografias de conclusão (opcional, máx. 5)",
-    "photoAlt": "Fotografia de conclusão",
-    "removePhotoAriaLabel": "Remover fotografia",
-    "addPhoto": "Adicionar fotografia",
-    "trustNote": "As fotografias ajudam a criar confiança e protegem contra disputas.",
-    "cancel": "Cancelar",
-    "uploading": "A carregar...",
-    "completing": "A concluir...",
-    "confirmComplete": "Confirmar conclusão"
-  },
   "providerLayout": {
     "dashboard": "Painel",
     "findJobs": "Encontrar trabalhos",
@@ -1111,6 +1088,10 @@
     "statusCancelled": "Cancelada",
     "statusDisputed": "Em disputa",
     "statusRefunded": "Reembolsada",
+    "statusFinishingUp": "A finalizar",
+    "statusClientNoShow": "Cliente não compareceu",
+    "statusCleanerNoShow": "Foste marcado como ausente",
+    "cancellationReasonLabel": "Motivo indicado",
     "emptyState": "Nenhuma reserva encontrada.",
     "defaultServiceName": "Serviço de limpeza",
     "customerLabel": "Cliente: {name}",
@@ -1455,12 +1436,13 @@
     "errorSavePhotos": "Não foi possível guardar as fotos",
     "errorUploadFailed": "Falha no carregamento. Tente novamente."
   },
-  "compBookingProviderBookingActions": {
-    "markComplete": "Marcar como concluído",
-    "confirmBooking": "Confirmar reserva",
-    "startCleaning": "Iniciar limpeza",
-    "processing": "A processar…",
-    "actionFailed": "Isso não funcionou. Tente novamente."
+  "compBookingCancelReport": {
+    "cancelBooking": "Cancelar reserva",
+    "cancelWarning": "Isto cancela a reserva. Consoante a proximidade do horário marcado, pode aplicar-se uma taxa — o cliente será notificado de qualquer forma.",
+    "reasonPlaceholder": "Porque estás a cancelar?",
+    "confirmCancel": "Confirmar cancelamento",
+    "dismiss": "Afinal não",
+    "genericError": "Algo correu mal. Tenta novamente."
   },
   "compBookingProviderCard": {
     "distanceAway": "a {distance} km",
@@ -1500,37 +1482,6 @@
     "dayThursday": "Quinta-feira",
     "dayFriday": "Sexta-feira",
     "daySaturday": "Sábado"
-  },
-  "compBookingRescheduleForm": {
-    "errorSelectDateTime": "Selecione uma data e uma hora.",
-    "errorRescheduleFailed": "Não foi possível remarcar",
-    "errorGeneric": "Algo correu mal. Tente novamente.",
-    "successTitle": "Reserva remarcada",
-    "successMessage": "A sua reserva foi remarcada com sucesso.",
-    "viewBooking": "Ver reserva",
-    "currentSchedule": "Horário atual:",
-    "newDate": "Nova data",
-    "newTime": "Nova hora",
-    "duration": "Duração",
-    "durationHours": "{count, plural, one {# hora} other {# horas}}",
-    "goBack": "Voltar",
-    "rescheduling": "A remarcar…",
-    "confirmReschedule": "Confirmar remarcação"
-  },
-  "compBookingRescheduleModal": {
-    "closeAriaLabel": "Fechar",
-    "title": "Reagendar reserva",
-    "currentScheduleLabel": "Horário atual:",
-    "newDateLabel": "Nova data",
-    "newTimeLabel": "Nova hora",
-    "durationLabel": "Duração",
-    "durationOption": "{count, plural, one {# hora} other {# horas}}",
-    "cancelButton": "Cancelar",
-    "submitButton": "Reagendar",
-    "submitting": "A reagendar…",
-    "errorSelectDateTime": "Selecione uma data e uma hora.",
-    "errorRescheduleFailed": "Falha ao reagendar",
-    "errorGeneric": "Algo correu mal. Tente novamente."
   },
   "compBookingStripePaymentForm": {
     "paymentFailed": "Pagamento recusado",
@@ -1574,6 +1525,8 @@
     "statusCancelled": "Cancelada",
     "statusDisputed": "Em disputa",
     "statusRefunded": "Reembolsada",
+    "statusClientNoShow": "Cliente não compareceu",
+    "statusCleanerNoShow": "Profissional não compareceu",
     "viewAll": "Ver tudo"
   },
   "compCustomerDashboardJobs": {
@@ -2123,6 +2076,8 @@
     "back": "Voltar",
     "reasonTooShort": "Indica um motivo breve (mín. 5 caracteres).",
     "suggestNothing": "Sugere um novo horário, uma nova tarifa ou ambos.",
+    "reasonRequiredForChange": "Indica um motivo breve para a alteração (pelo menos 5 caracteres).",
+    "proposeChangeButton": "Propor um novo horário",
     "rateBelowMinimum": "O valor mínimo por hora é {min} €.",
     "rateMinimumHint": "Mínimo {min} €/hora.",
     "genericError": "Algo correu mal. Tenta novamente."

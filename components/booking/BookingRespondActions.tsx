@@ -1,8 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { Loader2, Check, PencilLine, X } from "lucide-react"
+import { ProposeChangeForm } from "./ProposeChangeForm"
 
 // Cleaner's response bar on a NEW booking: accept as-is, counter-offer (new date/time and/or hourly
 // rate + message), or reject with a reason (full release of the client's hold).
@@ -11,21 +12,7 @@ export function BookingRespondActions({ bookingId, onDone }: { bookingId: string
   const [mode, setMode] = useState<"idle" | "suggest" | "reject">("idle")
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState("")
-  const [date, setDate] = useState("")
-  const [time, setTime] = useState("")
-  const [hourly, setHourly] = useState("")
-  const [message, setMessage] = useState("")
   const [reason, setReason] = useState("")
-  // Admin-configurable wage floor (lib/platform/settings.ts getMinHourlyRateCents) — 1500 (€15) is
-  // just the initial guess shown before the live value loads; the server is the real source of truth.
-  const [minHourlyRateCents, setMinHourlyRateCents] = useState(1500)
-
-  useEffect(() => {
-    fetch("/api/settings/min-hourly-rate")
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => { if (typeof d?.cents === "number") setMinHourlyRateCents(d.cents) })
-      .catch(() => {})
-  }, [])
 
   async function post(url: string, body: unknown) {
     setBusy(true)
@@ -43,47 +30,11 @@ export function BookingRespondActions({ bookingId, onDone }: { bookingId: string
     if (reason.trim().length < 5) { setError(t("reasonTooShort")); return }
     post(`/api/bookings/${bookingId}/cancel`, { reason: reason.trim() })
   }
-  const suggest = () => {
-    const hourlyCents = hourly ? Math.round(parseFloat(hourly) * 100) : undefined
-    const scheduledAt = date && time ? new Date(`${date}T${time}:00`).toISOString() : undefined
-    if (!hourlyCents && !scheduledAt) { setError(t("suggestNothing")); return }
-    if (hourlyCents && hourlyCents < minHourlyRateCents) {
-      setError(t("rateBelowMinimum", { min: (minHourlyRateCents / 100).toFixed(2) }))
-      return
-    }
-    post(`/api/bookings/${bookingId}/propose`, { scheduledAt, hourlyCents, message: message.trim() || undefined })
-  }
 
   const inputCls = "rounded-lg border border-[#E5EBF0] px-3 py-2 text-sm focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]"
 
   if (mode === "suggest") {
-    return (
-      <div className="space-y-3">
-        <p className="text-sm font-semibold text-[#2B3441]">{t("suggestTitle")}</p>
-        <div className="grid grid-cols-2 gap-2">
-          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} min={new Date().toISOString().split("T")[0]} className={inputCls} aria-label={t("newDate")} />
-          <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} aria-label={t("newTime")} />
-        </div>
-        <input
-          type="number"
-          min={minHourlyRateCents / 100}
-          step="0.5"
-          value={hourly}
-          onChange={(e) => setHourly(e.target.value)}
-          placeholder={t("newRatePlaceholder")}
-          className={`${inputCls} w-full`}
-        />
-        <p className="text-xs text-[#9CA3AF]">{t("rateMinimumHint", { min: (minHourlyRateCents / 100).toFixed(2) })}</p>
-        <textarea rows={2} value={message} onChange={(e) => setMessage(e.target.value)} placeholder={t("messagePlaceholder")} className={`${inputCls} w-full resize-none`} />
-        {error && <p className="text-xs text-red-500">{error}</p>}
-        <div className="flex gap-2">
-          <button onClick={suggest} disabled={busy} className="rounded-lg bg-[#2D7A5F] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">
-            {busy ? <Loader2 size={14} className="animate-spin" /> : t("sendSuggestion")}
-          </button>
-          <button onClick={() => { setMode("idle"); setError("") }} className="rounded-lg border border-[#E5EBF0] px-4 py-2 text-sm text-[#6B7280]">{t("back")}</button>
-        </div>
-      </div>
-    )
+    return <ProposeChangeForm bookingId={bookingId} onDone={onDone} onCancel={() => setMode("idle")} allowRateChange />
   }
 
   if (mode === "reject") {

@@ -4,6 +4,7 @@ import { db } from "@/lib/db"
 import { bookings, payments, providers, promoCodes, promoCodeUsages, carbonOffsetContributions, notifications, bookingCancellationEvents, referralCredits } from "@/lib/db/schema"
 import { stripe } from "@/lib/stripe/client"
 import { calculateCancellationFeeLive } from "@/lib/utils/refunds"
+import { getCancellationConfig } from "@/lib/platform/settings"
 import { eq, and, sql } from "drizzle-orm"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
 import { isUuid } from "@/lib/utils/uuid"
@@ -58,6 +59,19 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       .where(eq(payments.bookingId, bookingId))
 
     const hoursUntilJob = (new Date(booking.scheduledAt).getTime() - Date.now()) / (1000 * 60 * 60)
+
+    // Outside the free-cancel window (same live, admin-configurable cutoff the fee tiers already
+    // use — not a separate hardcoded number), a reason is required from whoever cancels. Applies to
+    // both roles equally — a provider is never fee-charged for cancelling, but a late cancellation
+    // is still disruptive for the client either way, so this isn't tied to whether a fee applies.
+    const { tier1Hours } = await getCancellationConfig()
+    if (hoursUntilJob < tier1Hours && (!reason || reason.trim().length < 10)) {
+      return NextResponse.json(
+        { error: { fieldErrors: { reason: [`Please give a reason (at least 10 characters) — this booking is within ${tier1Hours} hours of the appointment.`] } } },
+        { status: 422 },
+      )
+    }
+
     const { refundPercent, feePercent, travelCompensationCents } = await calculateCancellationFeeLive(hoursUntilJob, callerRole)
     // Non-refundable SERVICE portion = the cancellation fee (the carbon offset is always released).
     const feeAmount = Math.round(booking.totalAmount * feePercent / 100)

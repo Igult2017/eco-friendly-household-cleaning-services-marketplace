@@ -6,11 +6,13 @@ import { useTranslations, useLocale } from "next-intl"
 import { Loader2, PencilLine } from "lucide-react"
 import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
 
-type Proposal = { scheduledAt?: string; durationMinutes?: number; hourlyCents?: number; message?: string }
+type Proposal = { scheduledAt?: string; durationMinutes?: number; hourlyCents?: number; message?: string; proposedBy?: "client" | "provider" }
 
-// Client-side banner on the booking page when the cleaner has counter-offered. Accept applies the
-// change (a rate change re-authorizes the saved card); decline keeps the booking as originally agreed.
-export function ProposalBanner({ bookingId, proposal, providerCountry }: { bookingId: string; proposal: Proposal; providerCountry: string }) {
+// Banner on the booking page, shown to whichever party did NOT create the pending proposal. Accept
+// applies the change (a rate change re-authorizes the saved card); decline keeps the booking as
+// originally agreed. onDone is optional — server-rendered pages don't need it (router.refresh() is
+// enough), but the client-state-driven provider list passes its own reload function instead.
+export function ProposalBanner({ bookingId, proposal, providerCountry, onDone }: { bookingId: string; proposal: Proposal; providerCountry: string; onDone?: () => void }) {
   const t = useTranslations("compBookingProposalBanner")
   const locale = useLocale()
   const router = useRouter()
@@ -25,7 +27,7 @@ export function ProposalBanner({ bookingId, proposal, providerCountry }: { booki
         method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action }),
       })
       if (!r.ok) { const d = await r.json().catch(() => ({})); setError(typeof d.error === "string" ? d.error : t("genericError")); return }
-      router.refresh()
+      onDone ? onDone() : router.refresh()
     } catch { setError(t("genericError")) } finally { setBusy(null) }
   }
 

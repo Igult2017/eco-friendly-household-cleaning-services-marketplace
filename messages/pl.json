@@ -157,7 +157,7 @@
     "cityPlaceholder": "Amsterdam",
     "ecoLevelLabel": "Poziom eko",
     "minRatingLabel": "Min. ocena",
-    "priceRangeLabel": "Zakres cen",
+    "priceRangeLabel": "Cena (€/godz.)",
     "minPricePlaceholder": "Min",
     "maxPricePlaceholder": "Maks",
     "distanceLabel": "Odległość",
@@ -182,9 +182,6 @@
     "priceFrom": "Od",
     "viewButton": "Zobacz",
     "bookButton": "Rezerwuj",
-    "priceRangeLabel": "Cena (€/godz.)",
-    "minPricePlaceholder": "Min",
-    "maxPricePlaceholder": "Maks",
     "priceOnRequest": "Cena na zapytanie",
     "nearDetecting": "Szukanie osób sprzątających w pobliżu…",
     "nearYouChip": "W pobliżu: {city}",
@@ -774,11 +771,13 @@
     "labelScheduled": "Zaplanowano:",
     "labelAmountCharged": "Pobrana kwota:",
     "refundPolicyTitle": "Zasady zwrotów",
-    "refundFull": "Pełny zwrot (100%) — powiadomienie z wyprzedzeniem ponad 48 godzin",
-    "refundPartial": "Częściowy zwrot (50%) — powiadomienie z wyprzedzeniem 24–48 godzin",
-    "refundNone": "Brak zwrotu — powiadomienie z wyprzedzeniem poniżej 24 godzin",
+    "refundFull": "Pełny zwrot (100%) — powiadomienie z wyprzedzeniem ponad {hours} godzin",
+    "refundPartial": "Częściowy zwrot — tak blisko terminu nalicza się opłata za anulowanie",
+    "refundNone": "Brak zwrotu — mniej niż {hours} godzin do terminu",
     "youWillReceive": "Otrzymasz: {amount}",
     "reasonPlaceholder": "Powód anulowania (opcjonalnie)",
+    "reasonPlaceholderRequired": "Powód anulowania (wymagany tak blisko terminu)",
+    "errorReasonRequired": "Podaj powód (co najmniej 10 znaków) — ta rezerwacja odbędzie się już wkrótce.",
     "keepBooking": "Zachowaj rezerwację",
     "cancelling": "Anulowanie…",
     "confirmCancellation": "Potwierdź anulowanie"
@@ -833,17 +832,13 @@
     "preAuthorised": "Wstępnie autoryzowane — obciążenie po zakończeniu",
     "leaveReview": "Wystaw opinię",
     "openDispute": "Otwórz reklamację",
-    "reschedule": "Zmień termin",
     "cancelBooking": "Anuluj rezerwację",
     "messageCleaner": "Napisz do osoby sprzątającej",
     "confirmCompletion": "Potwierdź zakończenie",
     "confirmInfo": "Płatność zostaje zwolniona dla osoby sprzątającej dopiero po tym, jak oboje oznaczycie zlecenie jako wykonane.",
-    "statusAwaitingConfirmation": "Oczekuje na Twoje potwierdzenie"
-  },
-  "customerBookingsIdReschedulePage": {
-    "backToBooking": "Powrót do rezerwacji",
-    "title": "Zmień termin rezerwacji",
-    "defaultServiceName": "Usługa sprzątania"
+    "statusAwaitingConfirmation": "Oczekuje na Twoje potwierdzenie",
+    "waitingForCleanerResponse": "Czekanie, aż osoba sprzątająca zaakceptuje lub odrzuci proponowaną zmianę.",
+    "cancellationReasonTitle": "Podany powód"
   },
   "customerBookingsIdReviewPage": {
     "errorSelectOverallRating": "Wybierz ocenę ogólną",
@@ -1071,24 +1066,6 @@
     "paused": "Wstrzymane",
     "cancelled": "Anulowane"
   },
-  "providerBookingsIdCompletePage": {
-    "errorMarkComplete": "Nie udało się oznaczyć jako ukończone",
-    "errorGeneric": "Coś poszło nie tak. Spróbuj ponownie.",
-    "doneTitle": "Zlecenie oznaczone jako ukończone!",
-    "doneDescription": "Płatność jest pobierana. Twoje zarobki są wypłacane natychmiast i pojawią się w najbliższym podsumowaniu zarobków.",
-    "backToDashboard": "Powrót do panelu",
-    "title": "Oznacz zlecenie jako ukończone",
-    "subtitle": "Prześlij zdjęcia wykonanej pracy, aby potwierdzić rezerwację.",
-    "completionPhotosLabel": "Zdjęcia ukończenia (opcjonalnie, maks. 5)",
-    "photoAlt": "Zdjęcie ukończenia",
-    "removePhotoAriaLabel": "Usuń zdjęcie",
-    "addPhoto": "Dodaj zdjęcie",
-    "trustNote": "Zdjęcia budują zaufanie i chronią przed sporami.",
-    "cancel": "Anuluj",
-    "uploading": "Przesyłanie...",
-    "completing": "Kończenie...",
-    "confirmComplete": "Potwierdź ukończenie"
-  },
   "providerLayout": {
     "dashboard": "Panel",
     "findJobs": "Znajdź zlecenia",
@@ -1111,6 +1088,10 @@
     "statusCancelled": "Anulowana",
     "statusDisputed": "Sporna",
     "statusRefunded": "Zwrócona",
+    "statusFinishingUp": "Finalizowanie",
+    "statusClientNoShow": "Klient się nie stawił",
+    "statusCleanerNoShow": "Zostałeś zgłoszony jako nieobecny",
+    "cancellationReasonLabel": "Podany powód",
     "emptyState": "Nie znaleziono rezerwacji.",
     "defaultServiceName": "Usługa sprzątania",
     "customerLabel": "Klient: {name}",
@@ -1455,12 +1436,13 @@
     "errorSavePhotos": "Nie udało się zapisać zdjęć",
     "errorUploadFailed": "Przesyłanie nie powiodło się. Spróbuj ponownie."
   },
-  "compBookingProviderBookingActions": {
-    "markComplete": "Oznacz jako ukończone",
-    "confirmBooking": "Potwierdź rezerwację",
-    "startCleaning": "Rozpocznij sprzątanie",
-    "processing": "Przetwarzanie…",
-    "actionFailed": "To się nie powiodło. Spróbuj ponownie."
+  "compBookingCancelReport": {
+    "cancelBooking": "Anuluj rezerwację",
+    "cancelWarning": "To anuluje rezerwację. W zależności od tego, jak blisko jest termin, może zostać naliczona opłata — klient zostanie powiadomiony w każdym przypadku.",
+    "reasonPlaceholder": "Dlaczego anulujesz?",
+    "confirmCancel": "Potwierdź anulowanie",
+    "dismiss": "Anuluj",
+    "genericError": "Coś poszło nie tak. Spróbuj ponownie."
   },
   "compBookingProviderCard": {
     "distanceAway": "{distance} km stąd",
@@ -1500,37 +1482,6 @@
     "dayThursday": "Czwartek",
     "dayFriday": "Piątek",
     "daySaturday": "Sobota"
-  },
-  "compBookingRescheduleForm": {
-    "errorSelectDateTime": "Wybierz datę i godzinę.",
-    "errorRescheduleFailed": "Nie udało się zmienić terminu",
-    "errorGeneric": "Coś poszło nie tak. Spróbuj ponownie.",
-    "successTitle": "Termin zmieniony",
-    "successMessage": "Termin Twojej rezerwacji został pomyślnie zmieniony.",
-    "viewBooking": "Zobacz rezerwację",
-    "currentSchedule": "Obecny termin:",
-    "newDate": "Nowa data",
-    "newTime": "Nowa godzina",
-    "duration": "Czas trwania",
-    "durationHours": "{count, plural, one {# godzina} few {# godziny} many {# godzin} other {# godziny}}",
-    "goBack": "Wstecz",
-    "rescheduling": "Zmienianie terminu…",
-    "confirmReschedule": "Potwierdź zmianę terminu"
-  },
-  "compBookingRescheduleModal": {
-    "closeAriaLabel": "Zamknij",
-    "title": "Zmień termin rezerwacji",
-    "currentScheduleLabel": "Bieżący termin:",
-    "newDateLabel": "Nowa data",
-    "newTimeLabel": "Nowa godzina",
-    "durationLabel": "Czas trwania",
-    "durationOption": "{count, plural, one {# godzina} few {# godziny} many {# godzin} other {# godziny}}",
-    "cancelButton": "Anuluj",
-    "submitButton": "Zmień termin",
-    "submitting": "Zmienianie terminu…",
-    "errorSelectDateTime": "Wybierz datę i godzinę.",
-    "errorRescheduleFailed": "Nie udało się zmienić terminu",
-    "errorGeneric": "Coś poszło nie tak. Spróbuj ponownie."
   },
   "compBookingStripePaymentForm": {
     "paymentFailed": "Płatność nie powiodła się",
@@ -1574,6 +1525,8 @@
     "statusCancelled": "Anulowana",
     "statusDisputed": "Sporna",
     "statusRefunded": "Zwrócona",
+    "statusClientNoShow": "Klient się nie stawił",
+    "statusCleanerNoShow": "Osoba sprzątająca się nie stawiła",
     "viewAll": "Zobacz wszystkie"
   },
   "compCustomerDashboardJobs": {
@@ -2123,6 +2076,8 @@
     "back": "Wstecz",
     "reasonTooShort": "Podaj krótki powód (min. 5 znaków).",
     "suggestNothing": "Zaproponuj nowy termin, nową stawkę lub oba.",
+    "reasonRequiredForChange": "Podaj krótki powód zmiany (co najmniej 5 znaków).",
+    "proposeChangeButton": "Zaproponuj nowy termin",
     "rateBelowMinimum": "Minimalna kwota za godzinę to {min} €.",
     "rateMinimumHint": "Minimum {min} €/godzinę.",
     "genericError": "Coś poszło nie tak. Spróbuj ponownie."

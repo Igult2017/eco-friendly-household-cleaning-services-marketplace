@@ -39,7 +39,7 @@ export default async function CustomerBookingsPage() {
   const upcoming = list
     .filter((b) => ["pending_payment", "payment_authorized", "confirmed", "in_progress", "pending_capture"].includes(b.status))
     .sort((a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime())
-  const past = list.filter((b) => ["completed", "cancelled", "disputed", "refunded"].includes(b.status))
+  const past = list.filter((b) => ["completed", "cancelled", "disputed", "refunded", "client_no_show", "cleaner_no_show"].includes(b.status))
 
   return (
     <div className="space-y-6 max-w-3xl">

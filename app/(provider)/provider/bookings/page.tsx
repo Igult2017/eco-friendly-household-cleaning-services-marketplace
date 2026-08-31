@@ -9,6 +9,10 @@ import { formatCurrency } from "@/lib/utils/formatCurrency"
 import { BookingRespondActions } from "@/components/booking/BookingRespondActions"
 import { RateClientCard } from "@/components/provider/RateClientCard"
 import { InlineQuickMessage } from "@/components/messaging/InlineQuickMessage"
+import { ProposalBanner } from "@/components/booking/ProposalBanner"
+import { ProposeChangeTrigger } from "@/components/booking/ProposeChangeTrigger"
+import { NoShowReport } from "@/components/booking/NoShowReport"
+import { CancelBookingReport } from "@/components/booking/CancelBookingReport"
 
 // 2024-01-07 is a Sunday — offset by day number for a locale-aware short weekday name.
 const dayName = (d: number) => new Date(Date.UTC(2024, 0, 7 + d)).toLocaleDateString(undefined, { weekday: "short", timeZone: "UTC" })
@@ -29,7 +33,8 @@ type Booking = {
   customerEmail: string | null
   requestedFrequency: string | null
   requestedDays: number[] | null
-  pendingProposal: { scheduledAt?: string; hourlyCents?: number } | null
+  pendingProposal: { scheduledAt?: string; durationMinutes?: number; hourlyCents?: number; message?: string; proposedBy?: "client" | "provider" } | null
+  cancellationReason: string | null
   createdAt: string
 }
 
@@ -38,10 +43,13 @@ const STATUS_LABEL: Record<string, { labelKey: string; color: string }> = {
   payment_authorized: { labelKey: "statusConfirmed", color: "bg-blue-100 text-blue-700" },
   confirmed:          { labelKey: "statusConfirmed", color: "bg-blue-100 text-blue-700" },
   in_progress:        { labelKey: "statusInProgress", color: "bg-amber-100 text-amber-700" },
+  pending_capture:    { labelKey: "statusFinishingUp", color: "bg-amber-100 text-amber-700" },
   completed:          { labelKey: "statusCompleted", color: "bg-green-100 text-green-700" },
   cancelled:          { labelKey: "statusCancelled", color: "bg-gray-100 text-gray-500" },
   disputed:           { labelKey: "statusDisputed", color: "bg-red-100 text-red-700" },
   refunded:           { labelKey: "statusRefunded", color: "bg-purple-100 text-purple-700" },
+  client_no_show:     { labelKey: "statusClientNoShow", color: "bg-red-100 text-red-700" },
+  cleaner_no_show:    { labelKey: "statusCleanerNoShow", color: "bg-red-100 text-red-700" },
 }
 
 const TABS = ["all", "payment_authorized", "in_progress", "completed", "cancelled"]
@@ -162,6 +170,13 @@ export default function ProviderBookingsPage() {
                   </p>
                 )}
 
+                {/* Reason is captured at cancellation time but was never shown back afterward. */}
+                {["cancelled", "client_no_show", "cleaner_no_show"].includes(b.status) && b.cancellationReason && (
+                  <p className="mt-2 text-xs text-[#6B7280] bg-[#F4FAF6] rounded-lg px-3 py-2">
+                    <span className="font-medium text-[#2B3441]">{t("cancellationReasonLabel")}:</span> {b.cancellationReason}
+                  </p>
+                )}
+
                 {/* Completed → two-way reviews: the cleaner rates the client. */}
                 {b.status === "completed" && (
                   <RateClientCard bookingId={b.id} alreadyReviewed={reviewedIds.has(b.id)} />
@@ -198,26 +213,51 @@ export default function ProviderBookingsPage() {
                   </div>
                 )}
 
-                {/* New booking → accept / counter-offer / reject. Once a counter-offer is out, wait. */}
+                {/* New booking → accept / counter-offer / reject. A pending change (either side may
+                    have proposed one) shows the response banner to whoever didn't propose it, or a
+                    waiting indicator to whoever did. */}
                 {b.status === "payment_authorized" && (
                   <div className="mt-3 pt-3 border-t border-[#E5EBF0]">
                     {b.pendingProposal ? (
-                      <p className="inline-flex items-center gap-1.5 text-sm text-amber-700">
-                        <Hourglass size={14} /> {t("awaitingClient")}
-                      </p>
+                      b.pendingProposal.proposedBy === "client" ? (
+                        <ProposalBanner bookingId={b.id} proposal={b.pendingProposal} providerCountry={b.serviceAddress.country} onDone={load} />
+                      ) : (
+                        <p className="inline-flex items-center gap-1.5 text-sm text-amber-700">
+                          <Hourglass size={14} /> {t("awaitingClient")}
+                        </p>
+                      )
                     ) : (
                       <BookingRespondActions bookingId={b.id} onDone={load} />
                     )}
                   </div>
                 )}
                 {(b.status === "confirmed" || b.status === "in_progress") && (
-                  <div className="mt-3 pt-3 border-t border-[#E5EBF0]">
-                    <Link
-                      href={`/bookings/${b.id}/complete`}
-                      className="inline-flex items-center gap-1.5 rounded-xl bg-[#2D7A5F] px-4 py-2 text-sm font-semibold text-white hover:bg-[#256349] transition-colors"
-                    >
-                      {t("markAsComplete")}
-                    </Link>
+                  <div className="mt-3 pt-3 border-t border-[#E5EBF0] space-y-2">
+                    {b.pendingProposal ? (
+                      b.pendingProposal.proposedBy === "client" ? (
+                        <ProposalBanner bookingId={b.id} proposal={b.pendingProposal} providerCountry={b.serviceAddress.country} onDone={load} />
+                      ) : (
+                        <p className="inline-flex items-center gap-1.5 text-sm text-amber-700">
+                          <Hourglass size={14} /> {t("awaitingClient")}
+                        </p>
+                      )
+                    ) : (
+                      <>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Link
+                            href={`/provider/bookings/${b.id}/complete`}
+                            className="inline-flex items-center gap-1.5 rounded-xl bg-[#2D7A5F] px-4 py-2 text-sm font-semibold text-white hover:bg-[#256349] transition-colors"
+                          >
+                            {t("markAsComplete")}
+                          </Link>
+                          <ProposeChangeTrigger bookingId={b.id} allowRateChange onDone={load} />
+                        </div>
+                        <div className="flex flex-wrap items-center gap-3">
+                          <NoShowReport bookingId={b.id} side="cleaner" onDone={load} />
+                          <CancelBookingReport bookingId={b.id} onDone={load} />
+                        </div>
+                      </>
+                    )}
                   </div>
                 )}
                 {b.status === "completed" && (

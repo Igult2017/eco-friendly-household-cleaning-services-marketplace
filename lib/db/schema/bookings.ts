@@ -96,13 +96,16 @@ export const bookings = pgTable(
     requestedFrequency: varchar("requested_frequency", { length: 12 }),
     // Days of week (0=Sun..6=Sat) the client wants the recurring service on.
     requestedDays: jsonb("requested_days").$type<number[]>(),
-    // Cleaner's pending counter-offer (new time and/or hourly rate) awaiting the client's response.
+    // Either side's pending change request (new time and/or, cleaner-only, a new hourly rate)
+    // awaiting the OTHER party's response. proposedBy records who's waiting on whom; a rate change
+    // can only ever come from the cleaner (a client doesn't set the cleaner's price).
     pendingProposal: jsonb("pending_proposal").$type<{
       scheduledAt?: string
       durationMinutes?: number
       hourlyCents?: number
       message?: string
       proposedAt: string
+      proposedBy: "client" | "provider"
     }>(),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

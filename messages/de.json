@@ -157,9 +157,9 @@
     "cityPlaceholder": "Amsterdam",
     "ecoLevelLabel": "Öko-Stufe",
     "minRatingLabel": "Mindestbewertung",
-    "priceRangeLabel": "Preisspanne",
-    "minPricePlaceholder": "Min.",
-    "maxPricePlaceholder": "Max.",
+    "priceRangeLabel": "Preis (€/Std.)",
+    "minPricePlaceholder": "Min",
+    "maxPricePlaceholder": "Max",
     "distanceLabel": "Entfernung",
     "distanceNeedsLocation": "Erkenne zuerst deinen Standort („In meiner Nähe“), um nach Entfernung zu filtern.",
     "withinKm": "Innerhalb von {km} km",
@@ -182,9 +182,6 @@
     "priceFrom": "Ab",
     "viewButton": "Ansehen",
     "bookButton": "Buchen",
-    "priceRangeLabel": "Preis (€/Std.)",
-    "minPricePlaceholder": "Min",
-    "maxPricePlaceholder": "Max",
     "priceOnRequest": "Preis auf Anfrage",
     "nearDetecting": "Suche Reinigungskräfte in deiner Nähe…",
     "nearYouChip": "In der Nähe von {city}",
@@ -774,11 +771,13 @@
     "labelScheduled": "Geplant:",
     "labelAmountCharged": "Berechneter Betrag:",
     "refundPolicyTitle": "Rückerstattungsrichtlinie",
-    "refundFull": "Volle Rückerstattung (100 %) — mehr als 48 Stunden Vorlauf",
-    "refundPartial": "Teilrückerstattung (50 %) — 24–48 Stunden Vorlauf",
-    "refundNone": "Keine Rückerstattung — weniger als 24 Stunden Vorlauf",
+    "refundFull": "Volle Rückerstattung (100 %) — mehr als {hours} Stunden Vorlauf",
+    "refundPartial": "Teilrückerstattung — bei dieser Nähe zum Termin fällt eine Stornogebühr an",
+    "refundNone": "Keine Rückerstattung — weniger als {hours} Stunden vor dem Termin",
     "youWillReceive": "Sie erhalten: {amount}",
     "reasonPlaceholder": "Grund für die Stornierung (optional)",
+    "reasonPlaceholderRequired": "Grund für die Stornierung (bei dieser Nähe zum Termin erforderlich)",
+    "errorReasonRequired": "Bitte gib einen Grund an (mindestens 10 Zeichen) — dieser Termin steht kurz bevor.",
     "keepBooking": "Buchung behalten",
     "cancelling": "Wird storniert…",
     "confirmCancellation": "Stornierung bestätigen"
@@ -833,17 +832,13 @@
     "preAuthorised": "Vorautorisiert – Belastung nach Abschluss",
     "leaveReview": "Bewertung abgeben",
     "openDispute": "Reklamation eröffnen",
-    "reschedule": "Verschieben",
     "cancelBooking": "Buchung stornieren",
     "messageCleaner": "Reinigungskraft kontaktieren",
     "confirmCompletion": "Abschluss bestätigen",
     "confirmInfo": "Die Zahlung wird erst an deine Reinigungskraft freigegeben, wenn ihr beide den Auftrag als erledigt markiert.",
-    "statusAwaitingConfirmation": "Wartet auf deine Bestätigung"
-  },
-  "customerBookingsIdReschedulePage": {
-    "backToBooking": "Zurück zur Buchung",
-    "title": "Buchung verschieben",
-    "defaultServiceName": "Reinigungsservice"
+    "statusAwaitingConfirmation": "Wartet auf deine Bestätigung",
+    "waitingForCleanerResponse": "Warten darauf, dass deine Reinigungskraft deinen Änderungsvorschlag annimmt oder ablehnt.",
+    "cancellationReasonTitle": "Angegebener Grund"
   },
   "customerBookingsIdReviewPage": {
     "errorSelectOverallRating": "Bitte wähle eine Gesamtbewertung aus",
@@ -1071,24 +1066,6 @@
     "paused": "Pausiert",
     "cancelled": "Storniert"
   },
-  "providerBookingsIdCompletePage": {
-    "errorMarkComplete": "Markierung als abgeschlossen fehlgeschlagen",
-    "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
-    "doneTitle": "Auftrag als abgeschlossen markiert!",
-    "doneDescription": "Die Zahlung wird eingezogen. Dein Verdienst wird sofort ausgezahlt — er erscheint in deiner nächsten Verdienstübersicht.",
-    "backToDashboard": "Zurück zum Dashboard",
-    "title": "Auftrag als abgeschlossen markieren",
-    "subtitle": "Lade Fotos der erledigten Arbeit hoch, um die Buchung zu bestätigen.",
-    "completionPhotosLabel": "Abschlussfotos (optional, max. 5)",
-    "photoAlt": "Abschlussfoto",
-    "removePhotoAriaLabel": "Foto entfernen",
-    "addPhoto": "Foto hinzufügen",
-    "trustNote": "Fotos schaffen Vertrauen und schützen vor Streitfällen.",
-    "cancel": "Abbrechen",
-    "uploading": "Wird hochgeladen...",
-    "completing": "Wird abgeschlossen...",
-    "confirmComplete": "Abschluss bestätigen"
-  },
   "providerLayout": {
     "dashboard": "Dashboard",
     "findJobs": "Aufträge finden",
@@ -1111,6 +1088,10 @@
     "statusCancelled": "Storniert",
     "statusDisputed": "Strittig",
     "statusRefunded": "Erstattet",
+    "statusFinishingUp": "Wird abgeschlossen",
+    "statusClientNoShow": "Kunde nicht erschienen",
+    "statusCleanerNoShow": "Du wurdest als nicht erschienen gemeldet",
+    "cancellationReasonLabel": "Angegebener Grund",
     "emptyState": "Keine Buchungen gefunden.",
     "defaultServiceName": "Reinigungsservice",
     "customerLabel": "Kunde: {name}",
@@ -1455,12 +1436,13 @@
     "errorSavePhotos": "Fotos konnten nicht gespeichert werden",
     "errorUploadFailed": "Upload fehlgeschlagen. Bitte versuchen Sie es erneut."
   },
-  "compBookingProviderBookingActions": {
-    "markComplete": "Als erledigt markieren",
-    "confirmBooking": "Buchung bestätigen",
-    "startCleaning": "Reinigung starten",
-    "processing": "Wird verarbeitet…",
-    "actionFailed": "Das hat nicht funktioniert. Bitte versuche es erneut."
+  "compBookingCancelReport": {
+    "cancelBooking": "Buchung stornieren",
+    "cancelWarning": "Dies storniert die Buchung. Je nachdem, wie nah der Termin ist, kann eine Gebühr anfallen — der Kunde wird in jedem Fall benachrichtigt.",
+    "reasonPlaceholder": "Warum stornierst du?",
+    "confirmCancel": "Stornierung bestätigen",
+    "dismiss": "Doch nicht",
+    "genericError": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
   },
   "compBookingProviderCard": {
     "distanceAway": "{distance} km entfernt",
@@ -1500,37 +1482,6 @@
     "dayThursday": "Donnerstag",
     "dayFriday": "Freitag",
     "daySaturday": "Samstag"
-  },
-  "compBookingRescheduleForm": {
-    "errorSelectDateTime": "Bitte wählen Sie ein Datum und eine Uhrzeit.",
-    "errorRescheduleFailed": "Verschieben fehlgeschlagen",
-    "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
-    "successTitle": "Buchung verschoben",
-    "successMessage": "Ihre Buchung wurde erfolgreich verschoben.",
-    "viewBooking": "Buchung ansehen",
-    "currentSchedule": "Aktueller Termin:",
-    "newDate": "Neues Datum",
-    "newTime": "Neue Uhrzeit",
-    "duration": "Dauer",
-    "durationHours": "{count, plural, one {# Stunde} other {# Stunden}}",
-    "goBack": "Zurück",
-    "rescheduling": "Wird verschoben…",
-    "confirmReschedule": "Verschieben bestätigen"
-  },
-  "compBookingRescheduleModal": {
-    "closeAriaLabel": "Schließen",
-    "title": "Buchung verschieben",
-    "currentScheduleLabel": "Aktueller Termin:",
-    "newDateLabel": "Neues Datum",
-    "newTimeLabel": "Neue Uhrzeit",
-    "durationLabel": "Dauer",
-    "durationOption": "{count, plural, one {# Stunde} other {# Stunden}}",
-    "cancelButton": "Abbrechen",
-    "submitButton": "Verschieben",
-    "submitting": "Wird verschoben…",
-    "errorSelectDateTime": "Bitte wählen Sie ein Datum und eine Uhrzeit.",
-    "errorRescheduleFailed": "Verschieben fehlgeschlagen",
-    "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
   },
   "compBookingStripePaymentForm": {
     "paymentFailed": "Zahlung fehlgeschlagen",
@@ -1574,6 +1525,8 @@
     "statusCancelled": "Storniert",
     "statusDisputed": "Beanstandet",
     "statusRefunded": "Erstattet",
+    "statusClientNoShow": "Kunde nicht erschienen",
+    "statusCleanerNoShow": "Reinigungskraft nicht erschienen",
     "viewAll": "Alle ansehen"
   },
   "compCustomerDashboardJobs": {
@@ -2123,6 +2076,8 @@
     "back": "Zurück",
     "reasonTooShort": "Bitte gib einen kurzen Grund an (mind. 5 Zeichen).",
     "suggestNothing": "Schlage eine neue Zeit, einen neuen Satz oder beides vor.",
+    "reasonRequiredForChange": "Bitte gib einen kurzen Grund für die Änderung an (mindestens 5 Zeichen).",
+    "proposeChangeButton": "Neue Zeit vorschlagen",
     "rateBelowMinimum": "Der Mindestbetrag pro Stunde beträgt {min} €.",
     "rateMinimumHint": "Mindestens {min} €/Stunde.",
     "genericError": "Etwas ist schiefgelaufen. Bitte versuche es erneut."

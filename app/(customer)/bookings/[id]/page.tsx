@@ -7,9 +7,11 @@ import { getTranslations } from "next-intl/server"
 import Link from "next/link"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
 import { formatDate } from "@/lib/utils/formatDate"
-import { CalendarDays, MapPin, Leaf, Star, MessageSquare, MessageSquareWarning, XCircle, CheckCircle2, Clock, AlertCircle, CalendarClock, FileText } from "lucide-react"
+import { CalendarDays, MapPin, Leaf, Star, MessageSquare, MessageSquareWarning, XCircle, CheckCircle2, Clock, AlertCircle, Hourglass, FileText } from "lucide-react"
 import { ConfirmCompletionButton } from "@/components/customer/ConfirmCompletionButton"
 import { ProposalBanner } from "@/components/booking/ProposalBanner"
+import { ProposeChangeTrigger } from "@/components/booking/ProposeChangeTrigger"
+import { NoShowReport } from "@/components/booking/NoShowReport"
 
 export const dynamic = "force-dynamic"
 
@@ -77,10 +79,11 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
   const StatusIcon = cfg.icon
 
   const canCancel = ["payment_authorized", "confirmed"].includes(booking.status)
-  const canReschedule = ["payment_authorized", "confirmed"].includes(booking.status)
+  const canProposeChange = ["payment_authorized", "confirmed"].includes(booking.status) && !booking.pendingProposal
   const canDispute = booking.status === "completed"
   const canReview = booking.status === "completed"
   const canConfirm = booking.status === "pending_capture" && !!booking.providerCompletedAt && !booking.clientConfirmedAt
+  const canReportNoShow = ["payment_authorized", "confirmed", "in_progress"].includes(booking.status)
 
   const addr = booking.serviceAddress as { line1: string; line2?: string; city: string; postalCode: string; country: string }
 
@@ -108,9 +111,17 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
         </div>
       </div>
 
-      {/* Cleaner's pending counter-offer (new time / rate) — client accepts or declines. */}
+      {/* A pending change (either side can propose a new time; only the cleaner can also propose a
+          new rate) — the party who did NOT propose it accepts or declines; the proposer sees a
+          waiting indicator instead of being able to respond to their own request. */}
       {booking.pendingProposal && ["payment_authorized", "confirmed"].includes(booking.status) && (
-        <ProposalBanner bookingId={booking.id} proposal={booking.pendingProposal} providerCountry={booking.providerCountry ?? "DE"} />
+        booking.pendingProposal.proposedBy === "client" ? (
+          <p className="flex items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            <Hourglass size={15} className="shrink-0" /> {t("waitingForCleanerResponse")}
+          </p>
+        ) : (
+          <ProposalBanner bookingId={booking.id} proposal={booking.pendingProposal} providerCountry={booking.providerCountry ?? "DE"} />
+        )
       )}
 
       {/* Details */}
@@ -186,6 +197,14 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
         </Link>
       )}
 
+      {/* Reason is captured at cancellation time but was never shown back afterward. */}
+      {(booking.status === "cancelled" || booking.status === "client_no_show" || booking.status === "cleaner_no_show") && booking.cancellationReason && (
+        <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5">
+          <h2 className="font-semibold text-[#2B3441] mb-2">{t("cancellationReasonTitle")}</h2>
+          <p className="text-sm text-[#6B7280] leading-relaxed">{booking.cancellationReason}</p>
+        </div>
+      )}
+
       {/* Dual-confirm: a persistent reminder of how payment is released, plus the confirm action. */}
       {["payment_authorized", "confirmed", "in_progress", "pending_capture"].includes(booking.status) && (
         <p className="text-xs text-[#6B7280] bg-white rounded-xl px-4 py-3 border border-[#E5EBF0]">{t("confirmInfo")}</p>
@@ -193,6 +212,11 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
       {canConfirm && (
         <div className="rounded-2xl border border-[#2D7A5F]/30 bg-[#F4FAF6] p-5">
           <ConfirmCompletionButton bookingId={booking.id} />
+        </div>
+      )}
+      {canReportNoShow && (
+        <div className="flex justify-end">
+          <NoShowReport bookingId={booking.id} side="client" />
         </div>
       )}
 
@@ -207,7 +231,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
       )}
 
       {/* Actions */}
-      {(canCancel || canReschedule || canDispute || canReview) && (
+      {(canCancel || canProposeChange || canDispute || canReview) && (
         <div className="flex flex-col sm:flex-row gap-3">
           {canReview && (
             <Link
@@ -225,14 +249,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
               <MessageSquareWarning size={15} /> {t("openDispute")}
             </Link>
           )}
-          {canReschedule && (
-            <Link
-              href={`/bookings/${booking.id}/reschedule`}
-              className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-[#2D7A5F]/30 text-[#2D7A5F] hover:bg-[#F4FAF6] text-sm font-medium px-4 py-3 transition-colors"
-            >
-              <CalendarClock size={15} /> {t("reschedule")}
-            </Link>
-          )}
+          {canProposeChange && <ProposeChangeTrigger bookingId={booking.id} allowRateChange={false} fullWidth />}
           {canCancel && (
             <Link
               href={`/bookings/${booking.id}/cancel`}

@@ -157,9 +157,6 @@
     "cityPlaceholder": "Amsterdam",
     "ecoLevelLabel": "Eco Level",
     "minRatingLabel": "Min Rating",
-    "priceRangeLabel": "Price range",
-    "minPricePlaceholder": "Min",
-    "maxPricePlaceholder": "Max",
     "distanceLabel": "Distance",
     "distanceNeedsLocation": "Detect your location first (\"Near me\") to filter by distance.",
     "withinKm": "Within {km} km",
@@ -774,11 +771,13 @@
     "labelScheduled": "Scheduled:",
     "labelAmountCharged": "Amount charged:",
     "refundPolicyTitle": "Refund policy",
-    "refundFull": "Full refund (100%) — more than 48 hours notice",
-    "refundPartial": "Partial refund (50%) — 24–48 hours notice",
-    "refundNone": "No refund — less than 24 hours notice",
+    "refundFull": "Full refund (100%) — more than {hours} hours' notice",
+    "refundPartial": "Partial refund — a cancellation fee applies this close to the appointment",
+    "refundNone": "No refund — within {hours} hours of the appointment",
     "youWillReceive": "You will receive: {amount}",
     "reasonPlaceholder": "Reason for cancellation (optional)",
+    "reasonPlaceholderRequired": "Reason for cancellation (required this close to the appointment)",
+    "errorReasonRequired": "Please give a reason (at least 10 characters) — this booking is coming up soon.",
     "keepBooking": "Keep Booking",
     "cancelling": "Cancelling…",
     "confirmCancellation": "Confirm Cancellation"
@@ -833,17 +832,13 @@
     "preAuthorised": "Pre-authorised — charged after completion",
     "leaveReview": "Leave a Review",
     "openDispute": "Open Dispute",
-    "reschedule": "Reschedule",
     "cancelBooking": "Cancel Booking",
     "messageCleaner": "Message your cleaner",
     "confirmCompletion": "Confirm completion",
     "confirmInfo": "Payment is released to your cleaner only after you both mark the job complete.",
-    "statusAwaitingConfirmation": "Awaiting your confirmation"
-  },
-  "customerBookingsIdReschedulePage": {
-    "backToBooking": "Back to booking",
-    "title": "Reschedule Booking",
-    "defaultServiceName": "Cleaning Service"
+    "statusAwaitingConfirmation": "Awaiting your confirmation",
+    "waitingForCleanerResponse": "Waiting for your cleaner to accept or decline your suggested change.",
+    "cancellationReasonTitle": "Reason given"
   },
   "customerBookingsIdReviewPage": {
     "errorSelectOverallRating": "Please select an overall rating",
@@ -1071,24 +1066,6 @@
     "paused": "Paused",
     "cancelled": "Cancelled"
   },
-  "providerBookingsIdCompletePage": {
-    "errorMarkComplete": "Failed to mark as complete",
-    "errorGeneric": "Something went wrong. Please try again.",
-    "doneTitle": "Job Marked Complete!",
-    "doneDescription": "Payment is being captured. Your earnings are paid instantly — this will appear in your next earnings summary.",
-    "backToDashboard": "Back to Dashboard",
-    "title": "Mark Job Complete",
-    "subtitle": "Upload photos of the completed work to confirm the booking.",
-    "completionPhotosLabel": "Completion Photos (optional, max 5)",
-    "photoAlt": "Completion photo",
-    "removePhotoAriaLabel": "Remove photo",
-    "addPhoto": "Add photo",
-    "trustNote": "Photos help build trust and protect against disputes.",
-    "cancel": "Cancel",
-    "uploading": "Uploading...",
-    "completing": "Completing...",
-    "confirmComplete": "Confirm Complete"
-  },
   "providerLayout": {
     "dashboard": "Dashboard",
     "findJobs": "Find jobs",
@@ -1111,6 +1088,10 @@
     "statusCancelled": "Cancelled",
     "statusDisputed": "Disputed",
     "statusRefunded": "Refunded",
+    "statusFinishingUp": "Finishing up",
+    "statusClientNoShow": "Client no-show",
+    "statusCleanerNoShow": "You were marked a no-show",
+    "cancellationReasonLabel": "Reason given",
     "emptyState": "No bookings found.",
     "defaultServiceName": "Cleaning Service",
     "customerLabel": "Client: {name}",
@@ -1455,12 +1436,13 @@
     "errorSavePhotos": "Failed to save photos",
     "errorUploadFailed": "Upload failed. Please try again."
   },
-  "compBookingProviderBookingActions": {
-    "markComplete": "Mark Complete",
-    "confirmBooking": "Confirm Booking",
-    "startCleaning": "Start Cleaning",
-    "processing": "Processing…",
-    "actionFailed": "That didn't go through. Please try again."
+  "compBookingCancelReport": {
+    "cancelBooking": "Cancel booking",
+    "cancelWarning": "This cancels the booking. Depending on how close it is to the appointment, a fee may apply — the client will be notified either way.",
+    "reasonPlaceholder": "Why are you cancelling?",
+    "confirmCancel": "Confirm cancellation",
+    "dismiss": "Never mind",
+    "genericError": "Something went wrong. Please try again."
   },
   "compBookingProviderCard": {
     "distanceAway": "{distance} km away",
@@ -1500,37 +1482,6 @@
     "dayThursday": "Thursday",
     "dayFriday": "Friday",
     "daySaturday": "Saturday"
-  },
-  "compBookingRescheduleForm": {
-    "errorSelectDateTime": "Please select a date and time.",
-    "errorRescheduleFailed": "Reschedule failed",
-    "errorGeneric": "Something went wrong. Please try again.",
-    "successTitle": "Booking Rescheduled",
-    "successMessage": "Your booking has been successfully rescheduled.",
-    "viewBooking": "View Booking",
-    "currentSchedule": "Current schedule:",
-    "newDate": "New Date",
-    "newTime": "New Time",
-    "duration": "Duration",
-    "durationHours": "{count, plural, one {# hour} other {# hours}}",
-    "goBack": "Go Back",
-    "rescheduling": "Rescheduling…",
-    "confirmReschedule": "Confirm Reschedule"
-  },
-  "compBookingRescheduleModal": {
-    "closeAriaLabel": "Close",
-    "title": "Reschedule Booking",
-    "currentScheduleLabel": "Current schedule:",
-    "newDateLabel": "New Date",
-    "newTimeLabel": "New Time",
-    "durationLabel": "Duration",
-    "durationOption": "{count, plural, one {# hour} other {# hours}}",
-    "cancelButton": "Cancel",
-    "submitButton": "Reschedule",
-    "submitting": "Rescheduling…",
-    "errorSelectDateTime": "Please select a date and time.",
-    "errorRescheduleFailed": "Reschedule failed",
-    "errorGeneric": "Something went wrong. Please try again."
   },
   "compBookingStripePaymentForm": {
     "paymentFailed": "Payment failed",
@@ -1574,6 +1525,8 @@
     "statusCancelled": "Cancelled",
     "statusDisputed": "Disputed",
     "statusRefunded": "Refunded",
+    "statusClientNoShow": "Client no-show",
+    "statusCleanerNoShow": "Cleaner no-show",
     "viewAll": "View all"
   },
   "compCustomerDashboardJobs": {
@@ -2123,6 +2076,8 @@
     "back": "Back",
     "reasonTooShort": "Please give a short reason (at least 5 characters).",
     "suggestNothing": "Suggest a new time, a new rate, or both.",
+    "reasonRequiredForChange": "Please give a short reason for the change (at least 5 characters).",
+    "proposeChangeButton": "Propose a new time",
     "rateBelowMinimum": "The minimum hourly rate is €{min}.",
     "rateMinimumHint": "Minimum €{min}/hour.",
     "genericError": "Something went wrong. Please try again."
