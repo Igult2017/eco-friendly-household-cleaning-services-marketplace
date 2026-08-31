@@ -13,7 +13,7 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 // a job so bidding cleaners know a payment method is on file. Renders nothing if a card already is.
 // onSaved is optional — the onboarding step uses it to know when this step's goal is reached
 // (either a card was just added, or one already existed), so it can move on automatically.
-export function SaveCardPrompt({ onSkip, skipLabel, onSaved }: { onSkip: () => void; skipLabel: string; onSaved?: () => void }) {
+export function SaveCardPrompt({ onSkip, skipLabel, onSaved, hideSkip }: { onSkip: () => void; skipLabel: string; onSaved?: () => void; hideSkip?: boolean }) {
   const t = useTranslations("compSaveCardPrompt")
   const [state, setState] = useState<"loading" | "prompt" | "form" | "saved" | "hidden">("loading")
   const [clientSecret, setClientSecret] = useState<string | null>(null)
@@ -57,9 +57,11 @@ export function SaveCardPrompt({ onSkip, skipLabel, onSaved }: { onSkip: () => v
           <button onClick={startForm} className="rounded-xl bg-[#2D7A5F] px-4 py-2 text-sm font-semibold text-white hover:bg-[#235f49] transition-colors">
             {t("addCard")}
           </button>
-          <button onClick={onSkip} className="rounded-xl border border-[#E5EBF0] px-4 py-2 text-sm text-[#6B7280] hover:text-[#2B3441] transition-colors">
-            {skipLabel}
-          </button>
+          {!hideSkip && (
+            <button onClick={onSkip} className="rounded-xl border border-[#E5EBF0] px-4 py-2 text-sm text-[#6B7280] hover:text-[#2B3441] transition-colors">
+              {skipLabel}
+            </button>
+          )}
         </div>
       )}
       {state === "form" && clientSecret && (

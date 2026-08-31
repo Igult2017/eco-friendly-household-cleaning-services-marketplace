@@ -37,7 +37,7 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     ecoOptions, carbonOffsetCents = 0,
   } = data
 
-  if (!paymentIntentId) throw new BookingError(400, "paymentIntentId is required") // no-card path uses createUnpaidBooking
+  if (!paymentIntentId) throw new BookingError(400, "paymentIntentId is required")
 
   // Idempotency: a refresh/double-submit of the SAME PaymentIntent must return the booking it
   // already created — NOT fall through to the overlap guard, find its own booking, and cancel the
@@ -74,13 +74,19 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     db.select({ basePrice: providerServices.basePrice, priceUnit: providerServices.priceUnit })
       .from(providerServices)
       .where(and(eq(providerServices.id, effectiveServiceId), eq(providerServices.providerId, providerId), eq(providerServices.isActive, true))),
-    db.select({ id: providers.id, isApproved: providers.isApproved, isSuspended: providers.isSuspended })
+    db.select({ id: providers.id, isApproved: providers.isApproved, isSuspended: providers.isSuspended, stripeAccountStatus: providers.stripeAccountStatus })
       .from(providers)
       .where(eq(providers.id, providerId)),
   ])
 
   if (!service) await cancel(404, "Service not found")
   if (!provider?.isApproved || provider.isSuspended) await cancel(422, "Provider not available")
+  // Defense in depth: /api/payments/intent already blocks creating the PaymentIntent for a cleaner
+  // whose Stripe payout setup isn't done — re-check here too, since status can change in the gap
+  // between authorizing the card and this booking actually being created.
+  if (provider!.stripeAccountStatus !== "active") {
+    await cancel(422, "This cleaner's payout setup isn't ready — please try again later or choose another cleaner.")
+  }
 
   // Bug 5: use bid amount from PI metadata when present (bid-flow bookings)
   const bidAmountCents = intent.metadata.bid_amount_cents ? parseInt(intent.metadata.bid_amount_cents, 10) : null

@@ -6,6 +6,7 @@ import { recurringSchedules, providers, providerServices, users } from "@/lib/db
 import { eq, and } from "drizzle-orm"
 import { inngest } from "@/lib/inngest/client"
 import { stripe } from "@/lib/stripe/client"
+import { getOrCreateStripeCustomer } from "@/lib/stripe/getOrCreateCustomer"
 import { logError } from "@/lib/utils/logError"
 
 const createSchema = z.object({
@@ -169,24 +170,10 @@ export async function POST(req: NextRequest) {
 
     if (!service) return NextResponse.json({ error: "Service not found for this provider" }, { status: 404 })
 
-    // Get or create Stripe Customer to attach the payment method.
-    // FIN-017: search first + idempotency key so a retry after a failed DB write doesn't
-    // create a duplicate customer. Use the same `clerk_id` metadata key as the booking flow
-    // (payments/intent) so both paths resolve to ONE customer per user.
-    let stripeCustomerId = user.stripeCustomerId
-    if (!stripeCustomerId) {
-      const existing = await stripe.customers.search({ query: `metadata['clerk_id']:'${userId}'`, limit: 1 })
-      if (existing.data[0]) {
-        stripeCustomerId = existing.data[0].id
-      } else {
-        const customer = await stripe.customers.create(
-          { email: user.email, name: user.firstName ?? undefined, metadata: { clerk_id: userId } },
-          { idempotencyKey: `cus-create-${userId}` },
-        )
-        stripeCustomerId = customer.id
-      }
-      await db.update(users).set({ stripeCustomerId }).where(eq(users.id, userId))
-    }
+    // Single shared resolver — see lib/stripe/getOrCreateCustomer.ts for why every payment
+    // flow must resolve the Stripe customer the same way (a card saved through one flow has to
+    // be visible to every other one).
+    const stripeCustomerId = await getOrCreateStripeCustomer(userId)
 
     // Attach the payment method to the customer (idempotent)
     try {

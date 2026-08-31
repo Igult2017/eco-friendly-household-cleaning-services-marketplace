@@ -44,9 +44,10 @@ export default function PostJobPage() {
   // (network, or anything the server flags that doesn't map to a specific input below).
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [locationValid, setLocationValid] = useState(true)
-  // Payment method is now part of creating the order itself (both job types), not a follow-up
-  // ask after posting — dismissing it here just hides the card, no navigation needed mid-form.
-  const [cardPromptDismissed, setCardPromptDismissed] = useState(false)
+  // Payment method is mandatory before a job can be posted (both job types) — no skip option
+  // here, unlike the same prompt at signup. Tracks whether one exists so Submit can stay disabled
+  // until it does; SaveCardPrompt itself hides once a card is confirmed present.
+  const [hasCard, setHasCard] = useState(false)
   const postal = usePostalValidation()
   // Marketing copy, not conditional on picking recurring — shown upfront so it can actually
   // influence the choice, same treatment as the direct-booking wizard's banner.
@@ -541,11 +542,11 @@ export default function PostJobPage() {
             </div>
           </div>
 
-          {/* Payment method is part of placing the order itself, for both standard and Take Job
-              posts — not a follow-up ask after the job already exists. */}
-          {!cardPromptDismissed && (
+          {/* Payment method is required before a job can be posted, for both standard and Take
+              Job posts — no skip option (unlike the same prompt at signup). */}
+          {!hasCard && (
             <div className="flex justify-center">
-              <SaveCardPrompt onSkip={() => setCardPromptDismissed(true)} skipLabel={t("continueWithoutCard")} />
+              <SaveCardPrompt onSkip={() => {}} skipLabel="" hideSkip onSaved={() => setHasCard(true)} />
             </div>
           )}
 
@@ -553,11 +554,12 @@ export default function PostJobPage() {
 
           <Button
             type="submit"
-            disabled={loading || !locationValid}
+            disabled={loading || !locationValid || !hasCard}
             className={cn("w-full h-12 font-semibold text-white", jobType === "take_job" ? "bg-red-600 hover:bg-red-700" : "bg-[#2D7A5F] hover:bg-[#235f49]")}
           >
             {loading ? <><Loader2 size={16} className="animate-spin mr-2" /> {t("posting")}</> : jobType === "take_job" ? t("submitButtonTakeJob") : t("submitButton")}
           </Button>
+          {!hasCard && <p className="text-xs text-center text-[#9CA3AF]">{t("cardRequiredNote")}</p>}
         </form>
       </div>
     </div>

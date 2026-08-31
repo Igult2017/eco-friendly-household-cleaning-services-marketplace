@@ -48,7 +48,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     // creation refuses this provider — only the CLIENT would ever find that out, on an emergency
     // job where a fast fallback to another cleaner matters most. Same fix as the bid-accept route.
     if (provider.stripeAccountStatus !== "active") {
-      return NextResponse.json({ error: "Finish setting up how you get paid before claiming instant jobs." }, { status: 422 })
+      const msg = provider.stripeAccountStatus === "pending"
+        ? "Stripe is still reviewing your payout details — this usually takes a bit, we'll let you know when it's done."
+        : "Finish setting up how you get paid before claiming instant jobs."
+      return NextResponse.json({ error: msg }, { status: 422 })
     }
 
     const [job] = await db

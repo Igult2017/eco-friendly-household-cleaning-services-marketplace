@@ -69,7 +69,10 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       return NextResponse.json({ error: "This cleaner is no longer available. Please choose another bid." }, { status: 422 })
     }
     if (bidder.stripeAccountStatus !== "active") {
-      return NextResponse.json({ error: "This cleaner hasn't finished setting up how they get paid yet. Please choose another bid, or ask them to finish payout setup first." }, { status: 422 })
+      const msg = bidder.stripeAccountStatus === "pending"
+        ? "This cleaner is still being reviewed by Stripe for payouts — usually just a short wait. Please choose another bid for now, or check back shortly."
+        : "This cleaner hasn't finished setting up how they get paid yet. Please choose another bid, or ask them to finish payout setup first."
+      return NextResponse.json({ error: msg }, { status: 422 })
     }
 
     // Losing bidders (captured BEFORE the transaction flips them to rejected) — notified below so

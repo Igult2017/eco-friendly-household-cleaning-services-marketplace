@@ -101,6 +101,21 @@ export async function POST(req: Request) {
     if (!allowed) return NextResponse.json({ error: "Only clients can post jobs. If you also have a client account, switch to it first." }, { status: 403 })
     if (!(await ensureUserRow(userId))) return NextResponse.json({ error: "Could not link your account. Please reload and try again." }, { status: 500 })
 
+    // A payment method is mandatory before posting — Stripe is asked live (not a cached flag) so
+    // this can't drift from reality. Fails CLOSED on a Stripe hiccup: an uncertain result must
+    // never be treated as "verified" for this gate (unlike the cosmetic badge in GET below).
+    const [posterUser] = await db.select({ stripeCustomerId: users.stripeCustomerId }).from(users).where(eq(users.id, userId))
+    let posterHasCard = false
+    if (posterUser?.stripeCustomerId) {
+      try {
+        const pms = await stripe.paymentMethods.list({ customer: posterUser.stripeCustomerId, type: "card", limit: 1 })
+        posterHasCard = pms.data.length > 0
+      } catch { posterHasCard = false }
+    }
+    if (!posterHasCard) {
+      return NextResponse.json({ error: "Add a payment method before posting a job." }, { status: 422 })
+    }
+
     const body = await req.json().catch(() => ({}))
     const parsed = createJobSchema.safeParse(body)
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
@@ -253,7 +268,9 @@ export async function GET(req: Request) {
       const customerUsers = distinctCustomerIds.length
         ? await db.select({ id: users.id, stripeCustomerId: users.stripeCustomerId }).from(users).where(inArray(users.id, distinctCustomerIds))
         : []
-      const hasPaymentMethodByUser = new Map<string, boolean>()
+      // Map value is null when the live check itself failed (Stripe hiccup) — kept distinct from a
+      // genuine "no card" so a transient error never gets shown to cleaners as a false badge.
+      const hasPaymentMethodByUser = new Map<string, boolean | null>()
       await Promise.all(
         customerUsers.map(async (u) => {
           if (!u.stripeCustomerId) { hasPaymentMethodByUser.set(u.id, false); return }
@@ -261,11 +278,11 @@ export async function GET(req: Request) {
             const pms = await stripe.paymentMethods.list({ customer: u.stripeCustomerId, type: "card", limit: 1 })
             hasPaymentMethodByUser.set(u.id, pms.data.length > 0)
           } catch {
-            hasPaymentMethodByUser.set(u.id, false)
+            hasPaymentMethodByUser.set(u.id, null)
           }
         }),
       )
-      const hasPaymentMethodByJob = new Map(geoRows.map((r) => [r.id, hasPaymentMethodByUser.get(r.customerId) ?? false]))
+      const hasPaymentMethodByJob = new Map(geoRows.map((r) => [r.id, hasPaymentMethodByUser.get(r.customerId) ?? true]))
 
       const nearbyIds = [...new Set([...geoRows.map((r) => r.id), ...wonIds])]
 

@@ -4,7 +4,6 @@ import { WizardProgress } from "@/components/booking/WizardProgress"
 import { StripePaymentForm } from "@/components/booking/StripePaymentForm"
 import { BookingSuccessScreen } from "@/components/booking/confirm/BookingSuccessScreen"
 import { OrderSummaryCard } from "@/components/booking/confirm/OrderSummaryCard"
-import { PayoutFallbackCard } from "@/components/booking/confirm/PayoutFallbackCard"
 import { useBookingStore } from "@/stores/bookingStore"
 import { useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
@@ -45,11 +44,6 @@ export default function BookStep5Page() {
   const [promoLabel, setPromoLabel] = useState<string | null>(null)
   const [promoLoading, setPromoLoading] = useState(false)
   const [promoError, setPromoError] = useState<string | null>(null)
-  // Cleaner's payout account not connected → a hold can't be authorized, but the client's card
-  // guarantee is independent of that. Fall back to SAVING the card (SetupIntent) + booking.
-  const [payoutFallback, setPayoutFallback] = useState(false)
-  const [saveCardSecret, setSaveCardSecret] = useState<string | null>(null)
-  const [savedCard, setSavedCard] = useState<{ brand: string; last4: string } | null>(null)
   // Cleaner's IANA tz — needed to compute the recurring schedule's next occurrence correctly.
   const [providerTimezone, setProviderTimezone] = useState("Europe/Amsterdam")
   const [recurringSetupResult, setRecurringSetupResult] = useState<"pending" | "success" | "partial" | "failed" | "skipped" | null>(null)
@@ -267,69 +261,6 @@ export default function BookStep5Page() {
     setPromoError(null)
   }
 
-  // Book WITHOUT adding a card: booking is created with no hold; the cleaner is warned there's no
-  // payment method on file (settle directly or ask the client to add one).
-  async function bookWithoutCard() {
-    setLoading(true)
-    setError(null)
-    try {
-      const svcRes = await fetch(`/api/providers/${store.selectedProviderId}/services${store.categoryId ? `?categorySlug=${store.categoryId}` : ""}`)
-      const svcData = await svcRes.json()
-      const service = svcData.services?.[0]
-      const res = await fetch("/api/bookings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          providerId: store.selectedProviderId,
-          ...(service ? { serviceId: service.id } : {}),
-          scheduledAt: store.scheduledAt,
-          durationMinutes: store.durationMinutes,
-          serviceAddress: store.address,
-          serviceLatitude: store.latitude ?? undefined,
-          serviceLongitude: store.longitude ?? undefined,
-          specialInstructions: mergedInstructions || undefined,
-          ecoOptions: store.ecoOptions,
-          requestedFrequency: store.frequency !== "one_time" ? store.frequency : undefined,
-          requestedDays: store.frequency !== "one_time" && store.recurringDays.length ? store.recurringDays : undefined,
-          acceptedCancellationPolicy: store.acceptedCancellationPolicy,
-        }),
-      })
-      const data = await res.json()
-      if (!res.ok) { setError(data.error ?? t("errorBookingFailedSupport")); return }
-      setSuccess({ bookingId: data.bookingId, bookingNumber: data.bookingNumber })
-    } catch {
-      setError(t("errorGeneric"))
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // Card-save fallback. NEVER books silently: with a card on file the panel shows it and waits for an
-  // explicit "Confirm booking request"; without one it shows the card form (save = no charge).
-  async function startPayoutFallback() {
-    try {
-      const m = await fetch("/api/payments/methods").then((r) => r.json()).catch(() => ({ cards: [] }))
-      const card = (m.cards ?? [])[0]
-      if (card) {
-        setSavedCard({ brand: card.brand, last4: card.last4 })
-        setPayoutFallback(true)
-        return
-      }
-      await loadNewCardForm()
-    } catch {
-      setError(t("errorGeneric"))
-    }
-  }
-
-  async function loadNewCardForm() {
-    const r = await fetch("/api/payments/setup-intent", { method: "POST" })
-    const d = await r.json()
-    if (!d.clientSecret) { setError(t("errorPreparePayment")); return }
-    setSavedCard(null)
-    setSaveCardSecret(d.clientSecret)
-    setPayoutFallback(true)
-  }
-
   async function proceedToPayment() {
     setLoading(true)
     setError(null)
@@ -358,7 +289,8 @@ export default function BookStep5Page() {
       })
       const data = await res.json()
       if (!res.ok) {
-        if (data.code === "payout_not_ready") { await startPayoutFallback(); return }
+        // payout_not_ready: the cleaner's Stripe payout setup isn't done — no fallback, the
+        // server's own message ("choose another cleaner") already says what to do.
         setError(data.error ?? t("errorPreparePayment")); return
       }
       setClientSecret(data.clientSecret)
@@ -448,20 +380,10 @@ export default function BookStep5Page() {
           <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
         )}
 
-        {/* Payout-fallback: cleaner's payout account isn't ready — save/confirm the card + book. */}
-        {step === "summary" && payoutFallback && (
-          <PayoutFallbackCard
-            loading={loading}
-            savedCard={savedCard}
-            saveCardSecret={saveCardSecret}
-            onBookWithoutCard={() => void bookWithoutCard()}
-            onLoadNewCardForm={() => void loadNewCardForm()}
-            onCancel={() => setPayoutFallback(false)}
-          />
-        )}
-
-        {/* Step: summary → show proceed button */}
-        {step === "summary" && amounts && !payoutFallback && (
+        {/* Step: summary → show proceed button. A card is required to book — no fallback path;
+            if the cleaner's own payout setup isn't ready, /api/payments/intent rejects with a
+            clear message (surfaced above via `error`) instead of offering a way around it. */}
+        {step === "summary" && amounts && (
           <div className="space-y-3 mb-6">
             <Button
               onClick={proceedToPayment}
@@ -470,18 +392,6 @@ export default function BookStep5Page() {
             >
               {loading ? <><Loader2 size={18} className="animate-spin mr-2" />{t("preparingPayment")}</> : t("continueToPayment")}
             </Button>
-            {/* No-card path: booking is created without a hold; the cleaner is warned. Auto-renew
-                consent isn't required here — with no card on file, no schedule can be auto-created
-                either way, so a recurring client just falls back to the manual setup prompt below. */}
-            <Button
-              variant="outline"
-              onClick={bookWithoutCard}
-              disabled={loading || !store.acceptedCancellationPolicy}
-              className="w-full h-11 border-[#E5EBF0] text-[#6B7280] hover:text-[#2B3441]"
-            >
-              {t("bookWithoutCard")}
-            </Button>
-            <p className="text-xs text-center text-[#9CA3AF]">{t("bookWithoutCardNote")}</p>
           </div>
         )}
 

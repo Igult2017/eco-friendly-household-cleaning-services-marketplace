@@ -220,8 +220,7 @@ export const recurringBookingCron = inngest.createFunction(
               // expired card, OR the card is fine but Stripe requires a fresh 3D-Secure check that
               // can't happen without the customer present. Cancelling outright used to treat both
               // the same way and lose the booking either way. Instead: move it to pending_payment
-              // (the same status createUnpaidBooking already uses for "needs a payment method") and
-              // point the customer at the real, already-built on-session recovery page — Stripe's
+              // and point the customer at the real, already-built on-session recovery page — Stripe's
               // own PaymentElement there naturally handles a 3DS challenge when it's actually
               // needed, and a genuinely bad card just gets a clean re-entry. The schedule still
               // advances either way so a fixed card is retried next cycle regardless.

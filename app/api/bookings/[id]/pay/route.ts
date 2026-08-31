@@ -4,12 +4,15 @@ import { db } from "@/lib/db"
 import { bookings, payments, providers, users, notifications } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
 import { stripe } from "@/lib/stripe/client"
+import { getOrCreateStripeCustomer } from "@/lib/stripe/getOrCreateCustomer"
 import { getCurrencyForCountry } from "@/lib/utils/locale"
 import { isUuid } from "@/lib/utils/uuid"
 import { logError } from "@/lib/utils/logError"
 
-// Attach/re-attach a payment method to a booking that needs one. Two cases reach here:
-// - pending_payment: booking made WITHOUT a card at all (createUnpaidBooking).
+// Attach/re-attach a payment method to a booking that needs one. Every booking is created with a
+// card now, so both statuses that reach here are RECOVERY cases, not the original creation:
+// - pending_payment: an off-session recharge (e.g. after a recurring occurrence) failed and the
+//   booking was downgraded to this status (lib/inngest/functions/completion.ts / recurring.ts).
 // - pending_capture: the job is already done, but the original hold expired and the automatic
 //   off-session recharge failed (lib/inngest/functions/completion.ts) — same recovery mechanism,
 //   reused rather than building a second one, since an ON-SESSION retry here handles both "the
@@ -47,17 +50,9 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       return NextResponse.json({ error: "This cleaner hasn't finished their payout setup yet. Please try again later." }, { status: 422 })
     }
 
-    // One Stripe customer per user (same clerk_id convention as the other payment flows).
-    const [u] = await db.select({ email: users.email, firstName: users.firstName, stripeCustomerId: users.stripeCustomerId }).from(users).where(eq(users.id, userId))
-    let stripeCustomerId = u?.stripeCustomerId ?? null
-    if (!stripeCustomerId) {
-      const existing = await stripe.customers.search({ query: `metadata['clerk_id']:'${userId}'`, limit: 1 })
-      stripeCustomerId = existing.data[0]?.id ?? (await stripe.customers.create(
-        { email: u?.email, name: u?.firstName ?? undefined, metadata: { clerk_id: userId } },
-        { idempotencyKey: `cus-create-${userId}` },
-      )).id
-      await db.update(users).set({ stripeCustomerId }).where(eq(users.id, userId))
-    }
+    // Single shared resolver — see lib/stripe/getOrCreateCustomer.ts for why every payment
+    // flow must resolve the Stripe customer the same way.
+    const stripeCustomerId = await getOrCreateStripeCustomer(userId)
 
     const offset = b.carbonOffsetAmount ?? 0
     const intent = await stripe.paymentIntents.create(
