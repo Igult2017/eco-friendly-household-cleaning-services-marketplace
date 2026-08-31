@@ -2,7 +2,7 @@ import { auth, clerkClient } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { db } from "@/lib/db"
-import { jobPosts, providers, users, bids } from "@/lib/db/schema"
+import { jobPosts, providers, users, bids, bookings } from "@/lib/db/schema"
 import { computeReliability } from "@/lib/provider/reliability"
 import type { NewJobPost } from "@/lib/db/schema/jobs"
 import { inngest } from "@/lib/inngest/client"
@@ -347,6 +347,7 @@ export async function GET(req: Request) {
           with: {
             provider: {
               columns: {
+                userId: true,
                 slug: true,
                 businessName: true,
                 bio: true,
@@ -374,6 +375,22 @@ export async function GET(req: Request) {
     // Review privilege: bids are ranked by the cleaner's reliability (rating 60% + completion 40%,
     // same engine as /provider/statistics) — best-reviewed cleaners surface FIRST, and the top
     // bidder with a real track record is flagged as the best match for the client.
+    // Real own-cancellation counts for every bidding provider, batched in one query (same
+    // status list + cancelledBy match as the provider dashboard) — feeds the completion-rate
+    // half of the score below so a frequent self-canceller can't out-rank a dependable cleaner
+    // just because their star rating happens to be similar.
+    const biddingUserIds = Array.from(
+      new Set(jobs.flatMap((j: any) => j.bids.map((b: any) => b.provider?.userId).filter(Boolean)))
+    ) as string[]
+    const cancelCounts = new Map<string, number>()
+    if (biddingUserIds.length > 0) {
+      const cancelRows = await db
+        .select({ cancelledBy: bookings.cancelledBy, c: sql<number>`COUNT(*)` })
+        .from(bookings)
+        .where(and(inArray(bookings.cancelledBy, biddingUserIds), inArray(bookings.status, ["cancelled", "cleaner_no_show"])))
+        .groupBy(bookings.cancelledBy)
+      for (const row of cancelRows) if (row.cancelledBy) cancelCounts.set(row.cancelledBy, Number(row.c))
+    }
     const km = (aLat: number, aLng: number, bLat: number, bLng: number) => {
       const R = 6371
       const dLat = ((bLat - aLat) * Math.PI) / 180
@@ -386,7 +403,7 @@ export async function GET(req: Request) {
         b,
         r: computeReliability({
           completed: b.provider?.totalJobsCompleted ?? 0,
-          cancelledByProvider: 0,
+          cancelledByProvider: b.provider?.userId ? (cancelCounts.get(b.provider.userId) ?? 0) : 0,
           averageRating: b.provider?.averageRating ?? null,
           totalReviews: b.provider?.totalReviews ?? 0,
         }),
@@ -401,7 +418,7 @@ export async function GET(req: Request) {
             p?.latitude != null && p?.longitude != null && j.serviceLatitude != null && j.serviceLongitude != null
               ? formatDistance(km(p.latitude, p.longitude, j.serviceLatitude, j.serviceLongitude), j.serviceAddress?.country ?? p.country ?? "DE")
               : null
-          const provider = p ? { ...p, latitude: undefined, longitude: undefined } : null
+          const provider = p ? { ...p, userId: undefined, latitude: undefined, longitude: undefined } : null
           return {
             ...b,
             provider,

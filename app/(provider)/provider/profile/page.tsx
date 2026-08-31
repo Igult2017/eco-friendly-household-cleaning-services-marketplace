@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { Loader2, Save, AlertTriangle } from "lucide-react"
+import { Loader2, Save, AlertTriangle, Star, ExternalLink, MessageSquare } from "lucide-react"
 import { LocationDetectButton } from "@/components/location/LocationDetectButton"
 import { PricingSummaryCard } from "@/components/provider/PricingSummaryCard"
 import { AccountDataSection } from "@/components/account/AccountDataSection"
@@ -20,12 +21,16 @@ type Profile = {
   carbonOffsetEnabled: boolean
 }
 
+// Read-only — never sent back in the PATCH, just displayed.
+type RatingStats = { averageRating: number | null; totalReviews: number; slug: string | null }
+
 export default function ProviderProfilePage() {
   const t = useTranslations("providerProviderProfilePage")
   const [profile, setProfile] = useState<Profile>({
     businessName: "", bio: "", city: "", postalCode: "",
     country: "DE", serviceRadiusKm: 25, carbonOffsetEnabled: false,
   })
+  const [stats, setStats] = useState<RatingStats>({ averageRating: null, totalReviews: 0, slug: null })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -57,6 +62,11 @@ export default function ProviderProfilePage() {
             country: d.provider.country ?? "DE",
             serviceRadiusKm: d.provider.serviceRadiusKm ?? 25,
             carbonOffsetEnabled: d.provider.carbonOffsetEnabled ?? false,
+          })
+          setStats({
+            averageRating: d.provider.averageRating ?? null,
+            totalReviews: d.provider.totalReviews ?? 0,
+            slug: d.provider.slug ?? null,
           })
         }
         setLoading(false)
@@ -97,6 +107,34 @@ export default function ProviderProfilePage() {
         <h1 className="font-serif text-3xl font-bold text-[#2B3441]">{t("heading")}</h1>
         <p className="text-sm text-[#6B7280] mt-1">{t("subheading")}</p>
         <div className="mt-3"><RoleBadge variant="cleaner" /></div>
+      </div>
+
+      <div className="rounded-xl bg-white shadow-sm p-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <Star size={22} className="text-amber-400 fill-amber-400" />
+            <div>
+              <p className="text-2xl font-bold text-[#2B3441]">
+                {stats.averageRating ? Number(stats.averageRating).toFixed(1) : t("ratingNone")}
+              </p>
+              <p className="text-xs text-[#6B7280]">{t("ratingReviewCount", { count: stats.totalReviews })}</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link href="/reviews" className="inline-flex items-center gap-1.5 text-sm font-medium text-[#2D7A5F] hover:underline">
+              <MessageSquare size={14} /> {t("seeAllReviews")}
+            </Link>
+            {stats.slug && (
+              <Link
+                href={`/providers/${stats.slug}`}
+                target="_blank"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-[#E5EBF0] px-3 py-1.5 text-sm font-medium text-[#6B7280] transition-colors hover:border-[#2D7A5F] hover:text-[#2D7A5F]"
+              >
+                <ExternalLink size={13} /> {t("viewPublicProfile")}
+              </Link>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="rounded-xl bg-white shadow-sm p-6 space-y-5">

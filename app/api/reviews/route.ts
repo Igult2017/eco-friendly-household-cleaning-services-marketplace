@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { reviews, bookings, providers } from "@/lib/db/schema"
+import { reviews, bookings, providers, notifications } from "@/lib/db/schema"
 import type { NewReview } from "@/lib/db/schema/reviews"
 import { eq, and, avg, count } from "drizzle-orm"
 import { z } from "zod"
@@ -73,6 +73,23 @@ export async function POST(req: Request) {
       .update(providers)
       .set({ averageRating: Math.round(parseFloat(stats.avg ?? "0") * 10) / 10, totalReviews: stats.total })
       .where(eq(providers.id, booking.providerId))
+
+    // Let the cleaner know — this notification type existed but was never actually sent.
+    try {
+      const [prov] = await db.select({ userId: providers.userId }).from(providers).where(eq(providers.id, booking.providerId))
+      if (prov) {
+        await db.insert(notifications).values({
+          userId: prov.userId,
+          type: "review_received",
+          title: "New review received",
+          body: `A client rated your work ${data.overallRating}/5. Tap to see what they wrote.`,
+          link: "/reviews",
+          metadata: { rating: String(data.overallRating) },
+        })
+      }
+    } catch (e) {
+      console.warn("[reviews POST] notification failed:", e)
+    }
 
     return NextResponse.json({ reviewId: newReview.id }, { status: 201 })
   } catch (err) {

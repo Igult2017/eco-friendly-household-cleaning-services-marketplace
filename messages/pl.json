@@ -1111,6 +1111,7 @@
     "pricing": "Cennik",
     "calendar": "Kalendarz",
     "messages": "Wiadomości",
+    "reviews": "Opinie",
     "support": "Pomoc"
   },
   "providerProviderBookingsPage": {
@@ -1338,7 +1339,11 @@
     "carbonOffsetDescription": "Pozwól klientom dodać wkład na kompensację emisji CO2 przy płatności",
     "saveButton": "Zapisz zmiany",
     "saveButtonSaving": "Zapisywanie...",
-    "saveButtonSaved": "Zapisano!"
+    "saveButtonSaved": "Zapisano!",
+    "ratingNone": "Brak jeszcze oceny",
+    "ratingReviewCount": "{count, plural, one {# opinia} few {# opinie} many {# opinii} other {# opinii}}",
+    "seeAllReviews": "Zobacz wszystkie opinie",
+    "viewPublicProfile": "Zobacz swój publiczny profil"
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "Moje usługi",

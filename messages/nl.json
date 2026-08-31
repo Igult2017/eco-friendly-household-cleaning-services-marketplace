@@ -1111,6 +1111,7 @@
     "pricing": "Tarieven",
     "calendar": "Agenda",
     "messages": "Berichten",
+    "reviews": "Reviews",
     "support": "Support"
   },
   "providerProviderBookingsPage": {
@@ -1338,7 +1339,11 @@
     "carbonOffsetDescription": "Klanten toestaan een bijdrage voor CO2-compensatie toe te voegen bij het afrekenen",
     "saveButton": "Wijzigingen opslaan",
     "saveButtonSaving": "Opslaan...",
-    "saveButtonSaved": "Opgeslagen!"
+    "saveButtonSaved": "Opgeslagen!",
+    "ratingNone": "Nog geen beoordeling",
+    "ratingReviewCount": "{count, plural, one {# review} other {# reviews}}",
+    "seeAllReviews": "Alle reviews bekijken",
+    "viewPublicProfile": "Bekijk je openbare profiel"
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "Mijn diensten",

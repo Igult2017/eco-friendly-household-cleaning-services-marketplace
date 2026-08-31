@@ -1111,6 +1111,7 @@
     "pricing": "Preise",
     "calendar": "Kalender",
     "messages": "Nachrichten",
+    "reviews": "Bewertungen",
     "support": "Support"
   },
   "providerProviderBookingsPage": {
@@ -1338,7 +1339,11 @@
     "carbonOffsetDescription": "Kunden erlauben, an der Kasse einen Beitrag zum CO2-Ausgleich hinzuzufügen",
     "saveButton": "Änderungen speichern",
     "saveButtonSaving": "Wird gespeichert...",
-    "saveButtonSaved": "Gespeichert!"
+    "saveButtonSaved": "Gespeichert!",
+    "ratingNone": "Noch keine Bewertung",
+    "ratingReviewCount": "{count, plural, one {# Bewertung} other {# Bewertungen}}",
+    "seeAllReviews": "Alle Bewertungen ansehen",
+    "viewPublicProfile": "Dein öffentliches Profil ansehen"
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "Meine Leistungen",

@@ -1111,6 +1111,7 @@
     "pricing": "Tarifas",
     "calendar": "Calendario",
     "messages": "Mensajes",
+    "reviews": "Reseñas",
     "support": "Soporte"
   },
   "providerProviderBookingsPage": {
@@ -1338,7 +1339,11 @@
     "carbonOffsetDescription": "Permitir que los clientes añadan una contribución de compensación de carbono al pagar",
     "saveButton": "Guardar cambios",
     "saveButtonSaving": "Guardando...",
-    "saveButtonSaved": "¡Guardado!"
+    "saveButtonSaved": "¡Guardado!",
+    "ratingNone": "Aún sin valoración",
+    "ratingReviewCount": "{count, plural, one {# reseña} other {# reseñas}}",
+    "seeAllReviews": "Ver todas las reseñas",
+    "viewPublicProfile": "Ver tu perfil público"
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "Mis servicios",

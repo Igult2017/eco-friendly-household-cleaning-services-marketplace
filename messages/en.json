@@ -1111,6 +1111,7 @@
     "pricing": "Pricing",
     "calendar": "Calendar",
     "messages": "Messages",
+    "reviews": "Reviews",
     "support": "Support"
   },
   "providerProviderBookingsPage": {
@@ -1338,7 +1339,11 @@
     "carbonOffsetDescription": "Allow clients to add a carbon offset contribution at checkout",
     "saveButton": "Save changes",
     "saveButtonSaving": "Saving...",
-    "saveButtonSaved": "Saved!"
+    "saveButtonSaved": "Saved!",
+    "ratingNone": "No rating yet",
+    "ratingReviewCount": "{count, plural, one {# review} other {# reviews}}",
+    "seeAllReviews": "See all reviews",
+    "viewPublicProfile": "View your public profile"
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "My Services",
