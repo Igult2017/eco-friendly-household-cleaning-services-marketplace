@@ -10,6 +10,7 @@ import { formatCurrencyShort, priceUnitSuffix } from "@/lib/utils/formatCurrency
 import { formatDistance } from "@/lib/utils/locale"
 import { BrowseNearMe } from "@/components/browse/BrowseNearMe"
 import { findProvidersNearLocation } from "@/lib/db/queries/geo"
+import { getEffectiveRoleForDisplay } from "@/lib/auth/effectiveRole"
 
 const DISTANCE_OPTIONS = [5, 10, 25, 50, 100]
 
@@ -147,6 +148,12 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
   }
   const t = await getTranslations("browse")
   const hasFilters = !!(city || ecoLevel || minRating || minPrice || maxPrice || hasDistanceFilter)
+  // Booking is a client-only action — an admin or a cleaner not currently viewing as a client can
+  // browse freely, but the "Book Now" click would only dead-end them at the customer-only gate
+  // (middleware.ts), so it's replaced with a calm note instead of ever showing that button. A signed
+  // -out visitor keeps the button (they'll sign in as part of the booking flow).
+  const effRole = await getEffectiveRoleForDisplay()
+  const canBook = effRole === null || effRole === "customer"
 
   const ecoLabelText: Record<string, string> = {
     basic: t("ecoBasic"),
@@ -301,12 +308,18 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
                     >
                       {t("viewButton")}
                     </Link>
-                    <Link
-                      href={`/book?providerId=${p.id}`}
-                      className="flex-1 rounded-lg bg-[#2D7A5F] py-2 text-center text-sm font-semibold text-white hover:bg-[#256349] transition-colors"
-                    >
-                      {t("bookButton")}
-                    </Link>
+                    {canBook ? (
+                      <Link
+                        href={`/book?providerId=${p.id}`}
+                        className="flex-1 rounded-lg bg-[#2D7A5F] py-2 text-center text-sm font-semibold text-white hover:bg-[#256349] transition-colors"
+                      >
+                        {t("bookButton")}
+                      </Link>
+                    ) : (
+                      <span className="flex-1 rounded-lg bg-gray-50 py-2 text-center text-xs italic text-[#9CA3AF]" title={t("bookingClientOnly")}>
+                        {t("bookingClientOnly")}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>

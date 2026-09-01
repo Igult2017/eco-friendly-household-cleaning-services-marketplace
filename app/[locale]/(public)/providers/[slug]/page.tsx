@@ -13,6 +13,7 @@ import { providerSchema, breadcrumbSchema } from "@/lib/seo/schemas"
 import { ProviderAvailabilityCalendar } from "@/components/booking/ProviderAvailabilityCalendar"
 import { formatRelativeTime } from "@/lib/utils/formatDate"
 import { responseTimeBucket } from "@/lib/utils/responseTimeLabel"
+import { getEffectiveRoleForDisplay } from "@/lib/auth/effectiveRole"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   try {
@@ -92,6 +93,12 @@ export default async function ProviderProfilePage({ params }: { params: Promise<
   const fromPrice = pricedServices.length ? Math.min(...pricedServices.map((s) => s.basePrice!)) : null
   const fromUnit = fromPrice != null ? pricedServices.find((s) => s.basePrice === fromPrice)?.priceUnit ?? null : null
 
+  // Both "Book Now" and "Request a Quote" lead to customer-only routes (/book, /post-job) — an admin
+  // or a cleaner not currently viewing as a client would only dead-end at that gate, so show a calm
+  // note instead. A signed-out visitor keeps the button (they'll sign in as part of the flow).
+  const effRole = await getEffectiveRoleForDisplay()
+  const canBook = effRole === null || effRole === "customer"
+
   const ecoColors: Record<string, string> = {
     basic: "bg-gray-100 text-gray-600",
     certified: "bg-green-100 text-green-700",
@@ -170,7 +177,11 @@ export default async function ProviderProfilePage({ params }: { params: Promise<
           ) : null}
           {provider.bio && <p className="text-sm text-[#6B7280] mt-3 max-w-xl leading-relaxed">{provider.bio}</p>}
         </div>
-        {hasBookableService ? (
+        {!canBook ? (
+          <span className="shrink-0 rounded-xl bg-gray-50 px-6 py-3 text-sm italic text-[#9CA3AF]" title={t("bookingClientOnly")}>
+            {t("bookingClientOnly")}
+          </span>
+        ) : hasBookableService ? (
           <Link
             href={`/book?providerId=${provider.id}`}
             className="shrink-0 rounded-xl bg-[#2D7A5F] px-6 py-3 text-sm font-semibold text-white hover:bg-[#256349] transition-colors"
