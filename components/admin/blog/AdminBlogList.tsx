@@ -79,8 +79,10 @@ export function AdminBlogList({ initialPosts }: { initialPosts: Post[] }) {
             return (
               <tr key={post.id} className="hover:bg-[#F8FAFB] transition-colors">
                 <td className="px-5 py-3 max-w-xs">
-                  <p className="font-medium text-[#2B3441] truncate">{post.title}</p>
-                  <p className="text-xs text-[#9CA3AF] truncate">/blog/{post.slug}</p>
+                  <Link href={`/admin/content/blog/${post.id}/edit`} className="block group">
+                    <p className="font-medium text-[#2B3441] truncate group-hover:text-[#2D7A5F] group-hover:underline transition-colors">{post.title}</p>
+                    <p className="text-xs text-[#9CA3AF] truncate">/blog/{post.slug}</p>
+                  </Link>
                 </td>
                 <td className="px-4 py-3">
                   <Badge
