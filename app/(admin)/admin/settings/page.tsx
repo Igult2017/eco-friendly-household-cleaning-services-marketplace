@@ -230,10 +230,12 @@ export default function AdminSettingsPage() {
           </label>
           <p className="text-xs text-[#6B7280] mb-4">
             Cleaners earn cash commission (paid out via Stripe); clients earn a discount balance
-            (spendable at checkout or withdrawable). All rates are % of booking subtotal.
+            (spendable at checkout or withdrawable). All rates are % of booking subtotal. The rate a
+            client earns for referring anyone is set below, in its own <strong>Affiliate Programme</strong> section
+            — a signed-up Affiliate/Partner is paid through that exact same setting.
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
             <div>
               <label className="block text-xs font-medium text-[#6B7280] mb-1">Cleaner → Client commission %</label>
               <input
@@ -260,19 +262,6 @@ export default function AdminSettingsPage() {
               />
               <p className="text-xs text-[#6B7280] mt-1">Cleaner invites a cleaner — only the invited cleaner&apos;s first 3 completed jobs.</p>
             </div>
-            <div>
-              <label className="block text-xs font-medium text-[#6B7280] mb-1">Client referral discount % — also the Affiliate Programme rate</label>
-              <input
-                type="number"
-                min={0}
-                max={20}
-                value={cfg.client_referral_discount_pct ?? "5"}
-                onChange={e => set("client_referral_discount_pct", e.target.value)}
-                onWheel={blurOnWheel}
-                className="w-full h-10 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]"
-              />
-              <p className="text-xs text-[#6B7280] mt-1">Client invites anyone (client or cleaner) — credited as balance, ongoing. This is ALSO the exact rate a standalone Affiliate/Partner earns — they're not a cleaner, so they're paid through this same setting, not "Cleaner → Client commission %" above.</p>
-            </div>
           </div>
 
           <div>
@@ -289,6 +278,36 @@ export default function AdminSettingsPage() {
               />
               <span className="text-sm text-[#6B7280]">% off the client's 2nd and 3rd cleaning on a recurring schedule, all cleaners (was per-cleaner — now platform-wide)</span>
             </div>
+          </div>
+        </div>
+
+        {/* Affiliate Programme */}
+        <div className="px-6 py-5">
+          <label className="block text-sm font-semibold text-[#2B3441] mb-1">
+            Affiliate Programme
+          </label>
+          <p className="text-xs text-[#6B7280] mb-3">
+            The commission rate a signed-up Affiliate/Partner earns on every booking they refer — paid
+            out via Stripe, spendable at checkout, or withdrawable as cash. This is the exact same
+            number as &quot;Client referral discount %&quot; above: an affiliate is paid through that
+            same setting (they&apos;re not a cleaner, so &quot;Cleaner → Client commission %&quot;
+            doesn&apos;t apply to them) — one rate, shared by design, editable here.
+          </p>
+          <div className="flex items-center gap-3">
+            <input
+              type="number"
+              min={0}
+              max={20}
+              value={cfg.client_referral_discount_pct ?? "5"}
+              onChange={e => set("client_referral_discount_pct", e.target.value)}
+              onWheel={blurOnWheel}
+              className="w-24 h-10 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]"
+            />
+            <span className="text-sm text-[#6B7280]">% of every booking subtotal an affiliate refers, for life</span>
+          </div>
+          <div className="mt-3 bg-[#F4FAF6] rounded-xl px-4 py-3 text-xs text-[#2B3441] space-y-1">
+            <p>Referred booking subtotal <span className="font-semibold">€100</span></p>
+            <p>Affiliate earns <span className="font-semibold text-[#2D7A5F]">€{parseInt(cfg.client_referral_discount_pct ?? "5")}</span> ({cfg.client_referral_discount_pct ?? 5}%)</p>
           </div>
         </div>
 
@@ -460,12 +479,14 @@ export default function AdminSettingsPage() {
               )}
             </div>
             <p className="text-xs text-[#6B7280] leading-relaxed mb-3">
-              <strong>The Affiliate Programme doesn&apos;t have its own rate control</strong> — an
-              affiliate signs up with role &quot;affiliate&quot;, not &quot;provider&quot;, so they&apos;re
-              paid through the exact same code path as &quot;Client referral discount %&quot; above, not
-              &quot;Cleaner → Client commission %&quot;. Changing the &quot;Client referral discount %&quot;
-              field above changes what affiliates earn too, and the public <code className="text-[11px] bg-gray-50 px-1 py-0.5 rounded">/affiliate</code> page
-              always advertises this same live number, so the two can never drift apart.
+              <strong>The Affiliate Programme has its own section below, editing that same rate</strong> —
+              an affiliate signs up with role &quot;affiliate&quot;, not &quot;provider&quot;, so
+              they&apos;re paid through the exact same code path as &quot;Client referral discount
+              %&quot; above, not &quot;Cleaner → Client commission %&quot;. It has a dedicated
+              &quot;Affiliate Programme&quot; box further down this page so it&apos;s not just a
+              footnote — editing it there (or here) changes the same one number, and the public
+              <code className="text-[11px] bg-gray-50 px-1 py-0.5 rounded">/affiliate</code> page
+              always advertises that same live value, so the two can never drift apart.
             </p>
             <p className="text-xs text-[#6B7280] leading-relaxed mb-3">
               <strong>Promo codes and spending a referral-credit balance at checkout work differently</strong> —
