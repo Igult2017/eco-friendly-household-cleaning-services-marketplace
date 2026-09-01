@@ -32,7 +32,7 @@ const FIELD_BOUNDS: Record<string, { min: number; max: number; label: string }> 
   min_hourly_rate_cents:         { min: 0,  max: 100_000, label: "Minimum Hourly Rate" },
   referral_pct:                  { min: 0,  max: 20,      label: "Cleaner → Client commission %" },
   cleaner_peer_referral_pct:     { min: 0,  max: 20,      label: "Cleaner → Cleaner commission %" },
-  client_referral_discount_pct:  { min: 0,  max: 20,      label: "Client referral discount %" },
+  client_referral_discount_pct:  { min: 0,  max: 20,      label: "Client referral discount % / Affiliate rate" },
   recurring_discount_pct:        { min: 0,  max: 50,      label: "Recurring booking discount %" },
   max_service_radius_km:         { min: 10, max: 500,     label: "Maximum Service Radius" },
   cancel_tier1_hours:            { min: 1,  max: 168,     label: "Free window (hours)" },
@@ -261,7 +261,7 @@ export default function AdminSettingsPage() {
               <p className="text-xs text-[#6B7280] mt-1">Cleaner invites a cleaner — only the invited cleaner&apos;s first 3 completed jobs.</p>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#6B7280] mb-1">Client referral discount %</label>
+              <label className="block text-xs font-medium text-[#6B7280] mb-1">Client referral discount % — also the Affiliate Programme rate</label>
               <input
                 type="number"
                 min={0}
@@ -271,7 +271,7 @@ export default function AdminSettingsPage() {
                 onWheel={blurOnWheel}
                 className="w-full h-10 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]"
               />
-              <p className="text-xs text-[#6B7280] mt-1">Client invites anyone (client or cleaner) — credited as balance, ongoing.</p>
+              <p className="text-xs text-[#6B7280] mt-1">Client invites anyone (client or cleaner) — credited as balance, ongoing. This is ALSO the exact rate a standalone Affiliate/Partner earns — they're not a cleaner, so they're paid through this same setting, not "Cleaner → Client commission %" above.</p>
             </div>
           </div>
 
@@ -459,6 +459,14 @@ export default function AdminSettingsPage() {
                 <p className="text-amber-700">Note: a {recurringPct}% discount would exceed the {commission}% commission, so it&apos;s capped at €{recurringDiscountCapped} — raise commission if you want the full {recurringPct}% to reach clients.</p>
               )}
             </div>
+            <p className="text-xs text-[#6B7280] leading-relaxed mb-3">
+              <strong>The Affiliate Programme doesn&apos;t have its own rate control</strong> — an
+              affiliate signs up with role &quot;affiliate&quot;, not &quot;provider&quot;, so they&apos;re
+              paid through the exact same code path as &quot;Client referral discount %&quot; above, not
+              &quot;Cleaner → Client commission %&quot;. Changing the &quot;Client referral discount %&quot;
+              field above changes what affiliates earn too, and the public <code className="text-[11px] bg-gray-50 px-1 py-0.5 rounded">/affiliate</code> page
+              always advertises this same live number, so the two can never drift apart.
+            </p>
             <p className="text-xs text-[#6B7280] leading-relaxed mb-3">
               <strong>Promo codes and spending a referral-credit balance at checkout work differently</strong> —
               that discount is subtracted from the price BEFORE the commission split, so it&apos;s shared

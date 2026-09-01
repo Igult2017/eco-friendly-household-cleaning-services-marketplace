@@ -2,7 +2,10 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { localeAlternates } from "@/lib/seo/alternates"
-import { getReferralPct } from "@/lib/platform/settings"
+// An affiliate signs up with role "affiliate", not "provider" — lib/referrals/rewards.ts pays them
+// through the SAME branch as any other non-cleaner referrer (getClientReferralDiscountPct), not
+// getReferralPct (that one's cleaner-only). This page must advertise the rate that's actually paid.
+import { getClientReferralDiscountPct } from "@/lib/platform/settings"
 import { SITE_URL } from "@/lib/seo/site"
 import {
   Leaf,
@@ -24,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const t = await getTranslations({ locale, namespace: "affiliate" })
   return {
     title: t("metaTitle"),
-    description: t("metaDescription", { pct: await getReferralPct() }),
+    description: t("metaDescription", { pct: await getClientReferralDiscountPct() }),
     alternates: localeAlternates("/affiliate", locale),
   }
 }
@@ -33,7 +36,7 @@ export default async function AffiliatePage({ params }: { params: Promise<{ loca
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations({ locale, namespace: "affiliate" })
-  const pct = await getReferralPct()
+  const pct = await getClientReferralDiscountPct()
 
   const STATS = [
     { value: `${pct}%`, label: t("statLifetimeCommission"), icon: Euro },

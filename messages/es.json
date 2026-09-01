@@ -1668,7 +1668,9 @@
     "providerSwitchTitle": "Esa es tu cuenta de limpiador",
     "providerSwitchBody": "Ahora mismo estás navegando como cliente. Cambia a tu cuenta de limpiador para ver esa página.",
     "customerSwitchTitle": "Esa es tu cuenta de cliente",
-    "customerSwitchBody": "Ahora mismo estás navegando como limpiador. Cambia a tu cuenta de cliente para ver esa página."
+    "customerSwitchBody": "Ahora mismo estás navegando como limpiador. Cambia a tu cuenta de cliente para ver esa página.",
+    "adminCustomerTitle": "Los administradores no tienen vista de cliente",
+    "adminCustomerBody": "Publicar un trabajo o reservar una limpieza es una acción de cliente. Tu cuenta de administrador solo tiene vistas de administrador y de profesional de limpieza — inicia sesión con una cuenta de cliente independiente para hacerlo."
   },
   "compLocationLocationDetectButton": {
     "detecting": "Detectando ubicación…",

@@ -1668,7 +1668,9 @@
     "providerSwitchTitle": "Questo è il tuo account addetto",
     "providerSwitchBody": "Al momento stai navigando come cliente. Passa al tuo account addetto per vedere questa pagina.",
     "customerSwitchTitle": "Questo è il tuo account cliente",
-    "customerSwitchBody": "Al momento stai navigando come addetto. Passa al tuo account cliente per vedere questa pagina."
+    "customerSwitchBody": "Al momento stai navigando come addetto. Passa al tuo account cliente per vedere questa pagina.",
+    "adminCustomerTitle": "Gli amministratori non hanno una vista cliente",
+    "adminCustomerBody": "Pubblicare un lavoro o prenotare una pulizia è un'azione riservata ai clienti. Il tuo account amministratore ha solo le viste amministratore e addetto alle pulizie — accedi con un account cliente separato per farlo."
   },
   "compLocationLocationDetectButton": {
     "detecting": "Rilevamento posizione…",

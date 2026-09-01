@@ -1668,7 +1668,9 @@
     "providerSwitchTitle": "Das ist dein Reinigungskraft-Konto",
     "providerSwitchBody": "Du bist gerade als Kunde unterwegs. Wechsle zu deinem Reinigungskraft-Konto, um diese Seite zu sehen.",
     "customerSwitchTitle": "Das ist dein Kundenkonto",
-    "customerSwitchBody": "Du bist gerade als Reinigungskraft unterwegs. Wechsle zu deinem Kundenkonto, um diese Seite zu sehen."
+    "customerSwitchBody": "Du bist gerade als Reinigungskraft unterwegs. Wechsle zu deinem Kundenkonto, um diese Seite zu sehen.",
+    "adminCustomerTitle": "Admins haben keine Kundenansicht",
+    "adminCustomerBody": "Einen Auftrag zu posten oder eine Reinigung zu buchen ist eine Kundenaktion. Dein Admin-Konto hat nur eine Admin- und eine Reinigungskraft-Ansicht — melde dich mit einem separaten Kundenkonto an, um das zu tun."
   },
   "compLocationLocationDetectButton": {
     "detecting": "Standort wird ermittelt…",

@@ -1668,7 +1668,9 @@
     "providerSwitchTitle": "That's your Cleaner account",
     "providerSwitchBody": "You're currently browsing as a Client. Switch to your Cleaner account to see that page.",
     "customerSwitchTitle": "That's your Client account",
-    "customerSwitchBody": "You're currently browsing as a Cleaner. Switch to your Client account to see that page."
+    "customerSwitchBody": "You're currently browsing as a Cleaner. Switch to your Client account to see that page.",
+    "adminCustomerTitle": "Admins don't have a client view",
+    "adminCustomerBody": "Posting a job or booking a cleaning is a client action. Your admin account only has admin and cleaner views — sign in with a separate client account to do that."
   },
   "compLocationLocationDetectButton": {
     "detecting": "Detecting location…",

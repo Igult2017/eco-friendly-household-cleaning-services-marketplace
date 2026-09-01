@@ -1668,7 +1668,9 @@
     "providerSwitchTitle": "Dit is je schoonmaakaccount",
     "providerSwitchBody": "Je bladert nu als klant. Schakel over naar je schoonmaakaccount om deze pagina te zien.",
     "customerSwitchTitle": "Dit is je klantaccount",
-    "customerSwitchBody": "Je bladert nu als schoonmaker. Schakel over naar je klantaccount om deze pagina te zien."
+    "customerSwitchBody": "Je bladert nu als schoonmaker. Schakel over naar je klantaccount om deze pagina te zien.",
+    "adminCustomerTitle": "Beheerders hebben geen klantweergave",
+    "adminCustomerBody": "Een klus plaatsen of een schoonmaak boeken is een klanthandeling. Je beheerdersaccount heeft alleen een beheerders- en schoonmakerweergave — log in met een apart klantaccount om dat te doen."
   },
   "compLocationLocationDetectButton": {
     "detecting": "Locatie wordt bepaald…",

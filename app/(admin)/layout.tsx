@@ -2,11 +2,13 @@ import { auth, currentUser } from "@clerk/nextjs/server"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { NextIntlClientProvider } from "next-intl"
+import { Suspense } from "react"
 import { db } from "@/lib/db"
 import { users } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { AdminShell } from "@/components/admin/AdminShell"
 import { CookieBanner } from "@/components/gdpr/CookieBanner"
+import { AccessDeniedToast } from "@/components/layout/AccessDeniedToast"
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const { userId, sessionClaims } = await auth()
@@ -43,6 +45,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         {children}
       </AdminShell>
       <CookieBanner />
+      <Suspense fallback={null}>
+        <AccessDeniedToast />
+      </Suspense>
     </NextIntlClientProvider>
   )
 }

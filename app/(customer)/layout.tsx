@@ -30,7 +30,7 @@ export default async function CustomerLayout({ children }: { children: React.Rea
   // Admin has exactly two views (admin, cleaner) — never client. Middleware already blocks
   // this route for admin; this redirect is a second, independent check in case this layout is
   // ever reached another way.
-  if (primaryRole === "admin") redirect("/admin/dashboard?denied=customer")
+  if (primaryRole === "admin") redirect("/admin/dashboard?denied=admin-customer")
 
   const cookieStore = await cookies()
   const activeRole = isDual ? cookieStore.get("dorix_active_role")?.value : undefined

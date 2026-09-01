@@ -1668,7 +1668,9 @@
     "providerSwitchTitle": "To Twoje konto sprzątacza",
     "providerSwitchBody": "Obecnie przeglądasz jako klient. Przełącz się na konto sprzątacza, aby zobaczyć tę stronę.",
     "customerSwitchTitle": "To Twoje konto klienta",
-    "customerSwitchBody": "Obecnie przeglądasz jako sprzątacz. Przełącz się na konto klienta, aby zobaczyć tę stronę."
+    "customerSwitchBody": "Obecnie przeglądasz jako sprzątacz. Przełącz się na konto klienta, aby zobaczyć tę stronę.",
+    "adminCustomerTitle": "Administratorzy nie mają widoku klienta",
+    "adminCustomerBody": "Dodanie zlecenia lub zarezerwowanie sprzątania to czynność klienta. Twoje konto administratora ma tylko widok administratora i osoby sprzątającej — zaloguj się na osobne konto klienta, aby to zrobić."
   },
   "compLocationLocationDetectButton": {
     "detecting": "Wykrywanie lokalizacji…",

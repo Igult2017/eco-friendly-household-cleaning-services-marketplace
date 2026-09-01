@@ -17,6 +17,10 @@ const REASON_KEYS: Record<string, { title: string; body: string }> = {
   customer: { title: "customerTitle", body: "customerBody" },
   "provider-switch": { title: "providerSwitchTitle", body: "providerSwitchBody" },
   "customer-switch": { title: "customerSwitchTitle", body: "customerSwitchBody" },
+  // An admin trying to reach a client-only page (e.g. Post a Job) — distinct from the generic
+  // "customer" reason because an admin account can never itself become a client account (unlike a
+  // dual-role account, which just switches between its own two views), so the advice is different.
+  "admin-customer": { title: "adminCustomerTitle", body: "adminCustomerBody" },
 }
 
 // Shows a clear explanation when someone lands here because middleware or a role-gated layout just

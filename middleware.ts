@@ -179,7 +179,7 @@ const clerkHandler = clerkMiddleware(async (auth, req) => {
   if (role === "admin") {
     if (isCustomerOnlyRoute(req)) {
       const url = new URL("/admin/dashboard", base)
-      url.searchParams.set("denied", "customer")
+      url.searchParams.set("denied", "admin-customer")
       return NextResponse.redirect(url)
     }
     const res = NextResponse.next()
