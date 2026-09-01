@@ -1121,6 +1121,8 @@
     "subtitle": "Toutes les missions qui vous sont attribuées",
     "tabAll": "Toutes",
     "tabOnHold": "En attente",
+    "tabOverdue": "En retard",
+    "overdueByDays": "{days, plural, one {En retard de # jour} other {En retard de # jours}}",
     "statusConfirmed": "Confirmée",
     "statusInProgress": "En cours",
     "statusCompleted": "Terminée",
@@ -1769,6 +1771,17 @@
     "resolvedSuffix": " · Résolu le {date}",
     "allResolved": "Tous les litiges résolus"
   },
+  "compProviderProviderDashboardOverdue": {
+    "heading": "En retard",
+    "viewAll": "Tout voir →",
+    "emptyTitle": "Rien en retard",
+    "emptyDescription": "Les missions dont l'heure prévue est passée et qui ne sont pas marquées terminées apparaîtront ici.",
+    "forCustomer": "pour {name}",
+    "defaultCustomer": "Client",
+    "defaultService": "Ménage",
+    "wasScheduledFor": "Était prévu pour {date}",
+    "overdueByDays": "{days, plural, one {En retard de # jour} other {En retard de # jours}}"
+  },
   "compProviderProviderDashboardOnHold": {
     "heading": "En attente",
     "viewAll": "Tout voir →",
@@ -1856,7 +1869,8 @@
     "markDone": "Marquer comme terminé",
     "statusUpcoming": "À venir",
     "statusConfirmed": "Confirmé",
-    "statusInProgress": "En cours"
+    "statusInProgress": "En cours",
+    "dueToday": "Prévu aujourd'hui"
   },
   "compReferralReferralCard": {
     "title": "Programme de parrainage",

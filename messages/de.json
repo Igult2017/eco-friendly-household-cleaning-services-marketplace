@@ -1121,6 +1121,8 @@
     "subtitle": "Alle dir zugewiesenen Aufträge",
     "tabAll": "Alle",
     "tabOnHold": "Pausiert",
+    "tabOverdue": "Überfällig",
+    "overdueByDays": "{days, plural, one {Überfällig seit # Tag} other {Überfällig seit # Tagen}}",
     "statusConfirmed": "Bestätigt",
     "statusInProgress": "In Bearbeitung",
     "statusCompleted": "Abgeschlossen",
@@ -1769,6 +1771,17 @@
     "resolvedSuffix": " · Gelöst {date}",
     "allResolved": "Alle Streitfälle gelöst"
   },
+  "compProviderProviderDashboardOverdue": {
+    "heading": "Überfällig",
+    "viewAll": "Alle anzeigen →",
+    "emptyTitle": "Nichts überfällig",
+    "emptyDescription": "Aufträge, deren geplante Zeit verstrichen ist und die nicht als erledigt markiert wurden, erscheinen hier.",
+    "forCustomer": "für {name}",
+    "defaultCustomer": "Kunde",
+    "defaultService": "Reinigung",
+    "wasScheduledFor": "War geplant für {date}",
+    "overdueByDays": "{days, plural, one {Überfällig seit # Tag} other {Überfällig seit # Tagen}}"
+  },
   "compProviderProviderDashboardOnHold": {
     "heading": "Pausiert",
     "viewAll": "Alle anzeigen →",
@@ -1856,7 +1869,8 @@
     "markDone": "Als erledigt markieren",
     "statusUpcoming": "Anstehend",
     "statusConfirmed": "Bestätigt",
-    "statusInProgress": "In Bearbeitung"
+    "statusInProgress": "In Bearbeitung",
+    "dueToday": "Heute fällig"
   },
   "compReferralReferralCard": {
     "title": "Empfehlungsprogramm",

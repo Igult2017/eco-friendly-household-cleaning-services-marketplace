@@ -29,6 +29,7 @@ export async function GET(req: Request) {
         status: bookings.status,
         scheduledAt: bookings.scheduledAt,
         scheduledEndAt: bookings.scheduledEndAt,
+        overdueSince: bookings.overdueSince,
         serviceAddress: bookings.serviceAddress,
         specialInstructions: bookings.specialInstructions,
         subtotalAmount: bookings.subtotalAmount,

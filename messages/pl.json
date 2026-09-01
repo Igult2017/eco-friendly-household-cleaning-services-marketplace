@@ -1121,6 +1121,8 @@
     "subtitle": "Wszystkie zlecenia przypisane do Ciebie",
     "tabAll": "Wszystkie",
     "tabOnHold": "Wstrzymane",
+    "tabOverdue": "Zaległe",
+    "overdueByDays": "{days, plural, one {Zaległe od # dnia} few {Zaległe od # dni} many {Zaległe od # dni} other {Zaległe od # dnia}}",
     "statusConfirmed": "Potwierdzona",
     "statusInProgress": "W trakcie",
     "statusCompleted": "Zakończona",
@@ -1769,6 +1771,17 @@
     "resolvedSuffix": " · Rozstrzygnięto {date}",
     "allResolved": "Wszystkie spory rozstrzygnięte"
   },
+  "compProviderProviderDashboardOverdue": {
+    "heading": "Zaległe",
+    "viewAll": "Zobacz wszystkie →",
+    "emptyTitle": "Nic zaległego",
+    "emptyDescription": "Zlecenia, których zaplanowany czas minął i nie zostały oznaczone jako wykonane, pojawią się tutaj.",
+    "forCustomer": "dla {name}",
+    "defaultCustomer": "Klient",
+    "defaultService": "Sprzątanie",
+    "wasScheduledFor": "Było zaplanowane na {date}",
+    "overdueByDays": "{days, plural, one {Zaległe od # dnia} few {Zaległe od # dni} many {Zaległe od # dni} other {Zaległe od # dnia}}"
+  },
   "compProviderProviderDashboardOnHold": {
     "heading": "Wstrzymane",
     "viewAll": "Zobacz wszystkie →",
@@ -1856,7 +1869,8 @@
     "markDone": "Oznacz jako wykonane",
     "statusUpcoming": "Nadchodzące",
     "statusConfirmed": "Potwierdzone",
-    "statusInProgress": "W trakcie"
+    "statusInProgress": "W trakcie",
+    "dueToday": "Termin dzisiaj"
   },
   "compReferralReferralCard": {
     "title": "Program poleceń",

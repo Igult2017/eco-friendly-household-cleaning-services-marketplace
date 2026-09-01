@@ -23,6 +23,7 @@ type Booking = {
   status: string
   scheduledAt: string
   scheduledEndAt: string | null
+  overdueSince: string | null
   serviceAddress: { line1: string; city: string; postalCode: string; country: string }
   specialInstructions: string | null
   subtotalAmount: number
@@ -52,12 +53,35 @@ const STATUS_LABEL: Record<string, { labelKey: string; color: string }> = {
   cleaner_no_show:    { labelKey: "statusCleanerNoShow", color: "bg-red-100 text-red-700" },
 }
 
-const TABS = ["all", "payment_authorized", "in_progress", "on_hold", "completed", "cancelled"]
+const TABS = ["all", "payment_authorized", "in_progress", "on_hold", "overdue", "completed", "cancelled"]
 
 // "On hold" isn't a real status — it's a disagreement blocking agreement on WHEN (a pending
 // reschedule/rate proposal sitting unanswered) or WHETHER (an open dispute) the job goes ahead.
 function isOnHold(b: Booking) {
   return b.status === "disputed" || !!b.pendingProposal
+}
+
+const OVERDUE_STATUSES = ["payment_authorized", "confirmed", "in_progress"]
+const HOUR_MS = 3_600_000
+const DAY_MS = 86_400_000
+
+// Mirrors lib/inngest/functions/overdue.ts's own definition exactly — the work window (scheduled end,
+// or 2h after start if no end time) has passed and the job still isn't marked done — so this can never
+// disagree with what the background sweep (and the late-fee it triggers) considers overdue.
+function isOverdue(b: Booking): boolean {
+  if (!OVERDUE_STATUSES.includes(b.status)) return false
+  const end = b.scheduledEndAt ? new Date(b.scheduledEndAt).getTime() : new Date(b.scheduledAt).getTime() + 2 * HOUR_MS
+  return end < Date.now()
+}
+
+// Real days-overdue count. Prefers the persisted overdueSince (the exact moment the 6-hourly sweep
+// first caught it — same number admin/emails use), falling back to a live calc from the work window
+// itself for a job that's tipped overdue in the last few hours, before that sweep has run again.
+function overdueDays(b: Booking): number {
+  const since = b.overdueSince
+    ? new Date(b.overdueSince).getTime()
+    : (b.scheduledEndAt ? new Date(b.scheduledEndAt).getTime() : new Date(b.scheduledAt).getTime() + 2 * HOUR_MS)
+  return Math.max(1, Math.floor((Date.now() - since) / DAY_MS))
 }
 
 export default function ProviderBookingsPage() {
@@ -95,7 +119,11 @@ export default function ProviderBookingsPage() {
   }
   useEffect(() => { load() }, [])
 
-  const visible = tab === "all" ? bookings : tab === "on_hold" ? bookings.filter(isOnHold) : bookings.filter((b) => b.status === tab)
+  const visible =
+    tab === "all" ? bookings :
+    tab === "on_hold" ? bookings.filter(isOnHold) :
+    tab === "overdue" ? bookings.filter(isOverdue) :
+    bookings.filter((b) => b.status === tab)
 
   return (
     <div className="max-w-4xl space-y-6">
@@ -114,7 +142,7 @@ export default function ProviderBookingsPage() {
               tab === tabKey ? "bg-[#2D7A5F] text-white" : "bg-white text-[#6B7280] border border-gray-200 hover:border-[#2D7A5F] hover:text-[#2D7A5F]"
             }`}
           >
-            {tabKey === "all" ? t("tabAll") : tabKey === "on_hold" ? t("tabOnHold") : STATUS_LABEL[tabKey]?.labelKey ? t(STATUS_LABEL[tabKey].labelKey) : tabKey}
+            {tabKey === "all" ? t("tabAll") : tabKey === "on_hold" ? t("tabOnHold") : tabKey === "overdue" ? t("tabOverdue") : STATUS_LABEL[tabKey]?.labelKey ? t(STATUS_LABEL[tabKey].labelKey) : tabKey}
           </button>
         ))}
       </div>
@@ -134,6 +162,7 @@ export default function ProviderBookingsPage() {
             const badge = { label: statusMeta ? t(statusMeta.labelKey) : b.status, color: statusMeta?.color ?? "bg-gray-100 text-gray-600" }
             const scheduledDate = new Date(b.scheduledAt).toLocaleDateString("de-DE", { day: "2-digit", month: "short", year: "numeric" })
             const scheduledTime = new Date(b.scheduledAt).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })
+            const overdue = isOverdue(b)
 
             return (
               <div key={b.id} className="rounded-2xl bg-white shadow-sm border border-[#E5EBF0] p-5">
@@ -142,6 +171,11 @@ export default function ProviderBookingsPage() {
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-semibold text-[#2B3441]">{b.bookingNumber}</span>
                       <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${badge.color}`}>{badge.label}</span>
+                      {overdue && (
+                        <span className="rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-semibold text-red-700">
+                          {t("overdueByDays", { days: overdueDays(b) })}
+                        </span>
+                      )}
                     </div>
                     <p className="text-sm font-medium text-[#2B3441]">{b.serviceName ?? t("defaultServiceName")}</p>
                     <p className="text-xs text-[#6B7280]">{t("customerLabel", { name: b.customerName ?? b.customerEmail ?? "—" })}</p>

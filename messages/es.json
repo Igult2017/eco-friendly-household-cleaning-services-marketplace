@@ -1121,6 +1121,8 @@
     "subtitle": "Todos los trabajos asignados a ti",
     "tabAll": "Todas",
     "tabOnHold": "En espera",
+    "tabOverdue": "Atrasado",
+    "overdueByDays": "{days, plural, one {Atrasado por # día} other {Atrasado por # días}}",
     "statusConfirmed": "Confirmada",
     "statusInProgress": "En curso",
     "statusCompleted": "Completada",
@@ -1769,6 +1771,17 @@
     "resolvedSuffix": " · Resuelta el {date}",
     "allResolved": "Todas las disputas resueltas"
   },
+  "compProviderProviderDashboardOverdue": {
+    "heading": "Atrasado",
+    "viewAll": "Ver todo →",
+    "emptyTitle": "Nada atrasado",
+    "emptyDescription": "Los trabajos cuya hora programada ya pasó y no están marcados como hechos aparecerán aquí.",
+    "forCustomer": "para {name}",
+    "defaultCustomer": "Cliente",
+    "defaultService": "Limpieza",
+    "wasScheduledFor": "Estaba programado para {date}",
+    "overdueByDays": "{days, plural, one {Atrasado por # día} other {Atrasado por # días}}"
+  },
   "compProviderProviderDashboardOnHold": {
     "heading": "En espera",
     "viewAll": "Ver todo →",
@@ -1856,7 +1869,8 @@
     "markDone": "Marcar como hecho",
     "statusUpcoming": "Próximo",
     "statusConfirmed": "Confirmado",
-    "statusInProgress": "En curso"
+    "statusInProgress": "En curso",
+    "dueToday": "Vence hoy"
   },
   "compReferralReferralCard": {
     "title": "Programa de referidos",

@@ -1121,6 +1121,8 @@
     "subtitle": "All jobs assigned to you",
     "tabAll": "All",
     "tabOnHold": "On Hold",
+    "tabOverdue": "Overdue",
+    "overdueByDays": "{days, plural, one {Overdue by # day} other {Overdue by # days}}",
     "statusConfirmed": "Confirmed",
     "statusInProgress": "In Progress",
     "statusCompleted": "Completed",
@@ -1769,6 +1771,17 @@
     "resolvedSuffix": " · Resolved {date}",
     "allResolved": "All disputes resolved"
   },
+  "compProviderProviderDashboardOverdue": {
+    "heading": "Overdue",
+    "viewAll": "View all →",
+    "emptyTitle": "Nothing overdue",
+    "emptyDescription": "Jobs past their scheduled time that aren't marked done will show up here.",
+    "forCustomer": "for {name}",
+    "defaultCustomer": "Client",
+    "defaultService": "Cleaning",
+    "wasScheduledFor": "Was scheduled for {date}",
+    "overdueByDays": "{days, plural, one {Overdue by # day} other {Overdue by # days}}"
+  },
   "compProviderProviderDashboardOnHold": {
     "heading": "On Hold",
     "viewAll": "View all →",
@@ -1856,7 +1869,8 @@
     "markDone": "Mark done",
     "statusUpcoming": "Upcoming",
     "statusConfirmed": "Confirmed",
-    "statusInProgress": "In Progress"
+    "statusInProgress": "In Progress",
+    "dueToday": "Due today"
   },
   "compReferralReferralCard": {
     "title": "Referral Programme",

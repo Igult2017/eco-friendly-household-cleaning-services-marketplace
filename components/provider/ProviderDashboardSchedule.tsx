@@ -23,6 +23,11 @@ type Booking = {
   service: { name: string } | null
 }
 
+function isDueToday(scheduledAt: Date | string | null): boolean {
+  if (!scheduledAt) return false
+  return new Date(scheduledAt).toISOString().split("T")[0] === new Date().toISOString().split("T")[0]
+}
+
 export async function ProviderDashboardSchedule({ bookings }: { bookings: Booking[] }) {
   const t = await getTranslations("compProviderProviderDashboardSchedule")
   if (bookings.length === 0) {
@@ -63,7 +68,10 @@ export async function ProviderDashboardSchedule({ bookings }: { bookings: Bookin
                 )}
               </div>
               <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                <Badge className={cn("text-xs", cfg.cls)}>{t(cfg.labelKey)}</Badge>
+                <div className="flex items-center gap-1.5">
+                  {isDueToday(b.scheduledAt) && <Badge className="text-xs bg-amber-100 text-amber-700">{t("dueToday")}</Badge>}
+                  <Badge className={cn("text-xs", cfg.cls)}>{t(cfg.labelKey)}</Badge>
+                </div>
                 <p className="text-sm font-bold text-[#2D7A5F]">{formatCurrency(b.providerPayout)}</p>
                 <Link href={`/provider/bookings/${b.id}/complete`}>
                   <Button size="sm" className="bg-[#2D7A5F] hover:bg-[#235f49] text-white text-xs h-7">

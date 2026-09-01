@@ -1121,6 +1121,8 @@
     "subtitle": "Todos os trabalhos atribuídos a si",
     "tabAll": "Todas",
     "tabOnHold": "Em espera",
+    "tabOverdue": "Em atraso",
+    "overdueByDays": "{days, plural, one {Em atraso há # dia} other {Em atraso há # dias}}",
     "statusConfirmed": "Confirmada",
     "statusInProgress": "Em curso",
     "statusCompleted": "Concluída",
@@ -1769,6 +1771,17 @@
     "resolvedSuffix": " · Resolvida em {date}",
     "allResolved": "Todas as disputas resolvidas"
   },
+  "compProviderProviderDashboardOverdue": {
+    "heading": "Em atraso",
+    "viewAll": "Ver tudo →",
+    "emptyTitle": "Nada em atraso",
+    "emptyDescription": "Os trabalhos cujo horário agendado já passou e não estão marcados como concluídos aparecerão aqui.",
+    "forCustomer": "para {name}",
+    "defaultCustomer": "Cliente",
+    "defaultService": "Limpeza",
+    "wasScheduledFor": "Estava agendado para {date}",
+    "overdueByDays": "{days, plural, one {Em atraso há # dia} other {Em atraso há # dias}}"
+  },
   "compProviderProviderDashboardOnHold": {
     "heading": "Em espera",
     "viewAll": "Ver tudo →",
@@ -1856,7 +1869,8 @@
     "markDone": "Marcar como concluído",
     "statusUpcoming": "Em breve",
     "statusConfirmed": "Confirmado",
-    "statusInProgress": "Em andamento"
+    "statusInProgress": "Em andamento",
+    "dueToday": "Vence hoje"
   },
   "compReferralReferralCard": {
     "title": "Programa de indicações",

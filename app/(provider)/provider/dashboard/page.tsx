@@ -5,7 +5,7 @@ import { redirect } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { db } from "@/lib/db"
 import { bookings, providers, bids, notifications, payouts, reviews, disputes, jobPosts } from "@/lib/db/schema"
-import { eq, desc, asc, and, or, sql, inArray, isNotNull } from "drizzle-orm"
+import { eq, desc, asc, and, or, sql, inArray, isNotNull, lt } from "drizzle-orm"
 import { findJobsNearProvider } from "@/lib/db/queries/geo"
 import { CalendarDays, CheckCircle2, Star, TrendingUp, AlertCircle } from "lucide-react"
 import { ProviderDashboardSchedule }     from "@/components/provider/ProviderDashboardSchedule"
@@ -18,6 +18,7 @@ import { ProviderDashboardDisputes }     from "@/components/provider/ProviderDas
 import { ProviderDashboardCompleted }    from "@/components/provider/ProviderDashboardCompleted"
 import { ProviderDashboardCancelled }    from "@/components/provider/ProviderDashboardCancelled"
 import { ProviderDashboardOnHold }       from "@/components/provider/ProviderDashboardOnHold"
+import { ProviderDashboardOverdue }      from "@/components/provider/ProviderDashboardOverdue"
 import { ReferralCard }                  from "@/components/referral/ReferralCard"
 import { ProviderApprovalNotice }        from "@/components/provider/ProviderApprovalNotice"
 import { PayoutConnect }                  from "@/components/provider/PayoutConnect"
@@ -70,6 +71,7 @@ export default async function ProviderDashboardPage() {
     completedBookings,
     cancelledBookings,
     onHoldBookings,
+    overdueCandidates,
   ] = await Promise.all([
     // 1. Upcoming bookings
     db.query.bookings.findMany({
@@ -185,7 +187,27 @@ export default async function ProviderDashboardPage() {
       orderBy: [desc(bookings.updatedAt)],
       limit: 5,
     }).catch(() => [] as never[]),
+
+    // 12. Candidates for "overdue" — active bookings whose scheduled time has already passed. The
+    // precise cutoff (scheduledEndAt, or 2h after scheduledAt) matches lib/inngest/functions/overdue.ts
+    // exactly and is applied in JS below, since a job can have no end time set.
+    db.query.bookings.findMany({
+      where: (b, { and: a, inArray: inArr }) =>
+        a(eq(b.providerId, pid), inArr(b.status, ["payment_authorized", "confirmed", "in_progress"]), lt(b.scheduledAt, new Date())),
+      with: { customer: { columns: { firstName: true, lastName: true } }, service: { columns: { name: true } } },
+      orderBy: [asc(bookings.scheduledAt)],
+      limit: 20,
+    }).catch(() => [] as never[]),
   ])
+
+  // Same overdue definition as the background sweep — a job whose work window (end time, or 2h after
+  // start when none is set) has passed without being marked done.
+  const overdueBookings = (overdueCandidates as any[])
+    .filter((b) => {
+      const end = b.scheduledEndAt ? new Date(b.scheduledEndAt).getTime() : new Date(b.scheduledAt).getTime() + 2 * 3_600_000
+      return end < Date.now()
+    })
+    .slice(0, 5)
 
   const totalEarnings = Number(earningsRows[0]?.total ?? 0)
 
@@ -289,6 +311,7 @@ export default async function ProviderDashboardPage() {
             reviews={recentReviews as any}
           />
           <ProviderDashboardBids bids={recentBids as any} />
+          <ProviderDashboardOverdue bookings={overdueBookings as any} />
           <ProviderDashboardOnHold bookings={onHoldBookings as any} />
           <ProviderDashboardCompleted bookings={completedBookings as any} />
           <ProviderDashboardCancelled bookings={cancelledBookings as any} />

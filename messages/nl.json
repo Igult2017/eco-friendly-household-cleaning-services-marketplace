@@ -1121,6 +1121,8 @@
     "subtitle": "Alle aan jou toegewezen opdrachten",
     "tabAll": "Alle",
     "tabOnHold": "In de wacht",
+    "tabOverdue": "Te laat",
+    "overdueByDays": "{days, plural, one {# dag te laat} other {# dagen te laat}}",
     "statusConfirmed": "Bevestigd",
     "statusInProgress": "Bezig",
     "statusCompleted": "Voltooid",
@@ -1769,6 +1771,17 @@
     "resolvedSuffix": " · Opgelost op {date}",
     "allResolved": "Alle geschillen opgelost"
   },
+  "compProviderProviderDashboardOverdue": {
+    "heading": "Te laat",
+    "viewAll": "Alles bekijken →",
+    "emptyTitle": "Niets te laat",
+    "emptyDescription": "Klussen waarvan de geplande tijd is verstreken en die niet als voltooid zijn gemarkeerd, verschijnen hier.",
+    "forCustomer": "voor {name}",
+    "defaultCustomer": "Klant",
+    "defaultService": "Schoonmaak",
+    "wasScheduledFor": "Was gepland voor {date}",
+    "overdueByDays": "{days, plural, one {# dag te laat} other {# dagen te laat}}"
+  },
   "compProviderProviderDashboardOnHold": {
     "heading": "In de wacht",
     "viewAll": "Alles bekijken →",
@@ -1856,7 +1869,8 @@
     "markDone": "Markeer als voltooid",
     "statusUpcoming": "Aankomend",
     "statusConfirmed": "Bevestigd",
-    "statusInProgress": "Bezig"
+    "statusInProgress": "Bezig",
+    "dueToday": "Vandaag verwacht"
   },
   "compReferralReferralCard": {
     "title": "Aanbevelingsprogramma",

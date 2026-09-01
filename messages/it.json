@@ -1121,6 +1121,8 @@
     "subtitle": "Tutti i lavori assegnati a te",
     "tabAll": "Tutte",
     "tabOnHold": "In sospeso",
+    "tabOverdue": "In ritardo",
+    "overdueByDays": "{days, plural, one {In ritardo di # giorno} other {In ritardo di # giorni}}",
     "statusConfirmed": "Confermata",
     "statusInProgress": "In corso",
     "statusCompleted": "Completata",
@@ -1769,6 +1771,17 @@
     "resolvedSuffix": " · Risolta il {date}",
     "allResolved": "Tutte le controversie risolte"
   },
+  "compProviderProviderDashboardOverdue": {
+    "heading": "In ritardo",
+    "viewAll": "Vedi tutto →",
+    "emptyTitle": "Niente in ritardo",
+    "emptyDescription": "I lavori il cui orario previsto è passato e non sono contrassegnati come completati appariranno qui.",
+    "forCustomer": "per {name}",
+    "defaultCustomer": "Cliente",
+    "defaultService": "Pulizia",
+    "wasScheduledFor": "Era previsto per {date}",
+    "overdueByDays": "{days, plural, one {In ritardo di # giorno} other {In ritardo di # giorni}}"
+  },
   "compProviderProviderDashboardOnHold": {
     "heading": "In sospeso",
     "viewAll": "Vedi tutto →",
@@ -1856,7 +1869,8 @@
     "markDone": "Segna come completato",
     "statusUpcoming": "In arrivo",
     "statusConfirmed": "Confermato",
-    "statusInProgress": "In corso"
+    "statusInProgress": "In corso",
+    "dueToday": "Scade oggi"
   },
   "compReferralReferralCard": {
     "title": "Programma di referral",
