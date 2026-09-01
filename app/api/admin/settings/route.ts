@@ -8,9 +8,8 @@ import { logError } from "@/lib/utils/logError"
 const updateSchema = z.object({
   commission_pct:        z.number().int().min(0).max(50).optional(),
   referral_pct:          z.number().int().min(0).max(20).optional(),
-  payout_schedule:       z.enum(["weekly", "biweekly", "monthly"]).optional(),
+  payout_schedule:       z.enum(["weekly", "monthly"]).optional(),
   max_service_radius_km: z.number().int().min(10).max(500).optional(),
-  platform_name:         z.string().min(1).max(50).optional(),
   // Cancellation & no-show policy — see lib/platform/settings.ts getCancellationConfig().
   cancel_tier1_hours:          z.number().int().min(1).max(168).optional(),
   cancel_tier2_hours:          z.number().int().min(1).max(168).optional(),

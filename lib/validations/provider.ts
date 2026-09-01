@@ -6,7 +6,9 @@ export const providerProfileSchema = z.object({
   city: z.string().min(2).max(100),
   postalCode: z.string().min(3).max(10),
   country: z.string().length(2).default("DE"),
-  serviceRadiusKm: z.number().int().min(1).max(100).default(25),
+  // 500 is a generous static ceiling — the real, admin-adjustable cap (default 100, see
+  // lib/platform/settings.ts getMaxServiceRadiusKm) is enforced live where this schema is parsed.
+  serviceRadiusKm: z.number().int().min(1).max(500).default(25),
   ecoLevel: z.enum(["basic", "certified", "premium", "zero_impact"]).default("basic"),
   latitude: z.number().min(-90).max(90).optional(),
   longitude: z.number().min(-180).max(180).optional(),

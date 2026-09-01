@@ -1,4 +1,5 @@
 import { stripe } from "./client"
+import { getPayoutSchedule } from "@/lib/platform/settings"
 
 /** Create a Stripe Connect Express account for a new provider.
  * Pass `idempotencyKey` (e.g. per provider id) so a retry after a failed DB write
@@ -8,6 +9,15 @@ export async function createConnectAccount(params: {
   country: string // ISO 3166-1 alpha-2 e.g. "DE"
   idempotencyKey?: string
 }) {
+  // Admin-configurable (see /admin/settings "Default Payout Schedule") — Stripe only supports
+  // "weekly" and "monthly" for a payout interval, not "biweekly".
+  const interval = await getPayoutSchedule()
+  const schedule =
+    interval === "monthly"
+      ? { interval: "monthly" as const, monthly_anchor: 1 }
+      // Stripe requires an explicit day when interval is "weekly" — Monday matches the existing
+      // ledger-summary cron (lib/inngest/functions/payouts.ts runs 0 2 * * 1, also Monday).
+      : { interval: "weekly" as const, weekly_anchor: "monday" as const }
   return stripe.accounts.create(
     {
       type: "express",
@@ -29,11 +39,7 @@ export async function createConnectAccount(params: {
         product_description: "Eco-friendly home and office cleaning services",
       },
       settings: {
-        payouts: {
-          // Stripe requires an explicit day when interval is "weekly" — Monday matches the existing
-          // ledger-summary cron (lib/inngest/functions/payouts.ts runs 0 2 * * 1, also Monday).
-          schedule: { interval: "weekly", weekly_anchor: "monday" },
-        },
+        payouts: { schedule },
       },
     },
     params.idempotencyKey ? { idempotencyKey: params.idempotencyKey } : undefined,

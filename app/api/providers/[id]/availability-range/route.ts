@@ -70,10 +70,13 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       const d = new Date(t)
       const dateStr = d.toISOString().split("T")[0]
       const dayOfWeek = d.getUTCDay()
+      // A real booking always wins — a "Take Job" instant claim deliberately bypasses the weekly-hours
+      // check, and a cleaner can edit their weekly schedule or add a blackout date after a booking
+      // already exists on that day, so blackout/day_off must never hide an actual active booking.
       const status =
+        bookedDateSet.has(dateStr) ? "booked" :
         blackoutSet.has(dateStr) ? "blackout" :
         hasConfiguredWeek && !workingDays.has(dayOfWeek) ? "day_off" :
-        bookedDateSet.has(dateStr) ? "booked" :
         "available"
       days.push({ date: dateStr, status })
     }

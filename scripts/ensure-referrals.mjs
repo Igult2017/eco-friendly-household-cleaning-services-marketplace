@@ -163,9 +163,11 @@ INSERT INTO platform_settings (key, value) VALUES
   ('commission_pct','15'),
   ('referral_pct','5'),
   ('payout_schedule','weekly'),
-  ('max_service_radius_km','100'),
-  ('platform_name','DORIXÉ')
+  ('max_service_radius_km','100')
 ON CONFLICT (key) DO NOTHING;
+-- platform_name was a dead admin control (saved fine, never read anywhere) — removed from the
+-- settings UI; drop any previously-seeded row so it doesn't linger as an orphaned setting.
+DELETE FROM platform_settings WHERE key = 'platform_name';
 
 -- AI email marketing: campaigns + per-recipient send log.
 DO $$ BEGIN CREATE TYPE email_campaign_type   AS ENUM ('welcome','value','soft_sell','hard_sell','custom'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;

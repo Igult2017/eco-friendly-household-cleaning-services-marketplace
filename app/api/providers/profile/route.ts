@@ -5,6 +5,7 @@ import { providers, users, notifications } from "@/lib/db/schema"
 import type { NewProvider } from "@/lib/db/schema/providers"
 import { eq } from "drizzle-orm"
 import { providerProfileSchema } from "@/lib/validations/provider"
+import { getMaxServiceRadiusKm } from "@/lib/platform/settings"
 import { nanoid } from "nanoid"
 import { sendProviderApprovedEmail } from "@/lib/resend/providerApproved"
 import { logError } from "@/lib/utils/logError"
@@ -62,6 +63,12 @@ export async function PATCH(req: Request) {
     }
 
     const data = parsed.data
+    if (data.serviceRadiusKm !== undefined) {
+      const maxRadius = await getMaxServiceRadiusKm()
+      if (data.serviceRadiusKm > maxRadius) {
+        return NextResponse.json({ error: `Service radius cannot exceed ${maxRadius} km` }, { status: 400 })
+      }
+    }
     const updateFields: Record<string, unknown> = {}
 
     if (data.businessName !== undefined) updateFields.businessName = data.businessName
@@ -226,6 +233,10 @@ export async function POST(req: Request) {
     }
 
     const data = parsed.data
+    const maxRadius = await getMaxServiceRadiusKm()
+    if (data.serviceRadiusKm > maxRadius) {
+      return NextResponse.json({ error: `Service radius cannot exceed ${maxRadius} km` }, { status: 400 })
+    }
 
     // Geocode city + postal
     let lat = data.latitude ?? null

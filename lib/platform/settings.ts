@@ -92,6 +92,27 @@ export async function getMinHourlyRateCents(): Promise<number> {
   return getIntSetting("min_hourly_rate_cents", 1500, 0, 100_000)
 }
 
+// Admin-set hard cap on how far a cleaner can set their own service radius — enforced live in
+// lib/validations/provider.ts and lib/validations/onboarding.ts (the zod schema's own ceiling is
+// a generous static bound; this is the real, admin-adjustable one).
+export async function getMaxServiceRadiusKm(): Promise<number> {
+  return getIntSetting("max_service_radius_km", 100, 10, 500)
+}
+
+// Admin-set default payout interval for NEWLY connected cleaner Stripe accounts (lib/stripe/connect.ts).
+// Stripe supports "weekly" and "monthly" — NOT "biweekly" — so only those two are valid here.
+export async function getPayoutSchedule(): Promise<"weekly" | "monthly"> {
+  try {
+    const [row] = await db.select({ value: platformSettings.value }).from(platformSettings).where(eq(platformSettings.key, "payout_schedule"))
+    if (!row) return "weekly"
+    if (row.value === "weekly" || row.value === "monthly") return row.value
+    console.warn(`[settings] payout_schedule "${row.value}" is invalid — using default "weekly"`)
+  } catch {
+    // table missing / DB error — fall through to the default
+  }
+  return "weekly"
+}
+
 export type CancellationConfig = {
   tier1Hours: number       // above this = full refund (0% fee)
   tier2Hours: number       // between tier2 and tier1 = "low" fee
