@@ -35,6 +35,8 @@ export default async function EditBlogPostPage({ params }: { params: Promise<{ i
           tags: (post.tags as string[]) ?? [],
           allowComments: post.allowComments,
           allowSharing: post.allowSharing,
+          status: post.status,
+          scheduledFor: post.scheduledFor ? post.scheduledFor.toISOString() : undefined,
         }}
       />
     </main>

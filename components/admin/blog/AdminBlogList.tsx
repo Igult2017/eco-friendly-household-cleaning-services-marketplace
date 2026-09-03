@@ -11,10 +11,20 @@ type Post = {
   id: string
   title: string
   slug: string
-  status: "draft" | "published"
+  status: "draft" | "scheduled" | "published"
+  scheduledFor?: Date | string | null
   publishedAt: Date | string | null
   author: { firstName: string | null; lastName: string | null } | null
   views: number
+}
+
+// A scheduled post needs the TIME, not just the day — "12 Sep" doesn't tell you if it goes out
+// before or after the morning newsletter.
+function fmtWhen(d: Date | string | null | undefined) {
+  if (!d) return "—"
+  return new Date(d).toLocaleString(undefined, {
+    day: "numeric", month: "short", hour: "2-digit", minute: "2-digit",
+  })
 }
 
 function fmt(d: Date | string | null) {
@@ -39,7 +49,9 @@ export function AdminBlogList({ initialPosts }: { initialPosts: Post[] }) {
     setPosts((p) =>
       p.map((post) =>
         post.id === id
-          ? { ...post, status: published ? "published" : "draft", publishedAt: published ? new Date() : null }
+          // scheduledFor is cleared too: publishing a SCHEDULED post cancels its pending date, and
+          // leaving it set would keep showing a future date under a "published" badge until reload.
+          ? { ...post, status: published ? "published" : "draft", publishedAt: published ? new Date() : null, scheduledFor: null }
           : post
       )
     )
@@ -89,12 +101,19 @@ export function AdminBlogList({ initialPosts }: { initialPosts: Post[] }) {
                     className={
                       post.status === "published"
                         ? "bg-[#EDF5F0] text-[#2D7A5F] border-[#2D7A5F]/20 hover:bg-[#EDF5F0]"
-                        : "bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-100"
+                        : post.status === "scheduled"
+                          ? "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-50"
+                          : "bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-100"
                     }
                     variant="outline"
                   >
                     {post.status}
                   </Badge>
+                  {/* The date is the point of a scheduled post — a bare "scheduled" badge would
+                      mean checking every article to find out when anything goes out. */}
+                  {post.status === "scheduled" && post.scheduledFor && (
+                    <p className="mt-1 text-xs text-blue-700">{fmtWhen(post.scheduledFor)}</p>
+                  )}
                 </td>
                 <td className="px-4 py-3 text-[#6B7280]">{authorName}</td>
                 <td className="px-4 py-3 text-[#6B7280]">{fmt(post.publishedAt)}</td>

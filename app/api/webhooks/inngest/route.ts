@@ -16,6 +16,7 @@ import { bookingOverdueSweep } from "@/lib/inngest/functions/overdue"
 import { settleReferralCommissions } from "@/lib/inngest/functions/referralSettlement"
 import { jobAssignmentSweeper } from "@/lib/inngest/functions/jobSweeper"
 import { marketingScheduleSweep } from "@/lib/inngest/functions/marketingSchedule"
+import { blogScheduleSweep } from "@/lib/inngest/functions/blogSchedule"
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -38,5 +39,6 @@ export const { GET, POST, PUT } = serve({
     settleReferralCommissions,
     jobAssignmentSweeper,
     marketingScheduleSweep,
+    blogScheduleSweep,
   ],
 })

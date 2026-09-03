@@ -4,7 +4,14 @@ import {
 } from "drizzle-orm/pg-core"
 import { users } from "./users"
 
-export const blogPostStatusEnum = pgEnum("blog_post_status", ["draft", "published"])
+// "scheduled" is a third state on purpose, rather than publishing with a future date and hiding it
+// by date. EIGHT separate places decide whether a post is public and every one checks only the
+// status — the public list, the article page, both comment routes, the blog API, the single-post
+// API, the cover-image file proxy and the sitemap. A future-dated "published" post would have
+// needed a date check added to all eight, and missing one leaks the article early (the sitemap
+// would hand it to Google; the file route would serve its cover image). A scheduled post simply
+// isn't "published", so all eight keep hiding it with no changes at all.
+export const blogPostStatusEnum = pgEnum("blog_post_status", ["draft", "scheduled", "published"])
 
 export const blogPosts = pgTable(
   "blog_posts",
@@ -19,6 +26,10 @@ export const blogPosts = pgTable(
     authorName: varchar("author_name", { length: 160 }), // optional display name; falls back to the author's account name
     status: blogPostStatusEnum("status").notNull().default("draft"),
     publishedAt: timestamp("published_at", { withTimezone: true }),
+    // When a scheduled post should go live. The sweep stamps published_at with THIS value rather
+    // than its own run time, so ordering matches what the admin actually chose instead of drifting
+    // by however long the sweep took to notice.
+    scheduledFor: timestamp("scheduled_for", { withTimezone: true }),
     allowComments: boolean("allow_comments").notNull().default(true),
     allowSharing: boolean("allow_sharing").notNull().default(true),
     category: varchar("category", { length: 100 }),

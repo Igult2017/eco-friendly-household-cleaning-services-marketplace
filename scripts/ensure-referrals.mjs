@@ -489,6 +489,13 @@ ALTER TABLE providers DROP COLUMN IF EXISTS payout_schedule;
 -- base_price as a single fixed rate — nothing changes for a cleaner who never sets one.
 ALTER TABLE provider_services ADD COLUMN IF NOT EXISTS base_price_max integer;
 
+-- Scheduled blog publishing (lib/inngest/functions/blogSchedule.ts). scheduled_for is when a
+-- "scheduled" post should go live; the sweep flips it to published at that moment. Partial index
+-- because the sweep only ever asks for scheduled rows that are due.
+ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS scheduled_for timestamptz;
+CREATE INDEX IF NOT EXISTS blog_posts_scheduled_idx ON blog_posts(scheduled_for)
+  WHERE status = 'scheduled';
+
 -- Marketing email feedback (app/api/webhooks/resend/route.ts). Resend reports what happened to each
 -- email AFTER we hand it over — delivered, opened, clicked, bounced, marked as spam. Without this
 -- the platform sent into the dark: email_sends could only ever say "sent" or "failed".
@@ -540,6 +547,10 @@ async function main() {
     catch (e) { console.warn("[ensure-referrals] payment_automation_failed enum add skipped:", e?.message ?? e) }
     // Marketing feedback states Resend reports back. 'delivered'/'opened'/'bounced' already existed
     // in the enum but nothing ever wrote them; 'clicked' and 'complained' (marked as spam) are new.
+    // Third blog state so a scheduled post is never "published" — see lib/db/schema/blog.ts for
+    // why a future-dated published post would leak through the sitemap and image routes.
+    try { await sql.unsafe(`ALTER TYPE blog_post_status ADD VALUE IF NOT EXISTS 'scheduled'`) }
+    catch (e) { console.warn("[ensure-referrals] blog scheduled enum add skipped:", e?.message ?? e) }
     try { await sql.unsafe(`ALTER TYPE email_send_status ADD VALUE IF NOT EXISTS 'clicked'`) }
     catch (e) { console.warn("[ensure-referrals] clicked enum add skipped:", e?.message ?? e) }
     try { await sql.unsafe(`ALTER TYPE email_send_status ADD VALUE IF NOT EXISTS 'complained'`) }

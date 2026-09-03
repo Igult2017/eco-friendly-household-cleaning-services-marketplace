@@ -21,6 +21,18 @@ type PostData = {
   tags?: string[]
   allowComments?: boolean
   allowSharing?: boolean
+  status?: "draft" | "scheduled" | "published"
+  scheduledFor?: string
+}
+
+// <input type="datetime-local"> wants "YYYY-MM-DDTHH:mm" in LOCAL time, but the server stores an
+// absolute moment. Convert by shifting the stored time by the browser's own offset, otherwise an
+// admin in Berlin sees a stored 09:00 as 07:00 and "corrects" it into the wrong slot.
+function toLocalInput(iso?: string): string {
+  if (!iso) return ""
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return ""
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60_000).toISOString().slice(0, 16)
 }
 
 function slugify(t: string) {
@@ -39,6 +51,8 @@ export function BlogPostForm({ initial }: { initial?: PostData }) {
   const [tags, setTags] = useState((initial?.tags ?? []).join(", "))
   const [allowComments, setAllowComments] = useState(initial?.allowComments ?? true)
   const [allowSharing, setAllowSharing] = useState(initial?.allowSharing ?? true)
+  // Empty = publish immediately when "Save & publish" is used. A future value schedules instead.
+  const [sendAt, setSendAt] = useState(toLocalInput(initial?.scheduledFor))
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
   const [coverUploading, setCoverUploading] = useState(false)
@@ -88,6 +102,25 @@ export function BlogPostForm({ initial }: { initial?: PostData }) {
     }
   }
 
+  async function cancelSchedule() {
+    if (!initial?.id) return
+    setSaving(true)
+    try {
+      const r = await fetch(`/api/admin/blog/${initial.id}/publish`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cancelSchedule: true }),
+      })
+      if (!r.ok) { setError("Could not cancel the schedule."); return }
+      setSendAt("")
+      router.refresh()
+    } catch {
+      setError("Network error")
+    } finally {
+      setSaving(false)
+    }
+  }
+
   async function save(publish?: boolean) {
     setSaving(true)
     setError("")
@@ -119,7 +152,14 @@ export function BlogPostForm({ initial }: { initial?: PostData }) {
       const d = await res.json()
       const id = initial?.id ?? d.post?.id
       if (publish && id) {
-        await fetch(`/api/admin/blog/${id}/publish`, { method: "PATCH" })
+        // A local datetime carries no timezone, so convert to an absolute moment here rather than
+        // leaving the server to guess which clock the admin meant.
+        const scheduledFor = sendAt ? new Date(sendAt).toISOString() : undefined
+        await fetch(`/api/admin/blog/${id}/publish`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(scheduledFor ? { scheduledFor } : {}),
+        })
       }
       router.push("/admin/content/blog")
       router.refresh()
@@ -220,6 +260,43 @@ export function BlogPostForm({ initial }: { initial?: PostData }) {
         </label>
       </div>
 
+      {/* Publish later. Deliberately part of the article's own settings rather than a separate
+          screen — scheduling is a property of the post, decided while writing it. */}
+      <div className="border-t border-gray-100 pt-5 space-y-2">
+        <label htmlFor="blog-schedule" className="block text-sm font-medium text-[#2B3441]">
+          Publish later <span className="font-normal text-[#6B7280]">— leave empty to publish straight away</span>
+        </label>
+        <input
+          id="blog-schedule"
+          type="datetime-local"
+          value={sendAt}
+          onChange={(e) => setSendAt(e.target.value)}
+          className="w-full sm:w-72 rounded-lg border border-gray-200 px-3 py-2 text-sm text-[#2B3441] ring-1 ring-transparent focus:outline-none focus:ring-2 focus:ring-[#2D7A5F] transition-all duration-200"
+        />
+
+        {initial?.status === "scheduled" && initial.scheduledFor && (
+          <div className="flex flex-wrap items-center gap-3 rounded-lg bg-blue-50 border border-blue-200 px-3 py-2">
+            <p className="text-xs text-blue-900">
+              Scheduled for <strong>{new Date(initial.scheduledFor).toLocaleString()}</strong> — hidden from the blog until then.
+            </p>
+            <button
+              type="button"
+              onClick={cancelSchedule}
+              disabled={saving}
+              className="text-xs font-semibold text-blue-800 underline hover:text-blue-950 transition-colors disabled:opacity-50"
+            >
+              Cancel schedule
+            </button>
+          </div>
+        )}
+
+        {sendAt && initial?.status !== "scheduled" && (
+          <p className="text-xs text-[#6B7280]">
+            Goes live around {new Date(sendAt).toLocaleString()} — checked every 5 minutes, so it may appear a few minutes after.
+          </p>
+        )}
+      </div>
+
       {error && <p className="text-red-600 text-sm">{error}</p>}
 
       <div className="flex gap-3">
@@ -227,7 +304,7 @@ export function BlogPostForm({ initial }: { initial?: PostData }) {
           {saving ? "Saving…" : "Save draft"}
         </Button>
         <Button onClick={() => save(true)} disabled={saving || !title || !slug} className="bg-[#2D7A5F] hover:bg-[#235f49] text-white">
-          {saving ? "Saving…" : "Save & publish"}
+          {saving ? "Saving…" : sendAt ? "Save & schedule" : "Save & publish"}
         </Button>
         <Button variant="outline" onClick={() => router.back()} disabled={saving}>Cancel</Button>
       </div>
