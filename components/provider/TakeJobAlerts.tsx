@@ -8,11 +8,11 @@ import { usePusherChannel } from "@/hooks/usePusherChannel"
 
 // Genuine realtime "first tap wins" needs more than the 30s-polling notification bell — this
 // listens for the distinct take-job-available Pusher event (lib/inngest/functions/jobs.ts) and
-// surfaces an immediate toast. Unlike the earlier inactivity-logout toast bug (a toast fired
-// synchronously ON MOUNT, racing Sonner's <Toaster/> mount in the same commit pass — fixed by JSX
-// order in app/layout.tsx), this toast only ever fires later, async, off a Pusher event — by the
-// time any event can arrive the WebSocket has to connect first, so React's initial mount/commit has
-// long since settled and <Toaster/> is already subscribed regardless of this component's position.
+// surfaces an immediate toast. A toast fired synchronously ON MOUNT can race Sonner's <Toaster/>
+// mount in the same commit pass and be dropped (hence the JSX-order note in app/layout.tsx); this
+// one is safe from that regardless of where the component sits, because it only ever fires later,
+// async, off a Pusher event — the WebSocket has to connect before any event can arrive, by which
+// time React's initial mount/commit has long since settled and <Toaster/> is subscribed.
 export function TakeJobAlerts() {
   const t = useTranslations("compProviderTakeJobAlerts")
   const router = useRouter()

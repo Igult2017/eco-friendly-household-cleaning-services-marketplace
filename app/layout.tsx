@@ -109,9 +109,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <QueryProvider>
           {children}
         </QueryProvider>
-        {/* Toaster must mount BEFORE the watcher below — Sonner's toast() calls only reach a
-            Toaster instance that has already subscribed; siblings mount effects in JSX order, so
-            a toast fired from a component listed before Toaster can be silently dropped. */}
+        {/* Keep Toaster ahead of anything that can toast on mount — Sonner's toast() calls only
+            reach a Toaster instance that has already subscribed, and siblings mount effects in JSX
+            order, so a toast fired from a component listed above it is silently dropped. */}
         <Toaster richColors position="top-right" />
         {/* Guarded on publishableKey — this uses Clerk hooks, so it must never render in the
             ClerkProvider-less fallback path below. */}
