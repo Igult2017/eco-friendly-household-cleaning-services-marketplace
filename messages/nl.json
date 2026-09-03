@@ -997,7 +997,8 @@
     "status_refunded": "terugbetaald",
     "status_partially_refunded": "gedeeltelijk terugbetaald",
     "status_failed": "mislukt",
-    "status_pending": "in behandeling"
+    "status_pending": "in behandeling",
+    "receiptLink": "Bon"
   },
   "customerPostjobPage": {
     "errorGeneric": "Er is iets misgegaan. Probeer het opnieuw.",

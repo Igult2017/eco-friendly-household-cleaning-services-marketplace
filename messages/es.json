@@ -997,7 +997,8 @@
     "status_refunded": "reembolsado",
     "status_partially_refunded": "parcialmente reembolsado",
     "status_failed": "fallido",
-    "status_pending": "pendiente"
+    "status_pending": "pendiente",
+    "receiptLink": "Recibo"
   },
   "customerPostjobPage": {
     "errorGeneric": "Algo salió mal. Vuelve a intentarlo.",

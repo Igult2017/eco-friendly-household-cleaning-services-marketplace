@@ -997,7 +997,8 @@
     "status_refunded": "remboursé",
     "status_partially_refunded": "partiellement remboursé",
     "status_failed": "échoué",
-    "status_pending": "en attente"
+    "status_pending": "en attente",
+    "receiptLink": "Reçu"
   },
   "customerPostjobPage": {
     "errorGeneric": "Une erreur s'est produite. Veuillez réessayer.",

@@ -997,7 +997,8 @@
     "status_refunded": "zwrócono",
     "status_partially_refunded": "częściowo zwrócono",
     "status_failed": "nieudane",
-    "status_pending": "oczekujące"
+    "status_pending": "oczekujące",
+    "receiptLink": "Potwierdzenie"
   },
   "customerPostjobPage": {
     "errorGeneric": "Coś poszło nie tak. Spróbuj ponownie.",

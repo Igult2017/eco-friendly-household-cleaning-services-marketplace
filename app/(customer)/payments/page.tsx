@@ -4,7 +4,8 @@ import { db } from "@/lib/db"
 import { payments, bookings, providerServices, providers } from "@/lib/db/schema"
 import { eq, desc } from "drizzle-orm"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
-import { Leaf } from "lucide-react"
+import Link from "next/link"
+import { Leaf, FileText } from "lucide-react"
 import { getTranslations } from "next-intl/server"
 import { PaymentMethods } from "@/components/customer/PaymentMethods"
 
@@ -35,6 +36,7 @@ export default async function CustomerPaymentsPage() {
       currency: payments.currency,
       capturedAt: payments.capturedAt,
       createdAt: payments.createdAt,
+      bookingId: bookings.id,
       bookingNumber: bookings.bookingNumber,
       scheduledAt: bookings.scheduledAt,
       carbonOffsetAmount: bookings.carbonOffsetAmount,
@@ -112,6 +114,12 @@ export default async function CustomerPaymentsPage() {
                     <p className="font-bold text-[#2B3441]">{formatCurrency(p.amount)}</p>
                     {(p.refundedAmount ?? 0) > 0 && (
                       <p className="text-xs text-purple-600">{t("refundedAmount", { amount: formatCurrency(p.refundedAmount ?? 0) })}</p>
+                    )}
+                    {/* This is where anyone actually looks for a receipt — it had no link to one. */}
+                    {p.capturedAt && p.bookingId && (
+                      <Link href={`/bookings/${p.bookingId}/receipt`} className="mt-0.5 inline-flex items-center gap-1 text-xs font-medium text-[#2D7A5F] hover:underline">
+                        <FileText size={11} /> {t("receiptLink")}
+                      </Link>
                     )}
                   </div>
                 </div>

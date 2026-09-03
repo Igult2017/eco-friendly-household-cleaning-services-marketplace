@@ -997,7 +997,8 @@
     "status_refunded": "refunded",
     "status_partially_refunded": "partially refunded",
     "status_failed": "failed",
-    "status_pending": "pending"
+    "status_pending": "pending",
+    "receiptLink": "Receipt"
   },
   "customerPostjobPage": {
     "errorGeneric": "Something went wrong. Please try again.",

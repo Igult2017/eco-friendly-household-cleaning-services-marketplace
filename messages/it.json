@@ -997,7 +997,8 @@
     "status_refunded": "rimborsato",
     "status_partially_refunded": "parzialmente rimborsato",
     "status_failed": "non riuscito",
-    "status_pending": "in sospeso"
+    "status_pending": "in sospeso",
+    "receiptLink": "Ricevuta"
   },
   "customerPostjobPage": {
     "errorGeneric": "Qualcosa è andato storto. Riprova.",

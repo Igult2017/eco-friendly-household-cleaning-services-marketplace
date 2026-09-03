@@ -45,7 +45,12 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
 
   const country = b.providerCountry ?? "DE"
   const money = (c: number) => formatCurrencyForCountry(c, country)
-  const gross = b.subtotalAmount + (b.discountAmount ?? 0)
+  // Rebuild the pre-discount price from what was actually CHARGED, not from subtotalAmount: that
+  // column means different things depending on how the booking was made (the normal checkout stores
+  // it already discounted — lib/bookings/create.ts; the recurring cron stores it undiscounted), which
+  // made the recurring receipt read subtotal 110 / discount −10 / total 90. totalAmount means "what
+  // we charged" in both paths, so subtotal − discount + offset always reconciles to the total.
+  const gross = b.totalAmount + (b.discountAmount ?? 0)
   const totalPaid = b.totalAmount + (b.carbonOffsetAmount ?? 0)
   const customerName = [b.customerFirstName, b.customerLastName].filter(Boolean).join(" ") || b.customerEmail || "—"
 

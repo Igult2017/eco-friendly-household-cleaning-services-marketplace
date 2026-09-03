@@ -201,7 +201,10 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
         </div>
       </div>
 
-      {booking.status === "completed" && (
+      {/* Any booking where money actually moved gets a receipt — not just completed ones. A late
+          cancellation charges a fee on a booking that ends up "cancelled", and that payment needs a
+          receipt too. capturedAt is the honest signal that a charge went through. */}
+      {(booking.status === "completed" || !!payment?.capturedAt) && (
         <Link href={`/bookings/${booking.id}/receipt`} className="inline-flex items-center gap-2 text-sm font-medium text-[#2D7A5F] hover:underline">
           <FileText size={15} /> {tr("receiptLink")}
         </Link>

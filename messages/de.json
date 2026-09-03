@@ -997,7 +997,8 @@
     "status_refunded": "erstattet",
     "status_partially_refunded": "teilweise erstattet",
     "status_failed": "fehlgeschlagen",
-    "status_pending": "ausstehend"
+    "status_pending": "ausstehend",
+    "receiptLink": "Beleg"
   },
   "customerPostjobPage": {
     "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",

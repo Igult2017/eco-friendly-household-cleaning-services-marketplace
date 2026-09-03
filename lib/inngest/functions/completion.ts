@@ -1,9 +1,10 @@
 import { inngest } from "../client"
 import { db } from "@/lib/db"
-import { bookings, payments, users, notifications, providers, recurringSchedules, paymentEvents } from "@/lib/db/schema"
+import { bookings, payments, users, notifications, providers, providerServices, recurringSchedules, paymentEvents } from "@/lib/db/schema"
 import { stripe } from "@/lib/stripe/client"
 import { resend, FROM } from "@/lib/resend/client"
-import { reviewRequestEmail, reviewReminderEmail, recurringDiscountEmail } from "@/lib/resend/transactionalEmails"
+import { reviewRequestEmail, reviewReminderEmail, recurringDiscountEmail, paymentReceiptEmail } from "@/lib/resend/transactionalEmails"
+import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
 import { eq, and, sql } from "drizzle-orm"
 import { creditReferralReward } from "@/lib/referrals/rewards"
 import { getRecurringDiscountPct } from "@/lib/platform/settings"
@@ -145,6 +146,37 @@ export const onBookingCompleted = inngest.createFunction(
     const customer = await step.run("fetch-customer", async () => {
       const [c] = await db.select({ email: users.email, firstName: users.firstName, locale: users.locale, emailReminders: users.emailReminders }).from(users).where(eq(users.id, customerId))
       return c
+    })
+
+    // The receipt goes out the moment the money is actually taken. Read the booking back AFTER the
+    // status/late-penalty updates above so the amount shown is exactly what was charged. Not gated on
+    // emailReminders (unlike the review nudge below) — a receipt is a payment record, not a reminder.
+    await step.run("email-customer-receipt", async () => {
+      if (!customer?.email) return
+      const [b] = await db
+        .select({
+          bookingNumber: bookings.bookingNumber,
+          totalAmount: bookings.totalAmount,
+          carbonOffsetAmount: bookings.carbonOffsetAmount,
+          scheduledAt: bookings.scheduledAt,
+          providerCountry: providers.country,
+          serviceName: providerServices.name,
+        })
+        .from(bookings)
+        .leftJoin(providers, eq(bookings.providerId, providers.id))
+        .leftJoin(providerServices, eq(bookings.serviceId, providerServices.id))
+        .where(eq(bookings.id, bookingId))
+      if (!b) return
+      const locale = customer.locale ?? "en"
+      const { subject, html } = paymentReceiptEmail(customer.locale, {
+        name: customer.firstName,
+        number: b.bookingNumber,
+        service: b.serviceName ?? "Cleaning",
+        date: new Date(b.scheduledAt).toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" }),
+        total: formatCurrencyForCountry(b.totalAmount + (b.carbonOffsetAmount ?? 0), b.providerCountry ?? "DE"),
+        receiptUrl: `${process.env.NEXT_PUBLIC_APP_URL}/bookings/${bookingId}/receipt`,
+      })
+      await resend.emails.send({ from: FROM, to: customer.email, subject, html })
     })
 
     await step.run("email-customer-review", async () => {
