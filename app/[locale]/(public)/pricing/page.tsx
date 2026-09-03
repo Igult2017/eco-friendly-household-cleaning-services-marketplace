@@ -5,6 +5,7 @@ import { localeAlternates } from "@/lib/seo/alternates"
 import { CheckCircle2, XCircle, ArrowRight, Euro, ShieldCheck, Leaf, Zap } from "lucide-react"
 import { JsonLd } from "@/components/seo/JsonLd"
 import { faqSchema } from "@/lib/seo/schemas"
+import { getCancellationConfig } from "@/lib/platform/settings"
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params
@@ -21,6 +22,12 @@ export default async function PricingPage({ params }: { params: Promise<{ locale
   setRequestLocale(locale)
   const t = await getTranslations({ locale, namespace: "pricing" })
 
+  // The refund answer used to hardcode "48h / 24-48h / under 24h", which matched neither the Terms
+  // nor what the platform actually charges — and this same array is fed to Google as FAQ structured
+  // data, so the wrong policy was being published twice over. Read the live admin settings instead,
+  // so the answer can never drift again when the windows or fees are changed.
+  const cancel = await getCancellationConfig()
+
   const CUSTOMER_FEATURES = [
     t("customerFeature1"),
     t("customerFeature2"),
@@ -30,6 +37,7 @@ export default async function PricingPage({ params }: { params: Promise<{ locale
     t("customerFeature6"),
     t("customerFeature7"),
     t("customerFeature8"),
+    t("customerFeature9"),
   ]
 
   const PROVIDER_FEATURES = [
@@ -56,7 +64,17 @@ export default async function PricingPage({ params }: { params: Promise<{ locale
     { q: t("faqChargedQ"), a: t("faqChargedA") },
     { q: t("faqContractQ"), a: t("faqContractA") },
     { q: t("faqTasksQ"), a: t("faqTasksA") },
-    { q: t("faqCancelQ"), a: t("faqCancelA") },
+    {
+      q: t("faqCancelQ"),
+      a: t("faqCancelA", {
+        tier1: cancel.tier1Hours,
+        tier2: cancel.tier2Hours,
+        tier3: cancel.tier3Hours,
+        lowFee: cancel.feeLowPct,
+        mediumFee: cancel.feeMediumPct,
+        lateFee: cancel.feeLatePct,
+      }),
+    },
     { q: t("faqPayoutQ"), a: t("faqPayoutA") },
     { q: t("faqMinimumQ"), a: t("faqMinimumA") },
   ]
@@ -205,6 +223,23 @@ export default async function PricingPage({ params }: { params: Promise<{ locale
           </table>
         </div>
       </section>
+
+      {/* German households can claim 20% of household-service costs back under § 35a EStG (capped at
+          €4,000/year), but ONLY with an invoice and a non-cash payment — both of which happen here
+          automatically and cannot with a cash-in-hand cleaner. Shown on the German page only: the
+          relief is German tax law, so claiming it to other markets would be wrong. */}
+      {locale === "de" && (
+        <section className="bg-[#EDF5F0] border-y border-[#2D7A5F]/20">
+          <div className="max-w-3xl mx-auto px-4 py-12 space-y-3">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#2D7A5F]/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#2D7A5F]">
+              {t("taxBadge")}
+            </span>
+            <h2 className="font-serif text-2xl font-bold text-[#2B3441]">{t("taxHeading")}</h2>
+            <p className="text-sm leading-relaxed text-[#4B5563]">{t("taxBody")}</p>
+            <p className="text-xs leading-relaxed text-[#6B7280]">{t("taxDisclaimer")}</p>
+          </div>
+        </section>
+      )}
 
       {/* FAQ strip */}
       <section className="bg-white border-y border-gray-100">

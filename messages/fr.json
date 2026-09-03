@@ -441,7 +441,7 @@
     "faqChargedQ": "Quand suis-je débité ?",
     "faqChargedA": "Votre carte est préautorisée à la réservation. Le débit n'a lieu que lorsque le professionnel marque la mission comme terminée — vous ne payez jamais pour une réservation qui n'a pas eu lieu.",
     "faqCancelQ": "Que se passe-t-il si j'annule ?",
-    "faqCancelA": "Annulation plus de 48 heures à l'avance → remboursement intégral. 24–48 heures → remboursement de 50 %. Moins de 24 heures → aucun remboursement. Si le professionnel annule, vous êtes toujours intégralement remboursé.",
+    "faqCancelA": "Annulez plus de {tier1} h avant la prestation et vous êtes intégralement remboursé. Entre {tier2} h et {tier1} h, des frais de {lowFee} % s'appliquent, entre {tier3} h et {tier2} h ils sont de {mediumFee} %, et en dessous de {tier3} h de {lateFee} % plus une petite indemnité de déplacement pour l'intervenant. Si l'intervenant annule, vous êtes toujours intégralement remboursé.",
     "faqPayoutQ": "Comment les professionnels sont-ils payés ?",
     "faqPayoutA": "Vous êtes payé instantanément — dès que le client approuve votre mission terminée, votre part est immédiatement créditée sur votre compte Stripe. Stripe transfère ensuite automatiquement votre solde sur votre compte bancaire chaque semaine.",
     "faqMinimumQ": "Y a-t-il un montant minimum de réservation ?",
@@ -455,7 +455,12 @@
     "faqTasksQ": "Qu'inclut un ménage standard ?",
     "faqTasksA": "Un ménage standard comprend généralement l'époussetage, l'aspiration, le lavage des sols ainsi que le nettoyage des cuisines et des salles de bain. Vous pouvez ajouter des demandes spécifiques lors de la réservation.",
     "providerHowFeeTitle": "Comment fonctionne notre commission",
-    "providerExampleNote": "Vous fixez votre tarif et conservez la grande majorité de chaque réservation. Nous prenons seulement une petite commission par réservation effectuée – pour la maintenance du site et les taxes. Sans abonnement ni frais mensuels, versé instantanément."
+    "providerExampleNote": "Vous fixez votre tarif et conservez la grande majorité de chaque réservation. Nous prenons seulement une petite commission par réservation effectuée – pour la maintenance du site et les taxes. Sans abonnement ni frais mensuels, versé instantanément.",
+    "taxBadge": "20% tax deductible",
+    "taxHeading": "Claim 20% back through your tax return",
+    "taxBody": "Households taxable in Germany can deduct 20% of the labour cost of household services from their tax bill — up to €4,000 a year (§ 35a(2) EStG). It requires an invoice and a non-cash payment into the cleaner's account. You get both here automatically: you pay by card and receive a receipt after every job. Paying a private cleaner in cash rules the deduction out.",
+    "taxDisclaimer": "General information, not tax advice. Whether and how much you can claim is for your tax office or adviser to confirm.",
+    "customerFeature9": "Le même intervenant à chaque fois sur un planning récurrent"
   },
   "affiliate": {
     "metaTitle": "Programme d'affiliation",

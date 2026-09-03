@@ -441,7 +441,7 @@
     "faqChargedQ": "When am I charged?",
     "faqChargedA": "Your card is pre-authorised at booking. The charge is only captured when the cleaner marks the job complete — you never pay for a booking that didn't happen.",
     "faqCancelQ": "What if I cancel?",
-    "faqCancelA": "Cancel more than 48 hours before → full refund. 24–48 hours → 50% refund. Under 24 hours → no refund. If the cleaner cancels, you always get a full refund.",
+    "faqCancelA": "Cancel more than {tier1}h before the job and you get a full refund. Between {tier2}h and {tier1}h a {lowFee}% fee applies, between {tier3}h and {tier2}h it's {mediumFee}%, and under {tier3}h it's {lateFee}% plus a small travel payment to the cleaner. If the cleaner cancels, you always get a full refund.",
     "faqPayoutQ": "How do cleaners get paid?",
     "faqPayoutA": "You're paid instantly — the moment a client approves your completed job, your share is credited to your Stripe account right away. Stripe then automatically transfers your balance to your bank account weekly.",
     "faqMinimumQ": "Is there a minimum booking value?",
@@ -455,7 +455,12 @@
     "faqTasksQ": "What's included in a standard clean?",
     "faqTasksA": "A standard clean typically covers dusting, vacuuming, mopping, and cleaning kitchens and bathrooms. You can add specific requests when you book.",
     "providerHowFeeTitle": "How our commission works",
-    "providerExampleNote": "You set your rate and keep the large majority of every booking. We take only a small commission per completed booking — for site maintenance and taxes. No subscription, no monthly fees, paid out instantly."
+    "providerExampleNote": "You set your rate and keep the large majority of every booking. We take only a small commission per completed booking — for site maintenance and taxes. No subscription, no monthly fees, paid out instantly.",
+    "taxBadge": "20% tax deductible",
+    "taxHeading": "Claim 20% back through your tax return",
+    "taxBody": "Households taxable in Germany can deduct 20% of the labour cost of household services from their tax bill — up to €4,000 a year (§ 35a(2) EStG). It requires an invoice and a non-cash payment into the cleaner's account. You get both here automatically: you pay by card and receive a receipt after every job. Paying a private cleaner in cash rules the deduction out.",
+    "taxDisclaimer": "General information, not tax advice. Whether and how much you can claim is for your tax office or adviser to confirm.",
+    "customerFeature9": "Same cleaner every time on a recurring schedule"
   },
   "affiliate": {
     "metaTitle": "Affiliate Programme",

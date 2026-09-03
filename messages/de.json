@@ -441,7 +441,7 @@
     "faqChargedQ": "Wann werde ich belastet?",
     "faqChargedA": "Deine Karte wird bei der Buchung vorautorisiert. Die Abbuchung erfolgt erst, wenn die Reinigungskraft den Auftrag als abgeschlossen markiert — du zahlst nie für eine Buchung, die nicht stattgefunden hat.",
     "faqCancelQ": "Was passiert, wenn ich storniere?",
-    "faqCancelA": "Stornierung mehr als 48 Stunden vorher → volle Rückerstattung. 24–48 Stunden → 50 % Rückerstattung. Unter 24 Stunden → keine Rückerstattung. Storniert die Reinigungskraft, erhältst du immer eine volle Rückerstattung.",
+    "faqCancelA": "Stornierst du mehr als {tier1} Std. vor dem Termin, bekommst du den vollen Betrag zurück. Zwischen {tier2} und {tier1} Std. fallen {lowFee} % Gebühr an, zwischen {tier3} und {tier2} Std. {mediumFee} %, und unter {tier3} Std. {lateFee} % zuzüglich einer kleinen Fahrtkostenpauschale für die Reinigungskraft. Storniert die Reinigungskraft, erhältst du immer den vollen Betrag zurück.",
     "faqPayoutQ": "Wie werden Reinigungskräfte bezahlt?",
     "faqPayoutA": "Du wirst sofort bezahlt — sobald ein Kunde deinen abgeschlossenen Auftrag bestätigt, wird dein Anteil sofort deinem Stripe-Konto gutgeschrieben. Stripe überweist dein Guthaben anschließend automatisch wöchentlich auf dein Bankkonto.",
     "faqMinimumQ": "Gibt es einen Mindestbuchungswert?",
@@ -455,7 +455,12 @@
     "faqTasksQ": "Was ist in einer Standardreinigung enthalten?",
     "faqTasksA": "Eine Standardreinigung umfasst in der Regel Staubwischen, Staubsaugen, Wischen sowie die Reinigung von Küchen und Bädern. Beim Buchen kannst du besondere Wünsche hinzufügen.",
     "providerHowFeeTitle": "So funktioniert unsere Provision",
-    "providerExampleNote": "Sie legen Ihren Satz fest und behalten den Großteil jeder Buchung. Wir nehmen nur eine kleine Provision pro abgeschlossener Buchung – für Wartung der Plattform und Steuern. Kein Abo, keine monatlichen Gebühren, sofortige Auszahlung."
+    "providerExampleNote": "Sie legen Ihren Satz fest und behalten den Großteil jeder Buchung. Wir nehmen nur eine kleine Provision pro abgeschlossener Buchung – für Wartung der Plattform und Steuern. Kein Abo, keine monatlichen Gebühren, sofortige Auszahlung.",
+    "taxBadge": "20 % steuerlich absetzbar",
+    "taxHeading": "Hol dir 20 % über die Steuer zurück",
+    "taxBody": "Privathaushalte in Deutschland können 20 % der Arbeitskosten für haushaltsnahe Dienstleistungen von der Steuerschuld abziehen — bis zu 4.000 € im Jahr (§ 35a Abs. 2 EStG). Voraussetzung sind eine Rechnung und eine unbare Zahlung auf das Konto der Dienstleisterin. Beides bekommst du bei DORIXÉ automatisch: Du zahlst per Karte und erhältst nach jedem Auftrag einen Beleg. Bei Barzahlung an eine private Putzhilfe ist der Abzug dagegen ausgeschlossen.",
+    "taxDisclaimer": "Allgemeine Information, keine Steuerberatung. Ob und in welcher Höhe der Abzug in deinem Fall greift, klärst du mit deinem Finanzamt oder deiner Steuerberatung.",
+    "customerFeature9": "Bei wiederkehrenden Terminen immer dieselbe Reinigungskraft"
   },
   "affiliate": {
     "metaTitle": "Partnerprogramm",

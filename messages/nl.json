@@ -441,7 +441,7 @@
     "faqChargedQ": "Wanneer word ik in rekening gebracht?",
     "faqChargedA": "Je kaart wordt bij het boeken vooraf geautoriseerd. De afschrijving vindt pas plaats wanneer de schoonmaker de klus als afgerond markeert — je betaalt nooit voor een boeking die niet heeft plaatsgevonden.",
     "faqCancelQ": "Wat als ik annuleer?",
-    "faqCancelA": "Annuleer je meer dan 48 uur van tevoren → volledige terugbetaling. 24–48 uur → 50 % terugbetaling. Minder dan 24 uur → geen terugbetaling. Als de schoonmaker annuleert, krijg je altijd een volledige terugbetaling.",
+    "faqCancelA": "Annuleer je meer dan {tier1} uur van tevoren, dan krijg je het volledige bedrag terug. Tussen {tier2} en {tier1} uur geldt {lowFee}% kosten, tussen {tier3} en {tier2} uur {mediumFee}%, en onder {tier3} uur {lateFee}% plus een kleine reisvergoeding voor de schoonmaker. Annuleert de schoonmaker, dan krijg je altijd alles terug.",
     "faqPayoutQ": "Hoe worden schoonmakers betaald?",
     "faqPayoutA": "Je wordt direct uitbetaald — zodra de klant je voltooide klus goedkeurt, wordt jouw deel meteen bijgeschreven op je Stripe-account. Stripe maakt je saldo daarna automatisch wekelijks over naar je bankrekening.",
     "faqMinimumQ": "Is er een minimale boekwaarde?",
@@ -455,7 +455,12 @@
     "faqTasksQ": "Wat is inbegrepen bij een standaardschoonmaak?",
     "faqTasksA": "Een standaardschoonmaak omvat doorgaans afstoffen, stofzuigen, dweilen en het schoonmaken van keukens en badkamers. Je kunt bij het boeken specifieke wensen toevoegen.",
     "providerHowFeeTitle": "Hoe onze commissie werkt",
-    "providerExampleNote": "Je stelt je eigen tarief in en houdt het grootste deel van elke boeking. Wij nemen alleen een kleine commissie per voltooide boeking – voor onderhoud van het platform en belastingen. Geen abonnement, geen maandelijkse kosten, direct uitbetaald."
+    "providerExampleNote": "Je stelt je eigen tarief in en houdt het grootste deel van elke boeking. Wij nemen alleen een kleine commissie per voltooide boeking – voor onderhoud van het platform en belastingen. Geen abonnement, geen maandelijkse kosten, direct uitbetaald.",
+    "taxBadge": "20% tax deductible",
+    "taxHeading": "Claim 20% back through your tax return",
+    "taxBody": "Households taxable in Germany can deduct 20% of the labour cost of household services from their tax bill — up to €4,000 a year (§ 35a(2) EStG). It requires an invoice and a non-cash payment into the cleaner's account. You get both here automatically: you pay by card and receive a receipt after every job. Paying a private cleaner in cash rules the deduction out.",
+    "taxDisclaimer": "General information, not tax advice. Whether and how much you can claim is for your tax office or adviser to confirm.",
+    "customerFeature9": "Steeds dezelfde schoonmaker bij een terugkerend schema"
   },
   "affiliate": {
     "metaTitle": "Partnerprogramma",
