@@ -17,9 +17,26 @@ export function pctChange(d: Delta): number | null {
   return Math.round(((d.value - d.prev) / d.prev) * 100)
 }
 
+// Both halves of this page must agree on where a day starts. The traffic feed buckets days in
+// Europe/Berlin (hardcoded in lib/analytics/umami.ts) and the database runs in UTC, so grouping by
+// UTC date would push a booking made late evening onto the day BEFORE its own traffic — the two
+// lines would be misaligned by a day exactly when someone is trying to read cause and effect.
+// Everything here is therefore expressed in the same Berlin calendar the traffic uses.
+export const REPORTING_TZ = "Europe/Berlin"
+
+// en-CA formats as YYYY-MM-DD, which is what the SQL below returns and what the chart keys on.
+const dayFormatter = new Intl.DateTimeFormat("en-CA", {
+  timeZone: REPORTING_TZ,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+})
+
 function dayKey(d: Date): string {
-  return d.toISOString().slice(0, 10)
+  return dayFormatter.format(d)
 }
+
+const berlinDay = (col: unknown) => sql<string>`to_char(${col} at time zone ${sql.raw(`'${REPORTING_TZ}'`)}, 'YYYY-MM-DD')`
 
 /**
  * Everything the consolidated overview needs, for a window of `days` and the equally-long window
@@ -35,20 +52,20 @@ export async function getOverviewData(days: number) {
 
   const [signupRows, bookingRows, revenueRows, prevTotals, funnelRow, campaignRows, emailRow] = await Promise.all([
     db
-      .select({ day: sql<string>`to_char(${users.createdAt}, 'YYYY-MM-DD')`, n: sql<number>`cast(count(*) as int)` })
+      .select({ day: berlinDay(users.createdAt), n: sql<number>`cast(count(*) as int)` })
       .from(users)
       .where(gte(users.createdAt, start))
       .groupBy(sql`1`),
 
     db
-      .select({ day: sql<string>`to_char(${bookings.createdAt}, 'YYYY-MM-DD')`, n: sql<number>`cast(count(*) as int)` })
+      .select({ day: berlinDay(bookings.createdAt), n: sql<number>`cast(count(*) as int)` })
       .from(bookings)
       .where(gte(bookings.createdAt, start))
       .groupBy(sql`1`),
 
     db
       .select({
-        day: sql<string>`to_char(coalesce(${payments.capturedAt}, ${payments.createdAt}), 'YYYY-MM-DD')`,
+        day: berlinDay(sql`coalesce(${payments.capturedAt}, ${payments.createdAt})`),
         cents: sql<number>`cast(coalesce(sum(${payments.capturedAmount}), 0) as int)`,
       })
       .from(payments)
@@ -103,9 +120,15 @@ export async function getOverviewData(days: number) {
 
   // Every day in the window gets a row, including the empty ones — gaps in a chart read as missing
   // data rather than as a quiet day.
+  //
+  // Stepping in fixed 24-hour jumps from "now minus N days" would break across a daylight-saving
+  // change: if the page were opened just after midnight, one step would land back on the previous
+  // date, producing a duplicated day and a missing one. Anchoring at midday keeps every step far
+  // from a midnight boundary, so an hour's shift can never move a step onto the wrong date.
+  const anchor = new Date(`${dayKey(start)}T12:00:00Z`)
   const series: DayPoint[] = []
   for (let i = 0; i < days; i++) {
-    const key = dayKey(new Date(start.getTime() + i * 86_400_000))
+    const key = dayKey(new Date(anchor.getTime() + i * 86_400_000))
     series.push({
       date: key,
       visitors: 0, // filled from Umami by the caller; the DB knows nothing about traffic

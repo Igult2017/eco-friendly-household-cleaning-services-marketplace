@@ -33,7 +33,15 @@ export default async function AdminOverviewPage({
 
   // Traffic lives in Umami and everything else in our own database — this page is the only place
   // the two are put on the same axis.
-  const [data, analytics] = await Promise.all([getOverviewData(days), getAnalytics("day")])
+  //
+  // The traffic window must cover the window being charted. Umami's "day" preset only fetches the
+  // last 30 days, so asking for 90 used to leave the first 60 days at zero visitors — which reads
+  // as "nobody visited" rather than "we didn't fetch that far back". "week" fetches 90 days still
+  // bucketed by day, which is exactly what a 90-day chart needs.
+  const [data, analytics] = await Promise.all([
+    getOverviewData(days),
+    getAnalytics(days > 30 ? "week" : "day"),
+  ])
 
   const hasTraffic = analytics.configured && !!analytics.pageviews
   const visitorsByDay = new Map(
@@ -41,6 +49,14 @@ export default async function AdminOverviewPage({
   )
   const series = data.series.map((d) => ({ ...d, visitors: visitorsByDay.get(d.date) ?? 0 }))
   const visitorsTotal = series.reduce((a, d) => a + d.visitors, 0)
+
+  // Umami quietly returns coarser buckets when a window is too wide for the unit asked for, so
+  // rather than trust that the fetch covered the chart, check it. If traffic starts later than the
+  // chart does, say so instead of drawing a flat zero line over days we simply have no data for.
+  const earliestTraffic = [...visitorsByDay.keys()].sort()[0]
+  const trafficGap = hasTraffic && earliestTraffic && earliestTraffic > series[0]?.date
+    ? earliestTraffic
+    : null
 
   const kpis = [
     { label: "Visitors", value: hasTraffic ? visitorsTotal.toLocaleString() : "—",
@@ -85,6 +101,13 @@ export default async function AdminOverviewPage({
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((k) => <KpiCard key={k.label} {...k} />)}
       </div>
+
+      {trafficGap && (
+        <p className="-mb-4 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+          Visitor data only goes back to {trafficGap}. Days before that show no visitor line because
+          the figures aren&apos;t available, not because nobody visited.
+        </p>
+      )}
 
       <GrowthTimeline series={series} markers={data.markers} hasTraffic={hasTraffic} />
 
