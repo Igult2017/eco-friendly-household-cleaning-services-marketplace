@@ -38,6 +38,16 @@ function dayKey(d: Date): string {
 
 const berlinDay = (col: unknown) => sql<string>`to_char(${col} at time zone ${sql.raw(`'${REPORTING_TZ}'`)}, 'YYYY-MM-DD')`
 
+// The moment a payment counts as money in: when it was captured, else when the row was created.
+const paidAt = sql`coalesce(${payments.capturedAt}, ${payments.createdAt})`
+
+// Comparing a raw SQL expression against a JS Date CRASHES the query — with a plain column Drizzle
+// knows the column's type and encodes the Date, but with a raw expression on the left it has no type
+// to go on and hands the driver a Date object it cannot serialise ("Received an instance of Date").
+// That took /admin/overview down completely. Send an ISO string and cast it in SQL instead, which
+// is unambiguous to both sides.
+const at = (d: Date) => sql`${d.toISOString()}::timestamptz`
+
 /**
  * Everything the consolidated overview needs, for a window of `days` and the equally-long window
  * before it (so every figure can show a direction of travel).
@@ -65,11 +75,11 @@ export async function getOverviewData(days: number) {
 
     db
       .select({
-        day: berlinDay(sql`coalesce(${payments.capturedAt}, ${payments.createdAt})`),
+        day: berlinDay(paidAt),
         cents: sql<number>`cast(coalesce(sum(${payments.capturedAmount}), 0) as int)`,
       })
       .from(payments)
-      .where(and(eq(payments.status, "captured"), gte(sql`coalesce(${payments.capturedAt}, ${payments.createdAt})`, start)))
+      .where(and(eq(payments.status, "captured"), sql`${paidAt} >= ${at(start)}`))
       .groupBy(sql`1`),
 
     // The previous window, as single totals — only needed for the up/down arrows.
@@ -78,8 +88,8 @@ export async function getOverviewData(days: number) {
       db.select({ n: sql<number>`cast(count(*) as int)` }).from(bookings).where(and(gte(bookings.createdAt, prevStart), lt(bookings.createdAt, start))),
       db.select({ cents: sql<number>`cast(coalesce(sum(${payments.capturedAmount}), 0) as int)` }).from(payments)
         .where(and(eq(payments.status, "captured"),
-          gte(sql`coalesce(${payments.capturedAt}, ${payments.createdAt})`, prevStart),
-          lt(sql`coalesce(${payments.capturedAt}, ${payments.createdAt})`, start))),
+          sql`${paidAt} >= ${at(prevStart)}`,
+          sql`${paidAt} < ${at(start)}`)),
     ]),
 
     // Lifetime funnel below the visitor stage: how many people ever booked, and how many came back.
