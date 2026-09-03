@@ -26,6 +26,8 @@ export function CampaignComposer() {
   const [personalize, setPersonalize] = useState(true)
   const [audience, setAudience] = useState<AudienceFilter>({ onlyConsented: true })
   const [busy, setBusy] = useState<"ai" | "save" | "send" | null>(null)
+  // Empty = send as soon as it's created. A future date parks it until then.
+  const [sendAt, setSendAt] = useState("")
 
   async function generate() {
     setBusy("ai")
@@ -48,11 +50,22 @@ export function CampaignComposer() {
       const d = await r.json()
       if (!r.ok) { toast.error(d.error?.formErrors?.join(", ") ?? "Save failed"); return }
       if (send) {
-        const s = await fetch(`/api/admin/marketing/campaigns/${d.id}/send`, { method: "POST" })
-        if (s.ok) toast.success("Campaign sending — AI personalizes each email")
-        else toast.error((await s.json()).error ?? "Send failed")
+        // datetime-local gives a value with no timezone ("2026-09-10T09:00"); new Date() reads it
+        // in the admin's own timezone, which is the one they picked it in, and toISOString sends it
+        // as an absolute moment so the server never has to guess.
+        const scheduledAt = sendAt ? new Date(sendAt).toISOString() : undefined
+        const s = await fetch(`/api/admin/marketing/campaigns/${d.id}/send`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ scheduledAt }),
+        })
+        if (s.ok) {
+          toast.success(sendAt
+            ? `Scheduled for ${new Date(sendAt).toLocaleString()}`
+            : "Campaign sending — AI personalizes each email")
+        } else toast.error((await s.json()).error ?? "Send failed")
       } else toast.success("Draft saved")
-      setName(""); setBrief(""); setSubject(""); setBodyHtml("")
+      setName(""); setBrief(""); setSubject(""); setBodyHtml(""); setSendAt("")
       router.refresh()
     } finally { setBusy(null) }
   }
@@ -102,12 +115,31 @@ export function CampaignComposer() {
         <AudienceBuilder value={audience} onChange={setAudience} />
       </div>
 
+      <div className="border-t border-gray-100 pt-4">
+        <label htmlFor="campaign-send-at" className="block text-sm font-medium text-[#2B3441] mb-2">
+          Send later <span className="font-normal text-[#6B7280]">— leave empty to send straight away</span>
+        </label>
+        <input
+          id="campaign-send-at"
+          type="datetime-local"
+          value={sendAt}
+          onChange={(e) => setSendAt(e.target.value)}
+          className="w-full sm:w-72 rounded-lg border border-gray-200 px-3 py-2 text-sm text-[#2B3441] ring-1 ring-transparent focus:outline-none focus:ring-2 focus:ring-[#2D7A5F] transition-all duration-200"
+        />
+        {sendAt && (
+          <p className="mt-2 text-xs text-[#6B7280]">
+            Goes out around {new Date(sendAt).toLocaleString()} — checked every 5 minutes, so it may leave a few minutes after.
+          </p>
+        )}
+      </div>
+
       <div className="flex gap-3 pt-2">
-        <button type="button" onClick={() => submit(false)} disabled={!!busy} className="inline-flex items-center gap-2 rounded-lg border border-gray-200 text-[#2B3441] text-sm font-semibold px-4 py-2 disabled:opacity-50">
+        <button type="button" onClick={() => submit(false)} disabled={!!busy} className="inline-flex items-center gap-2 rounded-lg border border-gray-200 text-[#2B3441] text-sm font-semibold px-4 py-2 hover:bg-gray-50 transition-all duration-200 disabled:opacity-50">
           {busy === "save" ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} Save draft
         </button>
-        <button type="button" onClick={() => submit(true)} disabled={!!busy} className="inline-flex items-center gap-2 rounded-lg bg-[#2B3441] hover:bg-black text-white text-sm font-semibold px-4 py-2 disabled:opacity-50">
-          {busy === "send" ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />} Create &amp; send
+        <button type="button" onClick={() => submit(true)} disabled={!!busy} className="inline-flex items-center gap-2 rounded-lg bg-[#2B3441] hover:bg-black text-white text-sm font-semibold px-4 py-2 transition-all duration-200 disabled:opacity-50">
+          {busy === "send" ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+          {sendAt ? "Create & schedule" : "Create & send"}
         </button>
       </div>
     </div>

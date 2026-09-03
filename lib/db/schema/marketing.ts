@@ -31,12 +31,18 @@ export const emailCampaignStatusEnum = pgEnum("email_campaign_status", [
   "failed",
 ])
 
+// The happy path runs queued → sent → delivered → opened → clicked, and "bounced"/"complained"
+// (reported as spam) can end it at any point. Everything past "sent" is reported back by Resend
+// through app/api/webhooks/resend/route.ts — before that webhook existed, delivered/opened/bounced
+// were declared here but nothing ever wrote them, so a send could only ever read "sent" or "failed".
 export const emailSendStatusEnum = pgEnum("email_send_status", [
   "queued",
   "sent",
   "delivered",
   "opened",
+  "clicked",
   "bounced",
+  "complained",
   "failed",
   "skipped",
 ])
@@ -83,6 +89,9 @@ export const emailSends = pgTable(
     subject: varchar("subject", { length: 240 }),
     resendMessageId: varchar("resend_message_id", { length: 120 }),
     error: text("error"),
+    // The AI couldn't write this one and a fixed template went instead. Recorded because that
+    // fallback used to be silent — the admin page surfaces a warning when these appear.
+    aiFailed: boolean("ai_failed").notNull().default(false),
     sentAt: timestamp("sent_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },

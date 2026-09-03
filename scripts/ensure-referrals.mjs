@@ -488,6 +488,23 @@ ALTER TABLE providers DROP COLUMN IF EXISTS payout_schedule;
 -- Optional upper end of a cleaner's per-hour price range ("€20-25/hour"). NULL = no range, just
 -- base_price as a single fixed rate — nothing changes for a cleaner who never sets one.
 ALTER TABLE provider_services ADD COLUMN IF NOT EXISTS base_price_max integer;
+
+-- Marketing email feedback (app/api/webhooks/resend/route.ts). Resend reports what happened to each
+-- email AFTER we hand it over — delivered, opened, clicked, bounced, marked as spam. Without this
+-- the platform sent into the dark: email_sends could only ever say "sent" or "failed".
+-- Looked up by the Resend message id, so that column needs an index it never had.
+CREATE INDEX IF NOT EXISTS email_sends_resend_message_idx ON email_sends(resend_message_id);
+
+-- True when the AI could not write this email and a fixed template went out instead. Previously
+-- that fallback was completely silent, which is why every "AI" email ever sent was really a
+-- template and nobody noticed for months.
+ALTER TABLE email_sends ADD COLUMN IF NOT EXISTS ai_failed boolean NOT NULL DEFAULT false;
+
+-- When a scheduled campaign should actually go out. The column existed already but nothing ever
+-- read it, so "send later" looked available and silently never happened; a cron now claims due
+-- campaigns. Indexed because that cron polls for due rows.
+CREATE INDEX IF NOT EXISTS email_campaigns_scheduled_idx ON email_campaigns(scheduled_at)
+  WHERE status = 'scheduled';
 `
 
 function isValidUrl(url) {
@@ -521,6 +538,12 @@ async function main() {
     catch (e) { console.warn("[ensure-referrals] job_taken enum add skipped:", e?.message ?? e) }
     try { await sql.unsafe(`ALTER TYPE notification_type ADD VALUE IF NOT EXISTS 'payment_automation_failed'`) }
     catch (e) { console.warn("[ensure-referrals] payment_automation_failed enum add skipped:", e?.message ?? e) }
+    // Marketing feedback states Resend reports back. 'delivered'/'opened'/'bounced' already existed
+    // in the enum but nothing ever wrote them; 'clicked' and 'complained' (marked as spam) are new.
+    try { await sql.unsafe(`ALTER TYPE email_send_status ADD VALUE IF NOT EXISTS 'clicked'`) }
+    catch (e) { console.warn("[ensure-referrals] clicked enum add skipped:", e?.message ?? e) }
+    try { await sql.unsafe(`ALTER TYPE email_send_status ADD VALUE IF NOT EXISTS 'complained'`) }
+    catch (e) { console.warn("[ensure-referrals] complained enum add skipped:", e?.message ?? e) }
     await sql.unsafe(DDL)
     console.log("[ensure-referrals] referral + customer_reviews + service_categories + platform_settings + job_posts(view_count/geo/job_type) + cancellation_policy + recurring_schedules(occurrences) + providers(last_active/response_time/instant_jobs) + payment_events ensured ✓")
   } finally {

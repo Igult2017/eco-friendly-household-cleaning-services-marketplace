@@ -1,7 +1,7 @@
 import { db } from "@/lib/db"
 import { emailCampaigns, emailSends } from "@/lib/db/schema"
 import { desc, sql } from "drizzle-orm"
-import { Mail, Send, CheckCircle2, AlertTriangle } from "lucide-react"
+import { Mail, Send, AlertTriangle, MailOpen, MousePointerClick, Bot } from "lucide-react"
 import { CampaignComposer } from "@/components/admin/marketing/CampaignComposer"
 import { CAMPAIGN_TYPE_LABELS, type CampaignType } from "@/lib/marketing/types"
 
@@ -18,18 +18,30 @@ const STATUS_COLORS: Record<string, string> = {
 export default async function AdminMarketingPage() {
   const [stats] = await db
     .select({
-      sent: sql<number>`cast(count(*) filter (where ${emailSends.status} = 'sent') as int)`,
+      // "Left our hands" — every status past queued, since a delivered/opened email was also sent.
+      // Counting only status='sent' would make the number DROP as feedback arrives, which reads as
+      // emails going missing.
+      sent: sql<number>`cast(count(*) filter (where ${emailSends.status} in ('sent','delivered','opened','clicked')) as int)`,
       failed: sql<number>`cast(count(*) filter (where ${emailSends.status} = 'failed') as int)`,
-      welcomes: sql<number>`cast(count(*) filter (where ${emailSends.type} = 'welcome' and ${emailSends.status} = 'sent') as int)`,
+      welcomes: sql<number>`cast(count(*) filter (where ${emailSends.type} = 'welcome' and ${emailSends.status} <> 'failed') as int)`,
+      // Reported by Resend once it knows what happened (app/api/webhooks/resend/route.ts).
+      opened: sql<number>`cast(count(*) filter (where ${emailSends.status} in ('opened','clicked')) as int)`,
+      clicked: sql<number>`cast(count(*) filter (where ${emailSends.status} = 'clicked') as int)`,
+      bounced: sql<number>`cast(count(*) filter (where ${emailSends.status} = 'bounced') as int)`,
+      complained: sql<number>`cast(count(*) filter (where ${emailSends.status} = 'complained') as int)`,
+      aiFailed: sql<number>`cast(count(*) filter (where ${emailSends.aiFailed}) as int)`,
     })
     .from(emailSends)
   const campaigns = await db.select().from(emailCampaigns).orderBy(desc(emailCampaigns.createdAt)).limit(50)
 
+  const sent = stats?.sent ?? 0
+  const pct = (n: number) => (sent > 0 ? `${Math.round((n / sent) * 100)}%` : "—")
+
   const kpis = [
-    { label: "Emails sent", value: stats?.sent ?? 0, icon: Send, color: "#2D7A5F" },
-    { label: "Welcome emails", value: stats?.welcomes ?? 0, icon: Mail, color: "#2563EB" },
-    { label: "Campaigns", value: campaigns.length, icon: CheckCircle2, color: "#7C3AED" },
-    { label: "Failed", value: stats?.failed ?? 0, icon: AlertTriangle, color: "#DC2626" },
+    { label: "Emails sent", value: sent, icon: Send, color: "#2D7A5F" },
+    { label: "Opened", value: `${stats?.opened ?? 0} (${pct(stats?.opened ?? 0)})`, icon: MailOpen, color: "#2563EB" },
+    { label: "Clicked", value: `${stats?.clicked ?? 0} (${pct(stats?.clicked ?? 0)})`, icon: MousePointerClick, color: "#7C3AED" },
+    { label: "Bounced / spam", value: (stats?.bounced ?? 0) + (stats?.complained ?? 0), icon: AlertTriangle, color: "#DC2626" },
   ]
 
   return (
@@ -43,6 +55,23 @@ export default async function AdminMarketingPage() {
           <p className="text-sm text-[#6B7280]">AI-written lifecycle &amp; campaign emails. Welcome fires automatically on signup.</p>
         </div>
       </div>
+
+      {(stats?.aiFailed ?? 0) > 0 && (
+        <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+          <Bot size={18} className="text-amber-600 shrink-0 mt-0.5" aria-hidden="true" />
+          <div className="text-sm text-amber-900">
+            <p className="font-semibold">
+              {stats?.aiFailed} email{(stats?.aiFailed ?? 0) === 1 ? " was" : "s were"} sent without AI writing
+            </p>
+            <p className="mt-1 text-amber-800">
+              The AI could not write {(stats?.aiFailed ?? 0) === 1 ? "it" : "them"}, so a fixed template went out instead.
+              This is almost always a missing or expired <code className="font-mono text-xs">GEMINI_API_KEY</code>.
+              Recipients still got a proper email — just not a personalised one. Details are in{" "}
+              <a href="/admin/errors" className="underline font-medium hover:text-amber-950 transition-colors">Errors</a>.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map(({ label, value, icon: Icon, color }) => (
