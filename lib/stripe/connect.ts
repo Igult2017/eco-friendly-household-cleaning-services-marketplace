@@ -16,6 +16,16 @@ const BUSINESS_PROFILE = {
   product_description: "Eco-friendly home and office cleaning services provided through the DORIXE marketplace",
 } as const
 
+// Stripe REFUSES a transfers-only account in the US: "You cannot request the `transfers` capability
+// without the `card_payments` capability for accounts in US." Requesting transfers alone there fails
+// outright, so a US cleaner could not create an account at all. Across the EU transfers alone is
+// accepted and keeps the requirement list shorter, so card_payments is only added where Stripe
+// insists on it. Verified live per country (accounts created and deleted):
+//   DE FR ES IT NL PL PT IE -> transfers alone accepted, no website asked
+//   US                      -> transfers alone REJECTED; with card_payments it creates fine and,
+//                              thanks to BUSINESS_PROFILE above, still asks for no website
+const CARD_PAYMENTS_REQUIRED = new Set(["US"])
+
 /** Create a Stripe Connect Express account for a new provider.
  * Pass `idempotencyKey` (e.g. per provider id) so a retry after a failed DB write
  * returns the SAME account instead of creating an orphaned duplicate (BUG-008d). */
@@ -38,17 +48,16 @@ export async function createConnectAccount(params: {
       type: "express",
       country: params.country,
       email: params.email,
-      // Only "transfers" — the connected account only ever RECEIVES the destination-charge split
-      // and pays it out to a bank; it never accepts a card payment directly (the customer's card is
-      // always charged on the platform's own account, see app/api/payments/intent/route.ts). Asking
-      // for "card_payments" anyway made Stripe treat cleaners as online merchants and demand a
-      // business website during onboarding — dropping it removes that ask entirely.
-      capabilities: {
-        transfers: { requested: true },
-      },
+      // "transfers" is all the account actually needs — it only ever RECEIVES the destination-charge
+      // split and pays it out to a bank; the client's card is always charged on the platform's own
+      // account (see app/api/payments/intent/route.ts). card_payments is added ONLY where Stripe
+      // rejects transfers-on-its-own (see CARD_PAYMENTS_REQUIRED) — it is not what drives the website
+      // question, contrary to what this comment used to claim; BUSINESS_PROFILE is what settles that.
+      capabilities: CARD_PAYMENTS_REQUIRED.has(params.country.toUpperCase())
+        ? { transfers: { requested: true }, card_payments: { requested: true } }
+        : { transfers: { requested: true } },
       business_type: "individual",
-      // Includes the website URL — dropping the card_payments capability alone does NOT stop Stripe
-      // asking for one (proven on live accounts), so we set it rather than leaving it to the cleaner.
+      // Tells Stripe what the cleaner sells, which is what stops it demanding a business website.
       business_profile: BUSINESS_PROFILE,
       settings: {
         payouts: { schedule },
