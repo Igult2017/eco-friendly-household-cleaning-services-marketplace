@@ -1,17 +1,19 @@
 import { stripe } from "./client"
 import { getPayoutSchedule } from "@/lib/platform/settings"
-import { SITE_URL } from "@/lib/seo/site"
-
-// Stripe will not let a connected account finish onboarding without a business website, and a solo
-// cleaner doesn't have one — that ask is where every stalled account got stuck (verified live: the
-// only two accounts that ever completed are the only two with a URL on file; the rest sit at
-// details_submitted=false with business_profile.url still outstanding). Supplying the marketplace's
-// own URL ourselves removes the question entirely. SITE_URL is the exact value Stripe already
-// accepted on both completed accounts.
+// A cleaner never takes a card payment — the client is charged on the platform account and the money
+// is transferred on — so they have no business website and must never be asked for one. Stripe only
+// demands business_profile.url when it has NO other idea what the account sells: telling it the
+// industry + what the service is satisfies that instead, with no website involved.
+//
+// Verified directly against live Stripe (three accounts created and deleted to compare):
+//   no business_profile at all            -> business_profile.url REQUIRED
+//   mcc + product_description, no url     -> NOT required   <- what we do
+//   mcc + product_description + url       -> not required, but pins a URL on the cleaner's account
+// Deliberately no `url` here: setting one made Stripe drop product_description and show the cleaner a
+// "Your website" box pre-filled with the marketplace address, which isn't their website.
 const BUSINESS_PROFILE = {
   mcc: "7349", // Cleaning and Maintenance, Janitorial Services
-  product_description: "Eco-friendly home and office cleaning services",
-  url: SITE_URL,
+  product_description: "Eco-friendly home and office cleaning services provided through the DORIXE marketplace",
 } as const
 
 /** Create a Stripe Connect Express account for a new provider.
@@ -56,25 +58,26 @@ export async function createConnectAccount(params: {
   )
 }
 
-/** Repair an account created before we supplied the business website ourselves. Those accounts sit
- * with business_profile.url empty, so Stripe keeps demanding a website the cleaner doesn't have and
- * onboarding can never be completed. Called every time payout setup is opened, so a stuck cleaner
- * fixes themselves simply by clicking the button again — no manual Stripe surgery. Cheap and safe to
- * repeat: it only writes when the URL is actually missing, and never overwrites a real one. */
+/** Repair an account created before we described the service to Stripe. Those accounts have no
+ * industry code, so Stripe falls back to demanding a business website the cleaner doesn't have and
+ * onboarding can never be finished. Called every time payout setup is opened, so a stuck cleaner
+ * fixes themselves just by clicking the button again — no manual Stripe surgery.
+ *
+ * Keyed off the industry code, not the website: a missing mcc is what marks an account as predating
+ * this. Never sets a url, and never clears one a cleaner deliberately entered themselves. */
 export async function ensureBusinessProfile(accountId: string): Promise<void> {
   try {
     const account = await stripe.accounts.retrieve(accountId)
-    if (account.business_profile?.url) return
+    if (account.business_profile?.mcc) return
     await stripe.accounts.update(accountId, {
       business_profile: {
-        url: BUSINESS_PROFILE.url,
-        mcc: account.business_profile?.mcc ?? BUSINESS_PROFILE.mcc,
+        mcc: BUSINESS_PROFILE.mcc,
         product_description: account.business_profile?.product_description ?? BUSINESS_PROFILE.product_description,
       },
     })
   } catch (err) {
-    // Never block opening the onboarding form over this — worst case the cleaner is asked for a
-    // website exactly as before, which is the behaviour we're already trying to improve on.
+    // Never block opening the onboarding form over this — worst case the cleaner sees the same
+    // website question as before, which is the behaviour we're trying to remove, not a new failure.
     console.warn(`[stripe/connect] could not backfill business profile for ${accountId}:`, err)
   }
 }
