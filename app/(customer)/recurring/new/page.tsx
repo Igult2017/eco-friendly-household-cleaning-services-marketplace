@@ -9,7 +9,7 @@ import { zonedDayAndTime } from "@/lib/utils/tz"
 import { RecurringSetupForm } from "@/components/booking/RecurringSetupForm"
 import { BackButton } from "@/components/ui/BackButton"
 
-export const metadata = { title: "Set up recurring | DORIXÉ" }
+export const metadata = { title: "Set up recurring" }
 
 // Pre-fills the recurring schedule from the booking the client just made (provider, service, address,
 // frequency, day/time) so the stated intent becomes a live schedule with one consent step.

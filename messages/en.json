@@ -147,11 +147,11 @@
     "link_contact": "Help & support"
   },
   "homePage": {
-    "metaTitle": "DORIXÉ — Clean Home. Green Future.",
+    "metaTitle": "Eco-Friendly Cleaning Marketplace — Clean Home. Green Future.",
     "metaDescription": "Book trusted, eco-friendly cleaners near you. Verified cleaners, transparent pricing, and a green future for every home."
   },
   "browse": {
-    "metaTitle": "Browse Eco Cleaners — DORIXÉ",
+    "metaTitle": "Browse Eco Cleaners",
     "metaDescription": "Find trusted, eco-friendly cleaners near you.",
     "cityLabel": "City",
     "cityPlaceholder": "Amsterdam",
@@ -249,7 +249,7 @@
     "lastActive": "Last active {time}"
   },
   "sustainability": {
-    "metaTitle": "Sustainability Impact — DORIXÉ",
+    "metaTitle": "Sustainability Impact",
     "heroEyebrow": "Our commitment",
     "heroTitle": "Clean Home. Green Future.",
     "heroSubtitle": "Every booking on DORIXÉ connects you with verified eco-conscious cleaners who use sustainable, plant-based products that are gentler on your home and the environment.",
@@ -270,7 +270,7 @@
     "ctaButton": "Find eco cleaners →"
   },
   "howItWorksPage": {
-    "metaTitle": "How It Works — DORIXÉ",
+    "metaTitle": "How It Works",
     "metaDescription": "Book trusted eco-friendly cleaners in 3 simple steps.",
     "heroTitle": "How DORIXÉ works",
     "heroSubtitle": "Book trusted, eco-friendly cleaners in minutes. Or join as a cleaner and grow your eco-cleaning business.",
@@ -388,7 +388,7 @@
     "howItWorks": "How it works"
   },
   "pricing": {
-    "metaTitle": "Pricing — DORIXÉ",
+    "metaTitle": "Pricing",
     "metaDescription": "Transparent pricing. Clients pay the cleaner's rate — no fees added at checkout. Cleaners pay only a small commission per booking, with no subscriptions.",
     "customerFeature1": "Browse and book eco-friendly cleaners",
     "customerFeature2": "Pre-authorised payment — only captured on completion",
@@ -458,7 +458,7 @@
     "providerExampleNote": "You set your rate and keep the large majority of every booking. We take only a small commission per completed booking — for site maintenance and taxes. No subscription, no monthly fees, paid out instantly."
   },
   "affiliate": {
-    "metaTitle": "Affiliate Programme — DORIXÉ",
+    "metaTitle": "Affiliate Programme",
     "metaDescription": "Partner with DORIXÉ and earn {pct}% lifetime commission on every booking made by clients you refer. The eco-friendly way to grow your income.",
     "statLifetimeCommission": "Lifetime commission",
     "statCostToJoin": "Cost to join",
@@ -535,7 +535,7 @@
     "ctaTerms": "By joining, you agree to our <terms>Terms of Service</terms>. Commission paid as platform credit."
   },
   "blog": {
-    "metaTitle": "Blog — DORIXÉ",
+    "metaTitle": "Blog",
     "metaDescription": "Tips, news and eco-friendly insights from the DORIXÉ team.",
     "eyebrow": "Blog",
     "title": "Clean home. Green future.",
@@ -1980,7 +1980,7 @@
     "suspendedBody": "Your cleaner account has been suspended by an administrator. Please contact support to resolve this."
   },
   "ecoStore": {
-    "metaTitle": "Eco-store — DORIXÉ",
+    "metaTitle": "Eco-store",
     "metaDescription": "Eco-friendly cleaning products, supplies and business starter kits, recommended by DORIXÉ.",
     "title": "Eco-store",
     "subtitle": "Tools, supplies and starter kits we recommend for a greener clean.",

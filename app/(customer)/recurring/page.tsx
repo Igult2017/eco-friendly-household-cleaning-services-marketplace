@@ -12,7 +12,7 @@ import { RecurringScheduleCard } from "@/components/booking/RecurringScheduleCar
 import { getTranslations } from "next-intl/server"
 import { BackButton } from "@/components/ui/BackButton"
 
-export const metadata = { title: "Recurring Bookings | DORIXÉ" }
+export const metadata = { title: "Recurring Bookings" }
 
 export default async function RecurringPage() {
   const t = await getTranslations("customerRecurringPage")

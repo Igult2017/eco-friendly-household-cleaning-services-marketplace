@@ -3,6 +3,8 @@ import { db } from "@/lib/db"
 import { providers, blogPosts } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { SITE_URL } from "@/lib/seo/site"
+import { routing } from "@/i18n/routing"
+import { localeAlternates } from "@/lib/seo/alternates"
 
 export const revalidate = 3600 // refresh hourly
 
@@ -27,12 +29,25 @@ const STATIC_PATHS: { path: string; priority: number; changeFrequency: MetadataR
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date()
-  const staticEntries: MetadataRoute.Sitemap = STATIC_PATHS.map((r) => ({
-    url: `${SITE_URL}${r.path}`,
-    lastModified: now,
-    changeFrequency: r.changeFrequency,
-    priority: r.priority,
-  }))
+
+  // Every marketing page exists in all 8 languages and the pages already advertise each other via
+  // hreflang — but only the English URLs were ever submitted here, so ~8x the indexable surface was
+  // never offered to Google for crawling. Emit one entry per language, each carrying the full set of
+  // alternates. URLs are built with the SAME helper the pages' hreflang tags use
+  // (lib/seo/alternates.ts), so the sitemap and the tags can never disagree about a URL.
+  // Blog posts and provider profiles stay English-only on purpose: their body text isn't translated,
+  // so listing 8 near-identical copies would be thin duplicate content rather than reach.
+  const staticEntries: MetadataRoute.Sitemap = STATIC_PATHS.flatMap((r) => {
+    const { languages } = localeAlternates(r.path, routing.defaultLocale)
+    return routing.locales.map((locale) => ({
+      url: languages[locale],
+      lastModified: now,
+      changeFrequency: r.changeFrequency,
+      // The default-language page stays the primary; translations sit just below it.
+      priority: locale === routing.defaultLocale ? r.priority : Math.max(0.1, r.priority - 0.1),
+      alternates: { languages },
+    }))
+  })
 
   // Approved provider profiles — the high-volume, long-tail indexable pages.
   let providerEntries: MetadataRoute.Sitemap = []

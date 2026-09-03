@@ -147,11 +147,11 @@
     "link_contact": "Pomoc i wsparcie"
   },
   "homePage": {
-    "metaTitle": "DORIXÉ — Czysty dom. Zielona przyszłość.",
+    "metaTitle": "Platforma ekologicznego sprzątania — Czysty dom. Zielona przyszłość.",
     "metaDescription": "Zarezerwuj zaufanych, ekologicznych specjalistów od sprzątania w Twojej okolicy. Zweryfikowani wykonawcy, przejrzyste ceny i zielona przyszłość dla każdego domu."
   },
   "browse": {
-    "metaTitle": "Przeglądaj ekosprzątaczy — DORIXÉ",
+    "metaTitle": "Przeglądaj ekosprzątaczy",
     "metaDescription": "Znajdź zaufanych, ekologicznych specjalistów od sprzątania w pobliżu.",
     "cityLabel": "Miasto",
     "cityPlaceholder": "Amsterdam",
@@ -249,7 +249,7 @@
     "lastActive": "Ostatnio aktywny {time}"
   },
   "sustainability": {
-    "metaTitle": "Wpływ na środowisko — DORIXÉ",
+    "metaTitle": "Wpływ na środowisko",
     "heroEyebrow": "Nasze zobowiązanie",
     "heroTitle": "Czysty dom. Zielona przyszłość.",
     "heroSubtitle": "Każda rezerwacja w DORIXÉ łączy Cię ze zweryfikowanymi, ekoświadomymi specjalistami od sprzątania, którzy używają zrównoważonych produktów roślinnych, łagodniejszych dla Twojego domu i środowiska.",
@@ -270,7 +270,7 @@
     "ctaButton": "Znajdź ekologicznych specjalistów →"
   },
   "howItWorksPage": {
-    "metaTitle": "Jak to działa — DORIXÉ",
+    "metaTitle": "Jak to działa",
     "metaDescription": "Zamów zaufanych, ekologicznych specjalistów od sprzątania w 3 prostych krokach.",
     "heroTitle": "Jak działa DORIXÉ",
     "heroSubtitle": "Zamów w kilka minut zweryfikowanych, ekologicznych specjalistów od sprzątania. Albo dołącz jako usługodawca i rozwijaj swój ekologiczny biznes sprzątający.",
@@ -388,7 +388,7 @@
     "howItWorks": "Jak to działa"
   },
   "pricing": {
-    "metaTitle": "Cennik — DORIXÉ",
+    "metaTitle": "Cennik",
     "metaDescription": "Przejrzyste ceny. Klienci płacą stawkę sprzątacza – bez opłat dodawanych przy płatności. Sprzątacze płacą tylko niewielką prowizję od rezerwacji, bez abonamentu.",
     "customerFeature1": "Przeglądaj i rezerwuj ekologiczne osoby sprzątające",
     "customerFeature2": "Płatność wstępnie autoryzowana — pobierana dopiero po zakończeniu",
@@ -458,7 +458,7 @@
     "providerExampleNote": "Ustalasz swoją stawkę i zatrzymujesz większość każdej rezerwacji. Pobieramy tylko niewielką prowizję od zrealizowanej rezerwacji – na utrzymanie serwisu i podatki. Bez abonamentu i opłat miesięcznych, wypłata natychmiast."
   },
   "affiliate": {
-    "metaTitle": "Program partnerski — DORIXÉ",
+    "metaTitle": "Program partnerski",
     "metaDescription": "Zostań partnerem DORIXÉ i zarabiaj {pct} % dożywotniej prowizji od każdej rezerwacji złożonej przez poleconych klientów. Ekologiczny sposób na zwiększenie dochodów.",
     "statLifetimeCommission": "Dożywotnia prowizja",
     "statCostToJoin": "Koszt dołączenia",
@@ -535,7 +535,7 @@
     "ctaTerms": "Dołączając, akceptujesz nasz <terms>Regulamin</terms>. Prowizja jest wypłacana jako kredyt na platformie."
   },
   "blog": {
-    "metaTitle": "Blog — DORIXÉ",
+    "metaTitle": "Blog",
     "metaDescription": "Porady, nowości i ekologiczne inspiracje od zespołu DORIXÉ.",
     "eyebrow": "Blog",
     "title": "Czysty dom. Zielona przyszłość.",
@@ -1980,7 +1980,7 @@
     "suspendedBody": "Twoje konto sprzątacza zostało zawieszone przez administratora. Skontaktuj się z pomocą techniczną."
   },
   "ecoStore": {
-    "metaTitle": "Eko-sklep — DORIXÉ",
+    "metaTitle": "Eko-sklep",
     "metaDescription": "Ekologiczne produkty do sprzątania, akcesoria i zestawy startowe dla firm, polecane przez DORIXÉ.",
     "title": "Eko-sklep",
     "subtitle": "Narzędzia, akcesoria i zestawy startowe, które polecamy do bardziej ekologicznego sprzątania.",

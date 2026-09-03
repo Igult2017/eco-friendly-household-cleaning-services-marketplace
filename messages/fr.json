@@ -147,11 +147,11 @@
     "link_contact": "Aide et assistance"
   },
   "homePage": {
-    "metaTitle": "DORIXÉ — Maison propre. Avenir vert.",
+    "metaTitle": "Place de marché de ménage écologique — Maison propre. Avenir vert.",
     "metaDescription": "Réservez des professionnels du ménage écologiques et de confiance près de chez vous. Prestataires vérifiés, tarifs transparents et un avenir vert pour chaque foyer."
   },
   "browse": {
-    "metaTitle": "Parcourir les nettoyeurs éco — DORIXÉ",
+    "metaTitle": "Parcourir les nettoyeurs éco",
     "metaDescription": "Trouvez des professionnels du nettoyage de confiance et écologiques près de chez vous.",
     "cityLabel": "Ville",
     "cityPlaceholder": "Amsterdam",
@@ -249,7 +249,7 @@
     "lastActive": "Dernière activité {time}"
   },
   "sustainability": {
-    "metaTitle": "Impact écologique — DORIXÉ",
+    "metaTitle": "Impact écologique",
     "heroEyebrow": "Notre engagement",
     "heroTitle": "Maison propre. Avenir vert.",
     "heroSubtitle": "Chaque réservation sur DORIXÉ vous met en relation avec des professionnels du ménage écoresponsables et vérifiés, qui utilisent des produits durables et d'origine végétale, plus doux pour votre intérieur et pour l'environnement.",
@@ -270,7 +270,7 @@
     "ctaButton": "Trouver des professionnels éco →"
   },
   "howItWorksPage": {
-    "metaTitle": "Comment ça marche — DORIXÉ",
+    "metaTitle": "Comment ça marche",
     "metaDescription": "Réservez des agents de nettoyage écologiques de confiance en 3 étapes simples.",
     "heroTitle": "Comment fonctionne DORIXÉ",
     "heroSubtitle": "Réservez en quelques minutes des agents de nettoyage vérifiés et écologiques. Ou rejoignez-nous comme prestataire et développez votre activité de nettoyage écologique.",
@@ -388,7 +388,7 @@
     "howItWorks": "Comment ça marche"
   },
   "pricing": {
-    "metaTitle": "Tarifs — DORIXÉ",
+    "metaTitle": "Tarifs",
     "metaDescription": "Tarifs transparents. Les clients paient le tarif de l'agent d'entretien – aucuns frais ajoutés au paiement. Les agents ne paient qu'une petite commission par réservation, sans abonnement.",
     "customerFeature1": "Parcourez et réservez des professionnels écologiques",
     "customerFeature2": "Paiement préautorisé — débité uniquement à la fin de la prestation",
@@ -458,7 +458,7 @@
     "providerExampleNote": "Vous fixez votre tarif et conservez la grande majorité de chaque réservation. Nous prenons seulement une petite commission par réservation effectuée – pour la maintenance du site et les taxes. Sans abonnement ni frais mensuels, versé instantanément."
   },
   "affiliate": {
-    "metaTitle": "Programme d'affiliation — DORIXÉ",
+    "metaTitle": "Programme d'affiliation",
     "metaDescription": "Devenez partenaire de DORIXÉ et gagnez {pct} % de commission à vie sur chaque réservation effectuée par les clients que vous parrainez. La façon écologique de faire croître vos revenus.",
     "statLifetimeCommission": "Commission à vie",
     "statCostToJoin": "Coût d'inscription",
@@ -535,7 +535,7 @@
     "ctaTerms": "En vous inscrivant, vous acceptez nos <terms>Conditions d'utilisation</terms>. La commission est versée sous forme de crédit sur la plateforme."
   },
   "blog": {
-    "metaTitle": "Blog — DORIXÉ",
+    "metaTitle": "Blog",
     "metaDescription": "Conseils, actualités et idées écologiques de l'équipe DORIXÉ.",
     "eyebrow": "Blog",
     "title": "Maison propre. Avenir vert.",
@@ -1980,7 +1980,7 @@
     "suspendedBody": "Votre compte intervenant a été suspendu par un administrateur. Veuillez contacter le support."
   },
   "ecoStore": {
-    "metaTitle": "Éco-boutique — DORIXÉ",
+    "metaTitle": "Éco-boutique",
     "metaDescription": "Produits de nettoyage écologiques, fournitures et kits de démarrage d'entreprise, recommandés par DORIXÉ.",
     "title": "Éco-boutique",
     "subtitle": "Outils, fournitures et kits de démarrage que nous recommandons pour un nettoyage plus vert.",

@@ -147,11 +147,11 @@
     "link_contact": "Ayuda y soporte"
   },
   "homePage": {
-    "metaTitle": "DORIXÉ — Hogar limpio. Futuro verde.",
+    "metaTitle": "Mercado de limpieza ecológica — Hogar limpio. Futuro verde.",
     "metaDescription": "Reserva profesionales de limpieza ecológicos y de confianza cerca de ti. Proveedores verificados, precios transparentes y un futuro verde para cada hogar."
   },
   "browse": {
-    "metaTitle": "Explorar limpiadores ecológicos — DORIXÉ",
+    "metaTitle": "Explorar limpiadores ecológicos",
     "metaDescription": "Encuentra profesionales de la limpieza de confianza y ecológicos cerca de ti.",
     "cityLabel": "Ciudad",
     "cityPlaceholder": "Ámsterdam",
@@ -249,7 +249,7 @@
     "lastActive": "Última vez activo {time}"
   },
   "sustainability": {
-    "metaTitle": "Impacto sostenible — DORIXÉ",
+    "metaTitle": "Impacto sostenible",
     "heroEyebrow": "Nuestro compromiso",
     "heroTitle": "Hogar limpio. Futuro verde.",
     "heroSubtitle": "Cada reserva en DORIXÉ te conecta con profesionales de la limpieza ecológicos y verificados que utilizan productos sostenibles y de origen vegetal, más suaves para tu hogar y el medio ambiente.",
@@ -270,7 +270,7 @@
     "ctaButton": "Encontrar profesionales eco →"
   },
   "howItWorksPage": {
-    "metaTitle": "Cómo funciona — DORIXÉ",
+    "metaTitle": "Cómo funciona",
     "metaDescription": "Reserva personal de limpieza ecológico de confianza en 3 sencillos pasos.",
     "heroTitle": "Cómo funciona DORIXÉ",
     "heroSubtitle": "Reserva en minutos personal de limpieza verificado y ecológico. O únete como profesional y haz crecer tu negocio de limpieza ecológica.",
@@ -388,7 +388,7 @@
     "howItWorks": "Cómo funciona"
   },
   "pricing": {
-    "metaTitle": "Precios — DORIXÉ",
+    "metaTitle": "Precios",
     "metaDescription": "Precios transparentes. Los clientes pagan la tarifa del limpiador, sin comisiones añadidas al pagar. Los limpiadores solo pagan una pequeña comisión por reserva, sin suscripciones.",
     "customerFeature1": "Explora y reserva profesionales ecológicos",
     "customerFeature2": "Pago preautorizado — solo se cobra al finalizar",
@@ -458,7 +458,7 @@
     "providerExampleNote": "Tú fijas tu tarifa y te quedas con la gran mayoría de cada reserva. Solo cobramos una pequeña comisión por reserva completada, para el mantenimiento del sitio y los impuestos. Sin suscripción ni cuotas mensuales, con pago al instante."
   },
   "affiliate": {
-    "metaTitle": "Programa de afiliados — DORIXÉ",
+    "metaTitle": "Programa de afiliados",
     "metaDescription": "Asóciate con DORIXÉ y gana un {pct} % de comisión de por vida en cada reserva realizada por los clientes que recomiendes. La forma ecológica de aumentar tus ingresos.",
     "statLifetimeCommission": "Comisión de por vida",
     "statCostToJoin": "Coste de afiliación",
@@ -535,7 +535,7 @@
     "ctaTerms": "Al unirte, aceptas nuestras <terms>Condiciones del servicio</terms>. La comisión se paga como crédito de la plataforma."
   },
   "blog": {
-    "metaTitle": "Blog — DORIXÉ",
+    "metaTitle": "Blog",
     "metaDescription": "Consejos, novedades e ideas ecológicas del equipo de DORIXÉ.",
     "eyebrow": "Blog",
     "title": "Hogar limpio. Futuro verde.",
@@ -1980,7 +1980,7 @@
     "suspendedBody": "Un administrador ha suspendido tu cuenta de limpiador. Ponte en contacto con soporte para resolverlo."
   },
   "ecoStore": {
-    "metaTitle": "Eco-tienda — DORIXÉ",
+    "metaTitle": "Eco-tienda",
     "metaDescription": "Productos de limpieza ecológicos, suministros y kits para empezar un negocio, recomendados por DORIXÉ.",
     "title": "Eco-tienda",
     "subtitle": "Herramientas, suministros y kits de inicio que recomendamos para una limpieza más ecológica.",

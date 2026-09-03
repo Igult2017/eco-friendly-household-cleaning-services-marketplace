@@ -6,7 +6,7 @@ import { EnableCustomerRoleButton } from "@/components/layout/EnableCustomerRole
 import Link from "next/link"
 
 export const metadata = {
-  title: "Become a Cleaner — DORIXÉ",
+  title: "Become a Cleaner",
   description: "Join DORIXÉ as an eco-certified cleaner. Set your own rates, work your own schedule, get paid instantly.",
 }
 

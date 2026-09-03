@@ -3,7 +3,7 @@ import { LegalMarkdown } from "@/components/legal/LegalMarkdown"
 import { cookieMarkdown } from "@/lib/legal/cookie"
 
 export const metadata: Metadata = {
-  title: "Cookie Policy — DORIXÉ",
+  title: "Cookie Policy",
   description: "What cookies and similar technologies DORIXÉ uses, why, and how to control them under EU ePrivacy and US privacy law.",
 }
 

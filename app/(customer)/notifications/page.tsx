@@ -11,7 +11,7 @@ import { getTranslations, getLocale } from "next-intl/server"
 import { localizeNotification } from "@/lib/notifications/content"
 import { PingUnread } from "@/components/notifications/PingUnread"
 
-export const metadata: Metadata = { title: "Notifications — DORIXÉ" }
+export const metadata: Metadata = { title: "Notifications" }
 
 const TYPE_ICON: Record<string, string> = {
   booking_confirmed: "📅", booking_completed: "✅", booking_cancelled: "❌",

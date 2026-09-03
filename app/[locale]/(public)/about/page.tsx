@@ -7,7 +7,7 @@ import { Leaf, ShieldCheck, Star, Euro, Heart, Globe2, Users, Zap } from "lucide
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params
   return {
-    title: "About Us — DORIXÉ",
+    title: "About Us",
     description:
       "DORIXÉ connects eco-conscious households with identity-verified, eco-friendly cleaners. Clean home. Green future.",
     alternates: localeAlternates("/about", locale),

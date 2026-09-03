@@ -147,11 +147,11 @@
     "link_contact": "Hilfe & Support"
   },
   "homePage": {
-    "metaTitle": "DORIXÉ — Sauberes Zuhause. Grüne Zukunft.",
+    "metaTitle": "Marktplatz für umweltfreundliche Reinigung — Sauberes Zuhause. Grüne Zukunft.",
     "metaDescription": "Buchen Sie vertrauenswürdige, umweltfreundliche Reinigungsprofis in Ihrer Nähe. Verifizierte Anbieter, transparente Preise und eine grüne Zukunft für jedes Zuhause."
   },
   "browse": {
-    "metaTitle": "Öko-Reinigungskräfte durchsuchen — DORIXÉ",
+    "metaTitle": "Öko-Reinigungskräfte durchsuchen",
     "metaDescription": "Finde vertrauenswürdige, umweltfreundliche Reinigungsprofis in deiner Nähe.",
     "cityLabel": "Stadt",
     "cityPlaceholder": "Amsterdam",
@@ -249,7 +249,7 @@
     "lastActive": "Zuletzt aktiv {time}"
   },
   "sustainability": {
-    "metaTitle": "Nachhaltigkeit & Wirkung — DORIXÉ",
+    "metaTitle": "Nachhaltigkeit & Wirkung",
     "heroEyebrow": "Unser Versprechen",
     "heroTitle": "Sauberes Zuhause. Grüne Zukunft.",
     "heroSubtitle": "Jede Buchung bei DORIXÉ bringt dich mit verifizierten, umweltbewussten Reinigungskräften zusammen, die nachhaltige, pflanzenbasierte Produkte verwenden – schonender für dein Zuhause und die Umwelt.",
@@ -270,7 +270,7 @@
     "ctaButton": "Öko-Reinigungskräfte finden →"
   },
   "howItWorksPage": {
-    "metaTitle": "So funktioniert's — DORIXÉ",
+    "metaTitle": "So funktioniert's",
     "metaDescription": "Buchen Sie vertrauenswürdige Öko-Reinigungskräfte in 3 einfachen Schritten.",
     "heroTitle": "So funktioniert DORIXÉ",
     "heroSubtitle": "Buchen Sie in wenigen Minuten verifizierte, umweltfreundliche Reinigungskräfte. Oder werden Sie Anbieter und bauen Sie Ihr Öko-Reinigungsgeschäft aus.",
@@ -388,7 +388,7 @@
     "howItWorks": "So funktioniert's"
   },
   "pricing": {
-    "metaTitle": "Preise — DORIXÉ",
+    "metaTitle": "Preise",
     "metaDescription": "Transparente Preise. Kunden zahlen den Satz der Reinigungskraft – keine Gebühren beim Checkout. Reinigungskräfte zahlen nur eine kleine Provision pro Buchung, ohne Abo.",
     "customerFeature1": "Umweltfreundliche Reinigungskräfte finden und buchen",
     "customerFeature2": "Vorautorisierte Zahlung — Abbuchung erst nach Abschluss",
@@ -458,7 +458,7 @@
     "providerExampleNote": "Sie legen Ihren Satz fest und behalten den Großteil jeder Buchung. Wir nehmen nur eine kleine Provision pro abgeschlossener Buchung – für Wartung der Plattform und Steuern. Kein Abo, keine monatlichen Gebühren, sofortige Auszahlung."
   },
   "affiliate": {
-    "metaTitle": "Partnerprogramm — DORIXÉ",
+    "metaTitle": "Partnerprogramm",
     "metaDescription": "Werde Partner von DORIXÉ und verdiene {pct} % lebenslange Provision auf jede Buchung von Kunden, die du wirbst. Der umweltfreundliche Weg, dein Einkommen zu steigern.",
     "statLifetimeCommission": "Lebenslange Provision",
     "statCostToJoin": "Kosten für den Beitritt",
@@ -535,7 +535,7 @@
     "ctaTerms": "Mit dem Beitritt stimmst du unseren <terms>Nutzungsbedingungen</terms> zu. Die Provision wird als Plattform-Guthaben ausgezahlt."
   },
   "blog": {
-    "metaTitle": "Blog — DORIXÉ",
+    "metaTitle": "Blog",
     "metaDescription": "Tipps, Neuigkeiten und nachhaltige Einblicke vom DORIXÉ-Team.",
     "eyebrow": "Blog",
     "title": "Sauberes Zuhause. Grüne Zukunft.",
@@ -1980,7 +1980,7 @@
     "suspendedBody": "Ihr Reinigungskonto wurde von einem Administrator gesperrt. Bitte wenden Sie sich an den Support."
   },
   "ecoStore": {
-    "metaTitle": "Öko-Shop — DORIXÉ",
+    "metaTitle": "Öko-Shop",
     "metaDescription": "Umweltfreundliche Reinigungsprodukte, Zubehör und Starter-Sets für Unternehmen, empfohlen von DORIXÉ.",
     "title": "Öko-Shop",
     "subtitle": "Werkzeuge, Zubehör und Starter-Sets, die wir für eine grünere Reinigung empfehlen.",

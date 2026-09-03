@@ -3,7 +3,7 @@ import { LegalMarkdown } from "@/components/legal/LegalMarkdown"
 import { privacyMarkdown } from "@/lib/legal/privacy"
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — DORIXÉ",
+  title: "Privacy Policy",
   description: "How DORIXÉ collects, uses, and protects your personal data — GDPR (EU) and US state privacy rights (CCPA/CPRA and others).",
 }
 

@@ -147,11 +147,11 @@
     "link_contact": "Hulp en ondersteuning"
   },
   "homePage": {
-    "metaTitle": "DORIXÉ — Schoon huis. Groene toekomst.",
+    "metaTitle": "Marktplaats voor milieuvriendelijk schoonmaken — Schoon huis. Groene toekomst.",
     "metaDescription": "Boek betrouwbare, milieuvriendelijke schoonmaakprofessionals bij jou in de buurt. Geverifieerde aanbieders, transparante prijzen en een groene toekomst voor elk huis."
   },
   "browse": {
-    "metaTitle": "Eco-schoonmakers bekijken — DORIXÉ",
+    "metaTitle": "Eco-schoonmakers bekijken",
     "metaDescription": "Vind betrouwbare, milieuvriendelijke schoonmaakprofessionals bij jou in de buurt.",
     "cityLabel": "Stad",
     "cityPlaceholder": "Amsterdam",
@@ -249,7 +249,7 @@
     "lastActive": "Laatst actief {time}"
   },
   "sustainability": {
-    "metaTitle": "Duurzaamheidsimpact — DORIXÉ",
+    "metaTitle": "Duurzaamheidsimpact",
     "heroEyebrow": "Onze belofte",
     "heroTitle": "Schoon huis. Groene toekomst.",
     "heroSubtitle": "Elke boeking op DORIXÉ verbindt je met geverifieerde, milieubewuste schoonmakers die duurzame, plantaardige producten gebruiken die zachter zijn voor je huis en het milieu.",
@@ -270,7 +270,7 @@
     "ctaButton": "Vind eco-schoonmakers →"
   },
   "howItWorksPage": {
-    "metaTitle": "Hoe het werkt — DORIXÉ",
+    "metaTitle": "Hoe het werkt",
     "metaDescription": "Boek betrouwbare, milieuvriendelijke schoonmakers in 3 eenvoudige stappen.",
     "heroTitle": "Zo werkt DORIXÉ",
     "heroSubtitle": "Boek binnen enkele minuten geverifieerde, milieuvriendelijke schoonmakers. Of word aanbieder en laat je eco-schoonmaakbedrijf groeien.",
@@ -388,7 +388,7 @@
     "howItWorks": "Hoe het werkt"
   },
   "pricing": {
-    "metaTitle": "Prijzen — DORIXÉ",
+    "metaTitle": "Prijzen",
     "metaDescription": "Transparante prijzen. Klanten betalen het tarief van de schoonmaker – geen kosten bij het afrekenen. Schoonmakers betalen alleen een kleine commissie per boeking, zonder abonnement.",
     "customerFeature1": "Blader door en boek milieuvriendelijke schoonmakers",
     "customerFeature2": "Vooraf geautoriseerde betaling — pas afgeschreven bij afronding",
@@ -458,7 +458,7 @@
     "providerExampleNote": "Je stelt je eigen tarief in en houdt het grootste deel van elke boeking. Wij nemen alleen een kleine commissie per voltooide boeking – voor onderhoud van het platform en belastingen. Geen abonnement, geen maandelijkse kosten, direct uitbetaald."
   },
   "affiliate": {
-    "metaTitle": "Partnerprogramma — DORIXÉ",
+    "metaTitle": "Partnerprogramma",
     "metaDescription": "Word partner van DORIXÉ en verdien {pct} % levenslange commissie op elke boeking van klanten die je aanbrengt. De milieuvriendelijke manier om je inkomen te laten groeien.",
     "statLifetimeCommission": "Levenslange commissie",
     "statCostToJoin": "Aanmeldkosten",
@@ -535,7 +535,7 @@
     "ctaTerms": "Door lid te worden, ga je akkoord met onze <terms>Servicevoorwaarden</terms>. De commissie wordt uitbetaald als platformtegoed."
   },
   "blog": {
-    "metaTitle": "Blog — DORIXÉ",
+    "metaTitle": "Blog",
     "metaDescription": "Tips, nieuws en duurzame inzichten van het DORIXÉ-team.",
     "eyebrow": "Blog",
     "title": "Schoon huis. Groene toekomst.",
@@ -1980,7 +1980,7 @@
     "suspendedBody": "Je schoonmaakaccount is geschorst door een beheerder. Neem contact op met de klantenservice."
   },
   "ecoStore": {
-    "metaTitle": "Eco-winkel — DORIXÉ",
+    "metaTitle": "Eco-winkel",
     "metaDescription": "Milieuvriendelijke schoonmaakproducten, benodigdheden en starterspakketten voor ondernemers, aanbevolen door DORIXÉ.",
     "title": "Eco-winkel",
     "subtitle": "Gereedschap, benodigdheden en starterspakketten die wij aanraden voor groener schoonmaken.",

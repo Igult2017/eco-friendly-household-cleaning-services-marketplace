@@ -3,7 +3,7 @@ import { LegalMarkdown } from "@/components/legal/LegalMarkdown"
 import { impressumMarkdown } from "@/lib/legal/impressum"
 
 export const metadata: Metadata = {
-  title: "Impressum / Legal Notice — DORIXÉ",
+  title: "Impressum / Legal Notice",
   description: "DORIXÉ legal notice and provider identification (Impressum) under §5 DDG / EU and applicable law.",
 }
 

@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const post = await getPost(slug)
   if (!post) return { title: "Not found" }
   return {
-    title: `${post.title} — DORIXÉ Blog`,
+    title: post.title,
     description: post.excerpt ?? undefined,
     openGraph: post.coverImageUrl ? { images: [post.coverImageUrl] } : undefined,
   }

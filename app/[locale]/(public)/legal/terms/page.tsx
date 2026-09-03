@@ -3,7 +3,7 @@ import { LegalMarkdown } from "@/components/legal/LegalMarkdown"
 import { termsMarkdown } from "@/lib/legal/terms"
 
 export const metadata: Metadata = {
-  title: "Terms of Service — DORIXÉ",
+  title: "Terms of Service",
   description: "DORIXÉ Terms of Service — marketplace rules, payments, cancellations, and your rights across the EU, US, and globally.",
 }
 

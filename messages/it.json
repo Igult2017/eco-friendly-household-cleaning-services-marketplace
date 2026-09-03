@@ -147,11 +147,11 @@
     "link_contact": "Aiuto e assistenza"
   },
   "homePage": {
-    "metaTitle": "DORIXÉ — Casa pulita. Futuro verde.",
+    "metaTitle": "Marketplace di pulizie ecologiche — Casa pulita. Futuro verde.",
     "metaDescription": "Prenota professionisti delle pulizie ecologici e affidabili vicino a te. Fornitori verificati, prezzi trasparenti e un futuro verde per ogni casa."
   },
   "browse": {
-    "metaTitle": "Esplora addetti alle pulizie eco — DORIXÉ",
+    "metaTitle": "Esplora addetti alle pulizie eco",
     "metaDescription": "Trova professionisti delle pulizie affidabili ed ecologici vicino a te.",
     "cityLabel": "Città",
     "cityPlaceholder": "Amsterdam",
@@ -249,7 +249,7 @@
     "lastActive": "Ultima attività {time}"
   },
   "sustainability": {
-    "metaTitle": "Impatto sostenibile — DORIXÉ",
+    "metaTitle": "Impatto sostenibile",
     "heroEyebrow": "Il nostro impegno",
     "heroTitle": "Casa pulita. Futuro verde.",
     "heroSubtitle": "Ogni prenotazione su DORIXÉ ti mette in contatto con addetti alle pulizie ecologici e verificati che usano prodotti sostenibili e di origine vegetale, più delicati per la tua casa e per l'ambiente.",
@@ -270,7 +270,7 @@
     "ctaButton": "Trova addetti eco →"
   },
   "howItWorksPage": {
-    "metaTitle": "Come funziona — DORIXÉ",
+    "metaTitle": "Come funziona",
     "metaDescription": "Prenota addetti alle pulizie ecologici e affidabili in 3 semplici passaggi.",
     "heroTitle": "Come funziona DORIXÉ",
     "heroSubtitle": "Prenota in pochi minuti addetti alle pulizie verificati ed ecologici. Oppure unisciti come professionista e fai crescere la tua attività di pulizie ecologiche.",
@@ -388,7 +388,7 @@
     "howItWorks": "Come funziona"
   },
   "pricing": {
-    "metaTitle": "Prezzi — DORIXÉ",
+    "metaTitle": "Prezzi",
     "metaDescription": "Prezzi trasparenti. I clienti pagano la tariffa dell'addetto, senza commissioni aggiunte al checkout. Gli addetti pagano solo una piccola commissione per prenotazione, senza abbonamenti.",
     "customerFeature1": "Cerca e prenota addetti ecologici",
     "customerFeature2": "Pagamento preautorizzato — addebitato solo al completamento",
@@ -458,7 +458,7 @@
     "providerExampleNote": "Imposti la tua tariffa e tieni la maggior parte di ogni prenotazione. Tratteniamo solo una piccola commissione per prenotazione completata, per la manutenzione del sito e le tasse. Nessun abbonamento né canone mensile, con pagamento all'istante."
   },
   "affiliate": {
-    "metaTitle": "Programma di affiliazione — DORIXÉ",
+    "metaTitle": "Programma di affiliazione",
     "metaDescription": "Diventa partner di DORIXÉ e guadagna il {pct} % di commissione a vita su ogni prenotazione effettuata dai clienti che presenti. Il modo ecologico per far crescere i tuoi guadagni.",
     "statLifetimeCommission": "Commissione a vita",
     "statCostToJoin": "Costo di adesione",
@@ -535,7 +535,7 @@
     "ctaTerms": "Iscrivendoti, accetti i nostri <terms>Termini di servizio</terms>. La commissione viene pagata come credito sulla piattaforma."
   },
   "blog": {
-    "metaTitle": "Blog — DORIXÉ",
+    "metaTitle": "Blog",
     "metaDescription": "Consigli, novità e spunti ecologici dal team di DORIXÉ.",
     "eyebrow": "Blog",
     "title": "Casa pulita. Futuro green.",
@@ -1980,7 +1980,7 @@
     "suspendedBody": "Il tuo account addetto è stato sospeso da un amministratore. Contatta l'assistenza per risolvere."
   },
   "ecoStore": {
-    "metaTitle": "Eco-store — DORIXÉ",
+    "metaTitle": "Eco-store",
     "metaDescription": "Prodotti per la pulizia ecologici, forniture e kit di avvio per attività, consigliati da DORIXÉ.",
     "title": "Eco-store",
     "subtitle": "Strumenti, forniture e kit di avvio che consigliamo per una pulizia più green.",
