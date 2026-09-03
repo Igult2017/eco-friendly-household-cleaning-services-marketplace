@@ -3,7 +3,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { providers, users } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
-import { createConnectAccount, createAccountSession } from "@/lib/stripe/connect"
+import { createConnectAccount, createAccountSession, ensureBusinessProfile } from "@/lib/stripe/connect"
 import { logError } from "@/lib/utils/logError"
 
 export async function POST() {
@@ -36,7 +36,10 @@ export async function POST() {
       try {
         await db
           .update(providers)
-          .set({ stripeAccountId, stripeAccountStatus: "pending" })
+          // "incomplete", not "pending" — nothing has been submitted to Stripe at this point, and
+          // "pending" reads as "submitted, awaiting review". This matches what getConnectAccountStatus
+          // returns for the same state, so the admin view and the live check agree.
+          .set({ stripeAccountId, stripeAccountStatus: "incomplete" })
           .where(eq(providers.id, provider.id))
       } catch (dbErr) {
         // The Stripe account exists but we failed to record it. Log the id so it's
@@ -44,6 +47,11 @@ export async function POST() {
         console.error(`[stripe/connect/account] account ${account.id} created for provider ${provider.id} but DB update failed:`, dbErr)
         throw dbErr
       }
+    } else {
+      // Existing account created before we supplied the website ourselves — patch it before opening
+      // the form, so a cleaner stuck behind Stripe's "business website" question is unblocked just by
+      // clicking Set up payouts again.
+      await ensureBusinessProfile(stripeAccountId)
     }
 
     const clientSecret = await createAccountSession(stripeAccountId)

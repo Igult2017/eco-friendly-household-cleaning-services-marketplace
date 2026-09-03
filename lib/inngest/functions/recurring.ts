@@ -80,7 +80,29 @@ export const recurringBookingCron = inngest.createFunction(
 
     for (const schedule of dueSchedules as typeof recurringSchedules.$inferSelect[]) {
       await step.run(`create-booking-${schedule.id}`, async () => {
-        const scheduledAt = schedule.nextBookingAt!
+        // Dates lose their type crossing an Inngest step boundary — step results are persisted as
+        // JSON so they survive retries, and a Date comes back as a string. Everything below (the
+        // duplicate check, the booking insert, addFrequencyInTZ, the notification text) treats this
+        // as a real Date, so rebuild it here at the single source rather than at six call sites.
+        const scheduledAt = new Date(schedule.nextBookingAt!)
+
+        // A schedule stalled by that bug can be left pointing days into the past. Roll it forward to
+        // the next future slot and stop there for this run: never create — and off-session charge
+        // for — a cleaning whose time already passed, and don't charge early for one still days out.
+        // The next daily run books it normally once it's inside the usual 24h window. In healthy
+        // operation this never triggers: the cron picks a schedule up the day BEFORE it's due, so
+        // the date is always still in the future when it's processed.
+        if (scheduledAt.getTime() < Date.now()) {
+          let next = scheduledAt
+          // Guard the loop (≈10 years of weekly cycles) so a bad date can never spin forever.
+          for (let i = 0; next.getTime() < Date.now() && i < 520; i++) {
+            next = addFrequencyInTZ(next, schedule.frequency, schedule.timezone)
+          }
+          await db.update(recurringSchedules)
+            .set({ nextBookingAt: next, updatedAt: new Date() })
+            .where(eq(recurringSchedules.id, schedule.id))
+          return
+        }
 
         const existing = await db
           .select({ id: bookings.id })

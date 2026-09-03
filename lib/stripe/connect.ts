@@ -1,5 +1,18 @@
 import { stripe } from "./client"
 import { getPayoutSchedule } from "@/lib/platform/settings"
+import { SITE_URL } from "@/lib/seo/site"
+
+// Stripe will not let a connected account finish onboarding without a business website, and a solo
+// cleaner doesn't have one — that ask is where every stalled account got stuck (verified live: the
+// only two accounts that ever completed are the only two with a URL on file; the rest sit at
+// details_submitted=false with business_profile.url still outstanding). Supplying the marketplace's
+// own URL ourselves removes the question entirely. SITE_URL is the exact value Stripe already
+// accepted on both completed accounts.
+const BUSINESS_PROFILE = {
+  mcc: "7349", // Cleaning and Maintenance, Janitorial Services
+  product_description: "Eco-friendly home and office cleaning services",
+  url: SITE_URL,
+} as const
 
 /** Create a Stripe Connect Express account for a new provider.
  * Pass `idempotencyKey` (e.g. per provider id) so a retry after a failed DB write
@@ -32,18 +45,38 @@ export async function createConnectAccount(params: {
         transfers: { requested: true },
       },
       business_type: "individual",
-      // Belt-and-suspenders alongside dropping card_payments: a service-industry MCC + a plain
-      // description mean nothing should ever prompt for a website, even on an edge case.
-      business_profile: {
-        mcc: "7349", // Cleaning and Maintenance, Janitorial Services
-        product_description: "Eco-friendly home and office cleaning services",
-      },
+      // Includes the website URL — dropping the card_payments capability alone does NOT stop Stripe
+      // asking for one (proven on live accounts), so we set it rather than leaving it to the cleaner.
+      business_profile: BUSINESS_PROFILE,
       settings: {
         payouts: { schedule },
       },
     },
     params.idempotencyKey ? { idempotencyKey: params.idempotencyKey } : undefined,
   )
+}
+
+/** Repair an account created before we supplied the business website ourselves. Those accounts sit
+ * with business_profile.url empty, so Stripe keeps demanding a website the cleaner doesn't have and
+ * onboarding can never be completed. Called every time payout setup is opened, so a stuck cleaner
+ * fixes themselves simply by clicking the button again — no manual Stripe surgery. Cheap and safe to
+ * repeat: it only writes when the URL is actually missing, and never overwrites a real one. */
+export async function ensureBusinessProfile(accountId: string): Promise<void> {
+  try {
+    const account = await stripe.accounts.retrieve(accountId)
+    if (account.business_profile?.url) return
+    await stripe.accounts.update(accountId, {
+      business_profile: {
+        url: BUSINESS_PROFILE.url,
+        mcc: account.business_profile?.mcc ?? BUSINESS_PROFILE.mcc,
+        product_description: account.business_profile?.product_description ?? BUSINESS_PROFILE.product_description,
+      },
+    })
+  } catch (err) {
+    // Never block opening the onboarding form over this — worst case the cleaner is asked for a
+    // website exactly as before, which is the behaviour we're already trying to improve on.
+    console.warn(`[stripe/connect] could not backfill business profile for ${accountId}:`, err)
+  }
 }
 
 /** Create an Account Session client secret for the embedded Account Onboarding component
