@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { referralCommissions, referralCredits, referralPayouts, notifications, users, providers } from "@/lib/db/schema"
 import { and, eq, lt, sql } from "drizzle-orm"
 import { stripe } from "@/lib/stripe/client"
+import { getAccountPayoutCurrency } from "@/lib/stripe/connect"
 
 // Month-end referral settlement. Commissions accrue as `pending` when bookings complete
 // (completion.ts) and are moved into the referrer's withdrawable credit balance in one batch on
@@ -75,9 +76,12 @@ export const settleReferralCommissions = inngest.createFunction(
         if (!debited) { results.push({ userId: cleaner.userId, paid: false, reason: "balance_changed" }); continue }
 
         const [payoutRow] = await db.insert(referralPayouts).values({ userId: cleaner.userId, amountCents, status: "pending" }).returning({ id: referralPayouts.id })
+        // Pay in the account's OWN currency. This was hardcoded to euros, which sent a US cleaner a
+        // euro transfer — the rest of the platform already respects the payee's currency.
+        const currency = await getAccountPayoutCurrency(cleaner.stripeAccountId)
         try {
           const transfer = await stripe.transfers.create(
-            { amount: amountCents, currency: "eur", destination: cleaner.stripeAccountId },
+            { amount: amountCents, currency, destination: cleaner.stripeAccountId },
             { idempotencyKey: `referral-settlement-payout-${payoutRow.id}` },
           )
           await db.update(referralPayouts).set({ status: "paid", stripeTransferId: transfer.id }).where(eq(referralPayouts.id, payoutRow.id))

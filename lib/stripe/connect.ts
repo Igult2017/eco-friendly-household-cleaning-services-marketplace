@@ -118,3 +118,24 @@ export async function getConnectAccountStatus(accountId: string): Promise<"activ
   // "pending" forever. payouts_enabled is Stripe's own signal for "this account can actually be paid".
   return account.payouts_enabled ? "active" : account.details_submitted ? "pending" : "incomplete"
 }
+
+/**
+ * The currency a connected account should actually be paid in.
+ *
+ * Referral payouts used to send every transfer in euros, which is wrong for a US payee — the rest of
+ * the platform is careful about this (bookings are charged in the cleaner's own currency, and the
+ * weekly payout uses whatever the booking was captured in). Asking Stripe for the account's own
+ * default currency covers every country without this code keeping its own country-to-currency list.
+ *
+ * Falls back to euro if Stripe can't be reached, which is the pre-existing behaviour and the right
+ * default for the majority market — a payout attempted in the wrong currency fails loudly at
+ * Stripe rather than silently sending the wrong amount.
+ */
+export async function getAccountPayoutCurrency(accountId: string): Promise<string> {
+  try {
+    const account = await stripe.accounts.retrieve(accountId)
+    return account.default_currency ?? "eur"
+  } catch {
+    return "eur"
+  }
+}

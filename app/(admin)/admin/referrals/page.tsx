@@ -4,6 +4,8 @@ import { db } from "@/lib/db"
 import { referrals, referralCredits, users } from "@/lib/db/schema"
 import { eq, desc, count, sum, sql } from "drizzle-orm"
 import { Users, TrendingUp, Wallet, CheckCircle2, Clock, Gift } from "lucide-react"
+import { ReferrerTable } from "@/components/admin/referrals/ReferrerTable"
+import { getReferrerPerformance, programmeOf, type ReferrerRow } from "@/lib/admin/referralPerformance"
 
 function fmt(cents: number) {
   return `€${(cents / 100).toFixed(2)}`
@@ -26,6 +28,8 @@ export default async function AdminReferralsPage() {
   let totals: { total: number; active: number; pending: number; totalCommission: string | null } | null = null
   let totalCreditCents = 0
   let totalCommissionCents = 0
+  const byProgramme: Record<"affiliate" | "provider" | "customer", ReferrerRow[]> =
+    { affiliate: [], provider: [], customer: [] }
   let errorMsg: string | null = null
 
   try {
@@ -67,6 +71,12 @@ export default async function AdminReferralsPage() {
       .from(referralCredits)
 
     totalCreditCents = Number(creditRows[0]?.total ?? 0)
+
+    // Per-person rollup for the three programme tables. Failure here must not take the whole page
+    // down — the existing catch below already renders a banner instead.
+    for (const row of await getReferrerPerformance()) {
+      byProgramme[programmeOf(row.role)].push(row)
+    }
     totalCommissionCents = Number(totals?.totalCommission ?? 0)
   } catch (err) {
     console.error("[AdminReferralsPage]", err)
@@ -116,6 +126,33 @@ export default async function AdminReferralsPage() {
             <p className="text-xs text-[#6B7280] mt-1">{sub}</p>
           </div>
         ))}
+      </div>
+
+      {/* Per-person performance. The "All Referrals" table below lists one row per REFERRED person,
+          which never showed what any single referrer had brought in or was owed. */}
+      <div className="space-y-6">
+        <ReferrerTable
+          title="Influencers & affiliates"
+          blurb="People on the affiliate programme — they earn cash they withdraw on demand."
+          rows={byProgramme.affiliate}
+          emptyHint="Anyone who signs up through the affiliate programme appears here, with what they've brought in and what they're owed."
+        />
+
+        <ReferrerTable
+          title="Cleaners referring"
+          blurb="Cleaners earn cash. Their balance is swept to them automatically on the 1st of each month."
+          rows={byProgramme.provider}
+          showPayoutReady={false}
+          note="Cleaners are paid into their existing cleaner payout account, not the separate referral one, so a 'can be paid' column here would be misleading. A cleaner with money owed and no working payout account is retried automatically every month."
+          emptyHint="Cleaners who invite another cleaner or a client will show up here once someone uses their code."
+        />
+
+        <ReferrerTable
+          title="Clients & other accounts referring"
+          blurb="Everyone who isn't a cleaner or an affiliate — they earn discount credit, spendable at checkout or withdrawable as cash. Admin accounts hold codes too and earn on the same terms, so they appear here."
+          rows={byProgramme.customer}
+          emptyHint="Clients who share their code will appear here once a referral completes a booking."
+        />
       </div>
 
       {/* Referrals table */}

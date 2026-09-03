@@ -4,7 +4,7 @@ import { db } from "@/lib/db"
 import { users, referralCredits, referralPayouts } from "@/lib/db/schema"
 import { eq, and, sql } from "drizzle-orm"
 import { stripe } from "@/lib/stripe/client"
-import { getConnectAccountStatus } from "@/lib/stripe/connect"
+import { getConnectAccountStatus, getAccountPayoutCurrency } from "@/lib/stripe/connect"
 import { safeLimit, createRateLimiter } from "@/lib/redis/client"
 import { logError } from "@/lib/utils/logError"
 
@@ -52,8 +52,10 @@ export async function POST() {
       .returning({ id: referralPayouts.id })
 
     try {
+      // The payee's own currency, not a hardcoded euro — a US withdrawal was being sent in EUR.
+      const currency = await getAccountPayoutCurrency(user.accountId)
       const transfer = await stripe.transfers.create(
-        { amount: amountCents, currency: "eur", destination: user.accountId },
+        { amount: amountCents, currency, destination: user.accountId },
         { idempotencyKey: `referral-withdraw-${payoutRow.id}` },
       )
       await db.update(referralPayouts).set({ status: "paid", stripeTransferId: transfer.id }).where(eq(referralPayouts.id, payoutRow.id))

@@ -61,17 +61,16 @@ export async function creditReferralReward(params: {
 
   const rewardCents = Math.round(subtotalCents * pct / 100)
 
-  await db
-    .update(referrals)
-    .set({
-      ...(pendingRef ? { status: "active" as const, activatedAt: new Date() } : {}),
-      totalCommissionEarnedCents: sql`total_commission_earned_cents + ${rewardCents}`,
-      qualifyingOrdersCount: sql`qualifying_orders_count + ${isCleanerPeerReferral ? 1 : 0}`,
-    })
-    .where(eq(referrals.id, ref.id))
-
-  // Unique (booking_id, referral_id) makes this INSERT idempotent across Inngest retries, and lets
-  // the customer-side and provider-side calls for the SAME booking each get their own row.
+  // Claim the booking FIRST, then update the running totals — never the other way round.
+  //
+  // The unique (booking_id, referral_id) index makes this insert the idempotency guard: a second
+  // attempt for the same booking inserts nothing and returns empty. This used to sit AFTER the
+  // update below, which meant a retry added the reward to the referrer's total a second time while
+  // the insert correctly refused the duplicate. That was reachable, not theoretical: booking-completed
+  // runs with retries: 3 and calls this twice (customer side, then provider side) inside ONE step,
+  // so a failure on the provider side re-ran the customer side and inflated its total again. It also
+  // inflated qualifying_orders_count, which caps cleaner-to-cleaner rewards at 3 — so a retry could
+  // quietly cut a cleaner's earnings off early.
   const inserted = await db
     .insert(referralCommissions)
     .values({
@@ -86,5 +85,15 @@ export async function creditReferralReward(params: {
     .returning({ id: referralCommissions.id })
 
   if (!inserted.length) return { skipped: "already_credited" }
+
+  await db
+    .update(referrals)
+    .set({
+      ...(pendingRef ? { status: "active" as const, activatedAt: new Date() } : {}),
+      totalCommissionEarnedCents: sql`total_commission_earned_cents + ${rewardCents}`,
+      qualifyingOrdersCount: sql`qualifying_orders_count + ${isCleanerPeerReferral ? 1 : 0}`,
+    })
+    .where(eq(referrals.id, ref.id))
+
   return { commissionCents: rewardCents, referrerId: ref.referrerId, rewardType }
 }
