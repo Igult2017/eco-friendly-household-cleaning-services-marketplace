@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
+  Activity,
   LayoutDashboard,
   Users,
   ShieldCheck,
@@ -30,6 +31,10 @@ import {
 import { cn } from "@/lib/utils"
 
 const nav = [
+  // First, because it's the "how is the business doing" page: traffic, signups, bookings, revenue
+  // and email against one timeline. Dashboard stays as the operational view (what needs attention
+  // right now), Analytics as the deep traffic view.
+  { label: "Overview",    href: "/admin/overview",  icon: Activity },
   { label: "Dashboard",   href: "/admin/dashboard", icon: LayoutDashboard },
   { label: "Users",       href: "/admin/users",      icon: ShieldCheck },
   { label: "Providers",   href: "/admin/providers",  icon: Briefcase },
