@@ -57,6 +57,19 @@ package-lock.json
 # Playwright MCP visual-QA artifacts (screenshots, snapshots, console logs)
 .playwright-mcp/
 
+# Stray screenshots/recordings dropped in the REPO ROOT by visual-QA tooling. A screenshot saved to
+# a relative path lands here instead of .playwright-mcp/, and the auto-commit hook then commits it —
+# that is how eco-store-nav-highlight.png, geo-baseline-english.png, geo-german-autoswitch.png,
+# signin-check.png and footer-icons.png all got into the repo, none of them referenced by anything.
+# Root only (the leading slash): real image assets live in public/ and stay tracked.
+/*.png
+/*.jpg
+/*.jpeg
+/*.gif
+/*.webp
+/*.webm
+/*.zip
+
 # Installed skill bundles — materialized files are reproducible from skills-lock.json
 # (the lock IS tracked). Don't commit the 100s of skill files / agent symlinks.
 .agents/
