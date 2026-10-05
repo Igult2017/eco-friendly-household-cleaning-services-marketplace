@@ -16,6 +16,29 @@ const TYPES: { v: CampaignType; label: string }[] = [
 ]
 const inputCls = "w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]"
 
+// These routes answer with three different error shapes: a plain string, or zod's flatten() object
+// where the problems sit in fieldErrors (formErrors is usually an empty array). Reading only
+// formErrors produced an EMPTY red toast — `[].join(", ")` is "", and `??` does not replace "" —
+// and passing the raw object to toast() hands React a plain object as a child, which throws.
+function errorText(err: unknown, fallback: string): string {
+  if (typeof err === "string" && err.trim()) return err
+  if (err && typeof err === "object") {
+    const e = err as { formErrors?: string[]; fieldErrors?: Record<string, string[]> }
+    const parts = [
+      ...(e.formErrors ?? []),
+      ...Object.entries(e.fieldErrors ?? {}).map(([field, msgs]) => `${field}: ${(msgs ?? []).join(", ")}`),
+    ].filter(Boolean)
+    if (parts.length) return parts.join(" · ")
+  }
+  return fallback
+}
+
+// A failed request does not always answer with JSON — a gateway timeout or a crash returns an HTML
+// page, and r.json() then throws. Never let that escape as an unhandled rejection.
+async function readJson(r: Response): Promise<Record<string, unknown>> {
+  try { return await r.json() } catch { return {} }
+}
+
 export function CampaignComposer() {
   const router = useRouter()
   const [type, setType] = useState<CampaignType>("value")
@@ -33,9 +56,11 @@ export function CampaignComposer() {
     setBusy("ai")
     try {
       const r = await fetch("/api/admin/marketing/generate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type, brief }) })
-      const d = await r.json()
-      if (r.ok) { setSubject(d.subject); setBodyHtml(d.html); toast.success("AI draft ready — edit freely") }
-      else toast.error(d.error ?? "Generation failed (is GEMINI_API_KEY set?)")
+      const d = await readJson(r)
+      if (r.ok) { setSubject(d.subject as string); setBodyHtml(d.html as string); toast.success("AI draft ready — edit freely") }
+      else toast.error(errorText(d.error, "Generation failed (is GEMINI_API_KEY set?)"))
+    } catch {
+      toast.error("Could not reach the server. Please try again.")
     } finally { setBusy(null) }
   }
 
@@ -47,14 +72,14 @@ export function CampaignComposer() {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, type, subject, brief, bodyHtml, aiGenerated: !!bodyHtml, personalizePerUser: personalize, audience }),
       })
-      const d = await r.json()
-      if (!r.ok) { toast.error(d.error?.formErrors?.join(", ") ?? "Save failed"); return }
+      const d = await readJson(r)
+      if (!r.ok) { toast.error(errorText(d.error, "Save failed")); return }
       if (send) {
         // datetime-local gives a value with no timezone ("2026-09-10T09:00"); new Date() reads it
         // in the admin's own timezone, which is the one they picked it in, and toISOString sends it
         // as an absolute moment so the server never has to guess.
         const scheduledAt = sendAt ? new Date(sendAt).toISOString() : undefined
-        const s = await fetch(`/api/admin/marketing/campaigns/${d.id}/send`, {
+        const s = await fetch(`/api/admin/marketing/campaigns/${String(d.id)}/send`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ scheduledAt }),
@@ -63,10 +88,12 @@ export function CampaignComposer() {
           toast.success(sendAt
             ? `Scheduled for ${new Date(sendAt).toLocaleString()}`
             : "Campaign sending — AI personalizes each email")
-        } else toast.error((await s.json()).error ?? "Send failed")
+        } else toast.error(errorText((await readJson(s)).error, "Send failed"))
       } else toast.success("Draft saved")
       setName(""); setBrief(""); setSubject(""); setBodyHtml(""); setSendAt("")
       router.refresh()
+    } catch {
+      toast.error("Could not reach the server. Please try again.")
     } finally { setBusy(null) }
   }
 

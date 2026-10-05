@@ -209,7 +209,7 @@ export default async function AdminEcoPage() {
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-[#D1F0E0] flex items-center justify-center flex-shrink-0">
                         <span className="text-xs font-bold text-[#2D7A5F]">
-                          {(c.businessName ?? "?")[0].toUpperCase()}
+                          {c.businessName?.trim() ? c.businessName.trim()[0].toUpperCase() : "?"}
                         </span>
                       </div>
                       <span className="text-sm font-medium text-[#2B3441]">{c.businessName ?? "—"}</span>

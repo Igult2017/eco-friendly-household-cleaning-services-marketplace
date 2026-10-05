@@ -11,6 +11,17 @@ function fmt(cents: number) {
   return `€${(cents / 100).toFixed(2)}`
 }
 
+// First letter for the avatar circle. Written out rather than chained with ?? because an EMPTY
+// first name is not null — ?? keeps it, and ""[0] is undefined, which crashes the whole page when
+// .toUpperCase() is called on it.
+function initial(...candidates: (string | null | undefined)[]): string {
+  for (const c of candidates) {
+    const t = c?.trim()
+    if (t) return t[0].toUpperCase()
+  }
+  return "?"
+}
+
 export default async function AdminReferralsPage() {
   let allReferrals: {
     id: string
@@ -113,8 +124,8 @@ export default async function AdminReferralsPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
         {[
           { icon: Users,     label: "Total Referrals", value: String(totals?.total ?? 0),           sub: `${totals?.active ?? 0} active` },
-          { icon: Clock,     label: "Pending",          value: String(totals?.pending ?? 0),         sub: "first booking not yet made" },
-          { icon: TrendingUp,label: "Total Rewards",     value: fmt(totalCommissionCents),            sub: "cash + discount, all admin-set rates" },
+          { icon: Clock,     label: "Pending",          value: String(totals?.pending ?? 0),         sub: "reward threshold not reached yet" },
+          { icon: TrendingUp,label: "Total Rewards",     value: fmt(totalCommissionCents),            sub: "cash + discount, paid once per referral" },
           { icon: Wallet,    label: "Credits Held",     value: fmt(totalCreditCents),               sub: "across all users" },
         ].map(({ icon: Icon, label, value, sub }) => (
           <div key={label} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
@@ -187,7 +198,7 @@ export default async function AdminReferralsPage() {
                       <div className="flex items-center gap-2.5">
                         <div className="w-7 h-7 rounded-full bg-[#D1F0E0] flex items-center justify-center flex-shrink-0">
                           <span className="text-[10px] font-bold text-[#2D7A5F]">
-                            {(r.referrerFirst ?? r.referrerEmail ?? "?")[0].toUpperCase()}
+                            {initial(r.referrerFirst, r.referrerEmail)}
                           </span>
                         </div>
                         <div>
