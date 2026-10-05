@@ -1495,7 +1495,9 @@
     "reasonPlaceholder": "Porque estás a cancelar?",
     "confirmCancel": "Confirmar cancelamento",
     "dismiss": "Afinal não",
-    "genericError": "Algo correu mal. Tenta novamente."
+    "genericError": "Algo correu mal. Tenta novamente.",
+    "rescheduleInsteadTitle": "Prefere mudar a data ou a hora?",
+    "rescheduleInsteadBody": "Sugerir um novo horário não lhe custa nada e evita qualquer taxa de cancelamento tardio. O seu cliente tem de aceitar para que mude — também pode recusar."
   },
   "compBookingProviderCard": {
     "distanceAway": "a {distance} km",

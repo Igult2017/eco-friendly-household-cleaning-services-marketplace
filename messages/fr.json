@@ -1495,7 +1495,9 @@
     "reasonPlaceholder": "Pourquoi annulez-vous ?",
     "confirmCancel": "Confirmer l'annulation",
     "dismiss": "Laisser tomber",
-    "genericError": "Une erreur s'est produite. Veuillez réessayer."
+    "genericError": "Une erreur s'est produite. Veuillez réessayer.",
+    "rescheduleInsteadTitle": "Plutôt déplacer la date ou l'heure ?",
+    "rescheduleInsteadBody": "Proposer un nouvel horaire ne vous coûte rien et évite tous frais d'annulation tardive. Votre client doit l'accepter pour que cela change — il peut aussi refuser."
   },
   "compBookingProviderCard": {
     "distanceAway": "à {distance} km",

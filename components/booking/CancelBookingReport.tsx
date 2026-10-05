@@ -3,7 +3,8 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { Loader2, XCircle } from "lucide-react"
+import { Loader2, XCircle, CalendarClock } from "lucide-react"
+import { ProposeChangeTrigger } from "./ProposeChangeTrigger"
 import { CancellationReasonPicker } from "./CancellationReasonPicker"
 import type { CancellationReasonCategory } from "@/lib/utils/cancellationReasons"
 
@@ -44,8 +45,12 @@ export function CancelBookingReport({ bookingId, onDone }: { bookingId: string; 
 
   if (!open) {
     return (
-      <button type="button" onClick={() => setOpen(true)} className="text-xs text-red-500 hover:text-red-700 underline transition-colors">
-        {t("cancelBooking")}
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 transition-all duration-200"
+      >
+        <XCircle size={13} aria-hidden="true" /> {t("cancelBooking")}
       </button>
     )
   }
@@ -55,6 +60,12 @@ export function CancelBookingReport({ bookingId, onDone }: { bookingId: string; 
         <XCircle size={13} /> {t("cancelBooking")}
       </p>
       <p className="text-xs text-red-700">{t("cancelWarning")}</p>
+
+      <div className="rounded-lg border border-[#2D7A5F]/25 bg-[#F4FAF6] p-3">
+        <p className="text-xs font-semibold text-[#2B3441] mb-0.5">{t("rescheduleInsteadTitle")}</p>
+        <p className="text-[11px] text-[#6B7280] mb-2">{t("rescheduleInsteadBody")}</p>
+        <ProposeChangeTrigger bookingId={bookingId} allowRateChange={false} onDone={onDone} />
+      </div>
       <CancellationReasonPicker value={reasonCategory} onChange={setReasonCategory} disabled={busy} compact />
       <textarea
         value={reason}

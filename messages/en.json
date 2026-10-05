@@ -1495,7 +1495,9 @@
     "reasonPlaceholder": "Why are you cancelling?",
     "confirmCancel": "Confirm cancellation",
     "dismiss": "Never mind",
-    "genericError": "Something went wrong. Please try again."
+    "genericError": "Something went wrong. Please try again.",
+    "rescheduleInsteadTitle": "Move the date or time instead?",
+    "rescheduleInsteadBody": "Suggesting a new time costs you nothing and avoids any late-cancellation fee. Your client has to agree to it before it changes — they can also decline."
   },
   "compBookingProviderCard": {
     "distanceAway": "{distance} km away",

@@ -1495,7 +1495,9 @@
     "reasonPlaceholder": "Dlaczego anulujesz?",
     "confirmCancel": "Potwierdź anulowanie",
     "dismiss": "Anuluj",
-    "genericError": "Coś poszło nie tak. Spróbuj ponownie."
+    "genericError": "Coś poszło nie tak. Spróbuj ponownie.",
+    "rescheduleInsteadTitle": "Może lepiej przenieść termin lub godzinę?",
+    "rescheduleInsteadBody": "Zaproponowanie nowego terminu nic Cię nie kosztuje i pozwala uniknąć opłaty za późne anulowanie. Klient musi się zgodzić, zanim coś się zmieni — może też odmówić."
   },
   "compBookingProviderCard": {
     "distanceAway": "{distance} km stąd",

@@ -1495,7 +1495,9 @@
     "reasonPlaceholder": "Perché stai annullando?",
     "confirmCancel": "Conferma annullamento",
     "dismiss": "Lascia stare",
-    "genericError": "Qualcosa è andato storto. Riprova."
+    "genericError": "Qualcosa è andato storto. Riprova.",
+    "rescheduleInsteadTitle": "Preferisci spostare data o orario?",
+    "rescheduleInsteadBody": "Proporre un nuovo orario non ti costa nulla ed evita ogni penale per annullamento tardivo. Il tuo cliente deve accettarlo perché cambi: può anche rifiutare."
   },
   "compBookingProviderCard": {
     "distanceAway": "a {distance} km",

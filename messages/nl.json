@@ -1495,7 +1495,9 @@
     "reasonPlaceholder": "Waarom annuleer je?",
     "confirmCancel": "Annulering bevestigen",
     "dismiss": "Toch niet",
-    "genericError": "Er is iets misgegaan. Probeer het opnieuw."
+    "genericError": "Er is iets misgegaan. Probeer het opnieuw.",
+    "rescheduleInsteadTitle": "Liever de datum of tijd verzetten?",
+    "rescheduleInsteadBody": "Een nieuwe tijd voorstellen kost u niets en voorkomt annuleringskosten. Uw klant moet ermee akkoord gaan voordat er iets verandert — afwijzen kan ook."
   },
   "compBookingProviderCard": {
     "distanceAway": "{distance} km verderop",

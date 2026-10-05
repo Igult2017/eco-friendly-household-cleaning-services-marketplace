@@ -1495,7 +1495,9 @@
     "reasonPlaceholder": "Warum stornierst du?",
     "confirmCancel": "Stornierung bestätigen",
     "dismiss": "Doch nicht",
-    "genericError": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
+    "genericError": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
+    "rescheduleInsteadTitle": "Lieber Datum oder Uhrzeit verschieben?",
+    "rescheduleInsteadBody": "Einen neuen Termin vorzuschlagen kostet Sie nichts und vermeidet jede Stornogebühr. Ihre Kundin oder Ihr Kunde muss zustimmen, bevor sich etwas ändert — eine Ablehnung ist ebenfalls möglich."
   },
   "compBookingProviderCard": {
     "distanceAway": "{distance} km entfernt",
