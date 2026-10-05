@@ -2,7 +2,7 @@ import { db } from "@/lib/db"
 import { bookings, payments, providers, providerServices, carbonOffsetContributions, promoCodes, promoCodeUsages, bids, referralCredits, jobPosts } from "@/lib/db/schema"
 import type { NewBooking } from "@/lib/db/schema/bookings"
 import { stripe, calculateBookingAmounts } from "@/lib/stripe/client"
-import { getCommissionPct } from "@/lib/platform/settings"
+import { resolveCommissionPct } from "@/lib/platform/commissionTier"
 import { inngest } from "@/lib/inngest/client"
 import { redis } from "@/lib/redis/client"
 import { eq, and, sql, inArray, lt, gt, isNull } from "drizzle-orm"
@@ -142,7 +142,7 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
   // split matches what Stripe was told, even if an admin changed the rate in between.
   const commissionPct = intent.metadata.commission_pct
     ? parseInt(intent.metadata.commission_pct, 10)
-    : await getCommissionPct()
+    : (await resolveCommissionPct({ customerId: userId, providerId })).pct
   const amounts = calculateBookingAmounts(subtotalAfterDiscount, commissionPct)
   // The PaymentIntent amount is the source of truth (the card is already held for it). If the
   // recomputed total drifted (e.g. the provider changed basePrice after the PI was created), abort

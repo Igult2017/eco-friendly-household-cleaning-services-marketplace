@@ -288,7 +288,7 @@
     "providerStep1Title": "Bewerben & verifizieren",
     "providerStep1Desc": "Erstellen Sie ein Anbieterkonto, reichen Sie Ihre Öko-Zertifizierungen ein und schließen Sie die Identitätsprüfung ab. Die Freigabe dauert 1–2 Werktage.",
     "providerStep2Title": "Profil einrichten",
-    "providerStep2Desc": "Fügen Sie Ihre Leistungen, Preise, Arbeitszeiten und Ihren Einsatzradius hinzu. Verbinden Sie Ihr Stripe-Konto, um für jeden Auftrag sofort bezahlt zu werden.",
+    "providerStep2Desc": "Fügen Sie Ihre Leistungen, Preise, Arbeitszeiten und Ihren Einsatzradius hinzu. Hinterlegen Sie Ihre Bankdaten und Sie werden für jeden Auftrag sofort bezahlt.",
     "providerStep3Title": "Verdienen beginnen",
     "providerStep3Desc": "Stöbern Sie in Aufträgen, geben Sie Angebote ab oder erhalten Sie Direktbuchungen. Sofortige Auszahlung, sobald ein Kunde Ihren abgeschlossenen Auftrag bestätigt. DORIXÉ behält nur eine kleine Provision pro abgeschlossener Buchung – für Wartung der Plattform und Steuern – der Rest gehört Ihnen.",
     "providerCta": "Anbieter werden →",
@@ -311,7 +311,7 @@
     "perkScheduleTitle": "Arbeite, wann du willst",
     "perkScheduleBody": "Bestimme deine Verfügbarkeit und dein Einsatzgebiet und nimm nur die Buchungen an, die du möchtest.",
     "perkPayoutTitle": "Wöchentliche Auszahlungen",
-    "perkPayoutBody": "Du wirst sofort per Stripe bezahlt, sobald ein Auftrag bestätigt wird. Dein Guthaben wird anschließend wöchentlich auf dein Bankkonto überwiesen.",
+    "perkPayoutBody": "Sie werden bezahlt, sobald ein Auftrag freigegeben ist, und das Geld wird wöchentlich auf Ihr Bankkonto überwiesen.",
     "perkReputationTitle": "Baue deinen Ruf auf",
     "perkReputationBody": "Jede abgeschlossene Buchung fügt deinem öffentlichen Profil eine verifizierte Bewertung hinzu.",
     "perkEcoTitle": "Werde Teil einer Öko-Community",
@@ -399,7 +399,7 @@
     "customerFeature7": "Stornoschutz (gestaffelte Rückerstattung)",
     "customerFeature8": "Benachrichtigungen in Echtzeit",
     "providerFeature1": "Kostenloses Profil und Inserat",
-    "providerFeature2": "Wöchentliche automatische Auszahlungen über Stripe",
+    "providerFeature2": "Wöchentliche automatische Auszahlungen auf Ihr Bankkonto",
     "providerFeature3": "Auftragsbenachrichtigungen in deinem Einsatzgebiet",
     "providerFeature4": "Auf ausgeschriebene Aufträge bieten",
     "providerFeature5": "Verdienst-Dashboard",
@@ -443,7 +443,7 @@
     "faqCancelQ": "Was passiert, wenn ich storniere?",
     "faqCancelA": "Stornierst du mehr als {tier1} Std. vor dem Termin, bekommst du den vollen Betrag zurück. Zwischen {tier2} und {tier1} Std. fallen {lowFee} % Gebühr an, zwischen {tier3} und {tier2} Std. {mediumFee} %, und unter {tier3} Std. {lateFee} % zuzüglich einer kleinen Fahrtkostenpauschale für die Reinigungskraft. Storniert die Reinigungskraft, erhältst du immer den vollen Betrag zurück.",
     "faqPayoutQ": "Wie werden Reinigungskräfte bezahlt?",
-    "faqPayoutA": "Du wirst sofort bezahlt — sobald ein Kunde deinen abgeschlossenen Auftrag bestätigt, wird dein Anteil sofort deinem Stripe-Konto gutgeschrieben. Stripe überweist dein Guthaben anschließend automatisch wöchentlich auf dein Bankkonto.",
+    "faqPayoutA": "Sie werden sofort bezahlt — sobald ein Kunde Ihren erledigten Auftrag freigibt, wird Ihr Anteil Ihrem Guthaben gutgeschrieben. Es wird dann wöchentlich automatisch auf Ihr Bankkonto überwiesen.",
     "faqMinimumQ": "Gibt es einen Mindestbuchungswert?",
     "faqMinimumA": "Nein. Reinigungskräfte legen ihre Preise selbst fest, und die kleine Plattform-Provision skaliert mit der Buchung – es gibt keine Untergrenze.",
     "ctaHeading": "Bereit loszulegen?",
@@ -787,7 +787,9 @@
     "errorReasonRequired": "Bitte gib einen Grund an (mindestens 10 Zeichen) — dieser Termin steht kurz bevor.",
     "keepBooking": "Buchung behalten",
     "cancelling": "Wird storniert…",
-    "confirmCancellation": "Stornierung bestätigen"
+    "confirmCancellation": "Stornierung bestätigen",
+    "rescheduleInsteadTitle": "Lieber Datum oder Uhrzeit ändern?",
+    "rescheduleInsteadBody": "Den Termin zu verschieben ist kostenlos und löst nie eine Stornogebühr aus. Ihre Reinigungskraft muss der neuen Zeit nur zustimmen."
   },
   "customerBookingsIdDisputePage": {
     "detailTitle": "Reklamation",
@@ -1707,44 +1709,43 @@
   },
   "compOnboardingProviderIdentityStep": {
     "title": "Identitätsprüfung",
-    "description": "DORIXÉ verlangt von allen Anbietern, ihre Identität über Stripe zu bestätigen. Das gewährleistet die Sicherheit der Kundschaft und ermöglicht Auszahlungen auf Ihr Bankkonto.",
+    "description": "Jede Reinigungskraft bei DORIXÉ bestätigt einmalig ihre Identität. Das schützt die Kundinnen und Kunden und ermöglicht uns, Geld auf Ihr Bankkonto zu überweisen.",
     "whatYouNeed": "Das brauchen Sie:",
     "needId": "• Einen amtlichen Ausweis (Reisepass, Personalausweis oder Führerschein)",
     "needSelfie": "• Ein Selfie / Foto, das während der Prüfung aufgenommen wird",
-    "needProcess": "• Der Vorgang dauert 2–3 Minuten und wird sicher von Stripe abgewickelt",
-    "redirecting": "Weiterleitung zu Stripe...",
+    "needProcess": "• Dauert 2–3 Minuten und wird sicher von unserem Zahlungsdienstleister abgewickelt",
+    "redirecting": "Sichere Verifizierung wird geöffnet…",
     "startButton": "Identitätsprüfung starten",
     "skipButton": "Vorerst überspringen — ich mache das später",
     "footerNote": "Sie können ohne Bestätigung fortfahren, werden aber erst freigegeben, wenn die Identitätsprüfung abgeschlossen ist.",
     "errorStartVerification": "Die Identitätsprüfung konnte nicht gestartet werden. Bitte versuchen Sie es erneut."
   },
   "compOnboardingProviderPayoutStep": {
-    "successTitle": "Stripe-Konto verbunden!",
+    "successTitle": "Bankdaten gespeichert!",
     "successDescription": "Dein Auszahlungskonto ist eingerichtet. Du wirst sofort bezahlt, sobald ein Kunde deinen abgeschlossenen Auftrag bestätigt.",
     "goToDashboard": "Zu meinem Dashboard →",
     "title": "Auszahlungen einrichten",
-    "description": "Verbinde dein Bankkonto über Stripe. Du wirst sofort bezahlt, sobald ein Kunde deinen abgeschlossenen Auftrag bestätigt — DORIXÉ behält eine kleine Provision pro Buchung für Wartung der Plattform und Steuern; der Rest wird direkt an dich ausgezahlt.",
+    "description": "Geben Sie das Bankkonto an, auf das Sie Ihr Geld erhalten möchten. Sie werden bezahlt, sobald ein Kunde Ihren erledigten Auftrag freigibt — DORIXÉ behält eine kleine Provision pro Buchung für Wartung und Steuern; der Rest geht direkt an Sie.",
     "benefitInstantPayout": "Sofortige Auszahlung, sobald ein Kunde deinen Auftrag bestätigt",
-    "benefitDirectTransfer": "Direkte Banküberweisung über Stripe",
+    "benefitDirectTransfer": "Direkt auf Ihr eigenes Bankkonto",
     "benefitTransparency": "Volle Transparenz deiner Einnahmen im Dashboard",
     "benefitNoFees": "0 € Auszahlungsgebühren bei Standardüberweisungen",
-    "connectError": "Stripe Connect konnte nicht gestartet werden. Bitte versuche es erneut.",
-    "connecting": "Weiterleitung zu Stripe …",
-    "connectButton": "Stripe-Konto verbinden",
+    "connectError": "Das sichere Auszahlungsformular konnte nicht geöffnet werden. Bitte versuchen Sie es erneut.",
+    "connecting": "Sicheres Formular wird geöffnet…",
+    "connectButton": "Bankdaten hinzufügen",
     "skip": "Vorerst überspringen",
-    "footnote": "Du kannst Stripe später über dein Dashboard verbinden. Für Auszahlungen ist ein verbundenes Konto erforderlich.",
-    "loading": "Stripe-Onboarding wird geladen...",
-    "kycDisclaimer": "Sie werden gebeten, Ihre Identität über Stripe zu bestätigen. Dies ist eine gesetzliche Anforderung (KYC) — Sie benötigen dafür kein bestehendes Stripe-Konto; es wird für Sie erstellt.",
-    "kycStepMessage": "Stripe überprüft jetzt Ihre Identität. Dieser Schritt ist gesetzlich vorgeschrieben (KYC) — Sie benötigen kein bestehendes Stripe-Konto, um fortzufahren."
+    "footnote": "Sie können das später im Dashboard nachholen, erhalten bis dahin aber keine Auszahlungen.",
+    "loading": "Sicheres Auszahlungsformular wird geladen…",
+    "kycDisclaimer": "Sie brauchen kein Stripe-Konto und werden auch nicht aufgefordert, eines anzulegen. Unser Zahlungsdienstleister Stripe stellt dieses Formular bereit und bittet Sie, Ihre Identität zu bestätigen — gesetzlich vorgeschrieben für alle, die Zahlungen empfangen (KYC).",
+    "kycStepMessage": "Ihre Identität wird gerade geprüft. Das ist gesetzlich vorgeschrieben für alle, die Zahlungen empfangen (KYC) — es gibt kein Konto, für das Sie sich anmelden müssten."
   },
   "compOnboardingClientPaymentStep": {
-    "title": "Zahlungsmethode hinzufügen",
-    "description": "Speichere jetzt eine Karte, damit deine erste Buchung schneller geht. Völlig optional — du kannst später beim Bezahlen eine hinzufügen.",
+    "title": "Zahlungsdaten hinzufügen",
+    "description": "Hinterlegen Sie die Karte, mit der Sie bezahlen möchten. Wir benötigen sie, bevor Sie buchen können — es wird jetzt nichts abgebucht, und auch später erst, wenn Sie eine Buchung bestätigen.",
     "benefitFasterBooking": "Kartendaten beim Bezahlen nicht erneut eingeben",
     "benefitNoReentry": "Eine Karte für alle zukünftigen Buchungen",
     "benefitSecure": "Sicher gespeichert bei Stripe, nie auf unseren Servern",
-    "skip": "Vorerst überspringen",
-    "footnote": "Du kannst später eine Karte hinzufügen — bei deiner ersten Buchung oder über dein Dashboard."
+    "footnote": "Heute wird nichts abgebucht. Bezahlt wird erst, wenn Sie eine Reinigung bestätigen."
   },
   "compProviderProviderDashboardBids": {
     "emptyTitle": "Noch keine Angebote",
@@ -1880,7 +1881,6 @@
   },
   "compReferralReferralCard": {
     "title": "Empfehlungsprogramm",
-    "subtitle": "Verdiene {pct}% an jeder Buchung deiner Empfehlungen",
     "copy": "Kopieren",
     "copied": "Kopiert!",
     "loadError": "Empfehlungslink konnte nicht geladen werden.",
@@ -1895,18 +1895,15 @@
     "withdrawSuccess": "{amount} ist unterwegs zu deinem Bankkonto.",
     "withdrawFailed": "Auszahlung fehlgeschlagen. Bitte versuche es erneut.",
     "howItWorks": "So funktioniert's",
-    "step1": "Teile deinen Link — wer sich darüber registriert, wird als deine Empfehlung markiert",
-    "step2": "Sobald die erste Buchung abgeschlossen ist, wird deine Empfehlung aktiv",
-    "step3": "Du erhältst {pct}% jeder ihrer Buchungen — gutgeschrieben am Ende jedes Monats",
-    "step4": "Nutze dein Guthaben als Rabatt bei deiner nächsten Buchung",
-    "subtitleCleaner": "Verdiene Provision – automatisch ausgezahlt",
-    "subtitleClient": "Verdiene Rabatte, die du nutzen oder auszahlen kannst",
-    "stepCleanerPeer": "Empfiehl eine Reinigungskraft — erhalte {peerPct}% Provision für ihre ersten {cap} abgeschlossenen Aufträge",
-    "stepCleanerClient": "Empfiehl eine:n Kund:in — erhalte {pct}% Provision auf jede ihrer Buchungen",
-    "stepCleanerPayout": "Provisionen werden deinem Guthaben gutgeschrieben und monatlich automatisch per Stripe ausgezahlt",
-    "stepClientEarn": "Für jede abgeschlossene Bestellung einer eingeladenen Person erhältst du {discountPct}% Rabatt",
-    "stepClientCredit": "Dein Rabatt wird automatisch deinem Kontoguthaben gutgeschrieben",
-    "stepClientUse": "Nutze ihn bei deiner nächsten Buchung oder lass ihn dir jederzeit auszahlen"
+    "step1": "Teilen Sie Ihren Link — wer sich darüber anmeldet, wird Ihnen zugeordnet",
+    "subtitleCleaner": "{reward} in bar für jede Person, die Sie mitbringen",
+    "subtitleClient": "{reward} zum Einlösen oder Auszahlen für jede Person, die Sie mitbringen",
+    "stepCleanerPeer": "Reinigungskraft einladen — Sie erhalten {reward}, sobald sie {jobs} Aufträge abgeschlossen hat",
+    "stepCleanerClient": "Kundin oder Kunden einladen — Sie erhalten {reward}, sobald {jobs} Buchung abgeschlossen ist",
+    "stepCleanerPayout": "Provisionen werden Ihrem Guthaben gutgeschrieben und monatlich automatisch auf Ihr Bankkonto ausgezahlt",
+    "stepClientEarn": "Jemanden einladen — Sie erhalten {reward}, sobald {jobs} Buchung abgeschlossen ist",
+    "stepClientCredit": "Die Prämie wird Ihrem Guthaben automatisch gutgeschrieben",
+    "stepClientUse": "Beim nächsten Buchen einlösen oder jederzeit auf Ihr Bankkonto auszahlen lassen"
   },
   "compUiDialog": {
     "close": "Schließen"
@@ -2281,5 +2278,13 @@
     "toastTitle": "🚨 Neuer dringender Auftrag in deiner Nähe!",
     "toastBody": "In {city} — sei die/der Erste, die/der zugreift",
     "toastAction": "Ansehen"
+  },
+  "compCancellationReasonPicker": {
+    "legend": "Warum stornieren Sie?",
+    "option_illness": "Krankheit",
+    "option_transport": "Streik / Verkehr",
+    "option_other": "Anderer Grund",
+    "hintWaived": "Es fällt keine Stornogebühr an — solche Umstände lassen sich nicht planen.",
+    "hintFee": "Je nach Nähe zum Termin kann eine Stornogebühr anfallen."
   }
 }

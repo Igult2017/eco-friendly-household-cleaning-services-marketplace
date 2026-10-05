@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/button"
 import { Loader2, AlertTriangle, CheckCircle2 } from "lucide-react"
 import { formatCurrency } from "@/lib/utils/formatCurrency"
 import { formatDate } from "@/lib/utils/formatDate"
+import { CancellationReasonPicker } from "@/components/booking/CancellationReasonPicker"
+import { ProposeChangeTrigger } from "@/components/booking/ProposeChangeTrigger"
+import { isWaivedReason, type CancellationReasonCategory } from "@/lib/utils/cancellationReasons"
 
 interface BookingInfo {
   id: string
@@ -32,7 +35,10 @@ interface CancellationConfig {
 // Mirrors the same tiers /api/bookings/[id]/cancel actually applies (lib/utils/refunds.ts) — fed by
 // the live, admin-configurable numbers fetched below, not a guessed breakpoint, so this preview can
 // never say something different from what actually happens when Confirm is pressed.
-function calcRefundPercent(scheduledAt: string, cfg: CancellationConfig): number {
+function calcRefundPercent(scheduledAt: string, cfg: CancellationConfig, reasonCategory?: string): number {
+  // Illness / transport waive the fee at any notice — the same rule the server applies, so this
+  // preview can never promise something different from what Confirm actually does.
+  if (isWaivedReason(reasonCategory)) return 100
   const hours = (new Date(scheduledAt).getTime() - Date.now()) / 3_600_000
   if (hours > cfg.tier1Hours) return 100
   if (hours > cfg.tier2Hours) return 100 - cfg.feeLowPct
@@ -40,7 +46,8 @@ function calcRefundPercent(scheduledAt: string, cfg: CancellationConfig): number
   return 100 - cfg.feeLatePct
 }
 
-const DEFAULT_CONFIG: CancellationConfig = { tier1Hours: 24, tier2Hours: 6, tier3Hours: 2, feeLowPct: 10, feeMediumPct: 30, feeLatePct: 100 }
+// Matches the seeded defaults: free more than 48h ahead, half price inside 48h, full price inside 24h.
+const DEFAULT_CONFIG: CancellationConfig = { tier1Hours: 48, tier2Hours: 24, tier3Hours: 2, feeLowPct: 50, feeMediumPct: 100, feeLatePct: 100 }
 
 export default function CancelBookingPage() {
   const t = useTranslations("customerBookingsIdCancelPage")
@@ -50,6 +57,7 @@ export default function CancelBookingPage() {
   const [loading, setLoading] = useState(true)
   const [cancelling, setCancelling] = useState(false)
   const [reason, setReason] = useState("")
+  const [reasonCategory, setReasonCategory] = useState<CancellationReasonCategory>("other")
   const [done, setDone] = useState<RefundInfo | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [cfg, setCfg] = useState<CancellationConfig>(DEFAULT_CONFIG)
@@ -69,7 +77,7 @@ export default function CancelBookingPage() {
   async function handleCancel() {
     // Same rule the server enforces: outside the free-cancel window, a reason is required. Checked
     // here too so the client doesn't have to make a round-trip just to find that out.
-    if (booking && calcRefundPercent(booking.scheduledAt, cfg) < 100 && reason.trim().length < 10) {
+    if (booking && calcRefundPercent(booking.scheduledAt, cfg, reasonCategory) < 100 && reason.trim().length < 10) {
       setError(t("errorReasonRequired"))
       return
     }
@@ -79,7 +87,7 @@ export default function CancelBookingPage() {
       const res = await fetch(`/api/bookings/${id}/cancel`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reason: reason || null }),
+        body: JSON.stringify({ reason: reason || null, reasonCategory }),
       })
       const data = await res.json()
       if (!res.ok) { setError(data.error ?? t("errorCancellationFailed")); return }
@@ -115,7 +123,7 @@ export default function CancelBookingPage() {
     </div>
   )
 
-  const refundPct = calcRefundPercent(booking.scheduledAt, cfg)
+  const refundPct = calcRefundPercent(booking.scheduledAt, cfg, reasonCategory)
   const refundAmt = Math.round(booking.totalAmount * refundPct / 100)
   // Full / partial / none — the exact percent varies by admin config, but the messaging only needs
   // to know which of the three bands it falls in.
@@ -144,6 +152,14 @@ export default function CancelBookingPage() {
           <p>{tier === "none" && t("refundNone", { hours: cfg.tier3Hours })}</p>
           {refundAmt > 0 && <p className="mt-2 font-medium">{t("youWillReceive", { amount: formatCurrency(refundAmt) })}</p>}
         </div>
+
+        <div className="rounded-2xl border border-[#2D7A5F]/25 bg-[#F4FAF6] p-4 mb-6">
+          <p className="text-sm font-semibold text-[#2B3441] mb-1">{t("rescheduleInsteadTitle")}</p>
+          <p className="text-xs text-[#6B7280] mb-3">{t("rescheduleInsteadBody")}</p>
+          <ProposeChangeTrigger bookingId={id} allowRateChange={false} fullWidth />
+        </div>
+
+        <CancellationReasonPicker value={reasonCategory} onChange={setReasonCategory} disabled={cancelling} />
 
         <textarea
           value={reason}

@@ -7,5 +7,5 @@ export function OnboardingPaymentClient() {
   const router = useRouter()
   const goToDashboard = () => router.push("/dashboard")
 
-  return <ClientPaymentStep onSaved={goToDashboard} onSkip={goToDashboard} />
+  return <ClientPaymentStep onSaved={goToDashboard} />
 }

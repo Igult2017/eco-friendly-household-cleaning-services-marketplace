@@ -160,8 +160,7 @@ CREATE TABLE IF NOT EXISTS platform_settings (
   updated_at TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 INSERT INTO platform_settings (key, value) VALUES
-  ('commission_pct','15'),
-  ('referral_pct','5'),
+  ('commission_pct','45'),
   ('payout_schedule','weekly'),
   ('max_service_radius_km','100')
 ON CONFLICT (key) DO NOTHING;
@@ -380,18 +379,56 @@ CREATE TABLE IF NOT EXISTS booking_cancellation_events (
 );
 CREATE INDEX IF NOT EXISTS booking_cancellation_events_booking_idx ON booking_cancellation_events(booking_id);
 CREATE INDEX IF NOT EXISTS booking_cancellation_events_created_idx ON booking_cancellation_events(created_at);
+-- Which category of reason was claimed. "illness"/"transport" waive the fee at any notice, so a
+-- dispute has to be able to see what was claimed, not just the free-text sentence.
+ALTER TABLE booking_cancellation_events ADD COLUMN IF NOT EXISTS reason_category VARCHAR(24);
 
 -- Cancellation & no-show admin-configurable defaults (percentages/windows/grace period/travel comp).
 INSERT INTO platform_settings (key, value) VALUES
-  ('cancel_tier1_hours','24'),
-  ('cancel_tier2_hours','6'),
+  ('cancel_tier1_hours','48'),
+  ('cancel_tier2_hours','24'),
   ('cancel_tier3_hours','2'),
-  ('cancel_fee_low_pct','10'),
-  ('cancel_fee_medium_pct','30'),
+  ('cancel_fee_low_pct','50'),
+  ('cancel_fee_medium_pct','100'),
   ('cancel_fee_late_pct','100'),
   ('cancel_travel_comp_cents','500'),
   ('cancel_noshow_grace_minutes','15')
 ON CONFLICT (key) DO NOTHING;
+
+-- One-time move to the agreed ladder: free more than 48h ahead · half price inside 48h · full price
+-- inside 24h. The INSERT above only seeds a key that does not exist yet, so installs that already
+-- had the old 24h/6h/10%/30% numbers would never pick these up.
+--
+-- Guarded by a marker row so this runs exactly once: these are admin-editable settings, and a deploy
+-- must not silently undo a number the admin deliberately changed afterwards.
+-- Tiered commission: a regular client earns their cleaner a bigger share than a one-off does.
+--   one-off, and a regular's first 3 jobs  -> commission_pct           (platform keeps 45%)
+--   a regular's 4th job onwards            -> commission_regular_pct   (platform keeps 33%)
+-- Which bookings qualify as "regular" is decided in lib/platform/commissionTier.ts.
+INSERT INTO platform_settings (key, value) VALUES
+  ('commission_regular_pct','33'),
+  ('commission_regular_after_jobs','3')
+ON CONFLICT (key) DO NOTHING;
+
+-- One-time move of the standard rate to 45%. Guarded by a marker row for the same reason as the
+-- cancellation ladder below: commission_pct is admin-editable and a deploy must never silently undo
+-- a number the admin deliberately set afterwards.
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM platform_settings WHERE key = 'commission_tiers_applied') THEN
+    UPDATE platform_settings SET value = '45', updated_at = NOW() WHERE key = 'commission_pct';
+    INSERT INTO platform_settings (key, value) VALUES ('commission_tiers_applied','1');
+  END IF;
+END $$;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM platform_settings WHERE key = 'cancel_ladder_48h_applied') THEN
+    UPDATE platform_settings SET value = '48',  updated_at = NOW() WHERE key = 'cancel_tier1_hours';
+    UPDATE platform_settings SET value = '24',  updated_at = NOW() WHERE key = 'cancel_tier2_hours';
+    UPDATE platform_settings SET value = '50',  updated_at = NOW() WHERE key = 'cancel_fee_low_pct';
+    UPDATE platform_settings SET value = '100', updated_at = NOW() WHERE key = 'cancel_fee_medium_pct';
+    INSERT INTO platform_settings (key, value) VALUES ('cancel_ladder_48h_applied','1');
+  END IF;
+END $$;
 
 -- Referral/discount programme expansion: cleaner→cleaner referrals cap at the invited cleaner's
 -- first 3 completed jobs; client referrals earn a spendable/withdrawable discount balance instead
@@ -413,15 +450,23 @@ CREATE TABLE IF NOT EXISTS referral_payouts (
 CREATE INDEX IF NOT EXISTS referral_payouts_user_idx ON referral_payouts(user_id);
 
 INSERT INTO platform_settings (key, value) VALUES
-  ('cleaner_peer_referral_pct','10'),
   ('client_referral_discount_pct','5'),
   ('recurring_discount_pct','10')
 ON CONFLICT (key) DO NOTHING;
 
--- Minimum hourly wage floor (cents) — applies to a client's job-post rate AND a cleaner's own
--- per-hour service rate. 1500 = €15.00/hr.
+-- Referral reward: ONE flat amount, paid ONCE, when the invited person reaches the job threshold.
+-- (Was a percentage of every booking, three different rates.) The affiliate programme is separate
+-- and still percentage-based -- see client_referral_discount_pct above.
 INSERT INTO platform_settings (key, value) VALUES
-  ('min_hourly_rate_cents','1500')
+  ('referral_reward_cents','2500'),
+  ('referral_cleaner_jobs_required','2'),
+  ('referral_client_jobs_required','1')
+ON CONFLICT (key) DO NOTHING;
+
+-- Minimum hourly wage floor (cents) — applies to a client's job-post rate AND a cleaner's own
+-- per-hour service rate. 1800 = €18.00/hr.
+INSERT INTO platform_settings (key, value) VALUES
+  ('min_hourly_rate_cents','1800')
 ON CONFLICT (key) DO NOTHING;
 
 -- A completed booking must be able to credit TWO independent referrals (one for the referred

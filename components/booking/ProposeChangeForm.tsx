@@ -21,9 +21,9 @@ export function ProposeChangeForm({ bookingId, onDone, onCancel, allowRateChange
   const [time, setTime] = useState("")
   const [hourly, setHourly] = useState("")
   const [message, setMessage] = useState("")
-  // Admin-configurable wage floor (lib/platform/settings.ts getMinHourlyRateCents) — 1500 (€15) is
+  // Admin-configurable wage floor (lib/platform/settings.ts getMinHourlyRateCents) — 1800 (€18) is
   // just the initial guess shown before the live value loads; the server is the real source of truth.
-  const [minHourlyRateCents, setMinHourlyRateCents] = useState(1500)
+  const [minHourlyRateCents, setMinHourlyRateCents] = useState(1800)
 
   useEffect(() => {
     if (!allowRateChange) return

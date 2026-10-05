@@ -6,10 +6,9 @@ import { SaveCardPrompt } from "@/components/customer/SaveCardPrompt"
 
 interface Props {
   onSaved: () => void
-  onSkip: () => void
 }
 
-export function ClientPaymentStep({ onSaved, onSkip }: Props) {
+export function ClientPaymentStep({ onSaved }: Props) {
   const t = useTranslations("compOnboardingClientPaymentStep")
 
   return (
@@ -32,7 +31,7 @@ export function ClientPaymentStep({ onSaved, onSkip }: Props) {
       </div>
 
       <div className="flex justify-center">
-        <SaveCardPrompt onSkip={onSkip} skipLabel={t("skip")} onSaved={onSaved} />
+        <SaveCardPrompt hideSkip onSaved={onSaved} />
       </div>
 
       <p className="text-xs text-[#6B7280] mt-4 text-center">{t("footnote")}</p>

@@ -7,6 +7,12 @@ import { CAMPAIGN_TYPE_LABELS, type CampaignType } from "@/lib/marketing/types"
 
 export const dynamic = "force-dynamic"
 
+type EmailStats = {
+  sent: number; failed: number; welcomes: number; opened: number
+  clicked: number; bounced: number; complained: number; aiFailed: number
+}
+type Campaign = typeof emailCampaigns.$inferSelect
+
 const STATUS_COLORS: Record<string, string> = {
   draft: "bg-gray-100 text-gray-600",
   scheduled: "bg-blue-100 text-blue-700",
@@ -16,7 +22,14 @@ const STATUS_COLORS: Record<string, string> = {
 }
 
 export default async function AdminMarketingPage() {
-  const [stats] = await db
+  // Both queries are wrapped: this page had NO error handling at all, so a single failing column or
+  // a missing table took the whole page down with a crash screen instead of showing what it could.
+  // Same degrade-to-a-banner pattern the referrals page already uses.
+  let stats: EmailStats | null = null
+  let campaigns: Campaign[] = []
+  let errorMsg: string | null = null
+  try {
+    ;[stats] = await db
     .select({
       // "Left our hands" — every status past queued, since a delivered/opened email was also sent.
       // Counting only status='sent' would make the number DROP as feedback arrives, which reads as
@@ -32,7 +45,11 @@ export default async function AdminMarketingPage() {
       aiFailed: sql<number>`cast(count(*) filter (where ${emailSends.aiFailed}) as int)`,
     })
     .from(emailSends)
-  const campaigns = await db.select().from(emailCampaigns).orderBy(desc(emailCampaigns.createdAt)).limit(50)
+    campaigns = await db.select().from(emailCampaigns).orderBy(desc(emailCampaigns.createdAt)).limit(50)
+  } catch (err) {
+    console.error("[AdminMarketingPage]", err)
+    errorMsg = "Failed to load email data. The email tables may still be migrating — try refreshing in a moment."
+  }
 
   const sent = stats?.sent ?? 0
   const pct = (n: number) => (sent > 0 ? `${Math.round((n / sent) * 100)}%` : "—")
@@ -55,6 +72,12 @@ export default async function AdminMarketingPage() {
           <p className="text-sm text-[#6B7280]">AI-written lifecycle &amp; campaign emails. Welcome fires automatically on signup.</p>
         </div>
       </div>
+
+      {errorMsg && (
+        <div className="rounded-xl bg-red-50 border border-red-200 px-5 py-4 text-sm text-red-700">
+          {errorMsg}
+        </div>
+      )}
 
       {(stats?.aiFailed ?? 0) > 0 && (
         <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4">
@@ -90,7 +113,9 @@ export default async function AdminMarketingPage() {
           <h2 className="font-semibold text-[#2B3441]">Campaigns</h2>
         </div>
         {campaigns.length === 0 ? (
-          <p className="px-6 py-10 text-center text-sm text-[#9CA3AF]">No campaigns yet. Compose one above.</p>
+          <p className="px-6 py-10 text-center text-sm text-[#9CA3AF]">
+            {errorMsg ? "Campaigns could not be loaded." : "No campaigns yet. Compose one above."}
+          </p>
         ) : (
           <div className="overflow-x-auto -mx-px"><table className="w-full text-sm">
             <thead className="bg-gray-50 text-[#6B7280] text-xs uppercase tracking-wide">

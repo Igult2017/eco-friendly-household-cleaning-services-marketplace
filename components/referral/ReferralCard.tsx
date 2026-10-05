@@ -9,10 +9,9 @@ interface ReferralStats {
   code: string | null
   referralUrl: string | null
   isCleanerRole?: boolean
-  referralPct?: number
-  cleanerPeerReferralPct?: number | null
-  cleanerPeerReferralCap?: number | null
-  clientReferralDiscountPct?: number | null
+  rewardCents?: number
+  cleanerJobsRequired?: number
+  clientJobsRequired?: number
   stats: { total: number; active: number; pending: number; totalEarnedCents: number }
   credit: { balanceCents: number; lifetimeEarnedCents: number }
   payoutAccountStatus: string | null
@@ -63,10 +62,11 @@ export function ReferralCard() {
   }
 
   const isCleaner = data?.isCleanerRole ?? false
-  const pct = data?.referralPct ?? 5
-  const peerPct = data?.cleanerPeerReferralPct ?? 10
-  const peerCap = data?.cleanerPeerReferralCap ?? 3
-  const discountPct = data?.clientReferralDiscountPct ?? 5
+  // Fallbacks match the seeded defaults in scripts/ensure-referrals.mjs, so the card never shows a
+  // reward figure that differs from the one actually paid if the fetch is still in flight.
+  const reward = fmt(data?.rewardCents ?? 2500)
+  const cleanerJobs = data?.cleanerJobsRequired ?? 2
+  const clientJobs = data?.clientJobsRequired ?? 1
 
   async function copyLink() {
     if (!data?.referralUrl) return
@@ -156,8 +156,8 @@ export function ReferralCard() {
         <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280] mb-3">{t("howItWorks")}</p>
         <ol className="space-y-2">
           {(isCleaner
-            ? [t("step1"), t("stepCleanerPeer", { peerPct, cap: peerCap }), t("stepCleanerClient", { pct }), t("stepCleanerPayout")]
-            : [t("step1"), t("stepClientEarn", { discountPct }), t("stepClientCredit"), t("stepClientUse")]
+            ? [t("step1"), t("stepCleanerPeer", { reward, jobs: cleanerJobs }), t("stepCleanerClient", { reward, jobs: clientJobs }), t("stepCleanerPayout")]
+            : [t("step1"), t("stepClientEarn", { reward, jobs: clientJobs }), t("stepClientCredit"), t("stepClientUse")]
           ).map((step, i) => (
             <li key={i} className="flex items-start gap-2.5 text-xs text-[#6B7280]">
               <span className="w-4 h-4 rounded-full bg-[#D1F0E0] text-[#2D7A5F] font-bold text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">

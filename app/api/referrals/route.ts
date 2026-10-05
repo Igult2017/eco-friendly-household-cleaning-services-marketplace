@@ -10,8 +10,7 @@ import { customAlphabet } from "nanoid"
 import { logError } from "@/lib/utils/logError"
 import { SITE_URL } from "@/lib/seo/site"
 import { ensureUserRow } from "@/lib/clerk/ensureUser"
-import { getReferralPct, getCleanerPeerReferralPct, getClientReferralDiscountPct } from "@/lib/platform/settings"
-import { CLEANER_PEER_REFERRAL_CAP } from "@/lib/referrals/rewards"
+import { getReferralRewardCents, getReferralJobsRequired } from "@/lib/platform/settings"
 
 // Strict alphanumeric — no `-` or `_` from nanoid's default alphabet.
 // The middleware regex [A-Z0-9]{6,20} must match every generated code.
@@ -85,16 +84,15 @@ export async function GET() {
     return NextResponse.json({
       code: codeRow?.code ?? null,
       referralUrl: codeRow ? `${appUrl}/?ref=${codeRow.code}` : null,
-      // Reward matrix is role-aware (see lib/referrals/rewards.ts): cleaners earn cash commission —
-      // one rate for referring clients, a separate capped rate for referring other cleaners; clients
-      // earn a discount balance at one flat rate regardless of who they refer. Every referral surface
-      // renders THESE admin-configured rates, never a hardcoded number.
+      // One flat reward, paid ONCE per referral when the invited person reaches the job threshold
+      // (see lib/referrals/rewards.ts). How it is PAID still depends on the referrer's own role —
+      // cleaners get cash, everyone else gets spendable/withdrawable credit. Every referral surface
+      // renders THESE admin-configured numbers, never a hardcoded one.
       isCleanerRole,
       rewardType: isCleanerRole ? "commission" : "discount",
-      referralPct: await getReferralPct(),
-      cleanerPeerReferralPct: isCleanerRole ? await getCleanerPeerReferralPct() : null,
-      cleanerPeerReferralCap: isCleanerRole ? CLEANER_PEER_REFERRAL_CAP : null,
-      clientReferralDiscountPct: isCleanerRole ? null : await getClientReferralDiscountPct(),
+      rewardCents: await getReferralRewardCents(),
+      cleanerJobsRequired: await getReferralJobsRequired(true),
+      clientJobsRequired: await getReferralJobsRequired(false),
       stats: {
         total: Number(stats?.total ?? 0),
         active: Number(stats?.active ?? 0),

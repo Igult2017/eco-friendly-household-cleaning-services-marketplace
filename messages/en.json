@@ -288,7 +288,7 @@
     "providerStep1Title": "Apply & verify",
     "providerStep1Desc": "Create a cleaner account, submit your eco certifications, and complete identity verification. Approval takes 1–2 business days.",
     "providerStep2Title": "Set up your profile",
-    "providerStep2Desc": "Add your services, pricing, working hours, and service radius. Connect your Stripe account to get paid instantly for every job.",
+    "providerStep2Desc": "Add your services, pricing, working hours, and service radius. Add your bank details and you're paid instantly for every job.",
     "providerStep3Title": "Start earning",
     "providerStep3Desc": "Browse job posts, submit bids, or receive direct bookings. Get paid instantly the moment a client approves your completed job. DORIXÉ keeps only a small commission from each completed booking — for site maintenance and taxes — and the rest is yours.",
     "providerCta": "Become a cleaner →",
@@ -311,7 +311,7 @@
     "perkScheduleTitle": "Work when you want",
     "perkScheduleBody": "Set your own availability, service area, and take only the bookings you want.",
     "perkPayoutTitle": "Weekly payouts",
-    "perkPayoutBody": "You're paid instantly via Stripe the moment a job is approved, then it's transferred to your bank weekly.",
+    "perkPayoutBody": "You're paid the moment a job is approved, and the money is transferred to your bank every week.",
     "perkReputationTitle": "Build your reputation",
     "perkReputationBody": "Every completed booking adds a verified review to your public profile.",
     "perkEcoTitle": "Join an eco community",
@@ -399,7 +399,7 @@
     "customerFeature7": "Cancellation protection (tiered refund)",
     "customerFeature8": "Real-time notifications",
     "providerFeature1": "Free profile and listing",
-    "providerFeature2": "Weekly automatic payouts via Stripe",
+    "providerFeature2": "Weekly automatic payouts to your bank",
     "providerFeature3": "Job alerts in your service area",
     "providerFeature4": "Bid on posted jobs",
     "providerFeature5": "Earnings dashboard",
@@ -443,7 +443,7 @@
     "faqCancelQ": "What if I cancel?",
     "faqCancelA": "Cancel more than {tier1}h before the job and you get a full refund. Between {tier2}h and {tier1}h a {lowFee}% fee applies, between {tier3}h and {tier2}h it's {mediumFee}%, and under {tier3}h it's {lateFee}% plus a small travel payment to the cleaner. If the cleaner cancels, you always get a full refund.",
     "faqPayoutQ": "How do cleaners get paid?",
-    "faqPayoutA": "You're paid instantly — the moment a client approves your completed job, your share is credited to your Stripe account right away. Stripe then automatically transfers your balance to your bank account weekly.",
+    "faqPayoutA": "You're paid instantly — the moment a client approves your completed job, your share is credited to your balance. It's then transferred to your bank account automatically every week.",
     "faqMinimumQ": "Is there a minimum booking value?",
     "faqMinimumA": "No. Cleaners set their own prices, and the small platform commission scales with the booking — there's no floor.",
     "ctaHeading": "Ready to get started?",
@@ -787,7 +787,9 @@
     "errorReasonRequired": "Please give a reason (at least 10 characters) — this booking is coming up soon.",
     "keepBooking": "Keep Booking",
     "cancelling": "Cancelling…",
-    "confirmCancellation": "Confirm Cancellation"
+    "confirmCancellation": "Confirm Cancellation",
+    "rescheduleInsteadTitle": "Change the date or time instead?",
+    "rescheduleInsteadBody": "Moving the appointment is free and never charges a cancellation fee. Your cleaner just has to agree to the new time."
   },
   "customerBookingsIdDisputePage": {
     "detailTitle": "Dispute",
@@ -1707,44 +1709,43 @@
   },
   "compOnboardingProviderIdentityStep": {
     "title": "Identity verification",
-    "description": "DORIXÉ requires all cleaners to verify their identity via Stripe. This ensures client safety and enables payouts to your bank account.",
+    "description": "Every cleaner on DORIXÉ confirms their identity once. It keeps clients safe and it's what lets us pay money into your bank account.",
     "whatYouNeed": "What you'll need:",
     "needId": "• A government-issued ID (passport, national ID, or driver's licence)",
     "needSelfie": "• A selfie / photo taken during verification",
-    "needProcess": "• The process takes 2–3 minutes and is handled securely by Stripe",
-    "redirecting": "Redirecting to Stripe...",
+    "needProcess": "• It takes 2–3 minutes and is handled securely by our payment provider",
+    "redirecting": "Opening secure verification…",
     "startButton": "Start identity verification",
     "skipButton": "Skip for now — I'll do this later",
     "footerNote": "You can continue without verifying, but you won't be approved until identity verification is complete.",
     "errorStartVerification": "Could not start identity verification. Please try again."
   },
   "compOnboardingProviderPayoutStep": {
-    "successTitle": "Stripe account connected!",
+    "successTitle": "Bank details saved!",
     "successDescription": "Your payout account is set up. You're paid instantly whenever a client approves your completed job.",
     "goToDashboard": "Go to my dashboard →",
     "title": "Set up payouts",
-    "description": "Connect your bank account via Stripe. You're paid instantly the moment a client approves your completed job — DORIXÉ keeps a small commission per booking for site maintenance and taxes; the rest is paid straight to you.",
+    "description": "Add the bank account you'd like to be paid into. You're paid the moment a client approves your completed job — DORIXÉ keeps a small commission per booking for site maintenance and taxes; the rest goes straight to you.",
     "benefitInstantPayout": "Paid instantly when a client approves your job",
-    "benefitDirectTransfer": "Direct bank transfer via Stripe",
+    "benefitDirectTransfer": "Paid straight into your own bank account",
     "benefitTransparency": "Full earnings transparency in your dashboard",
     "benefitNoFees": "€0 payout fees for standard transfers",
-    "connectError": "Could not start Stripe Connect. Please try again.",
-    "connecting": "Redirecting to Stripe...",
-    "connectButton": "Connect Stripe account",
+    "connectError": "We couldn't open the secure payout form. Please try again.",
+    "connecting": "Opening the secure form…",
+    "connectButton": "Add bank details",
     "skip": "Skip for now",
-    "footnote": "You can connect Stripe later from your dashboard. Payouts require a connected account.",
-    "loading": "Loading Stripe onboarding...",
-    "kycDisclaimer": "You'll be asked to verify your identity through Stripe. This is a financial regulation (KYC) requirement — it does not mean you need an existing Stripe account; this creates one for you.",
-    "kycStepMessage": "Stripe is verifying your identity now. This step is required by financial regulations (KYC) — you do not need a pre-existing Stripe account to continue."
+    "footnote": "You can add these later from your dashboard, but you can't be paid until you do.",
+    "loading": "Loading the secure payout form…",
+    "kycDisclaimer": "You don't need a Stripe account and you won't be asked to create one. Our payment provider, Stripe, handles this form and will ask you to confirm your identity — that's a legal requirement for anyone receiving payments (KYC).",
+    "kycStepMessage": "Your identity is being checked now. This is a legal requirement for anyone receiving payments (KYC) — there is no account for you to sign up for."
   },
   "compOnboardingClientPaymentStep": {
-    "title": "Add a payment method",
-    "description": "Save a card now so booking your first cleaning is one step faster. Entirely optional — you can add one later at checkout instead.",
+    "title": "Add your payment details",
+    "description": "Add the card you'll pay with. We need it on file before you can book — nothing is charged now, and nothing is charged until you confirm a booking.",
     "benefitFasterBooking": "Skip re-entering card details at checkout",
     "benefitNoReentry": "One card works for every future booking",
     "benefitSecure": "Stored securely by Stripe, never on our servers",
-    "skip": "Skip for now",
-    "footnote": "You can add a card later — the first time you book, or from your dashboard."
+    "footnote": "No charge is made today. You're only charged when you confirm a cleaning."
   },
   "compProviderProviderDashboardBids": {
     "emptyTitle": "No bids yet",
@@ -1880,7 +1881,6 @@
   },
   "compReferralReferralCard": {
     "title": "Referral Programme",
-    "subtitle": "Earn {pct}% on every booking your referrals make",
     "copy": "Copy",
     "copied": "Copied!",
     "loadError": "Unable to load referral link.",
@@ -1895,18 +1895,15 @@
     "withdrawSuccess": "{amount} is on its way to your bank account.",
     "withdrawFailed": "Withdrawal failed. Please try again.",
     "howItWorks": "How it works",
-    "step1": "Share your link — anyone who signs up via it is tagged as your referral",
-    "step2": "They complete their first booking — your referral becomes active",
-    "step3": "You earn {pct}% of every booking they make — credited to your balance at the end of each month",
-    "step4": "Use your credit balance as a discount on your next booking",
-    "subtitleCleaner": "Earn cash commission, paid automatically",
-    "subtitleClient": "Earn discounts you can spend or withdraw",
-    "stepCleanerPeer": "Invite a cleaner — earn {peerPct}% commission on their first {cap} completed jobs",
-    "stepCleanerClient": "Invite a client — earn {pct}% commission on every booking they make",
-    "stepCleanerPayout": "Commissions are credited to your balance and paid out automatically via Stripe each month",
-    "stepClientEarn": "For every completed order from someone you invite, you earn a {discountPct}% discount",
-    "stepClientCredit": "Your discount is credited to your account balance automatically",
-    "stepClientUse": "Use it at checkout on your next booking, or withdraw it to your bank any time"
+    "step1": "Share your link — anyone who signs up through it is tagged as your referral",
+    "subtitleCleaner": "Earn {reward} cash for every person you bring in",
+    "subtitleClient": "Earn {reward} to spend or withdraw for every person you bring in",
+    "stepCleanerPeer": "Invite a cleaner — you earn {reward} once they've completed {jobs} jobs",
+    "stepCleanerClient": "Invite a client — you earn {reward} once they've completed {jobs} booking",
+    "stepCleanerPayout": "Commissions are credited to your balance and paid into your bank automatically each month",
+    "stepClientEarn": "Invite anyone — you earn {reward} once they've completed {jobs} booking",
+    "stepClientCredit": "The reward is added to your balance automatically",
+    "stepClientUse": "Spend it at checkout on your next booking, or withdraw it to your bank any time"
   },
   "compUiDialog": {
     "close": "Close"
@@ -2281,5 +2278,13 @@
     "toastTitle": "🚨 New urgent job nearby!",
     "toastBody": "In {city} — be the first to claim it",
     "toastAction": "View"
+  },
+  "compCancellationReasonPicker": {
+    "legend": "Why are you cancelling?",
+    "option_illness": "Illness",
+    "option_transport": "Strike / transport",
+    "option_other": "Other reason",
+    "hintWaived": "No cancellation fee applies — circumstances like these can't be planned around.",
+    "hintFee": "A cancellation fee may apply depending on how close this is to the appointment."
   }
 }

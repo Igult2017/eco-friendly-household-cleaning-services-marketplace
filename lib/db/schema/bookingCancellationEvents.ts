@@ -30,6 +30,10 @@ export const bookingCancellationEvents = pgTable(
     isAdminOverride: boolean("is_admin_override").notNull().default(false),
     overrideReason: text("override_reason"),
     reason: text("reason"),
+    // Why it was cancelled, as a category rather than free text: "illness" and "transport" waive the
+    // fee however late the cancellation is (lib/utils/refunds.ts WAIVED_REASONS), so a dispute needs
+    // to see which one was claimed — not just the sentence the person typed.
+    reasonCategory: varchar("reason_category", { length: 24 }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [

@@ -9,7 +9,8 @@ import { calculateDiscountedBookingAmounts, stripe } from "@/lib/stripe/client"
 // 3rd cleaning overall, counting their first ad-hoc booking as #1) — after that it reverts to
 // full price. Not admin-configurable: this is a fixed onboarding incentive, not an ongoing rate.
 const RECURRING_DISCOUNT_OCCURRENCE_CAP = 2
-import { getCommissionPct, getRecurringDiscountPct } from "@/lib/platform/settings"
+import { getRecurringDiscountPct } from "@/lib/platform/settings"
+import { resolveCommissionPct } from "@/lib/platform/commissionTier"
 import { getCurrencyForCountry } from "@/lib/utils/locale"
 import { logError } from "@/lib/utils/logError"
 
@@ -162,7 +163,11 @@ export const recurringBookingCron = inngest.createFunction(
         // active ones) — past discounted occurrences already happened; cancelling a schedule doesn't
         // un-spend that budget.
         const baseSubtotal = service?.basePrice ?? 0
-        const commissionPct = await getCommissionPct()
+        // Recurring by definition, so the tier is decided purely by how many jobs this client and
+        // cleaner have already delivered together.
+        const { pct: commissionPct } = await resolveCommissionPct({
+          customerId: schedule.customerId, providerId: schedule.providerId, isRecurring: true,
+        })
         const [{ totalOccurrences }] = await db
           .select({ totalOccurrences: sql<number>`COALESCE(SUM(occurrences_created), 0)` })
           .from(recurringSchedules)

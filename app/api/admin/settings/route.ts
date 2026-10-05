@@ -6,8 +6,9 @@ import { z } from "zod"
 import { logError } from "@/lib/utils/logError"
 
 const updateSchema = z.object({
-  commission_pct:        z.number().int().min(0).max(50).optional(),
-  referral_pct:          z.number().int().min(0).max(20).optional(),
+  commission_pct:        z.number().int().min(0).max(60).optional(),
+  commission_regular_pct: z.number().int().min(0).max(60).optional(),
+  commission_regular_after_jobs: z.number().int().min(0).max(50).optional(),
   payout_schedule:       z.enum(["weekly", "monthly"]).optional(),
   max_service_radius_km: z.number().int().min(10).max(500).optional(),
   // Cancellation & no-show policy — see lib/platform/settings.ts getCancellationConfig().
@@ -19,8 +20,11 @@ const updateSchema = z.object({
   cancel_fee_late_pct:         z.number().int().min(0).max(100).optional(),
   cancel_travel_comp_cents:    z.number().int().min(0).max(50_000).optional(),
   cancel_noshow_grace_minutes: z.number().int().min(0).max(120).optional(),
-  // Referral/discount programme — see lib/platform/settings.ts.
-  cleaner_peer_referral_pct:    z.number().int().min(0).max(20).optional(),
+  // Referral programme — ONE flat reward, paid once at a job threshold. See lib/referrals/rewards.ts.
+  referral_reward_cents:          z.number().int().min(0).max(100_000).optional(),
+  referral_cleaner_jobs_required: z.number().int().min(1).max(20).optional(),
+  referral_client_jobs_required:  z.number().int().min(1).max(20).optional(),
+  // The affiliate programme is separate and still percentage-based, per booking, ongoing.
   client_referral_discount_pct: z.number().int().min(0).max(20).optional(),
   recurring_discount_pct:       z.number().int().min(0).max(50).optional(),
   // Minimum hourly wage floor — see lib/platform/settings.ts getMinHourlyRateCents().

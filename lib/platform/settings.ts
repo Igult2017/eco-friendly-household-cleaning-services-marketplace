@@ -31,7 +31,7 @@ export async function getCommissionPct(): Promise<number> {
       .where(eq(platformSettings.key, "commission_pct"))
     if (row) {
       const n = parseInt(row.value, 10)
-      if (!Number.isNaN(n) && n >= 0 && n <= 50) return n
+      if (!Number.isNaN(n) && n >= 0 && n <= 60) return n
       // Row exists but is unparseable/out-of-range — fail LOUD so a typo'd setting (which would
       // silently apply the env default to every cleaner's payout) is diagnosable.
       console.warn(`[settings] commission_pct "${row.value}" is invalid/out-of-range — using default ${PLATFORM_FEE_PERCENT}%`)
@@ -42,38 +42,14 @@ export async function getCommissionPct(): Promise<number> {
   return PLATFORM_FEE_PERCENT
 }
 
-// The admin-configurable affiliate/referral commission % (what a referrer earns per booking),
-// read from platform_settings. Separate from the platform commission above. Defaults to 5.
-export async function getReferralPct(): Promise<number> {
-  try {
-    const [row] = await db
-      .select({ value: platformSettings.value })
-      .from(platformSettings)
-      .where(eq(platformSettings.key, "referral_pct"))
-    if (row) {
-      const n = parseInt(row.value, 10)
-      if (!Number.isNaN(n) && n >= 0 && n <= 20) return n
-      console.warn(`[settings] referral_pct "${row.value}" is invalid/out-of-range — using default 5%`)
-    }
-  } catch {
-    // table missing / DB error — fall through to the default
-  }
-  return 5
-}
-
-// Cleaner→cleaner referral commission % — paid on the invited cleaner's first 3 completed jobs
-// only (see referrals.qualifyingOrdersCount). Separate rate from the general referral_pct above.
-export async function getCleanerPeerReferralPct(): Promise<number> {
-  return getIntSetting("cleaner_peer_referral_pct", 10, 0, 20)
-}
-
-// Client referral reward %, credited to a spendable balance that a client can either apply as a
-// discount at checkout OR withdraw as real cash — clients DO have their own lightweight Connect
-// payout account for this (users.referralPayoutAccountId, separate from a cleaner's job-payout
-// account — see app/api/referrals/withdraw/route.ts, which has no role restriction). Applies
-// whether the invited person is a client or a cleaner (based on the OTHER party's own
-// booking-as-customer / job-as-provider).
-export async function getClientReferralDiscountPct(): Promise<number> {
+// The AFFILIATE commission % — the one referrer type still paid a share of every booking, ongoing,
+// which is what the public /affiliate page advertises. Everyone else now earns a one-off flat reward
+// (getReferralRewardCents). Credited to a spendable balance the holder can either apply as a
+// discount at checkout OR withdraw as real cash — they have their own lightweight Connect payout
+// account for it (users.referralPayoutAccountId, separate from a cleaner's job-payout account; see
+// app/api/referrals/withdraw/route.ts, which has no role restriction).
+// The key is still "client_referral_discount_pct" so existing installs keep their configured rate.
+export async function getAffiliateCommissionPct(): Promise<number> {
   return getIntSetting("client_referral_discount_pct", 5, 0, 20)
 }
 
@@ -89,7 +65,35 @@ export async function getRecurringDiscountPct(): Promise<number> {
 // One flat figure for both the EUR and USD markets (no currency-aware setting exists anywhere in
 // this app yet — see cancel_travel_comp_cents for the same precedent).
 export async function getMinHourlyRateCents(): Promise<number> {
-  return getIntSetting("min_hourly_rate_cents", 1500, 0, 100_000)
+  return getIntSetting("min_hourly_rate_cents", 1800, 0, 100_000)
+}
+
+// The flat referral reward, in cents — paid ONCE per referral when the invited person reaches the
+// job threshold below. Default 2500 (€25). Replaced the old per-booking percentage model.
+export async function getReferralRewardCents(): Promise<number> {
+  return getIntSetting("referral_reward_cents", 2500, 0, 100_000)
+}
+
+// How many completed jobs the invited person must reach before the reward is earned. A cleaner has
+// to finish 2 jobs (so a sign-up that does one job and vanishes earns nothing); a client only has to
+// complete 1 booking, since that is already a real, paid transaction.
+export async function getReferralJobsRequired(isProviderSide: boolean): Promise<number> {
+  return isProviderSide
+    ? getIntSetting("referral_cleaner_jobs_required", 2, 1, 20)
+    : getIntSetting("referral_client_jobs_required", 1, 1, 20)
+}
+
+// The reduced commission an ESTABLISHED regular client earns for their cleaner — see
+// lib/platform/commissionTier.ts for which bookings qualify. The standard rate above still applies
+// to one-offs and to a regular's first few jobs. Default 33% (the cleaner keeps 67%).
+export async function getRegularClientCommissionPct(): Promise<number> {
+  return getIntSetting("commission_regular_pct", 33, 0, 60)
+}
+
+// How many delivered jobs a client and cleaner must have together before the reduced rate kicks in.
+// Default 3 — the 4th job onwards is charged the reduced rate.
+export async function getRegularClientAfterJobs(): Promise<number> {
+  return getIntSetting("commission_regular_after_jobs", 3, 0, 50)
 }
 
 // Admin-set hard cap on how far a cleaner can set their own service radius — enforced live in
@@ -128,11 +132,14 @@ export type CancellationConfig = {
 // no caching — an admin change takes effect on the very next cancellation/no-show request.
 export async function getCancellationConfig(): Promise<CancellationConfig> {
   const [tier1Hours, tier2Hours, tier3Hours, feeLowPct, feeMediumPct, feeLatePct, travelCompCents, noshowGraceMinutes] = await Promise.all([
-    getIntSetting("cancel_tier1_hours", 24, 1, 168),
-    getIntSetting("cancel_tier2_hours", 6, 1, 168),
+    // Defaults express the agreed policy: free more than 48h ahead, half price inside 48h, full
+    // price inside 24h. tier3/late keep the most extreme band (the cleaner may already be
+    // travelling), which is the only band that also adds travel compensation.
+    getIntSetting("cancel_tier1_hours", 48, 1, 168),
+    getIntSetting("cancel_tier2_hours", 24, 1, 168),
     getIntSetting("cancel_tier3_hours", 2, 0, 168),
-    getIntSetting("cancel_fee_low_pct", 10, 0, 100),
-    getIntSetting("cancel_fee_medium_pct", 30, 0, 100),
+    getIntSetting("cancel_fee_low_pct", 50, 0, 100),
+    getIntSetting("cancel_fee_medium_pct", 100, 0, 100),
     getIntSetting("cancel_fee_late_pct", 100, 0, 100),
     getIntSetting("cancel_travel_comp_cents", 500, 0, 50_000),
     getIntSetting("cancel_noshow_grace_minutes", 15, 0, 120),

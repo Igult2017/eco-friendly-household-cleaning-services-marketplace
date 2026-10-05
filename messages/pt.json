@@ -288,7 +288,7 @@
     "providerStep1Title": "Candidatar e verificar",
     "providerStep1Desc": "Crie uma conta de prestador, envie as suas certificações ecológicas e conclua a verificação de identidade. A aprovação demora 1 a 2 dias úteis.",
     "providerStep2Title": "Configurar o seu perfil",
-    "providerStep2Desc": "Adicione os seus serviços, preços, horário de trabalho e raio de atuação. Ligue a sua conta Stripe para ser pago instantaneamente por cada trabalho.",
+    "providerStep2Desc": "Adicione os seus serviços, preços, horários e raio de atuação. Adicione os seus dados bancários e é pago de imediato por cada trabalho.",
     "providerStep3Title": "Começar a ganhar",
     "providerStep3Desc": "Veja trabalhos, envie propostas ou receba reservas diretas. Pagamento instantâneo assim que o cliente aprova o seu trabalho concluído. A DORIXÉ fica apenas com uma pequena comissão por reserva concluída – para manutenção do site e impostos – o resto é seu.",
     "providerCta": "Tornar-se prestador →",
@@ -311,7 +311,7 @@
     "perkScheduleTitle": "Trabalhe quando quiser",
     "perkScheduleBody": "Defina a sua disponibilidade e a sua área de serviço e aceite apenas as reservas que quiser.",
     "perkPayoutTitle": "Pagamentos semanais",
-    "perkPayoutBody": "É pago instantaneamente através do Stripe assim que um trabalho é aprovado; depois, o seu saldo é transferido para o seu banco semanalmente.",
+    "perkPayoutBody": "É pago assim que um trabalho é aprovado, e o dinheiro é transferido para a sua conta todas as semanas.",
     "perkReputationTitle": "Construa a sua reputação",
     "perkReputationBody": "Cada reserva concluída acrescenta uma avaliação verificada ao seu perfil público.",
     "perkEcoTitle": "Junte-se a uma comunidade ecológica",
@@ -399,7 +399,7 @@
     "customerFeature7": "Proteção de cancelamento (reembolso escalonado)",
     "customerFeature8": "Notificações em tempo real",
     "providerFeature1": "Perfil e anúncio gratuitos",
-    "providerFeature2": "Pagamentos automáticos semanais via Stripe",
+    "providerFeature2": "Pagamentos automáticos semanais para a sua conta",
     "providerFeature3": "Alertas de trabalhos na sua área de atuação",
     "providerFeature4": "Apresente propostas em trabalhos publicados",
     "providerFeature5": "Painel de ganhos",
@@ -443,7 +443,7 @@
     "faqCancelQ": "E se eu cancelar?",
     "faqCancelA": "Se cancelar com mais de {tier1} h de antecedência, recebe o reembolso total. Entre {tier2} h e {tier1} h aplica-se uma taxa de {lowFee} %, entre {tier3} h e {tier2} h de {mediumFee} %, e abaixo de {tier3} h de {lateFee} % mais uma pequena compensação de deslocação para o profissional. Se for o profissional a cancelar, recebe sempre o reembolso total.",
     "faqPayoutQ": "Como é que os profissionais são pagos?",
-    "faqPayoutA": "É pago instantaneamente — assim que o cliente aprova o seu trabalho concluído, a sua parte é creditada de imediato na sua conta Stripe. A Stripe transfere depois automaticamente o seu saldo para a sua conta bancária semanalmente.",
+    "faqPayoutA": "É pago de imediato — assim que um cliente aprova o trabalho concluído, a sua parte é creditada no seu saldo. Depois é transferida automaticamente para a sua conta bancária todas as semanas.",
     "faqMinimumQ": "Existe um valor mínimo de reserva?",
     "faqMinimumA": "Não. Os profissionais definem os seus próprios preços, e a pequena comissão da plataforma ajusta-se à reserva – não há valor mínimo.",
     "ctaHeading": "Pronto para começar?",
@@ -787,7 +787,9 @@
     "errorReasonRequired": "Indique um motivo (pelo menos 10 caracteres) — esta reserva está prestes a começar.",
     "keepBooking": "Manter reserva",
     "cancelling": "Cancelando…",
-    "confirmCancellation": "Confirmar cancelamento"
+    "confirmCancellation": "Confirmar cancelamento",
+    "rescheduleInsteadTitle": "Prefere mudar a data ou a hora?",
+    "rescheduleInsteadBody": "Mudar o agendamento é gratuito e nunca gera uma taxa de cancelamento. O seu profissional só tem de aceitar o novo horário."
   },
   "customerBookingsIdDisputePage": {
     "detailTitle": "Disputa",
@@ -1707,44 +1709,43 @@
   },
   "compOnboardingProviderIdentityStep": {
     "title": "Verificação de identidade",
-    "description": "A DORIXÉ exige que todos os prestadores verifiquem a sua identidade através do Stripe. Isto garante a segurança dos clientes e permite os pagamentos para a sua conta bancária.",
+    "description": "Cada profissional da DORIXÉ confirma a sua identidade uma vez. Protege os clientes e é o que nos permite depositar dinheiro na sua conta bancária.",
     "whatYouNeed": "O que vai precisar:",
     "needId": "• Um documento de identificação oficial (passaporte, cartão de cidadão ou carta de condução)",
     "needSelfie": "• Uma selfie / foto tirada durante a verificação",
-    "needProcess": "• O processo demora 2–3 minutos e é tratado de forma segura pelo Stripe",
-    "redirecting": "A redirecionar para o Stripe...",
+    "needProcess": "• Demora 2–3 minutos e é tratado em segurança pelo nosso fornecedor de pagamentos",
+    "redirecting": "A abrir a verificação segura…",
     "startButton": "Iniciar verificação de identidade",
     "skipButton": "Ignorar por agora — faço isto mais tarde",
     "footerNote": "Pode continuar sem verificar, mas só será aprovado quando a verificação de identidade estiver concluída.",
     "errorStartVerification": "Não foi possível iniciar a verificação de identidade. Tente novamente."
   },
   "compOnboardingProviderPayoutStep": {
-    "successTitle": "Conta Stripe ligada!",
+    "successTitle": "Dados bancários guardados!",
     "successDescription": "A sua conta de pagamentos está configurada. É pago instantaneamente assim que um cliente aprova o seu trabalho concluído.",
     "goToDashboard": "Ir para o meu painel →",
     "title": "Configurar pagamentos",
-    "description": "Ligue a sua conta bancária através do Stripe. É pago instantaneamente assim que um cliente aprova o seu trabalho concluído — a DORIXÉ fica com uma pequena comissão por reserva para manutenção do site e impostos; o resto é pago diretamente a si.",
+    "description": "Indique a conta bancária onde quer receber os pagamentos. É pago assim que um cliente aprova o trabalho concluído — a DORIXÉ fica com uma pequena comissão por reserva para manutenção do site e impostos; o resto vai diretamente para si.",
     "benefitInstantPayout": "Pagamento instantâneo assim que um cliente aprova o seu trabalho",
-    "benefitDirectTransfer": "Transferência bancária direta através do Stripe",
+    "benefitDirectTransfer": "Diretamente para a sua própria conta bancária",
     "benefitTransparency": "Total transparência dos seus ganhos no seu painel",
     "benefitNoFees": "0 € de taxas de pagamento para transferências padrão",
-    "connectError": "Não foi possível iniciar o Stripe Connect. Tente novamente.",
-    "connecting": "A redirecionar para o Stripe...",
-    "connectButton": "Ligar conta Stripe",
+    "connectError": "Não foi possível abrir o formulário seguro de pagamentos. Tente novamente.",
+    "connecting": "A abrir o formulário seguro…",
+    "connectButton": "Adicionar dados bancários",
     "skip": "Ignorar por agora",
-    "footnote": "Pode ligar o Stripe mais tarde a partir do seu painel. Os pagamentos requerem uma conta ligada.",
-    "loading": "A carregar o onboarding da Stripe...",
-    "kycDisclaimer": "Ser-lhe-á pedido que verifique a sua identidade através da Stripe. Este é um requisito regulamentar (KYC) — não significa que precise de já ter uma conta Stripe; esta é criada para si.",
-    "kycStepMessage": "A Stripe está agora a verificar a sua identidade. Este passo é exigido pela regulamentação financeira (KYC) — não precisa de uma conta Stripe pré-existente para continuar."
+    "footnote": "Pode fazê-lo mais tarde no seu painel, mas não receberá pagamentos até o fazer.",
+    "loading": "A carregar o formulário seguro de pagamentos…",
+    "kycDisclaimer": "Não precisa de uma conta Stripe e não lhe será pedido que crie uma. O nosso fornecedor de pagamentos, a Stripe, trata deste formulário e pedir-lhe-á que confirme a sua identidade — uma exigência legal para quem recebe pagamentos (KYC).",
+    "kycStepMessage": "A sua identidade está a ser verificada. É uma exigência legal para quem recebe pagamentos (KYC) — não há qualquer conta para criar."
   },
   "compOnboardingClientPaymentStep": {
-    "title": "Adicionar um método de pagamento",
-    "description": "Guarde já um cartão para tornar a sua primeira marcação mais rápida. Totalmente opcional — também pode adicionar um mais tarde no pagamento.",
+    "title": "Adicione os seus dados de pagamento",
+    "description": "Adicione o cartão com que vai pagar. Precisamos dele antes de poder reservar — nada é cobrado agora, nem até confirmar uma reserva.",
     "benefitFasterBooking": "Evite inserir novamente os dados do cartão no pagamento",
     "benefitNoReentry": "Um único cartão para todas as suas próximas marcações",
     "benefitSecure": "Guardado com segurança pela Stripe, nunca nos nossos servidores",
-    "skip": "Ignorar por agora",
-    "footnote": "Pode adicionar um cartão mais tarde — na sua primeira marcação ou a partir do seu painel."
+    "footnote": "Hoje não é feita qualquer cobrança. Só é cobrado quando confirmar uma limpeza."
   },
   "compProviderProviderDashboardBids": {
     "emptyTitle": "Ainda não há propostas",
@@ -1880,7 +1881,6 @@
   },
   "compReferralReferralCard": {
     "title": "Programa de indicações",
-    "subtitle": "Ganha {pct}% em cada reserva das tuas indicações",
     "copy": "Copiar",
     "copied": "Copiado!",
     "loadError": "Não foi possível carregar o link de indicação.",
@@ -1895,18 +1895,15 @@
     "withdrawSuccess": "{amount} está a caminho da sua conta bancária.",
     "withdrawFailed": "O levantamento falhou. Tente novamente.",
     "howItWorks": "Como funciona",
-    "step1": "Partilhe o seu link — quem se registar através dele é marcado como sua indicação",
-    "step2": "Quando concluem a primeira reserva, a sua indicação torna-se ativa",
-    "step3": "Ganhas {pct}% de cada reserva que fizerem — creditado no teu saldo no final de cada mês",
-    "step4": "Use o seu saldo de crédito como desconto na sua próxima reserva",
-    "subtitleCleaner": "Ganhe comissão, paga automaticamente",
-    "subtitleClient": "Ganhe descontos que pode usar ou levantar",
-    "stepCleanerPeer": "Indique um profissional de limpeza — ganhe {peerPct}% de comissão nos seus primeiros {cap} trabalhos concluídos",
-    "stepCleanerClient": "Indique um cliente — ganhe {pct}% de comissão em cada reserva que fizer",
-    "stepCleanerPayout": "As comissões são creditadas no seu saldo e pagas automaticamente via Stripe todos os meses",
-    "stepClientEarn": "Por cada encomenda concluída de alguém que convidar, ganha {discountPct}% de desconto",
-    "stepClientCredit": "O seu desconto é creditado automaticamente no saldo da sua conta",
-    "stepClientUse": "Use-o na sua próxima reserva, ou levante-o para o seu banco a qualquer momento"
+    "step1": "Partilhe o seu link — quem se registar através dele fica associado a si",
+    "subtitleCleaner": "Ganhe {reward} em dinheiro por cada pessoa que trouxer",
+    "subtitleClient": "Ganhe {reward} para gastar ou levantar por cada pessoa que trouxer",
+    "stepCleanerPeer": "Convide um profissional — ganha {reward} assim que tiver concluído {jobs} trabalhos",
+    "stepCleanerClient": "Convide um cliente — ganha {reward} assim que tiver concluído {jobs} reserva",
+    "stepCleanerPayout": "As comissões são creditadas no seu saldo e pagas automaticamente para a sua conta todos os meses",
+    "stepClientEarn": "Convide quem quiser — ganha {reward} assim que tiver concluído {jobs} reserva",
+    "stepClientCredit": "A recompensa é adicionada automaticamente ao seu saldo",
+    "stepClientUse": "Use-a na próxima reserva, ou transfira-a para o seu banco quando quiser"
   },
   "compUiDialog": {
     "close": "Fechar"
@@ -2281,5 +2278,13 @@
     "toastTitle": "🚨 Novo trabalho urgente perto de ti!",
     "toastBody": "Em {city} — sê o primeiro a aceitar",
     "toastAction": "Ver"
+  },
+  "compCancellationReasonPicker": {
+    "legend": "Porque está a cancelar?",
+    "option_illness": "Doença",
+    "option_transport": "Greve / transportes",
+    "option_other": "Outro motivo",
+    "hintWaived": "Não se aplica taxa de cancelamento — estas circunstâncias não são previsíveis.",
+    "hintFee": "Pode aplicar-se uma taxa de cancelamento consoante a proximidade do agendamento."
   }
 }

@@ -4,6 +4,8 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Loader2, XCircle } from "lucide-react"
+import { CancellationReasonPicker } from "./CancellationReasonPicker"
+import type { CancellationReasonCategory } from "@/lib/utils/cancellationReasons"
 
 // A cleaner's own option to back out of a booking they already accepted (turning down a job BEFORE
 // accepting it has its own flow — BookingRespondActions' reject mode). Posts to the same shared
@@ -17,6 +19,7 @@ export function CancelBookingReport({ bookingId, onDone }: { bookingId: string; 
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [reason, setReason] = useState("")
+  const [reasonCategory, setReasonCategory] = useState<CancellationReasonCategory>("other")
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState("")
 
@@ -27,7 +30,7 @@ export function CancelBookingReport({ bookingId, onDone }: { bookingId: string; 
       const r = await fetch(`/api/bookings/${bookingId}/cancel`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reason: reason.trim() || undefined }),
+        body: JSON.stringify({ reason: reason.trim() || undefined, reasonCategory }),
       })
       if (!r.ok) {
         const d = await r.json().catch(() => ({}))
@@ -52,6 +55,7 @@ export function CancelBookingReport({ bookingId, onDone }: { bookingId: string; 
         <XCircle size={13} /> {t("cancelBooking")}
       </p>
       <p className="text-xs text-red-700">{t("cancelWarning")}</p>
+      <CancellationReasonPicker value={reasonCategory} onChange={setReasonCategory} disabled={busy} compact />
       <textarea
         value={reason}
         onChange={(e) => setReason(e.target.value)}
@@ -69,7 +73,7 @@ export function CancelBookingReport({ bookingId, onDone }: { bookingId: string; 
         >
           {busy ? <Loader2 size={12} className="animate-spin" /> : t("confirmCancel")}
         </button>
-        <button type="button" onClick={() => { setOpen(false); setReason(""); setError("") }} className="text-xs text-[#6B7280] hover:text-[#2B3441]">
+        <button type="button" onClick={() => { setOpen(false); setReason(""); setReasonCategory("other"); setError("") }} className="text-xs text-[#6B7280] hover:text-[#2B3441]">
           {t("dismiss")}
         </button>
       </div>

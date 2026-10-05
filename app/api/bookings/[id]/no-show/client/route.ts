@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { bookings, payments, providers, notifications, bookingCancellationEvents } from "@/lib/db/schema"
 import { stripe } from "@/lib/stripe/client"
+import { resolveHold, blockingReason } from "@/lib/stripe/resolveHold"
 import { getCancellationConfig } from "@/lib/platform/settings"
 import { eq, and } from "drizzle-orm"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
@@ -58,14 +59,50 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const fullHold = booking.totalAmount + (booking.carbonOffsetAmount ?? 0)
     let capturedAmount = 0
     let feeCommission = 0
-    if (payment?.status === "authorized") {
-      // Full charge: the service portion only (carbon offset is always released, same as a cancel).
-      feeCommission = Math.round(booking.totalAmount * (booking.platformFeePercent ?? 0) / 100)
-      await stripe.paymentIntents.capture(payment.stripePaymentIntentId, {
-        amount_to_capture: booking.totalAmount,
-        application_fee_amount: feeCommission,
-      }, { idempotencyKey: `noshow-client-${bookingId}` })
-      capturedAmount = booking.totalAmount
+    if (payment) {
+      // Same reason as the cancel route: payments.status is our own mirror and goes stale when
+      // Stripe releases a lapsed hold by itself (~7 days), so check the real state before charging.
+      // Without this, reporting a no-show on an older booking died with a bare 500.
+      const hold = await resolveHold(payment.stripePaymentIntentId)
+      const blocked = blockingReason(hold)
+      if (blocked) return NextResponse.json({ error: blocked }, { status: 503 })
+
+      if (hold.state === "live") {
+        // Full charge: the service portion only (carbon offset is always released, same as a cancel).
+        feeCommission = Math.round(booking.totalAmount * (booking.platformFeePercent ?? 0) / 100)
+        try {
+          await stripe.paymentIntents.capture(payment.stripePaymentIntentId, {
+            amount_to_capture: booking.totalAmount,
+            application_fee_amount: feeCommission,
+          }, { idempotencyKey: `noshow-client-${bookingId}` })
+        } catch (stripeErr) {
+          const detail = stripeErr instanceof Error ? stripeErr.message : "Unknown payment error"
+          void logError({
+            message: "[bookings/[id]/no-show/client] capture failed", error: stripeErr,
+            route: "/api/bookings/[id]/no-show/client", severity: "error", userId, context: { bookingId },
+          })
+          return NextResponse.json(
+            { error: `The no-show was not recorded because the client's payment could not be taken: ${detail}. Please contact support so you are still paid for the slot.` },
+            { status: 502 },
+          )
+        }
+        capturedAmount = booking.totalAmount
+      } else if (hold.state === "collected") {
+        // Already taken (e.g. an earlier retry) — the client has paid in full, which is the intended
+        // outcome of a client no-show. Record it rather than charging a second time.
+        capturedAmount = booking.totalAmount
+        feeCommission = Math.round(booking.totalAmount * (booking.platformFeePercent ?? 0) / 100)
+      }
+      // "released" / "unpaid" → the hold is gone and there is nothing to take. The no-show is still
+      // recorded against the client (that is the point of the report), but the cleaner was not paid,
+      // so flag it for admin follow-up rather than silently booking a €0 no-show as settled.
+      if (hold.state === "released" || hold.state === "unpaid") {
+        void logError({
+          message: "[no-show/client] client no-show recorded but the payment hold was already gone — cleaner unpaid",
+          route: "/api/bookings/[id]/no-show/client", severity: "warning", userId,
+          context: { bookingId, holdState: hold.state },
+        })
+      }
     }
 
     await db.transaction(async (tx) => {

@@ -288,7 +288,7 @@
     "providerStep1Title": "Candidati e verifica",
     "providerStep1Desc": "Crea un account professionista, invia le tue certificazioni ecologiche e completa la verifica dell'identità. L'approvazione richiede 1–2 giorni lavorativi.",
     "providerStep2Title": "Configura il tuo profilo",
-    "providerStep2Desc": "Aggiungi i tuoi servizi, i prezzi, gli orari di lavoro e il raggio di intervento. Collega il tuo account Stripe per essere pagato all'istante per ogni lavoro.",
+    "providerStep2Desc": "Aggiungi i tuoi servizi, i prezzi, gli orari e il raggio d'azione. Inserisci i dati bancari e verrai pagato subito per ogni lavoro.",
     "providerStep3Title": "Inizia a guadagnare",
     "providerStep3Desc": "Sfoglia gli annunci, invia offerte o ricevi prenotazioni dirette. Pagamento all'istante non appena il cliente approva il lavoro completato. DORIXÉ trattiene solo una piccola commissione per prenotazione completata, per la manutenzione del sito e le tasse; il resto è tuo.",
     "providerCta": "Diventa un professionista →",
@@ -311,7 +311,7 @@
     "perkScheduleTitle": "Lavora quando vuoi",
     "perkScheduleBody": "Imposta la tua disponibilità e la tua zona di servizio e accetta solo le prenotazioni che desideri.",
     "perkPayoutTitle": "Pagamenti settimanali",
-    "perkPayoutBody": "Vieni pagato all'istante tramite Stripe non appena un lavoro viene approvato, poi il tuo saldo viene trasferito sul tuo conto ogni settimana.",
+    "perkPayoutBody": "Vieni pagato non appena un lavoro viene approvato, e il denaro viene trasferito sul tuo conto ogni settimana.",
     "perkReputationTitle": "Costruisci la tua reputazione",
     "perkReputationBody": "Ogni prenotazione completata aggiunge una recensione verificata al tuo profilo pubblico.",
     "perkEcoTitle": "Entra in una community eco",
@@ -399,7 +399,7 @@
     "customerFeature7": "Protezione cancellazione (rimborso a fasce)",
     "customerFeature8": "Notifiche in tempo reale",
     "providerFeature1": "Profilo e annuncio gratuiti",
-    "providerFeature2": "Pagamenti automatici settimanali tramite Stripe",
+    "providerFeature2": "Pagamenti automatici settimanali sul tuo conto",
     "providerFeature3": "Avvisi di lavori nella tua zona di servizio",
     "providerFeature4": "Fai offerte sui lavori pubblicati",
     "providerFeature5": "Dashboard dei guadagni",
@@ -443,7 +443,7 @@
     "faqCancelQ": "Cosa succede se annullo?",
     "faqCancelA": "Se annulli più di {tier1} h prima del servizio ricevi il rimborso completo. Tra {tier2} h e {tier1} h si applica una commissione del {lowFee} %, tra {tier3} h e {tier2} h del {mediumFee} %, e sotto le {tier3} h del {lateFee} % più un piccolo rimborso spese di viaggio per l'addetto. Se annulla l'addetto, ricevi sempre il rimborso completo.",
     "faqPayoutQ": "Come vengono pagati gli addetti?",
-    "faqPayoutA": "Vieni pagato all'istante: non appena il cliente approva il tuo lavoro completato, la tua parte viene accreditata subito sul tuo account Stripe. Stripe trasferisce poi automaticamente il tuo saldo sul tuo conto bancario ogni settimana.",
+    "faqPayoutA": "Vieni pagato subito: non appena un cliente approva il lavoro svolto, la tua quota viene accreditata sul tuo saldo. Viene poi trasferita automaticamente sul tuo conto corrente ogni settimana.",
     "faqMinimumQ": "Esiste un valore minimo di prenotazione?",
     "faqMinimumA": "No. Gli addetti impostano i propri prezzi e la piccola commissione della piattaforma varia in base alla prenotazione: non c'è un minimo.",
     "ctaHeading": "Pronto a iniziare?",
@@ -787,7 +787,9 @@
     "errorReasonRequired": "Indica un motivo (almeno 10 caratteri) — questa prenotazione è vicina.",
     "keepBooking": "Mantieni prenotazione",
     "cancelling": "Annullamento…",
-    "confirmCancellation": "Conferma annullamento"
+    "confirmCancellation": "Conferma annullamento",
+    "rescheduleInsteadTitle": "Preferisci cambiare data o orario?",
+    "rescheduleInsteadBody": "Spostare l'appuntamento è gratuito e non comporta mai una penale di annullamento. Il tuo professionista deve solo accettare il nuovo orario."
   },
   "customerBookingsIdDisputePage": {
     "detailTitle": "Contestazione",
@@ -1707,44 +1709,43 @@
   },
   "compOnboardingProviderIdentityStep": {
     "title": "Verifica dell'identità",
-    "description": "DORIXÉ richiede a tutti i professionisti di verificare la propria identità tramite Stripe. Questo garantisce la sicurezza dei clienti e consente i pagamenti sul tuo conto bancario.",
+    "description": "Ogni professionista DORIXÉ conferma la propria identità una volta sola. Protegge i clienti ed è ciò che ci permette di versare denaro sul tuo conto.",
     "whatYouNeed": "Cosa ti serve:",
     "needId": "• Un documento d'identità ufficiale (passaporto, carta d'identità o patente di guida)",
     "needSelfie": "• Un selfie / una foto scattata durante la verifica",
-    "needProcess": "• La procedura richiede 2–3 minuti ed è gestita in modo sicuro da Stripe",
-    "redirecting": "Reindirizzamento a Stripe...",
+    "needProcess": "• Richiede 2–3 minuti ed è gestito in sicurezza dal nostro fornitore di pagamenti",
+    "redirecting": "Apertura della verifica sicura…",
     "startButton": "Avvia la verifica dell'identità",
     "skipButton": "Salta per ora — lo farò più tardi",
     "footerNote": "Puoi continuare senza verificare, ma non verrai approvato finché la verifica dell'identità non sarà completata.",
     "errorStartVerification": "Impossibile avviare la verifica dell'identità. Riprova."
   },
   "compOnboardingProviderPayoutStep": {
-    "successTitle": "Account Stripe collegato!",
+    "successTitle": "Dati bancari salvati!",
     "successDescription": "Il tuo account per i pagamenti è configurato. Vieni pagato all'istante non appena un cliente approva il tuo lavoro completato.",
     "goToDashboard": "Vai alla mia dashboard →",
     "title": "Configura i pagamenti",
-    "description": "Collega il tuo conto bancario tramite Stripe. Vieni pagato all'istante non appena un cliente approva il tuo lavoro completato — DORIXÉ trattiene una piccola commissione per prenotazione per la manutenzione del sito e le tasse; il resto viene pagato direttamente a te.",
+    "description": "Indica il conto corrente su cui vuoi essere pagato. Vieni pagato nel momento in cui un cliente approva il lavoro svolto — DORIXÉ trattiene una piccola commissione per prenotazione per la manutenzione del sito e le tasse; il resto va direttamente a te.",
     "benefitInstantPayout": "Pagamento istantaneo non appena un cliente approva il tuo lavoro",
-    "benefitDirectTransfer": "Bonifico bancario diretto tramite Stripe",
+    "benefitDirectTransfer": "Direttamente sul tuo conto corrente",
     "benefitTransparency": "Piena trasparenza sui tuoi guadagni nella dashboard",
     "benefitNoFees": "0 € di commissioni di pagamento per i bonifici standard",
-    "connectError": "Impossibile avviare Stripe Connect. Riprova.",
-    "connecting": "Reindirizzamento a Stripe...",
-    "connectButton": "Collega account Stripe",
+    "connectError": "Non siamo riusciti ad aprire il modulo sicuro per i pagamenti. Riprova.",
+    "connecting": "Apertura del modulo sicuro…",
+    "connectButton": "Aggiungi dati bancari",
     "skip": "Salta per ora",
-    "footnote": "Potrai collegare Stripe in seguito dalla tua dashboard. I pagamenti richiedono un account collegato.",
-    "loading": "Caricamento dell'onboarding Stripe...",
-    "kycDisclaimer": "Ti verrà chiesto di verificare la tua identità tramite Stripe. Si tratta di un requisito normativo (KYC) — non significa che devi già avere un account Stripe; viene creato per te.",
-    "kycStepMessage": "Stripe sta verificando la tua identità. Questo passaggio è richiesto dalla normativa finanziaria (KYC) — non è necessario avere già un account Stripe per continuare."
+    "footnote": "Puoi farlo più tardi dalla tua dashboard, ma fino ad allora non potrai essere pagato.",
+    "loading": "Caricamento del modulo sicuro…",
+    "kycDisclaimer": "Non ti serve un account Stripe e non ti verrà chiesto di crearne uno. Il nostro fornitore di pagamenti, Stripe, gestisce questo modulo e ti chiederà di confermare la tua identità: è un obbligo di legge per chiunque riceva pagamenti (KYC).",
+    "kycStepMessage": "La tua identità è in fase di verifica. È un obbligo di legge per chiunque riceva pagamenti (KYC): non c'è alcun account da creare."
   },
   "compOnboardingClientPaymentStep": {
-    "title": "Aggiungi un metodo di pagamento",
-    "description": "Salva subito una carta per rendere più veloce la tua prima prenotazione. Del tutto facoltativo — puoi aggiungerla anche più tardi al momento del pagamento.",
+    "title": "Aggiungi i tuoi dati di pagamento",
+    "description": "Aggiungi la carta con cui pagherai. Ci serve prima che tu possa prenotare: non viene addebitato nulla ora, né finché non confermi una prenotazione.",
     "benefitFasterBooking": "Evita di reinserire i dati della carta al pagamento",
     "benefitNoReentry": "Una sola carta per tutte le tue prossime prenotazioni",
     "benefitSecure": "Conservata in modo sicuro da Stripe, mai sui nostri server",
-    "skip": "Salta per ora",
-    "footnote": "Potrai aggiungere una carta più tardi — alla tua prima prenotazione o dalla tua dashboard."
+    "footnote": "Oggi non viene addebitato nulla. Paghi solo quando confermi una pulizia."
   },
   "compProviderProviderDashboardBids": {
     "emptyTitle": "Ancora nessuna offerta",
@@ -1880,7 +1881,6 @@
   },
   "compReferralReferralCard": {
     "title": "Programma di referral",
-    "subtitle": "Guadagna il {pct}% su ogni prenotazione dei tuoi invitati",
     "copy": "Copia",
     "copied": "Copiato!",
     "loadError": "Impossibile caricare il link di referral.",
@@ -1895,18 +1895,15 @@
     "withdrawSuccess": "{amount} è in arrivo sul tuo conto bancario.",
     "withdrawFailed": "Prelievo non riuscito. Riprova.",
     "howItWorks": "Come funziona",
-    "step1": "Condividi il tuo link — chiunque si registri tramite esso viene associato come tuo referral",
-    "step2": "Quando completano la prima prenotazione, il tuo referral diventa attivo",
-    "step3": "Guadagni il {pct}% di ogni loro prenotazione — accreditato sul tuo saldo a fine mese",
-    "step4": "Usa il tuo saldo credito come sconto sulla tua prossima prenotazione",
-    "subtitleCleaner": "Guadagna una commissione, pagata automaticamente",
-    "subtitleClient": "Guadagna sconti da usare o prelevare",
-    "stepCleanerPeer": "Invita un addetto — guadagna il {peerPct}% di commissione sui suoi primi {cap} lavori completati",
-    "stepCleanerClient": "Invita un cliente — guadagna il {pct}% di commissione su ogni sua prenotazione",
-    "stepCleanerPayout": "Le commissioni vengono accreditate sul tuo saldo e pagate automaticamente tramite Stripe ogni mese",
-    "stepClientEarn": "Per ogni ordine completato da una persona che inviti, guadagni uno sconto del {discountPct}%",
-    "stepClientCredit": "Il tuo sconto viene accreditato automaticamente sul saldo del tuo account",
-    "stepClientUse": "Usalo alla tua prossima prenotazione, oppure prelevalo sul tuo conto bancario quando vuoi"
+    "step1": "Condividi il tuo link: chi si registra tramite il link viene associato a te",
+    "subtitleCleaner": "Guadagna {reward} in contanti per ogni persona che porti",
+    "subtitleClient": "Guadagna {reward} da spendere o ritirare per ogni persona che porti",
+    "stepCleanerPeer": "Invita un professionista: guadagni {reward} quando avrà completato {jobs} lavori",
+    "stepCleanerClient": "Invita un cliente: guadagni {reward} quando avrà completato {jobs} prenotazione",
+    "stepCleanerPayout": "Le commissioni vengono accreditate sul tuo saldo e versate automaticamente sul tuo conto ogni mese",
+    "stepClientEarn": "Invita chi vuoi: guadagni {reward} quando avrà completato {jobs} prenotazione",
+    "stepClientCredit": "La ricompensa viene aggiunta automaticamente al tuo saldo",
+    "stepClientUse": "Usala alla prossima prenotazione o trasferiscila sul tuo conto quando vuoi"
   },
   "compUiDialog": {
     "close": "Chiudi"
@@ -2281,5 +2278,13 @@
     "toastTitle": "🚨 Nuovo lavoro urgente vicino a te!",
     "toastBody": "A {city} — sii il primo ad accettarlo",
     "toastAction": "Vedi"
+  },
+  "compCancellationReasonPicker": {
+    "legend": "Perché stai annullando?",
+    "option_illness": "Malattia",
+    "option_transport": "Sciopero / trasporti",
+    "option_other": "Altro motivo",
+    "hintWaived": "Nessuna penale di annullamento: circostanze come queste non sono prevedibili.",
+    "hintFee": "Può essere applicata una penale in base a quanto è vicino l'appuntamento."
   }
 }

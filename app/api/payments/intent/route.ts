@@ -4,7 +4,7 @@ import { db } from "@/lib/db"
 import { providers, providerServices, users, bids, jobPosts, promoCodes, promoCodeUsages, providerAddons, notifications, referralCredits } from "@/lib/db/schema"
 import { stripe, calculateBookingAmounts } from "@/lib/stripe/client"
 import { getOrCreateStripeCustomer } from "@/lib/stripe/getOrCreateCustomer"
-import { getCommissionPct } from "@/lib/platform/settings"
+import { resolveCommissionPct } from "@/lib/platform/commissionTier"
 import { bookingRatelimit } from "@/lib/redis/client"
 import { paymentIntentSchema } from "@/lib/validations/booking"
 import { getCurrencyForCountry } from "@/lib/utils/locale"
@@ -192,7 +192,8 @@ export async function POST(req: Request) {
     }
 
     const subtotalAfterDiscount = Math.max(0, subtotalAfterPromo - referralCreditCents)
-    const commissionPct = await getCommissionPct()
+    // Regular clients earn their cleaner a bigger share — see lib/platform/commissionTier.ts.
+    const { pct: commissionPct } = await resolveCommissionPct({ customerId: userId, providerId })
     const amounts = calculateBookingAmounts(subtotalAfterDiscount, commissionPct)
     const totalWithOffset = amounts.totalCharged + carbonOffsetCents
     // Charge in the cleaner's own currency (US → USD, otherwise EUR), so the charge matches the

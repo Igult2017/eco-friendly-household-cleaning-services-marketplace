@@ -45,7 +45,7 @@ export default function ProviderServicesPage() {
   const [customInput, setCustomInput] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [hasProfile, setHasProfile] = useState(true)
-  const [minHourlyRateCents, setMinHourlyRateCents] = useState(1500)
+  const [minHourlyRateCents, setMinHourlyRateCents] = useState(1800)
 
   const reload = () => {
     setLoading(true)

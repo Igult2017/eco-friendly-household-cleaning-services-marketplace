@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Loader2, Check, PencilLine, X } from "lucide-react"
 import { ProposeChangeForm } from "./ProposeChangeForm"
+import { CancellationReasonPicker } from "./CancellationReasonPicker"
+import type { CancellationReasonCategory } from "@/lib/utils/cancellationReasons"
 
 // Cleaner's response bar on a NEW booking: accept as-is, counter-offer (new date/time and/or hourly
 // rate + message), or reject with a reason (full release of the client's hold). onDone is optional —
@@ -18,6 +20,7 @@ export function BookingRespondActions({ bookingId, onDone }: { bookingId: string
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState("")
   const [reason, setReason] = useState("")
+  const [reasonCategory, setReasonCategory] = useState<CancellationReasonCategory>("other")
 
   const done = () => (onDone ? onDone() : router.refresh())
 
@@ -35,7 +38,7 @@ export function BookingRespondActions({ bookingId, onDone }: { bookingId: string
   const accept = () => post(`/api/bookings/${bookingId}/confirm`, {})
   const reject = () => {
     if (reason.trim().length < 5) { setError(t("reasonTooShort")); return }
-    post(`/api/bookings/${bookingId}/cancel`, { reason: reason.trim() })
+    post(`/api/bookings/${bookingId}/cancel`, { reason: reason.trim(), reasonCategory })
   }
 
   const inputCls = "rounded-lg border border-[#E5EBF0] px-3 py-2 text-sm focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]"
@@ -48,6 +51,7 @@ export function BookingRespondActions({ bookingId, onDone }: { bookingId: string
     return (
       <div className="space-y-3">
         <p className="text-sm font-semibold text-[#2B3441]">{t("rejectTitle")}</p>
+        <CancellationReasonPicker value={reasonCategory} onChange={setReasonCategory} disabled={busy} compact />
         <textarea rows={2} value={reason} onChange={(e) => setReason(e.target.value)} placeholder={t("reasonPlaceholder")} className={`${inputCls} w-full resize-none`} />
         {error && <p className="text-xs text-red-500">{error}</p>}
         <div className="flex gap-2">

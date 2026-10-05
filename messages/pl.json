@@ -288,7 +288,7 @@
     "providerStep1Title": "Zgłoś się i zweryfikuj",
     "providerStep1Desc": "Załóż konto usługodawcy, prześlij swoje certyfikaty eko i przejdź weryfikację tożsamości. Zatwierdzenie trwa 1–2 dni robocze.",
     "providerStep2Title": "Skonfiguruj profil",
-    "providerStep2Desc": "Dodaj swoje usługi, cennik, godziny pracy i zasięg działania. Połącz konto Stripe, aby otrzymywać natychmiastową wypłatę za każde zlecenie.",
+    "providerStep2Desc": "Dodaj swoje usługi, ceny, godziny pracy i obszar działania. Dodaj dane bankowe, a otrzymasz zapłatę natychmiast po każdym zleceniu.",
     "providerStep3Title": "Zacznij zarabiać",
     "providerStep3Desc": "Przeglądaj zlecenia, składaj oferty lub otrzymuj bezpośrednie rezerwacje. Natychmiastowa wypłata, gdy tylko klient zatwierdzi ukończone zlecenie. DORIXÉ pobiera tylko niewielką prowizję od zrealizowanej rezerwacji – na utrzymanie serwisu i podatki – reszta należy do Ciebie.",
     "providerCta": "Zostań usługodawcą →",
@@ -311,7 +311,7 @@
     "perkScheduleTitle": "Pracuj, kiedy chcesz",
     "perkScheduleBody": "Ustal własną dostępność i obszar działania oraz przyjmuj tylko te zlecenia, które Ci odpowiadają.",
     "perkPayoutTitle": "Cotygodniowe wypłaty",
-    "perkPayoutBody": "Otrzymujesz natychmiastową wypłatę przez Stripe, gdy tylko zlecenie zostanie zatwierdzone, a następnie Twoje saldo jest co tydzień przelewane na konto bankowe.",
+    "perkPayoutBody": "Otrzymujesz zapłatę zaraz po zatwierdzeniu zlecenia, a pieniądze trafiają na Twoje konto co tydzień.",
     "perkReputationTitle": "Buduj swoją reputację",
     "perkReputationBody": "Każda ukończona rezerwacja dodaje zweryfikowaną opinię do Twojego publicznego profilu.",
     "perkEcoTitle": "Dołącz do ekospołeczności",
@@ -399,7 +399,7 @@
     "customerFeature7": "Ochrona przy anulowaniu (zwrot stopniowany)",
     "customerFeature8": "Powiadomienia w czasie rzeczywistym",
     "providerFeature1": "Bezpłatny profil i ogłoszenie",
-    "providerFeature2": "Cotygodniowe automatyczne wypłaty przez Stripe",
+    "providerFeature2": "Cotygodniowe automatyczne wypłaty na Twoje konto",
     "providerFeature3": "Powiadomienia o zleceniach w Twoim obszarze działania",
     "providerFeature4": "Składaj oferty na opublikowane zlecenia",
     "providerFeature5": "Panel zarobków",
@@ -443,7 +443,7 @@
     "faqCancelQ": "Co, jeśli anuluję?",
     "faqCancelA": "Jeśli anulujesz ponad {tier1} godz. przed terminem, otrzymasz pełny zwrot. Między {tier2} a {tier1} godz. obowiązuje opłata {lowFee}%, między {tier3} a {tier2} godz. {mediumFee}%, a poniżej {tier3} godz. {lateFee}% plus niewielki zwrot kosztów dojazdu dla osoby sprzątającej. Jeśli anuluje osoba sprzątająca, zawsze otrzymasz pełny zwrot.",
     "faqPayoutQ": "Jak osoby sprzątające otrzymują wynagrodzenie?",
-    "faqPayoutA": "Otrzymujesz wypłatę natychmiast — gdy tylko klient zatwierdzi ukończone zlecenie, Twój udział jest od razu zaksięgowany na koncie Stripe. Stripe automatycznie przelewa następnie Twoje saldo na konto bankowe co tydzień.",
+    "faqPayoutA": "Otrzymujesz zapłatę natychmiast — gdy tylko klient zatwierdzi wykonaną pracę, Twoja część trafia na Twoje saldo. Następnie co tydzień jest automatycznie przelewana na Twoje konto bankowe.",
     "faqMinimumQ": "Czy istnieje minimalna wartość rezerwacji?",
     "faqMinimumA": "Nie. Sprzątacze ustalają własne ceny, a niewielka prowizja platformy skaluje się z rezerwacją – nie ma progu minimalnego.",
     "ctaHeading": "Gotowy, by zacząć?",
@@ -787,7 +787,9 @@
     "errorReasonRequired": "Podaj powód (co najmniej 10 znaków) — ta rezerwacja odbędzie się już wkrótce.",
     "keepBooking": "Zachowaj rezerwację",
     "cancelling": "Anulowanie…",
-    "confirmCancellation": "Potwierdź anulowanie"
+    "confirmCancellation": "Potwierdź anulowanie",
+    "rescheduleInsteadTitle": "Może lepiej zmienić datę lub godzinę?",
+    "rescheduleInsteadBody": "Przeniesienie terminu jest bezpłatne i nigdy nie wiąże się z opłatą za anulowanie. Osoba sprzątająca musi tylko zaakceptować nowy termin."
   },
   "customerBookingsIdDisputePage": {
     "detailTitle": "Reklamacja",
@@ -1707,44 +1709,43 @@
   },
   "compOnboardingProviderIdentityStep": {
     "title": "Weryfikacja tożsamości",
-    "description": "DORIXÉ wymaga od wszystkich usługodawców potwierdzenia tożsamości przez Stripe. Zapewnia to bezpieczeństwo klientów i umożliwia wypłaty na Twoje konto bankowe.",
+    "description": "Każda osoba sprzątająca w DORIXÉ raz potwierdza swoją tożsamość. Chroni to klientów i pozwala nam przelewać pieniądze na Twoje konto.",
     "whatYouNeed": "Czego będziesz potrzebować:",
     "needId": "• Dokumentu tożsamości wydanego przez urząd (paszport, dowód osobisty lub prawo jazdy)",
     "needSelfie": "• Selfie / zdjęcia wykonanego podczas weryfikacji",
-    "needProcess": "• Proces trwa 2–3 minuty i jest bezpiecznie obsługiwany przez Stripe",
-    "redirecting": "Przekierowywanie do Stripe...",
+    "needProcess": "• Zajmuje 2–3 minuty i jest bezpiecznie obsługiwane przez naszego dostawcę płatności",
+    "redirecting": "Otwieranie bezpiecznej weryfikacji…",
     "startButton": "Rozpocznij weryfikację tożsamości",
     "skipButton": "Pomiń na razie — zrobię to później",
     "footerNote": "Możesz kontynuować bez weryfikacji, ale nie zostaniesz zatwierdzony, dopóki weryfikacja tożsamości nie zostanie ukończona.",
     "errorStartVerification": "Nie udało się rozpocząć weryfikacji tożsamości. Spróbuj ponownie."
   },
   "compOnboardingProviderPayoutStep": {
-    "successTitle": "Konto Stripe połączone!",
+    "successTitle": "Dane bankowe zapisane!",
     "successDescription": "Twoje konto wypłat jest skonfigurowane. Otrzymujesz zapłatę natychmiast, gdy klient zatwierdzi wykonane zlecenie.",
     "goToDashboard": "Przejdź do mojego panelu →",
     "title": "Skonfiguruj wypłaty",
-    "description": "Podłącz konto bankowe przez Stripe. Otrzymujesz zapłatę natychmiast, gdy klient zatwierdzi wykonane zlecenie — DORIXÉ pobiera niewielką prowizję od rezerwacji na utrzymanie serwisu i podatki; reszta trafia bezpośrednio do Ciebie.",
+    "description": "Podaj konto bankowe, na które chcesz otrzymywać wypłaty. Otrzymujesz zapłatę w chwili, gdy klient zatwierdzi wykonaną pracę — DORIXÉ pobiera niewielką prowizję od rezerwacji na utrzymanie serwisu i podatki; reszta trafia prosto do Ciebie.",
     "benefitInstantPayout": "Natychmiastowa wypłata, gdy klient zatwierdzi Twoje zlecenie",
-    "benefitDirectTransfer": "Bezpośredni przelew bankowy przez Stripe",
+    "benefitDirectTransfer": "Bezpośrednio na Twoje własne konto bankowe",
     "benefitTransparency": "Pełna przejrzystość zarobków w Twoim panelu",
     "benefitNoFees": "0 € opłat za wypłaty przy standardowych przelewach",
-    "connectError": "Nie udało się uruchomić Stripe Connect. Spróbuj ponownie.",
-    "connecting": "Przekierowywanie do Stripe...",
-    "connectButton": "Połącz konto Stripe",
+    "connectError": "Nie udało się otworzyć bezpiecznego formularza wypłat. Spróbuj ponownie.",
+    "connecting": "Otwieranie bezpiecznego formularza…",
+    "connectButton": "Dodaj dane bankowe",
     "skip": "Pomiń na razie",
-    "footnote": "Stripe możesz połączyć później ze swojego panelu. Wypłaty wymagają połączonego konta.",
-    "loading": "Wczytywanie procesu onboardingu Stripe...",
-    "kycDisclaimer": "Zostaniesz poproszony o zweryfikowanie tożsamości za pośrednictwem Stripe. Jest to wymóg regulacyjny (KYC) — nie oznacza to, że musisz już posiadać konto Stripe; zostanie ono dla Ciebie utworzone.",
-    "kycStepMessage": "Stripe weryfikuje teraz Twoją tożsamość. Ten krok jest wymagany przez przepisy finansowe (KYC) — nie potrzebujesz istniejącego konta Stripe, aby kontynuować."
+    "footnote": "Możesz to zrobić później w panelu, ale do tego czasu nie otrzymasz wypłaty.",
+    "loading": "Ładowanie bezpiecznego formularza wypłat…",
+    "kycDisclaimer": "Nie potrzebujesz konta Stripe i nie zostaniesz poproszony o jego założenie. Nasz dostawca płatności, Stripe, obsługuje ten formularz i poprosi o potwierdzenie tożsamości — to wymóg prawny dla każdego, kto otrzymuje płatności (KYC).",
+    "kycStepMessage": "Twoja tożsamość jest właśnie weryfikowana. To wymóg prawny dla każdego, kto otrzymuje płatności (KYC) — nie ma żadnego konta, które musiałbyś zakładać."
   },
   "compOnboardingClientPaymentStep": {
-    "title": "Dodaj metodę płatności",
-    "description": "Zapisz teraz kartę, aby Twoja pierwsza rezerwacja przebiegła szybciej. Całkowicie opcjonalne — możesz też dodać kartę później podczas płatności.",
+    "title": "Dodaj dane płatności",
+    "description": "Dodaj kartę, którą będziesz płacić. Potrzebujemy jej, zanim będziesz mógł zarezerwować — teraz nic nie jest pobierane, a płatność nastąpi dopiero po potwierdzeniu rezerwacji.",
     "benefitFasterBooking": "Nie wpisuj ponownie danych karty przy płatności",
     "benefitNoReentry": "Jedna karta do wszystkich przyszłych rezerwacji",
     "benefitSecure": "Bezpiecznie przechowywana przez Stripe, nigdy na naszych serwerach",
-    "skip": "Pomiń na razie",
-    "footnote": "Kartę możesz dodać później — przy pierwszej rezerwacji lub w panelu."
+    "footnote": "Dziś nie pobieramy żadnej opłaty. Płacisz dopiero przy potwierdzeniu sprzątania."
   },
   "compProviderProviderDashboardBids": {
     "emptyTitle": "Brak ofert",
@@ -1880,7 +1881,6 @@
   },
   "compReferralReferralCard": {
     "title": "Program poleceń",
-    "subtitle": "Zarabiaj {pct}% z każdej rezerwacji poleconych osób",
     "copy": "Kopiuj",
     "copied": "Skopiowano!",
     "loadError": "Nie udało się załadować linku polecającego.",
@@ -1895,18 +1895,15 @@
     "withdrawSuccess": "{amount} jest w drodze na Twoje konto bankowe.",
     "withdrawFailed": "Wypłata nie powiodła się. Spróbuj ponownie.",
     "howItWorks": "Jak to działa",
-    "step1": "Udostępnij swój link — każdy, kto zarejestruje się przez niego, zostaje oznaczony jako Twoje polecenie",
-    "step2": "Gdy ukończą pierwszą rezerwację, Twoje polecenie staje się aktywne",
-    "step3": "Zarabiasz {pct}% każdej ich rezerwacji — środki trafiają na Twoje saldo na koniec każdego miesiąca",
-    "step4": "Wykorzystaj swoje saldo środków jako rabat na następną rezerwację",
-    "subtitleCleaner": "Zarabiaj prowizję, wypłacaną automatycznie",
-    "subtitleClient": "Zdobywaj zniżki, które możesz wykorzystać lub wypłacić",
-    "stepCleanerPeer": "Poleć osobę sprzątającą — zarób {peerPct}% prowizji od jej pierwszych {cap} ukończonych zleceń",
-    "stepCleanerClient": "Poleć klienta — zarób {pct}% prowizji od każdej jego rezerwacji",
-    "stepCleanerPayout": "Prowizje są naliczane na Twoje saldo i automatycznie wypłacane przez Stripe co miesiąc",
-    "stepClientEarn": "Za każde ukończone zamówienie osoby, którą polecisz, zdobywasz {discountPct}% zniżki",
-    "stepClientCredit": "Twoja zniżka jest automatycznie zaliczana na saldo Twojego konta",
-    "stepClientUse": "Wykorzystaj ją przy następnej rezerwacji lub wypłać na konto bankowe w dowolnym momencie"
+    "step1": "Udostępnij swój link — każdy, kto zarejestruje się przez niego, zostaje przypisany do Ciebie",
+    "subtitleCleaner": "Zarabiaj {reward} gotówką za każdą przyprowadzoną osobę",
+    "subtitleClient": "Zarabiaj {reward} do wydania lub wypłaty za każdą przyprowadzoną osobę",
+    "stepCleanerPeer": "Zaproś osobę sprzątającą — zarabiasz {reward}, gdy wykona {jobs} zleceń",
+    "stepCleanerClient": "Zaproś klienta — zarabiasz {reward}, gdy zrealizuje {jobs} rezerwację",
+    "stepCleanerPayout": "Prowizje trafiają na Twoje saldo i są automatycznie wypłacane na Twoje konto co miesiąc",
+    "stepClientEarn": "Zaproś kogokolwiek — zarabiasz {reward}, gdy zrealizuje {jobs} rezerwację",
+    "stepClientCredit": "Nagroda trafia automatycznie na Twoje saldo",
+    "stepClientUse": "Wykorzystaj ją przy kolejnej rezerwacji albo wypłać na konto w dowolnym momencie"
   },
   "compUiDialog": {
     "close": "Zamknij"
@@ -2281,5 +2278,13 @@
     "toastTitle": "🚨 Nowe pilne zlecenie w pobliżu!",
     "toastBody": "W {city} — bądź pierwszy/a i przyjmij je",
     "toastAction": "Zobacz"
+  },
+  "compCancellationReasonPicker": {
+    "legend": "Dlaczego anulujesz?",
+    "option_illness": "Choroba",
+    "option_transport": "Strajk / transport",
+    "option_other": "Inny powód",
+    "hintWaived": "Opłata za anulowanie nie obowiązuje — takich okoliczności nie da się przewidzieć.",
+    "hintFee": "Może obowiązywać opłata za anulowanie, zależnie od tego, jak blisko jest termin."
   }
 }

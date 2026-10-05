@@ -288,7 +288,7 @@
     "providerStep1Title": "Postuler & vérifier",
     "providerStep1Desc": "Créez un compte prestataire, transmettez vos certifications écologiques et complétez la vérification d'identité. L'approbation prend 1 à 2 jours ouvrés.",
     "providerStep2Title": "Configurer votre profil",
-    "providerStep2Desc": "Ajoutez vos services, vos tarifs, vos horaires et votre rayon d'intervention. Connectez votre compte Stripe pour être payé instantanément pour chaque mission.",
+    "providerStep2Desc": "Ajoutez vos services, tarifs, horaires et rayon d'intervention. Renseignez vos coordonnées bancaires et vous êtes payé immédiatement pour chaque mission.",
     "providerStep3Title": "Commencer à gagner",
     "providerStep3Desc": "Parcourez les demandes, proposez des offres ou recevez des réservations directes. Paiement instantané dès que le client approuve votre mission terminée. DORIXÉ ne prend qu'une petite commission par réservation effectuée – pour la maintenance du site et les taxes – le reste est à vous.",
     "providerCta": "Devenir prestataire →",
@@ -311,7 +311,7 @@
     "perkScheduleTitle": "Travaillez quand vous voulez",
     "perkScheduleBody": "Définissez vos disponibilités, votre zone d'intervention et n'acceptez que les réservations qui vous conviennent.",
     "perkPayoutTitle": "Versements hebdomadaires",
-    "perkPayoutBody": "Vous êtes payé instantanément via Stripe dès qu'une mission est approuvée, puis votre solde est viré sur votre compte bancaire chaque semaine.",
+    "perkPayoutBody": "Vous êtes payé dès qu'une mission est validée, et l'argent est viré sur votre compte bancaire chaque semaine.",
     "perkReputationTitle": "Bâtissez votre réputation",
     "perkReputationBody": "Chaque réservation terminée ajoute un avis vérifié à votre profil public.",
     "perkEcoTitle": "Rejoignez une communauté éco-responsable",
@@ -399,7 +399,7 @@
     "customerFeature7": "Protection annulation (remboursement progressif)",
     "customerFeature8": "Notifications en temps réel",
     "providerFeature1": "Profil et annonce gratuits",
-    "providerFeature2": "Versements automatiques hebdomadaires via Stripe",
+    "providerFeature2": "Virements automatiques hebdomadaires sur votre compte",
     "providerFeature3": "Alertes de missions dans votre zone d'intervention",
     "providerFeature4": "Répondez aux missions publiées",
     "providerFeature5": "Tableau de bord des revenus",
@@ -443,7 +443,7 @@
     "faqCancelQ": "Que se passe-t-il si j'annule ?",
     "faqCancelA": "Annulez plus de {tier1} h avant la prestation et vous êtes intégralement remboursé. Entre {tier2} h et {tier1} h, des frais de {lowFee} % s'appliquent, entre {tier3} h et {tier2} h ils sont de {mediumFee} %, et en dessous de {tier3} h de {lateFee} % plus une petite indemnité de déplacement pour l'intervenant. Si l'intervenant annule, vous êtes toujours intégralement remboursé.",
     "faqPayoutQ": "Comment les professionnels sont-ils payés ?",
-    "faqPayoutA": "Vous êtes payé instantanément — dès que le client approuve votre mission terminée, votre part est immédiatement créditée sur votre compte Stripe. Stripe transfère ensuite automatiquement votre solde sur votre compte bancaire chaque semaine.",
+    "faqPayoutA": "Vous êtes payé immédiatement — dès qu'un client valide votre prestation, votre part est créditée sur votre solde. Elle est ensuite virée automatiquement sur votre compte bancaire chaque semaine.",
     "faqMinimumQ": "Y a-t-il un montant minimum de réservation ?",
     "faqMinimumA": "Non. Les agents fixent leurs propres prix, et la petite commission de la plateforme s'adapte à la réservation – il n'y a pas de minimum.",
     "ctaHeading": "Prêt à vous lancer ?",
@@ -787,7 +787,9 @@
     "errorReasonRequired": "Merci d'indiquer un motif (10 caractères minimum) — ce rendez-vous est très proche.",
     "keepBooking": "Conserver la réservation",
     "cancelling": "Annulation…",
-    "confirmCancellation": "Confirmer l'annulation"
+    "confirmCancellation": "Confirmer l'annulation",
+    "rescheduleInsteadTitle": "Changer plutôt la date ou l'heure ?",
+    "rescheduleInsteadBody": "Déplacer le rendez-vous est gratuit et n'entraîne jamais de frais d'annulation. Votre intervenant doit simplement accepter le nouvel horaire."
   },
   "customerBookingsIdDisputePage": {
     "detailTitle": "Litige",
@@ -1707,44 +1709,43 @@
   },
   "compOnboardingProviderIdentityStep": {
     "title": "Vérification d'identité",
-    "description": "DORIXÉ exige de tous les prestataires qu'ils vérifient leur identité via Stripe. Cela garantit la sécurité des clients et permet les versements sur votre compte bancaire.",
+    "description": "Chaque intervenant DORIXÉ confirme son identité une seule fois. Cela protège les clients et nous permet de virer l'argent sur votre compte bancaire.",
     "whatYouNeed": "Ce dont vous aurez besoin :",
     "needId": "• Une pièce d'identité officielle (passeport, carte nationale d'identité ou permis de conduire)",
     "needSelfie": "• Un selfie / une photo prise pendant la vérification",
-    "needProcess": "• Le processus prend 2 à 3 minutes et est géré en toute sécurité par Stripe",
-    "redirecting": "Redirection vers Stripe...",
+    "needProcess": "• Cela prend 2 à 3 minutes et est traité en toute sécurité par notre prestataire de paiement",
+    "redirecting": "Ouverture de la vérification sécurisée…",
     "startButton": "Démarrer la vérification d'identité",
     "skipButton": "Passer pour l'instant — je le ferai plus tard",
     "footerNote": "Vous pouvez continuer sans vérifier, mais vous ne serez pas approuvé tant que la vérification d'identité n'est pas terminée.",
     "errorStartVerification": "Impossible de démarrer la vérification d'identité. Veuillez réessayer."
   },
   "compOnboardingProviderPayoutStep": {
-    "successTitle": "Compte Stripe connecté !",
+    "successTitle": "Coordonnées bancaires enregistrées !",
     "successDescription": "Votre compte de versement est configuré. Vous êtes payé instantanément dès qu'un client approuve votre mission terminée.",
     "goToDashboard": "Aller à mon tableau de bord →",
     "title": "Configurer les versements",
-    "description": "Connectez votre compte bancaire via Stripe. Vous êtes payé instantanément dès qu'un client approuve votre mission terminée — DORIXÉ prend une petite commission par réservation pour la maintenance du site et les taxes ; le reste vous est versé directement.",
+    "description": "Indiquez le compte bancaire sur lequel vous souhaitez être payé. Vous êtes payé dès qu'un client valide votre prestation — DORIXÉ retient une petite commission par réservation pour la maintenance du site et les taxes ; le reste vous revient directement.",
     "benefitInstantPayout": "Paiement instantané dès qu'un client approuve votre mission",
-    "benefitDirectTransfer": "Virement bancaire direct via Stripe",
+    "benefitDirectTransfer": "Versé directement sur votre propre compte bancaire",
     "benefitTransparency": "Transparence totale de vos gains dans votre tableau de bord",
     "benefitNoFees": "0 € de frais de versement pour les virements standard",
-    "connectError": "Impossible de démarrer Stripe Connect. Veuillez réessayer.",
-    "connecting": "Redirection vers Stripe...",
-    "connectButton": "Connecter un compte Stripe",
+    "connectError": "Impossible d'ouvrir le formulaire sécurisé de paiement. Veuillez réessayer.",
+    "connecting": "Ouverture du formulaire sécurisé…",
+    "connectButton": "Ajouter mes coordonnées bancaires",
     "skip": "Ignorer pour l'instant",
-    "footnote": "Vous pourrez connecter Stripe plus tard depuis votre tableau de bord. Les versements nécessitent un compte connecté.",
-    "loading": "Chargement de l'intégration Stripe...",
-    "kycDisclaimer": "Il vous sera demandé de vérifier votre identité via Stripe. Il s'agit d'une exigence réglementaire (KYC) — cela ne signifie pas que vous devez déjà avoir un compte Stripe ; celui-ci est créé pour vous.",
-    "kycStepMessage": "Stripe vérifie actuellement votre identité. Cette étape est exigée par la réglementation financière (KYC) — vous n'avez pas besoin d'un compte Stripe existant pour continuer."
+    "footnote": "Vous pouvez le faire plus tard depuis votre tableau de bord, mais vous ne serez pas payé avant.",
+    "loading": "Chargement du formulaire sécurisé…",
+    "kycDisclaimer": "Vous n'avez pas besoin d'un compte Stripe et il ne vous sera pas demandé d'en créer un. Notre prestataire de paiement, Stripe, gère ce formulaire et vous demandera de confirmer votre identité — une obligation légale pour toute personne recevant des paiements (KYC).",
+    "kycStepMessage": "Votre identité est en cours de vérification. C'est une obligation légale pour toute personne recevant des paiements (KYC) — il n'y a aucun compte à créer."
   },
   "compOnboardingClientPaymentStep": {
-    "title": "Ajouter un moyen de paiement",
-    "description": "Enregistrez une carte maintenant pour accélérer votre première réservation. Entièrement facultatif — vous pouvez aussi en ajouter une plus tard au paiement.",
+    "title": "Ajoutez vos informations de paiement",
+    "description": "Ajoutez la carte avec laquelle vous réglerez. Nous en avons besoin avant toute réservation — rien n'est débité maintenant, ni avant que vous ne confirmiez une réservation.",
     "benefitFasterBooking": "Évitez de ressaisir les détails de la carte au paiement",
     "benefitNoReentry": "Une seule carte pour toutes vos futures réservations",
     "benefitSecure": "Stockée en toute sécurité par Stripe, jamais sur nos serveurs",
-    "skip": "Ignorer pour l'instant",
-    "footnote": "Vous pourrez ajouter une carte plus tard — lors de votre première réservation ou depuis votre tableau de bord."
+    "footnote": "Aucun débit aujourd'hui. Vous n'êtes débité qu'en confirmant une prestation."
   },
   "compProviderProviderDashboardBids": {
     "emptyTitle": "Aucune offre pour le moment",
@@ -1880,7 +1881,6 @@
   },
   "compReferralReferralCard": {
     "title": "Programme de parrainage",
-    "subtitle": "Gagnez {pct} % sur chaque réservation de vos filleuls",
     "copy": "Copier",
     "copied": "Copié !",
     "loadError": "Impossible de charger le lien de parrainage.",
@@ -1895,18 +1895,15 @@
     "withdrawSuccess": "{amount} est en route vers votre compte bancaire.",
     "withdrawFailed": "Le retrait a échoué. Veuillez réessayer.",
     "howItWorks": "Comment ça marche",
-    "step1": "Partagez votre lien — toute personne qui s'inscrit via ce lien devient votre filleul",
-    "step2": "Dès leur première réservation effectuée, votre filleul devient actif",
-    "step3": "Vous gagnez {pct} % de chacune de leurs réservations — crédité sur votre solde à la fin de chaque mois",
-    "step4": "Utilisez votre solde de crédit comme réduction sur votre prochaine réservation",
-    "subtitleCleaner": "Gagnez une commission, versée automatiquement",
-    "subtitleClient": "Gagnez des réductions à utiliser ou à retirer",
-    "stepCleanerPeer": "Parrainez un intervenant — gagnez {peerPct}% de commission sur ses {cap} premières missions terminées",
-    "stepCleanerClient": "Parrainez un client — gagnez {pct}% de commission sur chacune de ses réservations",
-    "stepCleanerPayout": "Les commissions sont créditées sur votre solde et versées automatiquement via Stripe chaque mois",
-    "stepClientEarn": "Pour chaque commande terminée par une personne que vous invitez, vous gagnez {discountPct}% de réduction",
-    "stepClientCredit": "Votre réduction est automatiquement créditée sur le solde de votre compte",
-    "stepClientUse": "Utilisez-la lors de votre prochaine réservation, ou retirez-la vers votre banque à tout moment"
+    "step1": "Partagez votre lien — toute personne qui s'inscrit via ce lien vous est rattachée",
+    "subtitleCleaner": "Gagnez {reward} en espèces pour chaque personne que vous amenez",
+    "subtitleClient": "Gagnez {reward} à dépenser ou à retirer pour chaque personne que vous amenez",
+    "stepCleanerPeer": "Invitez un intervenant — vous gagnez {reward} dès qu'il a terminé {jobs} missions",
+    "stepCleanerClient": "Invitez un client — vous gagnez {reward} dès qu'il a terminé {jobs} réservation",
+    "stepCleanerPayout": "Les commissions sont créditées sur votre solde et virées automatiquement sur votre compte chaque mois",
+    "stepClientEarn": "Invitez qui vous voulez — vous gagnez {reward} dès qu'il a terminé {jobs} réservation",
+    "stepClientCredit": "La récompense est ajoutée automatiquement à votre solde",
+    "stepClientUse": "Utilisez-la lors de votre prochaine réservation, ou virez-la sur votre compte à tout moment"
   },
   "compUiDialog": {
     "close": "Fermer"
@@ -2281,5 +2278,13 @@
     "toastTitle": "🚨 Nouvelle mission urgente à proximité !",
     "toastBody": "À {city} — soyez le premier à l'accepter",
     "toastAction": "Voir"
+  },
+  "compCancellationReasonPicker": {
+    "legend": "Pourquoi annulez-vous ?",
+    "option_illness": "Maladie",
+    "option_transport": "Grève / transport",
+    "option_other": "Autre raison",
+    "hintWaived": "Aucuns frais d'annulation — ce type de circonstance est imprévisible.",
+    "hintFee": "Des frais d'annulation peuvent s'appliquer selon la proximité du rendez-vous."
   }
 }

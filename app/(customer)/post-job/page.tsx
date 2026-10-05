@@ -52,9 +52,9 @@ export default function PostJobPage() {
   // Marketing copy, not conditional on picking recurring — shown upfront so it can actually
   // influence the choice, same treatment as the direct-booking wizard's banner.
   const [recurringDiscountPct, setRecurringDiscountPct] = useState<number | null>(null)
-  // Admin-configurable wage floor (lib/platform/settings.ts getMinHourlyRateCents) — 1500 (€15) is
+  // Admin-configurable wage floor (lib/platform/settings.ts getMinHourlyRateCents) — 1800 (€18) is
   // just the initial guess shown before the live value loads; the server is the real source of truth.
-  const [minHourlyRateCents, setMinHourlyRateCents] = useState(1500)
+  const [minHourlyRateCents, setMinHourlyRateCents] = useState(1800)
 
   useEffect(() => {
     fetch("/api/settings/recurring-discount")
@@ -546,7 +546,7 @@ export default function PostJobPage() {
               Job posts — no skip option (unlike the same prompt at signup). */}
           {!hasCard && (
             <div className="flex justify-center">
-              <SaveCardPrompt onSkip={() => {}} skipLabel="" hideSkip onSaved={() => setHasCard(true)} />
+              <SaveCardPrompt hideSkip onSaved={() => setHasCard(true)} />
             </div>
           )}
 

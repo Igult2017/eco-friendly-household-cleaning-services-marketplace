@@ -288,7 +288,7 @@
     "providerStep1Title": "Solicita y verifica",
     "providerStep1Desc": "Crea una cuenta de profesional, envía tus certificaciones ecológicas y completa la verificación de identidad. La aprobación tarda de 1 a 2 días laborables.",
     "providerStep2Title": "Configura tu perfil",
-    "providerStep2Desc": "Añade tus servicios, precios, horario de trabajo y radio de servicio. Conecta tu cuenta de Stripe para cobrar al instante por cada trabajo.",
+    "providerStep2Desc": "Añade tus servicios, precios, horario y radio de servicio. Añade tus datos bancarios y cobrarás al instante por cada trabajo.",
     "providerStep3Title": "Empieza a ganar",
     "providerStep3Desc": "Explora trabajos, envía ofertas o recibe reservas directas. Cobro al instante en cuanto el cliente aprueba tu trabajo completado. DORIXÉ solo se queda con una pequeña comisión por reserva completada, para el mantenimiento del sitio y los impuestos; el resto es para ti.",
     "providerCta": "Hazte profesional →",
@@ -311,7 +311,7 @@
     "perkScheduleTitle": "Trabaja cuando quieras",
     "perkScheduleBody": "Define tu disponibilidad y tu zona de servicio, y acepta solo las reservas que quieras.",
     "perkPayoutTitle": "Pagos semanales",
-    "perkPayoutBody": "Cobras al instante a través de Stripe en cuanto se aprueba un trabajo; después, tu saldo se transfiere a tu banco semanalmente.",
+    "perkPayoutBody": "Cobras en cuanto se aprueba un trabajo, y el dinero se transfiere a tu banco cada semana.",
     "perkReputationTitle": "Construye tu reputación",
     "perkReputationBody": "Cada reserva completada añade una reseña verificada a tu perfil público.",
     "perkEcoTitle": "Únete a una comunidad ecológica",
@@ -399,7 +399,7 @@
     "customerFeature7": "Protección por cancelación (reembolso escalonado)",
     "customerFeature8": "Notificaciones en tiempo real",
     "providerFeature1": "Perfil y anuncio gratuitos",
-    "providerFeature2": "Pagos automáticos semanales mediante Stripe",
+    "providerFeature2": "Pagos automáticos semanales a tu banco",
     "providerFeature3": "Alertas de trabajos en tu zona de servicio",
     "providerFeature4": "Puja por trabajos publicados",
     "providerFeature5": "Panel de ingresos",
@@ -443,7 +443,7 @@
     "faqCancelQ": "¿Qué pasa si cancelo?",
     "faqCancelA": "Si cancelas con más de {tier1} h de antelación, te devolvemos el importe íntegro. Entre {tier2} h y {tier1} h se aplica una tarifa del {lowFee} %, entre {tier3} h y {tier2} h del {mediumFee} %, y con menos de {tier3} h del {lateFee} % más una pequeña compensación de desplazamiento para el profesional. Si cancela el profesional, siempre recibes el reembolso completo.",
     "faqPayoutQ": "¿Cómo cobran los profesionales?",
-    "faqPayoutA": "Cobras al instante: en cuanto el cliente aprueba tu trabajo completado, tu parte se abona de inmediato en tu cuenta de Stripe. Después, Stripe transfiere automáticamente tu saldo a tu cuenta bancaria semanalmente.",
+    "faqPayoutA": "Cobras al instante: en cuanto un cliente aprueba tu trabajo, tu parte se abona en tu saldo. Después se transfiere automáticamente a tu cuenta bancaria cada semana.",
     "faqMinimumQ": "¿Hay un valor mínimo de reserva?",
     "faqMinimumA": "No. Los limpiadores fijan sus propios precios, y la pequeña comisión de la plataforma se ajusta a la reserva: no hay mínimo.",
     "ctaHeading": "¿Listo para empezar?",
@@ -787,7 +787,9 @@
     "errorReasonRequired": "Indica un motivo (al menos 10 caracteres) — esta reserva es muy próxima.",
     "keepBooking": "Mantener reserva",
     "cancelling": "Cancelando…",
-    "confirmCancellation": "Confirmar cancelación"
+    "confirmCancellation": "Confirmar cancelación",
+    "rescheduleInsteadTitle": "¿Prefieres cambiar la fecha o la hora?",
+    "rescheduleInsteadBody": "Mover la cita es gratis y nunca genera una tarifa de cancelación. Tu profesional solo tiene que aceptar el nuevo horario."
   },
   "customerBookingsIdDisputePage": {
     "detailTitle": "Reclamación",
@@ -1707,44 +1709,43 @@
   },
   "compOnboardingProviderIdentityStep": {
     "title": "Verificación de identidad",
-    "description": "DORIXÉ exige que todos los profesionales verifiquen su identidad a través de Stripe. Esto garantiza la seguridad de los clientes y permite los pagos a tu cuenta bancaria.",
+    "description": "Cada profesional de DORIXÉ confirma su identidad una vez. Protege a los clientes y es lo que nos permite ingresar dinero en tu cuenta bancaria.",
     "whatYouNeed": "Lo que necesitarás:",
     "needId": "• Un documento de identidad oficial (pasaporte, DNI o carné de conducir)",
     "needSelfie": "• Un selfie / foto tomada durante la verificación",
-    "needProcess": "• El proceso tarda de 2 a 3 minutos y lo gestiona Stripe de forma segura",
-    "redirecting": "Redirigiendo a Stripe...",
+    "needProcess": "• Tarda 2–3 minutos y lo gestiona de forma segura nuestro proveedor de pagos",
+    "redirecting": "Abriendo la verificación segura…",
     "startButton": "Iniciar verificación de identidad",
     "skipButton": "Omitir por ahora — lo haré más tarde",
     "footerNote": "Puedes continuar sin verificar, pero no te aprobarán hasta que se complete la verificación de identidad.",
     "errorStartVerification": "No se pudo iniciar la verificación de identidad. Inténtalo de nuevo."
   },
   "compOnboardingProviderPayoutStep": {
-    "successTitle": "¡Cuenta de Stripe conectada!",
+    "successTitle": "¡Datos bancarios guardados!",
     "successDescription": "Tu cuenta de pagos está configurada. Se te paga al instante en cuanto un cliente aprueba tu trabajo completado.",
     "goToDashboard": "Ir a mi panel →",
     "title": "Configurar pagos",
-    "description": "Conecta tu cuenta bancaria mediante Stripe. Se te paga al instante en cuanto un cliente aprueba tu trabajo completado — DORIXÉ se queda con una pequeña comisión por reserva para el mantenimiento del sitio y los impuestos; el resto se te paga directamente a ti.",
+    "description": "Indica la cuenta bancaria en la que quieres recibir tus pagos. Cobras en cuanto un cliente aprueba tu trabajo — DORIXÉ se queda una pequeña comisión por reserva para el mantenimiento del sitio y los impuestos; el resto es para ti.",
     "benefitInstantPayout": "Pago instantáneo en cuanto un cliente aprueba tu trabajo",
-    "benefitDirectTransfer": "Transferencia bancaria directa mediante Stripe",
+    "benefitDirectTransfer": "Directo a tu propia cuenta bancaria",
     "benefitTransparency": "Transparencia total de tus ganancias en tu panel",
     "benefitNoFees": "0 € en comisiones de pago para transferencias estándar",
-    "connectError": "No se pudo iniciar Stripe Connect. Inténtalo de nuevo.",
-    "connecting": "Redirigiendo a Stripe...",
-    "connectButton": "Conectar cuenta de Stripe",
+    "connectError": "No hemos podido abrir el formulario seguro de cobros. Inténtalo de nuevo.",
+    "connecting": "Abriendo el formulario seguro…",
+    "connectButton": "Añadir datos bancarios",
     "skip": "Omitir por ahora",
-    "footnote": "Puedes conectar Stripe más tarde desde tu panel. Los pagos requieren una cuenta conectada.",
-    "loading": "Cargando la incorporación de Stripe...",
-    "kycDisclaimer": "Se te pedirá que verifiques tu identidad a través de Stripe. Es un requisito normativo (KYC) — no significa que necesites tener ya una cuenta de Stripe; esta se crea para ti.",
-    "kycStepMessage": "Stripe está verificando tu identidad ahora. Este paso es obligatorio por normativa financiera (KYC) — no necesitas tener una cuenta de Stripe previa para continuar."
+    "footnote": "Puedes hacerlo más tarde desde tu panel, pero no cobrarás hasta que lo hagas.",
+    "loading": "Cargando el formulario seguro de cobros…",
+    "kycDisclaimer": "No necesitas una cuenta de Stripe ni se te pedirá que crees una. Nuestro proveedor de pagos, Stripe, gestiona este formulario y te pedirá que confirmes tu identidad: es un requisito legal para cualquiera que reciba pagos (KYC).",
+    "kycStepMessage": "Se está verificando tu identidad. Es un requisito legal para cualquiera que reciba pagos (KYC): no hay ninguna cuenta que debas crear."
   },
   "compOnboardingClientPaymentStep": {
-    "title": "Añade un método de pago",
-    "description": "Guarda una tarjeta ahora para que tu primera reserva sea más rápida. Totalmente opcional — también puedes añadirla más tarde al pagar.",
+    "title": "Añade tus datos de pago",
+    "description": "Añade la tarjeta con la que vas a pagar. La necesitamos antes de que puedas reservar: no se cobra nada ahora, ni hasta que confirmes una reserva.",
     "benefitFasterBooking": "Evita volver a introducir los datos de la tarjeta al pagar",
     "benefitNoReentry": "Una tarjeta sirve para todas tus próximas reservas",
     "benefitSecure": "Guardada de forma segura por Stripe, nunca en nuestros servidores",
-    "skip": "Omitir por ahora",
-    "footnote": "Puedes añadir una tarjeta más tarde — en tu primera reserva o desde tu panel."
+    "footnote": "Hoy no se realiza ningún cargo. Solo se te cobra al confirmar una limpieza."
   },
   "compProviderProviderDashboardBids": {
     "emptyTitle": "Aún no hay ofertas",
@@ -1880,7 +1881,6 @@
   },
   "compReferralReferralCard": {
     "title": "Programa de referidos",
-    "subtitle": "Gana el {pct}% de cada reserva de tus referidos",
     "copy": "Copiar",
     "copied": "¡Copiado!",
     "loadError": "No se pudo cargar el enlace de referidos.",
@@ -1895,18 +1895,15 @@
     "withdrawSuccess": "{amount} va en camino a tu cuenta bancaria.",
     "withdrawFailed": "El retiro falló. Inténtalo de nuevo.",
     "howItWorks": "Cómo funciona",
-    "step1": "Comparte tu enlace — quien se registre a través de él queda marcado como tu referido",
-    "step2": "Cuando completan su primera reserva, tu referido pasa a estar activo",
-    "step3": "Ganas el {pct}% de cada reserva que hagan — se acredita en tu saldo a final de cada mes",
-    "step4": "Usa tu saldo de crédito como descuento en tu próxima reserva",
-    "subtitleCleaner": "Gana comisión, pagada automáticamente",
-    "subtitleClient": "Gana descuentos que puedes usar o retirar",
-    "stepCleanerPeer": "Invita a un profesional de limpieza — gana un {peerPct}% de comisión por sus primeros {cap} trabajos completados",
-    "stepCleanerClient": "Invita a un cliente — gana un {pct}% de comisión por cada reserva que haga",
-    "stepCleanerPayout": "Las comisiones se acreditan en tu saldo y se pagan automáticamente por Stripe cada mes",
-    "stepClientEarn": "Por cada pedido completado de alguien que invites, ganas un {discountPct}% de descuento",
-    "stepClientCredit": "Tu descuento se acredita automáticamente en el saldo de tu cuenta",
-    "stepClientUse": "Úsalo en tu próxima reserva, o retíralo a tu banco cuando quieras"
+    "step1": "Comparte tu enlace: quien se registre a través de él queda asociado a ti",
+    "subtitleCleaner": "Gana {reward} en efectivo por cada persona que traigas",
+    "subtitleClient": "Gana {reward} para gastar o retirar por cada persona que traigas",
+    "stepCleanerPeer": "Invita a un profesional: ganas {reward} cuando haya completado {jobs} trabajos",
+    "stepCleanerClient": "Invita a un cliente: ganas {reward} cuando haya completado {jobs} reserva",
+    "stepCleanerPayout": "Las comisiones se abonan en tu saldo y se ingresan automáticamente en tu banco cada mes",
+    "stepClientEarn": "Invita a quien quieras: ganas {reward} cuando haya completado {jobs} reserva",
+    "stepClientCredit": "La recompensa se añade automáticamente a tu saldo",
+    "stepClientUse": "Úsala en tu próxima reserva o retírala a tu banco cuando quieras"
   },
   "compUiDialog": {
     "close": "Cerrar"
@@ -2281,5 +2278,13 @@
     "toastTitle": "🚨 ¡Nuevo trabajo urgente cerca!",
     "toastBody": "En {city} — sé el primero en reclamarlo",
     "toastAction": "Ver"
+  },
+  "compCancellationReasonPicker": {
+    "legend": "¿Por qué cancelas?",
+    "option_illness": "Enfermedad",
+    "option_transport": "Huelga / transporte",
+    "option_other": "Otro motivo",
+    "hintWaived": "No se aplica ninguna tarifa de cancelación: estas circunstancias no se pueden prever.",
+    "hintFee": "Puede aplicarse una tarifa de cancelación según lo cerca que esté la cita."
   }
 }

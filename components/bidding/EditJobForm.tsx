@@ -51,7 +51,7 @@ export function EditJobForm({ jobId, initial, hasBids, country }: { jobId: strin
   const [form, setForm] = useState(initial)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
-  const [minHourlyRateCents, setMinHourlyRateCents] = useState(1500)
+  const [minHourlyRateCents, setMinHourlyRateCents] = useState(1800)
 
   // Same rule as the posting form and the direct-booking wizard: Monthly is single-day.
   function toggleDay(d: number) {

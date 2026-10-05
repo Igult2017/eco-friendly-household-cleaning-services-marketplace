@@ -288,7 +288,7 @@
     "providerStep1Title": "Aanmelden & verifiëren",
     "providerStep1Desc": "Maak een aanbiedersaccount aan, dien je eco-certificeringen in en voltooi de identiteitsverificatie. Goedkeuring duurt 1–2 werkdagen.",
     "providerStep2Title": "Stel je profiel in",
-    "providerStep2Desc": "Voeg je diensten, tarieven, werktijden en werkgebied toe. Koppel je Stripe-account om direct uitbetaald te worden voor elke klus.",
+    "providerStep2Desc": "Voeg uw diensten, tarieven, werktijden en werkgebied toe. Voeg uw bankgegevens toe en u wordt direct betaald voor elke klus.",
     "providerStep3Title": "Begin met verdienen",
     "providerStep3Desc": "Bekijk klussen, breng biedingen uit of ontvang directe boekingen. Directe uitbetaling zodra de klant je voltooide klus goedkeurt. DORIXÉ neemt alleen een kleine commissie per voltooide boeking – voor onderhoud van het platform en belastingen – de rest is voor jou.",
     "providerCta": "Word aanbieder →",
@@ -311,7 +311,7 @@
     "perkScheduleTitle": "Werk wanneer je wilt",
     "perkScheduleBody": "Bepaal je eigen beschikbaarheid en werkgebied en neem alleen de boekingen aan die je wilt.",
     "perkPayoutTitle": "Wekelijkse uitbetalingen",
-    "perkPayoutBody": "Je wordt direct via Stripe betaald zodra een klus wordt goedgekeurd; daarna wordt je saldo wekelijks naar je bankrekening overgemaakt.",
+    "perkPayoutBody": "U wordt betaald zodra een klus is goedgekeurd, en het geld wordt wekelijks naar uw bankrekening overgemaakt.",
     "perkReputationTitle": "Bouw je reputatie op",
     "perkReputationBody": "Elke voltooide boeking voegt een geverifieerde review toe aan je openbare profiel.",
     "perkEcoTitle": "Word lid van een eco-community",
@@ -399,7 +399,7 @@
     "customerFeature7": "Annuleringsbescherming (getrapte terugbetaling)",
     "customerFeature8": "Realtime meldingen",
     "providerFeature1": "Gratis profiel en vermelding",
-    "providerFeature2": "Wekelijkse automatische uitbetalingen via Stripe",
+    "providerFeature2": "Wekelijkse automatische uitbetalingen naar uw bank",
     "providerFeature3": "Klusmeldingen in jouw werkgebied",
     "providerFeature4": "Bied op geplaatste klussen",
     "providerFeature5": "Verdiensten-dashboard",
@@ -443,7 +443,7 @@
     "faqCancelQ": "Wat als ik annuleer?",
     "faqCancelA": "Annuleer je meer dan {tier1} uur van tevoren, dan krijg je het volledige bedrag terug. Tussen {tier2} en {tier1} uur geldt {lowFee}% kosten, tussen {tier3} en {tier2} uur {mediumFee}%, en onder {tier3} uur {lateFee}% plus een kleine reisvergoeding voor de schoonmaker. Annuleert de schoonmaker, dan krijg je altijd alles terug.",
     "faqPayoutQ": "Hoe worden schoonmakers betaald?",
-    "faqPayoutA": "Je wordt direct uitbetaald — zodra de klant je voltooide klus goedkeurt, wordt jouw deel meteen bijgeschreven op je Stripe-account. Stripe maakt je saldo daarna automatisch wekelijks over naar je bankrekening.",
+    "faqPayoutA": "U wordt direct betaald — zodra een klant uw voltooide klus goedkeurt, wordt uw deel op uw saldo bijgeschreven. Het wordt vervolgens elke week automatisch naar uw bankrekening overgemaakt.",
     "faqMinimumQ": "Is er een minimale boekwaarde?",
     "faqMinimumA": "Nee. Schoonmakers bepalen hun eigen prijzen, en de kleine platformcommissie schaalt mee met de boeking – er is geen ondergrens.",
     "ctaHeading": "Klaar om te beginnen?",
@@ -787,7 +787,9 @@
     "errorReasonRequired": "Geef een reden op (minstens 10 tekens) — deze boeking staat binnenkort gepland.",
     "keepBooking": "Boeking behouden",
     "cancelling": "Bezig met annuleren…",
-    "confirmCancellation": "Annulering bevestigen"
+    "confirmCancellation": "Annulering bevestigen",
+    "rescheduleInsteadTitle": "Liever de datum of tijd wijzigen?",
+    "rescheduleInsteadBody": "De afspraak verzetten is gratis en kost nooit annuleringskosten. Uw schoonmaker hoeft alleen akkoord te gaan met de nieuwe tijd."
   },
   "customerBookingsIdDisputePage": {
     "detailTitle": "Geschil",
@@ -1707,44 +1709,43 @@
   },
   "compOnboardingProviderIdentityStep": {
     "title": "Identiteitsverificatie",
-    "description": "DORIXÉ vereist dat alle aanbieders hun identiteit verifiëren via Stripe. Dit zorgt voor de veiligheid van klanten en maakt uitbetalingen op je bankrekening mogelijk.",
+    "description": "Elke schoonmaker bij DORIXÉ bevestigt eenmalig zijn of haar identiteit. Dat beschermt klanten en maakt het mogelijk geld op uw rekening te storten.",
     "whatYouNeed": "Wat je nodig hebt:",
     "needId": "• Een door de overheid uitgegeven identiteitsbewijs (paspoort, identiteitskaart of rijbewijs)",
     "needSelfie": "• Een selfie / foto die tijdens de verificatie wordt gemaakt",
-    "needProcess": "• Het proces duurt 2–3 minuten en wordt veilig afgehandeld door Stripe",
-    "redirecting": "Doorverwijzen naar Stripe...",
+    "needProcess": "• Het duurt 2–3 minuten en wordt veilig afgehandeld door onze betaalprovider",
+    "redirecting": "Beveiligde verificatie wordt geopend…",
     "startButton": "Identiteitsverificatie starten",
     "skipButton": "Voorlopig overslaan — ik doe dit later",
     "footerNote": "Je kunt doorgaan zonder te verifiëren, maar je wordt pas goedgekeurd zodra de identiteitsverificatie is voltooid.",
     "errorStartVerification": "Kon de identiteitsverificatie niet starten. Probeer het opnieuw."
   },
   "compOnboardingProviderPayoutStep": {
-    "successTitle": "Stripe-account gekoppeld!",
+    "successTitle": "Bankgegevens opgeslagen!",
     "successDescription": "Je uitbetalingsaccount is ingesteld. Je wordt direct betaald zodra een klant je voltooide klus goedkeurt.",
     "goToDashboard": "Naar mijn dashboard →",
     "title": "Uitbetalingen instellen",
-    "description": "Koppel je bankrekening via Stripe. Je wordt direct betaald zodra een klant je voltooide klus goedkeurt — DORIXÉ houdt een kleine commissie per boeking in voor onderhoud van het platform en belastingen; de rest wordt rechtstreeks aan jou uitbetaald.",
+    "description": "Geef de bankrekening op waarop u betaald wilt worden. U wordt betaald zodra een klant uw voltooide klus goedkeurt — DORIXÉ houdt een kleine commissie per boeking in voor onderhoud en belastingen; de rest gaat rechtstreeks naar u.",
     "benefitInstantPayout": "Directe uitbetaling zodra een klant je klus goedkeurt",
-    "benefitDirectTransfer": "Directe bankoverschrijving via Stripe",
+    "benefitDirectTransfer": "Rechtstreeks op uw eigen bankrekening",
     "benefitTransparency": "Volledige inzage in je inkomsten via je dashboard",
     "benefitNoFees": "€0 uitbetalingskosten voor standaardoverschrijvingen",
-    "connectError": "Kan Stripe Connect niet starten. Probeer het opnieuw.",
-    "connecting": "Doorsturen naar Stripe...",
-    "connectButton": "Stripe-account koppelen",
+    "connectError": "We konden het beveiligde uitbetalingsformulier niet openen. Probeer het opnieuw.",
+    "connecting": "Beveiligd formulier wordt geopend…",
+    "connectButton": "Bankgegevens toevoegen",
     "skip": "Voorlopig overslaan",
-    "footnote": "Je kunt Stripe later koppelen via je dashboard. Voor uitbetalingen is een gekoppeld account vereist.",
-    "loading": "Stripe-onboarding wordt geladen...",
-    "kycDisclaimer": "Je wordt gevraagd je identiteit te verifiëren via Stripe. Dit is een wettelijke vereiste (KYC) — het betekent niet dat je al een Stripe-account moet hebben; dit wordt voor je aangemaakt.",
-    "kycStepMessage": "Stripe verifieert nu je identiteit. Deze stap is wettelijk verplicht (KYC) — je hebt geen bestaand Stripe-account nodig om door te gaan."
+    "footnote": "U kunt dit later vanuit uw dashboard doen, maar tot die tijd kunt u niet uitbetaald worden.",
+    "loading": "Beveiligd uitbetalingsformulier wordt geladen…",
+    "kycDisclaimer": "U heeft geen Stripe-account nodig en u wordt ook niet gevraagd er een aan te maken. Onze betaalprovider Stripe verzorgt dit formulier en vraagt u uw identiteit te bevestigen — wettelijk verplicht voor iedereen die betalingen ontvangt (KYC).",
+    "kycStepMessage": "Uw identiteit wordt nu gecontroleerd. Dit is wettelijk verplicht voor iedereen die betalingen ontvangt (KYC) — er is geen account waarvoor u zich moet aanmelden."
   },
   "compOnboardingClientPaymentStep": {
-    "title": "Betaalmethode toevoegen",
-    "description": "Sla nu een kaart op zodat je eerste boeking sneller gaat. Volledig optioneel — je kunt er ook later een toevoegen bij het afrekenen.",
+    "title": "Voeg uw betaalgegevens toe",
+    "description": "Voeg de kaart toe waarmee u wilt betalen. We hebben die nodig voordat u kunt boeken — er wordt nu niets afgeschreven, en ook later pas wanneer u een boeking bevestigt.",
     "benefitFasterBooking": "Kaartgegevens niet opnieuw invoeren bij het afrekenen",
     "benefitNoReentry": "Eén kaart voor al je toekomstige boekingen",
     "benefitSecure": "Veilig opgeslagen bij Stripe, nooit op onze servers",
-    "skip": "Voorlopig overslaan",
-    "footnote": "Je kunt later een kaart toevoegen — bij je eerste boeking of via je dashboard."
+    "footnote": "Vandaag wordt er niets afgeschreven. U betaalt pas wanneer u een schoonmaak bevestigt."
   },
   "compProviderProviderDashboardBids": {
     "emptyTitle": "Nog geen biedingen",
@@ -1880,7 +1881,6 @@
   },
   "compReferralReferralCard": {
     "title": "Aanbevelingsprogramma",
-    "subtitle": "Verdien {pct}% aan elke boeking van jouw verwijzingen",
     "copy": "Kopiëren",
     "copied": "Gekopieerd!",
     "loadError": "Aanbevelingslink kan niet worden geladen.",
@@ -1895,18 +1895,15 @@
     "withdrawSuccess": "{amount} is onderweg naar je bankrekening.",
     "withdrawFailed": "Opname mislukt. Probeer het opnieuw.",
     "howItWorks": "Hoe het werkt",
-    "step1": "Deel je link — wie zich via deze link aanmeldt, wordt als jouw aanbeveling gemarkeerd",
-    "step2": "Zodra ze hun eerste boeking voltooien, wordt je aanbeveling actief",
-    "step3": "Je verdient {pct}% van elke boeking die ze maken — aan het einde van elke maand bijgeschreven op je saldo",
-    "step4": "Gebruik je tegoed als korting op je volgende boeking",
-    "subtitleCleaner": "Verdien commissie, automatisch uitbetaald",
-    "subtitleClient": "Verdien kortingen die je kunt gebruiken of opnemen",
-    "stepCleanerPeer": "Verwijs een schoonmaker — verdien {peerPct}% commissie op hun eerste {cap} voltooide klussen",
-    "stepCleanerClient": "Verwijs een klant — verdien {pct}% commissie op elke boeking die ze maken",
-    "stepCleanerPayout": "Commissies worden bijgeschreven op je saldo en elke maand automatisch via Stripe uitbetaald",
-    "stepClientEarn": "Voor elke voltooide bestelling van iemand die je uitnodigt, verdien je {discountPct}% korting",
-    "stepClientCredit": "Je korting wordt automatisch bijgeschreven op je accountsaldo",
-    "stepClientUse": "Gebruik het bij je volgende boeking, of neem het op naar je bank wanneer je wilt"
+    "step1": "Deel uw link — wie zich daarmee aanmeldt, wordt aan u gekoppeld",
+    "subtitleCleaner": "Verdien {reward} contant voor elke persoon die u aanbrengt",
+    "subtitleClient": "Verdien {reward} om te besteden of op te nemen voor elke persoon die u aanbrengt",
+    "stepCleanerPeer": "Nodig een schoonmaker uit — u verdient {reward} zodra die {jobs} klussen heeft afgerond",
+    "stepCleanerClient": "Nodig een klant uit — u verdient {reward} zodra die {jobs} boeking heeft afgerond",
+    "stepCleanerPayout": "Commissies worden op uw saldo bijgeschreven en elke maand automatisch naar uw bank uitbetaald",
+    "stepClientEarn": "Nodig iemand uit — u verdient {reward} zodra die {jobs} boeking heeft afgerond",
+    "stepClientCredit": "De beloning wordt automatisch aan uw saldo toegevoegd",
+    "stepClientUse": "Gebruik het bij uw volgende boeking, of laat het op elk moment naar uw bank uitbetalen"
   },
   "compUiDialog": {
     "close": "Sluiten"
@@ -2281,5 +2278,13 @@
     "toastTitle": "🚨 Nieuwe dringende klus in de buurt!",
     "toastBody": "In {city} — wees de eerste die 'm claimt",
     "toastAction": "Bekijken"
+  },
+  "compCancellationReasonPicker": {
+    "legend": "Waarom annuleert u?",
+    "option_illness": "Ziekte",
+    "option_transport": "Staking / vervoer",
+    "option_other": "Andere reden",
+    "hintWaived": "Er zijn geen annuleringskosten — zulke omstandigheden zijn niet te plannen.",
+    "hintFee": "Er kunnen annuleringskosten gelden, afhankelijk van hoe dichtbij de afspraak is."
   }
 }
