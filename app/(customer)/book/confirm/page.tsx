@@ -29,6 +29,10 @@ export default function BookStep5Page() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [clientSecret, setClientSecret] = useState<string | null>(null)
+  // Lets the card form show a card the client already saved, instead of asking for it again and
+  // saving a second copy of the same card. Optional: if it fails, checkout still works, the client
+  // just types their card as before.
+  const [customerSessionSecret, setCustomerSessionSecret] = useState<string | null>(null)
   const [intentId, setIntentId] = useState<string | null>(null)
   const [amounts, setAmounts] = useState<{ subtotalCents: number; totalCharged: number } | null>(null)
   const [serviceId, setServiceId] = useState<string | null>(null)
@@ -294,6 +298,11 @@ export default function BookStep5Page() {
         setError(data.error ?? t("errorPreparePayment")); return
       }
       setClientSecret(data.clientSecret)
+      // Fetched alongside, never blocking: without it the form simply shows an empty card field.
+      fetch("/api/payments/customer-session", { method: "POST" })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => { if (d?.customerSessionClientSecret) setCustomerSessionSecret(d.customerSessionClientSecret) })
+        .catch(() => {})
       setIntentId(data.paymentIntentId)
       setAmounts(data.amounts)
       setReferralCreditAppliedCents(data.amounts?.referralCreditCents ?? 0)
@@ -399,7 +408,7 @@ export default function BookStep5Page() {
         {step === "payment" && (
           <div className="bg-white rounded-2xl shadow-sm border border-[#E5EBF0] p-5 mb-6">
             {clientSecret && intentId && serviceId ? (
-              <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: "stripe", variables: { colorPrimary: "#2D7A5F" } } }}>
+              <Elements stripe={stripePromise} options={{ clientSecret, customerSessionClientSecret: customerSessionSecret ?? undefined, appearance: { theme: "stripe", variables: { colorPrimary: "#2D7A5F" } } }}>
                 <StripePaymentForm
                   paymentIntentId={intentId}
                   providerId={store.selectedProviderId!}

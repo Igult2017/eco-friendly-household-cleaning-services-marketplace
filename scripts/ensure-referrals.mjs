@@ -469,6 +469,35 @@ INSERT INTO platform_settings (key, value) VALUES
   ('min_hourly_rate_cents','1800')
 ON CONFLICT (key) DO NOTHING;
 
+-- Shortest booking anyone can make, in minutes. Enforced on BOTH ways of arranging work (booking a
+-- cleaner directly and posting a job for bids) so neither is a way around the other. 120 = 2 hours.
+INSERT INTO platform_settings (key, value) VALUES
+  ('min_booking_minutes','120')
+ON CONFLICT (key) DO NOTHING;
+
+-- One-time: lift the service-radius ceiling so a cleaner can set any radius they like. 20000 km is
+-- half the Earth's circumference, so it already covers the whole planet — it exists only to stop a
+-- typo'd number reaching the distance maths in lib/db/queries/geo.ts. Guarded by a marker row,
+-- like the other one-time moves below, so a deploy never silently undoes an admin's own number.
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM platform_settings WHERE key = 'radius_cap_lifted') THEN
+    UPDATE platform_settings SET value = '20000', updated_at = NOW() WHERE key = 'max_service_radius_km';
+    INSERT INTO platform_settings (key, value) VALUES ('radius_cap_lifted','1');
+  END IF;
+END $$;
+
+-- One-time: raise every EXISTING cleaner service to the 2-hour minimum. Without this an older
+-- service still carries its own 60-minute floor, and the booking wizard would happily offer 1 hour
+-- on it — the new rule would leak straight through the oldest listings.
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM platform_settings WHERE key = 'min_booking_2h_applied') THEN
+    UPDATE provider_services SET min_duration_minutes = 120 WHERE min_duration_minutes < 120;
+    UPDATE provider_services SET max_duration_minutes = 120
+      WHERE max_duration_minutes IS NOT NULL AND max_duration_minutes < 120;
+    INSERT INTO platform_settings (key, value) VALUES ('min_booking_2h_applied','1');
+  END IF;
+END $$;
+
 -- A completed booking must be able to credit TWO independent referrals (one for the referred
 -- customer, one for the referred cleaner assigned to it) — the old single-column unique index on
 -- booking_id blocked that. Swap it for a composite (booking_id, referral_id) unique index.

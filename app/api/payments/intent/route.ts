@@ -5,6 +5,7 @@ import { providers, providerServices, users, bids, jobPosts, promoCodes, promoCo
 import { stripe, calculateBookingAmounts } from "@/lib/stripe/client"
 import { getOrCreateStripeCustomer } from "@/lib/stripe/getOrCreateCustomer"
 import { resolveCommissionPct } from "@/lib/platform/commissionTier"
+import { getMinBookingMinutes } from "@/lib/platform/settings"
 import { bookingRatelimit } from "@/lib/redis/client"
 import { paymentIntentSchema } from "@/lib/validations/booking"
 import { getCurrencyForCountry } from "@/lib/utils/locale"
@@ -38,6 +39,16 @@ export async function POST(req: Request) {
     // promoCodeDiscountCents is intentionally NOT destructured — the discount is recomputed
     // server-side (FIN-003); any client-supplied amount is ignored.
     const { providerId, serviceId, scheduledAt, durationMinutes, carbonOffsetCents = 0, bidAmountCents, promoCodeId, addOnIds = [], applyReferralCredit } = parsed.data
+
+    // Same live minimum the booking endpoint applies — checked here too so a too-short booking is
+    // refused BEFORE a card is put on hold, rather than after.
+    const minBookingMinutes = await getMinBookingMinutes()
+    if (durationMinutes < minBookingMinutes) {
+      return NextResponse.json(
+        { error: `The shortest booking we take is ${minBookingMinutes / 60} hours.` },
+        { status: 422 },
+      )
+    }
 
     // serviceId is optional ONLY for bid-flow bookings (job posts have no category, and a bid-only
     // cleaner may have no listing) — the accepted bid amount is the price; resolve any active service

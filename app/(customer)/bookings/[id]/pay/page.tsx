@@ -57,6 +57,9 @@ export default function BookingPayPage({ params }: { params: Promise<{ id: strin
   const t = useTranslations("customerBookingPayPage")
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null)
+  // Lets the card form show a card already on file instead of asking for it again — see
+  // app/api/payments/customer-session. Optional: without it the form just starts empty.
+  const [customerSessionSecret, setCustomerSessionSecret] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
@@ -75,6 +78,10 @@ export default function BookingPayPage({ params }: { params: Promise<{ id: strin
         if (!ok) { setError(d.error ?? t("errorGeneric")); return }
         setClientSecret(d.clientSecret)
         setPaymentIntentId(d.paymentIntentId)
+        fetch("/api/payments/customer-session", { method: "POST" })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((cs) => { if (cs?.customerSessionClientSecret) setCustomerSessionSecret(cs.customerSessionClientSecret) })
+          .catch(() => {})
       })
       .catch(() => setError(t("errorGeneric")))
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -91,7 +98,7 @@ export default function BookingPayPage({ params }: { params: Promise<{ id: strin
         {error ? (
           <p className="text-sm text-red-500">{error}</p>
         ) : clientSecret && paymentIntentId ? (
-          <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: "stripe", variables: { colorPrimary: "#2D7A5F" } } }}>
+          <Elements stripe={stripePromise} options={{ clientSecret, customerSessionClientSecret: customerSessionSecret ?? undefined, appearance: { theme: "stripe", variables: { colorPrimary: "#2D7A5F" } } }}>
             <PayForm bookingId={id} paymentIntentId={paymentIntentId} />
           </Elements>
         ) : (

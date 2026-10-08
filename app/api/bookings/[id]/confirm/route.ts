@@ -1,7 +1,10 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { bookings, notifications, providers } from "@/lib/db/schema"
+import { bookings, notifications, providers, users } from "@/lib/db/schema"
+import { resend, FROM } from "@/lib/resend/client"
+import { bookingAcceptedEmail } from "@/lib/resend/transactionalEmails"
+import { SITE_URL } from "@/lib/seo/site"
 import { eq, and } from "drizzle-orm"
 import { isUuid } from "@/lib/utils/uuid"
 import { logError } from "@/lib/utils/logError"
@@ -15,14 +18,18 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
     if (!isUuid(bookingId)) return NextResponse.json({ error: "Invalid booking id" }, { status: 400 })
 
     const [provider] = await db
-      .select({ id: providers.id })
+      .select({ id: providers.id, businessName: providers.businessName, timezone: providers.timezone })
       .from(providers)
       .where(and(eq(providers.userId, userId), eq(providers.isSuspended, false)))
 
     if (!provider) return NextResponse.json({ error: "Not a provider or account suspended" }, { status: 403 })
 
     const [booking] = await db
-      .select({ id: bookings.id, status: bookings.status, customerId: bookings.customerId, providerId: bookings.providerId })
+      .select({
+        id: bookings.id, status: bookings.status, customerId: bookings.customerId,
+        providerId: bookings.providerId, bookingNumber: bookings.bookingNumber,
+        scheduledAt: bookings.scheduledAt,
+      })
       .from(bookings)
       .where(and(eq(bookings.id, bookingId), eq(bookings.providerId, provider.id)))
 
@@ -55,6 +62,33 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       link: `/bookings/${bookingId}`,
       metadata: { variant: "booking_accepted_by_cleaner" },
     })
+
+    // The booking-request email told the client "we'll notify you as soon as they do"
+    // (lib/resend/transactionalEmails.ts bookingConfirmed). Until a client reported never getting
+    // it, only the in-app notification above existed and that promise was simply false.
+    // Wrapped: a mail failure must never undo an acceptance that has already been committed.
+    try {
+      const [client] = await db
+        .select({ email: users.email, locale: users.locale })
+        .from(users)
+        .where(eq(users.id, booking.customerId))
+      if (client?.email) {
+        const tz = provider.timezone || "Europe/Berlin"
+        const { subject, html } = bookingAcceptedEmail(client.locale, {
+          number: booking.bookingNumber,
+          cleaner: provider.businessName ?? "",
+          scheduled: new Date(booking.scheduledAt).toLocaleString(client.locale ?? "en-GB", { timeZone: tz }),
+          bookingUrl: `${SITE_URL}/bookings/${bookingId}`,
+        })
+        await resend.emails.send({ from: FROM, to: client.email, subject, html })
+      }
+    } catch (mailErr) {
+      console.warn("[bookings/[id]/confirm] acceptance email failed:", mailErr)
+      void logError({
+        message: "[bookings/[id]/confirm] acceptance email failed", error: mailErr,
+        route: "/api/bookings/[id]/confirm", severity: "warning", userId, context: { bookingId },
+      })
+    }
 
     return NextResponse.json({ success: true })
   } catch (err) {

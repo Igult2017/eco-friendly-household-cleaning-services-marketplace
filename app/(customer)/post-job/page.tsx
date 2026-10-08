@@ -55,6 +55,8 @@ export default function PostJobPage() {
   // Admin-configurable wage floor (lib/platform/settings.ts getMinHourlyRateCents) — 1800 (€18) is
   // just the initial guess shown before the live value loads; the server is the real source of truth.
   const [minHourlyRateCents, setMinHourlyRateCents] = useState(1800)
+  // Shortest job we accept, in hours. 2 is the seeded default, shown until the live value loads.
+  const [minBookingHours, setMinBookingHours] = useState(2)
 
   useEffect(() => {
     fetch("/api/settings/recurring-discount")
@@ -64,6 +66,10 @@ export default function PostJobPage() {
     fetch("/api/settings/min-hourly-rate")
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => { if (typeof d?.cents === "number") setMinHourlyRateCents(d.cents) })
+      .catch(() => {})
+    fetch("/api/settings/min-booking-minutes")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (typeof d?.minutes === "number") setMinBookingHours(d.minutes / 60) })
       .catch(() => {})
   }, [])
 
@@ -241,6 +247,11 @@ export default function PostJobPage() {
     }
     const hrs = parseFloat(form.estimatedHours)
     if (!(hrs > 0)) { setFieldErrors({ estimatedHours: t("errorHoursRequired") }); return }
+    // Same minimum the server applies — checked here so the client isn't rejected after submitting.
+    if (hrs < minBookingHours) {
+      setFieldErrors({ estimatedHours: t("errorHoursBelowMinimum", { min: minBookingHours }) })
+      return
+    }
     setLoading(true)
     try {
       const res = await fetch("/api/jobs", {
@@ -393,9 +404,11 @@ export default function PostJobPage() {
             )}
             <div>
               <Label className="text-sm font-semibold text-[#2B3441] mb-1.5 block">{t("estimatedHoursLabel")}</Label>
-              <Input type="number" min={0.5} max={12} step={0.5} value={form.estimatedHours} onChange={(e) => set("estimatedHours", e.target.value)} required
+              <Input type="number" min={minBookingHours} max={12} step={0.5} value={form.estimatedHours} onChange={(e) => set("estimatedHours", e.target.value)} required
                 className={cn(fieldErrors.estimatedHours && "border-red-400 ring-1 ring-red-400")} />
-              <p className="text-xs text-[#9CA3AF] mt-1">{t("estimatedHoursHint")}</p>
+              <p className="text-xs text-[#9CA3AF] mt-1">
+                {t("estimatedHoursHint")} {t("estimatedHoursMinimumHint", { min: minBookingHours })}
+              </p>
               <FieldError msg={fieldErrors.estimatedHours} />
             </div>
             {jobType === "standard" && (

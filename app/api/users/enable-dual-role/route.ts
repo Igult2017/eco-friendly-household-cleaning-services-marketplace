@@ -20,7 +20,9 @@ const enableSchema = z.object({
   city:         z.string().min(2).max(100),
   postalCode:   z.string().min(3).max(10),
   country:      z.string().length(2),
-  serviceRadiusKm: z.number().int().min(1).max(100).default(25),
+  // No practical cap — see SERVICE_RADIUS_CEILING_KM. Was 100, which silently rejected a radius
+  // the other two signup paths already accepted.
+  serviceRadiusKm: z.number().int().min(1).max(20_000).default(25),
   ecoLevel: z.enum(["basic", "certified", "premium", "zero_impact"]).default("basic"),
 }).optional()
 

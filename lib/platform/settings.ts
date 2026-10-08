@@ -96,12 +96,21 @@ export async function getRegularClientAfterJobs(): Promise<number> {
   return getIntSetting("commission_regular_after_jobs", 3, 0, 50)
 }
 
+// Admin-set shortest booking anyone can make, in minutes. Applies to BOTH ways work is arranged —
+// booking a cleaner directly and posting a job for bids — so a client cannot route around it by
+// using the other path. Default 120 (2 hours): shorter visits are not worth a cleaner's travel.
+export async function getMinBookingMinutes(): Promise<number> {
+  return getIntSetting("min_booking_minutes", 120, 15, 480)
+}
+
 // Admin-set hard cap on how far a cleaner can set their own service radius — enforced live in
 // lib/validations/provider.ts and lib/validations/onboarding.ts (the zod schema's own ceiling is
 // a generous static bound; this is the real, admin-adjustable one).
-export async function getMaxServiceRadiusKm(): Promise<number> {
-  return getIntSetting("max_service_radius_km", 100, 10, 500)
-}
+// NOTE: there is deliberately no getMaxServiceRadiusKm any more. A cleaner may set whatever service
+// radius they like, so the admin cap (and the three server checks that read it) were removed rather
+// than left as a control that changes nothing. The only bound left is the 20000 km technical
+// ceiling in the zod schemas — half the Earth's circumference, so it already covers the planet; it
+// exists purely so a typo'd number can't reach the distance maths in lib/db/queries/geo.ts.
 
 // Admin-set default payout interval for NEWLY connected cleaner Stripe accounts (lib/stripe/connect.ts).
 // Stripe supports "weekly" and "monthly" — NOT "biweekly" — so only those two are valid here.

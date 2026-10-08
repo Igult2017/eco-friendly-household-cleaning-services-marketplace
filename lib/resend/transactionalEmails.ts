@@ -7,6 +7,9 @@ import { isLocale, defaultLocale } from "@/i18n/config"
 
 type Tx = {
   bookingConfirmed: { subject: string; heading: string; labelNumber: string; labelService: string; labelScheduled: string; preauth: string; thanks: string }
+  // The email bookingConfirmed PROMISES ("we'll notify you as soon as they do"). It did not exist
+  // until a client reported never receiving it — the acceptance only ever raised an in-app notice.
+  bookingAccepted: { subject: string; heading: string; labelNumber: string; labelCleaner: string; labelScheduled: string; body: string; button: string; thanks: string }
   reviewRequest: { subject: string; heading: string; greeting: string; body: string; button: string; thanks: string }
   reviewReminder: { subject: string; body: string; link: string }
   weeklyEarnings: { subject: string; heading: string; greeting: string; earned: string; period: string; explainer: string; thanks: string }
@@ -18,6 +21,7 @@ type Tx = {
 const TX: Record<string, Tx> = {
   en: {
     bookingConfirmed: { subject: "Booking request received — {number}", heading: "Your booking request has been sent!", labelNumber: "Booking number:", labelService: "Service:", labelScheduled: "Scheduled:", preauth: "Your cleaner still has to accept the booking — we'll notify you as soon as they do. You'll only be charged once the cleaning is completed and confirmed.", thanks: "Thank you for choosing DORIXÉ 🌿" },
+    bookingAccepted: { subject: "Your cleaner accepted — {number}", heading: "Your booking is confirmed!", labelNumber: "Booking number:", labelCleaner: "Cleaner:", labelScheduled: "Scheduled:", body: "Your cleaner has accepted your booking. Nothing is charged until the cleaning is done and you both confirm it.", button: "View your booking", thanks: "Thank you for choosing DORIXÉ 🌿" },
     reviewRequest: { subject: "How was your cleaning? Leave a review 🌿", heading: "Your home is sparkling clean!", greeting: "Hi {name},", body: "Your cleaning session has been completed and payment captured.", button: "Leave a review", thanks: "Thank you for choosing DORIXÉ 🌿" },
     reviewReminder: { subject: "Reminder: share your DORIXÉ experience", body: "Just a friendly reminder to leave a review for your recent cleaning.", link: "Leave a review" },
     weeklyEarnings: { subject: "Your weekly earnings summary: {amount}", heading: "Your earnings this week", greeting: "Hi {name},", earned: "You earned {amount} across {count} booking(s).", period: "Period: {start} to {end}", explainer: "These funds are paid directly into your connected Stripe account as each job completes, and Stripe pays out to your bank on your account's payout schedule.", thanks: "Thank you for being part of DORIXÉ 🌿" },
@@ -27,6 +31,7 @@ const TX: Record<string, Tx> = {
   },
   de: {
     bookingConfirmed: { subject: "Buchungsanfrage erhalten — {number}", heading: "Ihre Buchungsanfrage wurde gesendet!", labelNumber: "Buchungsnummer:", labelService: "Leistung:", labelScheduled: "Termin:", preauth: "Ihre Reinigungskraft muss die Buchung noch annehmen — wir benachrichtigen Sie, sobald das geschieht. Die Abbuchung erfolgt erst, wenn die Reinigung abgeschlossen und bestätigt ist.", thanks: "Vielen Dank, dass Sie sich für DORIXÉ entschieden haben 🌿" },
+    bookingAccepted: { subject: "Ihre Reinigungskraft hat angenommen — {number}", heading: "Ihre Buchung ist bestätigt!", labelNumber: "Buchungsnummer:", labelCleaner: "Reinigungskraft:", labelScheduled: "Termin:", body: "Ihre Reinigungskraft hat Ihre Buchung angenommen. Abgebucht wird erst, wenn die Reinigung erledigt ist und Sie beide das bestätigt haben.", button: "Buchung ansehen", thanks: "Vielen Dank, dass Sie sich für DORIXÉ entschieden haben 🌿" },
     reviewRequest: { subject: "Wie war Ihre Reinigung? Hinterlassen Sie eine Bewertung 🌿", heading: "Ihr Zuhause strahlt vor Sauberkeit!", greeting: "Hallo {name},", body: "Ihre Reinigung ist abgeschlossen und die Zahlung wurde eingezogen.", button: "Bewertung abgeben", thanks: "Vielen Dank, dass Sie sich für DORIXÉ entschieden haben 🌿" },
     reviewReminder: { subject: "Erinnerung: Teilen Sie Ihre DORIXÉ-Erfahrung", body: "Nur eine freundliche Erinnerung, eine Bewertung für Ihre kürzliche Reinigung zu hinterlassen.", link: "Bewertung abgeben" },
     weeklyEarnings: { subject: "Ihre wöchentliche Verdienstübersicht: {amount}", heading: "Ihr Verdienst diese Woche", greeting: "Hallo {name},", earned: "Sie haben {amount} aus {count} Buchung(en) verdient.", period: "Zeitraum: {start} bis {end}", explainer: "Diese Beträge werden bei Abschluss jedes Auftrags direkt auf Ihr verbundenes Stripe-Konto ausgezahlt, und Stripe überweist sie gemäß dem Auszahlungsplan Ihres Kontos auf Ihr Bankkonto.", thanks: "Vielen Dank, dass Sie Teil von DORIXÉ sind 🌿" },
@@ -36,6 +41,7 @@ const TX: Record<string, Tx> = {
   },
   fr: {
     bookingConfirmed: { subject: "Demande de réservation reçue — {number}", heading: "Votre demande de réservation a été envoyée !", labelNumber: "Numéro de réservation :", labelService: "Prestation :", labelScheduled: "Programmée :", preauth: "Votre intervenant doit encore accepter la réservation — nous vous préviendrons dès que ce sera fait. Vous ne serez débité(e) qu'une fois le ménage terminé et confirmé.", thanks: "Merci d'avoir choisi DORIXÉ 🌿" },
+    bookingAccepted: { subject: "Votre intervenant a accepté — {number}", heading: "Votre réservation est confirmée !", labelNumber: "Numéro de réservation :", labelCleaner: "Intervenant :", labelScheduled: "Programmée :", body: "Votre intervenant a accepté votre réservation. Rien n'est débité tant que le ménage n'est pas terminé et confirmé par vous deux.", button: "Voir ma réservation", thanks: "Merci d'avoir choisi DORIXÉ 🌿" },
     reviewRequest: { subject: "Comment s'est passé votre ménage ? Laissez un avis 🌿", heading: "Votre intérieur est impeccable !", greeting: "Bonjour {name},", body: "Votre séance de ménage est terminée et le paiement a été prélevé.", button: "Laisser un avis", thanks: "Merci d'avoir choisi DORIXÉ 🌿" },
     reviewReminder: { subject: "Rappel : partagez votre expérience DORIXÉ", body: "Juste un petit rappel amical pour laisser un avis sur votre récent ménage.", link: "Laisser un avis" },
     weeklyEarnings: { subject: "Votre récapitulatif des gains de la semaine : {amount}", heading: "Vos gains cette semaine", greeting: "Bonjour {name},", earned: "Vous avez gagné {amount} sur {count} réservation(s).", period: "Période : du {start} au {end}", explainer: "Ces fonds sont versés directement sur votre compte Stripe connecté à mesure que chaque mission est terminée, et Stripe les reverse sur votre compte bancaire selon le calendrier de versement de votre compte.", thanks: "Merci de faire partie de DORIXÉ 🌿" },
@@ -45,6 +51,7 @@ const TX: Record<string, Tx> = {
   },
   es: {
     bookingConfirmed: { subject: "Solicitud de reserva recibida — {number}", heading: "¡Tu solicitud de reserva ha sido enviada!", labelNumber: "Número de reserva:", labelService: "Servicio:", labelScheduled: "Programada:", preauth: "Tu profesional aún debe aceptar la reserva; te avisaremos en cuanto lo haga. Solo se te cobrará una vez que la limpieza esté completada y confirmada.", thanks: "Gracias por elegir DORIXÉ 🌿" },
+    bookingAccepted: { subject: "Tu profesional ha aceptado — {number}", heading: "¡Tu reserva está confirmada!", labelNumber: "Número de reserva:", labelCleaner: "Profesional:", labelScheduled: "Programada:", body: "Tu profesional ha aceptado la reserva. No se cobra nada hasta que la limpieza esté hecha y ambos la confirméis.", button: "Ver mi reserva", thanks: "Gracias por elegir DORIXÉ 🌿" },
     reviewRequest: { subject: "¿Qué tal fue tu limpieza? Deja una reseña 🌿", heading: "¡Tu hogar está reluciente!", greeting: "Hola {name}:", body: "Tu sesión de limpieza se ha completado y el pago se ha cobrado.", button: "Dejar una reseña", thanks: "Gracias por elegir DORIXÉ 🌿" },
     reviewReminder: { subject: "Recordatorio: comparte tu experiencia con DORIXÉ", body: "Solo un recordatorio amistoso para que dejes una reseña sobre tu limpieza reciente.", link: "Dejar una reseña" },
     weeklyEarnings: { subject: "Tu resumen de ganancias semanales: {amount}", heading: "Tus ganancias esta semana", greeting: "Hola {name}:", earned: "Has ganado {amount} en {count} reserva(s).", period: "Periodo: del {start} al {end}", explainer: "Estos fondos se abonan directamente en tu cuenta de Stripe conectada a medida que se completa cada trabajo, y Stripe los transfiere a tu banco según el calendario de pagos de tu cuenta.", thanks: "Gracias por formar parte de DORIXÉ 🌿" },
@@ -54,6 +61,7 @@ const TX: Record<string, Tx> = {
   },
   it: {
     bookingConfirmed: { subject: "Richiesta di prenotazione ricevuta — {number}", heading: "La tua richiesta di prenotazione è stata inviata!", labelNumber: "Numero di prenotazione:", labelService: "Servizio:", labelScheduled: "Programmata:", preauth: "Il tuo addetto deve ancora accettare la prenotazione — ti avviseremo non appena lo farà. L'addebito avverrà solo al termine della pulizia, dopo la conferma.", thanks: "Grazie per aver scelto DORIXÉ 🌿" },
+    bookingAccepted: { subject: "Il tuo addetto ha accettato — {number}", heading: "La tua prenotazione è confermata!", labelNumber: "Numero di prenotazione:", labelCleaner: "Addetto:", labelScheduled: "Programmata:", body: "Il tuo addetto ha accettato la prenotazione. Non viene addebitato nulla finché la pulizia non è completata e confermata da entrambi.", button: "Vedi la prenotazione", thanks: "Grazie per aver scelto DORIXÉ 🌿" },
     reviewRequest: { subject: "Com'è andata la pulizia? Lascia una recensione 🌿", heading: "La tua casa è splendente!", greeting: "Ciao {name},", body: "La tua sessione di pulizia è stata completata e il pagamento è stato addebitato.", button: "Lascia una recensione", thanks: "Grazie per aver scelto DORIXÉ 🌿" },
     reviewReminder: { subject: "Promemoria: condividi la tua esperienza con DORIXÉ", body: "Solo un cordiale promemoria per lasciare una recensione sulla tua recente pulizia.", link: "Lascia una recensione" },
     weeklyEarnings: { subject: "Il riepilogo dei tuoi guadagni settimanali: {amount}", heading: "I tuoi guadagni questa settimana", greeting: "Ciao {name},", earned: "Hai guadagnato {amount} su {count} prenotazione/i.", period: "Periodo: dal {start} al {end}", explainer: "Questi importi vengono accreditati direttamente sul tuo account Stripe collegato al completamento di ogni lavoro, e Stripe li versa sul tuo conto bancario secondo il calendario dei pagamenti del tuo account.", thanks: "Grazie per far parte di DORIXÉ 🌿" },
@@ -63,6 +71,7 @@ const TX: Record<string, Tx> = {
   },
   nl: {
     bookingConfirmed: { subject: "Boekingsaanvraag ontvangen — {number}", heading: "Je boekingsaanvraag is verzonden!", labelNumber: "Boekingsnummer:", labelService: "Dienst:", labelScheduled: "Gepland:", preauth: "Je schoonmaker moet de boeking nog accepteren — we laten het je weten zodra dat gebeurt. Er wordt pas afgeschreven zodra de schoonmaak is afgerond en bevestigd.", thanks: "Bedankt dat je voor DORIXÉ hebt gekozen 🌿" },
+    bookingAccepted: { subject: "Je schoonmaker heeft geaccepteerd — {number}", heading: "Je boeking is bevestigd!", labelNumber: "Boekingsnummer:", labelCleaner: "Schoonmaker:", labelScheduled: "Gepland:", body: "Je schoonmaker heeft je boeking geaccepteerd. Er wordt niets afgeschreven totdat de schoonmaak klaar is en jullie het allebei bevestigen.", button: "Bekijk je boeking", thanks: "Bedankt dat je voor DORIXÉ hebt gekozen 🌿" },
     reviewRequest: { subject: "Hoe was je schoonmaak? Laat een beoordeling achter 🌿", heading: "Je huis is brandschoon!", greeting: "Hoi {name},", body: "Je schoonmaaksessie is afgerond en de betaling is geïncasseerd.", button: "Beoordeling achterlaten", thanks: "Bedankt dat je voor DORIXÉ hebt gekozen 🌿" },
     reviewReminder: { subject: "Herinnering: deel je DORIXÉ-ervaring", body: "Even een vriendelijke herinnering om een beoordeling achter te laten voor je recente schoonmaak.", link: "Beoordeling achterlaten" },
     weeklyEarnings: { subject: "Je wekelijkse verdienstenoverzicht: {amount}", heading: "Je verdiensten deze week", greeting: "Hoi {name},", earned: "Je hebt {amount} verdiend met {count} boeking(en).", period: "Periode: {start} tot {end}", explainer: "Deze bedragen worden direct op je gekoppelde Stripe-account gestort zodra elke klus is afgerond, en Stripe betaalt ze uit op je bankrekening volgens het uitbetalingsschema van je account.", thanks: "Bedankt dat je deel uitmaakt van DORIXÉ 🌿" },
@@ -72,6 +81,7 @@ const TX: Record<string, Tx> = {
   },
   pl: {
     bookingConfirmed: { subject: "Otrzymaliśmy prośbę o rezerwację — {number}", heading: "Twoja prośba o rezerwację została wysłana!", labelNumber: "Numer rezerwacji:", labelService: "Usługa:", labelScheduled: "Termin:", preauth: "Osoba sprzątająca musi jeszcze zaakceptować rezerwację — powiadomimy Cię, gdy tylko to zrobi. Opłata zostanie pobrana dopiero po zakończeniu i potwierdzeniu sprzątania.", thanks: "Dziękujemy za wybór DORIXÉ 🌿" },
+    bookingAccepted: { subject: "Osoba sprzątająca zaakceptowała — {number}", heading: "Twoja rezerwacja jest potwierdzona!", labelNumber: "Numer rezerwacji:", labelCleaner: "Osoba sprzątająca:", labelScheduled: "Termin:", body: "Osoba sprzątająca zaakceptowała Twoją rezerwację. Nic nie zostanie pobrane, dopóki sprzątanie nie zostanie wykonane i potwierdzone przez obie strony.", button: "Zobacz rezerwację", thanks: "Dziękujemy za wybór DORIXÉ 🌿" },
     reviewRequest: { subject: "Jak przebiegło sprzątanie? Zostaw opinię 🌿", heading: "Twój dom lśni czystością!", greeting: "Cześć {name},", body: "Twoja sesja sprzątania została zakończona, a płatność pobrana.", button: "Zostaw opinię", thanks: "Dziękujemy za wybór DORIXÉ 🌿" },
     reviewReminder: { subject: "Przypomnienie: podziel się swoim doświadczeniem z DORIXÉ", body: "To tylko przyjazne przypomnienie, aby zostawić opinię o niedawnym sprzątaniu.", link: "Zostaw opinię" },
     weeklyEarnings: { subject: "Twoje tygodniowe podsumowanie zarobków: {amount}", heading: "Twoje zarobki w tym tygodniu", greeting: "Cześć {name},", earned: "Zarobiłeś(-aś) {amount} z {count} rezerwacji.", period: "Okres: od {start} do {end}", explainer: "Środki te są przekazywane bezpośrednio na Twoje połączone konto Stripe po zakończeniu każdego zlecenia, a Stripe wypłaca je na Twoje konto bankowe zgodnie z harmonogramem wypłat Twojego konta.", thanks: "Dziękujemy, że jesteś częścią DORIXÉ 🌿" },
@@ -81,6 +91,7 @@ const TX: Record<string, Tx> = {
   },
   pt: {
     bookingConfirmed: { subject: "Pedido de reserva recebido — {number}", heading: "O seu pedido de reserva foi enviado!", labelNumber: "Número da reserva:", labelService: "Serviço:", labelScheduled: "Agendada:", preauth: "O seu profissional ainda tem de aceitar a reserva — avisá-lo-emos assim que o fizer. Só será cobrado depois de a limpeza estar concluída e confirmada.", thanks: "Obrigado por escolher a DORIXÉ 🌿" },
+    bookingAccepted: { subject: "O seu profissional aceitou — {number}", heading: "A sua reserva está confirmada!", labelNumber: "Número da reserva:", labelCleaner: "Profissional:", labelScheduled: "Agendada:", body: "O seu profissional aceitou a reserva. Nada é cobrado até a limpeza estar feita e ambos confirmarem.", button: "Ver a minha reserva", thanks: "Obrigado por escolher a DORIXÉ 🌿" },
     reviewRequest: { subject: "Como correu a sua limpeza? Deixe uma avaliação 🌿", heading: "A sua casa está a brilhar!", greeting: "Olá {name},", body: "A sua sessão de limpeza foi concluída e o pagamento foi cobrado.", button: "Deixar uma avaliação", thanks: "Obrigado por escolher a DORIXÉ 🌿" },
     reviewReminder: { subject: "Lembrete: partilhe a sua experiência com a DORIXÉ", body: "Apenas um lembrete amigável para deixar uma avaliação sobre a sua limpeza recente.", link: "Deixar uma avaliação" },
     weeklyEarnings: { subject: "O seu resumo de ganhos semanais: {amount}", heading: "Os seus ganhos esta semana", greeting: "Olá {name},", earned: "Ganhou {amount} em {count} reserva(s).", period: "Período: de {start} a {end}", explainer: "Estes valores são pagos diretamente para a sua conta Stripe associada à medida que cada trabalho é concluído, e a Stripe transfere-os para o seu banco de acordo com o calendário de pagamentos da sua conta.", thanks: "Obrigado por fazer parte da DORIXÉ 🌿" },
@@ -121,6 +132,24 @@ export function bookingConfirmedEmail(locale: string | null | undefined, v: { nu
     <p style="${PS}">${t.labelService} ${esc(v.service)}</p>
     <p style="${PS}">${t.labelScheduled} ${esc(v.scheduled)}</p>
     <p style="${PS}">${t.preauth}</p>
+    <p style="${THX}">${t.thanks}</p>`
+  return { subject: sub(t.subject, { number: v.number }), html: shell(inner) }
+}
+
+// The email bookingConfirmedEmail above promises ("we'll notify you as soon as they do"). Sent from
+// app/api/bookings/[id]/confirm when the cleaner accepts. It did not exist until a client reported
+// never receiving it — accepting only ever raised an in-app notification nobody was watching for.
+export function bookingAcceptedEmail(
+  locale: string | null | undefined,
+  v: { number: string; cleaner: string; scheduled: string; bookingUrl: string },
+) {
+  const t = (TX[loc(locale)] ?? TX[defaultLocale]).bookingAccepted
+  const inner = `<h1 style="${H1S}">${t.heading}</h1>
+    <p style="${PS}"><strong>${t.labelNumber}</strong> ${esc(v.number)}</p>
+    <p style="${PS}">${t.labelCleaner} ${esc(v.cleaner)}</p>
+    <p style="${PS}">${t.labelScheduled} ${esc(v.scheduled)}</p>
+    <p style="${PS}">${t.body}</p>
+    <a href="${v.bookingUrl}" style="${BTNS}">${t.button}</a>
     <p style="${THX}">${t.thanks}</p>`
   return { subject: sub(t.subject, { number: v.number }), html: shell(inner) }
 }

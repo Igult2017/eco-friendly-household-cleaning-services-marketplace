@@ -31,15 +31,22 @@ export function OperationsSection({ cfg, set }: { cfg: Config; set: SetFn }) {
         </select>
       </div>
 
-      {/* Max service radius */}
+      {/* Shortest booking. Replaces the old "Maximum Service Radius" box — cleaners now set any
+          radius they like, so that control no longer changed anything and was removed. */}
       <div className="px-6 py-5">
-        <label className="block text-sm font-semibold text-[#2B3441] mb-1">Maximum Service Radius (km)</label>
-        <p className="text-xs text-[#6B7280] mb-3">Hard cap on how far a cleaner can set their own service area.</p>
+        <label className="block text-sm font-semibold text-[#2B3441] mb-1">Shortest Booking (minutes)</label>
+        <p className="text-xs text-[#6B7280] mb-3">
+          The shortest visit anyone can book. Applies to <strong>both</strong> ways work is arranged —
+          booking a cleaner directly and posting a job for bids — so neither is a way around the other.
+          120 = 2 hours.
+        </p>
         <div className="flex items-center gap-3">
-          <input type="number" min={10} max={500} value={cfg.max_service_radius_km ?? "100"}
-            onChange={e => set("max_service_radius_km", e.target.value)} onWheel={blurOnWheel}
+          <input type="number" min={15} max={480} step={15} value={cfg.min_booking_minutes ?? "120"}
+            onChange={e => set("min_booking_minutes", e.target.value)} onWheel={blurOnWheel}
             className={`w-24 ${INPUT_CLS}`} />
-          <span className="text-sm text-[#6B7280]">km</span>
+          <span className="text-sm text-[#6B7280]">
+            = {((parseInt(cfg.min_booking_minutes ?? "120", 10) || 0) / 60).toFixed(1).replace(/\.0$/, "")} hours
+          </span>
         </div>
       </div>
 

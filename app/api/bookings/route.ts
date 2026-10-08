@@ -6,6 +6,7 @@ import { bookingRatelimit } from "@/lib/redis/client"
 import { createBookingSchema } from "@/lib/validations/booking"
 import { desc, eq } from "drizzle-orm"
 import { createBooking, BookingError } from "@/lib/bookings/create"
+import { getMinBookingMinutes } from "@/lib/platform/settings"
 import { logError } from "@/lib/utils/logError"
 
 export async function POST(req: Request) {
@@ -32,6 +33,18 @@ export async function POST(req: Request) {
     const body = await req.json().catch(() => ({}))
     const parsed = createBookingSchema.safeParse(body)
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+
+    // Shortest booking allowed, read live from platform_settings so an admin change applies to the
+    // very next booking. The schema's own floor is a static technical bound; THIS is the real rule,
+    // and it is enforced on both ways of arranging work (here and on a job post) so neither is a
+    // way around the other.
+    const minMinutes = await getMinBookingMinutes()
+    if (parsed.data.durationMinutes < minMinutes) {
+      return NextResponse.json(
+        { error: `The shortest booking we take is ${minMinutes / 60} hours.` },
+        { status: 422 },
+      )
+    }
 
     try {
       // A booking can only be created against an already-authorized card — see createBooking.

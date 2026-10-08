@@ -6,9 +6,10 @@ export const providerProfileSchema = z.object({
   city: z.string().min(2).max(100),
   postalCode: z.string().min(3).max(10),
   country: z.string().length(2).default("DE"),
-  // 500 is a generous static ceiling — the real, admin-adjustable cap (default 100, see
-  // lib/platform/settings.ts getMaxServiceRadiusKm) is enforced live where this schema is parsed.
-  serviceRadiusKm: z.number().int().min(1).max(500).default(25),
+  // No cap on how far a cleaner will travel — they set whatever area they want. 20000 km is half
+  // the Earth's circumference, so it already covers the planet; it is here only so a typo'd number
+  // can't reach the distance maths in lib/db/queries/geo.ts.
+  serviceRadiusKm: z.number().int().min(1).max(20_000).default(25),
   ecoLevel: z.enum(["basic", "certified", "premium", "zero_impact"]).default("basic"),
   latitude: z.number().min(-90).max(90).optional(),
   longitude: z.number().min(-180).max(180).optional(),

@@ -14,7 +14,7 @@ import { z } from "zod"
 import { logError } from "@/lib/utils/logError"
 import { ensureUserRow } from "@/lib/clerk/ensureUser"
 import { stripe } from "@/lib/stripe/client"
-import { getMinHourlyRateCents } from "@/lib/platform/settings"
+import { getMinHourlyRateCents, getMinBookingMinutes } from "@/lib/platform/settings"
 
 const createJobSchema = z.object({
   title: z.string().min(5).max(200),
@@ -126,6 +126,16 @@ export async function POST(req: Request) {
     if (Math.round(data.hourlyRate * 100) < minHourlyRateCents) {
       return NextResponse.json(
         { error: { fieldErrors: { hourlyRate: [`Hourly rate must be at least ${(minHourlyRateCents / 100).toFixed(2)} per hour.`] } } },
+        { status: 422 },
+      )
+    }
+
+    // The same shortest-booking rule the direct-booking path applies. Enforced here too, otherwise
+    // posting a job would be a way around it — the schema's own 0.5h floor is only a static bound.
+    const minBookingHours = (await getMinBookingMinutes()) / 60
+    if (data.estimatedHours !== undefined && data.estimatedHours < minBookingHours) {
+      return NextResponse.json(
+        { error: { fieldErrors: { estimatedHours: [`The shortest job we take is ${minBookingHours} hours.`] } } },
         { status: 422 },
       )
     }

@@ -3,7 +3,7 @@
 import { WizardProgress } from "@/components/booking/WizardProgress"
 import { useBookingStore } from "@/stores/bookingStore"
 import { useRouter } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Loader2, Clock } from "lucide-react"
@@ -19,7 +19,8 @@ import { FieldError } from "@/components/ui/FieldError"
 // per-service min/max exists to derive from). Real options are generated from the resolved service's
 // minDurationMinutes/maxDurationMinutes below, so a cleaner who allows longer jobs (e.g. office
 // cleaning) isn't artificially capped at a number that was never a real constraint.
-const DEFAULT_MIN_DURATION = 60
+// Fallback only — the real floor is the admin's min_booking_minutes, fetched live below. 120 = 2h.
+const DEFAULT_MIN_DURATION = 120
 const DEFAULT_MAX_DURATION = 480 // 8h
 
 const TIME_SLOTS = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"]
@@ -76,9 +77,20 @@ export default function BookStep3Page() {
   const [durationBounds, setDurationBounds] = useState({ min: DEFAULT_MIN_DURATION, max: DEFAULT_MAX_DURATION })
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
+  // The platform-wide shortest booking, read live so an admin change applies immediately. Kept in a
+  // ref as well, because the service-bounds effect below needs the value without re-running on it.
+  const platformMinRef = useRef(DEFAULT_MIN_DURATION)
+
   useEffect(() => {
     if (!selectedProviderId) { router.replace("/book"); return }
   }, [selectedProviderId, router])
+
+  useEffect(() => {
+    fetch("/api/settings/min-booking-minutes")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (typeof d?.minutes === "number") platformMinRef.current = d.minutes })
+      .catch(() => {})
+  }, [])
 
   // Duration options come from the actual resolved service's min/max — not an arbitrary fixed list
   // (the previous hardcoded 1–6h options had no relationship to what any given cleaner actually
@@ -89,7 +101,9 @@ export default function BookStep3Page() {
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
         const service = d?.services?.[0]
-        const min = service?.minDurationMinutes ?? DEFAULT_MIN_DURATION
+        // Never let a cleaner's own (possibly older, shorter) service minimum undercut the
+        // platform-wide floor — take whichever is longer.
+        const min = Math.max(service?.minDurationMinutes ?? DEFAULT_MIN_DURATION, platformMinRef.current)
         const max = Math.max(min, service?.maxDurationMinutes ?? DEFAULT_MAX_DURATION)
         setDurationBounds({ min, max })
         // A duration picked before this resolved (or restored from a previous session) might now

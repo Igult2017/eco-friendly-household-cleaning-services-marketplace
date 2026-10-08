@@ -16,9 +16,8 @@ const providerSchema = base.extend({
   city: z.string().min(2, "Required").max(100),
   postalCode: z.string().min(3, "Required").max(20),
   country: z.string().length(2, "Please select your country"),
-  // 500 is a generous static ceiling — the real, admin-adjustable cap (default 100, see
-  // lib/platform/settings.ts getMaxServiceRadiusKm) is enforced live where this schema is parsed.
-  serviceRadiusKm: z.number().int().min(1).max(500).default(25),
+  // No cap on how far a cleaner will travel — see the same note in lib/validations/provider.ts.
+  serviceRadiusKm: z.number().int().min(1).max(20_000).default(25),
   ecoLevel: z.enum(["basic", "certified", "premium", "zero_impact"]).default("basic"),
 })
 

@@ -5,7 +5,6 @@ import { users, providers, referralCodes, referrals, notifications } from "@/lib
 import type { NewProvider } from "@/lib/db/schema/providers"
 import { eq, sql } from "drizzle-orm"
 import { onboardingSchema } from "@/lib/validations/onboarding"
-import { getMaxServiceRadiusKm } from "@/lib/platform/settings"
 import { nanoid, customAlphabet } from "nanoid"
 import { inngest } from "@/lib/inngest/client"
 import { sendProviderApprovedEmail } from "@/lib/resend/providerApproved"
@@ -36,12 +35,9 @@ export async function POST(req: NextRequest) {
     }
 
     const data = parsed.data
-    if (data.role === "provider") {
-      const maxRadius = await getMaxServiceRadiusKm()
-      if (data.serviceRadiusKm > maxRadius) {
-        return NextResponse.json({ error: `Service radius cannot exceed ${maxRadius} km` }, { status: 400 })
-      }
-    }
+    // No service-radius cap — a cleaner may cover whatever area they like. This check is what
+    // produced "Service radius cannot exceed 50 km" at signup; the only bound left is the schema's
+    // technical ceiling (SERVICE_RADIUS_CEILING_KM), which guards the distance maths, not business.
     const phone = typeof data.phone === "string" ? data.phone.trim().replace(/[\s\-().]/g, "") : ""
     if (phone && !/^\+?[0-9]{7,15}$/.test(phone)) {
       return NextResponse.json({ error: "Invalid phone number format" }, { status: 400 })

@@ -198,11 +198,19 @@ export default function ProviderProfilePage() {
           <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">
             {t("serviceRadiusLabel", { km: profile.serviceRadiusKm })}
           </label>
-          <input type="range" min={5} max={100} step={5} value={profile.serviceRadiusKm}
-            onChange={(e) => setProfile((p) => ({ ...p, serviceRadiusKm: Number(e.target.value) }))}
-            className="w-full accent-[#2D7A5F]"
-          />
-          <div className="flex justify-between text-xs text-[#6B7280] mt-1"><span>{t("radiusMin")}</span><span>{t("radiusMax")}</span></div>
+          {/* A number box, not a slider: there is no cap on how far a cleaner will travel any more,
+              and a slider cannot usefully span 1 to 20000. The slider also hard-stopped at 100 km,
+              which silently contradicted the signup form. */}
+          <div className="flex items-center gap-3">
+            <input
+              type="number" min={1} max={20000} step={1} value={profile.serviceRadiusKm}
+              onChange={(e) => setProfile((p) => ({ ...p, serviceRadiusKm: Math.max(1, Number(e.target.value) || 1) }))}
+              onWheel={(e) => e.currentTarget.blur()}
+              className="w-32 h-10 rounded-lg border border-gray-200 px-3 text-sm font-semibold text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F] transition-all duration-200"
+            />
+            <span className="text-sm text-[#6B7280]">km</span>
+          </div>
+          <p className="text-xs text-[#6B7280] mt-1">{t("radiusNoLimitHint")}</p>
         </div>
 
         <label className="flex items-center gap-3 cursor-pointer">

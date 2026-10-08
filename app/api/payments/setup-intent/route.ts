@@ -35,6 +35,12 @@ export async function POST() {
       customer: stripeCustomerId,
       payment_method_types: ["card"],
     })
+    // NOTE: a card saved here is filed by Stripe with no redisplay preference ("unspecified"), and
+    // the Payment Element hides those by default — which is why a client who saved a card at signup
+    // was asked for it again at checkout and ended up with it twice. Setting that flag here is not
+    // supported on a SetupIntent in this API version, so the checkout's Customer Session includes
+    // "unspecified" in its redisplay filters instead (app/api/payments/customer-session). That also
+    // covers every card already saved before this was fixed, which setting a flag here would not.
 
     return NextResponse.json({ clientSecret: setupIntent.client_secret, stripeCustomerId })
   } catch (err) {
