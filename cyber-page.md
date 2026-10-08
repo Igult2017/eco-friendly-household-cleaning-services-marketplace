@@ -1,0 +1,267 @@
+- generic [active] [ref=e1]:
+  - iframe [ref=e2]:
+    
+  - generic [ref=e4]:
+    - toolbar "Main toolbar" [ref=e7]:
+      - generic [ref=e8]:
+        - button "Sites home" [ref=e9] [cursor=pointer]:
+          - img "Sites logo" [ref=e10]
+        - tooltip [ref=e11]: Sites home
+      - 'generic "Site document name: My ePortfolio" [ref=e12]':
+        - generic [ref=e13]:
+          - textbox [ref=e18]: My ePortfolio
+          - tooltip [ref=e19]: Site document name
+      - status [ref=e20]:
+        - generic [ref=e21]:
+          - generic [ref=e24]:
+            - button "Open the version history" [ref=e26] [cursor=pointer]:
+              - generic [ref=e29]: All changes saved in Drive
+            - tooltip [ref=e30]: Open the version history
+          - tooltip [ref=e31]: Open the version history
+      - generic [ref=e34]:
+        - generic [ref=e37]:
+          - button "Undo last action" [ref=e38] [cursor=pointer]:
+            - img [ref=e40]
+          - tooltip [ref=e42]: Undo last action
+        - tooltip [ref=e43]: Undo last action
+      - generic [ref=e45]:
+        - generic [ref=e48]:
+          - button "Redo last action" [ref=e49] [cursor=pointer]:
+            - img [ref=e51]
+          - tooltip [ref=e53]: Redo last action
+        - tooltip [ref=e54]: Redo last action
+      - generic [ref=e56]:
+        - generic [ref=e59]:
+          - button "Preview" [ref=e60] [cursor=pointer]:
+            - img [ref=e62]
+          - tooltip [ref=e64]: Preview
+        - tooltip [ref=e65]: Preview
+      - generic [ref=e67]:
+        - generic [ref=e70]:
+          - button "Can't copy link for unpublished site" [ref=e71] [cursor=pointer]:
+            - img [ref=e73]
+          - tooltip [ref=e76]: Copy published site link
+        - tooltip [ref=e77]: Can't copy link for unpublished site
+      - generic [ref=e80]:
+        - generic [ref=e83]:
+          - button "Share with others" [ref=e84] [cursor=pointer]:
+            - img [ref=e86]
+          - tooltip [ref=e88]: Share with others
+        - tooltip [ref=e89]: Share with others
+      - generic [ref=e91]:
+        - generic [ref=e94]:
+          - button "Settings" [ref=e95] [cursor=pointer]:
+            - img [ref=e97]
+          - tooltip [ref=e100]: Settings
+        - tooltip [ref=e101]: Settings
+      - generic [ref=e105]:
+        - button "More" [ref=e106] [cursor=pointer]:
+          - img [ref=e108]
+        - tooltip [ref=e110]: More
+      - generic [ref=e111]:
+        - button "Publish" [ref=e112] [cursor=pointer]:
+          - generic [ref=e115]: Publish
+        - button "Publish options" [ref=e116] [cursor=pointer]:
+          - img [ref=e120]
+      - 'button "Google Account: Inform Globals (informglobals@gmail.com)" [ref=e124] [cursor=pointer]':
+        - img [ref=e125]
+    - generic [ref=e126]:
+      - generic [ref=e171]:
+        - main [ref=e174]:
+          - generic [ref=e176]:
+            - banner [ref=e177]:
+              - 'generic "Site name: My ePortfolio" [ref=e180]':
+                - textbox "Site name" [ref=e185]: My ePortfolio
+              - navigation "Top navigation" [ref=e188]:
+                - list [ref=e898]:
+                  - listitem [ref=e899]:
+                    - link "Home" [ref=e902] [cursor=pointer]
+                  - listitem [ref=e904]:
+                    - link "Cybersecurity in the News" [ref=e907] [cursor=pointer]
+                  - listitem [ref=e909]:
+                    - link "Social Media Impact" [ref=e912] [cursor=pointer]
+                  - listitem [ref=e914]:
+                    - link "CSIT Cybersecurity Training" [ref=e917] [cursor=pointer]
+              - menubar [ref=e209]:
+                - generic [ref=e210]:
+                  - button "Navigation settings" [ref=e211] [cursor=pointer]:
+                    - img [ref=e213]
+                  - tooltip [ref=e216]: Navigation settings
+              - generic:
+                - generic:
+                  - button "Add logo":
+                    - generic:
+                      - generic:
+                        - generic:
+                          - img
+                        - generic: Add logo
+            - generic [ref=e218]:
+              - img [ref=e221]
+              - generic [ref=e223]:
+                - generic [ref=e224]: Edit this menu via the Pages tab
+                - link [ref=e225] [cursor=pointer]: Show me
+            - generic [ref=e227]:
+              - article "My ePortfolio – Google Sites" [ref=e920]:
+                - region "Page header section" [ref=e921]:
+                  - generic [ref=e923]:
+                    - toolbar:
+                      - generic [ref=e926]:
+                        - button "Delete the header" [ref=e990] [cursor=pointer]:
+                          - img [ref=e929]
+                        - tooltip [ref=e932]: Delete the header
+                      - generic [ref=e933]:
+                        - button "Image" [ref=e991] [cursor=pointer]:
+                          - generic [ref=e936]:
+                            - img [ref=e938]
+                            - generic [ref=e940]: Image
+                            - img [ref=e942]
+                        - button "Header type" [ref=e992] [cursor=pointer]:
+                          - generic [ref=e948]:
+                            - img [ref=e950]
+                            - generic [ref=e952]: Header type
+                    - generic [ref=e953]:
+                      - generic:
+                        - img
+                      - button [ref=e956] [cursor=pointer]:
+                        - img [ref=e960]
+                    - gridcell "Text" [ref=e973]:
+                      - textbox "Text" [ref=e976]:
+                        - link "https://apnews.com/article/67a83df1d6c80cdf07ee2c208bf6e676" [ref=e977]
+                        - link "https://www.reuters.com/technology/thousands-european-wind-solar-power-systems-exposed-online-dutch-researchers-say-2026-10-06/" [ref=e978]
+                      - application
+              - button "Add footer" [ref=e441] [cursor=pointer]:
+                - generic [ref=e444]:
+                  - img [ref=e446]
+                  - text: Add footer
+        - generic [ref=e449]:
+          - tablist [ref=e450]:
+            - generic [ref=e451]:
+              - tab [disabled] [ref=e453]:
+                - img [ref=e457]
+              - tab [disabled] [ref=e460]:
+                - img [ref=e464]
+              - tab [disabled] [selected] [ref=e467]:
+                - img [ref=e471]
+            - button [disabled] [ref=e476]:
+              - img [ref=e480]
+            - button [disabled] [ref=e483]:
+              - img [ref=e487]
+          - iframe [ref=e493]:
+            
+      - complementary "Sidebar" [ref=e496]:
+        - generic [ref=e497]:
+          - tablist [ref=e498]:
+            - generic [ref=e501]:
+              - tab "Insert" [selected] [ref=e502] [cursor=pointer]:
+                - generic:
+                  - generic: Insert
+              - tab "Pages" [ref=e504] [cursor=pointer]:
+                - generic:
+                  - generic: Pages
+              - tab "Themes" [ref=e506] [cursor=pointer]:
+                - generic:
+                  - generic: Themes
+          - tabpanel "Insert" [ref=e508]:
+            - menubar [ref=e510]:
+              - menu [ref=e511]:
+                - generic [ref=e512]:
+                  - menuitem "Text box" [ref=e513] [cursor=pointer]:
+                    - img [ref=e516]
+                    - generic [ref=e518]: Text box
+                  - tooltip [ref=e519]
+                - generic [ref=e522]:
+                  - menuitem "Images" [ref=e523] [cursor=pointer]:
+                    - img [ref=e526]
+                    - generic [ref=e528]: Images
+                  - tooltip [ref=e529]
+                - generic [ref=e530]:
+                  - menuitem "Embed" [ref=e531] [cursor=pointer]:
+                    - img [ref=e534]
+                    - generic [ref=e536]: Embed
+                  - tooltip [ref=e537]
+                - generic [ref=e538]:
+                  - menuitem "Drive" [ref=e539] [cursor=pointer]:
+                    - generic [ref=e542]: Drive
+                  - tooltip [ref=e543]
+                - button [ref=e544]
+              - generic [ref=e545]:
+                - generic [ref=e546]:
+                  - button "Content blocks" [expanded] [ref=e547]:
+                    - generic [ref=e549]:
+                      - generic [ref=e550]: Content blocks
+                      - generic [ref=e552]: 
+                  - tooltip [ref=e553]
+                - generic [ref=e554]:
+                  - generic [ref=e555]:
+                    - 'button "Add layout: Image and caption" [ref=e556] [cursor=pointer]':
+                      - 'generic "Add layout: Image and caption" [ref=e559]':
+                        - img [ref=e560]
+                    - 'button "Add layout: Two column image and captions" [ref=e577] [cursor=pointer]':
+                      - 'generic "Add layout: Two column image and captions" [ref=e580]':
+                        - img [ref=e581]
+                  - generic [ref=e611]:
+                    - 'button "Add layout: Three images" [ref=e612] [cursor=pointer]':
+                      - 'generic "Add layout: Three images" [ref=e615]':
+                        - img [ref=e616]
+                    - 'button "Add layout: Three column image and captions" [ref=e641] [cursor=pointer]':
+                      - 'generic "Add layout: Three column image and captions" [ref=e644]':
+                        - img [ref=e645]
+                  - generic [ref=e679]:
+                    - 'button "Add layout: Two column image and side captions" [ref=e680] [cursor=pointer]':
+                      - 'generic "Add layout: Two column image and side captions" [ref=e683]':
+                        - img [ref=e684]
+                    - 'button "Add layout: Four column image and captions" [ref=e708] [cursor=pointer]':
+                      - 'generic "Add layout: Four column image and captions" [ref=e711]':
+                        - img [ref=e712]
+              - menu [ref=e743]:
+                - menuitem "Collapsible group" [ref=e745] [cursor=pointer]:
+                  - img [ref=e749]
+                  - generic [ref=e753]: Collapsible group
+                - menuitem "Table of contents" [ref=e755] [cursor=pointer]:
+                  - img [ref=e759]
+                  - generic [ref=e761]: Table of contents
+                - menuitem "Image carousel" [ref=e763] [cursor=pointer]:
+                  - img [ref=e767]
+                  - generic [ref=e770]: Image carousel
+                - menuitem "Button" [ref=e772] [cursor=pointer]:
+                  - img [ref=e776]
+                  - generic [ref=e782]: Button
+                - menuitem "Divider" [ref=e784] [cursor=pointer]:
+                  - img [ref=e788]
+                  - generic [ref=e790]: Divider
+                - menuitem "Spacer" [ref=e792] [cursor=pointer]:
+                  - img [ref=e796]
+                  - generic [ref=e805]: Spacer
+                - menuitem "Social links" [ref=e807] [cursor=pointer]:
+                  - img [ref=e811]
+                  - generic [ref=e814]: Social links
+                - menuitem "Placeholder" [ref=e816] [cursor=pointer]:
+                  - img [ref=e820]
+                  - generic [ref=e823]: Placeholder
+                - menuitem "YouTube" [ref=e825] [cursor=pointer]:
+                  - img [ref=e829]
+                  - generic [ref=e832]: YouTube
+                - menuitem "Calendar" [ref=e834] [cursor=pointer]:
+                  - img [ref=e838]
+                  - generic [ref=e841]: Calendar
+                - menuitem "Map" [ref=e843] [cursor=pointer]:
+                  - img [ref=e847]
+                  - generic [ref=e850]: Map
+                - menuitem "Docs" [ref=e852] [cursor=pointer]:
+                  - img [ref=e856]
+                  - generic [ref=e859]: Docs
+                - menuitem "Slides" [ref=e861] [cursor=pointer]:
+                  - img [ref=e865]
+                  - generic [ref=e868]: Slides
+                - menuitem "Sheets" [ref=e870] [cursor=pointer]:
+                  - img [ref=e874]
+                  - generic [ref=e877]: Sheets
+                - menuitem "Forms" [ref=e879] [cursor=pointer]:
+                  - img [ref=e883]
+                  - generic [ref=e886]: Forms
+                - menuitem "Charts" [ref=e888] [cursor=pointer]:
+                  - img [ref=e892]
+                  - generic [ref=e895]: Charts
+  - iframe [ref=e896]:
+    
+  - region [ref=e897]: Navigated to page Cybersecurity in the News
