@@ -28,9 +28,6 @@ const bidSchema = z.object({
   // Still stored as a whole-job TOTAL in bids.amount (rate × hours, computed below), because that
   // is what every downstream consumer expects — see lib/bookings/create.ts.
   hourlyRateCents: z.number().int().min(100).optional(),
-  // Deprecated alias kept so a bid submitted from a stale open tab is still read as a RATE rather
-  // than silently reverting to the old whole-job meaning. Remove once no old clients remain.
-  amount: z.number().int().min(100).optional(),
   message: z.string().max(1000).optional(),
   estimatedDurationMinutes: z.number().int().min(30).max(480).optional(),
   proposedDate: z.string().optional(),
@@ -118,7 +115,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     // The typed figure is a RATE PER HOUR, so multiply it by the booked hours exactly as the
     // auto-fill below already does. Before this, a typed number was banked as the whole-job price
     // while the auto-filled one was multiplied — same box, two different meanings.
-    const typedRateCents = data.hourlyRateCents ?? data.amount
+    const typedRateCents = data.hourlyRateCents
     // Now that the figure is unambiguously a rate per hour, the wage floor can be checked against
     // it — which was impossible while the box held a whole-job total, because a "low" total might
     // just have been a short job. Same live, admin-set floor the job-posting form already applies.
@@ -158,7 +155,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const amount = typedTotal ?? autoAmount ?? job.budgetMin ?? undefined
     if (amount === undefined) {
       return NextResponse.json(
-        { error: { fieldErrors: { amount: ["Couldn't determine a price for this bid — please enter one."] } } },
+        { error: { fieldErrors: { hourlyRateCents: ["Couldn't work out a price for this bid — please enter your hourly rate."] } } },
         { status: 422 },
       )
     }

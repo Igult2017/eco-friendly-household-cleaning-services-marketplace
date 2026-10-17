@@ -52,7 +52,7 @@ test.describe("Provider flow", () => {
     const results: number[] = []
     for (let i = 0; i < 12; i++) {
       const res = await page.request.post("/api/jobs/fake-job-id/bids", {
-        data: { amount: 5000, message: "test", estimatedDurationMinutes: 60 },
+        data: { hourlyRateCents: 5000, message: "test", estimatedDurationMinutes: 60 },
       })
       results.push(res.status())
     }
