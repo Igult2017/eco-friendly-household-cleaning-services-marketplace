@@ -1357,7 +1357,15 @@
     "ratingNone": "Brak jeszcze oceny",
     "ratingReviewCount": "{count, plural, one {# opinia} few {# opinie} many {# opinii} other {# opinii}}",
     "seeAllReviews": "Zobacz wszystkie opinie",
-    "viewPublicProfile": "Zobacz swój publiczny profil"
+    "viewPublicProfile": "Zobacz swój publiczny profil",
+    "firstNameLabel": "Imię",
+    "lastNameLabel": "Nazwisko",
+    "phoneLabel": "Telefon",
+    "ecoLevelLabel": "Poziom ekologiczny",
+    "ecoLevelBasic": "Podstawowy — produkty przyjazne środowisku",
+    "ecoLevelCertified": "Certyfikowany — uznany certyfikat ekologiczny",
+    "ecoLevelPremium": "Premium — certyfikowane produkty i metody",
+    "ecoLevelZeroImpact": "Zerowy wpływ — w pełni zrównoważony"
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "Moje usługi",
@@ -1394,7 +1402,9 @@
     "errorAddFailed": "Nie udało się dodać usługi.",
     "categoriesHint": "Wybierz wszystkie pasujące — klienci znajdą Cię w każdej z nich. Dodaj własną poniżej, jeśli jej nie ma na liście.",
     "customCategoryPlaceholder": "Dodaj własną kategorię",
-    "addCustomButton": "Dodaj"
+    "addCustomButton": "Dodaj",
+    "editService": "Edytuj usługę",
+    "saveChanges": "Zapisz zmiany"
   },
   "providerReviewsPage": {
     "title": "Opinie",
@@ -1615,7 +1625,7 @@
     "viewFullHistory": "Zobacz pełną historię płatności →",
     "status_authorized": "autoryzowana",
     "status_captured": "pobrana",
-    "status_pending_capture": "oczekuje na pobranie",
+    "status_pending_capture": "oczekuje na potwierdzenie",
     "status_pending": "oczekująca",
     "status_refunded": "zwrócona",
     "status_partially_refunded": "częściowo zwrócona",

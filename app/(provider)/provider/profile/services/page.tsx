@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { Plus, Trash2, Loader2 } from "lucide-react"
+import { Plus, Trash2, Loader2, Pencil } from "lucide-react"
 import { AddonsManager } from "@/components/provider/AddonsManager"
 import { BackButton } from "@/components/ui/BackButton"
 
@@ -39,6 +39,9 @@ export default function ProviderServicesPage() {
   const [loading, setLoading] = useState(true)
   const [adding, setAdding] = useState(false)
   const [showForm, setShowForm] = useState(false)
+  // Which service is being edited; null means the form is adding a new one. Before this there was
+  // no way to change a rate at all — a cleaner had to delete the service and rebuild it.
+  const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState(EMPTY_FORM)
   const [catIds, setCatIds] = useState<string[]>([])          // selected built-in categories
   const [customCats, setCustomCats] = useState<string[]>([])  // free-text custom categories
@@ -113,7 +116,26 @@ export default function ProviderServicesPage() {
     setCustomCats((cs) => cs.some((c) => c.toLowerCase() === v.toLowerCase()) ? cs : [...cs, v])
     setCustomInput("")
   }
-  const resetForm = () => { setForm(EMPTY_FORM); setCatIds([]); setCustomCats([]); setCustomInput("") }
+  const resetForm = () => { setForm(EMPTY_FORM); setCatIds([]); setCustomCats([]); setCustomInput(""); setEditingId(null) }
+
+  // Load an existing service back into the same form the add flow uses, so edit and create can
+  // never validate differently or drift apart visually.
+  const startEdit = (s: Service) => {
+    setEditingId(s.id)
+    setForm({
+      name: s.name,
+      description: s.description ?? "",
+      basePrice: s.basePrice == null ? "" : String(s.basePrice / 100),
+      basePriceMax: s.basePriceMax == null ? "" : String(s.basePriceMax / 100),
+      priceUnit: s.priceUnit,
+      minDurationMinutes: String(s.minDurationMinutes),
+      askOnBooking: s.basePrice == null,
+    })
+    setCatIds(Array.isArray(s.categoryIds) && s.categoryIds.length ? s.categoryIds : [s.categoryId])
+    setCustomCats(Array.isArray(s.customCategories) ? s.customCategories : [])
+    setError(null)
+    setShowForm(true)
+  }
   const catName = (id: string) => categories.find((c) => c.id === id)?.name ?? null
   const serviceCategoryLabels = (s: Service): string[] => {
     const ids = s.categoryIds && s.categoryIds.length ? s.categoryIds : [s.categoryId]
@@ -276,7 +298,7 @@ export default function ProviderServicesPage() {
             <button onClick={() => { setShowForm(false); setError(null); resetForm() }} className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-[#6B7280] hover:bg-gray-50">{t("cancel")}</button>
             <button onClick={addService} disabled={adding} className="flex-1 rounded-xl bg-[#2D7A5F] py-2.5 text-sm font-semibold text-white disabled:opacity-50 hover:bg-[#256349] transition-colors flex items-center justify-center gap-2">
               {adding && <Loader2 className="h-4 w-4 animate-spin" />}
-              {adding ? t("adding") : t("addService")}
+              {adding ? t("adding") : editingId ? t("saveChanges") : t("addService")}
             </button>
           </div>
         </div>
@@ -313,6 +335,9 @@ export default function ProviderServicesPage() {
                         : `€${(s.basePrice / 100).toFixed(2)}`}
                   </p>
                 </div>
+                <button onClick={() => startEdit(s)} aria-label={t("editService")} title={t("editService")} className="p-2 rounded-lg hover:bg-[#F4FAF6] text-gray-400 hover:text-[#2D7A5F] transition-colors">
+                  <Pencil className="h-4 w-4" />
+                </button>
                 <button onClick={() => remove(s.id)} className="p-2 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors">
                   <Trash2 className="h-4 w-4" />
                 </button>

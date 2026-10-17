@@ -4,6 +4,8 @@ import { bookings, users, providers, notifications } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { resend, FROM } from "@/lib/resend/client"
 import { bookingConfirmedEmail } from "@/lib/resend/transactionalEmails"
+import { newBookingForCleanerEmail } from "@/lib/resend/activityEmails"
+import { SITE_URL } from "@/lib/seo/site"
 
 export const onBookingCreated = inngest.createFunction(
   { id: "booking-created", triggers: [{ event: "booking/created" }] },
@@ -44,6 +46,23 @@ export const onBookingCreated = inngest.createFunction(
         // sees "New booking!" in their language, not "your booking is confirmed".
         metadata: { variant: recurring ? "new_booking_provider_recurring" : "new_booking_provider", service: svc, datetime: dt },
       })
+
+      // The cleaner previously got NOTHING by email when a client booked them directly — only the
+      // client was written to. They had to happen to open the app to discover they had work.
+      const [pu] = await db
+        .select({ email: users.email, locale: users.locale })
+        .from(users)
+        .where(eq(users.id, provider.userId))
+      if (pu?.email) {
+        const clientName = [customer?.firstName].filter(Boolean).join(" ") || "A client"
+        const { subject, html } = newBookingForCleanerEmail(pu.locale, {
+          number: booking.bookingNumber,
+          client: clientName,
+          scheduled: new Date(booking.scheduledAt).toLocaleString(pu.locale ?? "en-GB", { timeZone: provider?.timezone || "Europe/Berlin" }),
+          url: `${SITE_URL}/provider/bookings`,
+        })
+        await resend.emails.send({ from: FROM, to: pu.email, subject, html })
+      }
     })
 
     await step.run("notify-customer", async () => {

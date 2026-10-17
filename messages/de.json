@@ -1357,7 +1357,15 @@
     "ratingNone": "Noch keine Bewertung",
     "ratingReviewCount": "{count, plural, one {# Bewertung} other {# Bewertungen}}",
     "seeAllReviews": "Alle Bewertungen ansehen",
-    "viewPublicProfile": "Dein öffentliches Profil ansehen"
+    "viewPublicProfile": "Dein öffentliches Profil ansehen",
+    "firstNameLabel": "Vorname",
+    "lastNameLabel": "Nachname",
+    "phoneLabel": "Telefon",
+    "ecoLevelLabel": "Öko-Stufe",
+    "ecoLevelBasic": "Basis — umweltfreundliche Produkte",
+    "ecoLevelCertified": "Zertifiziert — anerkannte Öko-Zertifizierung",
+    "ecoLevelPremium": "Premium — zertifizierte Produkte und Methoden",
+    "ecoLevelZeroImpact": "Null Impact — vollständig nachhaltig"
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "Meine Leistungen",
@@ -1394,7 +1402,9 @@
     "errorAddFailed": "Leistung konnte nicht hinzugefügt werden.",
     "categoriesHint": "Wählen Sie alle zutreffenden aus – Kunden finden Sie unter jeder. Fügen Sie unten eigene hinzu, falls nicht aufgeführt.",
     "customCategoryPlaceholder": "Eigene Kategorie hinzufügen",
-    "addCustomButton": "Hinzufügen"
+    "addCustomButton": "Hinzufügen",
+    "editService": "Leistung bearbeiten",
+    "saveChanges": "Änderungen speichern"
   },
   "providerReviewsPage": {
     "title": "Bewertungen",
@@ -1615,7 +1625,7 @@
     "viewFullHistory": "Vollständigen Zahlungsverlauf ansehen →",
     "status_authorized": "autorisiert",
     "status_captured": "eingezogen",
-    "status_pending_capture": "Einzug ausstehend",
+    "status_pending_capture": "wartet auf Bestätigung",
     "status_pending": "ausstehend",
     "status_refunded": "erstattet",
     "status_partially_refunded": "teilweise erstattet",

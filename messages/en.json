@@ -1357,7 +1357,15 @@
     "ratingNone": "No rating yet",
     "ratingReviewCount": "{count, plural, one {# review} other {# reviews}}",
     "seeAllReviews": "See all reviews",
-    "viewPublicProfile": "View your public profile"
+    "viewPublicProfile": "View your public profile",
+    "firstNameLabel": "First name",
+    "lastNameLabel": "Last name",
+    "phoneLabel": "Phone",
+    "ecoLevelLabel": "Eco level",
+    "ecoLevelBasic": "Basic — eco-friendly products",
+    "ecoLevelCertified": "Certified — recognised eco certification",
+    "ecoLevelPremium": "Premium — certified products and methods",
+    "ecoLevelZeroImpact": "Zero impact — fully sustainable"
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "My Services",
@@ -1394,7 +1402,9 @@
     "errorAddFailed": "Failed to add service.",
     "categoriesHint": "Pick all that apply — clients can find you under each. Add your own below if it's not listed.",
     "customCategoryPlaceholder": "Add your own category",
-    "addCustomButton": "Add"
+    "addCustomButton": "Add",
+    "editService": "Edit service",
+    "saveChanges": "Save changes"
   },
   "providerReviewsPage": {
     "title": "Reviews",
@@ -1615,7 +1625,7 @@
     "viewFullHistory": "View full payment history →",
     "status_authorized": "authorized",
     "status_captured": "captured",
-    "status_pending_capture": "pending capture",
+    "status_pending_capture": "awaiting confirmation",
     "status_pending": "pending",
     "status_refunded": "refunded",
     "status_partially_refunded": "partially refunded",

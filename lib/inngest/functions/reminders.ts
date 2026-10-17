@@ -4,6 +4,9 @@ import { bookings, users, providers, notifications } from "@/lib/db/schema"
 import { eq, and, sql } from "drizzle-orm"
 import { resend, FROM } from "@/lib/resend/client"
 import { reminderTomorrowEmail } from "@/lib/resend/transactionalEmails"
+import { startingSoonEmail, deadlineSoonEmail } from "@/lib/resend/activityEmails"
+import { getDeadlineWarningHours, getReminderHoursBefore } from "@/lib/platform/settings"
+import { SITE_URL } from "@/lib/seo/site"
 
 const ACTIVE = ["payment_authorized", "confirmed", "in_progress", "pending_capture"]
 
@@ -52,7 +55,12 @@ export const bookingReminders = inngest.createFunction(
 
     const booking = await step.run("fetch-booking", async () => {
       const [b] = await db
-        .select({ scheduledAt: bookings.scheduledAt, serviceAddress: bookings.serviceAddress })
+        .select({
+          scheduledAt: bookings.scheduledAt,
+          scheduledEndAt: bookings.scheduledEndAt,
+          bookingNumber: bookings.bookingNumber,
+          serviceAddress: bookings.serviceAddress,
+        })
         .from(bookings)
         .where(eq(bookings.id, bookingId))
       return b ?? null
@@ -62,6 +70,10 @@ export const bookingReminders = inngest.createFunction(
     const scheduledTime = new Date(booking.scheduledAt)
     const scheduledMs = scheduledTime.getTime()
     if (scheduledTime <= new Date()) return { skipped: true, reason: "already_passed" }
+    const bookingNumber = booking.bookingNumber
+    // Null for older bookings that predate the end-time column — those simply get no finish-by
+    // warning rather than a guessed one.
+    const endMs = booking.scheduledEndAt ? new Date(booking.scheduledEndAt).getTime() : null
 
     const addr =
       typeof booking.serviceAddress === "object" && booking.serviceAddress !== null
@@ -84,7 +96,10 @@ export const bookingReminders = inngest.createFunction(
     }
 
     const dayBefore = new Date(scheduledMs - 24 * 60 * 60 * 1000)
-    const twoHoursBefore = new Date(scheduledMs - 2 * 60 * 60 * 1000)
+    // Admin-set, not hardcoded — read once here so the sleep below and the "in N hours" wording in
+    // the email are the same number. Read at scheduling time, so a change applies to new bookings.
+    const reminderHours = await step.run("fetch-reminder-hours", getReminderHoursBefore)
+    const startingSoonAt = new Date(scheduledMs - reminderHours * 60 * 60 * 1000)
 
     if (dayBefore > new Date()) {
       await step.sleepUntil("until-day-before", dayBefore)
@@ -112,8 +127,8 @@ export const bookingReminders = inngest.createFunction(
       })
     }
 
-    if (twoHoursBefore > new Date()) {
-      await step.sleepUntil("until-2h-before", twoHoursBefore)
+    if (startingSoonAt > new Date()) {
+      await step.sleepUntil("until-starting-soon", startingSoonAt)
       await step.run("remind-2h", async () => {
         if (!(await stillValid())) return
         const [c] = await db.select({ locale: users.locale }).from(users).where(eq(users.id, customerId))
@@ -128,10 +143,63 @@ export const bookingReminders = inngest.createFunction(
           await insertReminder({
             userId: provider.userId, bookingId, tag: "2h", variant: "booking_reminder_provider",
             datetime: fmtTz("en-GB"), link: `/provider/bookings`,
-            title: "Booking in 2 hours", body: `Reminder: your cleaning job starts at ${fmtTz("en-GB")}.`,
+            title: "Booking starting soon", body: `Reminder: your cleaning job starts at ${fmtTz("en-GB")}.`,
           })
         }
+
+        // ...and by email, to BOTH sides. This close-in reminder was in-app only, so the person
+        // about to travel to a stranger's home got no push at all.
+        const hrs = Math.max(1, Math.round((scheduledMs - Date.now()) / 3_600_000))
+        const [cu] = await db.select({ email: users.email, locale: users.locale, emailReminders: users.emailReminders }).from(users).where(eq(users.id, customerId))
+        if (cu?.email && cu.emailReminders) {
+          const { subject, html } = startingSoonEmail(cu.locale, {
+            number: bookingNumber, address: addr, scheduled: fmtTz(cu.locale ?? "en-GB"), hours: hrs,
+            url: `${SITE_URL}/bookings/${bookingId}`,
+          })
+          await resend.emails.send({ from: FROM, to: cu.email, subject, html })
+        }
+        if (provider) {
+          const [pu] = await db.select({ email: users.email, locale: users.locale, emailReminders: users.emailReminders }).from(users).where(eq(users.id, provider.userId))
+          if (pu?.email && pu.emailReminders) {
+            const { subject, html } = startingSoonEmail(pu.locale, {
+              number: bookingNumber, address: addr, scheduled: fmtTz(pu.locale ?? "en-GB"), hours: hrs,
+              url: `${SITE_URL}/provider/bookings`,
+            })
+            await resend.emails.send({ from: FROM, to: pu.email, subject, html })
+          }
+        }
       })
+    }
+
+    // The cleaner's finish-by warning. New: nothing watched the END of a job before, yet a cleaner
+    // who forgets to mark it complete simply doesn't get paid, and starts accruing a late penalty.
+    if (endMs && provider) {
+      const warnHours = await getDeadlineWarningHours()
+      const warnAt = new Date(endMs - warnHours * 60 * 60 * 1000)
+      if (warnAt > new Date()) {
+        await step.sleepUntil("until-deadline-warning", warnAt)
+        await step.run("warn-deadline", async () => {
+          // Only worth sending while the job is still open — once it's marked done, it's noise.
+          const [b] = await db.select({ status: bookings.status }).from(bookings).where(eq(bookings.id, bookingId))
+          if (!b || !["confirmed", "in_progress"].includes(b.status)) return
+          const endStr = new Date(endMs).toLocaleString("en-GB", { timeZone: tz })
+          await insertReminder({
+            userId: provider.userId, bookingId, tag: "deadline", variant: "booking_reminder_provider",
+            datetime: endStr, link: `/provider/bookings`,
+            title: "Job due to finish soon", body: `This cleaning is due to be finished by ${endStr}. Mark it complete so you can be paid.`,
+          })
+          const [pu] = await db.select({ email: users.email, locale: users.locale, emailReminders: users.emailReminders }).from(users).where(eq(users.id, provider.userId))
+          if (pu?.email && pu.emailReminders) {
+            const { subject, html } = deadlineSoonEmail(pu.locale, {
+              number: bookingNumber, address: addr,
+              deadline: new Date(endMs).toLocaleString(pu.locale ?? "en-GB", { timeZone: tz }),
+              hours: warnHours,
+              url: `${SITE_URL}/provider/bookings`,
+            })
+            await resend.emails.send({ from: FROM, to: pu.email, subject, html })
+          }
+        })
+      }
     }
 
     return { bookingId, reminded: true }

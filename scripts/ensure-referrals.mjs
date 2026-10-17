@@ -475,6 +475,14 @@ INSERT INTO platform_settings (key, value) VALUES
   ('min_booking_minutes','120')
 ON CONFLICT (key) DO NOTHING;
 
+-- Email reminder timings. reminder_hours_before = how long before the appointment BOTH sides get
+-- the "starting soon" email; deadline_warning_hours = how long before a job's finish time the
+-- CLEANER is reminded to mark it complete (they cannot be paid until they do).
+INSERT INTO platform_settings (key, value) VALUES
+  ('reminder_hours_before','2'),
+  ('deadline_warning_hours','1')
+ON CONFLICT (key) DO NOTHING;
+
 -- One-time: lift the service-radius ceiling so a cleaner can set any radius they like. 20000 km is
 -- half the Earth's circumference, so it already covers the whole planet — it exists only to stop a
 -- typo'd number reaching the distance maths in lib/db/queries/geo.ts. Guarded by a marker row,

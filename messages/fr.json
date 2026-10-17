@@ -1357,7 +1357,15 @@
     "ratingNone": "Pas encore de note",
     "ratingReviewCount": "{count, plural, one {# avis} other {# avis}}",
     "seeAllReviews": "Voir tous les avis",
-    "viewPublicProfile": "Voir votre profil public"
+    "viewPublicProfile": "Voir votre profil public",
+    "firstNameLabel": "Prénom",
+    "lastNameLabel": "Nom",
+    "phoneLabel": "Téléphone",
+    "ecoLevelLabel": "Niveau écologique",
+    "ecoLevelBasic": "Basique — produits écologiques",
+    "ecoLevelCertified": "Certifié — certification écologique reconnue",
+    "ecoLevelPremium": "Premium — produits et méthodes certifiés",
+    "ecoLevelZeroImpact": "Impact zéro — entièrement durable"
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "Mes prestations",
@@ -1394,7 +1402,9 @@
     "errorAddFailed": "Échec de l'ajout de la prestation.",
     "categoriesHint": "Sélectionnez toutes celles qui s'appliquent — les clients vous trouveront dans chacune. Ajoutez la vôtre ci-dessous si elle n'est pas dans la liste.",
     "customCategoryPlaceholder": "Ajouter votre propre catégorie",
-    "addCustomButton": "Ajouter"
+    "addCustomButton": "Ajouter",
+    "editService": "Modifier la prestation",
+    "saveChanges": "Enregistrer les modifications"
   },
   "providerReviewsPage": {
     "title": "Avis",
@@ -1615,7 +1625,7 @@
     "viewFullHistory": "Voir l'historique complet des paiements →",
     "status_authorized": "autorisé",
     "status_captured": "encaissé",
-    "status_pending_capture": "encaissement en attente",
+    "status_pending_capture": "en attente de confirmation",
     "status_pending": "en attente",
     "status_refunded": "remboursé",
     "status_partially_refunded": "partiellement remboursé",

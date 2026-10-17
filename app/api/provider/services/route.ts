@@ -26,6 +26,51 @@ const serviceSchema = z.object({
   { message: "The maximum can't be lower than the minimum.", path: ["basePriceMax"] },
 )
 
+type ServiceInput = z.infer<typeof serviceSchema>
+
+// Shared by create AND edit. Extracted deliberately: these two checks are the only thing standing
+// between a cleaner and an unpayable or unfindable listing, and a copy-pasted second version would
+// drift the moment one side changed. Returns a ready-to-send error, or null when the input is fine.
+async function rejectInvalidService(d: ServiceInput): Promise<NextResponse | null> {
+  // Every chosen built-in category must exist. The primary also has a foreign key, but this gives a
+  // clean 400 instead of a 500 on a crafted request, and keeps the extra ids honest.
+  const validCats = await db.select({ id: serviceCategories.id }).from(serviceCategories).where(eq(serviceCategories.isActive, true))
+  const validIds = new Set(validCats.map((c) => c.id))
+  if (!d.categoryIds.every((id) => validIds.has(id))) {
+    return NextResponse.json({ error: "One or more selected categories are invalid" }, { status: 400 })
+  }
+  // The wage floor only makes sense for an actual hourly rate — a flat per-job or per-sqft price
+  // isn't a wage, so it's left alone (see lib/platform/settings.ts getMinHourlyRateCents()).
+  if (d.priceUnit === "per_hour" && d.basePrice !== null) {
+    const minHourlyRateCents = await getMinHourlyRateCents()
+    const floor = `Hourly rate must be at least ${(minHourlyRateCents / 100).toFixed(2)} per hour.`
+    if (d.basePrice < minHourlyRateCents) {
+      return NextResponse.json({ error: { fieldErrors: { basePrice: [floor] } } }, { status: 422 })
+    }
+    if (d.basePriceMax != null && d.basePriceMax < minHourlyRateCents) {
+      return NextResponse.json({ error: { fieldErrors: { basePriceMax: [floor] } } }, { status: 422 })
+    }
+  }
+  return null
+}
+
+/** The columns create and edit both write, so the two can never disagree about shape. */
+function serviceColumns(d: ServiceInput) {
+  return {
+    categoryId: d.categoryIds[0],          // primary — keeps joins/search working
+    categoryIds: d.categoryIds,
+    customCategories: d.customCategories,
+    name: d.name,
+    description: d.description ?? null,
+    basePrice: d.basePrice,
+    // A range only makes sense alongside an actual price and hourly billing — never persist a
+    // stray max when there's no base price to pair it with, or the unit isn't per-hour.
+    basePriceMax: d.priceUnit === "per_hour" && d.basePrice != null ? (d.basePriceMax ?? null) : null,
+    priceUnit: d.priceUnit,
+    minDurationMinutes: d.minDurationMinutes,
+  }
+}
+
 export async function GET() {
   try {
     const { userId } = await auth()
@@ -78,43 +123,12 @@ export async function POST(req: Request) {
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
     const d = parsed.data
-    // Validate every chosen built-in category actually exists. The primary also has an FK, but this
-    // returns a clean 400 instead of a 500 on a crafted request, and keeps the extra ids honest.
-    const validCats = await db.select({ id: serviceCategories.id }).from(serviceCategories).where(eq(serviceCategories.isActive, true))
-    const validIds = new Set(validCats.map((c) => c.id))
-    if (!d.categoryIds.every((id) => validIds.has(id))) {
-      return NextResponse.json({ error: "One or more selected categories are invalid" }, { status: 400 })
-    }
-    // Wage floor only makes sense for an actual hourly rate — a flat per-job or per-sqft price
-    // isn't a wage, so it's left alone (see lib/platform/settings.ts getMinHourlyRateCents()).
-    if (d.priceUnit === "per_hour" && d.basePrice !== null) {
-      const minHourlyRateCents = await getMinHourlyRateCents()
-      if (d.basePrice < minHourlyRateCents) {
-        return NextResponse.json(
-          { error: { fieldErrors: { basePrice: [`Hourly rate must be at least ${(minHourlyRateCents / 100).toFixed(2)} per hour.`] } } },
-          { status: 422 },
-        )
-      }
-      if (d.basePriceMax != null && d.basePriceMax < minHourlyRateCents) {
-        return NextResponse.json(
-          { error: { fieldErrors: { basePriceMax: [`Hourly rate must be at least ${(minHourlyRateCents / 100).toFixed(2)} per hour.`] } } },
-          { status: 422 },
-        )
-      }
-    }
+    const invalid = await rejectInvalidService(d)
+    if (invalid) return invalid
+
     const [service] = await db.insert(providerServices).values({
       providerId: provider.id,
-      categoryId: d.categoryIds[0],          // primary — keeps joins/search working
-      categoryIds: d.categoryIds,
-      customCategories: d.customCategories,
-      name: d.name,
-      description: d.description ?? null,
-      basePrice: d.basePrice,
-      // A range only makes sense alongside an actual price and hourly billing — never persist a
-      // stray max when there's no base price to pair it with, or the unit isn't per-hour.
-      basePriceMax: d.priceUnit === "per_hour" && d.basePrice != null ? (d.basePriceMax ?? null) : null,
-      priceUnit: d.priceUnit,
-      minDurationMinutes: d.minDurationMinutes,
+      ...serviceColumns(d),
       ecoProductsUsed: [],
     }).returning({ id: providerServices.id })
 
@@ -122,6 +136,49 @@ export async function POST(req: Request) {
   } catch (err) {
     console.error("[provider/services POST]", err)
     void logError({ message: "[provider/services POST]", error: err, route: "/api/provider/services", severity: "error" })
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
+}
+
+// Change an existing service — its rate above all. Before this there was no PATCH at all, so a
+// cleaner who wanted to raise or lower their price had to DELETE the service and rebuild it from
+// scratch, losing its history. Same validation as create, via the shared helpers above.
+export async function PATCH(req: Request) {
+  try {
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+    const [provider] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, userId))
+    if (!provider) return NextResponse.json({ error: "Provider not found" }, { status: 404 })
+
+    const body = await req.json().catch(() => ({}))
+    const { serviceId, ...rest } = body as { serviceId?: string }
+    if (!serviceId || typeof serviceId !== "string") {
+      return NextResponse.json({ error: "serviceId required" }, { status: 400 })
+    }
+
+    const parsed = serviceSchema.safeParse(rest)
+    if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+
+    // Ownership check — without it any signed-in cleaner could re-price a competitor's listing.
+    const [owned] = await db
+      .select({ id: providerServices.id })
+      .from(providerServices)
+      .where(and(eq(providerServices.id, serviceId), eq(providerServices.providerId, provider.id)))
+    if (!owned) return NextResponse.json({ error: "Service not found" }, { status: 404 })
+
+    const d = parsed.data
+    const invalid = await rejectInvalidService(d)
+    if (invalid) return invalid
+
+    await db.update(providerServices).set(serviceColumns(d)).where(eq(providerServices.id, serviceId))
+
+    // Existing bookings are unaffected: each one stored its own price when it was created, so a
+    // rate change never alters work already agreed or already done.
+    return NextResponse.json({ serviceId })
+  } catch (err) {
+    console.error("[provider/services PATCH]", err)
+    void logError({ message: "[provider/services PATCH]", error: err, route: "/api/provider/services", severity: "error" })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

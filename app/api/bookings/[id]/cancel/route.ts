@@ -35,6 +35,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const [booking] = await db
       .select({
         id: bookings.id,
+        bookingNumber: bookings.bookingNumber,
         customerId: bookings.customerId,
         providerId: bookings.providerId,
         scheduledAt: bookings.scheduledAt,
@@ -167,7 +168,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       callerRole === "provider" ? Math.round(booking.totalAmount * cancellerFeePercent / 100) : capturedFee
 
     await recordCancellationNotices({
-      bookingId, userId, callerRole,
+      bookingId, bookingNumber: booking.bookingNumber, userId, callerRole,
       customerId: booking.customerId,
       providerId: booking.providerId,
       scheduledAt: booking.scheduledAt,

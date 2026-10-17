@@ -1357,7 +1357,15 @@
     "ratingNone": "Nog geen beoordeling",
     "ratingReviewCount": "{count, plural, one {# review} other {# reviews}}",
     "seeAllReviews": "Alle reviews bekijken",
-    "viewPublicProfile": "Bekijk je openbare profiel"
+    "viewPublicProfile": "Bekijk je openbare profiel",
+    "firstNameLabel": "Voornaam",
+    "lastNameLabel": "Achternaam",
+    "phoneLabel": "Telefoon",
+    "ecoLevelLabel": "Eco-niveau",
+    "ecoLevelBasic": "Basis — milieuvriendelijke producten",
+    "ecoLevelCertified": "Gecertificeerd — erkend eco-certificaat",
+    "ecoLevelPremium": "Premium — gecertificeerde producten en methoden",
+    "ecoLevelZeroImpact": "Nul impact — volledig duurzaam"
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "Mijn diensten",
@@ -1394,7 +1402,9 @@
     "errorAddFailed": "Dienst toevoegen mislukt.",
     "categoriesHint": "Kies alles wat van toepassing is — klanten vinden je onder elke. Voeg hieronder je eigen toe als die er niet bij staat.",
     "customCategoryPlaceholder": "Voeg je eigen categorie toe",
-    "addCustomButton": "Toevoegen"
+    "addCustomButton": "Toevoegen",
+    "editService": "Dienst bewerken",
+    "saveChanges": "Wijzigingen opslaan"
   },
   "providerReviewsPage": {
     "title": "Beoordelingen",
@@ -1615,7 +1625,7 @@
     "viewFullHistory": "Volledige betalingsgeschiedenis bekijken →",
     "status_authorized": "geautoriseerd",
     "status_captured": "geïncasseerd",
-    "status_pending_capture": "incasso in behandeling",
+    "status_pending_capture": "wacht op bevestiging",
     "status_pending": "in behandeling",
     "status_refunded": "terugbetaald",
     "status_partially_refunded": "gedeeltelijk terugbetaald",

@@ -96,6 +96,18 @@ export async function getRegularClientAfterJobs(): Promise<number> {
   return getIntSetting("commission_regular_after_jobs", 3, 0, 50)
 }
 
+// How many hours before the appointment both sides get the "starting soon" email. The day-before
+// reminder is separate and always sent; this is the close-in one.
+export async function getReminderHoursBefore(): Promise<number> {
+  return getIntSetting("reminder_hours_before", 2, 1, 48)
+}
+
+// How many hours before a job's finish time the CLEANER is reminded that it is due to be done —
+// they cannot be paid until they mark it complete, so a silent deadline costs them money.
+export async function getDeadlineWarningHours(): Promise<number> {
+  return getIntSetting("deadline_warning_hours", 1, 1, 24)
+}
+
 // Admin-set shortest booking anyone can make, in minutes. Applies to BOTH ways work is arranged —
 // booking a cleaner directly and posting a job for bids — so a client cannot route around it by
 // using the other path. Default 120 (2 hours): shorter visits are not worth a cleaner's travel.

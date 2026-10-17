@@ -7,6 +7,8 @@ export interface Config {
   commission_regular_after_jobs?:  string
   payout_schedule?:                string
   min_booking_minutes?:            string
+  reminder_hours_before?:          string
+  deadline_warning_hours?:         string
   cancel_tier1_hours?:             string
   cancel_tier2_hours?:             string
   cancel_tier3_hours?:             string
@@ -39,6 +41,8 @@ export const FIELD_BOUNDS: Record<string, { min: number; max: number; label: str
   client_referral_discount_pct:   { min: 0,  max: 20,      label: "Affiliate commission %" },
   recurring_discount_pct:         { min: 0,  max: 50,      label: "Recurring booking discount %" },
   min_booking_minutes:            { min: 15, max: 480,     label: "Shortest booking (minutes)" },
+  reminder_hours_before:          { min: 1,  max: 48,      label: "Starting-soon reminder (hours before)" },
+  deadline_warning_hours:         { min: 1,  max: 24,      label: "Finish-by reminder (hours before)" },
   cancel_tier1_hours:             { min: 1,  max: 168,     label: "Free window (hours)" },
   cancel_tier2_hours:             { min: 1,  max: 168,     label: "Half-fee window (hours)" },
   cancel_tier3_hours:             { min: 0,  max: 168,     label: "Travel-comp window (hours)" },
@@ -52,7 +56,7 @@ export const FIELD_BOUNDS: Record<string, { min: number; max: number; label: str
 // Every numeric field that the admin can edit, in the order save() sends them.
 export const NUMERIC_KEYS: (keyof Config)[] = [
   "commission_pct", "commission_regular_pct", "commission_regular_after_jobs",
-  "min_booking_minutes", "min_hourly_rate_cents",
+  "min_booking_minutes", "min_hourly_rate_cents", "reminder_hours_before", "deadline_warning_hours",
   "cancel_tier1_hours", "cancel_tier2_hours", "cancel_tier3_hours",
   "cancel_fee_low_pct", "cancel_fee_medium_pct", "cancel_fee_late_pct",
   "cancel_travel_comp_cents", "cancel_noshow_grace_minutes",

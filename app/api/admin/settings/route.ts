@@ -12,6 +12,8 @@ const updateSchema = z.object({
   payout_schedule:       z.enum(["weekly", "monthly"]).optional(),
   // max_service_radius_km is gone: cleaners set any radius they like, so nothing read it any more.
   min_booking_minutes:   z.number().int().min(15).max(480).optional(),
+  reminder_hours_before: z.number().int().min(1).max(48).optional(),
+  deadline_warning_hours: z.number().int().min(1).max(24).optional(),
   // Cancellation & no-show policy — see lib/platform/settings.ts getCancellationConfig().
   cancel_tier1_hours:          z.number().int().min(1).max(168).optional(),
   cancel_tier2_hours:          z.number().int().min(1).max(168).optional(),

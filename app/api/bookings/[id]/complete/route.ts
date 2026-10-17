@@ -1,7 +1,10 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { bookings, payments, providers, notifications } from "@/lib/db/schema"
+import { bookings, payments, providers, notifications, users } from "@/lib/db/schema"
+import { resend, FROM } from "@/lib/resend/client"
+import { confirmCompletionEmail } from "@/lib/resend/activityEmails"
+import { SITE_URL } from "@/lib/seo/site"
 import { eq, and, inArray } from "drizzle-orm"
 import { inngest } from "@/lib/inngest/client"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
@@ -105,6 +108,25 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
           metadata: { variant: "client_confirm_request" },
         })
         await inngest.send({ name: "booking/awaiting-confirmation", data: { bookingId } })
+
+        // Email it too. The cleaner cannot be paid until the client confirms, so an in-app notice
+        // the client may never open was holding up someone's wages.
+        const [cu] = await db
+          .select({ email: users.email, locale: users.locale })
+          .from(users)
+          .where(eq(users.id, booking.customerId))
+        if (cu?.email) {
+          const [pv] = await db
+            .select({ businessName: providers.businessName, timezone: providers.timezone })
+            .from(providers)
+            .where(eq(providers.id, provider.id))
+          const { subject, html } = confirmCompletionEmail(cu.locale, {
+            cleaner: pv?.businessName ?? "Your cleaner",
+            scheduled: new Date(booking.scheduledAt).toLocaleString(cu.locale ?? "en-GB", { timeZone: pv?.timezone || "Europe/Berlin" }),
+            url: `${SITE_URL}/bookings/${bookingId}`,
+          })
+          await resend.emails.send({ from: FROM, to: cu.email, subject, html })
+        }
       } catch (e) { console.warn("[bookings/complete POST] notify/await send failed:", e) }
     }
 

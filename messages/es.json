@@ -1357,7 +1357,15 @@
     "ratingNone": "Aún sin valoración",
     "ratingReviewCount": "{count, plural, one {# reseña} other {# reseñas}}",
     "seeAllReviews": "Ver todas las reseñas",
-    "viewPublicProfile": "Ver tu perfil público"
+    "viewPublicProfile": "Ver tu perfil público",
+    "firstNameLabel": "Nombre",
+    "lastNameLabel": "Apellidos",
+    "phoneLabel": "Teléfono",
+    "ecoLevelLabel": "Nivel ecológico",
+    "ecoLevelBasic": "Básico: productos ecológicos",
+    "ecoLevelCertified": "Certificado: certificación ecológica reconocida",
+    "ecoLevelPremium": "Premium: productos y métodos certificados",
+    "ecoLevelZeroImpact": "Impacto cero: totalmente sostenible"
   },
   "providerProviderProfileServicesPage": {
     "pageTitle": "Mis servicios",
@@ -1394,7 +1402,9 @@
     "errorAddFailed": "No se pudo añadir el servicio.",
     "categoriesHint": "Elige todas las que correspondan: los clientes te encontrarán en cada una. Añade la tuya abajo si no está en la lista.",
     "customCategoryPlaceholder": "Añade tu propia categoría",
-    "addCustomButton": "Añadir"
+    "addCustomButton": "Añadir",
+    "editService": "Editar servicio",
+    "saveChanges": "Guardar cambios"
   },
   "providerReviewsPage": {
     "title": "Reseñas",
@@ -1615,7 +1625,7 @@
     "viewFullHistory": "Ver el historial completo de pagos →",
     "status_authorized": "autorizado",
     "status_captured": "cobrado",
-    "status_pending_capture": "cobro pendiente",
+    "status_pending_capture": "pendiente de confirmación",
     "status_pending": "pendiente",
     "status_refunded": "reembolsado",
     "status_partially_refunded": "parcialmente reembolsado",

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { toast } from "sonner"
-import { StatusBadge } from "@/components/admin/StatusBadge"
+import { StatusBadge, statusLabels } from "@/components/admin/StatusBadge"
 import { Loader2, ChevronLeft, ChevronRight } from "lucide-react"
 
 type BookingRow = {
@@ -73,7 +73,7 @@ export default function AdminBookingsPage() {
                 : "border-gray-200 text-[#6B7280] hover:border-[#2D7A5F] hover:text-[#2D7A5F] bg-white"
             }`}
           >
-            {s.replace(/_/g, " ")}
+            {s === "all" ? "All" : (statusLabels[s] ?? s.replace(/_/g, " "))}
           </button>
         ))}
       </div>

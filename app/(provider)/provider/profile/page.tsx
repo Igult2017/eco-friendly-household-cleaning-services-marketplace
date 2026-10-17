@@ -19,7 +19,13 @@ type Profile = {
   country: string
   serviceRadiusKm: number
   carbonOffsetEnabled: boolean
+  ecoLevel: string
 }
+
+// Name and phone belong to the ACCOUNT, not the cleaner listing, so they save through the shared
+// /api/customers/profile endpoint. Shown here because a cleaner has no reason to visit the client
+// profile page, and every field entered at signup should be changeable afterwards.
+type Account = { firstName: string; lastName: string; phone: string }
 
 // Read-only — never sent back in the PATCH, just displayed.
 type RatingStats = { averageRating: number | null; totalReviews: number; slug: string | null }
@@ -28,8 +34,9 @@ export default function ProviderProfilePage() {
   const t = useTranslations("providerProviderProfilePage")
   const [profile, setProfile] = useState<Profile>({
     businessName: "", bio: "", city: "", postalCode: "",
-    country: "DE", serviceRadiusKm: 25, carbonOffsetEnabled: false,
+    country: "DE", serviceRadiusKm: 25, carbonOffsetEnabled: false, ecoLevel: "basic",
   })
+  const [account, setAccount] = useState<Account>({ firstName: "", lastName: "", phone: "" })
   const [stats, setStats] = useState<RatingStats>({ averageRating: null, totalReviews: 0, slug: null })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -62,6 +69,7 @@ export default function ProviderProfilePage() {
             country: d.provider.country ?? "DE",
             serviceRadiusKm: d.provider.serviceRadiusKm ?? 25,
             carbonOffsetEnabled: d.provider.carbonOffsetEnabled ?? false,
+            ecoLevel: d.provider.ecoLevel ?? "basic",
           })
           setStats({
             averageRating: d.provider.averageRating ?? null,
@@ -71,6 +79,13 @@ export default function ProviderProfilePage() {
         }
         setLoading(false)
       })
+    fetch("/api/customers/profile")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        const u = d?.user ?? d
+        if (u) setAccount({ firstName: u.firstName ?? "", lastName: u.lastName ?? "", phone: u.phone ?? "" })
+      })
+      .catch(() => {})
   }, [])
 
   const save = async () => {
@@ -88,6 +103,11 @@ export default function ProviderProfilePage() {
         setError(typeof d?.error === "string" ? d.error : "Couldn't save your profile. Please try again.")
         return
       }
+      await fetch("/api/customers/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(account),
+      }).catch(() => {})
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)
     } catch {
@@ -138,6 +158,36 @@ export default function ProviderProfilePage() {
       </div>
 
       <div className="rounded-xl bg-white shadow-sm p-6 space-y-5">
+        {/* Name and phone were only editable on the client-side profile page, which a cleaner has
+            no reason to open. Every field entered at signup should be changeable afterwards. */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">{t("firstNameLabel")}</label>
+            <input
+              type="text" value={account.firstName}
+              onChange={(e) => setAccount((a) => ({ ...a, firstName: e.target.value }))}
+              className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">{t("lastNameLabel")}</label>
+            <input
+              type="text" value={account.lastName}
+              onChange={(e) => setAccount((a) => ({ ...a, lastName: e.target.value }))}
+              className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">{t("phoneLabel")}</label>
+          <input
+            type="tel" value={account.phone}
+            onChange={(e) => setAccount((a) => ({ ...a, phone: e.target.value }))}
+            className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]"
+          />
+        </div>
+
         <div>
           <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">{t("businessNameLabel")}</label>
           <input
@@ -211,6 +261,22 @@ export default function ProviderProfilePage() {
             <span className="text-sm text-[#6B7280]">km</span>
           </div>
           <p className="text-xs text-[#6B7280] mt-1">{t("radiusNoLimitHint")}</p>
+        </div>
+
+        {/* Chosen at signup and shown publicly on the listing, but there was no way to change it
+            afterwards — even though the save endpoint already accepted it. */}
+        <div>
+          <label className="block text-sm font-semibold text-[#2B3441] mb-1.5">{t("ecoLevelLabel")}</label>
+          <select
+            value={profile.ecoLevel}
+            onChange={(e) => setProfile((p) => ({ ...p, ecoLevel: e.target.value }))}
+            className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm bg-white focus:border-[#2D7A5F] focus:outline-none focus:ring-1 focus:ring-[#2D7A5F]"
+          >
+            <option value="basic">{t("ecoLevelBasic")}</option>
+            <option value="certified">{t("ecoLevelCertified")}</option>
+            <option value="premium">{t("ecoLevelPremium")}</option>
+            <option value="zero_impact">{t("ecoLevelZeroImpact")}</option>
+          </select>
         </div>
 
         <label className="flex items-center gap-3 cursor-pointer">

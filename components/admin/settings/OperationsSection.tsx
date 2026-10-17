@@ -50,6 +50,31 @@ export function OperationsSection({ cfg, set }: { cfg: Config; set: SetFn }) {
         </div>
       </div>
 
+      {/* Email reminder timings */}
+      <div className="px-6 py-5">
+        <label className="block text-sm font-semibold text-[#2B3441] mb-1">Email Reminders</label>
+        <p className="text-xs text-[#6B7280] mb-4">
+          A reminder always goes out the day before. These two control the close-in ones: how long
+          before the appointment <strong>both sides</strong> are told it is starting, and how long
+          before a job&apos;s finish time the <strong>cleaner</strong> is reminded to mark it
+          complete — they cannot be paid until they do.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label className="block text-xs font-medium text-[#6B7280] mb-1">Starting soon (hours before)</label>
+            <input type="number" min={1} max={48} value={cfg.reminder_hours_before ?? "2"}
+              onChange={e => set("reminder_hours_before", e.target.value)} onWheel={blurOnWheel}
+              className={`w-full ${INPUT_CLS}`} />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-[#6B7280] mb-1">Finish-by reminder (hours before)</label>
+            <input type="number" min={1} max={24} value={cfg.deadline_warning_hours ?? "1"}
+              onChange={e => set("deadline_warning_hours", e.target.value)} onWheel={blurOnWheel}
+              className={`w-full ${INPUT_CLS}`} />
+          </div>
+        </div>
+      </div>
+
       {/* Cancellation & no-show policy */}
       <div className="px-6 py-5">
         <label className="block text-sm font-semibold text-[#2B3441] mb-1">Cancellation &amp; No-Show Policy</label>

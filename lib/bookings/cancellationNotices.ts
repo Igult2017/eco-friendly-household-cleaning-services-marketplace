@@ -2,11 +2,17 @@ import { db } from "@/lib/db"
 import { notifications, providers, bookingCancellationEvents } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { alertAdmins } from "@/lib/notifications/adminAlert"
+import { users } from "@/lib/db/schema"
+import { resend, FROM } from "@/lib/resend/client"
+import { bookingCancelledEmail } from "@/lib/resend/activityEmails"
+import { SITE_URL } from "@/lib/seo/site"
 
 type Role = "customer" | "provider"
 
 export type NoticeInput = {
   bookingId: string
+  /** For the email subject — falls back to a short id if the caller doesn't have it to hand. */
+  bookingNumber?: string
   userId: string
   callerRole: Role
   customerId: string
@@ -106,5 +112,35 @@ export async function recordCancellationNotices(n: NoticeInput): Promise<void> {
     }
   } catch (notifErr) {
     console.warn("[cancel] failed to notify other party:", notifErr)
+  }
+
+  // ...and by email. A cancellation is the event the other side most needs pushed to them — they
+  // may be about to set off, or expecting someone at their door. Until now it was in-app only, so
+  // they only found out if they happened to open the app.
+  try {
+    const recipientUserId =
+      n.callerRole === "customer"
+        ? (await db.select({ userId: providers.userId }).from(providers).where(eq(providers.id, n.providerId)))[0]?.userId
+        : n.customerId
+    if (recipientUserId) {
+      const [u] = await db.select({ email: users.email, locale: users.locale }).from(users).where(eq(users.id, recipientUserId))
+      if (u?.email) {
+        const detail =
+          n.callerRole === "provider"
+            ? [n.reason ? "Reason given: " + n.reason + "." : "", "Your payment hold was fully released."].filter(Boolean).join(" ")
+            : n.cancellerLiability > 0
+              ? "A late-cancellation fee applied."
+              : "No fee applied."
+        const { subject, html } = bookingCancelledEmail(u.locale, {
+          number: n.bookingNumber ?? n.bookingId.slice(0, 8),
+          scheduled: dt,
+          detail,
+          url: SITE_URL + (n.callerRole === "customer" ? "/provider/bookings" : "/bookings/" + n.bookingId),
+        })
+        await resend.emails.send({ from: FROM, to: u.email, subject, html })
+      }
+    }
+  } catch (mailErr) {
+    console.warn("[cancel] cancellation email failed:", mailErr)
   }
 }

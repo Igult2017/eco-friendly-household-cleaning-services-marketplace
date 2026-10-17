@@ -4,6 +4,7 @@ import { bookings, payments, users, notifications, providers, providerServices, 
 import { stripe } from "@/lib/stripe/client"
 import { resend, FROM } from "@/lib/resend/client"
 import { reviewRequestEmail, reviewReminderEmail, recurringDiscountEmail, paymentReceiptEmail } from "@/lib/resend/transactionalEmails"
+import { cleanerPaidEmail } from "@/lib/resend/activityEmails"
 import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
 import { eq, and, sql } from "drizzle-orm"
 import { creditReferralReward } from "@/lib/referrals/rewards"
@@ -141,6 +142,39 @@ export const onBookingCompleted = inngest.createFunction(
         body: "Your cleaning session is done! Share your experience to help others.",
         link: `/bookings/${bookingId}/review`,
       })
+    })
+
+    // The cleaner was told nothing when their money actually moved — only a weekly summary days
+    // later. This is the moment they care about most, so it gets its own email. Never gated on the
+    // reminder opt-out: being paid is a money record, not a nudge.
+    await step.run("notify-provider-paid", async () => {
+      const [b] = await db
+        .select({ payout: bookings.providerPayout, scheduledAt: bookings.scheduledAt })
+        .from(bookings)
+        .where(eq(bookings.id, bookingId))
+      const [pv] = await db
+        .select({ userId: providers.userId, country: providers.country, timezone: providers.timezone })
+        .from(providers)
+        .where(eq(providers.id, providerId))
+      if (!b || !pv) return { skipped: "missing_booking_or_provider" }
+
+      await db.insert(notifications).values({
+        userId: pv.userId,
+        type: "booking_completed",
+        title: "You've been paid",
+        body: `${formatCurrencyForCountry(b.payout ?? 0, pv.country || "DE")} for this cleaning has been released to you.`,
+        link: "/provider/earnings",
+      })
+
+      const [pu] = await db.select({ email: users.email, locale: users.locale }).from(users).where(eq(users.id, pv.userId))
+      if (!pu?.email) return { skipped: "no_email" }
+      const { subject, html } = cleanerPaidEmail(pu.locale, {
+        amount: formatCurrencyForCountry(b.payout ?? 0, pv.country || "DE"),
+        scheduled: new Date(b.scheduledAt).toLocaleString(pu.locale ?? "en-GB", { timeZone: pv.timezone || "Europe/Berlin" }),
+        url: `${process.env.NEXT_PUBLIC_APP_URL}/provider/earnings`,
+      })
+      await resend.emails.send({ from: FROM, to: pu.email, subject, html })
+      return { paid: true }
     })
 
     const customer = await step.run("fetch-customer", async () => {
