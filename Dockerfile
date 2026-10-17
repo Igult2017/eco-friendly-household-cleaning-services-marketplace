@@ -8,18 +8,30 @@ FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-COPY package.json package-lock.json* ./
-# The retry used to be a plain second `npm install`, which was no retry at all: it ran inside the
-# same cache mount, so a corrupted cache failed both attempts the same way and every deploy stayed
-# broken until someone cleared it by hand on the host. That happened — two deploys died on
-# "Cannot read properties of null (reading 'edgesOut')" while the identical package.json resolved
-# cleanly against a fresh cache. The retry now throws the cache away first, so the build repairs
-# itself instead of needing a human on the server.
+# The lockfile is REQUIRED, not optional (it used to be copied with a `*` glob, which silently
+# tolerated its absence). Without it every build re-resolved all 65 dependencies live from the
+# registry, so two builds of the same commit were never guaranteed to be the same thing -- and a
+# build duly broke overnight on 2026-10-17 with no code change at all.
+COPY package.json package-lock.json ./
+
+# node:20-alpine ships npm 10.8.2, whose dependency resolver crashes on this tree with
+# "Cannot read properties of null (reading 'edgesOut')". It killed three deploys in a row,
+# including one that ran against a completely emptied cache -- so the cache was never the problem,
+# the installer was. npm 11.6.2 resolves this identical package.json successfully (measured). The
+# installer is therefore pinned here instead of being whatever the base image happens to carry.
+# Deliberately non-fatal: `npm ci` below installs the lockfile verbatim and never runs the resolver
+# that crashes, so the lockfile is the actual fix and this upgrade is only belt and braces. If npm
+# 11 ever refuses to install on this base image's Node version, the build must carry on rather than
+# die on a precaution.
+RUN npm install -g npm@11.6.2 || echo "could not upgrade npm — continuing with the bundled version"
+
+# `npm ci` installs EXACTLY what the lockfile pins, so production runs the dependency set that was
+# actually built and tested, rather than whatever the registry offers at deploy time. The fallback
+# exists for one case only -- a lockfile that genuinely cannot be satisfied -- so a drifted lockfile
+# costs a slower build instead of taking the site's deploys down.
 RUN --mount=type=cache,id=npm,target=/root/.npm \
-    npm install --no-audit --no-fund --prefer-offline || { \
-      echo "npm install failed — discarding the shared npm cache and reinstalling from the registry"; \
-      npm cache clean --force 2>/dev/null || true; \
-      rm -rf /root/.npm/_cacache node_modules package-lock.json; \
+    npm ci --no-audit --no-fund || { \
+      echo "npm ci could not use the lockfile — falling back to a fresh resolve"; \
       npm install --no-audit --no-fund; \
     }
 
