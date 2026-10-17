@@ -1243,10 +1243,10 @@
     "cancel": "Abbrechen",
     "submitABid": "Angebot abgeben",
     "yourBid": "Ihr Angebot",
-    "yourPriceLabel": "Ihr Preis (€)",
+    "yourPriceLabel": "Ihr Stundensatz (€)",
     "yourPriceAutoPlaceholder": "Automatisch aus deinem Profil",
-    "yourPriceAutoHint": "Leer lassen, um deinen eigenen Satz zu verwenden — oder, falls keiner hinterlegt ist, den vom Kunden gewünschten Preis.",
-    "durationLabel": "Dauer (Min., optional)",
+    "yourPriceAutoHint": "Pro Stunde — wir multiplizieren ihn mit der Dauer. Leer lassen, um Ihren hinterlegten Satz zu verwenden.",
+    "durationLabel": "Dauer des Auftrags (Min.)",
     "proposedDateLabel": "Vorgeschlagenes Datum (optional)",
     "messageLabel": "Nachricht an den Kunden (optional)",
     "messagePlaceholder": "Warum sollten sie sich für Sie entscheiden? Ihr Vorgehen, Ihre Öko-Referenzen...",
@@ -1298,7 +1298,8 @@
     "reviewsFromCleaners": "({count} von Reinigungskräften)",
     "takeJobBadge": "Dringend",
     "noPaymentMethodBadge": "Noch keine Zahlungsmethode",
-    "takeJobOutOfRadius": "Außerhalb des {radius} km Übernahme-Radius"
+    "takeJobOutOfRadius": "Außerhalb des {radius} km Übernahme-Radius",
+    "bidTotalPreview": "€{rate}/Std. × {hours} Stunden = €{total} gesamt"
   },
   "providerProviderNotificationsPage": {
     "heading": "Benachrichtigungen",

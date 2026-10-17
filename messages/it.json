@@ -1243,10 +1243,10 @@
     "cancel": "Annulla",
     "submitABid": "Invia un'offerta",
     "yourBid": "La tua offerta",
-    "yourPriceLabel": "Il tuo prezzo (€)",
+    "yourPriceLabel": "La tua tariffa oraria (€)",
     "yourPriceAutoPlaceholder": "Compilato automaticamente dal tuo profilo",
-    "yourPriceAutoHint": "Lascia vuoto per usare la tua tariffa oppure, se non ne hai una impostata, il prezzo richiesto dal cliente.",
-    "durationLabel": "Durata (min, facoltativo)",
+    "yourPriceAutoHint": "All'ora: la moltiplichiamo per la durata. Lascia vuoto per usare la tua tariffa salvata.",
+    "durationLabel": "Durata del lavoro (min)",
     "proposedDateLabel": "Data proposta (facoltativo)",
     "messageLabel": "Messaggio al cliente (facoltativo)",
     "messagePlaceholder": "Perché dovrebbero scegliere te? Il tuo approccio, le tue credenziali ecologiche...",
@@ -1298,7 +1298,8 @@
     "reviewsFromCleaners": "({count} da addetti)",
     "takeJobBadge": "Urgente",
     "noPaymentMethodBadge": "Nessun metodo di pagamento",
-    "takeJobOutOfRadius": "Fuori dal raggio di {radius} km per l'accettazione"
+    "takeJobOutOfRadius": "Fuori dal raggio di {radius} km per l'accettazione",
+    "bidTotalPreview": "{rate} €/ora × {hours} ore = {total} € in totale"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifiche",

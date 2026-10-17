@@ -18,6 +18,13 @@ export function ProviderBidForm({ jobId, onSubmitted }: { jobId: string; onSubmi
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // Rate × hours, recomputed as they type — the same sum the server does when the bid is saved.
+  const bidRate = form.amount && !isNaN(parseFloat(form.amount)) ? parseFloat(form.amount) : null
+  const bidMinutes = Number.isFinite(parseInt(form.estimatedDurationMinutes))
+    ? parseInt(form.estimatedDurationMinutes)
+    : 120
+  const bidTotal = bidRate !== null && bidMinutes > 0 ? (bidRate * bidMinutes) / 60 : null
+
   function extractError(payload: unknown): string {
     if (typeof payload === "string") return payload
     if (payload && typeof payload === "object") {
@@ -49,7 +56,10 @@ export function ProviderBidForm({ jobId, onSubmitted }: { jobId: string; onSubmi
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: form.amount ? Math.round(amountUnits * 100) : undefined,
+          // A RATE PER HOUR. The server multiplies it by the duration below. It used to be sent as
+          // the whole-job price while this form asked for a duration beside it — which is how a
+          // cleaner quoting "26" for a 2-hour job got paid €26 instead of €52.
+          hourlyRateCents: form.amount ? Math.round(amountUnits * 100) : undefined,
           message: form.message || undefined,
           estimatedDurationMinutes: Number.isFinite(parseInt(form.estimatedDurationMinutes)) ? parseInt(form.estimatedDurationMinutes) : undefined,
           proposedDate: form.proposedDate || undefined,
@@ -95,6 +105,17 @@ export function ProviderBidForm({ jobId, onSubmitted }: { jobId: string; onSubmi
           {t.rich("acceptCancellationPolicyBid", { link: (chunks) => <a href="/legal/terms#cancellation-policy" target="_blank" className="text-[#2D7A5F] underline">{chunks}</a> })}
         </span>
       </label>
+      {/* Shows the rate multiplied out, so nobody can mistake a per-hour rate for the job total —
+          the exact confusion that underpaid a cleaner by half. */}
+      {bidTotal !== null && (
+        <p className="rounded-lg bg-[#F4FAF6] border border-[#2D7A5F]/20 px-3 py-2 text-xs font-medium text-[#2B3441]">
+          {t("bidTotalPreview", {
+            rate: bidRate!.toFixed(2),
+            hours: (bidMinutes / 60).toFixed(bidMinutes % 60 === 0 ? 0 : 1),
+            total: bidTotal.toFixed(2),
+          })}
+        </p>
+      )}
       {error && <p className="text-red-500 text-xs">{error}</p>}
       <Button onClick={submit} disabled={submitting || !acceptedPolicy} className="w-full h-10 bg-[#2D7A5F] hover:bg-[#235f49] text-white text-sm font-semibold">
         {submitting ? <><Loader2 size={14} className="animate-spin mr-2" /> {t("submitting")}</> : t("submitBid")}

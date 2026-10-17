@@ -1243,10 +1243,10 @@
     "cancel": "Cancelar",
     "submitABid": "Enviar uma proposta",
     "yourBid": "A sua proposta",
-    "yourPriceLabel": "O seu preço (€)",
+    "yourPriceLabel": "A sua tarifa por hora (€)",
     "yourPriceAutoPlaceholder": "Preenchido automaticamente a partir do teu perfil",
-    "yourPriceAutoHint": "Deixa em branco para usar a tua própria tarifa ou, se não tiveres uma definida, o preço pedido pelo cliente.",
-    "durationLabel": "Duração (min, opcional)",
+    "yourPriceAutoHint": "Por hora — multiplicamos pela duração. Deixe em branco para usar a sua tarifa guardada.",
+    "durationLabel": "Duração do trabalho (min)",
     "proposedDateLabel": "Data proposta (opcional)",
     "messageLabel": "Mensagem para o cliente (opcional)",
     "messagePlaceholder": "Porque deveriam escolhê-lo? A sua abordagem, as suas credenciais ecológicas...",
@@ -1298,7 +1298,8 @@
     "reviewsFromCleaners": "({count} de profissionais)",
     "takeJobBadge": "Urgente",
     "noPaymentMethodBadge": "Ainda sem método de pagamento",
-    "takeJobOutOfRadius": "Fora do raio de {radius} km para aceitar"
+    "takeJobOutOfRadius": "Fora do raio de {radius} km para aceitar",
+    "bidTotalPreview": "{rate} €/h × {hours} horas = {total} € no total"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notificações",

@@ -124,7 +124,9 @@ export default function ProviderJobsPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: bidForm.amount ? Math.round(amountEuros * 100) : undefined,
+          // A RATE PER HOUR — the server multiplies it by the duration. Sent as a whole-job total
+          // before, which is how a cleaner quoting "26" for a 2-hour job was paid €26, not €52.
+          hourlyRateCents: bidForm.amount ? Math.round(amountEuros * 100) : undefined,
           message: bidForm.message || undefined,
           // A cleared field parses to NaN → JSON null → zod rejects with a cryptic error. Omit instead.
           estimatedDurationMinutes: Number.isFinite(parseInt(bidForm.estimatedDurationMinutes)) ? parseInt(bidForm.estimatedDurationMinutes) : undefined,
@@ -382,6 +384,22 @@ export default function ProviderJobsPage() {
                           {t.rich("acceptCancellationPolicyBid", { link: (chunks) => <a href="/legal/terms#cancellation-policy" target="_blank" className="text-[#2D7A5F] underline">{chunks}</a> })}
                         </span>
                       </label>
+                      {/* Multiplies the rate out as they type, so a per-hour rate can never be
+                          mistaken for the job total — the confusion that underpaid a cleaner. */}
+                      {(() => {
+                        const rate = bidForm.amount && !isNaN(parseFloat(bidForm.amount)) ? parseFloat(bidForm.amount) : null
+                        const mins = Number.isFinite(parseInt(bidForm.estimatedDurationMinutes)) ? parseInt(bidForm.estimatedDurationMinutes) : 120
+                        if (rate === null || mins <= 0) return null
+                        return (
+                          <p className="rounded-lg bg-[#F4FAF6] border border-[#2D7A5F]/20 px-3 py-2 text-xs font-medium text-[#2B3441]">
+                            {t("bidTotalPreview", {
+                              rate: rate.toFixed(2),
+                              hours: (mins / 60).toFixed(mins % 60 === 0 ? 0 : 1),
+                              total: ((rate * mins) / 60).toFixed(2),
+                            })}
+                          </p>
+                        )
+                      })()}
                       {error && <p className="text-red-500 text-xs">{error}</p>}
                       <Button onClick={() => submitBid(job.id)} disabled={submitting || !acceptedPolicy} className="w-full h-9 bg-[#2D7A5F] hover:bg-[#235f49] text-white text-sm">
                         {submitting ? <><Loader2 size={14} className="animate-spin mr-2" /> {t("submitting")}</> : t("submitBid")}

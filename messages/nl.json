@@ -1243,10 +1243,10 @@
     "cancel": "Annuleren",
     "submitABid": "Een bod doen",
     "yourBid": "Jouw bod",
-    "yourPriceLabel": "Jouw prijs (€)",
+    "yourPriceLabel": "Jouw uurtarief (€)",
     "yourPriceAutoPlaceholder": "Automatisch ingevuld vanuit je profiel",
-    "yourPriceAutoHint": "Laat leeg om je eigen tarief te gebruiken — of, als je er geen hebt ingesteld, de vraagprijs van de klant.",
-    "durationLabel": "Duur (min, optioneel)",
+    "yourPriceAutoHint": "Per uur — we vermenigvuldigen het met de duur. Laat leeg om je eigen tarief te gebruiken.",
+    "durationLabel": "Hoe lang de klus duurt (min)",
     "proposedDateLabel": "Voorgestelde datum (optioneel)",
     "messageLabel": "Bericht aan de klant (optioneel)",
     "messagePlaceholder": "Waarom zouden ze voor jou moeten kiezen? Jouw aanpak, je eco-referenties...",
@@ -1298,7 +1298,8 @@
     "reviewsFromCleaners": "({count} van schoonmakers)",
     "takeJobBadge": "Dringend",
     "noPaymentMethodBadge": "Nog geen betaalmethode",
-    "takeJobOutOfRadius": "Buiten de {radius} km straal om te claimen"
+    "takeJobOutOfRadius": "Buiten de {radius} km straal om te claimen",
+    "bidTotalPreview": "€{rate}/uur × {hours} uur = €{total} totaal"
   },
   "providerProviderNotificationsPage": {
     "heading": "Meldingen",

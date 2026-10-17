@@ -11,14 +11,25 @@ import { bidRatelimit } from "@/lib/redis/client"
 import { eq, and } from "drizzle-orm"
 import { getClientIp } from "@/lib/utils/ip"
 import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
+import { getMinHourlyRateCents } from "@/lib/platform/settings"
 import { z } from "zod"
 import { logError } from "@/lib/utils/logError"
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 const bidSchema = z.object({
-  // Optional — a blank bid amount is filled in server-side from the cleaner's own listed rate
-  // (see the auto-price fallback below), so a bid can be submitted with none of the boxes filled.
+  // The cleaner's RATE PER HOUR, in cents — NOT the price of the whole job.
+  //
+  // This used to be the whole-job total while the box beside it asked for a duration, so a cleaner
+  // typing 26 next to "120 minutes" was quoting €26 for two hours' work, not €26 an hour. It
+  // underpaid a real cleaner by half (booking BK-2026-000014: 2 hours, €26). The blank-box
+  // auto-fill right below always multiplied by the hours correctly — only the typed value didn't.
+  //
+  // Still stored as a whole-job TOTAL in bids.amount (rate × hours, computed below), because that
+  // is what every downstream consumer expects — see lib/bookings/create.ts.
+  hourlyRateCents: z.number().int().min(100).optional(),
+  // Deprecated alias kept so a bid submitted from a stale open tab is still read as a RATE rather
+  // than silently reverting to the old whole-job meaning. Remove once no old clients remain.
   amount: z.number().int().min(100).optional(),
   message: z.string().max(1000).optional(),
   estimatedDurationMinutes: z.number().int().min(30).max(480).optional(),
@@ -104,10 +115,30 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const data = parsed.data
     const durationMinutes = data.estimatedDurationMinutes ?? 120
 
+    // The typed figure is a RATE PER HOUR, so multiply it by the booked hours exactly as the
+    // auto-fill below already does. Before this, a typed number was banked as the whole-job price
+    // while the auto-filled one was multiplied — same box, two different meanings.
+    const typedRateCents = data.hourlyRateCents ?? data.amount
+    // Now that the figure is unambiguously a rate per hour, the wage floor can be checked against
+    // it — which was impossible while the box held a whole-job total, because a "low" total might
+    // just have been a short job. Same live, admin-set floor the job-posting form already applies.
+    if (typedRateCents !== undefined) {
+      const minRate = await getMinHourlyRateCents()
+      if (typedRateCents < minRate) {
+        return NextResponse.json(
+          { error: { fieldErrors: { hourlyRateCents: [`Your hourly rate must be at least ${(minRate / 100).toFixed(2)} per hour.`] } } },
+          { status: 422 },
+        )
+      }
+    }
+    const typedTotal = typedRateCents !== undefined
+      ? Math.round((typedRateCents * durationMinutes) / 60)
+      : undefined
+
     // Every box on the bid form is optional, including the price — fill it in from the cleaner's
     // own listed rate for this job's category instead of forcing them to type one every time.
     let autoAmount: number | undefined
-    if (data.amount === undefined) {
+    if (typedRateCents === undefined) {
       const myServices = await db
         .select({ basePrice: providerServices.basePrice, priceUnit: providerServices.priceUnit, categoryIds: providerServices.categoryIds })
         .from(providerServices)
@@ -124,7 +155,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     // Still nothing (no rate entered, no priced service to fill it in from)? Fall back to the
     // client's own posted minimum for this job — a bid is always submittable, and the client still
     // reviews and can decline/negotiate before it becomes a real booking, unlike a Take Job claim.
-    const amount = data.amount ?? autoAmount ?? job.budgetMin ?? undefined
+    const amount = typedTotal ?? autoAmount ?? job.budgetMin ?? undefined
     if (amount === undefined) {
       return NextResponse.json(
         { error: { fieldErrors: { amount: ["Couldn't determine a price for this bid — please enter one."] } } },

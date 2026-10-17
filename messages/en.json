@@ -1243,10 +1243,10 @@
     "cancel": "Cancel",
     "submitABid": "Submit a Bid",
     "yourBid": "Your Bid",
-    "yourPriceLabel": "Your price (€)",
+    "yourPriceLabel": "Your rate per hour (€)",
     "yourPriceAutoPlaceholder": "Auto-filled from your profile",
-    "yourPriceAutoHint": "Leave blank to use your own rate — or, if you haven't set one, the client's asking price.",
-    "durationLabel": "Duration (mins, optional)",
+    "yourPriceAutoHint": "Per hour — we multiply it by the duration. Leave blank to use your own listed rate.",
+    "durationLabel": "How long the job takes (mins)",
     "proposedDateLabel": "Proposed date (optional)",
     "messageLabel": "Message to client (optional)",
     "messagePlaceholder": "Why should they choose you? Your approach, eco credentials...",
@@ -1298,7 +1298,8 @@
     "reviewsFromCleaners": "({count} from cleaners)",
     "takeJobBadge": "Urgent",
     "noPaymentMethodBadge": "No payment method yet",
-    "takeJobOutOfRadius": "Outside the {radius} km claim radius"
+    "takeJobOutOfRadius": "Outside the {radius} km claim radius",
+    "bidTotalPreview": "€{rate}/hr × {hours} hours = €{total} total"
   },
   "providerProviderNotificationsPage": {
     "heading": "Notifications",
