@@ -9,9 +9,19 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
+# The retry used to be a plain second `npm install`, which was no retry at all: it ran inside the
+# same cache mount, so a corrupted cache failed both attempts the same way and every deploy stayed
+# broken until someone cleared it by hand on the host. That happened — two deploys died on
+# "Cannot read properties of null (reading 'edgesOut')" while the identical package.json resolved
+# cleanly against a fresh cache. The retry now throws the cache away first, so the build repairs
+# itself instead of needing a human on the server.
 RUN --mount=type=cache,id=npm,target=/root/.npm \
-    npm install --no-audit --no-fund --prefer-offline || \
-    npm install --no-audit --no-fund
+    npm install --no-audit --no-fund --prefer-offline || { \
+      echo "npm install failed — discarding the shared npm cache and reinstalling from the registry"; \
+      npm cache clean --force 2>/dev/null || true; \
+      rm -rf /root/.npm/_cacache node_modules package-lock.json; \
+      npm install --no-audit --no-fund; \
+    }
 
 # ── Stage 2: builder ─────────────────────────────────────────────────────────
 # Compile the Next.js app. Result is a self-contained /app/.next/standalone dir.
