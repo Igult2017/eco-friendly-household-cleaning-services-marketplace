@@ -40,6 +40,7 @@ const isPublicRoute = createRouteMatcher([
   "/become-a-cleaner(.*)",
   "/contact(.*)", // Help & support page — public (was redirecting to /sign-in)
   "/api/contact(.*)", // contact form submit — usable while logged out
+  "/api/health", // uptime monitoring — an outside monitor cannot sign in, so this must be public
   "/api/webhooks/(.*)",
   "/unsubscribe(.*)", // email unsubscribe confirmation — clicked from emails while logged out
   "/api/email/(.*)", // one-click unsubscribe endpoint (RFC 8058) — must be public

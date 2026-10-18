@@ -9,6 +9,7 @@ import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
 import { isUuid } from "@/lib/utils/uuid"
 import { logError } from "@/lib/utils/logError"
 import { clawbackReferralCommission } from "@/lib/referrals/clawback"
+import { alertAdmins } from "@/lib/notifications/adminAlert"
 
 const ACTIVE = ["payment_authorized", "confirmed", "in_progress"] as const
 
@@ -34,6 +35,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const [booking] = await db
       .select({
         id: bookings.id, customerId: bookings.customerId, providerId: bookings.providerId,
+        bookingNumber: bookings.bookingNumber,
         scheduledAt: bookings.scheduledAt, status: bookings.status, totalAmount: bookings.totalAmount,
         carbonOffsetAmount: bookings.carbonOffsetAmount,
       })
@@ -106,6 +108,14 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     } catch (notifErr) {
       console.warn("[no-show/cleaner] failed to notify cleaner:", notifErr)
     }
+
+    // Tell the admin too. A cleaner marked as a no-show is a reliability problem worth following up
+    // directly, and the client has just been refunded in full on one party's word.
+    await alertAdmins(
+      `Cleaner no-show reported — ${booking.bookingNumber}`,
+      `The client reported that the CLEANER did not turn up for ${booking.bookingNumber}, scheduled ${new Date(booking.scheduledAt).toLocaleString("en-GB")}. The client was refunded €${(fullHold / 100).toFixed(2)} in full. Reason given: ${reason}.`,
+      `/admin/bookings`,
+    )
 
     return NextResponse.json({ success: true, refundedAmount: fullHold })
   } catch (err) {

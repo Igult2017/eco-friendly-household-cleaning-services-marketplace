@@ -9,6 +9,7 @@ import { eq, and } from "drizzle-orm"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
 import { isUuid } from "@/lib/utils/uuid"
 import { logError } from "@/lib/utils/logError"
+import { alertAdmins } from "@/lib/notifications/adminAlert"
 
 const ACTIVE = ["payment_authorized", "confirmed", "in_progress"] as const
 
@@ -34,6 +35,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const [booking] = await db
       .select({
         id: bookings.id, customerId: bookings.customerId, providerId: bookings.providerId,
+        bookingNumber: bookings.bookingNumber,
         scheduledAt: bookings.scheduledAt, status: bookings.status, totalAmount: bookings.totalAmount,
         platformFeePercent: bookings.platformFeePercent, carbonOffsetAmount: bookings.carbonOffsetAmount,
       })
@@ -136,6 +138,15 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     } catch (notifErr) {
       console.warn("[no-show/client] failed to notify client:", notifErr)
     }
+
+    // Tell the admin too. A no-show decides who pays and who is compensated, and the client has
+    // just been charged on one party's word — if that is wrong, the window to put it right is
+    // short. alertAdmins both files it in the bell and emails it.
+    await alertAdmins(
+      `No-show reported — ${booking.bookingNumber}`,
+      `The cleaner reported that the CLIENT did not turn up for ${booking.bookingNumber}, scheduled ${new Date(booking.scheduledAt).toLocaleString("en-GB")}. €${(capturedAmount / 100).toFixed(2)} was charged to the client. Reason given: ${reason || "none"}.`,
+      `/admin/bookings`,
+    )
 
     return NextResponse.json({ success: true, charged: capturedAmount })
   } catch (err) {
