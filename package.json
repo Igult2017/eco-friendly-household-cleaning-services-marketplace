@@ -71,6 +71,7 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.10",
     "@playwright/test": "^1.60.0",
     "@react-email/components": "^1.0.12",
     "@tailwindcss/postcss": "^4",
