@@ -75,7 +75,7 @@ ALTER TABLE job_posts ADD COLUMN IF NOT EXISTS estimated_duration_minutes intege
 ALTER TABLE store_products ADD COLUMN IF NOT EXISTS pack_id uuid;
 -- Identity verification on award: a job given to a cleaner who has not passed an identity check is
 -- theirs only until this deadline. Pass and it clears; fail or let it lapse and the job is
--- re-awarded to a verified cleaner nearby. `attempts` caps paid retries — Stripe bills a FAILED
+-- re-awarded to a verified cleaner nearby. The attempts column caps paid retries: Stripe bills a FAILED
 -- check as a completed one, so each try costs money.
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS identity_check_due_at timestamptz;
 CREATE INDEX IF NOT EXISTS bookings_identity_due_idx ON bookings(identity_check_due_at) WHERE identity_check_due_at IS NOT NULL;
