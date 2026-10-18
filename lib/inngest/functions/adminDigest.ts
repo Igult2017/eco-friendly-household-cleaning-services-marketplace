@@ -25,8 +25,14 @@ function localMidnight(days: number) {
   return sql`((date_trunc('day', now() AT TIME ZONE ${BUSINESS_TZ}) + ${sql.raw(`interval '${days} day'`)}) AT TIME ZONE ${BUSINESS_TZ})`
 }
 
+// 03:00 UTC, NOT 06:00. A cron runs in UTC, and the whole point of this email is to arrive before
+// the first job of the day so a cleaner can still be chased — the bookings in production start at
+// 06:00 local, so a 06:00 UTC send would have landed at 08:00 Berlin, two hours too late to be of
+// any use. 03:00 UTC is 05:00 Berlin in summer and 04:00 in winter, so it is ahead of a 06:00 start
+// in both halves of the year without relying on a timezone-aware cron, which this version of
+// Inngest does not visibly document.
 export const adminDailyDigest = inngest.createFunction(
-  { id: "admin-daily-digest", retries: 2, triggers: [{ cron: "0 6 * * *" }] },
+  { id: "admin-daily-digest", retries: 2, triggers: [{ cron: "0 3 * * *" }] },
   async ({ step }: { step: any }) => {
     const adminEmail = process.env.ADMIN_EMAIL
     if (!adminEmail) return { skipped: true, reason: "ADMIN_EMAIL not set" }
