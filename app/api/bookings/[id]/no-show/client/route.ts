@@ -10,6 +10,7 @@ import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
 import { isUuid } from "@/lib/utils/uuid"
 import { logError } from "@/lib/utils/logError"
 import { alertAdmins } from "@/lib/notifications/adminAlert"
+import { blockIfAwaitingIdentity } from "@/lib/bookings/identityGate"
 
 const ACTIVE = ["payment_authorized", "confirmed", "in_progress"] as const
 
@@ -45,6 +46,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     const [prov] = await db.select({ id: providers.id, userId: providers.userId }).from(providers).where(and(eq(providers.userId, userId), eq(providers.id, booking.providerId)))
     if (!prov) return NextResponse.json({ error: "Not authorized" }, { status: 403 })
+
+    // This charges the client in full. An unverified cleaner must not be able to collect a no-show
+    // fee on a job they were never cleared to do.
+    const identityBlocked = await blockIfAwaitingIdentity(bookingId)
+    if (identityBlocked) return identityBlocked
 
     if (!ACTIVE.includes(booking.status as typeof ACTIVE[number])) {
       return NextResponse.json({ error: "This booking can't be reported as a client no-show right now." }, { status: 422 })

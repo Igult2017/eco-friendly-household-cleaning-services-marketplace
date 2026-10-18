@@ -145,9 +145,28 @@ export async function attemptReassign(
     return { ok: false, reason: "not_authorized" }
   }
 
+  // 1b) RE-RUN GUARD. This whole function runs inside an Inngest step with retries. The
+  // PaymentIntent above is idempotency-keyed, so a retry gets the SAME one back — but the booking
+  // insert below is not, so a retry used to add a second booking, and the payment insert then hit
+  // the unique index on stripe_payment_intent_id and threw, retrying again. The client and the new
+  // cleaner were left looking at orphan bookings that no payment backed.
+  const [already] = await db
+    .select({ bookingId: payments.bookingId })
+    .from(payments)
+    .where(eq(payments.stripePaymentIntentId, newPi.id))
+  if (already?.bookingId) return { ok: true, newBookingId: already.bookingId }
+
   // 2) Release the old hold + cancel the original.
   try { await stripe.paymentIntents.cancel(pay.pi, undefined, { idempotencyKey: `cancel-${pay.pi}` }) } catch {}
-  await db.update(bookings).set({ status: "cancelled", cancellationReason: "Overdue — reassigned to another cleaner", cancelledAt: new Date(), cancelledBy: "system" }).where(eq(bookings.id, bookingId))
+  // The reason recorded must be the reason it actually happened — this said "Overdue" even for an
+  // identity swap or an unanswered availability check, which made the audit trail wrong.
+  const cancellationReason =
+    opts.reason === "identity"
+      ? "Identity not verified — reassigned to another cleaner"
+      : opts.reason === "unconfirmed"
+        ? "Cleaner did not confirm availability — reassigned to another cleaner"
+        : "Overdue — reassigned to another cleaner"
+  await db.update(bookings).set({ status: "cancelled", cancellationReason, cancelledAt: new Date(), cancelledBy: "system" }).where(eq(bookings.id, bookingId))
   await db.update(payments).set({ status: "cancelled" }).where(eq(payments.bookingId, bookingId))
 
   // 3) Create the new booking + payment.

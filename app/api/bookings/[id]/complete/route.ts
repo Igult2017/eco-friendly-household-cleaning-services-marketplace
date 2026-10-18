@@ -10,6 +10,7 @@ import { inngest } from "@/lib/inngest/client"
 import { safeLimit, bookingActionRatelimit } from "@/lib/redis/client"
 import { isUuid } from "@/lib/utils/uuid"
 import { logError } from "@/lib/utils/logError"
+import { blockIfAwaitingIdentity } from "@/lib/bookings/identityGate"
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -40,6 +41,14 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       .where(and(eq(bookings.id, bookingId), eq(bookings.providerId, provider.id)))
 
     if (!booking) return NextResponse.json({ error: "Booking not found" }, { status: 404 })
+
+    // Completing captures the client's card. An unverified cleaner must not reach that, and this
+    // runs before the atomic status flip so a refusal cannot leave the booking half-completed.
+    // Recoverable by the cleaner themselves: verifying takes a minute and the prompt is on the
+    // same page — and if they have used up their attempts, an admin can reset them.
+    const identityBlocked = await blockIfAwaitingIdentity(bookingId)
+    if (identityBlocked) return identityBlocked
+
     // pending_payment (no card on file) is NOT completable — the client must add a payment method
     // first, so payment can always be collected automatically at completion.
     if (!["payment_authorized", "confirmed", "in_progress"].includes(booking.status)) {

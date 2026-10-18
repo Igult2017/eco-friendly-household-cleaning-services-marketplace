@@ -25,27 +25,38 @@ export const ALLOWED_DOCUMENTS = ["passport", "id_card", "driving_license"] as c
  * stripe.verifyIdentity(), so they never leave DORIXÉ. (The previous version returned session.url,
  * which sent them to Stripe's website and lost them mid-flow.)
  */
-export async function createIdentityCheck(params: { providerId: string; bookingId?: string }) {
-  const session = await stripe.identity.verificationSessions.create({
-    type: "document",
-    options: {
-      document: {
-        allowed_types: [...ALLOWED_DOCUMENTS],
-        // Capture the face and compare it to the photo on the document. Without this the check only
-        // proves the document exists, not that the person holding it is its owner.
-        require_matching_selfie: true,
-        // Disables file uploads: the document must be photographed with the device camera. Without
-        // it a cleaner can upload a picture of a picture — a screenshot of someone else's ID passes
-        // a document check but should never pass a person check.
-        require_live_capture: true,
+export async function createIdentityCheck(params: {
+  providerId: string
+  bookingId?: string
+  /**
+   * Stripe's own guidance is to key creation on an internal user reference so a repeated request
+   * cannot leave the same person with two sessions. Pass one per cleaner per attempt.
+   */
+  idempotencyKey?: string
+}) {
+  const session = await stripe.identity.verificationSessions.create(
+    {
+      type: "document",
+      options: {
+        document: {
+          allowed_types: [...ALLOWED_DOCUMENTS],
+          // Capture the face and compare it to the photo on the document. Without this the check only
+          // proves the document exists, not that the person holding it is its owner.
+          require_matching_selfie: true,
+          // Disables file uploads: the document must be photographed with the device camera. Without
+          // it a cleaner can upload a picture of a picture — a screenshot of someone else's ID passes
+          // a document check but should never pass a person check.
+          require_live_capture: true,
+        },
+      },
+      // Carried back on the webhook, which is how a result finds the cleaner and the waiting job.
+      metadata: {
+        provider_id: params.providerId,
+        ...(params.bookingId ? { booking_id: params.bookingId } : {}),
       },
     },
-    // Carried back on the webhook, which is how a result finds the cleaner and the waiting job.
-    metadata: {
-      provider_id: params.providerId,
-      ...(params.bookingId ? { booking_id: params.bookingId } : {}),
-    },
-  })
+    params.idempotencyKey ? { idempotencyKey: params.idempotencyKey } : undefined,
+  )
   return { id: session.id, clientSecret: session.client_secret }
 }
 

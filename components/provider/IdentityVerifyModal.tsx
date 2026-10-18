@@ -55,10 +55,18 @@ export function IdentityVerifyModal({ bookingId, dueAt, onVerified }: Props) {
       // real pass/fail arrives by webhook afterwards, so this does NOT claim success.
       const result = await stripe.verifyIdentity(data.clientSecret)
       if (result.error) {
-        // Closing it early is not a failure worth shouting about; they can reopen it.
+        // Closing it early is not a failure worth shouting about; they can reopen it — and now
+        // reopening costs nothing, because the same Stripe session is resumed.
         toast.error(result.error.message ?? t("failedStart"))
         return
       }
+      // Ask Stripe directly rather than waiting on the webhook. If it already says verified, the
+      // hold on this job is released right here — so a webhook that never arrives cannot cost the
+      // cleaner the work. Failure is silent on purpose: the webhook and the hourly sweep both
+      // still cover it, and nothing is worse for having tried.
+      try {
+        await fetch("/api/stripe/identity/status", { method: "POST" })
+      } catch { /* webhook + sweep remain the backstop */ }
       toast.success(t("submitted"))
       onVerified?.()
     } catch {

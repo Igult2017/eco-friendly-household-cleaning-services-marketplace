@@ -4,7 +4,7 @@ import { redis } from "@/lib/redis/client"
 import { db } from "@/lib/db"
 import { payments, providers, notifications, bookings, disputes, users, providerIdentityVerifications } from "@/lib/db/schema"
 import { clawbackReferralCommission } from "@/lib/referrals/clawback"
-import { eq } from "drizzle-orm"
+import { eq, sql } from "drizzle-orm"
 import type Stripe from "stripe"
 import { logError } from "@/lib/utils/logError"
 import { recordPaymentEvent } from "@/lib/payments/ledger"
@@ -80,6 +80,12 @@ export async function POST(req: Request) {
         const meta = session.metadata as Record<string, string>
         if (meta?.provider_id) {
           await db.update(providers).set({ verificationStatus: "verified" }).where(eq(providers.id, meta.provider_id))
+          // A submission happened, so Stripe billed for it. Counted HERE rather than when the
+          // pop-up was opened — Stripe charges per submitted check, not per session created.
+          await db
+            .update(providerIdentityVerifications)
+            .set({ status: "verified", attempts: sql`${providerIdentityVerifications.attempts} + 1`, updatedAt: new Date() })
+            .where(eq(providerIdentityVerifications.providerId, meta.provider_id))
           const [prov] = await db.select({ userId: providers.userId }).from(providers).where(eq(providers.id, meta.provider_id))
           // Release every job that was waiting on this cleaner's check. Until this clears, those
           // jobs are on the deadline sweeper's list to be taken away — so missing it would hand a
@@ -101,6 +107,25 @@ export async function POST(req: Request) {
         break
       }
 
+      case "identity.verification_session.processing": {
+        // Submitted and being judged. Recorded so the deadline sweeper can tell "still deciding"
+        // apart from "never tried" and leave the job alone rather than handing it to someone else
+        // mid-decision.
+        const session = event.data.object as Stripe.Identity.VerificationSession
+        const meta = session.metadata as Record<string, string>
+        if (meta?.provider_id) {
+          // "pending" on the provider — its column is a Postgres enum with no "processing" value,
+          // and widening it would be a schema change for no behavioural gain. The exact state is
+          // kept on the verification record, and the sweeper reads it live from Stripe anyway.
+          await db.update(providers).set({ verificationStatus: "pending" }).where(eq(providers.id, meta.provider_id))
+          await db
+            .update(providerIdentityVerifications)
+            .set({ status: "processing", updatedAt: new Date() })
+            .where(eq(providerIdentityVerifications.providerId, meta.provider_id))
+        }
+        break
+      }
+
       case "identity.verification_session.requires_input": {
         const session = event.data.object as Stripe.Identity.VerificationSession
         const meta = session.metadata as Record<string, string>
@@ -110,10 +135,20 @@ export async function POST(req: Request) {
           // Stripe says this one did not pass. Whether the cleaner gets another go depends on how
           // many paid attempts they have used — Stripe bills a failed check like a passed one, so
           // retries are capped rather than open-ended.
+          //
+          // Counted only when `last_error` is set, i.e. a check was actually SUBMITTED and judged.
+          // A session the cleaner merely opened and closed carries no error, costs nothing, and
+          // must not cost them an attempt either.
+          const wasSubmitted = Boolean(session.last_error?.code)
           const [rec] = await db
-            .select({ attempts: providerIdentityVerifications.attempts })
-            .from(providerIdentityVerifications)
+            .update(providerIdentityVerifications)
+            .set({
+              status: "requires_resubmission",
+              ...(wasSubmitted ? { attempts: sql`${providerIdentityVerifications.attempts} + 1` } : {}),
+              updatedAt: new Date(),
+            })
             .where(eq(providerIdentityVerifications.providerId, meta.provider_id))
+            .returning({ attempts: providerIdentityVerifications.attempts })
           const used = rec?.attempts ?? MAX_IDENTITY_ATTEMPTS
           const canRetry = used < MAX_IDENTITY_ATTEMPTS
           const why = explainIdentityFailure(session.last_error?.code)

@@ -4,6 +4,8 @@ import { db } from "@/lib/db"
 import { providers, providerIdentityVerifications, bookings } from "@/lib/db/schema"
 import { and, eq } from "drizzle-orm"
 import { createIdentityCheck, MAX_IDENTITY_ATTEMPTS } from "@/lib/stripe/identity"
+import { stripe } from "@/lib/stripe/client"
+import { clearIdentityHold } from "@/lib/bookings/identityGate"
 import { isUuid } from "@/lib/utils/uuid"
 import { logError } from "@/lib/utils/logError"
 
@@ -45,12 +47,18 @@ export async function POST(req: Request) {
     }
 
     const [existing] = await db
-      .select({ id: providerIdentityVerifications.id, attempts: providerIdentityVerifications.attempts })
+      .select({
+        id: providerIdentityVerifications.id,
+        attempts: providerIdentityVerifications.attempts,
+        sessionId: providerIdentityVerifications.stripeVerificationSessionId,
+      })
       .from(providerIdentityVerifications)
       .where(eq(providerIdentityVerifications.providerId, provider.id))
 
-    // Stripe charges for a failed check as well as a passed one, so retries are capped. Past the cap
-    // the cleaner is not offered another paid try — the job is re-awarded instead.
+    // Stripe bills per SUBMITTED check, pass or fail, so submissions are capped. `attempts` is
+    // incremented by the webhook when Stripe reports a real submission — NOT here. Counting
+    // openings instead of submissions used to lock a cleaner out after two accidental closes,
+    // having charged nothing and checked nothing.
     if (existing && existing.attempts >= MAX_IDENTITY_ATTEMPTS) {
       return NextResponse.json(
         {
@@ -61,24 +69,33 @@ export async function POST(req: Request) {
       )
     }
 
-    const check = await createIdentityCheck({ providerId: provider.id, bookingId })
+    // Stripe's own guidance: "If a verification process is interrupted, reuse the existing
+    // VerificationSession rather than creating a new one." Retrieving it hands back a usable
+    // client_secret, so reopening the pop-up costs nothing and burns nothing.
+    if (existing?.sessionId) {
+      const reused = await reuseSession(existing.sessionId, provider.id)
+      if (reused) return reused
+    }
+
+    // Keyed per cleaner AND per attempt: a double-submitted request can never create two sessions,
+    // while a genuinely new attempt after a cancelled session still gets its own.
+    const check = await createIdentityCheck({
+      providerId: provider.id,
+      bookingId,
+      idempotencyKey: `identity-${provider.id}-${existing?.attempts ?? 0}`,
+    })
 
     if (existing) {
       await db
         .update(providerIdentityVerifications)
-        .set({
-          stripeVerificationSessionId: check.id,
-          status: "pending",
-          attempts: existing.attempts + 1,
-          updatedAt: new Date(),
-        })
+        .set({ stripeVerificationSessionId: check.id, status: "pending", updatedAt: new Date() })
         .where(eq(providerIdentityVerifications.id, existing.id))
     } else {
       await db.insert(providerIdentityVerifications).values({
         providerId: provider.id,
         stripeVerificationSessionId: check.id,
         status: "pending",
-        attempts: 1,
+        attempts: 0,
       })
     }
 
@@ -95,5 +112,48 @@ export async function POST(req: Request) {
       severity: "error",
     })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
+}
+
+/**
+ * Hand back the cleaner's EXISTING Stripe check rather than starting another one.
+ *
+ * Returns the response to send, or null to mean "that session is spent — make a new one".
+ * A Stripe error also returns null: falling through to a fresh session is the recoverable
+ * outcome, where failing the request would leave the cleaner unable to verify at all.
+ */
+async function reuseSession(sessionId: string, providerId: string): Promise<NextResponse | null> {
+  try {
+    const session = await stripe.identity.verificationSessions.retrieve(sessionId)
+
+    if (session.status === "verified") {
+      // Stripe passed them but our column had not caught up — the webhook never landed. Settle it
+      // now and release any job still being held, rather than sending them through a second check.
+      await db.update(providers).set({ verificationStatus: "verified" }).where(eq(providers.id, providerId))
+      await clearIdentityHold(providerId)
+      return NextResponse.json({ alreadyVerified: true })
+    }
+
+    if (session.status === "processing") {
+      return NextResponse.json({ processing: true, error: "Your identity check is still being reviewed. We'll let you know as soon as it's done." }, { status: 409 })
+    }
+
+    // requires_input: either never finished or genuinely failed — both are resumed on the same
+    // session, which is exactly what Stripe recommends and what keeps it free until submitted.
+    if (session.status === "requires_input" && session.client_secret) {
+      return NextResponse.json({ clientSecret: session.client_secret })
+    }
+
+    // canceled, redacted, or no usable secret — fall through and create a fresh one.
+    return null
+  } catch (err) {
+    void logError({
+      message: "[stripe/identity/session] could not reuse the existing session — creating a new one",
+      error: err,
+      route: "/api/stripe/identity/session",
+      severity: "warning",
+      context: { providerId, sessionId },
+    })
+    return null
   }
 }

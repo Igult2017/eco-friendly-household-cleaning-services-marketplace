@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import { toast } from "sonner"
 import { StatusBadge } from "@/components/admin/StatusBadge"
 import { DeleteCleanerDialog } from "@/components/admin/DeleteCleanerDialog"
-import { PauseCircle, PlayCircle, Loader2, Check, X } from "lucide-react"
+import { PauseCircle, PlayCircle, Loader2, Check, X, RotateCcw } from "lucide-react"
 
 type ProviderRow = {
   id: string
@@ -91,6 +91,20 @@ export default function AdminProvidersPage() {
 
   useEffect(() => { reload() }, [reload])
 
+  // Gives a cleaner their identity-check attempts back. Without this, a cleaner who used up their
+  // tries is told to "contact support" and support has no way to help — the delete route refuses
+  // to touch anyone who has bookings, which is exactly who needs it.
+  const resetIdentity = async (id: string, name: string) => {
+    if (!confirm(`Give ${name} their identity check attempts back? They will still have to pass it.`)) return
+    setActioning(id)
+    const res = await fetch(`/api/admin/providers/${id}/identity-reset`, { method: "POST" })
+    const d = await res.json().catch(() => ({}))
+    if (res.ok) toast.success("Identity check reset — they can try again.")
+    else toast.error(d.error ?? "Couldn't reset the identity check")
+    setActioning(null)
+    reload()
+  }
+
   const handle = async (id: string, action: string) => {
     setActioning(id)
     await takeAction(id, action)
@@ -174,6 +188,16 @@ export default function AdminProvidersPage() {
                           ) : (
                             <button onClick={() => handle(p.id, "unsuspend")} title="Reinstate" className="p-1.5 rounded-lg hover:bg-green-50 text-green-600 transition-colors">
                               <PlayCircle className="h-4 w-4" />
+                            </button>
+                          )}
+                          {p.verificationStatus !== "verified" && p.verificationStatus !== "not_started" && (
+                            <button
+                              onClick={() => resetIdentity(p.id, p.businessName)}
+                              title="Reset identity check attempts"
+                              aria-label={`Reset identity check attempts for ${p.businessName}`}
+                              className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors"
+                            >
+                              <RotateCcw className="h-4 w-4" />
                             </button>
                           )}
                           <DeleteCleanerDialog id={p.id} name={p.businessName} onDeleted={reload} />

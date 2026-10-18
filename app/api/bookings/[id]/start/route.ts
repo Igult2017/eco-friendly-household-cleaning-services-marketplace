@@ -5,6 +5,7 @@ import { bookings, notifications, providers } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
 import { isUuid } from "@/lib/utils/uuid"
 import { logError } from "@/lib/utils/logError"
+import { blockIfAwaitingIdentity } from "@/lib/bookings/identityGate"
 
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -27,6 +28,11 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       .where(and(eq(bookings.id, bookingId), eq(bookings.providerId, provider.id)))
 
     if (!booking) return NextResponse.json({ error: "Booking not found" }, { status: 404 })
+
+    // An unverified cleaner must not be able to mark themselves as arrived at a client's home.
+    // Checked BEFORE the state change, so a refusal leaves the booking exactly as it was.
+    const identityBlocked = await blockIfAwaitingIdentity(bookingId)
+    if (identityBlocked) return identityBlocked
 
     // Atomic conditional update — only succeeds if status is still 'confirmed'
     const updated = await db

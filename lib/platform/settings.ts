@@ -115,6 +115,18 @@ export async function getIdentityCheckHours(): Promise<number> {
   return getIntSetting("identity_check_hours", 12, 1, 72)
 }
 
+// The SHORTEST identity deadline a cleaner can ever be given, whatever the job's start time says.
+//
+// Without a floor, capping against "two hours before the job" produces a deadline in the PAST for
+// any job starting within two hours — which the emergency Take Job flow exists to create. The
+// cleaner would be handed an already-expired clock and lose the job on the next sweep without ever
+// having a chance. The floor can land after a very short-notice job's start time, and that is fine:
+// an unverified cleaner is blocked from starting the job anyway, so the client is protected by the
+// block, not by the clock.
+export async function getIdentityMinMinutes(): Promise<number> {
+  return getIntSetting("identity_min_minutes", 45, 5, 720)
+}
+
 // How many hours before a job we ask a cleaner to confirm they are still coming.
 export async function getAvailabilityCheckHours(): Promise<number> {
   return getIntSetting("availability_check_hours", 6, 1, 48)
