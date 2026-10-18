@@ -6,6 +6,7 @@ import { inngest } from "@/lib/inngest/client"
 import { redis } from "@/lib/redis/client"
 import { findProvidersNearLocation } from "@/lib/db/queries/geo"
 import { checkProviderAvailable } from "@/lib/bookings/availability"
+import { requireIdentityOnAward } from "@/lib/bookings/identityGate"
 
 const ACTIVE = ["payment_authorized", "confirmed", "in_progress"] as const
 
@@ -37,15 +38,6 @@ export async function attemptReassign(
      * being swapped before the job: a client who booked Tuesday 09:00 should still get Tuesday 09:00.
      */
     keepOriginalSlot?: boolean
-    /**
-     * Only consider cleaners who have passed an identity check.
-     *
-     * Defaults to FALSE on purpose. It is exactly right for an identity-failure swap, but switching
-     * it on for the overdue path today would break it: no cleaner on this platform has verified yet,
-     * so every overdue reassignment would find nobody and fall through to admin. Worth turning on
-     * for overdue too once cleaners are actually verifying in practice.
-     */
-    requireVerified?: boolean
     /** Why the swap happened — decides what the client and the old cleaner are told. */
     reason?: "overdue" | "identity"
   } = {},
@@ -82,7 +74,12 @@ export async function attemptReassign(
   const ids = near.map((p) => p.id).filter((id) => id !== b.providerId)
   if (!ids.length) return { ok: false, reason: "no_candidates" }
   const eligible = await db
-    .select({ id: providers.id, stripeAccountId: providers.stripeAccountId, businessName: providers.businessName })
+    .select({
+      id: providers.id,
+      stripeAccountId: providers.stripeAccountId,
+      businessName: providers.businessName,
+      verificationStatus: providers.verificationStatus,
+    })
     .from(providers)
     .where(
       and(
@@ -90,13 +87,23 @@ export async function attemptReassign(
         eq(providers.stripeAccountStatus, "active"),
         eq(providers.isApproved, true),
         eq(providers.isSuspended, false),
-        // Identity was NOT part of this filter before. Without it, a job taken away from a cleaner
-        // for failing an identity check could be handed to another cleaner who had never been
-        // checked at all — which would defeat the entire point of the swap.
-        ...(opts.requireVerified ? [eq(providers.verificationStatus, "verified")] : []),
       ),
     )
-  const ordered = ids.map((id) => eligible.find((e) => e.id === id)).filter((e): e is NonNullable<typeof e> => !!e?.stripeAccountId)
+  const byDistance = ids
+    .map((id) => eligible.find((e) => e.id === id))
+    .filter((e): e is NonNullable<typeof e> => !!e?.stripeAccountId)
+
+  // Identity is a PREFERENCE, not a filter: already-verified cleaners are tried first (nearest
+  // first), and only if none of them can take it does it fall to an unverified cleaner — who then
+  // has to pass the same check to keep it, exactly as on a first job.
+  //
+  // A hard filter was the wrong shape. Today not one cleaner is verified, so "verified only" would
+  // find nobody for every job and reassignment would never happen at all. Preferring instead of
+  // requiring means the feature works on day one and gets stricter by itself as cleaners verify.
+  const ordered = [
+    ...byDistance.filter((c) => c.verificationStatus === "verified"),
+    ...byDistance.filter((c) => c.verificationStatus !== "verified"),
+  ]
 
   // Propose tomorrow, same duration; pick the nearest candidate who's available then.
   // Tomorrow for a no-show (the original slot has already passed); the original slot when the
@@ -165,6 +172,18 @@ export async function attemptReassign(
 
   // 4) Standard new-booking flow (reminders + confirmation + notify the new cleaner).
   try { await inngest.send({ name: "booking/created", data: { bookingId: nb.id, customerId: b.customerId, providerId: chosen.id } }) } catch { /* non-fatal */ }
+
+  // If the job fell to an UNVERIFIED cleaner because no verified one could take it, they inherit the
+  // same requirement: verify to keep it, exactly as on a first job. Without this the fallback would
+  // be a way around the check — the surest route to an unverified cleaner in a client's home would
+  // be to wait for a reassignment.
+  if (chosen.verificationStatus !== "verified") {
+    try {
+      await requireIdentityOnAward({ bookingId: nb.id, providerId: chosen.id })
+    } catch (gateErr) {
+      console.error("[bookings/reassign] identity hold not set on the replacement booking:", gateErr)
+    }
+  }
 
   // 5) Tell the client + the original cleaner.
   // Told only NOW, once the job is actually re-awarded — so the client never hears "your cleaner

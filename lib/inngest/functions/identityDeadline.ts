@@ -38,8 +38,6 @@ async function handOver(job: { id: string; number: string; businessName: string 
   const result = await attemptReassign(job.id, {
     // The client chose this time; swapping the cleaner must not move it.
     keepOriginalSlot: true,
-    // The whole point of the swap — the replacement must be someone whose identity IS confirmed.
-    requireVerified: true,
     reason: "identity",
   })
 
@@ -48,17 +46,16 @@ async function handOver(job: { id: string; number: string; businessName: string 
     return { ok: true as const }
   }
 
-  // DELIBERATELY NOT CANCELLED. The obvious-looking move here is to refund the client and close the
-  // booking, but "no verified cleaner nearby" is the NORMAL state until cleaners start verifying —
-  // on the day this ships, nobody is verified at all. Auto-cancelling would wipe out every booking
-  // on the platform rather than protect anyone.
+  // Reaching here means no cleaner at all could take it — not "none verified", since an unverified
+  // cleaner is an accepted fallback and simply inherits the check. So this is the genuinely stuck
+  // case: nobody nearby, nobody free at that time, or the client's card would not authorise again.
   //
-  // So the job stays where it is, the client keeps their booking and their slot, and a human is told
-  // to deal with it. The hold stays set, so this is retried on the next sweep and resolves by itself
-  // the moment a verified cleaner is available nearby.
+  // DELIBERATELY NOT CANCELLED: the client keeps their booking and their slot, and a human decides.
+  // The hold stays set, so the next hourly sweep tries again and this resolves by itself as soon as
+  // any cleaner becomes available.
   await alertAdmins(
     `Identity not verified — ${job.number} needs a decision`,
-    `${job.businessName ?? "The cleaner"} did not verify their identity for ${job.number}, and no verified cleaner nearby was available to take it (${result.reason}). The client still has their booking at the original time. Either chase this cleaner to verify, assign someone manually, or cancel and refund.`,
+    `${job.businessName ?? "The cleaner"} did not verify their identity for ${job.number}, and no cleaner nearby could take it over (${result.reason}). The client still has their booking at the original time. Either chase this cleaner to verify, assign someone manually, or cancel and refund.`,
     `/admin/bookings`,
   )
   return { ok: false as const, reason: result.reason }
