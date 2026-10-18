@@ -60,6 +60,10 @@ export const providerIdentityVerifications = pgTable(
       .references(() => providers.id),
     stripeVerificationSessionId: varchar("stripe_session_id", { length: 100 }),
     status: varchar("status", { length: 30 }).notNull().default("not_started"),
+    // Paid attempts used so far. Stripe bills per COMPLETED check and counts a FAILED one as
+    // completed, so each retry costs real money — this is what stops an unlimited series of tries
+    // being funded (see MAX_IDENTITY_ATTEMPTS).
+    attempts: integer("attempts").notNull().default(0),
     documentType: varchar("document_type", { length: 50 }),
     documentFrontUrl: text("document_front_url"),
     documentBackUrl: text("document_back_url"),

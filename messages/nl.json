@@ -1721,19 +1721,6 @@
     "unreadCount": "{count, plural, one {# ongelezen} other {# ongelezen}}",
     "empty": "Nog geen meldingen"
   },
-  "compOnboardingProviderIdentityStep": {
-    "title": "Identiteitsverificatie",
-    "description": "Elke schoonmaker bij DORIXÉ bevestigt eenmalig zijn of haar identiteit. Dat beschermt klanten en maakt het mogelijk geld op uw rekening te storten.",
-    "whatYouNeed": "Wat je nodig hebt:",
-    "needId": "• Een door de overheid uitgegeven identiteitsbewijs (paspoort, identiteitskaart of rijbewijs)",
-    "needSelfie": "• Een selfie / foto die tijdens de verificatie wordt gemaakt",
-    "needProcess": "• Het duurt 2–3 minuten en wordt veilig afgehandeld door onze betaalprovider",
-    "redirecting": "Beveiligde verificatie wordt geopend…",
-    "startButton": "Identiteitsverificatie starten",
-    "skipButton": "Voorlopig overslaan — ik doe dit later",
-    "footerNote": "Je kunt doorgaan zonder te verifiëren, maar je wordt pas goedgekeurd zodra de identiteitsverificatie is voltooid.",
-    "errorStartVerification": "Kon de identiteitsverificatie niet starten. Probeer het opnieuw."
-  },
   "compOnboardingProviderPayoutStep": {
     "successTitle": "Bankgegevens opgeslagen!",
     "successDescription": "Je uitbetalingsaccount is ingesteld. Je wordt direct betaald zodra een klant je voltooide klus goedkeurt.",
@@ -2300,5 +2287,19 @@
     "option_other": "Andere reden",
     "hintWaived": "Er zijn geen annuleringskosten — zulke omstandigheden zijn niet te plannen.",
     "hintFee": "Er kunnen annuleringskosten gelden, afhankelijk van hoe dichtbij de afspraak is."
+  },
+  "compProviderIdentityCheck": {
+    "heading": "Verifieer je identiteit om deze klus te houden",
+    "intro": "Je werkt in het huis van iemand anders, dus voordat deze klus doorgaat moeten we vaststellen wie je bent. Dit beschermt je klant en is voor ons verplicht. Je doet dit maar één keer.",
+    "whatYouNeed": "Wat je nodig hebt:",
+    "needId": "Fotografeer je identiteitsbewijs met je camera — paspoort, ID-kaart of rijbewijs. Een opgeslagen foto of schermafbeelding wordt niet geaccepteerd.",
+    "needSelfie": "Maak een foto van je gezicht — we controleren of die overeenkomt met de foto op je identiteitsbewijs, zodat we weten dat het document van jou is.",
+    "tip": "Het duurt ongeveer een minuut. Gebruik zo mogelijk een telefoon: je hebt een werkende camera, goed licht en het hele document in beeld nodig.",
+    "dueBy": "Rond dit af vóór {when}, anders wordt de klus aangeboden aan een andere geverifieerde schoonmaker.",
+    "button": "Mijn identiteit verifiëren",
+    "opening": "Openen…",
+    "submitted": "Bedankt — we controleren je gegevens. Dit duurt meestal minder dan een minuut.",
+    "failedStart": "De identiteitscontrole kon niet worden gestart.",
+    "alreadyDone": "Je identiteit is al geverifieerd."
   }
 }

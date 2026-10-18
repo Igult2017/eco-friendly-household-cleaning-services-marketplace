@@ -18,6 +18,7 @@ import { jobAssignmentSweeper } from "@/lib/inngest/functions/jobSweeper"
 import { marketingScheduleSweep } from "@/lib/inngest/functions/marketingSchedule"
 import { blogScheduleSweep } from "@/lib/inngest/functions/blogSchedule"
 import { adminDailyDigest } from "@/lib/inngest/functions/adminDigest"
+import { identityDeadlineSweep, onIdentityFailed } from "@/lib/inngest/functions/identityDeadline"
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -42,5 +43,7 @@ export const { GET, POST, PUT } = serve({
     marketingScheduleSweep,
     blogScheduleSweep,
     adminDailyDigest,
+    identityDeadlineSweep,
+    onIdentityFailed,
   ],
 })

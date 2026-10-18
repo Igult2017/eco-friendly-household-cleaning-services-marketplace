@@ -1721,19 +1721,6 @@
     "unreadCount": "{count, plural, one {# non lue} other {# non lues}}",
     "empty": "Aucune notification pour le moment"
   },
-  "compOnboardingProviderIdentityStep": {
-    "title": "Vérification d'identité",
-    "description": "Chaque intervenant DORIXÉ confirme son identité une seule fois. Cela protège les clients et nous permet de virer l'argent sur votre compte bancaire.",
-    "whatYouNeed": "Ce dont vous aurez besoin :",
-    "needId": "• Une pièce d'identité officielle (passeport, carte nationale d'identité ou permis de conduire)",
-    "needSelfie": "• Un selfie / une photo prise pendant la vérification",
-    "needProcess": "• Cela prend 2 à 3 minutes et est traité en toute sécurité par notre prestataire de paiement",
-    "redirecting": "Ouverture de la vérification sécurisée…",
-    "startButton": "Démarrer la vérification d'identité",
-    "skipButton": "Passer pour l'instant — je le ferai plus tard",
-    "footerNote": "Vous pouvez continuer sans vérifier, mais vous ne serez pas approuvé tant que la vérification d'identité n'est pas terminée.",
-    "errorStartVerification": "Impossible de démarrer la vérification d'identité. Veuillez réessayer."
-  },
   "compOnboardingProviderPayoutStep": {
     "successTitle": "Coordonnées bancaires enregistrées !",
     "successDescription": "Votre compte de versement est configuré. Vous êtes payé instantanément dès qu'un client approuve votre mission terminée.",
@@ -2300,5 +2287,19 @@
     "option_other": "Autre raison",
     "hintWaived": "Aucuns frais d'annulation — ce type de circonstance est imprévisible.",
     "hintFee": "Des frais d'annulation peuvent s'appliquer selon la proximité du rendez-vous."
+  },
+  "compProviderIdentityCheck": {
+    "heading": "Vérifiez votre identité pour conserver cette mission",
+    "intro": "Vous allez travailler au domicile d'une autre personne. Avant que cette mission commence, nous devons donc confirmer votre identité. Cela protège votre client et nous y sommes tenus. Vous ne le faites qu'une seule fois.",
+    "whatYouNeed": "Ce qu'il vous faut :",
+    "needId": "Photographiez votre pièce d'identité avec votre caméra — passeport, carte d'identité ou permis de conduire. Une photo enregistrée ou une capture d'écran ne sera pas acceptée.",
+    "needSelfie": "Prenez une photo de votre visage — nous vérifions qu'elle correspond à la photo de votre pièce d'identité, pour confirmer que le document est bien le vôtre.",
+    "tip": "Cela prend environ une minute. Utilisez un téléphone si possible : il faut une caméra qui fonctionne, une bonne lumière et le document entier dans le cadre.",
+    "dueBy": "Merci de terminer avant le {when}, sinon la mission sera proposée à un autre nettoyeur vérifié.",
+    "button": "Vérifier mon identité",
+    "opening": "Ouverture…",
+    "submitted": "Merci — nous vérifions vos informations. Cela prend généralement moins d'une minute.",
+    "failedStart": "Impossible de démarrer la vérification d'identité.",
+    "alreadyDone": "Votre identité est déjà vérifiée."
   }
 }

@@ -30,6 +30,9 @@ export async function GET(req: Request) {
         scheduledAt: bookings.scheduledAt,
         scheduledEndAt: bookings.scheduledEndAt,
         overdueSince: bookings.overdueSince,
+        // Set when this job is held pending the cleaner's identity check — the page shows the
+        // camera check while it is set, so the job cannot quietly lapse and be given away.
+        identityCheckDueAt: bookings.identityCheckDueAt,
         serviceAddress: bookings.serviceAddress,
         specialInstructions: bookings.specialInstructions,
         subtotalAmount: bookings.subtotalAmount,

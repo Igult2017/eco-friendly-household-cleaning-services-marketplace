@@ -2,13 +2,16 @@ import { headers } from "next/headers"
 import { stripe } from "@/lib/stripe/client"
 import { redis } from "@/lib/redis/client"
 import { db } from "@/lib/db"
-import { payments, providers, notifications, bookings, disputes, users } from "@/lib/db/schema"
+import { payments, providers, notifications, bookings, disputes, users, providerIdentityVerifications } from "@/lib/db/schema"
 import { clawbackReferralCommission } from "@/lib/referrals/clawback"
 import { eq } from "drizzle-orm"
 import type Stripe from "stripe"
 import { logError } from "@/lib/utils/logError"
 import { recordPaymentEvent } from "@/lib/payments/ledger"
 import { alertAdmins } from "@/lib/notifications/adminAlert"
+import { clearIdentityHold } from "@/lib/bookings/identityGate"
+import { MAX_IDENTITY_ATTEMPTS, explainIdentityFailure } from "@/lib/stripe/identity"
+import { inngest } from "@/lib/inngest/client"
 
 export async function POST(req: Request) {
   const headersList = await headers()
@@ -78,14 +81,20 @@ export async function POST(req: Request) {
         if (meta?.provider_id) {
           await db.update(providers).set({ verificationStatus: "verified" }).where(eq(providers.id, meta.provider_id))
           const [prov] = await db.select({ userId: providers.userId }).from(providers).where(eq(providers.id, meta.provider_id))
+          // Release every job that was waiting on this cleaner's check. Until this clears, those
+          // jobs are on the deadline sweeper's list to be taken away — so missing it would hand a
+          // verified cleaner's work to someone else.
+          const released = await clearIdentityHold(meta.provider_id)
           if (prov?.userId) {
             await db.insert(notifications).values({
               userId: prov.userId,
               type: "provider_approved",
               title: "Identity verified!",
-              body: "Your identity has been verified. You can now accept bookings on DORIXÉ.",
-              // Provider recipient — /dashboard is the CLIENT dashboard; open their support thread.
-              link: "/provider/support",
+              body: released.length
+                ? `Your identity has been verified and your ${released.length === 1 ? "job is" : "jobs are"} confirmed. You only ever need to do this once.`
+                : "Your identity has been verified. You only ever need to do this once.",
+              // Provider recipient — /dashboard is the CLIENT dashboard; open their own bookings.
+              link: released.length ? "/provider/bookings" : "/provider/support",
             })
           }
         }
@@ -98,13 +107,35 @@ export async function POST(req: Request) {
         if (meta?.provider_id) {
           await db.update(providers).set({ verificationStatus: "requires_resubmission" }).where(eq(providers.id, meta.provider_id))
           const [prov] = await db.select({ userId: providers.userId }).from(providers).where(eq(providers.id, meta.provider_id))
+          // Stripe says this one did not pass. Whether the cleaner gets another go depends on how
+          // many paid attempts they have used — Stripe bills a failed check like a passed one, so
+          // retries are capped rather than open-ended.
+          const [rec] = await db
+            .select({ attempts: providerIdentityVerifications.attempts })
+            .from(providerIdentityVerifications)
+            .where(eq(providerIdentityVerifications.providerId, meta.provider_id))
+          const used = rec?.attempts ?? MAX_IDENTITY_ATTEMPTS
+          const canRetry = used < MAX_IDENTITY_ATTEMPTS
+          const why = explainIdentityFailure(session.last_error?.code)
+
           if (prov?.userId) {
             await db.insert(notifications).values({
               userId: prov.userId,
               type: "provider_suspended",
-              title: "Additional documents needed",
-              body: "We need more information to verify your identity. Please resubmit your documents.",
-              link: "/provider/profile",
+              title: canRetry ? "Identity check not completed" : "Identity check failed",
+              body: canRetry
+                ? `${why} You can try once more from your jobs page — remember the document must be photographed with your camera, in good light, with the whole document in frame.`
+                : `${why} You have used all your attempts, so any job waiting on this check will be offered to another cleaner. Contact support if you believe this is wrong.`,
+              link: "/provider/bookings",
+            })
+          }
+
+          // Out of attempts: do not make the client wait out the deadline for an outcome that
+          // cannot change. Hand the job over now.
+          if (!canRetry) {
+            await inngest.send({
+              name: "identity/failed",
+              data: { providerId: meta.provider_id },
             })
           }
         }

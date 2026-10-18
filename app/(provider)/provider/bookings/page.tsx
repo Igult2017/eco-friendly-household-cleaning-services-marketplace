@@ -13,6 +13,7 @@ import { ProposalBanner } from "@/components/booking/ProposalBanner"
 import { ProposeChangeTrigger } from "@/components/booking/ProposeChangeTrigger"
 import { NoShowReport } from "@/components/booking/NoShowReport"
 import { CancelBookingReport } from "@/components/booking/CancelBookingReport"
+import { IdentityVerifyModal } from "@/components/provider/IdentityVerifyModal"
 
 // 2024-01-07 is a Sunday — offset by day number for a locale-aware short weekday name.
 const dayName = (d: number) => new Date(Date.UTC(2024, 0, 7 + d)).toLocaleDateString(undefined, { weekday: "short", timeZone: "UTC" })
@@ -24,6 +25,7 @@ type Booking = {
   scheduledAt: string
   scheduledEndAt: string | null
   overdueSince: string | null
+  identityCheckDueAt: string | null
   serviceAddress: { line1: string; city: string; postalCode: string; country: string }
   specialInstructions: string | null
   subtotalAmount: number
@@ -250,6 +252,15 @@ export default function ProviderBookingsPage() {
                         label={t("askInChat")}
                       />
                     </div>
+                  </div>
+                )}
+
+                {/* The identity check comes FIRST on the card, whatever the booking's status: until
+                    it is done the job is only provisionally theirs, so burying it under the usual
+                    actions would be how a cleaner loses work without understanding why. */}
+                {b.identityCheckDueAt && (
+                  <div className="mt-3">
+                    <IdentityVerifyModal bookingId={b.id} dueAt={b.identityCheckDueAt} onVerified={load} />
                   </div>
                 )}
 

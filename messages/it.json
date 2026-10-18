@@ -1721,19 +1721,6 @@
     "unreadCount": "{count, plural, one {# non letta} other {# non lette}}",
     "empty": "Nessuna notifica al momento"
   },
-  "compOnboardingProviderIdentityStep": {
-    "title": "Verifica dell'identità",
-    "description": "Ogni professionista DORIXÉ conferma la propria identità una volta sola. Protegge i clienti ed è ciò che ci permette di versare denaro sul tuo conto.",
-    "whatYouNeed": "Cosa ti serve:",
-    "needId": "• Un documento d'identità ufficiale (passaporto, carta d'identità o patente di guida)",
-    "needSelfie": "• Un selfie / una foto scattata durante la verifica",
-    "needProcess": "• Richiede 2–3 minuti ed è gestito in sicurezza dal nostro fornitore di pagamenti",
-    "redirecting": "Apertura della verifica sicura…",
-    "startButton": "Avvia la verifica dell'identità",
-    "skipButton": "Salta per ora — lo farò più tardi",
-    "footerNote": "Puoi continuare senza verificare, ma non verrai approvato finché la verifica dell'identità non sarà completata.",
-    "errorStartVerification": "Impossibile avviare la verifica dell'identità. Riprova."
-  },
   "compOnboardingProviderPayoutStep": {
     "successTitle": "Dati bancari salvati!",
     "successDescription": "Il tuo account per i pagamenti è configurato. Vieni pagato all'istante non appena un cliente approva il tuo lavoro completato.",
@@ -2300,5 +2287,19 @@
     "option_other": "Altro motivo",
     "hintWaived": "Nessuna penale di annullamento: circostanze come queste non sono prevedibili.",
     "hintFee": "Può essere applicata una penale in base a quanto è vicino l'appuntamento."
+  },
+  "compProviderIdentityCheck": {
+    "heading": "Verifica la tua identità per mantenere questo lavoro",
+    "intro": "Lavorerai dentro la casa di qualcun altro, quindi prima che questo lavoro proceda dobbiamo confermare chi sei. Questo protegge il cliente ed è un obbligo per noi. Lo fai una volta sola.",
+    "whatYouNeed": "Cosa ti serve:",
+    "needId": "Fotografa il tuo documento con la fotocamera — passaporto, carta d'identità o patente. Una foto salvata o uno screenshot non sarà accettato.",
+    "needSelfie": "Scatta una foto del tuo viso — verifichiamo che corrisponda alla foto sul documento, così sappiamo che il documento è tuo.",
+    "tip": "Ci vuole circa un minuto. Se puoi usa il telefono: serve una fotocamera funzionante, buona luce e tutto il documento inquadrato.",
+    "dueBy": "Completa entro il {when}, altrimenti il lavoro sarà offerto a un'altra persona verificata.",
+    "button": "Verifica la mia identità",
+    "opening": "Apertura…",
+    "submitted": "Grazie — stiamo controllando i tuoi dati. Di solito ci vuole meno di un minuto.",
+    "failedStart": "Non è stato possibile avviare la verifica dell'identità.",
+    "alreadyDone": "La tua identità è già verificata."
   }
 }

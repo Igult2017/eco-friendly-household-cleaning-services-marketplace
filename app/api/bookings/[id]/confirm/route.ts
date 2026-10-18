@@ -8,6 +8,7 @@ import { SITE_URL } from "@/lib/seo/site"
 import { eq, and } from "drizzle-orm"
 import { isUuid } from "@/lib/utils/uuid"
 import { logError } from "@/lib/utils/logError"
+import { requireIdentityOnAward } from "@/lib/bookings/identityGate"
 
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -52,6 +53,11 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       return NextResponse.json({ error: "Booking cannot be confirmed in its current state" }, { status: 409 })
     }
 
+    // An unverified cleaner holds this job only provisionally: they must pass an identity check
+    // before the deadline or it is re-awarded to a verified cleaner nearby. A cleaner who has
+    // already verified is untouched — no prompt, no Stripe call, no cost.
+    const gate = await requireIdentityOnAward({ bookingId, providerId: provider.id })
+
     // Accept message includes the payment-method reassurance: cleaners only take orders from clients
     // with a payment method on file, and adding one never charges before the work is done.
     await db.insert(notifications).values({
@@ -90,7 +96,14 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       })
     }
 
-    return NextResponse.json({ success: true })
+    // The client is deliberately NOT told about a pending identity check — they are only told if
+    // the cleaner actually changes. `identityRequired` is for the CLEANER's screen, which opens the
+    // check immediately rather than making them hunt for it.
+    return NextResponse.json({
+      success: true,
+      identityRequired: gate.awaitingIdentity,
+      identityDueAt: gate.dueAt?.toISOString() ?? null,
+    })
   } catch (err) {
     console.error("[bookings/[id]/confirm POST]", err)
     void logError({ message: "[bookings/[id]/confirm POST]", error: err, route: "/api/bookings/[id]/confirm", severity: "error" })

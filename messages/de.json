@@ -1721,19 +1721,6 @@
     "unreadCount": "{count, plural, one {# ungelesen} other {# ungelesen}}",
     "empty": "Noch keine Benachrichtigungen"
   },
-  "compOnboardingProviderIdentityStep": {
-    "title": "Identitätsprüfung",
-    "description": "Jede Reinigungskraft bei DORIXÉ bestätigt einmalig ihre Identität. Das schützt die Kundinnen und Kunden und ermöglicht uns, Geld auf Ihr Bankkonto zu überweisen.",
-    "whatYouNeed": "Das brauchen Sie:",
-    "needId": "• Einen amtlichen Ausweis (Reisepass, Personalausweis oder Führerschein)",
-    "needSelfie": "• Ein Selfie / Foto, das während der Prüfung aufgenommen wird",
-    "needProcess": "• Dauert 2–3 Minuten und wird sicher von unserem Zahlungsdienstleister abgewickelt",
-    "redirecting": "Sichere Verifizierung wird geöffnet…",
-    "startButton": "Identitätsprüfung starten",
-    "skipButton": "Vorerst überspringen — ich mache das später",
-    "footerNote": "Sie können ohne Bestätigung fortfahren, werden aber erst freigegeben, wenn die Identitätsprüfung abgeschlossen ist.",
-    "errorStartVerification": "Die Identitätsprüfung konnte nicht gestartet werden. Bitte versuchen Sie es erneut."
-  },
   "compOnboardingProviderPayoutStep": {
     "successTitle": "Bankdaten gespeichert!",
     "successDescription": "Dein Auszahlungskonto ist eingerichtet. Du wirst sofort bezahlt, sobald ein Kunde deinen abgeschlossenen Auftrag bestätigt.",
@@ -2300,5 +2287,19 @@
     "option_other": "Anderer Grund",
     "hintWaived": "Es fällt keine Stornogebühr an — solche Umstände lassen sich nicht planen.",
     "hintFee": "Je nach Nähe zum Termin kann eine Stornogebühr anfallen."
+  },
+  "compProviderIdentityCheck": {
+    "heading": "Bestätige deine Identität, um diesen Auftrag zu behalten",
+    "intro": "Du arbeitest in der Wohnung einer anderen Person. Bevor dieser Auftrag startet, müssen wir daher bestätigen, wer du bist. Das schützt deine Kundschaft und ist für uns verpflichtend. Du machst das nur ein einziges Mal.",
+    "whatYouNeed": "Das brauchst du:",
+    "needId": "Fotografiere deinen Ausweis mit der Kamera — Pass, Personalausweis oder Führerschein. Ein gespeichertes Foto oder ein Screenshot wird nicht akzeptiert.",
+    "needSelfie": "Mache ein Foto von deinem Gesicht — wir prüfen, ob es zum Foto auf dem Ausweis passt, damit wir wissen, dass das Dokument dir gehört.",
+    "tip": "Es dauert etwa eine Minute. Nutze möglichst ein Handy: Du brauchst eine funktionierende Kamera, gutes Licht und das vollständige Dokument im Bild.",
+    "dueBy": "Bitte schließe das bis {when} ab, sonst wird der Auftrag einer anderen verifizierten Reinigungskraft angeboten.",
+    "button": "Identität bestätigen",
+    "opening": "Wird geöffnet…",
+    "submitted": "Danke — wir prüfen deine Angaben jetzt. Das dauert meist weniger als eine Minute.",
+    "failedStart": "Die Identitätsprüfung konnte nicht gestartet werden.",
+    "alreadyDone": "Deine Identität ist bereits bestätigt."
   }
 }

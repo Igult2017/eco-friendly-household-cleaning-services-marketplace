@@ -108,6 +108,13 @@ export async function getDeadlineWarningHours(): Promise<number> {
   return getIntSetting("deadline_warning_hours", 1, 1, 24)
 }
 
+// How long a cleaner has to pass their identity check after being awarded a job, before it is
+// re-awarded to a verified cleaner. Capped against the job's own start time by the caller: a job
+// tomorrow morning must not be allowed to sit unverified until it is too late to find anyone else.
+export async function getIdentityCheckHours(): Promise<number> {
+  return getIntSetting("identity_check_hours", 12, 1, 72)
+}
+
 // Admin-set shortest booking anyone can make, in minutes. Applies to BOTH ways work is arranged —
 // booking a cleaner directly and posting a job for bids — so a client cannot route around it by
 // using the other path. Default 120 (2 hours): shorter visits are not worth a cleaner's travel.

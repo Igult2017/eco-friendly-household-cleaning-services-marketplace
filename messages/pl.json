@@ -1721,19 +1721,6 @@
     "unreadCount": "{count, plural, one {# nieprzeczytane} few {# nieprzeczytane} many {# nieprzeczytanych} other {# nieprzeczytanych}}",
     "empty": "Brak powiadomień"
   },
-  "compOnboardingProviderIdentityStep": {
-    "title": "Weryfikacja tożsamości",
-    "description": "Każda osoba sprzątająca w DORIXÉ raz potwierdza swoją tożsamość. Chroni to klientów i pozwala nam przelewać pieniądze na Twoje konto.",
-    "whatYouNeed": "Czego będziesz potrzebować:",
-    "needId": "• Dokumentu tożsamości wydanego przez urząd (paszport, dowód osobisty lub prawo jazdy)",
-    "needSelfie": "• Selfie / zdjęcia wykonanego podczas weryfikacji",
-    "needProcess": "• Zajmuje 2–3 minuty i jest bezpiecznie obsługiwane przez naszego dostawcę płatności",
-    "redirecting": "Otwieranie bezpiecznej weryfikacji…",
-    "startButton": "Rozpocznij weryfikację tożsamości",
-    "skipButton": "Pomiń na razie — zrobię to później",
-    "footerNote": "Możesz kontynuować bez weryfikacji, ale nie zostaniesz zatwierdzony, dopóki weryfikacja tożsamości nie zostanie ukończona.",
-    "errorStartVerification": "Nie udało się rozpocząć weryfikacji tożsamości. Spróbuj ponownie."
-  },
   "compOnboardingProviderPayoutStep": {
     "successTitle": "Dane bankowe zapisane!",
     "successDescription": "Twoje konto wypłat jest skonfigurowane. Otrzymujesz zapłatę natychmiast, gdy klient zatwierdzi wykonane zlecenie.",
@@ -2300,5 +2287,19 @@
     "option_other": "Inny powód",
     "hintWaived": "Opłata za anulowanie nie obowiązuje — takich okoliczności nie da się przewidzieć.",
     "hintFee": "Może obowiązywać opłata za anulowanie, zależnie od tego, jak blisko jest termin."
+  },
+  "compProviderIdentityCheck": {
+    "heading": "Potwierdź swoją tożsamość, aby zachować to zlecenie",
+    "intro": "Będziesz pracować w czyimś domu, dlatego przed rozpoczęciem tego zlecenia musimy potwierdzić, kim jesteś. Chroni to klienta i jest naszym obowiązkiem. Robisz to tylko raz.",
+    "whatYouNeed": "Co będzie potrzebne:",
+    "needId": "Sfotografuj swój dokument kamerą — paszport, dowód osobisty lub prawo jazdy. Zapisane zdjęcie ani zrzut ekranu nie zostaną przyjęte.",
+    "needSelfie": "Zrób zdjęcie twarzy — sprawdzamy, czy zgadza się ze zdjęciem w dokumencie, aby wiedzieć, że dokument należy do Ciebie.",
+    "tip": "Zajmuje to około minuty. Jeśli możesz, użyj telefonu: potrzebujesz działającej kamery, dobrego światła i całego dokumentu w kadrze.",
+    "dueBy": "Dokończ to do {when}, w przeciwnym razie zlecenie zostanie zaproponowane innej zweryfikowanej osobie.",
+    "button": "Potwierdź tożsamość",
+    "opening": "Otwieranie…",
+    "submitted": "Dziękujemy — sprawdzamy Twoje dane. Zwykle zajmuje to mniej niż minutę.",
+    "failedStart": "Nie udało się rozpocząć weryfikacji tożsamości.",
+    "alreadyDone": "Twoja tożsamość jest już potwierdzona."
   }
 }

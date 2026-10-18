@@ -9,6 +9,8 @@ import { eq, and, sql, inArray, lt, gt, isNull } from "drizzle-orm"
 import type { CreateBookingInput } from "@/lib/validations/booking"
 import { checkProviderAvailable } from "@/lib/bookings/availability"
 import { recordPaymentEvent } from "@/lib/payments/ledger"
+import { requireIdentityOnAward } from "@/lib/bookings/identityGate"
+import { logError } from "@/lib/utils/logError"
 
 export async function generateBookingNumber(): Promise<string> {
   let seq: number
@@ -309,6 +311,24 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     bookingId: result.id, userId, kind: "authorized",
     amountCents: intent.amount, stripeObjectId: paymentIntentId, status: "authorized",
   })
+
+  // THE single place that catches every way a cleaner gets work, because every one of them ends
+  // here: a direct booking, an accepted bid, and an urgent "take job" claim (which deliberately
+  // creates an auto-accepted bid and feeds this same pipeline rather than booking directly).
+  // An unverified cleaner now holds the job only until their identity-check deadline.
+  //
+  // AFTER the transaction and wrapped: the booking and its payment are already committed, so a
+  // failure to set the hold must never undo them. It would leave an unverified cleaner holding the
+  // job, which the deadline sweeper cannot see — so it is logged loudly rather than swallowed.
+  try {
+    await requireIdentityOnAward({ bookingId: result.id, providerId })
+  } catch (gateErr) {
+    console.error("[bookings/create] failed to set the identity hold:", gateErr)
+    void logError({
+      message: "[bookings/create] identity hold not set — unverified cleaner may hold this job",
+      error: gateErr, severity: "critical", context: { bookingId: result.id, providerId },
+    })
+  }
 
   return { bookingId: result.id, bookingNumber: result.bookingNumber }
 }

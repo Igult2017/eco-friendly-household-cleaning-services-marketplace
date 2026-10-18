@@ -1721,19 +1721,6 @@
     "unreadCount": "{count, plural, one {# sin leer} other {# sin leer}}",
     "empty": "Aún no hay notificaciones"
   },
-  "compOnboardingProviderIdentityStep": {
-    "title": "Verificación de identidad",
-    "description": "Cada profesional de DORIXÉ confirma su identidad una vez. Protege a los clientes y es lo que nos permite ingresar dinero en tu cuenta bancaria.",
-    "whatYouNeed": "Lo que necesitarás:",
-    "needId": "• Un documento de identidad oficial (pasaporte, DNI o carné de conducir)",
-    "needSelfie": "• Un selfie / foto tomada durante la verificación",
-    "needProcess": "• Tarda 2–3 minutos y lo gestiona de forma segura nuestro proveedor de pagos",
-    "redirecting": "Abriendo la verificación segura…",
-    "startButton": "Iniciar verificación de identidad",
-    "skipButton": "Omitir por ahora — lo haré más tarde",
-    "footerNote": "Puedes continuar sin verificar, pero no te aprobarán hasta que se complete la verificación de identidad.",
-    "errorStartVerification": "No se pudo iniciar la verificación de identidad. Inténtalo de nuevo."
-  },
   "compOnboardingProviderPayoutStep": {
     "successTitle": "¡Datos bancarios guardados!",
     "successDescription": "Tu cuenta de pagos está configurada. Se te paga al instante en cuanto un cliente aprueba tu trabajo completado.",
@@ -2300,5 +2287,19 @@
     "option_other": "Otro motivo",
     "hintWaived": "No se aplica ninguna tarifa de cancelación: estas circunstancias no se pueden prever.",
     "hintFee": "Puede aplicarse una tarifa de cancelación según lo cerca que esté la cita."
+  },
+  "compProviderIdentityCheck": {
+    "heading": "Verifica tu identidad para conservar este trabajo",
+    "intro": "Vas a trabajar dentro de la casa de otra persona, así que antes de que este trabajo siga adelante necesitamos confirmar quién eres. Esto protege a tu cliente y es obligatorio para nosotros. Solo lo haces una vez.",
+    "whatYouNeed": "Lo que necesitas:",
+    "needId": "Fotografía tu documento con la cámara — pasaporte, DNI o carné de conducir. No se acepta una foto guardada ni una captura de pantalla.",
+    "needSelfie": "Hazte una foto de la cara — comprobamos que coincide con la foto del documento, para saber que el documento es tuyo.",
+    "tip": "Tarda alrededor de un minuto. Usa el móvil si puedes: necesitas una cámara que funcione, buena luz y el documento completo en el encuadre.",
+    "dueBy": "Termínalo antes del {when}, o el trabajo se ofrecerá a otra persona de limpieza verificada.",
+    "button": "Verificar mi identidad",
+    "opening": "Abriendo…",
+    "submitted": "Gracias — estamos comprobando tus datos. Normalmente tarda menos de un minuto.",
+    "failedStart": "No se pudo iniciar la verificación de identidad.",
+    "alreadyDone": "Tu identidad ya está verificada."
   }
 }

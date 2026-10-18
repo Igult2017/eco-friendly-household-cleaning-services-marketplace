@@ -1721,19 +1721,6 @@
     "unreadCount": "{count, plural, one {# unread} other {# unread}}",
     "empty": "No notifications yet"
   },
-  "compOnboardingProviderIdentityStep": {
-    "title": "Identity verification",
-    "description": "Every cleaner on DORIXÉ confirms their identity once. It keeps clients safe and it's what lets us pay money into your bank account.",
-    "whatYouNeed": "What you'll need:",
-    "needId": "• A government-issued ID (passport, national ID, or driver's licence)",
-    "needSelfie": "• A selfie / photo taken during verification",
-    "needProcess": "• It takes 2–3 minutes and is handled securely by our payment provider",
-    "redirecting": "Opening secure verification…",
-    "startButton": "Start identity verification",
-    "skipButton": "Skip for now — I'll do this later",
-    "footerNote": "You can continue without verifying, but you won't be approved until identity verification is complete.",
-    "errorStartVerification": "Could not start identity verification. Please try again."
-  },
   "compOnboardingProviderPayoutStep": {
     "successTitle": "Bank details saved!",
     "successDescription": "Your payout account is set up. You're paid instantly whenever a client approves your completed job.",
@@ -2300,5 +2287,19 @@
     "option_other": "Other reason",
     "hintWaived": "No cancellation fee applies — circumstances like these can't be planned around.",
     "hintFee": "A cancellation fee may apply depending on how close this is to the appointment."
+  },
+  "compProviderIdentityCheck": {
+    "heading": "Verify your identity to keep this job",
+    "intro": "You'll be working inside someone's home, so before this job goes ahead we need to confirm who you are. This protects your client and is required of us. You only ever do this once.",
+    "whatYouNeed": "What you'll need:",
+    "needId": "Photograph your ID with your camera — passport, national ID card or driving licence. A saved photo or screenshot won't be accepted.",
+    "needSelfie": "Take a photo of your face — we check it matches the photo on your ID, so we know the document is yours.",
+    "tip": "It takes about a minute. Use a phone if you can: you need a working camera, good light, and the whole document in frame.",
+    "dueBy": "Please finish by {when}, or the job will be offered to another verified cleaner.",
+    "button": "Verify my identity",
+    "opening": "Opening…",
+    "submitted": "Thanks — we're checking your details now. This usually takes under a minute.",
+    "failedStart": "Could not start the identity check.",
+    "alreadyDone": "Your identity is already verified."
   }
 }

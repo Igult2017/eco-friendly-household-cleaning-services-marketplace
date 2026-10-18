@@ -73,6 +73,13 @@ ALTER TABLE job_posts ADD COLUMN IF NOT EXISTS recurring_frequency varchar(12);
 ALTER TABLE job_posts ADD COLUMN IF NOT EXISTS recurring_days jsonb DEFAULT '[]'::jsonb;
 ALTER TABLE job_posts ADD COLUMN IF NOT EXISTS estimated_duration_minutes integer;
 ALTER TABLE store_products ADD COLUMN IF NOT EXISTS pack_id uuid;
+-- Identity verification on award: a job given to a cleaner who has not passed an identity check is
+-- theirs only until this deadline. Pass and it clears; fail or let it lapse and the job is
+-- re-awarded to a verified cleaner nearby. `attempts` caps paid retries — Stripe bills a FAILED
+-- check as a completed one, so each try costs money.
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS identity_check_due_at timestamptz;
+CREATE INDEX IF NOT EXISTS bookings_identity_due_idx ON bookings(identity_check_due_at) WHERE identity_check_due_at IS NOT NULL;
+ALTER TABLE provider_identity_verifications ADD COLUMN IF NOT EXISTS attempts integer NOT NULL DEFAULT 0;
 ALTER TABLE messages ALTER COLUMN booking_id DROP NOT NULL;
 ALTER TABLE messages ADD COLUMN IF NOT EXISTS job_post_id uuid;
 CREATE INDEX IF NOT EXISTS messages_job_post_idx ON messages(job_post_id);

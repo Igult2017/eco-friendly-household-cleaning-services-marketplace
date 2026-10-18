@@ -20,7 +20,7 @@ const CLIENT_NAMESPACES = new Set<string>([
   "compBookingBeforePhotoUpload", "compBookingRecurringScheduleCard",
   "compBookingRecurringToggle",
   "compBookingWizardProgress", "compBookingStripePaymentForm",
-  "compOnboardingProviderPayoutStep", "compOnboardingProviderIdentityStep",
+  "compOnboardingProviderPayoutStep", "compProviderIdentityCheck",
   "compNotificationsNotificationBell", "compNotificationsMarkAllReadButton",
   "compReviewsRateCustomer", "compProviderPricing", "compProviderAddons",
   "compMessagingMessageThread", "compBiddingAcceptBidButton",

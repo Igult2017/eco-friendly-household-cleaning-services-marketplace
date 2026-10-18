@@ -28,7 +28,28 @@ async function genBookingNumber(): Promise<string> {
  * leaves the client with no booking. Returns ok:false (with a reason) so the caller can fall back to
  * notifying admin. (Off-session EU cards may need SCA → charge fails → admin fallback.)
  */
-export async function attemptReassign(bookingId: string): Promise<{ ok: boolean; newBookingId?: string; reason?: string }> {
+export async function attemptReassign(
+  bookingId: string,
+  opts: {
+    /**
+     * Keep the client's ORIGINAL date and time instead of proposing tomorrow. Tomorrow is right when
+     * a cleaner simply never turned up (the slot is already gone), but wrong when the cleaner is
+     * being swapped before the job: a client who booked Tuesday 09:00 should still get Tuesday 09:00.
+     */
+    keepOriginalSlot?: boolean
+    /**
+     * Only consider cleaners who have passed an identity check.
+     *
+     * Defaults to FALSE on purpose. It is exactly right for an identity-failure swap, but switching
+     * it on for the overdue path today would break it: no cleaner on this platform has verified yet,
+     * so every overdue reassignment would find nobody and fall through to admin. Worth turning on
+     * for overdue too once cleaners are actually verifying in practice.
+     */
+    requireVerified?: boolean
+    /** Why the swap happened — decides what the client and the old cleaner are told. */
+    reason?: "overdue" | "identity"
+  } = {},
+): Promise<{ ok: boolean; newBookingId?: string; reason?: string }> {
   const [b] = await db
     .select({
       status: bookings.status, customerId: bookings.customerId, providerId: bookings.providerId,
@@ -63,11 +84,26 @@ export async function attemptReassign(bookingId: string): Promise<{ ok: boolean;
   const eligible = await db
     .select({ id: providers.id, stripeAccountId: providers.stripeAccountId, businessName: providers.businessName })
     .from(providers)
-    .where(and(inArray(providers.id, ids), eq(providers.stripeAccountStatus, "active"), eq(providers.isApproved, true), eq(providers.isSuspended, false)))
+    .where(
+      and(
+        inArray(providers.id, ids),
+        eq(providers.stripeAccountStatus, "active"),
+        eq(providers.isApproved, true),
+        eq(providers.isSuspended, false),
+        // Identity was NOT part of this filter before. Without it, a job taken away from a cleaner
+        // for failing an identity check could be handed to another cleaner who had never been
+        // checked at all — which would defeat the entire point of the swap.
+        ...(opts.requireVerified ? [eq(providers.verificationStatus, "verified")] : []),
+      ),
+    )
   const ordered = ids.map((id) => eligible.find((e) => e.id === id)).filter((e): e is NonNullable<typeof e> => !!e?.stripeAccountId)
 
   // Propose tomorrow, same duration; pick the nearest candidate who's available then.
-  const proposedStart = new Date(Date.now() + 24 * 60 * 60 * 1000)
+  // Tomorrow for a no-show (the original slot has already passed); the original slot when the
+  // cleaner is being swapped before the job, because the client chose that time.
+  const proposedStart = opts.keepOriginalSlot
+    ? new Date(b.scheduledAt)
+    : new Date(Date.now() + 24 * 60 * 60 * 1000)
   const durMs = b.scheduledEndAt ? new Date(b.scheduledEndAt).getTime() - new Date(b.scheduledAt).getTime() : 2 * 60 * 60 * 1000
   const proposedEnd = new Date(proposedStart.getTime() + durMs)
 
@@ -131,10 +167,33 @@ export async function attemptReassign(bookingId: string): Promise<{ ok: boolean;
   try { await inngest.send({ name: "booking/created", data: { bookingId: nb.id, customerId: b.customerId, providerId: chosen.id } }) } catch { /* non-fatal */ }
 
   // 5) Tell the client + the original cleaner.
-  await db.insert(notifications).values({ userId: b.customerId, type: "booking_rescheduled", title: "Booking reassigned", body: `Your overdue booking has been reassigned to ${chosen.businessName}.`, link: `/bookings/${nb.id}`, metadata: { variant: "booking_reassigned_client" } })
+  // Told only NOW, once the job is actually re-awarded — so the client never hears "your cleaner
+  // failed a check" while sitting with no cleaner at all. The identity wording says plainly what
+  // happened and why, because a silent change of the person entering their home is worse than an
+  // uncomfortable explanation.
+  const identity = opts.reason === "identity"
+  await db.insert(notifications).values({
+    userId: b.customerId,
+    type: "booking_rescheduled",
+    title: identity ? "Your cleaner has been changed for your safety" : "Booking reassigned",
+    body: identity
+      ? `The cleaner you booked did not verify their identity, so for your safety the job has been given to ${chosen.businessName}, whose identity we have confirmed. Your time is unchanged and you have not been charged anything extra.`
+      : `Your overdue booking has been reassigned to ${chosen.businessName}.`,
+    link: `/bookings/${nb.id}`,
+    metadata: { variant: "booking_reassigned_client" },
+  })
   const [origProv] = await db.select({ userId: providers.userId }).from(providers).where(eq(providers.id, b.providerId))
   if (origProv) {
-    await db.insert(notifications).values({ userId: origProv.userId, type: "booking_cancelled", title: "Booking removed", body: "An overdue booking was removed and reassigned to another cleaner.", link: "/provider/bookings", metadata: { variant: "booking_reassigned_away" } })
+    await db.insert(notifications).values({
+      userId: origProv.userId,
+      type: "booking_cancelled",
+      title: identity ? "Job removed — identity not verified" : "Booking removed",
+      body: identity
+        ? "This job has been given to another cleaner because your identity was not verified in time. Verify your identity and you can take jobs again."
+        : "An overdue booking was removed and reassigned to another cleaner.",
+      link: "/provider/bookings",
+      metadata: { variant: "booking_reassigned_away" },
+    })
   }
 
   return { ok: true, newBookingId: nb.id }

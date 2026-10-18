@@ -86,6 +86,12 @@ export const bookings = pgTable(
     providerCompletedAt: timestamp("provider_completed_at", { withTimezone: true }),
     clientConfirmedAt: timestamp("client_confirmed_at", { withTimezone: true }),
     paymentReleasedBy: varchar("payment_released_by", { length: 20 }),
+    // Set when a job is awarded to a cleaner who has NOT passed an identity check yet. While it is
+    // set and the cleaner is still unverified, the job is theirs only provisionally: pass the check
+    // and it clears, fail it or let this time pass and the job is re-awarded to a verified cleaner
+    // nearby. Deliberately a timestamp rather than a new booking status — the status enum would need
+    // a migration, and this production journal is drifted (see the ensure-script).
+    identityCheckDueAt: timestamp("identity_check_due_at", { withTimezone: true }),
     // Overdue tracking — cleaner loses 5%/day (late_penalty_amount) once past the scheduled end.
     overdueSince: timestamp("overdue_since", { withTimezone: true }),
     overdueEscalatedAt: timestamp("overdue_escalated_at", { withTimezone: true }),

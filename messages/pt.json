@@ -1721,19 +1721,6 @@
     "unreadCount": "{count, plural, one {# não lida} other {# não lidas}}",
     "empty": "Ainda não há notificações"
   },
-  "compOnboardingProviderIdentityStep": {
-    "title": "Verificação de identidade",
-    "description": "Cada profissional da DORIXÉ confirma a sua identidade uma vez. Protege os clientes e é o que nos permite depositar dinheiro na sua conta bancária.",
-    "whatYouNeed": "O que vai precisar:",
-    "needId": "• Um documento de identificação oficial (passaporte, cartão de cidadão ou carta de condução)",
-    "needSelfie": "• Uma selfie / foto tirada durante a verificação",
-    "needProcess": "• Demora 2–3 minutos e é tratado em segurança pelo nosso fornecedor de pagamentos",
-    "redirecting": "A abrir a verificação segura…",
-    "startButton": "Iniciar verificação de identidade",
-    "skipButton": "Ignorar por agora — faço isto mais tarde",
-    "footerNote": "Pode continuar sem verificar, mas só será aprovado quando a verificação de identidade estiver concluída.",
-    "errorStartVerification": "Não foi possível iniciar a verificação de identidade. Tente novamente."
-  },
   "compOnboardingProviderPayoutStep": {
     "successTitle": "Dados bancários guardados!",
     "successDescription": "A sua conta de pagamentos está configurada. É pago instantaneamente assim que um cliente aprova o seu trabalho concluído.",
@@ -2300,5 +2287,19 @@
     "option_other": "Outro motivo",
     "hintWaived": "Não se aplica taxa de cancelamento — estas circunstâncias não são previsíveis.",
     "hintFee": "Pode aplicar-se uma taxa de cancelamento consoante a proximidade do agendamento."
+  },
+  "compProviderIdentityCheck": {
+    "heading": "Verifique a sua identidade para manter este trabalho",
+    "intro": "Vai trabalhar dentro da casa de outra pessoa, por isso antes de este trabalho avançar precisamos de confirmar quem é. Isto protege o seu cliente e é obrigatório para nós. Só faz isto uma vez.",
+    "whatYouNeed": "O que precisa:",
+    "needId": "Fotografe o seu documento com a câmara — passaporte, cartão de cidadão ou carta de condução. Uma fotografia guardada ou captura de ecrã não será aceite.",
+    "needSelfie": "Tire uma fotografia do seu rosto — verificamos se corresponde à fotografia do documento, para sabermos que o documento é seu.",
+    "tip": "Leva cerca de um minuto. Use o telemóvel se puder: precisa de uma câmara a funcionar, boa luz e o documento todo visível.",
+    "dueBy": "Conclua até {when}, caso contrário o trabalho será oferecido a outra pessoa verificada.",
+    "button": "Verificar a minha identidade",
+    "opening": "A abrir…",
+    "submitted": "Obrigado — estamos a verificar os seus dados. Normalmente leva menos de um minuto.",
+    "failedStart": "Não foi possível iniciar a verificação de identidade.",
+    "alreadyDone": "A sua identidade já está verificada."
   }
 }
