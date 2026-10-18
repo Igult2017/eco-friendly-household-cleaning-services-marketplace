@@ -139,3 +139,31 @@ export async function getAccountPayoutCurrency(accountId: string): Promise<strin
     return "eur"
   }
 }
+
+/**
+ * When THIS cleaner's money actually reaches their bank, in words, for the weekly earnings email.
+ *
+ * Asks Stripe about the cleaner's own account rather than reading the admin setting, because the
+ * two drift apart by design: the setting is applied once, when the account is created, so changing
+ * it later leaves existing cleaners where they were. Three accounts on this platform are already on
+ * a different schedule from the current setting — so quoting the setting would tell some cleaners
+ * the wrong payday.
+ *
+ * Returns null when Stripe can't be reached, and the caller then says nothing rather than guessing:
+ * a wrong payday in writing is worse than no payday in writing.
+ */
+export async function describePayoutSchedule(
+  accountId: string,
+): Promise<{ interval: "weekly" | "monthly" | "daily" | "manual"; delayDays: number | null } | null> {
+  try {
+    const account = await stripe.accounts.retrieve(accountId)
+    const s = account.settings?.payouts?.schedule
+    if (!s?.interval) return null
+    return {
+      interval: s.interval as "weekly" | "monthly" | "daily" | "manual",
+      delayDays: typeof s.delay_days === "number" ? s.delay_days : null,
+    }
+  } catch {
+    return null
+  }
+}

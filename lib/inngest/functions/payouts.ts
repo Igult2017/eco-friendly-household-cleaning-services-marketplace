@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { payments, payouts, bookings, providers, users } from "@/lib/db/schema"
 import { resend, FROM } from "@/lib/resend/client"
 import { weeklyEarningsEmail } from "@/lib/resend/transactionalEmails"
+import { describePayoutSchedule } from "@/lib/stripe/connect"
 import { eq, and, gte, lte, inArray, isNull } from "drizzle-orm"
 
 // PAYOUT MODEL — read before changing anything here.
@@ -152,12 +153,19 @@ export const processProviderPayout = inngest.createFunction(
         .from(users)
         .where(eq(users.id, provider.userId))
       if (!user?.email) return
+      // This email is WEEKLY but the money is not: payouts run on the cleaner's own Stripe schedule
+      // (monthly on this platform today), after Stripe's holding period. Under a heading that reads
+      // "your earnings this week", silence about that invites "where is my money?" — so the real
+      // payday for THIS cleaner goes in the email. null = Stripe unreachable, and the email then
+      // omits the line rather than naming a day that might be wrong.
+      const schedule = await describePayoutSchedule(provider.stripeAccountId!)
       const { subject, html } = weeklyEarningsEmail(user.locale, {
         name: user.firstName,
         amount: `€${(totalPayout / 100).toFixed(2)}`,
         count: bookingIdList.length,
         start: String(periodStart),
         end: String(periodEnd),
+        payoutInterval: schedule?.interval ?? null,
       })
       await resend.emails.send({ from: FROM, to: user.email, subject, html })
     })
