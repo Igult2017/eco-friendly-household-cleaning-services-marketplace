@@ -130,6 +130,7 @@ const clerkHandler = clerkMiddleware(async (auth, req) => {
   }
 
   // Cookie expired or missing — hit Clerk API as last resort.
+  let clerkLookupFailed = false
   if (!role) {
     try {
       const client = await clerkClient()
@@ -140,7 +141,13 @@ const clerkHandler = clerkMiddleware(async (auth, req) => {
         shouldRefreshCookie = true
       }
     } catch {
-      // Clerk API unreachable — fall through to onboarding redirect
+      // Could not ASK Clerk — which is NOT the same as Clerk answering "this user has no role".
+      // Swallowing the difference is what made an existing user look brand new: a slow or erroring
+      // Clerk read on this single VPS sent them to onboarding to type their name again. Middleware
+      // cannot check our own database (it has no Node runtime, so no Postgres driver), so the honest
+      // response to "I don't know" is to let the signed-in request through rather than to act on a
+      // fact we never established.
+      clerkLookupFailed = true
     }
   }
 
@@ -150,7 +157,12 @@ const clerkHandler = clerkMiddleware(async (auth, req) => {
     return res
   }
 
-  if (!role) return NextResponse.redirect(new URL("/onboarding", base))
+  // Only send someone to onboarding when we actually KNOW they have no role. If the Clerk lookup
+  // merely failed, let the request through: the page they land on resolves the role from our own
+  // database and gates itself. Redirecting here on an unknown would also risk a loop, because the
+  // onboarding page would read the database, find the role and bounce straight back.
+  if (!role && !clerkLookupFailed) return NextResponse.redirect(new URL("/onboarding", base))
+  if (!role) return NextResponse.next()
 
   // Admin-only gate. A stale dorix_role cookie (or a session token that doesn't carry metadata)
   // can hold an old role even after the role was changed in Clerk, so re-verify against Clerk

@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
@@ -44,12 +45,31 @@ export function ProviderFields({ values, onChange, onValidChange }: Props) {
   const t = useTranslations("authOnboardingProviderFields")
   const postal = usePostalValidation()
 
+  // Set when "use my location" finds a country DORIXÉ does not serve, so the form can say so.
+  const [unservedCountry, setUnservedCountry] = useState<string | null>(null)
+
   function handleDetect(result: GeoResult) {
-    onChange("city", result.city)
-    onChange("postalCode", result.postalCode)
-    if (EU_COUNTRIES.some(([code]) => code === result.country)) onChange("country", result.country)
+    const supported = EU_COUNTRIES.some(([code]) => code === result.country)
+
+    // Previously the detected country was dropped on the floor whenever it was not on the list,
+    // with no word to the user: the city and postcode were filled in from (say) Kenya while the
+    // country stayed on whatever was already selected. Validating a Kenyan town against Germany
+    // then failed, and the form blamed the ADDRESS — which is why this looked like "it only works
+    // for German addresses". Say what actually happened instead.
+    if (supported) {
+      onChange("city", result.city)
+      onChange("postalCode", result.postalCode)
+      onChange("country", result.country)
+      setUnservedCountry(null)
+      postal.clear()
+      onValidChange?.(true)
+      return
+    }
+
+    setUnservedCountry(result.country)
     postal.clear()
-    onValidChange?.(true)
+    // Not a valid address for us, so the step must not be treated as satisfied.
+    onValidChange?.(false)
   }
 
   async function validatePostal() {
@@ -77,6 +97,22 @@ export function ProviderFields({ values, onChange, onValidChange }: Props) {
           <p className="text-xs font-semibold text-[#2B3441] uppercase tracking-wide">{t("location")}</p>
           <LocationDetectButton onDetect={handleDetect} />
         </div>
+
+        {/* Names the real problem — the country, not the address. Without this the user retypes a
+            perfectly correct town over and over while the form keeps rejecting it. */}
+        {unservedCountry && (
+          <div className="mt-2 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-[#2B3441]">
+            <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-600" aria-hidden="true" />
+            <span>
+              {t("countryNotServed", { country: unservedCountry })}{" "}
+              <span className="text-[#6B7280]">
+                {t("countryNotServedHelp", {
+                  countries: EU_COUNTRIES.map(([, name]) => name).join(", "),
+                })}
+              </span>
+            </span>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>

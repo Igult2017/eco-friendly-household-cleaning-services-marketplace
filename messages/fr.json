@@ -606,7 +606,9 @@
     "ecoLevelBasic": "Basique — produits respectueux de l'environnement",
     "ecoLevelCertified": "Certifié — produits écologiques",
     "ecoLevelPremium": "Premium — produits d'origine végétale uniquement",
-    "ecoLevelZeroImpact": "Zéro impact — activité neutre en carbone"
+    "ecoLevelZeroImpact": "Zéro impact — activité neutre en carbone",
+    "countryNotServed": "Nous ne sommes pas encore présents en {country}, nous ne pouvons donc pas accepter d'adresse là-bas.",
+    "countryNotServedHelp": "DORIXÉ couvre actuellement : {countries}."
   },
   "customerBookConfirmPage": {
     "errorServiceNotFoundSupport": "Service introuvable. Veuillez contacter le support.",

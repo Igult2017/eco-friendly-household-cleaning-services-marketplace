@@ -606,7 +606,9 @@
     "ecoLevelBasic": "Basis — milieubewuste producten",
     "ecoLevelCertified": "Gecertificeerd — eco-certificering behaald",
     "ecoLevelPremium": "Premium — uitsluitend plantaardige producten",
-    "ecoLevelZeroImpact": "Zero Impact — klimaatneutrale werkzaamheden"
+    "ecoLevelZeroImpact": "Zero Impact — klimaatneutrale werkzaamheden",
+    "countryNotServed": "We zijn nog niet actief in {country}, dus we kunnen daar geen adres accepteren.",
+    "countryNotServedHelp": "DORIXÉ dekt momenteel: {countries}."
   },
   "customerBookConfirmPage": {
     "errorServiceNotFoundSupport": "Dienst niet gevonden. Neem contact op met de klantenservice.",

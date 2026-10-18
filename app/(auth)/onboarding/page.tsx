@@ -1,6 +1,9 @@
 import { auth, currentUser } from "@clerk/nextjs/server"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
+import { eq } from "drizzle-orm"
+import { db } from "@/lib/db"
+import { users } from "@/lib/db/schema"
 import { OnboardingForm } from "./OnboardingForm"
 
 const VALID_ROLES = ["customer", "provider", "admin", "affiliate"]
@@ -20,6 +23,21 @@ export default async function OnboardingPage({ searchParams }: { searchParams: P
     if (ck) {
       const [cookieUserId, cookieRole] = ck.split(":")
       if (cookieUserId === userId && VALID_ROLES.includes(cookieRole)) role = cookieRole
+    }
+  }
+
+  // OUR OWN DATABASE, last and decisive. Every source above is either a network call to Clerk or a
+  // browser cookie: on a loaded single VPS a slow Clerk read, or a cookie lost to a new browser, an
+  // incognito window or a 7-day expiry, left an existing user staring at the sign-up form being
+  // asked their name again — which is exactly what was reported. The users table holds the role
+  // locally and authoritatively (every live account has the right one), so consulting it removes the
+  // dependency on anything remote staying up.
+  if (!role && userId) {
+    try {
+      const [row] = await db.select({ role: users.role }).from(users).where(eq(users.id, userId))
+      if (row?.role && VALID_ROLES.includes(row.role)) role = row.role
+    } catch {
+      // Database unreachable too — fall through and show the form rather than a crash.
     }
   }
 
