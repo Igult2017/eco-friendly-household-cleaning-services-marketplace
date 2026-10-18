@@ -1746,7 +1746,9 @@
     "footnote": "U kunt dit later vanuit uw dashboard doen, maar tot die tijd kunt u niet uitbetaald worden.",
     "loading": "Beveiligd uitbetalingsformulier wordt geladen…",
     "kycDisclaimer": "U heeft geen Stripe-account nodig en u wordt ook niet gevraagd er een aan te maken. Onze betaalprovider Stripe verzorgt dit formulier en vraagt u uw identiteit te bevestigen — wettelijk verplicht voor iedereen die betalingen ontvangt (KYC).",
-    "kycStepMessage": "Uw identiteit wordt nu gecontroleerd. Dit is wettelijk verplicht voor iedereen die betalingen ontvangt (KYC) — er is geen account waarvoor u zich moet aanmelden."
+    "kycStepMessage": "Uw identiteit wordt nu gecontroleerd. Dit is wettelijk verplicht voor iedereen die betalingen ontvangt (KYC) — er is geen account waarvoor u zich moet aanmelden.",
+    "reviewTitle": "Je uitbetalingsgegevens worden gecontroleerd",
+    "reviewDescription": "We hebben je bankgegevens — Stripe controleert ze nu. Je hoeft verder niets te doen. We laten het weten zodra je uitbetaald kunt worden."
   },
   "compOnboardingClientPaymentStep": {
     "title": "Voeg uw betaalgegevens toe",

@@ -1746,7 +1746,9 @@
     "footnote": "Pode fazê-lo mais tarde no seu painel, mas não receberá pagamentos até o fazer.",
     "loading": "A carregar o formulário seguro de pagamentos…",
     "kycDisclaimer": "Não precisa de uma conta Stripe e não lhe será pedido que crie uma. O nosso fornecedor de pagamentos, a Stripe, trata deste formulário e pedir-lhe-á que confirme a sua identidade — uma exigência legal para quem recebe pagamentos (KYC).",
-    "kycStepMessage": "A sua identidade está a ser verificada. É uma exigência legal para quem recebe pagamentos (KYC) — não há qualquer conta para criar."
+    "kycStepMessage": "A sua identidade está a ser verificada. É uma exigência legal para quem recebe pagamentos (KYC) — não há qualquer conta para criar.",
+    "reviewTitle": "Os seus dados de pagamento estão a ser verificados",
+    "reviewDescription": "Já temos os seus dados bancários — a Stripe está a analisá-los. Não precisa de fazer mais nada. Avisamos assim que puder receber pagamentos."
   },
   "compOnboardingClientPaymentStep": {
     "title": "Adicione os seus dados de pagamento",

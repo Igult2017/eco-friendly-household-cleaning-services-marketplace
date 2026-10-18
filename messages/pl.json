@@ -1746,7 +1746,9 @@
     "footnote": "Możesz to zrobić później w panelu, ale do tego czasu nie otrzymasz wypłaty.",
     "loading": "Ładowanie bezpiecznego formularza wypłat…",
     "kycDisclaimer": "Nie potrzebujesz konta Stripe i nie zostaniesz poproszony o jego założenie. Nasz dostawca płatności, Stripe, obsługuje ten formularz i poprosi o potwierdzenie tożsamości — to wymóg prawny dla każdego, kto otrzymuje płatności (KYC).",
-    "kycStepMessage": "Twoja tożsamość jest właśnie weryfikowana. To wymóg prawny dla każdego, kto otrzymuje płatności (KYC) — nie ma żadnego konta, które musiałbyś zakładać."
+    "kycStepMessage": "Twoja tożsamość jest właśnie weryfikowana. To wymóg prawny dla każdego, kto otrzymuje płatności (KYC) — nie ma żadnego konta, które musiałbyś zakładać.",
+    "reviewTitle": "Sprawdzamy Twoje dane do wypłat",
+    "reviewDescription": "Mamy Twoje dane bankowe — Stripe właśnie je weryfikuje. Nie musisz nic więcej robić. Damy znać, gdy tylko będziesz mógł otrzymywać wypłaty."
   },
   "compOnboardingClientPaymentStep": {
     "title": "Dodaj dane płatności",

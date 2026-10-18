@@ -43,7 +43,9 @@ function Criteria({ p }: { p: ProviderRow }) {
   const hasPostal = Boolean(p.postalCode)
   const hasEco = Boolean(p.ecoLevel)
   const idVerified = p.verificationStatus === "verified"
-  const stripeReady = ["active", "charges_enabled"].includes(p.stripeAccountStatus ?? "")
+  // "active" only — the account must be payouts_enabled. "charges_enabled" was never a value this
+  // field can hold (see lib/stripe/connect.ts getConnectAccountStatus).
+  const stripeReady = p.stripeAccountStatus === "active"
   return (
     <div className="flex flex-wrap gap-1 max-w-[200px]">
       <Tick ok={hasBio} label="Bio" />

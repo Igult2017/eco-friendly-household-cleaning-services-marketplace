@@ -1746,7 +1746,9 @@
     "footnote": "Puoi farlo più tardi dalla tua dashboard, ma fino ad allora non potrai essere pagato.",
     "loading": "Caricamento del modulo sicuro…",
     "kycDisclaimer": "Non ti serve un account Stripe e non ti verrà chiesto di crearne uno. Il nostro fornitore di pagamenti, Stripe, gestisce questo modulo e ti chiederà di confermare la tua identità: è un obbligo di legge per chiunque riceva pagamenti (KYC).",
-    "kycStepMessage": "La tua identità è in fase di verifica. È un obbligo di legge per chiunque riceva pagamenti (KYC): non c'è alcun account da creare."
+    "kycStepMessage": "La tua identità è in fase di verifica. È un obbligo di legge per chiunque riceva pagamenti (KYC): non c'è alcun account da creare.",
+    "reviewTitle": "Stiamo verificando i tuoi dati di pagamento",
+    "reviewDescription": "Abbiamo le tue coordinate bancarie: Stripe le sta verificando. Non devi fare altro. Ti avviseremo appena potrai ricevere i pagamenti."
   },
   "compOnboardingClientPaymentStep": {
     "title": "Aggiungi i tuoi dati di pagamento",

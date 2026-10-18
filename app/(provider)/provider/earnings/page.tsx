@@ -7,6 +7,7 @@ import { db } from "@/lib/db"
 import { providers, payouts, bookings, payments } from "@/lib/db/schema"
 import { eq, and, sum, count, desc, gte, lt, inArray } from "drizzle-orm"
 import { PayoutConnect } from "@/components/provider/PayoutConnect"
+import { resolvePayoutStatus, type PayoutStatus } from "@/lib/stripe/payoutStatus"
 import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
 
 async function getEarningsData(providerId: string) {
@@ -45,12 +46,13 @@ export default async function EarningsPage() {
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
 
-  const [provider] = await db.select({ id: providers.id, stripeAccountStatus: providers.stripeAccountStatus, country: providers.country }).from(providers).where(eq(providers.userId, userId))
+  const [provider] = await db.select({ id: providers.id, stripeAccountId: providers.stripeAccountId, stripeAccountStatus: providers.stripeAccountStatus, country: providers.country }).from(providers).where(eq(providers.userId, userId))
   if (!provider) redirect("/provider/profile")
 
-  // Status is kept in sync by the account.updated webhook, plus a live refresh the moment the
-  // cleaner exits the embedded Stripe onboarding component (see StripeConnectEmbed/PayoutConnect).
-  const payoutStatus = provider.stripeAccountStatus
+  // The stored status is kept in sync by the account.updated webhook plus a refresh when the cleaner
+  // exits the embedded form — but if both are missed it stays wrong forever, which silently blocks
+  // bookings and payouts. resolvePayoutStatus re-asks Stripe when the stored value isn't "active".
+  const payoutStatus = await resolvePayoutStatus(provider.id, provider.stripeAccountId, provider.stripeAccountStatus as PayoutStatus)
 
   const data = await getEarningsData(provider.id)
   const country = provider.country ?? "DE"

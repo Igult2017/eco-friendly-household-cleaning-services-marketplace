@@ -1746,7 +1746,9 @@
     "footnote": "Sie können das später im Dashboard nachholen, erhalten bis dahin aber keine Auszahlungen.",
     "loading": "Sicheres Auszahlungsformular wird geladen…",
     "kycDisclaimer": "Sie brauchen kein Stripe-Konto und werden auch nicht aufgefordert, eines anzulegen. Unser Zahlungsdienstleister Stripe stellt dieses Formular bereit und bittet Sie, Ihre Identität zu bestätigen — gesetzlich vorgeschrieben für alle, die Zahlungen empfangen (KYC).",
-    "kycStepMessage": "Ihre Identität wird gerade geprüft. Das ist gesetzlich vorgeschrieben für alle, die Zahlungen empfangen (KYC) — es gibt kein Konto, für das Sie sich anmelden müssten."
+    "kycStepMessage": "Ihre Identität wird gerade geprüft. Das ist gesetzlich vorgeschrieben für alle, die Zahlungen empfangen (KYC) — es gibt kein Konto, für das Sie sich anmelden müssten.",
+    "reviewTitle": "Deine Auszahlungsdaten werden geprüft",
+    "reviewDescription": "Wir haben deine Bankdaten – Stripe prüft sie gerade. Du musst nichts weiter tun. Wir melden uns, sobald Auszahlungen möglich sind."
   },
   "compOnboardingClientPaymentStep": {
     "title": "Zahlungsdaten hinzufügen",

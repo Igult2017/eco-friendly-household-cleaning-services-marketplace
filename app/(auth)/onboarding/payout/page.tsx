@@ -15,7 +15,9 @@ export default async function OnboardingPayoutPage() {
     .where(eq(providers.userId, userId))
 
   if (!provider) redirect("/onboarding")
-  if (provider.stripeAccountStatus === "active") redirect("/provider/dashboard")
+  // "pending" as well as "active": the details are already submitted and Stripe is reviewing them,
+  // so there is nothing left for the cleaner to type on this step.
+  if (["active", "pending"].includes(provider.stripeAccountStatus ?? "")) redirect("/provider/dashboard")
 
   return <OnboardingPayoutClient />
 }

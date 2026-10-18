@@ -1746,7 +1746,9 @@
     "footnote": "You can add these later from your dashboard, but you can't be paid until you do.",
     "loading": "Loading the secure payout form…",
     "kycDisclaimer": "You don't need a Stripe account and you won't be asked to create one. Our payment provider, Stripe, handles this form and will ask you to confirm your identity — that's a legal requirement for anyone receiving payments (KYC).",
-    "kycStepMessage": "Your identity is being checked now. This is a legal requirement for anyone receiving payments (KYC) — there is no account for you to sign up for."
+    "kycStepMessage": "Your identity is being checked now. This is a legal requirement for anyone receiving payments (KYC) — there is no account for you to sign up for.",
+    "reviewTitle": "Your payout details are being checked",
+    "reviewDescription": "We have your bank details — Stripe is reviewing them now. There's nothing more for you to do. We'll let you know as soon as you can be paid."
   },
   "compOnboardingClientPaymentStep": {
     "title": "Add your payment details",

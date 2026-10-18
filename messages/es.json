@@ -1746,7 +1746,9 @@
     "footnote": "Puedes hacerlo más tarde desde tu panel, pero no cobrarás hasta que lo hagas.",
     "loading": "Cargando el formulario seguro de cobros…",
     "kycDisclaimer": "No necesitas una cuenta de Stripe ni se te pedirá que crees una. Nuestro proveedor de pagos, Stripe, gestiona este formulario y te pedirá que confirmes tu identidad: es un requisito legal para cualquiera que reciba pagos (KYC).",
-    "kycStepMessage": "Se está verificando tu identidad. Es un requisito legal para cualquiera que reciba pagos (KYC): no hay ninguna cuenta que debas crear."
+    "kycStepMessage": "Se está verificando tu identidad. Es un requisito legal para cualquiera que reciba pagos (KYC): no hay ninguna cuenta que debas crear.",
+    "reviewTitle": "Estamos comprobando tus datos de pago",
+    "reviewDescription": "Ya tenemos tus datos bancarios: Stripe los está revisando. No tienes que hacer nada más. Te avisaremos en cuanto puedas recibir pagos."
   },
   "compOnboardingClientPaymentStep": {
     "title": "Añade tus datos de pago",

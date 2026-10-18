@@ -1746,7 +1746,9 @@
     "footnote": "Vous pouvez le faire plus tard depuis votre tableau de bord, mais vous ne serez pas payé avant.",
     "loading": "Chargement du formulaire sécurisé…",
     "kycDisclaimer": "Vous n'avez pas besoin d'un compte Stripe et il ne vous sera pas demandé d'en créer un. Notre prestataire de paiement, Stripe, gère ce formulaire et vous demandera de confirmer votre identité — une obligation légale pour toute personne recevant des paiements (KYC).",
-    "kycStepMessage": "Votre identité est en cours de vérification. C'est une obligation légale pour toute personne recevant des paiements (KYC) — il n'y a aucun compte à créer."
+    "kycStepMessage": "Votre identité est en cours de vérification. C'est une obligation légale pour toute personne recevant des paiements (KYC) — il n'y a aucun compte à créer.",
+    "reviewTitle": "Vos informations de paiement sont en cours de vérification",
+    "reviewDescription": "Nous avons vos coordonnées bancaires — Stripe les vérifie actuellement. Vous n'avez rien d'autre à faire. Nous vous préviendrons dès que vous pourrez être payé."
   },
   "compOnboardingClientPaymentStep": {
     "title": "Ajoutez vos informations de paiement",

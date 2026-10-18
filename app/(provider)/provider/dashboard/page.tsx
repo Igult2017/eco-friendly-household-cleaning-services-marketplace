@@ -22,6 +22,7 @@ import { ProviderDashboardOverdue }      from "@/components/provider/ProviderDas
 import { ReferralCard }                  from "@/components/referral/ReferralCard"
 import { ProviderApprovalNotice }        from "@/components/provider/ProviderApprovalNotice"
 import { PayoutConnect }                  from "@/components/provider/PayoutConnect"
+import { resolvePayoutStatus, type PayoutStatus } from "@/lib/stripe/payoutStatus"
 import { InstantJobsToggle }              from "@/components/provider/InstantJobsToggle"
 import { ReliabilityCard }                from "@/components/provider/ReliabilityCard"
 import { computeReliability }             from "@/lib/provider/reliability"
@@ -48,6 +49,7 @@ export default async function ProviderDashboardPage() {
       longitude: providers.longitude,
       serviceRadiusKm: providers.serviceRadiusKm,
       country: providers.country,
+      stripeAccountId: providers.stripeAccountId,
       stripeAccountStatus: providers.stripeAccountStatus,
       instantJobsAvailable: providers.instantJobsAvailable,
     })
@@ -239,6 +241,11 @@ export default async function ProviderDashboardPage() {
     totalReviews: provider.totalReviews ?? 0,
   })
 
+  // Re-asks Stripe only when our stored copy isn't "active" — a stale copy makes a cleaner who HAS
+  // finished with Stripe silently unbookable (lib/bookings/create.ts gates on this exact value).
+  // Placed after the queries above so it doesn't hold them up.
+  const payoutStatus = await resolvePayoutStatus(provider.id, provider.stripeAccountId, provider.stripeAccountStatus as PayoutStatus)
+
   const unreadCount = recentNotifs.filter((n) => !n.isRead).length
   const activeDisputes = providerDisputes.filter((d) =>
     ["open", "under_review", "escalated"].includes(d.status)
@@ -250,9 +257,11 @@ export default async function ProviderDashboardPage() {
 
         <ProviderApprovalNotice isApproved={provider.isApproved} isSuspended={provider.isSuspended} />
 
-        {/* Until payouts are connected, the cleaner can't be paid (and customers can't be charged). */}
-        {!["active", "charges_enabled"].includes(provider.stripeAccountStatus ?? "") && (
-          <PayoutConnect status={provider.stripeAccountStatus} />
+        {/* Only while there is still something for the cleaner to DO. "pending" means they already
+            submitted their details and Stripe is reviewing — the earnings page carries that notice,
+            the dashboard shouldn't nag about it. ("charges_enabled" was never a value this holds.) */}
+        {!["active", "pending"].includes(payoutStatus ?? "") && (
+          <PayoutConnect status={payoutStatus} />
         )}
 
         {/* Header */}
