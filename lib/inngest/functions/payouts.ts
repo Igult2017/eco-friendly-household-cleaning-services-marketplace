@@ -153,11 +153,12 @@ export const processProviderPayout = inngest.createFunction(
         .from(users)
         .where(eq(users.id, provider.userId))
       if (!user?.email) return
-      // This email is WEEKLY but the money is not: payouts run on the cleaner's own Stripe schedule
-      // (monthly on this platform today), after Stripe's holding period. Under a heading that reads
-      // "your earnings this week", silence about that invites "where is my money?" — so the real
-      // payday for THIS cleaner goes in the email. null = Stripe unreachable, and the email then
-      // omits the line rather than naming a day that might be wrong.
+      // This email is WEEKLY but the money is not: each payment reaches the bank a fixed number of
+      // days after it is paid for (PAYOUT_DELAY_DAYS). Under a heading that reads "your earnings
+      // this week", silence about that invites "where is my money?" — so the real wait for THIS
+      // cleaner goes in the email, read from their own Stripe account rather than from the admin
+      // setting, because the two drift: the setting is applied once, at account creation.
+      // null = Stripe unreachable, and the email then omits the line rather than guessing.
       const schedule = await describePayoutSchedule(provider.stripeAccountId!)
       const { subject, html } = weeklyEarningsEmail(user.locale, {
         name: user.firstName,
@@ -165,7 +166,7 @@ export const processProviderPayout = inngest.createFunction(
         count: bookingIdList.length,
         start: String(periodStart),
         end: String(periodEnd),
-        payoutInterval: schedule?.interval ?? null,
+        payoutDelayDays: schedule?.delayDays ?? null,
       })
       await resend.emails.send({ from: FROM, to: user.email, subject, html })
     })

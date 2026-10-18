@@ -1,5 +1,19 @@
 import { stripe } from "./client"
 import { getPayoutSchedule } from "@/lib/platform/settings"
+
+/**
+ * How many days after a job is paid for the cleaner's money reaches their bank.
+ *
+ * These ARE the payout policy — there is no calendar day involved (see createConnectAccount).
+ *  - weekly  → 7 days, which is also Stripe's minimum hold for Germany, so this is as fast as the
+ *              platform is allowed to pay.
+ *  - monthly → 28 days = that same 7-day hold plus three more weeks. Four weeks, never five:
+ *              a calendar anchor on the 1st meant a job on the 26th waited ~34 days.
+ *
+ * 28 is deliberately four weeks rather than a calendar month, so the wait is a fixed, promisable
+ * number instead of 28–34 days depending on which month the job happened to fall in.
+ */
+export const PAYOUT_DELAY_DAYS: Record<"weekly" | "monthly", number> = { weekly: 7, monthly: 28 }
 // A cleaner never takes a card payment — the client is charged on the platform account and the money
 // is transferred on — so they have no business website and must never be asked for one. Stripe only
 // demands business_profile.url when it has NO other idea what the account sells: telling it the
@@ -34,15 +48,17 @@ export async function createConnectAccount(params: {
   country: string // ISO 3166-1 alpha-2 e.g. "DE"
   idempotencyKey?: string
 }) {
-  // Admin-configurable (see /admin/settings "Default Payout Schedule") — Stripe only supports
-  // "weekly" and "monthly" for a payout interval, not "biweekly".
-  const interval = await getPayoutSchedule()
-  const schedule =
-    interval === "monthly"
-      ? { interval: "monthly" as const, monthly_anchor: 1 }
-      // Stripe requires an explicit day when interval is "weekly" — Monday matches the existing
-      // ledger-summary cron (lib/inngest/functions/payouts.ts runs 0 2 * * 1, also Monday).
-      : { interval: "weekly" as const, weekly_anchor: "monday" as const }
+  // Admin-configurable (see /admin/settings "Default Payout Schedule"), but NOT as a calendar
+  // anchor. An anchored schedule makes the cleaner wait twice: Stripe holds each payment for its
+  // country minimum (7 days in Germany) and only THEN does the money wait for the next payout day.
+  // A job finished on the 26th missed the 1st and was paid ~34 days later — five weeks for someone
+  // who cleans houses for a living.
+  //
+  // `daily` is not "paid every day": it is a ROLLING payout, where each payment leaves exactly
+  // delay_days after it clears, with no calendar day to wait for. So the delay alone expresses the
+  // whole policy, and the worst case equals the delay instead of delay + up to a month.
+  const preference = await getPayoutSchedule()
+  const schedule = { interval: "daily" as const, delay_days: PAYOUT_DELAY_DAYS[preference] }
   return stripe.accounts.create(
     {
       type: "express",

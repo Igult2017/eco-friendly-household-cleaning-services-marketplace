@@ -108,12 +108,17 @@ export function SettingsManual({ cfg }: { cfg: Config }) {
         </div>
 
         <div>
-          <p className="font-semibold mb-1">Default Payout Schedule</p>
+          <p className="font-semibold mb-1">How Soon Cleaners Are Paid</p>
           <p className="text-xs text-[#6B7280] leading-relaxed">
-            Sets how often a cleaner&apos;s payout account pays into their bank, applied when that
-            account is first created (<code className="text-[11px] bg-gray-50 px-1 py-0.5 rounded">lib/stripe/connect.ts</code>).
-            Only Weekly or Monthly are supported — not bi-weekly. Changing it only affects cleaners set
-            up AFTER the change; it does not move existing cleaners onto a new schedule.
+            Sets how long after a cleaning is paid for the money reaches the cleaner&apos;s bank, applied
+            when that account is first created (<code className="text-[11px] bg-gray-50 px-1 py-0.5 rounded">lib/stripe/connect.ts</code>).
+            Each payment arrives on its own, that many days later — there is no payout &quot;day&quot;, so
+            the wait never depends on when in the month the job fell. This replaced a weekly/monthly
+            calendar schedule that made cleaners wait twice: Stripe&apos;s 7-day hold AND then the next
+            payout date, which meant a job on the 26th was paid about 34 days later. 7 days is the
+            floor — Stripe will not release money sooner. Changing it only affects cleaners set up
+            AFTER the change; existing cleaners keep their current wait until their account is updated
+            directly (<code className="text-[11px] bg-gray-50 px-1 py-0.5 rounded">scripts/migrate-connect-payout-settings.mjs</code>).
           </p>
         </div>
 

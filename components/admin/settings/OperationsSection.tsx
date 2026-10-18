@@ -15,19 +15,21 @@ export function OperationsSection({ cfg, set }: { cfg: Config; set: SetFn }) {
     <>
       {/* Payout schedule */}
       <div className="px-6 py-5">
-        <label className="block text-sm font-semibold text-[#2B3441] mb-1">Default Payout Schedule</label>
+        <label className="block text-sm font-semibold text-[#2B3441] mb-1">How Soon Cleaners Are Paid</label>
         <p className="text-xs text-[#6B7280] mb-3">
-          How often a newly set-up cleaner&apos;s payout account pays into their bank. Only applies to
-          accounts set up AFTER this is changed — it does not retroactively move a cleaner who has
-          already been set up.
+          How long after a cleaning is paid for the money reaches the cleaner&apos;s bank. There is no
+          payout &quot;day&quot; — each payment arrives on its own, exactly this many days later, so the
+          wait is the same whenever the job happens. <strong>7 days is the fastest allowed</strong> (it is
+          Stripe&apos;s minimum hold). Only applies to accounts set up AFTER this is changed — it does not
+          move a cleaner who is already set up.
         </p>
         <select
           value={cfg.payout_schedule ?? "weekly"}
           onChange={e => set("payout_schedule", e.target.value)}
           className="h-10 rounded-lg border border-gray-200 px-3 text-sm text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]"
         >
-          <option value="weekly">Weekly (Monday)</option>
-          <option value="monthly">Monthly</option>
+          <option value="weekly">7 days after each job (fastest)</option>
+          <option value="monthly">28 days after each job (four weeks)</option>
         </select>
       </div>
 
