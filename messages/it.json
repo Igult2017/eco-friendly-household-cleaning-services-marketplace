@@ -1164,7 +1164,13 @@
     "acceptRequestPayment": "Accetta e richiedi metodo di pagamento",
     "requestPaymentSending": "Invio…",
     "requestPaymentSent": "Cliente avvisato — in attesa del metodo di pagamento",
-    "requestPaymentFailed": "Impossibile inviare la richiesta di pagamento. Riprova."
+    "requestPaymentFailed": "Impossibile inviare la richiesta di pagamento. Riprova.",
+    "availabilityTitle": "Vieni ancora?",
+    "availabilityBody": "Conferma che sei ancora disponibile per questo lavoro. Se non confermi in tempo, sarà affidato a un'altra persona per non lasciare il cliente in attesa.",
+    "availabilityButton": "Sì, vengo ancora",
+    "availabilitySaving": "Conferma in corso…",
+    "availabilityDone": "Grazie — il cliente ti aspetta.",
+    "availabilityFailed": "Conferma non riuscita. Riprova."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Impossibile contrassegnare come completato",

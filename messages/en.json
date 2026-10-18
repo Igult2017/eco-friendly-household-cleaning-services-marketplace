@@ -1164,7 +1164,13 @@
     "acceptRequestPayment": "Accept & request payment method",
     "requestPaymentSending": "Sending…",
     "requestPaymentSent": "Client notified — waiting for their payment method",
-    "requestPaymentFailed": "Couldn't send the payment request. Please try again."
+    "requestPaymentFailed": "Couldn't send the payment request. Please try again.",
+    "availabilityTitle": "Are you still coming?",
+    "availabilityBody": "Confirm you are still available for this job. If you do not confirm in time, it will be given to another cleaner so the client is not left waiting.",
+    "availabilityButton": "Yes, I am still coming",
+    "availabilitySaving": "Confirming…",
+    "availabilityDone": "Thanks — your client is expecting you.",
+    "availabilityFailed": "Could not confirm. Please try again."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Failed to mark as complete",

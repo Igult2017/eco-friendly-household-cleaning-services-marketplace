@@ -80,6 +80,11 @@ ALTER TABLE store_products ADD COLUMN IF NOT EXISTS pack_id uuid;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS identity_check_due_at timestamptz;
 CREATE INDEX IF NOT EXISTS bookings_identity_due_idx ON bookings(identity_check_due_at) WHERE identity_check_due_at IS NOT NULL;
 ALTER TABLE provider_identity_verifications ADD COLUMN IF NOT EXISTS attempts integer NOT NULL DEFAULT 0;
+-- "Are you still coming?" check: asked a few hours before the job, and if the cleaner does not
+-- confirm within the grace window the job is reassigned automatically rather than letting a client
+-- be stood up by a cleaner who has gone quiet.
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS availability_asked_at timestamptz;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS availability_confirmed_at timestamptz;
 ALTER TABLE messages ALTER COLUMN booking_id DROP NOT NULL;
 ALTER TABLE messages ADD COLUMN IF NOT EXISTS job_post_id uuid;
 CREATE INDEX IF NOT EXISTS messages_job_post_idx ON messages(job_post_id);

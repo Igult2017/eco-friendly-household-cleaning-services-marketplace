@@ -15,6 +15,7 @@ type Tx = {
   cleanerPaid: Row            // money has actually been sent to the cleaner
   startingSoon: Row           // the appointment starts in a few hours
   deadlineSoon: Row           // the cleaner's finish-by time is approaching
+  confirmAvailability: Row    // hours before the job: are you still coming? confirm or lose it
 }
 
 const TX: Record<string, Tx> = {
@@ -25,6 +26,7 @@ const TX: Record<string, Tx> = {
     cleanerPaid: { subject: "You've been paid — {amount}", heading: "Payment on its way", body: "{amount} for the cleaning on {scheduled} has been released to your payout account. Your bank receives it on your usual payout schedule.", button: "View your earnings", thanks: "Thank you for cleaning with DORIXÉ 🌿" },
     startingSoon: { subject: "Starting in {hours} hours — {number}", heading: "Your cleaning starts soon", body: "The cleaning at {address} is due to start at {scheduled}, about {hours} hours from now.", button: "View the booking", thanks: "Thank you for choosing DORIXÉ 🌿" },
     deadlineSoon: { subject: "Due to finish in {hours} hours — {number}", heading: "Your job is due to finish soon", body: "The cleaning at {address} is due to be finished by {deadline}, about {hours} hours from now. Mark it complete once you're done so you can be paid.", button: "Mark it complete", thanks: "Thank you for cleaning with DORIXÉ 🌿" },
+    confirmAvailability: { subject: "Are you still coming? — {number}", heading: "Please confirm you are still available", body: "Your cleaning {number} at {address} starts at {scheduled}, in about {hours} hours, and we have not heard from you. Please log in and confirm you are still coming. If you do not confirm within {grace} hour(s), the job will be given to another cleaner so the client is not left waiting.", button: "Confirm I am still available", thanks: "Thank you for cleaning with DORIXÉ 🌿" },
   },
   de: {
     newBookingForCleaner: { subject: "Neue Buchung — {number}", heading: "Sie haben eine neue Buchung", body: "{client} hat Sie für {scheduled} gebucht. Nehmen Sie die Buchung im Dashboard an, damit die Person weiß, dass Sie kommen.", button: "Buchung ansehen", thanks: "Danke, dass Sie mit DORIXÉ reinigen 🌿" },
@@ -33,6 +35,7 @@ const TX: Record<string, Tx> = {
     cleanerPaid: { subject: "Sie wurden bezahlt — {amount}", heading: "Zahlung ist unterwegs", body: "{amount} für die Reinigung am {scheduled} wurden für Ihre Auszahlung freigegeben. Ihre Bank erhält den Betrag gemäß Ihrem üblichen Auszahlungsrhythmus.", button: "Einnahmen ansehen", thanks: "Danke, dass Sie mit DORIXÉ reinigen 🌿" },
     startingSoon: { subject: "Beginnt in {hours} Stunden — {number}", heading: "Ihre Reinigung beginnt bald", body: "Die Reinigung in {address} beginnt um {scheduled}, in etwa {hours} Stunden.", button: "Buchung ansehen", thanks: "Vielen Dank, dass Sie sich für DORIXÉ entschieden haben 🌿" },
     deadlineSoon: { subject: "Fertigstellung in {hours} Stunden — {number}", heading: "Ihr Auftrag sollte bald fertig sein", body: "Die Reinigung in {address} sollte bis {deadline} abgeschlossen sein, in etwa {hours} Stunden. Markieren Sie sie als erledigt, sobald Sie fertig sind, damit Sie bezahlt werden.", button: "Als erledigt markieren", thanks: "Danke, dass Sie mit DORIXÉ reinigen 🌿" },
+    confirmAvailability: { subject: "Kommst du noch? — {number}", heading: "Bitte bestätige, dass du noch verfügbar bist", body: "Deine Reinigung {number} in {address} beginnt um {scheduled}, in etwa {hours} Stunden, und wir haben nichts von dir gehört. Bitte melde dich an und bestätige, dass du noch kommst. Wenn du das nicht innerhalb von {grace} Stunde(n) tust, wird der Auftrag an eine andere Reinigungskraft vergeben, damit die Kundschaft nicht wartet.", button: "Ich bin noch verfügbar", thanks: "Vielen Dank, dass du mit DORIXÉ reinigst 🌿" },
   },
   fr: {
     newBookingForCleaner: { subject: "Nouvelle réservation — {number}", heading: "Vous avez une nouvelle réservation", body: "{client} vous a réservé pour {scheduled}. Acceptez-la depuis votre tableau de bord pour confirmer votre venue.", button: "Voir la réservation", thanks: "Merci de nettoyer avec DORIXÉ 🌿" },
@@ -41,6 +44,7 @@ const TX: Record<string, Tx> = {
     cleanerPaid: { subject: "Vous avez été payé — {amount}", heading: "Paiement en route", body: "{amount} pour le ménage du {scheduled} ont été débloqués vers votre compte de paiement. Votre banque les recevra selon votre rythme de versement habituel.", button: "Voir mes revenus", thanks: "Merci de nettoyer avec DORIXÉ 🌿" },
     startingSoon: { subject: "Début dans {hours} heures — {number}", heading: "Votre ménage commence bientôt", body: "Le ménage au {address} doit commencer à {scheduled}, dans environ {hours} heures.", button: "Voir la réservation", thanks: "Merci d'avoir choisi DORIXÉ 🌿" },
     deadlineSoon: { subject: "À terminer dans {hours} heures — {number}", heading: "Votre mission doit bientôt se terminer", body: "Le ménage au {address} doit être terminé pour {deadline}, dans environ {hours} heures. Marquez-le comme terminé une fois fini pour être payé.", button: "Marquer comme terminé", thanks: "Merci de nettoyer avec DORIXÉ 🌿" },
+    confirmAvailability: { subject: "Venez-vous toujours ? — {number}", heading: "Merci de confirmer votre disponibilité", body: "Votre ménage {number} à {address} commence à {scheduled}, dans environ {hours} heures, et nous n'avons pas eu de nouvelles. Merci de vous connecter et de confirmer que vous venez toujours. Sans confirmation dans un délai de {grace} heure(s), la mission sera confiée à un autre nettoyeur afin que le client ne reste pas sans personne.", button: "Je suis toujours disponible", thanks: "Merci de nettoyer avec DORIXÉ 🌿" },
   },
   es: {
     newBookingForCleaner: { subject: "Nueva reserva — {number}", heading: "Tienes una nueva reserva", body: "{client} te ha reservado para {scheduled}. Acéptala en tu panel para que sepa que vas a ir.", button: "Ver la reserva", thanks: "Gracias por limpiar con DORIXÉ 🌿" },
@@ -49,6 +53,7 @@ const TX: Record<string, Tx> = {
     cleanerPaid: { subject: "Te han pagado: {amount}", heading: "Pago en camino", body: "{amount} por la limpieza del {scheduled} se han liberado a tu cuenta de cobros. Tu banco lo recibirá según tu calendario habitual.", button: "Ver mis ingresos", thanks: "Gracias por limpiar con DORIXÉ 🌿" },
     startingSoon: { subject: "Empieza en {hours} horas — {number}", heading: "Tu limpieza empieza pronto", body: "La limpieza en {address} empieza a las {scheduled}, dentro de unas {hours} horas.", button: "Ver la reserva", thanks: "Gracias por elegir DORIXÉ 🌿" },
     deadlineSoon: { subject: "Debe terminar en {hours} horas — {number}", heading: "Tu trabajo debe terminar pronto", body: "La limpieza en {address} debe estar terminada antes de las {deadline}, dentro de unas {hours} horas. Márcala como completada al acabar para poder cobrar.", button: "Marcar como completada", thanks: "Gracias por limpiar con DORIXÉ 🌿" },
+    confirmAvailability: { subject: "¿Sigues viniendo? — {number}", heading: "Confirma que sigues disponible", body: "Tu limpieza {number} en {address} empieza a las {scheduled}, en unas {hours} horas, y no hemos sabido nada de ti. Inicia sesión y confirma que sigues viniendo. Si no lo confirmas en {grace} hora(s), el trabajo se dará a otra persona de limpieza para que el cliente no se quede esperando.", button: "Sigo disponible", thanks: "Gracias por limpiar con DORIXÉ 🌿" },
   },
   it: {
     newBookingForCleaner: { subject: "Nuova prenotazione — {number}", heading: "Hai una nuova prenotazione", body: "{client} ti ha prenotato per {scheduled}. Accettala dalla tua dashboard così sa che arriverai.", button: "Vedi la prenotazione", thanks: "Grazie per pulire con DORIXÉ 🌿" },
@@ -57,6 +62,7 @@ const TX: Record<string, Tx> = {
     cleanerPaid: { subject: "Sei stato pagato: {amount}", heading: "Pagamento in arrivo", body: "{amount} per la pulizia del {scheduled} sono stati sbloccati sul tuo conto di pagamento. La banca li riceverà secondo il tuo solito calendario.", button: "Vedi i guadagni", thanks: "Grazie per pulire con DORIXÉ 🌿" },
     startingSoon: { subject: "Inizia tra {hours} ore — {number}", heading: "La pulizia inizia a breve", body: "La pulizia in {address} inizia alle {scheduled}, tra circa {hours} ore.", button: "Vedi la prenotazione", thanks: "Grazie per aver scelto DORIXÉ 🌿" },
     deadlineSoon: { subject: "Da finire tra {hours} ore — {number}", heading: "Il lavoro deve finire a breve", body: "La pulizia in {address} deve essere completata entro le {deadline}, tra circa {hours} ore. Segnala come completata quando hai finito per essere pagato.", button: "Segna come completata", thanks: "Grazie per pulire con DORIXÉ 🌿" },
+    confirmAvailability: { subject: "Vieni ancora? — {number}", heading: "Conferma che sei ancora disponibile", body: "La tua pulizia {number} in {address} inizia alle {scheduled}, tra circa {hours} ore, e non abbiamo tue notizie. Accedi e conferma che vieni ancora. Se non confermi entro {grace} ora(e), il lavoro sarà affidato a un'altra persona per non lasciare il cliente in attesa.", button: "Sono ancora disponibile", thanks: "Grazie per pulire con DORIXÉ 🌿" },
   },
   nl: {
     newBookingForCleaner: { subject: "Nieuwe boeking — {number}", heading: "Je hebt een nieuwe boeking", body: "{client} heeft je geboekt voor {scheduled}. Accepteer de boeking in je dashboard zodat ze weten dat je komt.", button: "Bekijk de boeking", thanks: "Bedankt dat je schoonmaakt met DORIXÉ 🌿" },
@@ -65,6 +71,7 @@ const TX: Record<string, Tx> = {
     cleanerPaid: { subject: "Je bent betaald — {amount}", heading: "Betaling onderweg", body: "{amount} voor de schoonmaak van {scheduled} is vrijgegeven naar je uitbetaalrekening. Je bank ontvangt het volgens je gebruikelijke schema.", button: "Bekijk je verdiensten", thanks: "Bedankt dat je schoonmaakt met DORIXÉ 🌿" },
     startingSoon: { subject: "Begint over {hours} uur — {number}", heading: "Je schoonmaak begint binnenkort", body: "De schoonmaak op {address} begint om {scheduled}, over ongeveer {hours} uur.", button: "Bekijk de boeking", thanks: "Bedankt dat je voor DORIXÉ hebt gekozen 🌿" },
     deadlineSoon: { subject: "Klaar over {hours} uur — {number}", heading: "Je klus moet binnenkort klaar zijn", body: "De schoonmaak op {address} moet klaar zijn om {deadline}, over ongeveer {hours} uur. Markeer hem als afgerond zodra je klaar bent zodat je betaald wordt.", button: "Markeer als afgerond", thanks: "Bedankt dat je schoonmaakt met DORIXÉ 🌿" },
+    confirmAvailability: { subject: "Kom je nog? — {number}", heading: "Bevestig dat je nog beschikbaar bent", body: "Je schoonmaak {number} op {address} begint om {scheduled}, over ongeveer {hours} uur, en we hebben niets van je gehoord. Log in en bevestig dat je nog komt. Als je dit niet binnen {grace} uur bevestigt, gaat de klus naar een andere schoonmaker zodat de klant niet blijft wachten.", button: "Ik ben nog beschikbaar", thanks: "Bedankt dat je schoonmaakt met DORIXÉ 🌿" },
   },
   pl: {
     newBookingForCleaner: { subject: "Nowa rezerwacja — {number}", heading: "Masz nową rezerwację", body: "{client} zarezerwował(a) Cię na {scheduled}. Zaakceptuj ją w panelu, aby wiedzieli, że przyjedziesz.", button: "Zobacz rezerwację", thanks: "Dziękujemy, że sprzątasz z DORIXÉ 🌿" },
@@ -73,6 +80,7 @@ const TX: Record<string, Tx> = {
     cleanerPaid: { subject: "Otrzymałeś zapłatę — {amount}", heading: "Płatność w drodze", body: "{amount} za sprzątanie z {scheduled} zostało zwolnione na Twoje konto wypłat. Bank otrzyma je zgodnie ze zwykłym harmonogramem.", button: "Zobacz zarobki", thanks: "Dziękujemy, że sprzątasz z DORIXÉ 🌿" },
     startingSoon: { subject: "Start za {hours} godz. — {number}", heading: "Sprzątanie wkrótce się zacznie", body: "Sprzątanie pod adresem {address} zaczyna się o {scheduled}, za około {hours} godz.", button: "Zobacz rezerwację", thanks: "Dziękujemy za wybór DORIXÉ 🌿" },
     deadlineSoon: { subject: "Zakończenie za {hours} godz. — {number}", heading: "Zlecenie wkrótce powinno się zakończyć", body: "Sprzątanie pod adresem {address} powinno zakończyć się do {deadline}, za około {hours} godz. Oznacz je jako wykonane, aby otrzymać zapłatę.", button: "Oznacz jako wykonane", thanks: "Dziękujemy, że sprzątasz z DORIXÉ 🌿" },
+    confirmAvailability: { subject: "Czy nadal przyjdziesz? — {number}", heading: "Potwierdź, że nadal jesteś dostępny", body: "Twoje sprzątanie {number} pod adresem {address} zaczyna się o {scheduled}, za około {hours} godz., a nie mamy od Ciebie wiadomości. Zaloguj się i potwierdź, że nadal przyjdziesz. Jeśli nie potwierdzisz w ciągu {grace} godz., zlecenie zostanie przekazane innej osobie, aby klient nie czekał.", button: "Nadal jestem dostępny", thanks: "Dziękujemy, że sprzątasz z DORIXÉ 🌿" },
   },
   pt: {
     newBookingForCleaner: { subject: "Nova reserva — {number}", heading: "Tem uma nova reserva", body: "{client} reservou-o para {scheduled}. Aceite no seu painel para que saibam que vai aparecer.", button: "Ver a reserva", thanks: "Obrigado por limpar com a DORIXÉ 🌿" },
@@ -81,6 +89,7 @@ const TX: Record<string, Tx> = {
     cleanerPaid: { subject: "Foi pago — {amount}", heading: "Pagamento a caminho", body: "{amount} pela limpeza de {scheduled} foram libertados para a sua conta de pagamentos. O seu banco recebe-o no calendário habitual.", button: "Ver os meus ganhos", thanks: "Obrigado por limpar com a DORIXÉ 🌿" },
     startingSoon: { subject: "Começa em {hours} horas — {number}", heading: "A sua limpeza começa em breve", body: "A limpeza em {address} começa às {scheduled}, daqui a cerca de {hours} horas.", button: "Ver a reserva", thanks: "Obrigado por escolher a DORIXÉ 🌿" },
     deadlineSoon: { subject: "Termina em {hours} horas — {number}", heading: "O seu trabalho deve terminar em breve", body: "A limpeza em {address} deve estar concluída até às {deadline}, daqui a cerca de {hours} horas. Marque como concluída quando terminar para poder ser pago.", button: "Marcar como concluída", thanks: "Obrigado por limpar com a DORIXÉ 🌿" },
+    confirmAvailability: { subject: "Ainda vem? — {number}", heading: "Confirme que continua disponível", body: "A sua limpeza {number} em {address} começa às {scheduled}, dentro de cerca de {hours} horas, e não recebemos notícias suas. Inicie sessão e confirme que ainda vem. Se não confirmar no prazo de {grace} hora(s), o trabalho será entregue a outra pessoa para que o cliente não fique à espera.", button: "Continuo disponível", thanks: "Obrigado por limpar com DORIXÉ 🌿" },
   },
 }
 
@@ -114,3 +123,19 @@ export const startingSoonEmail = (l: string | null | undefined, v: { number: str
 
 export const deadlineSoonEmail = (l: string | null | undefined, v: { number: string; address: string; deadline: string; hours: number; url: string }) =>
   build(l, "deadlineSoon", { number: v.number, address: v.address, deadline: v.deadline, hours: String(v.hours) }, v.url)
+
+/**
+ * Sent a few hours before the job to a cleaner we have heard nothing from. It states the deadline
+ * and the consequence plainly, because the consequence is real: no reply and the job goes to someone
+ * else. A vague "please check in" would cost a cleaner their work without warning them properly.
+ */
+export const confirmAvailabilityEmail = (
+  l: string | null | undefined,
+  v: { number: string; address: string; scheduled: string; hours: number; grace: number; url: string },
+) =>
+  build(
+    l,
+    "confirmAvailability",
+    { number: v.number, address: v.address, scheduled: v.scheduled, hours: String(v.hours), grace: String(v.grace) },
+    v.url,
+  )

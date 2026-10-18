@@ -1164,7 +1164,13 @@
     "acceptRequestPayment": "Aceptar y pedir método de pago",
     "requestPaymentSending": "Enviando…",
     "requestPaymentSent": "Cliente avisado: esperando su método de pago",
-    "requestPaymentFailed": "No se pudo enviar la solicitud de pago. Inténtalo de nuevo."
+    "requestPaymentFailed": "No se pudo enviar la solicitud de pago. Inténtalo de nuevo.",
+    "availabilityTitle": "¿Sigues viniendo?",
+    "availabilityBody": "Confirma que sigues disponible para este trabajo. Si no lo confirmas a tiempo, se dará a otra persona de limpieza para que el cliente no se quede esperando.",
+    "availabilityButton": "Sí, sigo viniendo",
+    "availabilitySaving": "Confirmando…",
+    "availabilityDone": "Gracias — tu cliente te espera.",
+    "availabilityFailed": "No se pudo confirmar. Inténtalo de nuevo."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "No se pudo marcar como completado",

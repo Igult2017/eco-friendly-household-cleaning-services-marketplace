@@ -26,6 +26,8 @@ type Booking = {
   scheduledEndAt: string | null
   overdueSince: string | null
   identityCheckDueAt: string | null
+  availabilityAskedAt: string | null
+  availabilityConfirmedAt: string | null
   serviceAddress: { line1: string; city: string; postalCode: string; country: string }
   specialInstructions: string | null
   subtotalAmount: number
@@ -94,6 +96,26 @@ export default function ProviderBookingsPage() {
   const [reviewedIds, setReviewedIds] = useState<Set<string>>(new Set())
   const [requestedIds, setRequestedIds] = useState<Set<string>>(new Set())
   const [requesting, setRequesting] = useState<string | null>(null)
+  const [confirmingAvail, setConfirmingAvail] = useState<string | null>(null)
+
+  // "Yes, I am still coming" — stops the automatic handover to another cleaner.
+  async function confirmAvailability(bookingId: string) {
+    setConfirmingAvail(bookingId)
+    try {
+      const res = await fetch(`/api/bookings/${bookingId}/confirm-availability`, { method: "POST" })
+      if (res.ok) {
+        toast.success(t("availabilityDone"))
+        load()
+        return
+      }
+      const d = await res.json().catch(() => ({}))
+      toast.error(typeof d.error === "string" ? d.error : t("availabilityFailed"))
+    } catch {
+      toast.error(t("availabilityFailed"))
+    } finally {
+      setConfirmingAvail(null)
+    }
+  }
 
   async function requestPayment(bookingId: string) {
     setRequesting(bookingId)
@@ -261,6 +283,24 @@ export default function ProviderBookingsPage() {
                 {b.identityCheckDueAt && (
                   <div className="mt-3">
                     <IdentityVerifyModal bookingId={b.id} dueAt={b.identityCheckDueAt} onVerified={load} />
+                  </div>
+                )}
+
+                {/* "Are you still coming?" — only while we have asked and they have not answered.
+                    Also near the top: the clock is running towards this job being handed to someone
+                    else, so it must not sit below the fold. */}
+                {b.availabilityAskedAt && !b.availabilityConfirmedAt && (
+                  <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-4 shadow-sm">
+                    <p className="font-semibold text-[#2B3441]">{t("availabilityTitle")}</p>
+                    <p className="mt-1 text-sm leading-relaxed text-[#2B3441]">{t("availabilityBody")}</p>
+                    <button
+                      onClick={() => confirmAvailability(b.id)}
+                      disabled={confirmingAvail === b.id}
+                      className="mt-4 inline-flex items-center gap-2 rounded-lg bg-[#2D7A5F] px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-[#235f49] disabled:opacity-50"
+                    >
+                      {confirmingAvail === b.id ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : null}
+                      {confirmingAvail === b.id ? t("availabilitySaving") : t("availabilityButton")}
+                    </button>
                   </div>
                 )}
 

@@ -33,6 +33,10 @@ export async function GET(req: Request) {
         // Set when this job is held pending the cleaner's identity check — the page shows the
         // camera check while it is set, so the job cannot quietly lapse and be given away.
         identityCheckDueAt: bookings.identityCheckDueAt,
+        // Asked-but-not-confirmed = the "are you still coming?" prompt is live on this job, and the
+        // clock is running towards it being reassigned.
+        availabilityAskedAt: bookings.availabilityAskedAt,
+        availabilityConfirmedAt: bookings.availabilityConfirmedAt,
         serviceAddress: bookings.serviceAddress,
         specialInstructions: bookings.specialInstructions,
         subtotalAmount: bookings.subtotalAmount,

@@ -1164,7 +1164,13 @@
     "acceptRequestPayment": "Accepteren & betaalmethode vragen",
     "requestPaymentSending": "Versturen…",
     "requestPaymentSent": "Klant geïnformeerd — wachten op betaalmethode",
-    "requestPaymentFailed": "Het betalingsverzoek kon niet worden verzonden. Probeer het opnieuw."
+    "requestPaymentFailed": "Het betalingsverzoek kon niet worden verzonden. Probeer het opnieuw.",
+    "availabilityTitle": "Kom je nog?",
+    "availabilityBody": "Bevestig dat je nog beschikbaar bent voor deze klus. Als je niet op tijd bevestigt, gaat de klus naar een andere schoonmaker zodat de klant niet blijft wachten.",
+    "availabilityButton": "Ja, ik kom nog",
+    "availabilitySaving": "Bevestigen…",
+    "availabilityDone": "Bedankt — je klant verwacht je.",
+    "availabilityFailed": "Bevestigen is mislukt. Probeer het opnieuw."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Markeren als voltooid mislukt",

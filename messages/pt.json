@@ -1164,7 +1164,13 @@
     "acceptRequestPayment": "Aceitar e pedir método de pagamento",
     "requestPaymentSending": "A enviar…",
     "requestPaymentSent": "Cliente avisado — à espera do método de pagamento",
-    "requestPaymentFailed": "Não foi possível enviar o pedido de pagamento. Tente novamente."
+    "requestPaymentFailed": "Não foi possível enviar o pedido de pagamento. Tente novamente.",
+    "availabilityTitle": "Ainda vem?",
+    "availabilityBody": "Confirme que continua disponível para este trabalho. Se não confirmar a tempo, será entregue a outra pessoa para que o cliente não fique à espera.",
+    "availabilityButton": "Sim, ainda vou",
+    "availabilitySaving": "A confirmar…",
+    "availabilityDone": "Obrigado — o seu cliente está à sua espera.",
+    "availabilityFailed": "Não foi possível confirmar. Tente novamente."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Falha ao marcar como concluído",

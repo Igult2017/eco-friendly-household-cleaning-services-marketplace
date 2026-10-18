@@ -115,6 +115,17 @@ export async function getIdentityCheckHours(): Promise<number> {
   return getIntSetting("identity_check_hours", 12, 1, 72)
 }
 
+// How many hours before a job we ask a cleaner to confirm they are still coming.
+export async function getAvailabilityCheckHours(): Promise<number> {
+  return getIntSetting("availability_check_hours", 6, 1, 48)
+}
+
+// How long the cleaner then has to answer before the job is reassigned. Kept short on purpose: the
+// point is to find a replacement while there is still time, not to be fair to a silent cleaner.
+export async function getAvailabilityGraceHours(): Promise<number> {
+  return getIntSetting("availability_grace_hours", 1, 1, 12)
+}
+
 // Admin-set shortest booking anyone can make, in minutes. Applies to BOTH ways work is arranged —
 // booking a cleaner directly and posting a job for bids — so a client cannot route around it by
 // using the other path. Default 120 (2 hours): shorter visits are not worth a cleaner's travel.

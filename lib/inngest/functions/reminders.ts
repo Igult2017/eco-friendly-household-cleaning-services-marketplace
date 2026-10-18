@@ -4,8 +4,15 @@ import { bookings, users, providers, notifications } from "@/lib/db/schema"
 import { eq, and, sql } from "drizzle-orm"
 import { resend, FROM } from "@/lib/resend/client"
 import { reminderTomorrowEmail } from "@/lib/resend/transactionalEmails"
-import { startingSoonEmail, deadlineSoonEmail } from "@/lib/resend/activityEmails"
-import { getDeadlineWarningHours, getReminderHoursBefore } from "@/lib/platform/settings"
+import { startingSoonEmail, deadlineSoonEmail, confirmAvailabilityEmail } from "@/lib/resend/activityEmails"
+import {
+  getDeadlineWarningHours,
+  getReminderHoursBefore,
+  getAvailabilityCheckHours,
+  getAvailabilityGraceHours,
+} from "@/lib/platform/settings"
+import { attemptReassign } from "@/lib/bookings/reassign"
+import { alertAdmins } from "@/lib/notifications/adminAlert"
 import { SITE_URL } from "@/lib/seo/site"
 
 const ACTIVE = ["payment_authorized", "confirmed", "in_progress", "pending_capture"]
@@ -125,6 +132,91 @@ export const bookingReminders = inngest.createFunction(
           })
         }
       })
+    }
+
+    // ── "Are you still coming?" ───────────────────────────────────────────────────────────────
+    // A client being stood up is the worst outcome on this platform, and the warning sign is a
+    // cleaner who has gone quiet. Hours before the job we ask any SILENT cleaner to confirm, and if
+    // they do not answer within the grace window the job is handed to someone else automatically —
+    // while there is still time to find anyone at all.
+    //
+    // Placed before the starting-soon block because it happens EARLIER, and these steps run in
+    // order: a sleepUntil that has already passed would fire immediately and run out of sequence.
+    const askHours = await step.run("fetch-availability-hours", getAvailabilityCheckHours)
+    const graceHours = await step.run("fetch-availability-grace", getAvailabilityGraceHours)
+    const askAt = new Date(scheduledMs - askHours * 3_600_000)
+    const enforceAt = new Date(askAt.getTime() + graceHours * 3_600_000)
+
+    if (askAt > new Date()) {
+      await step.sleepUntil("until-availability-check", askAt)
+      const asked = await step.run("ask-still-available", async () => {
+        if (!(await stillValid())) return { asked: false }
+        if (!provider) return { asked: false }
+
+        // Only SILENT cleaners are asked. Someone who has opened the app within the window plainly
+        // knows about the job, and emailing them before every booking would train them to ignore it.
+        const [p] = await db
+          .select({ lastActiveAt: providers.lastActiveAt })
+          .from(providers)
+          .where(eq(providers.id, providerId))
+        const seenRecently =
+          !!p?.lastActiveAt && new Date(p.lastActiveAt).getTime() > Date.now() - askHours * 3_600_000
+        if (seenRecently) return { asked: false, reason: "active_recently" }
+
+        await db.update(bookings).set({ availabilityAskedAt: new Date() }).where(eq(bookings.id, bookingId))
+
+        const [pu] = await db
+          .select({ email: users.email, locale: users.locale })
+          .from(users)
+          .where(eq(users.id, provider.userId))
+
+        await insertReminder({
+          userId: provider.userId, bookingId, tag: "availability", variant: "booking_reminder_provider",
+          datetime: fmtTz("en-GB"), link: `/provider/bookings`,
+          title: "Are you still coming?",
+          body: `Please confirm you are still available for the cleaning at ${fmtTz("en-GB")}. If you do not confirm within ${graceHours} hour${graceHours === 1 ? "" : "s"}, the job will be given to another cleaner.`,
+        })
+
+        // Sent even if they have opted out of reminder emails: this one is not a reminder, it is
+        // "answer or lose the job", and losing work without being told would be worse.
+        if (pu?.email) {
+          const { subject, html } = confirmAvailabilityEmail(pu.locale, {
+            number: bookingNumber,
+            address: addr,
+            scheduled: fmtTz(pu.locale ?? "en-GB"),
+            hours: askHours,
+            grace: graceHours,
+            url: `${SITE_URL}/provider/bookings`,
+          })
+          await resend.emails.send({ from: FROM, to: pu.email, subject, html })
+        }
+        return { asked: true }
+      })
+
+      // Only wait out the grace window if we actually asked.
+      if (asked?.asked) {
+        await step.sleepUntil("until-availability-grace", enforceAt)
+        await step.run("reassign-if-unconfirmed", async () => {
+          const [b2] = await db
+            .select({ confirmedAt: bookings.availabilityConfirmedAt, status: bookings.status })
+            .from(bookings)
+            .where(eq(bookings.id, bookingId))
+          // Confirmed, or the booking moved on by itself → nothing to do.
+          if (!b2 || b2.confirmedAt || !ACTIVE.includes(b2.status)) return { skipped: true }
+
+          const res = await attemptReassign(bookingId, { keepOriginalSlot: true, reason: "unconfirmed" })
+          if (!res.ok) {
+            // Nobody could take it. The client keeps their booking rather than being cancelled on;
+            // a human is told so they can chase the cleaner or stand the job down.
+            await alertAdmins(
+              `Cleaner unreachable — ${bookingNumber}`,
+              `The cleaner for ${bookingNumber} did not confirm they were still coming, and no replacement could be found (${res.reason}). The job starts at ${fmtTz("en-GB")} and the client still expects someone.`,
+              `/admin/bookings`,
+            )
+          }
+          return { reassigned: res.ok, reason: res.reason }
+        })
+      }
     }
 
     if (startingSoonAt > new Date()) {

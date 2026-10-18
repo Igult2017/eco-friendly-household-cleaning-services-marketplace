@@ -1164,7 +1164,13 @@
     "acceptRequestPayment": "Annehmen & Zahlungsmethode anfordern",
     "requestPaymentSending": "Wird gesendet…",
     "requestPaymentSent": "Kunde benachrichtigt — warte auf die Zahlungsmethode",
-    "requestPaymentFailed": "Die Zahlungsanfrage konnte nicht gesendet werden. Bitte versuche es erneut."
+    "requestPaymentFailed": "Die Zahlungsanfrage konnte nicht gesendet werden. Bitte versuche es erneut.",
+    "availabilityTitle": "Kommst du noch?",
+    "availabilityBody": "Bestätige, dass du für diesen Auftrag noch verfügbar bist. Ohne rechtzeitige Bestätigung wird er an eine andere Reinigungskraft vergeben, damit die Kundschaft nicht wartet.",
+    "availabilityButton": "Ja, ich komme",
+    "availabilitySaving": "Wird bestätigt…",
+    "availabilityDone": "Danke — deine Kundschaft erwartet dich.",
+    "availabilityFailed": "Bestätigung fehlgeschlagen. Bitte versuche es erneut."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Als abgeschlossen markieren fehlgeschlagen",

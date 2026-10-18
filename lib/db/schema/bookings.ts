@@ -92,6 +92,11 @@ export const bookings = pgTable(
     // nearby. Deliberately a timestamp rather than a new booking status — the status enum would need
     // a migration, and this production journal is drifted (see the ensure-script).
     identityCheckDueAt: timestamp("identity_check_due_at", { withTimezone: true }),
+    // Hours before the job we ask a silent cleaner to confirm they are still coming. `asked` is set
+    // when we ask, `confirmed` when they say yes. Asked but not confirmed by the grace deadline =
+    // the client would be stood up, so the job is reassigned automatically.
+    availabilityAskedAt: timestamp("availability_asked_at", { withTimezone: true }),
+    availabilityConfirmedAt: timestamp("availability_confirmed_at", { withTimezone: true }),
     // Overdue tracking — cleaner loses 5%/day (late_penalty_amount) once past the scheduled end.
     overdueSince: timestamp("overdue_since", { withTimezone: true }),
     overdueEscalatedAt: timestamp("overdue_escalated_at", { withTimezone: true }),

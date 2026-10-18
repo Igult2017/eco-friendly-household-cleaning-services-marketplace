@@ -39,7 +39,7 @@ export async function attemptReassign(
      */
     keepOriginalSlot?: boolean
     /** Why the swap happened — decides what the client and the old cleaner are told. */
-    reason?: "overdue" | "identity"
+    reason?: "overdue" | "identity" | "unconfirmed"
   } = {},
 ): Promise<{ ok: boolean; newBookingId?: string; reason?: string }> {
   const [b] = await db
@@ -191,13 +191,20 @@ export async function attemptReassign(
   // happened and why, because a silent change of the person entering their home is worse than an
   // uncomfortable explanation.
   const identity = opts.reason === "identity"
+  const unconfirmed = opts.reason === "unconfirmed"
   await db.insert(notifications).values({
     userId: b.customerId,
     type: "booking_rescheduled",
-    title: identity ? "Your cleaner has been changed for your safety" : "Booking reassigned",
+    title: identity
+      ? "Your cleaner has been changed for your safety"
+      : unconfirmed
+        ? "Your cleaner has been changed"
+        : "Booking reassigned",
     body: identity
       ? `The cleaner you booked did not verify their identity, so for your safety the job has been given to ${chosen.businessName}, whose identity we have confirmed. Your time is unchanged and you have not been charged anything extra.`
-      : `Your overdue booking has been reassigned to ${chosen.businessName}.`,
+      : unconfirmed
+        ? `We could not reach the cleaner you booked to confirm they were still coming, so rather than risk nobody arriving we have given the job to ${chosen.businessName}. Your time is unchanged and you have not been charged anything extra.`
+        : `Your overdue booking has been reassigned to ${chosen.businessName}.`,
     link: `/bookings/${nb.id}`,
     metadata: { variant: "booking_reassigned_client" },
   })
@@ -206,10 +213,16 @@ export async function attemptReassign(
     await db.insert(notifications).values({
       userId: origProv.userId,
       type: "booking_cancelled",
-      title: identity ? "Job removed — identity not verified" : "Booking removed",
+      title: identity
+        ? "Job removed — identity not verified"
+        : unconfirmed
+          ? "Job removed — you did not confirm"
+          : "Booking removed",
       body: identity
         ? "This job has been given to another cleaner because your identity was not verified in time. Verify your identity and you can take jobs again."
-        : "An overdue booking was removed and reassigned to another cleaner.",
+        : unconfirmed
+          ? "We asked you to confirm you were still coming and did not hear back in time, so this job has been given to another cleaner. Keep an eye on your notifications so this does not happen again."
+          : "An overdue booking was removed and reassigned to another cleaner.",
       link: "/provider/bookings",
       metadata: { variant: "booking_reassigned_away" },
     })

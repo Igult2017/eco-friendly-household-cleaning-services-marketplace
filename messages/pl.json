@@ -1164,7 +1164,13 @@
     "acceptRequestPayment": "Przyjmij i poproś o metodę płatności",
     "requestPaymentSending": "Wysyłanie…",
     "requestPaymentSent": "Klient powiadomiony — oczekiwanie na metodę płatności",
-    "requestPaymentFailed": "Nie udało się wysłać prośby o płatność. Spróbuj ponownie."
+    "requestPaymentFailed": "Nie udało się wysłać prośby o płatność. Spróbuj ponownie.",
+    "availabilityTitle": "Czy nadal przyjdziesz?",
+    "availabilityBody": "Potwierdź, że nadal jesteś dostępny do tego zlecenia. Jeśli nie potwierdzisz w czasie, zostanie ono przekazane innej osobie, aby klient nie czekał.",
+    "availabilityButton": "Tak, nadal przyjdę",
+    "availabilitySaving": "Potwierdzanie…",
+    "availabilityDone": "Dziękujemy — klient na Ciebie czeka.",
+    "availabilityFailed": "Nie udało się potwierdzić. Spróbuj ponownie."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Nie udało się oznaczyć jako ukończone",

@@ -1164,7 +1164,13 @@
     "acceptRequestPayment": "Accepter et demander un moyen de paiement",
     "requestPaymentSending": "Envoi…",
     "requestPaymentSent": "Client averti — en attente de son moyen de paiement",
-    "requestPaymentFailed": "Impossible d'envoyer la demande de paiement. Veuillez réessayer."
+    "requestPaymentFailed": "Impossible d'envoyer la demande de paiement. Veuillez réessayer.",
+    "availabilityTitle": "Venez-vous toujours ?",
+    "availabilityBody": "Confirmez que vous êtes toujours disponible pour cette mission. Sans confirmation à temps, elle sera confiée à un autre nettoyeur afin que le client ne reste pas sans personne.",
+    "availabilityButton": "Oui, je viens toujours",
+    "availabilitySaving": "Confirmation…",
+    "availabilityDone": "Merci — votre client vous attend.",
+    "availabilityFailed": "Confirmation impossible. Veuillez réessayer."
   },
   "providerProviderBookingsIdCompletePage": {
     "errorMarkComplete": "Échec du marquage comme terminé",
