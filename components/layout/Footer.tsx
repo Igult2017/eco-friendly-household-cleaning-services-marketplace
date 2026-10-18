@@ -4,6 +4,7 @@ import { Leaf } from "lucide-react"
 import { getTranslations } from "next-intl/server"
 import { CookieSettingsButton } from "@/components/gdpr/CookieSettingsButton"
 import { SOCIAL_LINKS } from "@/components/layout/SocialIcons"
+import { CONTACT_EMAIL, SUPPORT_EMAIL } from "@/lib/seo/site"
 
 const SECTIONS = [
   {
@@ -70,6 +71,23 @@ export async function Footer() {
                   <Icon className="w-[18px] h-[18px]" />
                 </a>
               ))}
+            </div>
+            {/* Plain mailto links, deliberately not translated: an address is the same in every
+                language, and routing it through the message files would let a translation silently
+                change where mail goes. */}
+            <div className="mt-4 flex flex-col gap-1">
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                className="text-sm text-white/50 hover:text-white transition-colors"
+              >
+                {CONTACT_EMAIL}
+              </a>
+              <a
+                href={`mailto:${SUPPORT_EMAIL}`}
+                className="text-sm text-white/50 hover:text-white transition-colors"
+              >
+                {SUPPORT_EMAIL}
+              </a>
             </div>
           </div>
           {SECTIONS.map(({ key, links }) => (

@@ -1,7 +1,7 @@
 // schema.org JSON-LD builders. Structured data is read by Google for rich
 // results AND by AI answer engines (ChatGPT, Perplexity, Gemini) to understand
 // and cite the site — so it doubles as our AI-search (GEO) layer.
-import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, absoluteUrl } from "./site"
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, absoluteUrl, SOCIAL_PROFILES, CONTACT_EMAIL, SUPPORT_EMAIL } from "./site"
 
 type Json = Record<string, unknown>
 
@@ -20,6 +20,21 @@ export function organizationSchema(): Json {
     description: SITE_DESCRIPTION,
     slogan: "Clean Home. Green Future.",
     areaServed: ["Europe", "United States"],
+    // The brand's own profiles. `sameAs` is how a search or answer engine confirms that this site
+    // and those accounts are one organisation — which is the weak link behind the brand-query
+    // problem, since "Dorix" collides with established names. Canonical profile URLs only, never
+    // share links with tracking parameters.
+    sameAs: [SOCIAL_PROFILES.facebook, SOCIAL_PROFILES.instagram, SOCIAL_PROFILES.linkedin, SOCIAL_PROFILES.tiktok],
+    email: CONTACT_EMAIL,
+    contactPoint: [
+      {
+        "@type": "ContactPoint",
+        contactType: "customer support",
+        email: SUPPORT_EMAIL,
+        availableLanguage: ["en", "de", "fr", "es", "it", "nl", "pl", "pt"],
+      },
+      { "@type": "ContactPoint", contactType: "sales", email: CONTACT_EMAIL },
+    ],
   }
 }
 

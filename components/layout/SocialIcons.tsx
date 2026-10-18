@@ -1,4 +1,5 @@
 import type { SVGProps } from "react"
+import { SOCIAL_PROFILES } from "@/lib/seo/site"
 
 // Official brand marks, not lookalikes — the previous versions were hand-drawn in lucide's outline
 // style and read as generic shapes rather than the companies they stand for (the TikTok one was an
@@ -63,10 +64,12 @@ function TiktokIcon(props: SVGProps<SVGSVGElement>) {
   )
 }
 
-// hrefs are placeholders until real profile URLs are provided — swap them here, nowhere else.
+// The URLs themselves live in lib/seo/site.ts, because the same profiles are also published in the
+// Organization structured data (`sameAs`) that search engines and AI answer engines read. Keeping
+// one source means the footer links and the machine-readable identity can never disagree.
 export const SOCIAL_LINKS = [
-  { key: "facebook", label: "Facebook", href: "#", Icon: FacebookIcon },
-  { key: "instagram", label: "Instagram", href: "#", Icon: InstagramIcon },
-  { key: "linkedin", label: "LinkedIn", href: "#", Icon: LinkedinIcon },
-  { key: "tiktok", label: "TikTok", href: "#", Icon: TiktokIcon },
+  { key: "facebook", label: "Facebook", href: SOCIAL_PROFILES.facebook, Icon: FacebookIcon },
+  { key: "instagram", label: "Instagram", href: SOCIAL_PROFILES.instagram, Icon: InstagramIcon },
+  { key: "linkedin", label: "LinkedIn", href: SOCIAL_PROFILES.linkedin, Icon: LinkedinIcon },
+  { key: "tiktok", label: "TikTok", href: SOCIAL_PROFILES.tiktok, Icon: TiktokIcon },
 ] as const
