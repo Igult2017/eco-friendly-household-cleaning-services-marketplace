@@ -92,6 +92,29 @@ export async function readIdentityCheck(sessionId: string) {
 }
 
 /**
+ * True when Stripe is refusing because Identity is not switched on for the account at all.
+ *
+ * Stripe Identity is a SEPARATE product that an account admin has to enable; until then every
+ * attempt to start a check fails with "Your account is not set up to use Identity". That is not a
+ * bug in this code and not the cleaner's fault, but both were previously reported as a generic
+ * "could not start" — which is indistinguishable from a real fault and sent us hunting.
+ *
+ * Matched on the message because Stripe returns this as a plain invalid_request_error with no
+ * distinguishing code of its own. Deliberately broad: a false positive just produces a clearer
+ * message, while a false negative hides the one thing the reader needs to know.
+ */
+export function isIdentityNotEnabled(err: unknown): boolean {
+  const msg = err instanceof Error ? err.message : String(err ?? "")
+  return /not set up to use Identity|identity\/application/i.test(msg)
+}
+
+/** What to tell an account admin, including where to go. */
+export const IDENTITY_NOT_ENABLED_ADMIN_MESSAGE =
+  "Stripe Identity is not switched on for this account yet, so no identity check can start. " +
+  "An account admin needs to enable it at https://dashboard.stripe.com/identity/application — " +
+  "it takes a couple of minutes, and nothing else here needs changing."
+
+/**
  * Turn Stripe's failure code into something a cleaner can act on.
  *
  * Stripe's codes are precise but not addressed to the person who has to fix it — "selfie_face_mismatch"

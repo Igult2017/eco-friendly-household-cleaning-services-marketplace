@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server"
 import { requireAdmin } from "@/lib/auth/requireAdmin"
-import { createIdentityCheck, readIdentityCheck, explainIdentityFailure } from "@/lib/stripe/identity"
+import {
+  createIdentityCheck, readIdentityCheck, explainIdentityFailure,
+  isIdentityNotEnabled, IDENTITY_NOT_ENABLED_ADMIN_MESSAGE,
+} from "@/lib/stripe/identity"
 import { logError } from "@/lib/utils/logError"
 
 /**
@@ -28,6 +31,17 @@ export async function POST() {
 
     return NextResponse.json({ clientSecret: check.clientSecret, sessionId: check.id })
   } catch (err) {
+    // Say WHY when Stripe gives a reason the reader can act on. The generic "could not start"
+    // this used to return was indistinguishable from a real fault, and cost real time hunting a
+    // bug that did not exist — the product simply was not switched on.
+    if (isIdentityNotEnabled(err)) {
+      void logError({
+        message: "[admin/identity-test] Stripe Identity is not enabled on this account",
+        error: err, route: "/api/admin/identity-test", severity: "warning",
+      })
+      return NextResponse.json({ error: IDENTITY_NOT_ENABLED_ADMIN_MESSAGE, setupRequired: true }, { status: 409 })
+    }
+
     console.error("[admin/identity-test POST]", err)
     void logError({
       message: "[admin/identity-test POST]",

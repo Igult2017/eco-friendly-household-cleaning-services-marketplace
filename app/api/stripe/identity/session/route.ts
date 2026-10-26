@@ -3,7 +3,11 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { providers, providerIdentityVerifications, bookings } from "@/lib/db/schema"
 import { and, eq } from "drizzle-orm"
-import { createIdentityCheck, MAX_IDENTITY_ATTEMPTS } from "@/lib/stripe/identity"
+import {
+  createIdentityCheck, MAX_IDENTITY_ATTEMPTS,
+  isIdentityNotEnabled, IDENTITY_NOT_ENABLED_ADMIN_MESSAGE,
+} from "@/lib/stripe/identity"
+import { alertAdmins } from "@/lib/notifications/adminAlert"
 import { stripe } from "@/lib/stripe/client"
 import { clearIdentityHold } from "@/lib/bookings/identityGate"
 import { isUuid } from "@/lib/utils/uuid"
@@ -13,9 +17,13 @@ import { logError } from "@/lib/utils/logError"
 // needs. Returns a client_secret rather than a hosted URL on purpose: the check opens over the
 // cleaner's own job page, so they never leave DORIXÉ.
 export async function POST(req: Request) {
+  // Held outside the try so the error handler can still identify the cleaner — it needs to release
+  // their hold when the failure is the platform's fault rather than theirs.
+  let signedInUserId: string | null = null
   try {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    signedInUserId = userId
 
     const [provider] = await db
       .select({ id: providers.id, verificationStatus: providers.verificationStatus })
@@ -104,6 +112,39 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ clientSecret: check.clientSecret })
   } catch (err) {
+    // Stripe Identity is not switched on for the platform's own account. The cleaner has done
+    // nothing wrong and can do nothing about it — so do NOT leave them holding a deadline they
+    // cannot possibly meet, which would hand their job to someone else (who would hit the same
+    // wall). Release the hold, tell them plainly, and put it in front of an admin, who is the only
+    // person who can fix it.
+    if (isIdentityNotEnabled(err)) {
+      void logError({
+        message: "[stripe/identity/session] Stripe Identity is not enabled — releasing the cleaner's hold",
+        error: err, route: "/api/stripe/identity/session", severity: "critical",
+      })
+
+      try {
+        if (signedInUserId) {
+          const [prov] = await db.select({ id: providers.id }).from(providers).where(eq(providers.userId, signedInUserId))
+          if (prov) await clearIdentityHold(prov.id)
+        }
+      } catch { /* the message below still matters even if releasing failed */ }
+
+      await alertAdmins(
+        "Identity checks cannot run — Stripe Identity is not enabled",
+        `${IDENTITY_NOT_ENABLED_ADMIN_MESSAGE} A cleaner has just tried to verify and could not. Their job has been released from the check so they do not lose it, but NOBODY can verify until this is switched on.`,
+        "/admin/settings",
+      ).catch(() => {})
+
+      return NextResponse.json(
+        {
+          error: "Identity checks aren't available right now — this is on our side, not yours. We've alerted the team, and your job is safe in the meantime.",
+          setupRequired: true,
+        },
+        { status: 503 },
+      )
+    }
+
     console.error("[stripe/identity/session POST]", err)
     void logError({
       message: "[stripe/identity/session POST]",

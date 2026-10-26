@@ -94,3 +94,37 @@ describe("an attempt is spent on a SUBMITTED check, never on opening the pop-up"
     expect(spend([null, "document_expired", null])).toBe(1)
   })
 })
+
+// ---------------------------------------------------------------------------------------------
+// Recognising that Stripe Identity is not switched on at all. Mirrors isIdentityNotEnabled.
+// ---------------------------------------------------------------------------------------------
+describe("'Identity is not switched on' is recognised and said out loud", () => {
+  // The real message Stripe returned in production on 2026-10-26, copied verbatim from error_logs.
+  const REAL = "Your account is not set up to use Identity. Please have an account admin visit https://dashboard.stripe.com/identity/application to get started."
+
+  const looksLikeNotEnabled = (msg: string) => /not set up to use Identity|identity\/application/i.test(msg)
+
+  it("recognises the exact message Stripe actually sent", () => {
+    // Reported as a generic "could not start", which is indistinguishable from a real fault — and
+    // sent us hunting a bug that did not exist. The product simply was not enabled.
+    expect(looksLikeNotEnabled(REAL)).toBe(true)
+  })
+
+  it("does not mistake an ordinary check failure for a missing product", () => {
+    for (const other of [
+      "The document has expired.",
+      "selfie_face_mismatch",
+      "No such verification session: vs_123",
+      "Request timed out",
+    ]) {
+      expect(looksLikeNotEnabled(other)).toBe(false)
+    }
+  })
+
+  it("still recognises it if Stripe reworded half the sentence", () => {
+    // Matched on two independent fragments on purpose: a false positive only produces a clearer
+    // message, while a false negative hides the one thing the reader needs to know.
+    expect(looksLikeNotEnabled("Visit https://dashboard.stripe.com/identity/application to begin")).toBe(true)
+    expect(looksLikeNotEnabled("This account is NOT SET UP TO USE IDENTITY")).toBe(true)
+  })
+})
