@@ -14,13 +14,17 @@ import { SettingsManual } from "@/components/admin/settings/SettingsManual"
 
 export default function AdminSettingsPage() {
   const [cfg, setCfg]         = useState<Config>({})
+  // What the server last confirmed. Kept alongside the edited copy so a section can say plainly
+  // "you changed this but haven't saved it" — clicking a control changes nothing on its own, and
+  // leaving the admin to guess whether it took is how a setting gets silently not applied.
+  const [savedCfg, setSavedCfg] = useState<Config>({})
   const [loading, setLoading] = useState(true)
   const [saving, setSaving]   = useState(false)
 
   useEffect(() => {
     fetch("/api/admin/settings")
       .then(r => r.ok ? r.json() : {})
-      .then(setCfg)
+      .then((loaded: Config) => { setCfg(loaded); setSavedCfg(loaded) })
       .catch(console.error)
       .finally(() => setLoading(false))
   }, [])
@@ -63,6 +67,8 @@ export default function AdminSettingsPage() {
         body: JSON.stringify(payload),
       })
       if (res.ok) {
+        // Only now is the edited copy the saved one — this clears the "not saved yet" markers.
+        setSavedCfg(cfg)
         toast.success("Settings saved")
       } else {
         const d = await res.json().catch(() => ({}))
@@ -105,7 +111,7 @@ export default function AdminSettingsPage() {
         <MoneySection cfg={cfg} set={set} />
         <ReferralSection cfg={cfg} set={set} />
         <OperationsSection cfg={cfg} set={set} />
-        <IdentitySection cfg={cfg} set={set} />
+        <IdentitySection cfg={cfg} set={set} savedCfg={savedCfg} />
       </div>
 
       <button
