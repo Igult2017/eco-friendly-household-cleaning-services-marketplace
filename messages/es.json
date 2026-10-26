@@ -2056,7 +2056,8 @@
     "thu": "Jue",
     "fri": "Vie",
     "sat": "Sáb",
-    "sun": "Dom"
+    "sun": "Dom",
+    "plannedLegend": "Las fechas punteadas son limpiezas periódicas futuras. Cada una se confirma y se cobra el día anterior."
   },
   "providerMessagesPage": {
     "heading": "Mensajes",

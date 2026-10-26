@@ -2056,7 +2056,8 @@
     "thu": "Gio",
     "fri": "Ven",
     "sat": "Sab",
-    "sun": "Dom"
+    "sun": "Dom",
+    "plannedLegend": "Le date tratteggiate sono pulizie ricorrenti in arrivo. Ognuna viene confermata e addebitata il giorno prima."
   },
   "providerMessagesPage": {
     "heading": "Messaggi",

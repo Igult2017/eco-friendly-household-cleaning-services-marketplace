@@ -19,7 +19,14 @@ async function generateBookingNumber(): Promise<string> {
   return `BK-${new Date().getFullYear()}-${String(seq).padStart(6, "0")}`
 }
 
-function addFrequencyInTZ(date: Date, frequency: "weekly" | "biweekly" | "monthly", timezone: string): Date {
+/**
+ * The next date in a recurring series.
+ *
+ * EXPORTED because the calendar projects future dates from it (lib/bookings/recurringProjection.ts).
+ * Re-implementing this there would let the calendar drift from the bookings that actually get
+ * created — the dates shown would be the ones nobody is ever charged for.
+ */
+export function addFrequencyInTZ(date: Date, frequency: "weekly" | "biweekly" | "monthly", timezone: string): Date {
   if (frequency === "weekly")   return new Date(date.getTime() + 7 * 86_400_000)
   if (frequency === "biweekly") return new Date(date.getTime() + 14 * 86_400_000)
 

@@ -2056,7 +2056,8 @@
     "thu": "Czw",
     "fri": "Pt",
     "sat": "Sob",
-    "sun": "Niedz"
+    "sun": "Niedz",
+    "plannedLegend": "Daty przerywane to zaplanowane kolejne sprzątania. Każde jest potwierdzane i rozliczane dzień wcześniej."
   },
   "providerMessagesPage": {
     "heading": "Wiadomości",

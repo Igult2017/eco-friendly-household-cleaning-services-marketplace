@@ -5,6 +5,7 @@ import { and, eq, inArray, isNotNull, isNull, lte, ne } from "drizzle-orm"
 import { attemptReassign } from "@/lib/bookings/reassign"
 import { requireIdentityOnAward } from "@/lib/bookings/identityGate"
 import { refreshIdentityStatus } from "@/lib/stripe/identityStatus"
+import { getIdentityEnabled } from "@/lib/platform/settings"
 import { alertAdmins } from "@/lib/notifications/adminAlert"
 import { SITE_URL } from "@/lib/seo/site"
 
@@ -117,6 +118,14 @@ async function reconcileMissingHolds(): Promise<number> {
 export const identityDeadlineSweep = inngest.createFunction(
   { id: "identity-deadline-sweep", retries: 1, triggers: [{ cron: "15 * * * *" }] },
   async ({ step }: { step: any }) => {
+    // Identity checks switched off: do nothing at all. Holds already written stay in the database
+    // harmlessly (isAwaitingIdentity ignores them while the feature is off), but this sweep must
+    // not act on them — taking a job away from a cleaner moves money and changes who walks into a
+    // client's home, and doing that over a requirement the admin has withdrawn would be indefensible.
+    if (!(await step.run("is-identity-enabled", getIdentityEnabled))) {
+      return { checked: 0, repaired: 0, disabled: true }
+    }
+
     // Repair first, so a booking whose hold never saved is gated from this hour on rather than
     // waiting for someone to notice. It cannot make this run act on those bookings: their fresh
     // deadline is in the future, and the sweep below only looks at ones already past due.
@@ -142,6 +151,13 @@ export const onIdentityFailed = inngest.createFunction(
   { id: "identity-failed", retries: 2, triggers: [{ event: "identity/failed" }] },
   async ({ event, step }: { event: { data: { providerId: string } }; step: any }) => {
     const { providerId } = event.data
+
+    // Same rule as the hourly sweep: with identity checks switched off, a failed check is not a
+    // reason to take anyone's work away. The event can still be in flight from before the switch.
+    if (!(await step.run("is-identity-enabled", getIdentityEnabled))) {
+      return { reassigned: 0, disabled: true }
+    }
+
     const jobs = await step.run("find-this-cleaners-held-jobs", async () =>
       // Not past-due: their attempts are gone, so the clock no longer matters.
       heldJobs({ pastDueOnly: false, onlyProviderId: providerId }),

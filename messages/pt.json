@@ -2056,7 +2056,8 @@
     "thu": "Qui",
     "fri": "Sex",
     "sat": "Sáb",
-    "sun": "Dom"
+    "sun": "Dom",
+    "plannedLegend": "As datas a tracejado são limpezas recorrentes futuras. Cada uma é confirmada e cobrada no dia anterior."
   },
   "providerMessagesPage": {
     "heading": "Mensagens",

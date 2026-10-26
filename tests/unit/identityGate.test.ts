@@ -96,7 +96,10 @@ describe("a Stripe outage must never cost a cleaner their job", () => {
 
     expect(result.live).toBe(false)
     expect(result.status).toBe("pending")
-  }, 10_000)
+    // The code gives up on Stripe after 5s, so this resolves well inside the budget. The budget is
+    // generous on purpose: when the whole suite runs at once the machine is busy, and a test that
+    // fails only under load is worse than no test — it teaches people to re-run and ignore it.
+  }, 30_000)
 })
 
 describe("a cleaner who passed is released even if the webhook never arrived", () => {

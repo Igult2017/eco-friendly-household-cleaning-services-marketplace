@@ -2056,7 +2056,8 @@
     "thu": "Jeu",
     "fri": "Ven",
     "sat": "Sam",
-    "sun": "Dim"
+    "sun": "Dim",
+    "plannedLegend": "Les dates en pointillés sont des ménages récurrents à venir. Chacun est confirmé — et facturé — la veille."
   },
   "providerMessagesPage": {
     "heading": "Messages",

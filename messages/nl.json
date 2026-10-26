@@ -2056,7 +2056,8 @@
     "thu": "do",
     "fri": "vr",
     "sat": "za",
-    "sun": "zo"
+    "sun": "zo",
+    "plannedLegend": "Gestippelde data zijn geplande herhaalbeurten. Elke beurt wordt de dag ervoor bevestigd en in rekening gebracht."
   },
   "providerMessagesPage": {
     "heading": "Berichten",

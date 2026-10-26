@@ -23,6 +23,8 @@ export interface Config {
   client_referral_discount_pct?:   string
   recurring_discount_pct?:         string
   min_hourly_rate_cents?:          string
+  identity_enabled?:               string
+  identity_mode?:                  string
 }
 
 export type SetFn = (key: keyof Config, val: string) => void
@@ -62,6 +64,15 @@ export const NUMERIC_KEYS: (keyof Config)[] = [
   "cancel_travel_comp_cents", "cancel_noshow_grace_minutes",
   "referral_reward_cents", "referral_cleaner_jobs_required", "referral_client_jobs_required",
   "client_referral_discount_pct", "recurring_discount_pct",
+]
+
+// Settings whose value is a WORD, not a number. save() sends these verbatim. Listed rather than
+// hard-coded one at a time, so adding another text setting is one entry here instead of another
+// special case in save() that someone has to remember to write.
+export const TEXT_KEYS: (keyof Config)[] = [
+  "payout_schedule",
+  "identity_enabled",
+  "identity_mode",
 ]
 
 // Scrolling the page while the mouse happens to rest over a focused number field silently changes

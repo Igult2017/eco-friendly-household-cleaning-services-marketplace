@@ -2056,7 +2056,8 @@
     "thu": "Thu",
     "fri": "Fri",
     "sat": "Sat",
-    "sun": "Sun"
+    "sun": "Sun",
+    "plannedLegend": "Dashed dates are repeat cleanings still to come. They're confirmed — and charged — the day before each one."
   },
   "providerMessagesPage": {
     "heading": "Messages",

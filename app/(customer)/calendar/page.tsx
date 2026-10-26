@@ -7,6 +7,7 @@ import { db } from "@/lib/db"
 import { bookings, providers, providerServices } from "@/lib/db/schema"
 import { eq, and, gte, inArray, desc } from "drizzle-orm"
 import { ProviderCalendar } from "@/components/provider/ProviderCalendar"
+import { projectRecurringDates } from "@/lib/bookings/recurringProjection"
 
 export default async function CustomerCalendarPage() {
   const { userId } = await auth()
@@ -54,13 +55,32 @@ export default async function CustomerCalendarPage() {
     }
   })
 
+  // Recurring cleanings are only turned into real bookings one day before they happen, so without
+  // this a client who booked twice-weekly saw ONE upcoming date instead of the series. These are
+  // projected, never booked — nothing is charged for a date drawn here.
+  const planned = await projectRecurringDates({
+    customerId: userId,
+    excludeTimes: rows.map((b) => new Date(b.scheduledAt)),
+  }).catch(() => [])
+
+  const plannedEvents = planned.map((p) => {
+    const [y, mo, day] = p.at.toLocaleDateString("en-CA", { timeZone: p.timezone }).split("-").map(Number)
+    return {
+      id: `planned-${p.scheduleId}-${p.at.getTime()}`,
+      y, m: mo - 1, d: day,
+      label: p.label ?? t("booking"),
+      time: p.at.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", timeZone: p.timezone }),
+      status: "planned",
+    }
+  })
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="font-serif text-3xl font-bold text-[#2B3441]">{t("heading")}</h1>
         <p className="text-sm text-[#6B7280] mt-1">{t("subheading")}</p>
       </div>
-      <ProviderCalendar events={events} linkBase="/bookings" perEvent />
+      <ProviderCalendar events={[...events, ...plannedEvents]} linkBase="/bookings" perEvent />
     </div>
   )
 }

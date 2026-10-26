@@ -15,6 +15,9 @@ const STATUS_CLS: Record<string, string> = {
   pending_capture: "bg-blue-100 text-blue-700",
   cancelled: "bg-red-50 text-red-500 line-through",
   disputed: "bg-red-100 text-red-700",
+  // A repeat cleaning that is coming but has not been booked yet — the booking (and the charge) is
+  // only created the day before. Dashed and muted so it never reads as a confirmed job.
+  planned: "border border-dashed border-[#9CA3AF] bg-transparent text-[#6B7280]",
 }
 
 const WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
@@ -73,17 +76,33 @@ export function ProviderCalendar({ events, linkBase = "/provider/bookings", perE
               <>
                 <span className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs ${isToday(day) ? "bg-[#2D7A5F] text-white font-bold" : "text-[#6B7280]"}`}>{day}</span>
                 <div className="mt-1 space-y-1">
-                  {(byDay[day] ?? []).map((e) => (
-                    <Link key={e.id} href={perEvent ? `${linkBase}/${e.id}` : linkBase} title={`${e.time} · ${e.label}`} className={`block truncate rounded px-1.5 py-0.5 text-[10px] font-medium ${STATUS_CLS[e.status] ?? "bg-gray-100 text-gray-600"}`}>
-                      {e.time} {e.label}
-                    </Link>
-                  ))}
+                  {(byDay[day] ?? []).map((e) =>
+                    // A planned repeat has no booking to open yet, so it is shown but not clickable
+                    // — a link to nowhere is worse than no link.
+                    e.status === "planned" ? (
+                      <span key={e.id} title={`${e.time} · ${e.label} · ${t("plannedLegend")}`} className={`block truncate rounded px-1.5 py-0.5 text-[10px] font-medium ${STATUS_CLS.planned}`}>
+                        {e.time} {e.label}
+                      </span>
+                    ) : (
+                      <Link key={e.id} href={perEvent ? `${linkBase}/${e.id}` : linkBase} title={`${e.time} · ${e.label}`} className={`block truncate rounded px-1.5 py-0.5 text-[10px] font-medium ${STATUS_CLS[e.status] ?? "bg-gray-100 text-gray-600"}`}>
+                        {e.time} {e.label}
+                      </Link>
+                    )
+                  )}
                 </div>
               </>
             )}
           </div>
         ))}
       </div>
+
+      {/* Only shown when there is actually a dashed entry to explain. */}
+      {events.some((e) => e.status === "planned") && (
+        <p className="flex items-center gap-2 px-4 py-3 text-xs text-[#6B7280]">
+          <span className="inline-block h-3 w-6 shrink-0 rounded border border-dashed border-[#9CA3AF]" aria-hidden="true" />
+          {t("plannedLegend")}
+        </p>
+      )}
     </div>
   )
 }

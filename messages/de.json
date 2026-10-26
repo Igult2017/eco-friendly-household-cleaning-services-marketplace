@@ -2056,7 +2056,8 @@
     "thu": "Do",
     "fri": "Fr",
     "sat": "Sa",
-    "sun": "So"
+    "sun": "So",
+    "plannedLegend": "Gestrichelte Termine sind geplante Folgereinigungen. Sie werden jeweils am Vortag bestätigt und abgerechnet."
   },
   "providerMessagesPage": {
     "heading": "Nachrichten",

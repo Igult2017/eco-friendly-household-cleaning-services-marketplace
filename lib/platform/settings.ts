@@ -127,6 +127,44 @@ export async function getIdentityMinMinutes(): Promise<number> {
   return getIntSetting("identity_min_minutes", 45, 5, 720)
 }
 
+/**
+ * Whether cleaners are asked to verify their identity at all.
+ *
+ * Defaults to ON, which is what the platform already does — so an admin who never touches this
+ * setting sees no change. Turning it OFF does not merely stop asking: it also releases cleaners
+ * who are already being held (see isAwaitingIdentity), because switching the feature off while
+ * someone is mid-check would otherwise lock them out of their own job with no way forward.
+ */
+export async function getIdentityEnabled(): Promise<boolean> {
+  return (await getTextSetting("identity_enabled", ["on", "off"], "on")) === "on"
+}
+
+/**
+ * WHEN a cleaner is asked to verify.
+ *
+ * - "first_job"  — only once they are actually awarded work. The default, and the reason the check
+ *                  costs nothing for cleaners who never take a job.
+ * - "onboarding" — asked right after signup instead. The award gate still applies as a backstop:
+ *                  onboarding can be skipped by closing the tab, and "asked early" must never mean
+ *                  "never checked".
+ */
+export async function getIdentityMode(): Promise<"first_job" | "onboarding"> {
+  return getTextSetting("identity_mode", ["first_job", "onboarding"], "first_job")
+}
+
+/** Reads a setting that is one of a fixed set of words, falling back to the default on anything odd. */
+async function getTextSetting<T extends string>(key: string, allowed: readonly T[], fallback: T): Promise<T> {
+  try {
+    const [row] = await db.select({ value: platformSettings.value }).from(platformSettings).where(eq(platformSettings.key, key))
+    if (!row) return fallback
+    if ((allowed as readonly string[]).includes(row.value)) return row.value as T
+    console.warn(`[settings] ${key} "${row.value}" is not one of ${allowed.join("/")} — using default "${fallback}"`)
+  } catch {
+    // table missing / DB error — fall through to the default
+  }
+  return fallback
+}
+
 // How many hours before a job we ask a cleaner to confirm they are still coming.
 export async function getAvailabilityCheckHours(): Promise<number> {
   return getIntSetting("availability_check_hours", 6, 1, 48)

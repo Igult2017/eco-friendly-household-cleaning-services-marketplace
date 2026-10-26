@@ -11,15 +11,35 @@ import { useTranslations } from "next-intl"
 // the client_secret rather than the hosted URL Stripe also offers.
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
+/** The cleaner's own route. Anything else means this is an admin trying the check out. */
+const DEFAULT_ENDPOINT = "/api/stripe/identity/session"
+
 interface Props {
   /** The job waiting on this check, so the result can release exactly that booking. */
   bookingId?: string
   /** When the job is given away if the check is not done. */
   dueAt?: string | null
-  onVerified?: () => void
+  /**
+   * Where to ask for the check. Defaults to the cleaner's own route.
+   *
+   * The admin settings panel points this at /api/admin/identity-test so an admin can try the check
+   * before any cleaner meets it — running THIS component, not a copy of it. A separate admin flow
+   * could drift from the real one, and then a passing test would prove nothing about what cleaners
+   * actually get.
+   */
+  endpoint?: string
+  /** Hides the deadline/consequence wording, which is meaningless outside a real job. */
+  hideJobWarning?: boolean
+  onVerified?: (sessionId?: string) => void
 }
 
-export function IdentityVerifyModal({ bookingId, dueAt, onVerified }: Props) {
+export function IdentityVerifyModal({
+  bookingId,
+  dueAt,
+  endpoint = DEFAULT_ENDPOINT,
+  hideJobWarning = false,
+  onVerified,
+}: Props) {
   const [busy, setBusy] = useState(false)
   const t = useTranslations("compProviderIdentityCheck")
 
@@ -32,7 +52,7 @@ export function IdentityVerifyModal({ bookingId, dueAt, onVerified }: Props) {
         return
       }
 
-      const res = await fetch("/api/stripe/identity/session", {
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ bookingId }),
@@ -64,11 +84,16 @@ export function IdentityVerifyModal({ bookingId, dueAt, onVerified }: Props) {
       // hold on this job is released right here — so a webhook that never arrives cannot cost the
       // cleaner the work. Failure is silent on purpose: the webhook and the hourly sweep both
       // still cover it, and nothing is worse for having tried.
-      try {
-        await fetch("/api/stripe/identity/status", { method: "POST" })
-      } catch { /* webhook + sweep remain the backstop */ }
+      // Only for a real cleaner: there is no provider record behind an admin's test run, so there
+      // is nothing to refresh and nothing being held.
+      if (endpoint === DEFAULT_ENDPOINT) {
+        try {
+          await fetch("/api/stripe/identity/status", { method: "POST" })
+        } catch { /* webhook + sweep remain the backstop */ }
+      }
       toast.success(t("submitted"))
-      onVerified?.()
+      // The session id lets the admin panel read the verdict back from Stripe.
+      onVerified?.(data.sessionId)
     } catch {
       toast.error(t("failedStart"))
     } finally {
@@ -98,7 +123,7 @@ export function IdentityVerifyModal({ bookingId, dueAt, onVerified }: Props) {
 
           <p className="mt-4 text-xs leading-relaxed text-[#6B7280]">
             {t("tip")}
-            {dueAt ? <> {t("dueBy", { when: new Date(dueAt).toLocaleString() })}</> : null}
+            {dueAt && !hideJobWarning ? <> {t("dueBy", { when: new Date(dueAt).toLocaleString() })}</> : null}
           </p>
 
           <button

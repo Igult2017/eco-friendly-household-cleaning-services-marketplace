@@ -10,6 +10,13 @@ const updateSchema = z.object({
   commission_regular_pct: z.number().int().min(0).max(60).optional(),
   commission_regular_after_jobs: z.number().int().min(0).max(50).optional(),
   payout_schedule:       z.enum(["weekly", "monthly"]).optional(),
+
+  // Identity check. "off" does not merely stop asking — it also releases cleaners already being
+  // held (lib/bookings/identityGate.ts), so switching it off mid-check cannot strand anyone.
+  identity_enabled:      z.enum(["on", "off"]).optional(),
+  // "first_job" = asked when they are awarded work. "onboarding" = asked right after signup, with
+  // the award still acting as a backstop for anyone who skipped it.
+  identity_mode:         z.enum(["first_job", "onboarding"]).optional(),
   // max_service_radius_km is gone: cleaners set any radius they like, so nothing read it any more.
   min_booking_minutes:   z.number().int().min(15).max(480).optional(),
   reminder_hours_before: z.number().int().min(1).max(48).optional(),

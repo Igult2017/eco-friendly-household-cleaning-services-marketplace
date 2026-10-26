@@ -5,10 +5,11 @@ export const dynamic = "force-dynamic"
 import { useEffect, useState } from "react"
 import { Settings, Save, Loader2 } from "lucide-react"
 import { toast } from "sonner"
-import { Config, FIELD_BOUNDS, NUMERIC_KEYS } from "@/components/admin/settings/shared"
+import { Config, FIELD_BOUNDS, NUMERIC_KEYS, TEXT_KEYS } from "@/components/admin/settings/shared"
 import { MoneySection } from "@/components/admin/settings/MoneySection"
 import { ReferralSection } from "@/components/admin/settings/ReferralSection"
 import { OperationsSection } from "@/components/admin/settings/OperationsSection"
+import { IdentitySection } from "@/components/admin/settings/IdentitySection"
 import { SettingsManual } from "@/components/admin/settings/SettingsManual"
 
 export default function AdminSettingsPage() {
@@ -37,8 +38,9 @@ export default function AdminSettingsPage() {
         const raw = cfg[key]
         if (raw !== undefined && raw !== "") payload[key] = parseInt(raw, 10)
       }
-      if (cfg.payout_schedule !== undefined && cfg.payout_schedule !== "") {
-        payload.payout_schedule = cfg.payout_schedule
+      for (const key of TEXT_KEYS) {
+        const raw = cfg[key]
+        if (raw !== undefined && raw !== "") payload[key] = raw
       }
 
       // Catch a bad value (mistyped, or nudged by an accidental mouse-wheel scroll) before it ever
@@ -103,6 +105,7 @@ export default function AdminSettingsPage() {
         <MoneySection cfg={cfg} set={set} />
         <ReferralSection cfg={cfg} set={set} />
         <OperationsSection cfg={cfg} set={set} />
+        <IdentitySection cfg={cfg} set={set} />
       </div>
 
       <button

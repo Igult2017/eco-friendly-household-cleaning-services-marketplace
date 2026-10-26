@@ -26,8 +26,20 @@ export const ALLOWED_DOCUMENTS = ["passport", "id_card", "driving_license"] as c
  * which sent them to Stripe's website and lost them mid-flow.)
  */
 export async function createIdentityCheck(params: {
-  providerId: string
+  /**
+   * The cleaner this check belongs to. Omitted ONLY for an admin's test run — see adminTestFor.
+   */
+  providerId?: string
   bookingId?: string
+  /**
+   * An admin trying the check out from the settings panel, before any real cleaner meets it.
+   *
+   * When this is set, `provider_id` is deliberately LEFT OUT of the metadata, and that omission is
+   * what makes a test harmless: the webhook only acts on a result when `provider_id` is present
+   * (app/api/webhooks/stripe/route.ts), so a test can never mark a real cleaner verified — or
+   * failed — no matter what the admin photographs. Safe by construction rather than by remembering.
+   */
+  adminTestFor?: string
   /**
    * Stripe's own guidance is to key creation on an internal user reference so a repeated request
    * cannot leave the same person with two sessions. Pass one per cleaner per attempt.
@@ -50,10 +62,13 @@ export async function createIdentityCheck(params: {
         },
       },
       // Carried back on the webhook, which is how a result finds the cleaner and the waiting job.
-      metadata: {
-        provider_id: params.providerId,
-        ...(params.bookingId ? { booking_id: params.bookingId } : {}),
-      },
+      // An admin test carries NO provider_id, so the webhook ignores its result entirely.
+      metadata: params.adminTestFor
+        ? { admin_test: "1", admin_id: params.adminTestFor }
+        : {
+            provider_id: params.providerId!,
+            ...(params.bookingId ? { booking_id: params.bookingId } : {}),
+          },
     },
     params.idempotencyKey ? { idempotencyKey: params.idempotencyKey } : undefined,
   )

@@ -1,7 +1,7 @@
 import { db } from "@/lib/db"
 import { bookings, providers, notifications } from "@/lib/db/schema"
 import { and, eq, isNotNull } from "drizzle-orm"
-import { getIdentityCheckHours, getIdentityMinMinutes } from "@/lib/platform/settings"
+import { getIdentityCheckHours, getIdentityMinMinutes, getIdentityEnabled } from "@/lib/platform/settings"
 
 // Called the moment a job is awarded to a cleaner, from ALL THREE routes that can award one:
 // a cleaner accepting a direct booking, a cleaner claiming an urgent job, and a CLIENT accepting a
@@ -19,6 +19,13 @@ export async function requireIdentityOnAward(params: {
   bookingId: string
   providerId: string
 }): Promise<{ awaitingIdentity: boolean; dueAt?: Date }> {
+  // Admin switch. Checked HERE because this is the one place every award route converges on, so
+  // "is anyone asked to verify?" has a single answer rather than three that can drift apart.
+  // Note this is deliberately NOT conditioned on identity_mode: in "onboarding" mode the cleaner is
+  // asked at signup, but onboarding can be abandoned by closing the tab, so the award still has to
+  // catch anyone who never finished. Asked earlier must never mean never checked.
+  if (!(await getIdentityEnabled())) return { awaitingIdentity: false }
+
   const [prov] = await db
     .select({ userId: providers.userId, verificationStatus: providers.verificationStatus })
     .from(providers)
@@ -73,6 +80,11 @@ export async function requireIdentityOnAward(params: {
  * be the wrong test: it would freeze every booking made before the check existed.
  */
 export async function isAwaitingIdentity(bookingId: string): Promise<boolean> {
+  // Turning the feature off RELEASES people, it does not just stop asking new ones. A cleaner
+  // already holding a job mid-check would otherwise be frozen out of it with the prompt switched
+  // off and no way to satisfy a requirement that no longer exists.
+  if (!(await getIdentityEnabled())) return false
+
   const [row] = await db
     .select({ dueAt: bookings.identityCheckDueAt, status: providers.verificationStatus })
     .from(bookings)
