@@ -158,6 +158,10 @@ export default function BookStep5Page() {
               frequency: freq,
               dayOfWeek,
               preferredTime,
+              // The hours the client actually chose. Without this the repeat charged ONE HOUR
+              // every time however long the clean was booked for, and the cleaner was paid for
+              // one hour (BK-2026-000010 to 000013, and 000015).
+              durationMinutes: store.durationMinutes,
               serviceAddress: addr,
               ecoOptions: store.ecoOptions,
               specialInstructions: mergedInstructions || undefined,

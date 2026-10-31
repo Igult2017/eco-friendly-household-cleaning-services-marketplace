@@ -28,6 +28,10 @@ export default async function RecurringNewPage({ searchParams }: { searchParams:
       specialInstructions: bookings.specialInstructions,
       requestedFrequency: bookings.requestedFrequency,
       scheduledAt: bookings.scheduledAt,
+      // How long the original cleaning ran. The repeat should last as long as the booking it is
+      // based on — without this the schedule stored no duration and every repeat charged ONE HOUR
+      // however many hours were booked.
+      scheduledEndAt: bookings.scheduledEndAt,
       businessName: providers.businessName,
       timezone: providers.timezone,
       serviceName: providerServices.name,
@@ -38,6 +42,13 @@ export default async function RecurringNewPage({ searchParams }: { searchParams:
     .where(and(eq(bookings.id, bookingId), eq(bookings.customerId, userId)))
 
   if (!b || !b.providerId || !b.serviceId) redirect("/recurring")
+
+  // The repeat runs as long as the cleaning it is based on. Falls back to two hours only when the
+  // original has no end time recorded — itself a symptom of the same bug, on bookings made before
+  // it was fixed.
+  const durationMinutes = b.scheduledEndAt
+    ? Math.round((new Date(b.scheduledEndAt).getTime() - new Date(b.scheduledAt).getTime()) / 60_000)
+    : 120
 
   const tz = b.timezone || "Europe/Amsterdam"
   const { dayOfWeek, hhmm } = zonedDayAndTime(new Date(b.scheduledAt), tz)
@@ -60,6 +71,7 @@ export default async function RecurringNewPage({ searchParams }: { searchParams:
       initialFrequency={freq}
       initialDayOfWeek={dayOfWeek}
       initialTime={hhmm}
+      durationMinutes={durationMinutes}
       />
     </>
   )

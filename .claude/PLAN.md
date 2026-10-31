@@ -1,23 +1,19 @@
-# PLAN — repeat cleanings charge 1 hour instead of the booked hours
-## Phase 1 Architecture
-EVIDENCE (production, not inference): bookings 000010/11/12/13 (6,13,20,27 Sep - exactly weekly)
-and 000015 charged exactly one hour (EUR20/EUR25) and have NO scheduled_end_at. One-off bookings
-000004-000009 are all correct.
-ROOT CAUSE: recurring_schedules has NO duration column (lib/db/schema/recurringSchedules.ts) and
-app/api/recurring/route.ts never captures one, so lib/inngest/functions/recurring.ts:172 uses
-baseSubtotal = service.basePrice (one hour) with no multiplication, and its insert sets no
-scheduledEndAt. lib/bookings/create.ts does BOTH correctly (lines 133 and 156).
-CLEARED: bids are whole-job totals BY DESIGN (create.ts:125) and the bid form already multiplies
-rate x hours (bids/route.ts:132). BK-2026-000014 predates that fix.
-
-CHANGED scripts/ensure-referrals.mjs  - ADD COLUMN IF NOT EXISTS duration_minutes (journal drift)
-CHANGED app/api/recurring/route.ts    - capture the chosen duration
-CHANGED lib/inngest/functions/recurring.ts - multiply per_hour by hours; set scheduledEndAt;
-        refuse to charge when expected != charged; fallback 120 min flagged in the trail
-CHANGED lib/db/schema/paymentEvents.ts + ensure script - new kind "priced"
-CHANGED lib/payments/ledger.ts        - record rate/unit/minutes/source/expected/charged/mismatch
-CHANGED app/(admin)/admin/payments/history/page.tsx - show the arithmetic
+# PLAN — repeat cleanings charge 1 hour instead of the hours booked
+## Phase 1 Architecture (evidence, not inference)
+Bookings 000010/11/12/13 (6,13,20,27 Sep - exactly weekly) and 000015 charged ONE HOUR and have no
+scheduled_end_at. One-off bookings 000004-000009 are all correct.
+ROOT CAUSE: recurring_schedules had NO duration column; app/api/recurring/route.ts never captured
+one; lib/inngest/functions/recurring.ts:172 used basePrice (one hour) with no multiplication and
+set no scheduledEndAt. lib/bookings/create.ts did both correctly all along.
+CLEARED: bids are whole-job totals BY DESIGN (create.ts:125); bid form already multiplies
+(bids/route.ts:132). BK-2026-000014 predates that fix.
 ## Phase 2 Tasks
-1 schema col  2 capture duration  3 recurring pricing + end time  4 priced event + ledger
-5 admin display  6 mismatch guard  7 tests  8 tsc/tests/build  9 commit/deploy/re-register crons
-## Phase 4 Health check: repeat pricing equals one-off pricing for the same inputs.
+1 ensure-referrals: duration_minutes col + priced enum (enum OUTSIDE the DDL batch)   [done]
+2 lib/bookings/price.ts shared rule, used by BOTH create.ts and recurring.ts           [done]
+3 recurring.ts: multiply, set scheduledEndAt, refuse mismatched charge, alert admins   [done]
+4 payment trail: priced event + ledger + admin history display                         [done]
+5 tests (10 passing)                                                                   [done]
+6 PHASE 4 FINDING: neither caller sent durationMinutes, so the API change alone did
+  nothing. Fix app/(customer)/book/confirm/page.tsx AND components/booking/RecurringSetupForm.tsx
+7 tsc/tests/build  8 commit, push, deploy, re-register crons, verify
+## Phase 4 Health check: every caller actually sends the hours; repeat price == one-off price.

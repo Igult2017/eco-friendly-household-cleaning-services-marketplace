@@ -25,6 +25,8 @@ interface Props {
   initialFrequency: Freq
   initialDayOfWeek: number
   initialTime: string
+  /** How long each repeat runs. Taken from the booking this repeat is based on. */
+  durationMinutes: number
 }
 
 export function RecurringSetupForm(props: Props) {
@@ -57,6 +59,9 @@ export function RecurringSetupForm(props: Props) {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         providerId: props.providerId, serviceId: props.serviceId, frequency, dayOfWeek, preferredTime,
+        // Without this the schedule stored no duration, so every repeat charged ONE HOUR however
+        // many hours were booked, and the cleaner was paid for one hour.
+        durationMinutes: props.durationMinutes,
         serviceAddress: addr, ecoOptions: props.ecoOptions, specialInstructions: props.specialInstructions || undefined,
         paymentMethodId: pmId, timezone: props.timezone, autoRenewConsent: true,
       }),
