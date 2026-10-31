@@ -95,3 +95,40 @@ describe("the paper trail explains the charge rather than asserting it", () => {
     expect(w.summary).toBe("50.00 for the job — charged 50.00")
   })
 })
+
+describe("the trail shows the split, not just the charge", () => {
+  it("names the commission, the rate it was taken at, and what the cleaner gets", () => {
+    // "Why was I charged that?" and "why was I paid that?" are the same sum read from either end.
+    // Showing only the charge invites the second question and leaves it unanswered.
+    const w = explainPrice({
+      basePrice: 2000, priceUnit: "per_hour", durationMinutes: 180,
+      durationSource: "schedule", chargedCents: 6000,
+      commissionCents: 1800, commissionPct: 30, payoutCents: 4200,
+    })
+
+    expect(w.commission).toBe(1800)
+    expect(w.commissionPct).toBe(30)
+    expect(w.payout).toBe(4200)
+    expect(w.summary).toBe("20.00/hr × 3.0 hrs = 60.00 — charged 60.00 · commission 18.00 (30%) · cleaner gets 42.00")
+  })
+
+  it("the commission and the payout together account for the whole charge", () => {
+    // A split that does not add up is the thing this trail exists to make visible.
+    const charged = 6000, commission = 1800, payout = 4200
+    const w = explainPrice({
+      basePrice: 2000, priceUnit: "per_hour", durationMinutes: 180,
+      durationSource: "schedule", chargedCents: charged,
+      commissionCents: commission, commissionPct: 30, payoutCents: payout,
+    })
+    expect(w.commission + w.payout).toBe(w.charged)
+  })
+
+  it("still reads sensibly when no split is supplied", () => {
+    const w = explainPrice({
+      basePrice: 2000, priceUnit: "per_hour", durationMinutes: 60,
+      durationSource: "schedule", chargedCents: 2000,
+    })
+    expect(w.summary).toBe("20.00/hr × 1.0 hrs = 20.00 — charged 20.00")
+    expect(w.commission).toBe(0)
+  })
+})

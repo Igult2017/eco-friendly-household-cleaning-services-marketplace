@@ -327,11 +327,13 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     status: "ok",
     metadata: bidAmountCents != null
       ? {
-          summary: `agreed bid of ${(bidAmountCents / 100).toFixed(2)} for the job — charged ${(subtotalAfterDiscount / 100).toFixed(2)}`,
+          summary: `agreed bid of ${(bidAmountCents / 100).toFixed(2)} for the job — charged ${(subtotalAfterDiscount / 100).toFixed(2)} · commission ${(amounts.platformFee / 100).toFixed(2)} (${commissionPct}%) · cleaner gets ${(amounts.providerPayout / 100).toFixed(2)}`,
           rate: String(bidAmountCents), unit: "bid_total",
           minutes: String(durationMinutes), durationSource: "booking",
           expected: String(bidAmountCents), charged: String(subtotalAfterDiscount),
-          mismatch: String(subtotalAfterDiscount - bidAmountCents), origin: "bid",
+          mismatch: String(subtotalAfterDiscount - bidAmountCents),
+          commission: String(amounts.platformFee), commissionPct: String(commissionPct),
+          payout: String(amounts.providerPayout), origin: "bid",
         }
       : {
           ...explainPrice({
@@ -340,7 +342,13 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
             durationMinutes,
             durationSource: "schedule",
             chargedCents: baseAmount,
+            commissionCents: amounts.platformFee,
+            commissionPct,
+            payoutCents: amounts.providerPayout,
           }),
+          commission: String(amounts.platformFee),
+          commissionPct: String(commissionPct),
+          payout: String(amounts.providerPayout),
           rate: String(service!.basePrice ?? 0),
           minutes: String(durationMinutes),
           expected: String(baseAmount),

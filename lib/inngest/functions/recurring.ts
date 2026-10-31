@@ -213,6 +213,9 @@ export const recurringBookingCron = inngest.createFunction(
           durationMinutes,
           durationSource,
           chargedCents: amounts.subtotalCents,
+          commissionCents: amounts.platformFee,
+          commissionPct,
+          payoutCents: amounts.providerPayout,
         })
         if (Math.abs(workings.mismatch) > 1 && recurringDiscountPct === 0) {
           await logError({
@@ -285,6 +288,9 @@ export const recurringBookingCron = inngest.createFunction(
             expected: String(workings.expected),
             charged: String(workings.charged),
             mismatch: String(workings.mismatch),
+            commission: String(workings.commission),
+            commissionPct: String(workings.commissionPct),
+            payout: String(workings.payout),
             origin: "recurring",
           },
         }).catch(() => { /* the trail must never be the reason a booking fails */ })

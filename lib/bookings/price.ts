@@ -35,6 +35,11 @@ export function explainPrice(params: ServicePricing & {
   chargedCents: number
   /** "schedule" = the real booked duration. "fallback" = assumed, and worth an admin's attention. */
   durationSource: "schedule" | "fallback"
+  /** The platform's cut in cents, and the percentage it was taken at. */
+  commissionCents?: number
+  commissionPct?: number
+  /** What actually reaches the cleaner, after the cut. */
+  payoutCents?: number
 }): {
   rate: number
   unit: string
@@ -43,16 +48,26 @@ export function explainPrice(params: ServicePricing & {
   expected: number
   charged: number
   mismatch: number
+  commission: number
+  commissionPct: number
+  payout: number
   summary: string
 } {
   const expected = priceForService(params)
   const hours = params.durationMinutes / 60
   const money = (cents: number) => (cents / 100).toFixed(2)
 
-  const summary =
+  const base =
     params.priceUnit === "per_hour"
       ? `${money(params.basePrice)}/hr × ${hours.toFixed(1)} hrs = ${money(expected)} — charged ${money(params.chargedCents)}`
       : `${money(params.basePrice)} for the job — charged ${money(params.chargedCents)}`
+
+  // The split belongs in the same sentence. "Why was I charged that?" and "why was I paid that?"
+  // are one sum read from either end, and showing only half of it invites the other question.
+  const split =
+    params.payoutCents != null
+      ? ` · commission ${money(params.commissionCents ?? 0)}${params.commissionPct != null ? ` (${params.commissionPct}%)` : ""} · cleaner gets ${money(params.payoutCents)}`
+      : ""
 
   return {
     rate: params.basePrice,
@@ -62,6 +77,9 @@ export function explainPrice(params: ServicePricing & {
     expected,
     charged: params.chargedCents,
     mismatch: params.chargedCents - expected,
-    summary,
+    commission: params.commissionCents ?? 0,
+    commissionPct: params.commissionPct ?? 0,
+    payout: params.payoutCents ?? 0,
+    summary: base + split,
   }
 }
