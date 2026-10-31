@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl"
 import { Plus, Trash2, Loader2, Pencil } from "lucide-react"
 import { AddonsManager } from "@/components/provider/AddonsManager"
 import { BackButton } from "@/components/ui/BackButton"
+import { durationOptions } from "@/lib/utils/duration"
 
 type Service = {
   id: string
@@ -277,11 +278,17 @@ export default function ProviderServicesPage() {
             </div>
             <div>
               <label className="block text-xs font-semibold text-[#2B3441] mb-1.5">{t("minDurationLabel")}</label>
-              <input
-                type="number" min="30" step="30" value={form.minDurationMinutes}
+              {/* Hours, not minutes — a cleaner should never have to work out that two hours is
+                  "120". Stored as minutes either way, because an hour and a half is 90. */}
+              <select
+                value={form.minDurationMinutes}
                 onChange={(e) => setForm((f) => ({ ...f, minDurationMinutes: e.target.value }))}
                 className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2D7A5F] focus:outline-none"
-              />
+              >
+                {durationOptions().map((opt) => (
+                  <option key={opt.minutes} value={String(opt.minutes)}>{opt.label}</option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="block text-xs font-semibold text-[#2B3441] mb-1.5">{t("descriptionLabel")}</label>

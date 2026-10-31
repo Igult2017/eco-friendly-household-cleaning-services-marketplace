@@ -16,6 +16,7 @@ import Link from "next/link"
 import { InlineQuickMessage } from "@/components/messaging/InlineQuickMessage"
 import { TakeJobButton } from "@/components/bidding/TakeJobButton"
 import { usePusherChannel } from "@/hooks/usePusherChannel"
+import { durationOptions } from "@/lib/utils/duration"
 
 // 2024-01-07 is a Sunday — offset by day number for a locale-aware short weekday name.
 const dayName = (d: number) => new Date(Date.UTC(2024, 0, 7 + d)).toLocaleDateString(undefined, { weekday: "short", timeZone: "UTC" })
@@ -367,7 +368,19 @@ export default function ProviderJobsPage() {
                         </div>
                         <div>
                           <Label className="text-xs font-medium text-[#2B3441] mb-1 block">{t("durationLabel")}</Label>
-                          <Input type="number" value={bidForm.estimatedDurationMinutes} onChange={(e) => setBidForm((p) => ({ ...p, estimatedDurationMinutes: e.target.value }))} className="bg-white" />
+                          {/* Hours, not minutes. This number multiplies the hourly rate into the
+                              bid, so a cleaner typing "2" meaning two hours used to be rejected by
+                              the server's 30-minute floor with a message that explained nothing.
+                              Every option here is a value the server already accepts. */}
+                          <select
+                            value={bidForm.estimatedDurationMinutes}
+                            onChange={(e) => setBidForm((p) => ({ ...p, estimatedDurationMinutes: e.target.value }))}
+                            className="h-9 w-full rounded-md border border-gray-200 bg-white px-3 text-sm text-[#2B3441] focus:outline-none focus:ring-2 focus:ring-[#2D7A5F]"
+                          >
+                            {durationOptions().map((opt) => (
+                              <option key={opt.minutes} value={String(opt.minutes)}>{opt.label}</option>
+                            ))}
+                          </select>
                         </div>
                       </div>
                       <div>
