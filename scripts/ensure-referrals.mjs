@@ -85,6 +85,12 @@ ALTER TABLE provider_identity_verifications ADD COLUMN IF NOT EXISTS attempts in
 -- be stood up by a cleaner who has gone quiet.
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS availability_asked_at timestamptz;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS availability_confirmed_at timestamptz;
+-- How long each repeat cleaning lasts. Without it the nightly job had nothing to multiply the
+-- hourly rate by, so every repeat charged ONE HOUR no matter how many hours the client booked --
+-- BK-2026-000010 to 000013 were charged 20.00 a week for a job priced at 20.00 per hour, and the
+-- cleaner was paid for one hour each time. NULL means a schedule created before this existed; the
+-- job falls back to 120 minutes and records in the payment trail that it assumed.
+ALTER TABLE recurring_schedules ADD COLUMN IF NOT EXISTS duration_minutes integer;
 ALTER TABLE messages ALTER COLUMN booking_id DROP NOT NULL;
 ALTER TABLE messages ADD COLUMN IF NOT EXISTS job_post_id uuid;
 CREATE INDEX IF NOT EXISTS messages_job_post_idx ON messages(job_post_id);
@@ -649,6 +655,12 @@ async function main() {
     catch (e) { console.warn("[ensure-referrals] clicked enum add skipped:", e?.message ?? e) }
     try { await sql.unsafe(`ALTER TYPE email_send_status ADD VALUE IF NOT EXISTS 'complained'`) }
     catch (e) { console.warn("[ensure-referrals] complained enum add skipped:", e?.message ?? e) }
+    // Records the arithmetic behind a charge — rate, hours, what it should have been, what it
+    // actually was — so a wrong amount can be SEEN rather than inferred from a Stripe statement.
+    // Out here with the other enum additions, NOT in the DDL string: ALTER TYPE ... ADD VALUE
+    // cannot run inside the single batch that DDL is executed as.
+    try { await sql.unsafe(`ALTER TYPE payment_event_kind ADD VALUE IF NOT EXISTS 'priced'`) }
+    catch (e) { console.warn("[ensure-referrals] priced enum add skipped:", e?.message ?? e) }
     await sql.unsafe(DDL)
     console.log("[ensure-referrals] referral + customer_reviews + service_categories + platform_settings + job_posts(view_count/geo/job_type) + cancellation_policy + recurring_schedules(occurrences) + providers(last_active/response_time/instant_jobs) + payment_events ensured ✓")
   } finally {

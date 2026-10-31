@@ -12,6 +12,7 @@ const KIND_LABELS: Record<string, string> = {
   transferred: "Transferred",
   payout_succeeded: "Payout succeeded",
   payout_failed: "Payout failed",
+  priced: "Price worked out",
 }
 
 export default async function AdminPaymentHistoryPage() {
@@ -63,8 +64,24 @@ export default async function AdminPaymentHistoryPage() {
                   <td className="px-3 py-3 text-sm font-medium text-[#2B3441]">€{(r.amountCents / 100).toFixed(2)}</td>
                   <td className="px-3 py-3"><StatusBadge status={r.status} /></td>
                   <td className="px-3 py-3 text-xs font-mono text-[#6B7280] truncate max-w-32">{r.stripeObjectId ?? "—"}</td>
-                  <td className="px-3 py-3 text-xs text-[#6B7280] max-w-64 truncate">
-                    {r.metadata ? Object.entries(r.metadata).map(([k, v]) => `${k}: ${v}`).join(" · ") : "—"}
+                  <td className="px-3 py-3 text-xs text-[#6B7280] max-w-64">
+                    {/* A "priced" row carries the arithmetic behind the charge — rate, hours, what
+                        the sum came to and what was actually taken. Shown as the sentence it is,
+                        rather than buried in a run of key: value pairs, and in red when the two
+                        disagree: a mismatch nobody notices is the whole reason this exists. */}
+                    {r.kind === "priced" && r.metadata?.summary ? (
+                      <span className={Number(r.metadata.mismatch ?? 0) === 0 ? "text-[#2B3441]" : "font-semibold text-red-600"}>
+                        {r.metadata.summary}
+                        {Number(r.metadata.mismatch ?? 0) === 0
+                          ? " ✓"
+                          : ` — OFF BY €${(Math.abs(Number(r.metadata.mismatch)) / 100).toFixed(2)}`}
+                        {r.metadata.durationSource === "fallback" && (
+                          <span className="ml-1 text-amber-700">(hours assumed, not recorded)</span>
+                        )}
+                      </span>
+                    ) : r.metadata ? (
+                      <span className="block truncate">{Object.entries(r.metadata).map(([k, v]) => `${k}: ${v}`).join(" · ")}</span>
+                    ) : "—"}
                   </td>
                 </tr>
               ))}

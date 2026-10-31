@@ -10,6 +10,9 @@ import { calculateDiscountedBookingAmounts, stripe } from "@/lib/stripe/client"
 // full price. Not admin-configurable: this is a fixed onboarding incentive, not an ongoing rate.
 const RECURRING_DISCOUNT_OCCURRENCE_CAP = 2
 import { getRecurringDiscountPct } from "@/lib/platform/settings"
+import { priceForService, explainPrice, DEFAULT_DURATION_MINUTES } from "@/lib/bookings/price"
+import { recordPaymentEvent } from "@/lib/payments/ledger"
+import { alertAdmins } from "@/lib/notifications/adminAlert"
 import { resolveCommissionPct } from "@/lib/platform/commissionTier"
 import { getCurrencyForCountry } from "@/lib/utils/locale"
 import { logError } from "@/lib/utils/logError"
@@ -133,7 +136,9 @@ export const recurringBookingCron = inngest.createFunction(
         }
 
         const [service] = await db
-          .select({ basePrice: providerServices.basePrice })
+          // priceUnit decides whether basePrice is an hourly rate or the whole-job price. Not
+          // reading it is what made every repeat charge a single hour.
+          .select({ basePrice: providerServices.basePrice, priceUnit: providerServices.priceUnit })
           .from(providerServices)
           .where(eq(providerServices.id, schedule.serviceId))
 
@@ -169,7 +174,20 @@ export const recurringBookingCron = inngest.createFunction(
         // calculateDiscountedBookingAmounts). Sums ALL schedules ever created for the pair (not just
         // active ones) — past discounted occurrences already happened; cancelling a schedule doesn't
         // un-spend that budget.
-        const baseSubtotal = service?.basePrice ?? 0
+        // THE BUG THIS REPLACES: this used to be `service?.basePrice ?? 0`, which for a per-hour
+        // service is ONE HOUR'S RATE used as the whole price. A client booking three hours a week
+        // at €20/hr was charged €20 and the cleaner paid for one hour — every week, with nothing on
+        // screen showing it (BK-2026-000010 to 000013, and 000015).
+        //
+        // priceForService is the SAME function one-off bookings use (lib/bookings/create.ts), so
+        // the two cannot drift apart again.
+        const durationSource = schedule.durationMinutes ? "schedule" as const : "fallback" as const
+        const durationMinutes = schedule.durationMinutes ?? DEFAULT_DURATION_MINUTES
+        const baseSubtotal = priceForService({
+          basePrice: service?.basePrice ?? 0,
+          priceUnit: service?.priceUnit ?? null,
+          durationMinutes,
+        })
         // Recurring by definition, so the tier is decided purely by how many jobs this client and
         // cleaner have already delivered together.
         const { pct: commissionPct } = await resolveCommissionPct({
@@ -182,6 +200,38 @@ export const recurringBookingCron = inngest.createFunction(
         const discountEligible = Number(totalOccurrences) < RECURRING_DISCOUNT_OCCURRENCE_CAP
         const recurringDiscountPct = discountEligible ? await getRecurringDiscountPct() : 0
         const amounts = calculateDiscountedBookingAmounts(baseSubtotal, commissionPct, recurringDiscountPct)
+
+        // The arithmetic, checked against itself BEFORE any money moves. `baseSubtotal` is what the
+        // rate and hours say the job costs; `amounts.subtotalCents` is what the discount maths
+        // carried forward. If those two ever disagree, something has gone wrong in between and a
+        // charge would be a guess — so refuse it and tell a human, rather than take the wrong
+        // amount from a real card. lib/bookings/create.ts has guarded one-off bookings this way
+        // (line 150) since it was written; repeat bookings never had it.
+        const workings = explainPrice({
+          basePrice: service?.basePrice ?? 0,
+          priceUnit: service?.priceUnit ?? null,
+          durationMinutes,
+          durationSource,
+          chargedCents: amounts.subtotalCents,
+        })
+        if (Math.abs(workings.mismatch) > 1 && recurringDiscountPct === 0) {
+          await logError({
+            message: "[recurring-cron] refusing to charge — the price does not match its own arithmetic",
+            severity: "critical",
+            context: { scheduleId: schedule.id, ...workings },
+          })
+          await alertAdmins(
+            "A repeat cleaning was NOT charged — the price did not add up",
+            `${workings.summary}. Nothing has been charged and the schedule has moved on, so no client was billed a wrong amount. Rate ${workings.rate} ${workings.unit}, ${workings.minutes} minutes (${workings.durationSource}).`,
+            "/admin/payments/history",
+          ).catch(() => {})
+          const skipTo = addFrequencyInTZ(scheduledAt, schedule.frequency, schedule.timezone)
+          await db.update(recurringSchedules)
+            .set({ nextBookingAt: skipTo, updatedAt: new Date() })
+            .where(eq(recurringSchedules.id, schedule.id))
+          return
+        }
+
         // Charge recurring bookings in the cleaner's own currency (US → USD, else EUR).
         const chargeCurrency = getCurrencyForCountry(providerRow.country).toLowerCase()
         const bookingNumber = await generateBookingNumber()
@@ -195,6 +245,10 @@ export const recurringBookingCron = inngest.createFunction(
             serviceId: schedule.serviceId,
             status: "pending_payment",
             scheduledAt,
+            // Recorded so the hours are visible on the booking, the calendar and every later
+            // check. Its absence is exactly why the wrong charges were invisible: the rows showed
+            // no duration at all, so nothing could compare the price against the hours.
+            scheduledEndAt: new Date(scheduledAt.getTime() + durationMinutes * 60_000),
             serviceAddress: schedule.serviceAddress as {
               line1: string; line2?: string; city: string;
               state?: string; postalCode: string; country: string
@@ -211,6 +265,29 @@ export const recurringBookingCron = inngest.createFunction(
             completionPhotoUrls: [],
           })
           .returning({ id: bookings.id })
+
+        // The paper trail: rate, hours, what the sum says, what was actually charged, and the gap
+        // between them. Written for every repeat cleaning whether or not the card succeeds, so the
+        // question "why was I charged that?" has a recorded answer instead of needing someone to
+        // re-derive it from a Stripe statement. Shown on /admin/payments/history.
+        await recordPaymentEvent({
+          bookingId: newBooking.id,
+          userId: schedule.customerId,
+          kind: "priced",
+          amountCents: amounts.totalCharged,
+          status: workings.mismatch === 0 ? "ok" : "mismatch",
+          metadata: {
+            summary: workings.summary,
+            rate: String(workings.rate),
+            unit: workings.unit,
+            minutes: String(workings.minutes),
+            durationSource: workings.durationSource,
+            expected: String(workings.expected),
+            charged: String(workings.charged),
+            mismatch: String(workings.mismatch),
+            origin: "recurring",
+          },
+        }).catch(() => { /* the trail must never be the reason a booking fails */ })
 
         // Attempt off-session Stripe payment if a saved payment method is on file
         let paymentFailed = false

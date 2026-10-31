@@ -15,6 +15,11 @@ export const recurringSchedules = pgTable("recurring_schedules", {
   frequency: recurringFrequencyEnum("frequency").notNull(),
   dayOfWeek: smallint("day_of_week").notNull(),
   preferredTime: text("preferred_time").notNull(),
+  // How long each cleaning runs for. Without it the nightly job had nothing to multiply an hourly
+  // rate by, so every repeat charged ONE HOUR however many hours the client booked — and the
+  // cleaner was paid for one hour, every time. NULL means the schedule was set up before this
+  // existed; the job then assumes two hours and says so in the payment trail rather than silently.
+  durationMinutes: integer("duration_minutes"),
   serviceAddress: jsonb("service_address").notNull(),
   ecoOptions: jsonb("eco_options").default([]),
   specialInstructions: text("special_instructions"),

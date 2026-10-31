@@ -15,6 +15,10 @@ const createSchema = z.object({
   frequency: z.enum(["weekly", "biweekly", "monthly"]),
   dayOfWeek: z.number().int().min(0).max(6),
   preferredTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
+  // How long each cleaning runs. Previously not captured at all, so the nightly job had nothing to
+  // multiply an hourly rate by and charged ONE HOUR every time, however many hours were booked.
+  // Same bounds as a bid's duration (app/api/jobs/[id]/bids/route.ts).
+  durationMinutes: z.number().int().min(30).max(480).optional(),
   serviceAddress: z.record(z.string(), z.string()),
   ecoOptions: z.array(z.string()).max(10).optional(),
   specialInstructions: z.string().max(1000).optional(),
@@ -132,7 +136,7 @@ export async function POST(req: NextRequest) {
     }
 
     const {
-      providerId, serviceId, frequency, dayOfWeek, preferredTime,
+      providerId, serviceId, frequency, dayOfWeek, preferredTime, durationMinutes,
       serviceAddress, ecoOptions, specialInstructions, timezone,
     } = parsed.data
 
@@ -201,6 +205,7 @@ export async function POST(req: NextRequest) {
         frequency,
         dayOfWeek,
         preferredTime,
+        durationMinutes,
         serviceAddress,
         ecoOptions: ecoOptions ?? [],
         specialInstructions,

@@ -9,6 +9,11 @@ export const paymentEventKindEnum = pgEnum("payment_event_kind", [
   "transferred",
   "payout_succeeded",
   "payout_failed",
+  // Not a money movement but the sum BEHIND one: rate, hours, what it should have cost, what it
+  // actually cost. Kept here because this is already the single place that answers "what happened
+  // to this booking's money", and a price nobody could check is how repeat cleanings charged a
+  // single hour for months without anyone seeing it.
+  "priced",
 ])
 
 // Append-only record of every real money movement — never updated after insert, same convention as

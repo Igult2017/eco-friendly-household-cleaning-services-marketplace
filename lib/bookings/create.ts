@@ -9,6 +9,7 @@ import { eq, and, sql, inArray, lt, gt, isNull } from "drizzle-orm"
 import type { CreateBookingInput } from "@/lib/validations/booking"
 import { checkProviderAvailable } from "@/lib/bookings/availability"
 import { recordPaymentEvent } from "@/lib/payments/ledger"
+import { explainPrice, priceForService } from "@/lib/bookings/price"
 import { requireIdentityOnAward } from "@/lib/bookings/identityGate"
 import { logError } from "@/lib/utils/logError"
 
@@ -130,7 +131,9 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
   const servicePrice = service!.basePrice ?? 0
   const baseAmount =
     bidAmountCents ??
-    (service!.priceUnit === "per_hour" ? Math.round((servicePrice * durationMinutes) / 60) : servicePrice)
+    // Shared with the repeat-booking job (lib/bookings/price.ts). It used to be written out here
+    // and separately — wrongly — over there, which is how every repeat cleaning charged one hour.
+    priceForService({ basePrice: servicePrice, priceUnit: service!.priceUnit, durationMinutes })
   const subtotal = baseAmount + addOnsTotal
 
   // Promo code from PI metadata
@@ -311,6 +314,41 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     bookingId: result.id, userId, kind: "authorized",
     amountCents: intent.amount, stripeObjectId: paymentIntentId, status: "authorized",
   })
+
+  // The same workings recorded for repeat cleanings, kept here too on purpose: a paper trail that
+  // only covers the path already under suspicion cannot show that the other path is healthy. For a
+  // bid the price is the agreed whole-job total rather than a sum from rate and hours, so that is
+  // what gets recorded — otherwise the trail would "disagree" with a figure that is correct.
+  await recordPaymentEvent({
+    bookingId: result.id,
+    userId,
+    kind: "priced",
+    amountCents: intent.amount,
+    status: "ok",
+    metadata: bidAmountCents != null
+      ? {
+          summary: `agreed bid of ${(bidAmountCents / 100).toFixed(2)} for the job — charged ${(subtotalAfterDiscount / 100).toFixed(2)}`,
+          rate: String(bidAmountCents), unit: "bid_total",
+          minutes: String(durationMinutes), durationSource: "booking",
+          expected: String(bidAmountCents), charged: String(subtotalAfterDiscount),
+          mismatch: String(subtotalAfterDiscount - bidAmountCents), origin: "bid",
+        }
+      : {
+          ...explainPrice({
+            basePrice: service!.basePrice ?? 0,
+            priceUnit: service!.priceUnit ?? null,
+            durationMinutes,
+            durationSource: "schedule",
+            chargedCents: baseAmount,
+          }),
+          rate: String(service!.basePrice ?? 0),
+          minutes: String(durationMinutes),
+          expected: String(baseAmount),
+          charged: String(baseAmount),
+          mismatch: "0",
+          origin: "one_off",
+        } as Record<string, string>,
+  }).catch(() => { /* the trail must never be the reason a booking fails */ })
 
   // THE single place that catches every way a cleaner gets work, because every one of them ends
   // here: a direct booking, an accepted bid, and an urgent "take job" claim (which deliberately
