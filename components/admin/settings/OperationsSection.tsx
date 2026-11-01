@@ -60,6 +60,13 @@ export function OperationsSection({ cfg, set }: { cfg: Config; set: SetFn }) {
           before the appointment <strong>both sides</strong> are told it is starting, and how long
           before a job&apos;s finish time the <strong>cleaner</strong> is reminded to mark it
           complete — they cannot be paid until they do.
+          {/* The same disclosure the payout schedule already carries. A booking's reminders are
+              scheduled when it is created and then wait, so a change cannot reach one already in
+              flight. Without saying so, an admin who edits this and sees an old booking remind at
+              the old time would reasonably conclude the setting was broken. */}
+          <br />
+          <strong>Applies to bookings made after the change</strong> — a booking already in the
+          diary keeps the reminder times it was given when it was made.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
