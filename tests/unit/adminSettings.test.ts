@@ -139,3 +139,24 @@ describe("a nonsense value never reaches the business", () => {
     expect(["first_job", "onboarding"]).toContain(await s.getIdentityMode())
   })
 })
+
+describe("the silent-cleaner settings are now adjustable, not hardcoded", () => {
+  it("both save and are read back", async () => {
+    // These decide whether a client gets stood up — when a quiet cleaner is asked "still coming?"
+    // and how long before the job goes to someone else. They worked, but only a code change could
+    // alter them: there was no switch in the panel at all.
+    await put("availability_check_hours", "12")
+    await put("availability_grace_hours", "3")
+    expect(await s.getAvailabilityCheckHours()).toBe(12)
+    expect(await s.getAvailabilityGraceHours()).toBe(3)
+  })
+
+  it("out-of-range values fall back rather than being obeyed", async () => {
+    // The panel's bounds must match the reader's. If they ever disagree, a value looks saved and
+    // is then silently ignored — the worst outcome, because nothing tells the admin.
+    await put("availability_check_hours", "500")
+    await put("availability_grace_hours", "99")
+    expect(await s.getAvailabilityCheckHours()).toBeLessThanOrEqual(48)
+    expect(await s.getAvailabilityGraceHours()).toBeLessThanOrEqual(12)
+  })
+})

@@ -25,6 +25,8 @@ export interface Config {
   min_hourly_rate_cents?:          string
   identity_enabled?:               string
   identity_mode?:                  string
+  availability_check_hours?:       string
+  availability_grace_hours?:       string
 }
 
 export type SetFn = (key: keyof Config, val: string) => void
@@ -45,6 +47,8 @@ export const FIELD_BOUNDS: Record<string, { min: number; max: number; label: str
   min_booking_minutes:            { min: 15, max: 480,     label: "Shortest booking (minutes)" },
   reminder_hours_before:          { min: 1,  max: 48,      label: "Starting-soon reminder (hours before)" },
   deadline_warning_hours:         { min: 1,  max: 24,      label: "Finish-by reminder (hours before)" },
+  availability_check_hours:       { min: 1,  max: 48,      label: "Ask a quiet cleaner (hours before)" },
+  availability_grace_hours:       { min: 1,  max: 12,      label: "Time to answer before reassigning" },
   cancel_tier1_hours:             { min: 1,  max: 168,     label: "Free window (hours)" },
   cancel_tier2_hours:             { min: 1,  max: 168,     label: "Half-fee window (hours)" },
   cancel_tier3_hours:             { min: 0,  max: 168,     label: "Travel-comp window (hours)" },
@@ -59,6 +63,7 @@ export const FIELD_BOUNDS: Record<string, { min: number; max: number; label: str
 export const NUMERIC_KEYS: (keyof Config)[] = [
   "commission_pct", "commission_regular_pct", "commission_regular_after_jobs",
   "min_booking_minutes", "min_hourly_rate_cents", "reminder_hours_before", "deadline_warning_hours",
+  "availability_check_hours", "availability_grace_hours",
   "cancel_tier1_hours", "cancel_tier2_hours", "cancel_tier3_hours",
   "cancel_fee_low_pct", "cancel_fee_medium_pct", "cancel_fee_late_pct",
   "cancel_travel_comp_cents", "cancel_noshow_grace_minutes",

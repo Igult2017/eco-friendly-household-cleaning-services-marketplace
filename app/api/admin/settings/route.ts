@@ -21,6 +21,13 @@ const updateSchema = z.object({
   min_booking_minutes:   z.number().int().min(15).max(480).optional(),
   reminder_hours_before: z.number().int().min(1).max(48).optional(),
   deadline_warning_hours: z.number().int().min(1).max(24).optional(),
+
+  // When a cleaner who has gone quiet is asked whether they are still coming, and how long they
+  // then have to answer before the job is handed to someone else. Bounds mirror the getters in
+  // lib/platform/settings.ts exactly — if the two ever disagree, a value looks saved and is then
+  // silently ignored when read.
+  availability_check_hours: z.number().int().min(1).max(48).optional(),
+  availability_grace_hours: z.number().int().min(1).max(12).optional(),
   // Cancellation & no-show policy — see lib/platform/settings.ts getCancellationConfig().
   cancel_tier1_hours:          z.number().int().min(1).max(168).optional(),
   cancel_tier2_hours:          z.number().int().min(1).max(168).optional(),

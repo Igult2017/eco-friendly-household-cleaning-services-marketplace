@@ -84,6 +84,37 @@ export function OperationsSection({ cfg, set }: { cfg: Config; set: SetFn }) {
         </div>
       </div>
 
+      {/* The silent-cleaner check. These two decided whether a client gets stood up and were
+          hard-coded with no way to change them — they worked, but only a code change could adjust
+          them. */}
+      <div className="px-6 py-5">
+        <label className="block text-sm font-semibold text-[#2B3441] mb-1">When a Cleaner Goes Quiet</label>
+        <p className="text-xs text-[#6B7280] mb-4">
+          If a cleaner hasn&apos;t opened the app as the job approaches, they&apos;re emailed and
+          asked to confirm they&apos;re still coming. No answer within the time below and the job is
+          <strong> automatically given to another cleaner</strong>, so a client isn&apos;t left
+          waiting for someone who never arrives. Only cleaners who have actually gone quiet are
+          asked — nobody else is pestered.
+          <br />
+          <strong>Applies to bookings made after the change</strong> — a booking already in the
+          diary keeps the timings it was given when it was made.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label className="block text-xs font-medium text-[#6B7280] mb-1">Ask a quiet cleaner (hours before)</label>
+            <input type="number" min={1} max={48} value={cfg.availability_check_hours ?? "6"}
+              onChange={e => set("availability_check_hours", e.target.value)} onWheel={blurOnWheel}
+              className={`w-full ${INPUT_CLS}`} />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-[#6B7280] mb-1">Time to answer before reassigning (hours)</label>
+            <input type="number" min={1} max={12} value={cfg.availability_grace_hours ?? "1"}
+              onChange={e => set("availability_grace_hours", e.target.value)} onWheel={blurOnWheel}
+              className={`w-full ${INPUT_CLS}`} />
+          </div>
+        </div>
+      </div>
+
       {/* Cancellation & no-show policy */}
       <div className="px-6 py-5">
         <label className="block text-sm font-semibold text-[#2B3441] mb-1">Cancellation &amp; No-Show Policy</label>
