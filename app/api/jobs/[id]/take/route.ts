@@ -8,6 +8,7 @@ import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
 import { getClientIp } from "@/lib/utils/ip"
 import { pusherServer } from "@/lib/pusher/server"
 import { logError } from "@/lib/utils/logError"
+import { isTestParticipant } from "@/lib/testing/testAccount"
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -70,9 +71,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     if (!job) return NextResponse.json({ error: "Job not found" }, { status: 404 })
     if (job.jobType !== "take_job") return NextResponse.json({ error: "This job isn't an instant-claim job" }, { status: 422 })
-    if (job.customerId === userId) return NextResponse.json({ error: "Cannot take your own job" }, { status: 403 })
+    // Same rule as bidding: an admin-flagged test account may claim its own job, so the urgent-job
+    // path can be tested without a second person. Only these two checks are lifted.
+    const isTest = await isTestParticipant([userId, job.customerId])
+
+    if (!isTest && job.customerId === userId) return NextResponse.json({ error: "Cannot take your own job" }, { status: 403 })
     const claimerIp = getClientIp(req)
-    if (claimerIp && job.postedIp && job.postedIp === claimerIp) {
+    if (!isTest && claimerIp && job.postedIp && job.postedIp === claimerIp) {
       return NextResponse.json({ error: "Cannot take your own job" }, { status: 403 })
     }
     if (job.status !== "open") return NextResponse.json({ error: "This job has already been claimed by another cleaner." }, { status: 409 })

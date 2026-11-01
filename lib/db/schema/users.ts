@@ -32,6 +32,11 @@ export const users = pgTable(
     // frequency + tells cleaners the client wants repeat work.
     recurringInterest: varchar("recurring_interest", { length: 12 }),
     dualRoleEnabled: boolean("dual_role_enabled").notNull().default(false),
+    // Admin-set, off by default. Lifts ONLY the self-dealing and distance checks on the job board,
+    // so the owner can bid on his own job to test the money and identity pipelines without hiring
+    // a real person. Payment, identity and payout rules are deliberately untouched — those are the
+    // things being tested. Anything this account books is marked and kept out of real revenue.
+    isTestAccount: boolean("is_test_account").notNull().default(false),
     locale: varchar("locale", { length: 5 }), // detected at onboarding (IP country -> language); used for localized emails
     // Separate from providers.stripeAccountId (job payouts) — this is a lightweight Connect Express
     // account any user (typically a client) can create on-demand purely to withdraw a referral

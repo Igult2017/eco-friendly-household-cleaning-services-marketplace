@@ -7,6 +7,7 @@ import { users } from "@/lib/db/schema"
 import { desc, isNull } from "drizzle-orm"
 import { UserRoleManager } from "@/components/admin/UserRoleManager"
 import { SyncUsersButton } from "@/components/admin/SyncUsersButton"
+import { TestAccountToggle } from "@/components/admin/TestAccountToggle"
 import { syncClerkUsers } from "@/lib/clerk/sync"
 
 export default async function AdminUsersPage() {
@@ -31,6 +32,7 @@ export default async function AdminUsersPage() {
       role: users.role,
       createdAt: users.createdAt,
       isActive: users.isActive,
+      isTestAccount: users.isTestAccount,
     })
     .from(users)
     .where(isNull(users.deletedAt))
@@ -53,7 +55,7 @@ export default async function AdminUsersPage() {
         <div className="overflow-x-auto -mx-px"><table className="min-w-full divide-y divide-gray-100">
           <thead className="bg-gray-50">
             <tr>
-              {["Name", "Email", "Role", "Status", "Joined", "Actions"].map((h) => (
+              {["Name", "Email", "Role", "Status", "Test", "Joined", "Actions"].map((h) => (
                 <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-[#6B7280]">
                   {h}
                 </th>
@@ -73,6 +75,11 @@ export default async function AdminUsersPage() {
                   <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${u.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
                     {u.isActive ? "Active" : "Inactive"}
                   </span>
+                </td>
+                <td className="px-4 py-3">
+                  {/* Lets this account bid on and be booked for its own jobs, so the platform can
+                      be tested without paying a real person to play the other side. */}
+                  <TestAccountToggle userId={u.id} initialValue={u.isTestAccount} email={u.email} />
                 </td>
                 <td className="px-4 py-3 text-xs text-[#6B7280]">
                   {new Date(u.createdAt).toLocaleDateString("de-DE")}

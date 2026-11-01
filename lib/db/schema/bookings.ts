@@ -4,6 +4,7 @@ import {
   varchar,
   text,
   integer,
+  boolean,
   doublePrecision,
   timestamp,
   jsonb,
@@ -67,6 +68,9 @@ export const bookings = pgTable(
     providerPayout: integer("provider_payout").notNull(),   // provider receives this
     carbonOffsetAmount: integer("carbon_offset_amount").notNull().default(0),
     completionPhotoUrls: jsonb("completion_photos").$type<string[]>().default([]),
+    // Produced by a test account (users.is_test_account). Kept out of revenue figures so testing
+    // the platform cannot quietly inflate the numbers the owner relies on.
+    isTest: boolean("is_test").notNull().default(false),
     beforePhotoUrls: jsonb("before_photo_urls").$type<string[]>().default([]),
     promoCodeId: uuid("promo_code_id"),  // no FK here to avoid circular dep — enforced in API
     discountAmount: integer("discount_amount").notNull().default(0),

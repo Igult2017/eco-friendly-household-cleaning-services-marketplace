@@ -10,6 +10,7 @@ import type { CreateBookingInput } from "@/lib/validations/booking"
 import { checkProviderAvailable } from "@/lib/bookings/availability"
 import { recordPaymentEvent } from "@/lib/payments/ledger"
 import { explainPrice, priceForService } from "@/lib/bookings/price"
+import { isTestParticipant } from "@/lib/testing/testAccount"
 import { requireIdentityOnAward } from "@/lib/bookings/identityGate"
 import { logError } from "@/lib/utils/logError"
 
@@ -77,7 +78,8 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     db.select({ basePrice: providerServices.basePrice, priceUnit: providerServices.priceUnit })
       .from(providerServices)
       .where(and(eq(providerServices.id, effectiveServiceId), eq(providerServices.providerId, providerId), eq(providerServices.isActive, true))),
-    db.select({ id: providers.id, isApproved: providers.isApproved, isSuspended: providers.isSuspended, stripeAccountStatus: providers.stripeAccountStatus })
+    // userId so the booking can be marked as a test when either side is a flagged test account.
+    db.select({ id: providers.id, userId: providers.userId, isApproved: providers.isApproved, isSuspended: providers.isSuspended, stripeAccountStatus: providers.stripeAccountStatus })
       .from(providers)
       .where(eq(providers.id, providerId)),
   ])
@@ -202,6 +204,9 @@ export async function createBooking(userId: string, data: CreateBookingInput) {
     requestedFrequency: data.requestedFrequency ?? null,
     requestedDays: data.requestedDays?.length ? data.requestedDays : null,
     cancellationPolicyAcceptedAt: new Date(),
+    // Marked when either side is an admin-flagged test account, so testing the platform cannot
+    // quietly inflate the revenue figures the owner relies on.
+    isTest: await isTestParticipant([userId, provider!.userId]),
   }
   insertData.serviceId = effectiveServiceId
 

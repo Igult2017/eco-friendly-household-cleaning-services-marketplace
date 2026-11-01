@@ -60,6 +60,17 @@ export async function getOverviewData(days: number) {
   const start = new Date(now.getTime() - days * 86_400_000)
   const prevStart = new Date(start.getTime() - days * 86_400_000)
 
+  // Bookings made by a test account are excluded from every figure on this page. Testing the
+  // platform must never quietly inflate the numbers the business is judged on — a dashboard you
+  // cannot trust is worse than no dashboard.
+  //
+  // Written as NOT EXISTS rather than a join so a payment with NO booking behind it (a referral or
+  // affiliate payout) still counts. An inner join would have silently dropped those from revenue.
+  const realBookingsOnly = eq(bookings.isTest, false)
+  const realPaymentsOnly = sql`NOT EXISTS (
+    SELECT 1 FROM ${bookings} b WHERE b.id = ${payments.bookingId} AND b.is_test = true
+  )`
+
   const [signupRows, bookingRows, revenueRows, prevTotals, funnelRow, campaignRows, emailRow] = await Promise.all([
     db
       .select({ day: berlinDay(users.createdAt), n: sql<number>`cast(count(*) as int)` })
@@ -70,7 +81,7 @@ export async function getOverviewData(days: number) {
     db
       .select({ day: berlinDay(bookings.createdAt), n: sql<number>`cast(count(*) as int)` })
       .from(bookings)
-      .where(gte(bookings.createdAt, start))
+      .where(and(gte(bookings.createdAt, start), realBookingsOnly))
       .groupBy(sql`1`),
 
     db
@@ -79,17 +90,18 @@ export async function getOverviewData(days: number) {
         cents: sql<number>`cast(coalesce(sum(${payments.capturedAmount}), 0) as int)`,
       })
       .from(payments)
-      .where(and(eq(payments.status, "captured"), sql`${paidAt} >= ${at(start)}`))
+      .where(and(eq(payments.status, "captured"), sql`${paidAt} >= ${at(start)}`, realPaymentsOnly))
       .groupBy(sql`1`),
 
     // The previous window, as single totals — only needed for the up/down arrows.
     Promise.all([
       db.select({ n: sql<number>`cast(count(*) as int)` }).from(users).where(and(gte(users.createdAt, prevStart), lt(users.createdAt, start))),
-      db.select({ n: sql<number>`cast(count(*) as int)` }).from(bookings).where(and(gte(bookings.createdAt, prevStart), lt(bookings.createdAt, start))),
+      db.select({ n: sql<number>`cast(count(*) as int)` }).from(bookings).where(and(gte(bookings.createdAt, prevStart), lt(bookings.createdAt, start), realBookingsOnly)),
       db.select({ cents: sql<number>`cast(coalesce(sum(${payments.capturedAmount}), 0) as int)` }).from(payments)
         .where(and(eq(payments.status, "captured"),
           sql`${paidAt} >= ${at(prevStart)}`,
-          sql`${paidAt} < ${at(start)}`)),
+          sql`${paidAt} < ${at(start)}`,
+          realPaymentsOnly)),
     ]),
 
     // Lifetime funnel below the visitor stage: how many people ever booked, and how many came back.

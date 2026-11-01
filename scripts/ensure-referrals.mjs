@@ -91,6 +91,14 @@ ALTER TABLE bookings ADD COLUMN IF NOT EXISTS availability_confirmed_at timestam
 -- cleaner was paid for one hour each time. NULL means a schedule created before this existed; the
 -- job falls back to 120 minutes and records in the payment trail that it assumed.
 ALTER TABLE recurring_schedules ADD COLUMN IF NOT EXISTS duration_minutes integer;
+-- Test accounts. The owner could not test the platform without hiring real people, because the job
+-- board refuses a bid from the person who posted the job, from the same internet connection, and
+-- from a cleaner outside the client's radius. Flagging an account lifts those three checks FOR THAT
+-- ACCOUNT ONLY -- payment, identity and payout rules are untouched, since those are the things
+-- being tested. Bookings a test account produces are marked so they never count as real revenue.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS is_test_account boolean NOT NULL DEFAULT false;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS is_test boolean NOT NULL DEFAULT false;
+CREATE INDEX IF NOT EXISTS bookings_is_test_idx ON bookings(is_test) WHERE is_test = true;
 ALTER TABLE messages ALTER COLUMN booking_id DROP NOT NULL;
 ALTER TABLE messages ADD COLUMN IF NOT EXISTS job_post_id uuid;
 CREATE INDEX IF NOT EXISTS messages_job_post_idx ON messages(job_post_id);

@@ -14,6 +14,7 @@ import { formatCurrencyForCountry } from "@/lib/utils/formatCurrency"
 import { getMinHourlyRateCents } from "@/lib/platform/settings"
 import { z } from "zod"
 import { logError } from "@/lib/utils/logError"
+import { isTestParticipant } from "@/lib/testing/testAccount"
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -70,10 +71,17 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       .where(eq(jobPosts.id, jobPostId))
 
     if (!job) return NextResponse.json({ error: "Job not found" }, { status: 404 })
-    if (job.customerId === userId) return NextResponse.json({ error: "Cannot bid on your own job" }, { status: 403 })
+
+    // An admin-flagged test account may bid on its own job, so the platform can be tested end to
+    // end without hiring a real person. It lifts ONLY the three checks below (same person, same
+    // connection, distance) — payment, identity and payout behave exactly as for a real cleaner,
+    // because those are the things being tested.
+    const isTest = await isTestParticipant([userId, job.customerId])
+
+    if (!isTest && job.customerId === userId) return NextResponse.json({ error: "Cannot bid on your own job" }, { status: 403 })
     // Self-bid prevention: also block a second account bidding from the same IP the job was posted from.
     const bidderIp = getClientIp(req)
-    if (bidderIp && job.postedIp && job.postedIp === bidderIp) {
+    if (!isTest && bidderIp && job.postedIp && job.postedIp === bidderIp) {
       return NextResponse.json({ error: "Cannot bid on your own job" }, { status: 403 })
     }
     // Jobs are VISIBLE to everyone (Upwork model), but bidding requires being within the client's
@@ -88,7 +96,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             Math.sin(toRad(job.serviceLongitude - provider.longitude) / 2) ** 2,
           ))
         : null
-      if (km == null || km > (job.radiusKm ?? 25)) {
+      // The check that would have defeated testing even with two accounts on two machines: it
+      // refuses outright when the cleaner has NO coordinates, which is every cleaner outside the
+      // supported countries. Skipped for a test account.
+      if (!isTest && (km == null || km > (job.radiusKm ?? 25))) {
         const city = (job.serviceAddress as { city?: string } | null)?.city ?? "another area"
         return NextResponse.json(
           { error: `This client is in ${city} and needs a cleaner within ${job.radiusKm ?? 25} km of their location — outside your service area.` },
