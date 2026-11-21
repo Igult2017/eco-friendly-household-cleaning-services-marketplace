@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest"
+import { isIdentityNotEnabled, IDENTITY_NOT_ENABLED_CODE } from "@/lib/stripe/identity"
 
 // The clock a cleaner is given to verify their identity after being awarded a job, and the rule
 // for when an attempt costs them one of their two tries. Both were wrong, and both are the kind of
@@ -96,18 +97,34 @@ describe("an attempt is spent on a SUBMITTED check, never on opening the pop-up"
 })
 
 // ---------------------------------------------------------------------------------------------
-// Recognising that Stripe Identity is not switched on at all. Mirrors isIdentityNotEnabled.
+// Recognising that Stripe Identity is not usable on the account at all.
+//
+// This block used to define its OWN copy of the matcher and assert against that copy. It stayed
+// green while the shipped function was broken, which is exactly how the November 2026 regression
+// survived unnoticed: a test that re-implements its subject proves nothing about the subject. It
+// now calls the REAL isIdentityNotEnabled, so breaking the function turns this red.
 // ---------------------------------------------------------------------------------------------
-describe("'Identity is not switched on' is recognised and said out loud", () => {
-  // The real message Stripe returned in production on 2026-10-26, copied verbatim from error_logs.
-  const REAL = "Your account is not set up to use Identity. Please have an account admin visit https://dashboard.stripe.com/identity/application to get started."
+describe("'Identity is not usable on this account' is recognised and said out loud", () => {
+  // Both strings are verbatim from production. Stripe REWORDED this error between the two dates —
+  // which is the whole reason matching on the sentence alone is not safe.
+  const REAL_OCT = "Your account is not set up to use Identity. Please have an account admin visit https://dashboard.stripe.com/identity/application to get started."
+  const REAL_NOV = "For more information on Stripe Identity supported use-cases and locations, please see https://docs.stripe.com/identity/use-cases."
 
-  const looksLikeNotEnabled = (msg: string) => /not set up to use Identity|identity\/application/i.test(msg)
+  it("recognises the message Stripe sent in October", () => {
+    expect(isIdentityNotEnabled(new Error(REAL_OCT))).toBe(true)
+  })
 
-  it("recognises the exact message Stripe actually sent", () => {
-    // Reported as a generic "could not start", which is indistinguishable from a real fault — and
-    // sent us hunting a bug that did not exist. The product simply was not enabled.
-    expect(looksLikeNotEnabled(REAL)).toBe(true)
+  it("recognises the REWORDED message Stripe sent in November", () => {
+    // The regression itself. Neither old fragment appears in this sentence, so the detector went
+    // blind: cleaners' job holds stopped being released and the admin test reported nothing useful.
+    expect(isIdentityNotEnabled(new Error(REAL_NOV))).toBe(true)
+  })
+
+  it("recognises it from the error CODE whatever the wording says", () => {
+    // The real defence. Stripe does not reword this code, so a future rewrite cannot blind us again.
+    expect(isIdentityNotEnabled({ code: IDENTITY_NOT_ENABLED_CODE, message: "anything at all" })).toBe(true)
+    // Stripe puts the code on the raw payload as well as the wrapper; both must count.
+    expect(isIdentityNotEnabled({ raw: { code: IDENTITY_NOT_ENABLED_CODE } })).toBe(true)
   })
 
   it("does not mistake an ordinary check failure for a missing product", () => {
@@ -117,14 +134,15 @@ describe("'Identity is not switched on' is recognised and said out loud", () => 
       "No such verification session: vs_123",
       "Request timed out",
     ]) {
-      expect(looksLikeNotEnabled(other)).toBe(false)
+      expect(isIdentityNotEnabled(new Error(other))).toBe(false)
     }
+    expect(isIdentityNotEnabled({ code: "resource_missing" })).toBe(false)
   })
 
-  it("still recognises it if Stripe reworded half the sentence", () => {
-    // Matched on two independent fragments on purpose: a false positive only produces a clearer
-    // message, while a false negative hides the one thing the reader needs to know.
-    expect(looksLikeNotEnabled("Visit https://dashboard.stripe.com/identity/application to begin")).toBe(true)
-    expect(looksLikeNotEnabled("This account is NOT SET UP TO USE IDENTITY")).toBe(true)
+  it("survives junk input instead of throwing", () => {
+    // It runs inside a catch block, so it must never become the thing that fails there.
+    for (const junk of [null, undefined, "", 0, [], {}]) {
+      expect(isIdentityNotEnabled(junk)).toBe(false)
+    }
   })
 })

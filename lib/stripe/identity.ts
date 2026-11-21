@@ -91,21 +91,44 @@ export async function readIdentityCheck(sessionId: string) {
   }
 }
 
+/** The code Stripe refuses with when Identity is not usable on this account. */
+export const IDENTITY_NOT_ENABLED_CODE = "identity_api_invalid_application"
+
 /**
- * True when Stripe is refusing because Identity is not switched on for the account at all.
+ * True when Stripe is refusing because Identity is not usable on this account at all.
  *
- * Stripe Identity is a SEPARATE product that an account admin has to enable; until then every
- * attempt to start a check fails with "Your account is not set up to use Identity". That is not a
- * bug in this code and not the cleaner's fault, but both were previously reported as a generic
- * "could not start" — which is indistinguishable from a real fault and sent us hunting.
+ * Stripe Identity is a SEPARATE product that has to be enabled and approved for the account; until
+ * then every attempt to start a check is refused with a 403. That is not a bug in this code and not
+ * the cleaner's fault, but both were previously reported as a generic "could not start" — which is
+ * indistinguishable from a real fault and sent us hunting.
  *
- * Matched on the message because Stripe returns this as a plain invalid_request_error with no
- * distinguishing code of its own. Deliberately broad: a false positive just produces a clearer
- * message, while a false negative hides the one thing the reader needs to know.
+ * MATCH ON THE CODE, NOT THE PROSE. This used to test the message text ONLY, on the stated premise
+ * that Stripe "returns this as a plain invalid_request_error with no distinguishing code of its
+ * own". Production logs disprove that premise: the refusal carries
+ * `code: "identity_api_invalid_application"` alongside the 403. Depending on the sentence broke this
+ * SILENTLY when Stripe reworded it between 2026-10-26 and 2026-11-15:
+ *   2026-10-26: "Your account is not set up to use Identity. Please have an account admin visit
+ *                https://dashboard.stripe.com/identity/application to get started."
+ *   2026-11-15: "For more information on Stripe Identity supported use-cases and locations, please
+ *                see https://docs.stripe.com/identity/use-cases."
+ * The second matches neither old fragment, so for a week the detector was blind — which meant a
+ * cleaner's job hold was never released and the admin test showed nothing useful. The code is the
+ * part of the payload Stripe does not reword; the sentence is not.
+ *
+ * The wording check is KEPT as a fallback, covering both observed messages, in case a related
+ * refusal ever arrives under a different code: a false positive only produces a clearer message,
+ * while a false negative hides the one thing the reader needs to know.
  */
 export function isIdentityNotEnabled(err: unknown): boolean {
+  // Stripe throws error OBJECTS, but this accepts `unknown` — read the field without assuming a
+  // shape, and check `raw` too, since the code sits on both the wrapper and the raw payload.
+  if (typeof err === "object" && err !== null) {
+    const e = err as { code?: unknown; raw?: { code?: unknown } }
+    if (e.code === IDENTITY_NOT_ENABLED_CODE || e.raw?.code === IDENTITY_NOT_ENABLED_CODE) return true
+  }
+
   const msg = err instanceof Error ? err.message : String(err ?? "")
-  return /not set up to use Identity|identity\/application/i.test(msg)
+  return /not set up to use Identity|identity\/(application|use-cases)|Identity supported use-cases/i.test(msg)
 }
 
 /** What to tell an account admin, including where to go. */
