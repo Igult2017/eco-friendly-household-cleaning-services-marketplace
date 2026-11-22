@@ -56,7 +56,7 @@ export async function HeroSection() {
               placeholder={t("postcodePlaceholder")}
               buttonLabel={t("findCleaners")}
               checkingLabel={t("checking")}
-              availableTemplate={t("availableNear")}
+              availableTemplate={t.raw("availableNear") as string}
               noneLabel={t("noneNear")}
               viewLabel={t("viewCleaners")}
             />
